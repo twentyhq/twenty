@@ -114,9 +114,11 @@ export const arrangeBillingPriceRepositoryFindOneOrFail = (
       return {} as BillingPriceEntity;
     });
 
-  jest.spyOn(billingPriceRepository, 'find').mockImplementation(
-    async (criteria?: unknown) => {
-      const where = (criteria as { where?: { stripePriceId?: unknown } })?.where;
+  jest
+    .spyOn(billingPriceRepository, 'find')
+    .mockImplementation(async (criteria?: unknown) => {
+      const where = (criteria as { where?: { stripePriceId?: unknown } })
+        ?.where;
       const stripePriceIdCondition = where?.stripePriceId;
 
       const resolveStripePriceIds = (cond: unknown): string[] => {
@@ -145,8 +147,7 @@ export const arrangeBillingPriceRepositoryFindOneOrFail = (
           (entity): entity is BillingPriceEntity =>
             entity !== null && entity !== undefined,
         );
-    },
-  );
+    });
 };
 
 export const arrangeStripeSubscriptionScheduleServiceLoadSubscriptionSchedule =

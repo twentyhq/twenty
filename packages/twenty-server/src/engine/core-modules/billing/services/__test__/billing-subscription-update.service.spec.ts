@@ -77,9 +77,9 @@ describe('BillingSubscriptionUpdateService', () => {
         {
           provide: StripeInvoiceService,
           useValue: {
-            createImmediateUpgradeInvoice: jest.fn().mockResolvedValue(
-              undefined,
-            ),
+            createImmediateUpgradeInvoice: jest
+              .fn()
+              .mockResolvedValue(undefined),
           },
         },
         {
@@ -116,43 +116,24 @@ describe('BillingSubscriptionUpdateService', () => {
           provide: BillingSubscriptionPhaseService,
           useValue: {
             toPhaseUpdateParams: jest.fn(),
-            buildPhaseUpdateParams: jest
-              .fn()
-              .mockImplementation(
-                async ({
-                  toUpdatePrices,
-                  startDate,
-                  endDate,
-                  isV2,
-                }: {
-                  toUpdatePrices: {
-                    licensedPriceId: string;
-                    seats: number;
-                    meteredPriceId?: string;
-                    resourceCreditPriceId?: string;
-                  };
-                  startDate: Stripe.SubscriptionScheduleUpdateParams.Phase['start_date'];
-                  endDate: number | undefined;
-                  isV2: boolean;
-                }) => {
-                  if (isV2) {
-                    return {
-                      start_date: startDate,
-                      ...(endDate ? { end_date: endDate } : {}),
-                      proration_behavior: 'none',
-                      items: [
-                        {
-                          price: toUpdatePrices.licensedPriceId,
-                          quantity: toUpdatePrices.seats,
-                        },
-                        {
-                          price: toUpdatePrices.resourceCreditPriceId,
-                          quantity: 1,
-                        },
-                      ],
-                    };
-                  }
-
+            buildPhaseUpdateParams: jest.fn().mockImplementation(
+              async ({
+                toUpdatePrices,
+                startDate,
+                endDate,
+                isV2,
+              }: {
+                toUpdatePrices: {
+                  licensedPriceId: string;
+                  seats: number;
+                  meteredPriceId?: string;
+                  resourceCreditPriceId?: string;
+                };
+                startDate: Stripe.SubscriptionScheduleUpdateParams.Phase['start_date'];
+                endDate: number | undefined;
+                isV2: boolean;
+              }) => {
+                if (isV2) {
                   return {
                     start_date: startDate,
                     ...(endDate ? { end_date: endDate } : {}),
@@ -162,15 +143,32 @@ describe('BillingSubscriptionUpdateService', () => {
                         price: toUpdatePrices.licensedPriceId,
                         quantity: toUpdatePrices.seats,
                       },
-                      { price: toUpdatePrices.meteredPriceId },
+                      {
+                        price: toUpdatePrices.resourceCreditPriceId,
+                        quantity: 1,
+                      },
                     ],
-                    billing_thresholds: {
-                      amount_gte: 1000,
-                      reset_billing_cycle_anchor: false,
-                    },
                   };
-                },
-              ),
+                }
+
+                return {
+                  start_date: startDate,
+                  ...(endDate ? { end_date: endDate } : {}),
+                  proration_behavior: 'none',
+                  items: [
+                    {
+                      price: toUpdatePrices.licensedPriceId,
+                      quantity: toUpdatePrices.seats,
+                    },
+                    { price: toUpdatePrices.meteredPriceId },
+                  ],
+                  billing_thresholds: {
+                    amount_gte: 1000,
+                    reset_billing_cycle_anchor: false,
+                  },
+                };
+              },
+            ),
             isSamePhaseSignature: jest.fn().mockResolvedValue(false),
           },
         },

@@ -132,11 +132,10 @@ export class BillingPortalWorkspaceService {
           !isDefined(customer) || customer.billingSubscriptions.length === 0,
       });
 
-    const createdBillingSubscription =
-      await this.billingSubscriptionService.syncSubscriptionToDatabase(
-        workspace.id,
-        stripeSubscription.id,
-      );
+    await this.billingSubscriptionService.syncSubscriptionToDatabase(
+      workspace.id,
+      stripeSubscription.id,
+    );
 
     return successUrl;
   }
