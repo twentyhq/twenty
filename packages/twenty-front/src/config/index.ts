@@ -18,4 +18,6 @@ const getDefaultUrl = () => {
 };
 
 export const REACT_APP_SERVER_BASE_URL =
-  window._env_?.REACT_APP_SERVER_BASE_URL || getDefaultUrl();
+  window._env_?.REACT_APP_SERVER_BASE_URL ||
+  import.meta.env.REACT_APP_SERVER_BASE_URL ||
+  getDefaultUrl();
