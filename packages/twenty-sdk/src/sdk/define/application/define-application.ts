@@ -1,16 +1,12 @@
-import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
-import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
+import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 
 export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
   const errors = [];
 
   if (!config.universalIdentifier) {
     errors.push('Application must have a universalIdentifier');
-  }
-
-  if (!config.defaultRoleUniversalIdentifier) {
-    errors.push('Application must have a defaultRoleUniversalIdentifier');
   }
 
   if (!config.displayName || config.displayName.length === 0) {

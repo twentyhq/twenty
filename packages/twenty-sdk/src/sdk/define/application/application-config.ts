@@ -6,4 +6,7 @@ export type ApplicationConfig = Omit<
   | 'yarnLockChecksum'
   | 'postInstallLogicFunction'
   | 'preInstallLogicFunction'
->;
+  | 'defaultRoleUniversalIdentifier'
+> & {
+  defaultRoleUniversalIdentifier?: string;
+};
