@@ -72,7 +72,6 @@ export const RecordInlineCellEditMode = ({
     placement: isCentered ? 'bottom' : 'bottom-start',
     middleware: [
       flip(),
-      shift({ padding: 8 }),
       offset(
         isCentered
           ? {
@@ -84,6 +83,7 @@ export const RecordInlineCellEditMode = ({
               crossAxis: -5,
             },
       ),
+      shift({ padding: 8 }),
       setFieldInputLayoutDirectionMiddleware,
     ],
     whileElementsMounted: autoUpdate,
