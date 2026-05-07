@@ -23,6 +23,9 @@ const MEMBERS_TAB_ROLES_ID = 'roles';
 export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
 
+  const hasMembersPermission = useHasPermissionFlag(
+    PermissionFlagType.WORKSPACE_MEMBERS,
+  );
   const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
 
   const activeTabId = useAtomComponentStateValue(
@@ -31,8 +34,12 @@ export const SettingsWorkspaceMembers = () => {
   );
 
   const tabs = [
-    { id: MEMBERS_TAB_TEAM_ID, title: t`Team`, Icon: IconUsers },
-    { id: MEMBERS_TAB_ACCESS_ID, title: t`Access`, Icon: IconKey },
+    ...(hasMembersPermission
+      ? [
+          { id: MEMBERS_TAB_TEAM_ID, title: t`Team`, Icon: IconUsers },
+          { id: MEMBERS_TAB_ACCESS_ID, title: t`Access`, Icon: IconKey },
+        ]
+      : []),
     ...(hasRolesPermission
       ? [{ id: MEMBERS_TAB_ROLES_ID, title: t`Roles`, Icon: IconLock }]
       : []),
@@ -41,15 +48,19 @@ export const SettingsWorkspaceMembers = () => {
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case MEMBERS_TAB_ACCESS_ID:
-        return <SettingsWorkspaceMembersAccessTab />;
+        return hasMembersPermission ? (
+          <SettingsWorkspaceMembersAccessTab />
+        ) : null;
       case MEMBERS_TAB_ROLES_ID:
-        return hasRolesPermission ? (
-          <SettingsWorkspaceMembersRolesTab />
-        ) : (
+        return hasRolesPermission ? <SettingsWorkspaceMembersRolesTab /> : null;
+      case MEMBERS_TAB_TEAM_ID:
+        return hasMembersPermission ? (
           <SettingsWorkspaceMembersTeamTab />
-        );
+        ) : null;
       default:
-        return <SettingsWorkspaceMembersTeamTab />;
+        if (hasMembersPermission) return <SettingsWorkspaceMembersTeamTab />;
+        if (hasRolesPermission) return <SettingsWorkspaceMembersRolesTab />;
+        return null;
     }
   };
 

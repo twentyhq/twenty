@@ -672,7 +672,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={PermissionFlagType.WORKSPACE_MEMBERS}
+            anySettingsPermission={[
+              PermissionFlagType.WORKSPACE_MEMBERS,
+              PermissionFlagType.ROLES,
+            ]}
           />
         }
       >
@@ -680,6 +683,14 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.WorkspaceMembersPage}
           element={<SettingsWorkspaceMembers />}
         />
+      </Route>
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.WORKSPACE_MEMBERS}
+          />
+        }
+      >
         <Route
           path={SettingsPath.WorkspaceMemberPage}
           element={<SettingsWorkspaceMember />}
