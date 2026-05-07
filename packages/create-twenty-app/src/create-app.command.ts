@@ -33,6 +33,8 @@ type CreateAppOptions = {
 };
 
 export class CreateAppCommand {
+  private static TOTAL_STEPS = 4;
+
   async execute(options: CreateAppOptions = {}): Promise<void> {
     const { appName, appDisplayName, appDirectory, appDescription } =
       await this.getAppInfos(options);
@@ -40,9 +42,26 @@ export class CreateAppCommand {
     try {
       await this.validateDirectory(appDirectory);
 
-      this.logCreationInfo({ appDirectory, appName });
+      const confirmed = await this.promptScaffoldConfirmation({
+        appName,
+        appDisplayName,
+        appDescription,
+        appDirectory,
+        autoConfirm: options.yes,
+      });
 
+      if (!confirmed) {
+        console.log(chalk.gray('\nScaffolding cancelled.'));
+        process.exit(0);
+      }
+
+      console.log('');
+
+      this.logStep(1, 'Creating project directory');
       await fs.ensureDir(appDirectory);
+      this.logDetail(appDirectory);
+
+      this.logStep(2, 'Scaffolding project files');
 
       if (options.example) {
         const exampleSucceeded = await this.tryDownloadExample(
@@ -56,6 +75,7 @@ export class CreateAppCommand {
             appDisplayName,
             appDescription,
             appDirectory,
+            onProgress: (message) => this.logDetail(message),
           });
         }
       } else {
@@ -64,33 +84,52 @@ export class CreateAppCommand {
           appDisplayName,
           appDescription,
           appDirectory,
+          onProgress: (message) => this.logDetail(message),
         });
       }
 
-      await install(appDirectory);
+      this.logStep(3, 'Installing dependencies');
+      await install(appDirectory, (message) => this.logDetail(message));
 
-      await tryGitInit(appDirectory);
+      this.logStep(4, 'Initializing Git repository');
+      const gitInitialized = await tryGitInit(appDirectory);
+
+      if (gitInitialized) {
+        this.logDetail('Initialized on branch main');
+        this.logDetail('Created initial commit');
+      } else {
+        this.logDetail('Skipped (already in a repository)');
+      }
+
+      console.log('');
 
       let serverResult: ServerStartResult | undefined;
+      let authSucceeded = false;
 
       if (!options.skipLocalInstance) {
-        const shouldStartServer = await this.shouldStartServer(options.yes);
+        const existingServerUrl = await detectLocalServer();
 
-        if (shouldStartServer) {
-          const startResult = await serverStart({
-            onProgress: (message: string) => console.log(chalk.gray(message)),
-          });
+        if (existingServerUrl) {
+          authSucceeded = await this.promptConnectToLocal(existingServerUrl);
+        } else {
+          const shouldStart = await this.shouldStartServer(options.yes);
 
-          if (startResult.success) {
-            serverResult = startResult.data;
-            await this.promptConnectToLocal(serverResult.url);
-          } else {
-            console.log(chalk.yellow(`\n${startResult.error.message}`));
+          if (shouldStart) {
+            const startResult = await serverStart({
+              onProgress: (message: string) => console.log(chalk.gray(message)),
+            });
+
+            if (startResult.success) {
+              serverResult = startResult.data;
+              authSucceeded = await this.promptConnectToLocal(serverResult.url);
+            } else {
+              console.log(chalk.yellow(`\n${startResult.error.message}`));
+            }
           }
         }
       }
 
-      this.logSuccess(appDirectory, serverResult);
+      this.logSuccess(appDirectory, serverResult, authSucceeded);
     } catch (error) {
       console.error(
         chalk.red('\nCreate application failed:'),
@@ -213,26 +252,74 @@ export class CreateAppCommand {
     }
   }
 
-  private logCreationInfo({
-    appDirectory,
+  private async promptScaffoldConfirmation({
     appName,
+    appDisplayName,
+    appDescription,
+    appDirectory,
+    autoConfirm,
   }: {
-    appDirectory: string;
     appName: string;
-  }): void {
+    appDisplayName: string;
+    appDescription: string;
+    appDirectory: string;
+    autoConfirm?: boolean;
+  }): Promise<boolean> {
+    console.log(chalk.blue('\nCreating Twenty Application\n'));
+    console.log(chalk.white(`  Name:           ${appName}`));
+    console.log(chalk.white(`  Display name:   ${appDisplayName}`));
+
+    if (appDescription) {
+      console.log(chalk.white(`  Description:    ${appDescription}`));
+    }
+
+    console.log(chalk.white(`  Directory:      ${appDirectory}`));
+
+    console.log(chalk.white('\nThe following steps will be performed:\n'));
+    console.log(chalk.gray('  1. Create project directory'));
     console.log(
-      chalk.blue('\n', 'Creating Twenty Application\n'),
-      chalk.gray(`- Directory: ${appDirectory}\n`, `- Name: ${appName}\n`),
+      chalk.gray(
+        '  2. Scaffold project files from base template\n' +
+          '     - Copy template files\n' +
+          '     - Configure dotfiles (.gitignore, .github)\n' +
+          '     - Generate unique application identifiers\n' +
+          '     - Update package.json with app name and SDK versions',
+      ),
     );
-  }
+    console.log(chalk.gray('  3. Install dependencies (yarn)'));
+    console.log(
+      chalk.gray('  4. Initialize Git repository with initial commit'),
+    );
+    console.log('');
 
-  private async shouldStartServer(autoConfirm?: boolean): Promise<boolean> {
-    const existingServerUrl = await detectLocalServer();
-
-    if (existingServerUrl) {
+    if (autoConfirm) {
       return true;
     }
 
+    const { proceed } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'proceed',
+        message: 'Proceed?',
+        default: true,
+      },
+    ]);
+
+    return proceed;
+  }
+
+  private logStep(step: number, title: string): void {
+    console.log(
+      chalk.blue(`\n[${step}/${CreateAppCommand.TOTAL_STEPS}]`) +
+        chalk.white(` ${title}...`),
+    );
+  }
+
+  private logDetail(message: string): void {
+    console.log(chalk.gray(`      → ${message}`));
+  }
+
+  private async shouldStartServer(autoConfirm?: boolean): Promise<boolean> {
     if (checkDockerRunning() && containerExists()) {
       if (autoConfirm) {
         return true;
@@ -268,12 +355,20 @@ export class CreateAppCommand {
     return startDocker;
   }
 
-  private async promptConnectToLocal(serverUrl: string): Promise<void> {
+  private async promptConnectToLocal(serverUrl: string): Promise<boolean> {
+    console.log(
+      chalk.white(
+        '\n  Authentication links your app to a Twenty instance so you can\n' +
+          '  sync custom objects, fields, and roles during development.\n' +
+          '  This will open a browser window to complete the OAuth flow.\n',
+      ),
+    );
+
     const { shouldAuthenticate } = await inquirer.prompt([
       {
         type: 'confirm',
         name: 'shouldAuthenticate',
-        message: `Would you like to authenticate to the local Twenty instance (${serverUrl})?`,
+        message: `Authenticate to the local Twenty instance (${serverUrl})?`,
         default: true,
       },
     ]);
@@ -285,8 +380,16 @@ export class CreateAppCommand {
         ),
       );
 
-      return;
+      return false;
     }
+
+    await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'confirm',
+        message: 'Press Enter to open the browser for authentication...',
+      },
+    ]);
 
     try {
       const result = await authLoginOAuth({
@@ -298,12 +401,16 @@ export class CreateAppCommand {
         const configService = new ConfigService();
 
         await configService.setDefaultRemote('local');
+
+        return true;
       } else {
         console.log(
           chalk.yellow(
             'Authentication failed. Run `yarn twenty remote add --local` manually.',
           ),
         );
+
+        return false;
       }
     } catch {
       console.log(
@@ -311,28 +418,44 @@ export class CreateAppCommand {
           'Authentication failed. Run `yarn twenty remote add` manually.',
         ),
       );
+
+      return false;
     }
   }
 
   private logSuccess(
     appDirectory: string,
     serverResult?: ServerStartResult,
+    authSucceeded?: boolean,
   ): void {
     const dirName = basename(appDirectory);
 
-    console.log(chalk.blue('\nApplication created. Next steps:'));
-    console.log(chalk.gray(`- cd ${dirName}`));
+    console.log(chalk.green('\n✔ Application created successfully!\n'));
+    console.log(chalk.white('  Next steps:\n'));
 
-    if (!serverResult) {
-      console.log(
-        chalk.gray(
-          '- yarn twenty remote add          # Authenticate with Twenty',
-        ),
-      );
+    let stepNumber = 1;
+
+    console.log(chalk.white(`  ${stepNumber}. Navigate to your project`));
+    console.log(chalk.cyan(`     cd ${dirName}\n`));
+    stepNumber++;
+
+    if (!authSucceeded) {
+      const remoteCommand = serverResult
+        ? 'yarn twenty remote add --local'
+        : 'yarn twenty remote add';
+
+      console.log(chalk.white(`  ${stepNumber}. Connect to a Twenty instance`));
+      console.log(chalk.cyan(`     ${remoteCommand}\n`));
+      stepNumber++;
     }
 
+    console.log(chalk.white(`  ${stepNumber}. Start developing`));
+    console.log(chalk.cyan('     yarn twenty dev\n'));
+
     console.log(
-      chalk.gray('- yarn twenty dev                  # Start dev mode'),
+      chalk.gray(
+        '  Documentation: https://docs.twenty.com/developers/extend/capabilities/apps',
+      ),
     );
   }
 }
