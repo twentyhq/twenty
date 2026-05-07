@@ -55,7 +55,7 @@ import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata
   SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
 )
 @UseFilters(ObjectMetadataRestApiExceptionFilter)
-@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+@UsePipes(new ValidationPipe())
 export class ObjectMetadataController {
   constructor(
     @InjectRepository(ObjectMetadataEntity)

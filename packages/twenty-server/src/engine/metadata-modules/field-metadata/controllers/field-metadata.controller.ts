@@ -52,7 +52,7 @@ import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-mod
   SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
 )
 @UseFilters(FieldMetadataRestApiExceptionFilter)
-@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+@UsePipes(new ValidationPipe())
 export class FieldMetadataController {
   constructor(
     @InjectRepository(FieldMetadataEntity)
