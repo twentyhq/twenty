@@ -195,6 +195,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   },
   roleTarget: {},
   permissionFlag: {},
+  permissionFlagDefinition: {},
   objectPermission: {},
   fieldPermission: {},
   pageLayout: {

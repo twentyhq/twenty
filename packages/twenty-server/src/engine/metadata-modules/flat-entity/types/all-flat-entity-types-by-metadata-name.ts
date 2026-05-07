@@ -24,6 +24,8 @@ import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
+import { type FlatPermissionFlagDefinitionMaps } from 'src/engine/metadata-modules/flat-permission-flag-definition/types/flat-permission-flag-definition-maps.type';
+import { type FlatPermissionFlagDefinition } from 'src/engine/metadata-modules/flat-permission-flag-definition/types/flat-permission-flag-definition.type';
 import { type FlatPermissionFlagMaps } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag-maps.type';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
@@ -69,6 +71,7 @@ import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
+import { type UniversalFlatPermissionFlagDefinition } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-permission-flag-definition.type';
 import { type UniversalFlatPermissionFlag } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-permission-flag.type';
 import { type UniversalFlatRoleTarget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role-target.type';
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
@@ -196,6 +199,14 @@ import {
   type UniversalDeletePageLayoutAction,
   type UniversalUpdatePageLayoutAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
+import {
+  type FlatCreatePermissionFlagDefinitionAction,
+  type FlatDeletePermissionFlagDefinitionAction,
+  type FlatUpdatePermissionFlagDefinitionAction,
+  type UniversalCreatePermissionFlagDefinitionAction,
+  type UniversalDeletePermissionFlagDefinitionAction,
+  type UniversalUpdatePermissionFlagDefinitionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/permission-flag-definition/types/workspace-migration-permission-flag-definition-action.type';
 import {
   type FlatCreatePermissionFlagAction,
   type FlatDeletePermissionFlagAction,
@@ -640,6 +651,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatPermissionFlag;
     universalFlatEntity: UniversalFlatPermissionFlag;
     entity: MetadataEntity<'permissionFlag'>;
+  };
+  permissionFlagDefinition: {
+    flatEntityMaps: FlatPermissionFlagDefinitionMaps;
+    universalActions: {
+      create: UniversalCreatePermissionFlagDefinitionAction;
+      update: UniversalUpdatePermissionFlagDefinitionAction;
+      delete: UniversalDeletePermissionFlagDefinitionAction;
+    };
+    flatActions: {
+      create: FlatCreatePermissionFlagDefinitionAction;
+      update: FlatUpdatePermissionFlagDefinitionAction;
+      delete: FlatDeletePermissionFlagDefinitionAction;
+    };
+    flatEntity: FlatPermissionFlagDefinition;
+    universalFlatEntity: UniversalFlatPermissionFlagDefinition;
+    entity: MetadataEntity<'permissionFlagDefinition'>;
   };
   objectPermission: {
     flatEntityMaps: FlatObjectPermissionMaps;

@@ -168,6 +168,7 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       case 'frontComponent':
       case 'viewSort':
       case 'permissionFlag':
+      case 'permissionFlagDefinition':
       case 'objectPermission':
       case 'fieldPermission':
       case 'webhook':

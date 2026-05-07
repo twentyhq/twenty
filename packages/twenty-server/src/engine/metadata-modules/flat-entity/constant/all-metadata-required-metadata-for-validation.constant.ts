@@ -79,6 +79,9 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   permissionFlag: {
     role: true,
   },
+  permissionFlagDefinition: {
+    permissionFlag: true,
+  },
   objectPermission: {
     role: true,
     objectMetadata: true,
