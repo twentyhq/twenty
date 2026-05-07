@@ -17,6 +17,7 @@ import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
+import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
@@ -30,7 +31,11 @@ export class EmailVerificationTokenService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async generateToken(userId: string, email: string): Promise<AuthToken> {
+  async generateToken(
+    userId: string,
+    email: string,
+    verificationTrigger: EmailVerificationTrigger = EmailVerificationTrigger.SIGN_UP,
+  ): Promise<AuthToken> {
     const expiresIn = this.twentyConfigService.get(
       'EMAIL_VERIFICATION_TOKEN_EXPIRES_IN',
     );
@@ -47,7 +52,7 @@ export class EmailVerificationTokenService {
       expiresAt,
       type: AppTokenType.EmailVerificationToken,
       value: hashedToken,
-      context: { email },
+      context: { email, verificationTrigger },
     });
 
     await this.appTokenRepository.save(verificationToken);

@@ -64,7 +64,11 @@ export class EmailVerificationService {
     }
 
     const { token: emailVerificationToken } =
-      await this.emailVerificationTokenService.generateToken(userId, email);
+      await this.emailVerificationTokenService.generateToken(
+        userId,
+        email,
+        verificationTrigger,
+      );
 
     const linkPathnameAndSearchParams = {
       pathname: AppPath.VerifyEmail,
@@ -167,7 +171,13 @@ export class EmailVerificationService {
           EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED,
         );
       }
+    }
 
+    const verificationTrigger =
+      existingToken?.context?.verificationTrigger ??
+      EmailVerificationTrigger.SIGN_UP;
+
+    if (existingToken) {
       await this.appTokenRepository.delete(existingToken.id);
     }
 
@@ -176,7 +186,7 @@ export class EmailVerificationService {
       email,
       workspace,
       locale,
-      verificationTrigger: EmailVerificationTrigger.SIGN_UP,
+      verificationTrigger,
     });
 
     return { success: true };

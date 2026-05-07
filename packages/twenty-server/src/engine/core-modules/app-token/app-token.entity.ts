@@ -17,6 +17,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BeforeCreateOneAppToken } from 'src/engine/core-modules/app-token/hooks/before-create-one-app-token.hook';
+import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -97,5 +98,6 @@ export class AppTokenEntity {
     clientId?: string;
     codeChallenge?: string;
     scope?: string;
+    verificationTrigger?: EmailVerificationTrigger;
   } | null;
 }
