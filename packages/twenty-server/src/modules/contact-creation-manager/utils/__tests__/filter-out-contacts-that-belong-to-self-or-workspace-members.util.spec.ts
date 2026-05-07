@@ -51,10 +51,7 @@ describe('filterOutContactsThatBelongToSelfOrWorkspaceMembers', () => {
 
   it('drops workspace members regardless of domain', () => {
     const result = filterOutContactsThatBelongToSelfOrWorkspaceMembers(
-      [
-        contact('teammate@partner.com'),
-        contact('outsider@partner.com'),
-      ],
+      [contact('teammate@partner.com'), contact('outsider@partner.com')],
       account('me@acme.com'),
       [member('teammate@partner.com')],
     );
