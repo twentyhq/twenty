@@ -59,18 +59,19 @@ export class AppLogicFunctionService {
         : undefined,
     });
 
-    const jobId =
-      await this.logicFunctionMessageQueueService.add<LogicFunctionTriggerJobData[]>(
-        LogicFunctionTriggerJob.name,
-        [
-          {
-            logicFunctionId: logicFunction.id,
-            workspaceId,
-            payload,
-          },
-        ],
-        { retryLimit: 3 },
-      );
+    const jobId = await this.logicFunctionMessageQueueService.add<
+      LogicFunctionTriggerJobData[]
+    >(
+      LogicFunctionTriggerJob.name,
+      [
+        {
+          logicFunctionId: logicFunction.id,
+          workspaceId,
+          payload,
+        },
+      ],
+      { retryLimit: 3 },
+    );
 
     if (!isDefined(jobId)) {
       throw new InternalServerErrorException(
