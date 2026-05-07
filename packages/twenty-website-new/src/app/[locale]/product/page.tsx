@@ -7,6 +7,7 @@ import { FEATURE_DATA } from '@/app/[locale]/product/feature.data';
 import { HERO_COPY } from '@/app/[locale]/product/hero.data';
 import { SIGNOFF_COPY } from '@/app/[locale]/product/signoff.data';
 import { STEPPER_DATA } from '@/app/[locale]/product/stepper.data';
+import { TABS_DATA } from '@/app/[locale]/product/tabs.data';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/[locale]/product/three-cards.data';
 import {
   Body,
@@ -29,6 +30,7 @@ import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { ProductStepper } from '@/sections/ProductStepper/components';
 import { Signoff } from '@/sections/Signoff/components';
+import { Tabs } from '@/sections/Tabs/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
@@ -112,6 +114,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
           renderText={renderText}
         />
       </TrustedBy.Root>
+
+      <Tabs.Root>
+        <Eyebrow
+          colorScheme="secondary"
+          heading={TABS_DATA.eyebrow.heading}
+          renderText={renderText}
+        />
+        <Heading size="lg" weight="light">
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`AI that actually`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`helps you`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {renderText(msg`work faster`)}
+          </HeadingPart>
+        </Heading>
+        <Body
+          body={{ text: msg`The AI understands your CRM and takes action.` }}
+          renderText={renderText}
+          size="sm"
+        />
+        <Tabs.TabGroup tabs={TABS_DATA.tabs} />
+      </Tabs.Root>
 
       <Feature.Root backgroundColor={theme.colors.primary.background[100]}>
         <Feature.Intro align="center" page={Pages.Product}>
