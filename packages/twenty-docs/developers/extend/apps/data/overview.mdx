@@ -1,5 +1,5 @@
 ---
-title: Data
+title: Overview
 description: Shape the data inside a workspace — application identity, roles, objects, fields, and relations.
 icon: "database"
 ---
@@ -26,9 +26,21 @@ A Twenty app's **data layer** is everything the app contributes to the shape of 
 
 ## In this section
 
-<CardGroup cols={1}>
-  <Card title="Data Model" icon="database" href="/developers/extend/apps/data/data-model">
-    Reference for `defineApplication`, `defineRole`, `defineObject`, `defineField`, and bidirectional relations.
+<CardGroup cols={2}>
+  <Card title="Application Config" icon="rocket" href="/developers/extend/apps/data/application">
+    `defineApplication` — identity, default role, variables, marketplace metadata.
+  </Card>
+  <Card title="Roles & Permissions" icon="shield-halved" href="/developers/extend/apps/data/roles">
+    `defineRole` — what your functions can read and write.
+  </Card>
+  <Card title="Objects" icon="table" href="/developers/extend/apps/data/objects">
+    `defineObject` — declare new record types with their own fields.
+  </Card>
+  <Card title="Extending Objects" icon="wand-magic-sparkles" href="/developers/extend/apps/data/extending-objects">
+    `defineField` — add fields to standard or other apps' objects.
+  </Card>
+  <Card title="Relations" icon="diagram-project" href="/developers/extend/apps/data/relations">
+    Bidirectional `MANY_TO_ONE` / `ONE_TO_MANY` connections between objects.
   </Card>
 </CardGroup>
 

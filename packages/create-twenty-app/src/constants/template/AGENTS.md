@@ -5,7 +5,11 @@
     - https://docs.twenty.com/developers/extend/apps/building.md
 - Data:
     - https://docs.twenty.com/developers/extend/apps/data/overview.md
-    - https://docs.twenty.com/developers/extend/apps/data/data-model.md
+    - https://docs.twenty.com/developers/extend/apps/data/application.md
+    - https://docs.twenty.com/developers/extend/apps/data/roles.md
+    - https://docs.twenty.com/developers/extend/apps/data/objects.md
+    - https://docs.twenty.com/developers/extend/apps/data/extending-objects.md
+    - https://docs.twenty.com/developers/extend/apps/data/relations.md
 - Logic:
     - https://docs.twenty.com/developers/extend/apps/logic/overview.md
     - https://docs.twenty.com/developers/extend/apps/logic/logic-functions.md
@@ -13,8 +17,11 @@
     - https://docs.twenty.com/developers/extend/apps/logic/connections.md
 - Layout:
     - https://docs.twenty.com/developers/extend/apps/layout/overview.md
-    - https://docs.twenty.com/developers/extend/apps/layout/views-and-pages.md
+    - https://docs.twenty.com/developers/extend/apps/layout/views.md
+    - https://docs.twenty.com/developers/extend/apps/layout/navigation-menu-items.md
+    - https://docs.twenty.com/developers/extend/apps/layout/page-layouts.md
     - https://docs.twenty.com/developers/extend/apps/layout/front-components.md
+    - https://docs.twenty.com/developers/extend/apps/layout/command-menu-items.md
 - Operations:
     - https://docs.twenty.com/developers/extend/apps/cli-and-testing.md
     - https://docs.twenty.com/developers/extend/apps/publishing.md

@@ -380,7 +380,11 @@
                     "group": "Data",
                     "pages": [
                       "developers/extend/apps/data/overview",
-                      "developers/extend/apps/data/data-model"
+                      "developers/extend/apps/data/application",
+                      "developers/extend/apps/data/roles",
+                      "developers/extend/apps/data/objects",
+                      "developers/extend/apps/data/extending-objects",
+                      "developers/extend/apps/data/relations"
                     ]
                   },
                   {
@@ -396,8 +400,11 @@
                     "group": "Layout",
                     "pages": [
                       "developers/extend/apps/layout/overview",
-                      "developers/extend/apps/layout/views-and-pages",
-                      "developers/extend/apps/layout/front-components"
+                      "developers/extend/apps/layout/views",
+                      "developers/extend/apps/layout/navigation-menu-items",
+                      "developers/extend/apps/layout/page-layouts",
+                      "developers/extend/apps/layout/front-components",
+                      "developers/extend/apps/layout/command-menu-items"
                     ]
                   },
                   "developers/extend/apps/cli-and-testing",
@@ -5425,7 +5432,11 @@
   "redirects": [
     {
       "source": "/developers/extend/apps/data-model",
-      "destination": "/developers/extend/apps/data/data-model"
+      "destination": "/developers/extend/apps/data/overview"
+    },
+    {
+      "source": "/developers/extend/apps/data/data-model",
+      "destination": "/developers/extend/apps/data/overview"
     },
     {
       "source": "/developers/extend/apps/logic-functions",
@@ -5441,7 +5452,11 @@
     },
     {
       "source": "/developers/extend/apps/layout",
-      "destination": "/developers/extend/apps/layout/views-and-pages"
+      "destination": "/developers/extend/apps/layout/overview"
+    },
+    {
+      "source": "/developers/extend/apps/layout/views-and-pages",
+      "destination": "/developers/extend/apps/layout/overview"
     },
     {
       "source": "/developers/extend/capabilities/api",
