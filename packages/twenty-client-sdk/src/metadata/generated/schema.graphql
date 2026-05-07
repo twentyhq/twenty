@@ -2354,6 +2354,7 @@ type PublicDomain {
   id: UUID!
   domain: String!
   isValidated: Boolean!
+  applicationId: UUID
   createdAt: DateTime!
 }
 
@@ -3316,7 +3317,8 @@ type Mutation {
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
   enablePostgresProxy: PostgresCredentials!
   disablePostgresProxy: PostgresCredentials!
-  createPublicDomain(domain: String!): PublicDomain!
+  createPublicDomain(domain: String!, applicationId: String): PublicDomain!
+  updatePublicDomain(domain: String!, applicationId: String): PublicDomain!
   deletePublicDomain(domain: String!): Boolean!
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
   createEmailingDomain(domain: String!, driver: EmailingDomainDriver!): EmailingDomain!

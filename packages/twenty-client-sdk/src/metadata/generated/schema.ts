@@ -2025,6 +2025,7 @@ export interface PublicDomain {
     id: Scalars['UUID']
     domain: Scalars['String']
     isValidated: Scalars['Boolean']
+    applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     __typename: 'PublicDomain'
 }
@@ -2846,6 +2847,7 @@ export interface Mutation {
     enablePostgresProxy: PostgresCredentials
     disablePostgresProxy: PostgresCredentials
     createPublicDomain: PublicDomain
+    updatePublicDomain: PublicDomain
     deletePublicDomain: Scalars['Boolean']
     checkPublicDomainValidRecords?: DomainValidRecords
     createEmailingDomain: EmailingDomain
@@ -5024,6 +5026,7 @@ export interface PublicDomainGenqlSelection{
     id?: boolean | number
     domain?: boolean | number
     isValidated?: boolean | number
+    applicationId?: boolean | number
     createdAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5901,7 +5904,8 @@ export interface MutationGenqlSelection{
     updateLabPublicFeatureFlag?: (FeatureFlagGenqlSelection & { __args: {input: UpdateLabPublicFeatureFlagInput} })
     enablePostgresProxy?: PostgresCredentialsGenqlSelection
     disablePostgresProxy?: PostgresCredentialsGenqlSelection
-    createPublicDomain?: (PublicDomainGenqlSelection & { __args: {domain: Scalars['String']} })
+    createPublicDomain?: (PublicDomainGenqlSelection & { __args: {domain: Scalars['String'], applicationId?: (Scalars['String'] | null)} })
+    updatePublicDomain?: (PublicDomainGenqlSelection & { __args: {domain: Scalars['String'], applicationId?: (Scalars['String'] | null)} })
     deletePublicDomain?: { __args: {domain: Scalars['String']} }
     checkPublicDomainValidRecords?: (DomainValidRecordsGenqlSelection & { __args: {domain: Scalars['String']} })
     createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {domain: Scalars['String'], driver: EmailingDomainDriver} })
