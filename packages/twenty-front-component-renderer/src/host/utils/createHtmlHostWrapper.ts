@@ -135,6 +135,21 @@ const serializeEvent = (event: unknown): SerializedEventData => {
     if ('playbackRate' in target && typeof target.playbackRate === 'number') {
       serialized.playbackRate = target.playbackRate;
     }
+
+    // Add target property for React-compatible event patterns (event.detail.target.value)
+    serialized.target = {
+      value: serialized.value,
+      checked: serialized.checked,
+      scrollTop: serialized.scrollTop,
+      scrollLeft: serialized.scrollLeft,
+      currentTime: serialized.currentTime,
+      duration: serialized.duration,
+      paused: serialized.paused,
+      ended: serialized.ended,
+      volume: serialized.volume,
+      muted: serialized.muted,
+      playbackRate: serialized.playbackRate,
+    };
   }
 
   return serialized;

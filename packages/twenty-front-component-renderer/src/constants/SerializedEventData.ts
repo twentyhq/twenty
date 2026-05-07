@@ -1,3 +1,17 @@
+export type SerializedEventTarget = {
+  value?: string;
+  checked?: boolean;
+  scrollTop?: number;
+  scrollLeft?: number;
+  currentTime?: number;
+  duration?: number;
+  paused?: boolean;
+  ended?: boolean;
+  volume?: number;
+  muted?: boolean;
+  playbackRate?: number;
+};
+
 export type SerializedEventData = {
   type: string;
   altKey?: boolean;
@@ -34,4 +48,5 @@ export type SerializedEventData = {
   volume?: number;
   muted?: boolean;
   playbackRate?: number;
+  target?: SerializedEventTarget;
 };
