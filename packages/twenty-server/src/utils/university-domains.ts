@@ -1,10549 +1,10550 @@
 // https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json
-export const universityDomainsSet = new Set([
-  '29mayis.edu.tr',
-  '4cd.edu',
-  'a-aarhus.dk',
-  'a2.keio.jp',
-  'aabu.edu.jo',
-  'aacc.edu',
-  'aada.edu',
-  'aaidu.org',
-  'aalto.fi',
-  'aambfs.edu.eg',
-  'aamu.edu',
-  'aasa.ac.jp',
-  'aast.edu',
-  'aastu.org',
-  'aau.ac.in',
-  'aau.dk',
-  'aau.edu.et',
-  'aau.edu.jo',
-  'aau.edu.sd',
-  'aaua.edu.ng',
-  'aauekpoma.edu.ng',
-  'aauj.edu',
-  'aauni.edu',
-  'abac.edu',
-  'abasyn.edu.pk',
-  'abcnash.edu',
-  'abdn.ac.uk',
-  'aber.ac.uk',
-  'aberdeen.ac.uk',
-  'abertay.ac.uk',
-  'abiapoly.edu.ng',
-  'ablaikhan.kz',
-  'abm.ac.bw',
-  'abo.fi',
-  'absparis.com',
-  'absu.edu.ng',
-  'abtech.edu',
-  'abu.ac.jp',
-  'abu.edu.ng',
-  'abuad.edu.ng',
-  'ac-aix-marseille.fr',
-  'ac-besancon.fr',
-  'ac-bordeaux.fr',
-  'ac-creteil.fr',
-  'ac-mayotte.fr',
-  'ac-orleans-tours.fr',
-  'ac-paris.fr',
-  'ac.ac.cy',
-  'academia.cl',
-  'academiaga.ru',
-  'academy.mia.by',
-  'academy.sumy.ua',
-  'academyart.edu',
-  'acadiau.ca',
-  'accimt.ac.lk',
-  'acd.ac.ae',
-  'ace.tamut.edu',
-  'aceondo-ng.com',
-  'acg.gr',
-  'achievers.edu.ng',
-  'acibadem.edu.tr',
-  'acighana.org',
-  'ackonline.com',
-  'acms.edu.my',
-  'acmt.ac.ir',
-  'acofi.edu',
-  'acs.edu.au',
-  'acs350.org',
-  'act.edu',
-  'act.gotevot.edu.sa',
-  'acts.ac.kr',
-  'actx.edu',
-  'acu.edu',
-  'acu.edu.au',
-  'acu.edu.ng',
-  'ad.unc.edu',
-  'ada.edu.az',
-  'adamson.edu.ph',
-  'adanabtu.edu.tr',
-  'adau.edu.az',
-  'adda.edu.az',
-  'addu.edu.ph',
-  'adelaide.edu.au',
-  'adelekeuniversity.edu.ng',
-  'adelphi.edu',
-  'adenuniversity.edu.ye',
-  'adfa.oz.au',
-  'adiban.ac.ir',
-  'aditya.ac.in',
-  'adiyaman.edu.tr',
-  'admiu.edu.az',
-  'admu.edu.ph',
-  'adnu.edu.ph',
-  'adpu.edu.az',
-  'adrian.edu',
-  'adsu.edu.ng',
-  'adtu.in',
-  'adu.ac.ae',
-  'adu.edu.az',
-  'adu.edu.et',
-  'adu.edu.tr',
-  'adygnet.ru',
-  'adzu.edu.ph',
-  'ae.katowice.pl',
-  'ae.krakow.pl',
-  'ae.poznan.pl',
-  'ae.wroc.pl',
-  'aea.asso.fr',
-  'aecwb.edu.in',
-  'aefs.edu.al',
-  'aegean.gr',
-  'ael.ru',
-  'aereshogeschool.nl',
-  'aeu.edu.kh',
-  'aeu.edu.my',
-  'afa.ac.kr',
-  'afeka.ac.il',
-  'afghanuniversity.edu.af',
-  'afi-ue.sn',
-  'afit.edu',
-  'africau.edu',
-  'afu.edu.np',
-  'agh.edu.pl',
-  'agma.astranet.ru',
-  'agnesscott.edu',
-  'agr.unideb.hu',
-  'agrar.uz',
-  'agri.edu.tr',
-  'agriun.almaty.kz',
-  'agro.roazhon.inra.fr',
-  'agroparistech.fr',
-  'agrosupdijon.fr',
-  'ags.edu',
-  'agsm.gr',
-  'agtu.ru',
-  'agu.ae',
-  'agu.edu.bh',
-  'agu.edu.tr',
-  'ah.dk',
-  'ahap.edu.tr',
-  'ahduni.edu.in',
-  'ahe.edu.pl',
-  'ahfad.edu.sd',
-  'ahgaff.edu',
-  'ahievran.edu.tr',
-  'ahliauniversity.org',
-  'ahlulbaitonline.com',
-  'ahmu.edu.cn',
-  'ahnu.edu.cn',
-  'aho.no',
-  'ahsdxy.ah.edu.cn',
-  'ahtcm.edu.cn',
-  'ahu.edu.cn',
-  'ahu.edu.jo',
-  'aic.edu',
-  'aichi-edu.ac.jp',
-  'aichi-fam-u.ac.jp',
-  'aichi-gakuin.ac.jp',
-  'aichi-med-u.ac.jp',
-  'aichi-pu.ac.jp',
-  'aichi-u.ac.jp',
-  'aii.edu',
-  'aiims.ac.in',
-  'aikoku-u.ac.jp',
-  'aims.edu',
-  'aimst.edu.my',
-  'aiou.edu.pk',
-  'ais.edu.sg',
-  'aisct.org',
-  'aisectuniversity.ac.in',
-  'aistedaab.ro',
-  'ait.ac.th',
-  'ait.ie',
-  'aitech.ac.jp',
-  'aiu.ac.ke',
-  'aiu.edu.gm',
-  'aiu.edu.my',
-  'aiu.edu.sy',
-  'aiub.edu',
-  'aiuniv.edu',
-  'ajku.edu.pk',
-  'ajman.ac.ae',
-  'ajou.ac.kr',
-  'ajums.ac.ir',
-  'akad.de',
-  'akademiaearteve.edu.al',
-  'akademiapz.sk',
-  'akbild.ac.at',
-  'akdeniz.edu.tr',
-  'akeihou-u.ac.jp',
-  'akfarmitseda.ac.id',
-  'akfaryarsiptk.ac.id',
-  'akhbaracademy.edu.eg',
-  'akita-u.ac.jp',
-  'akprind.ac.id',
-  'aksaray.edu.tr',
-  'aktsu.kz',
-  'aku.edu',
-  'aku.edu.et',
-  'aku.edu.tr',
-  'aku.sk',
-  'akutech.edu.ng',
-  'al-edu.com',
-  'al.infnet.edu.br',
-  'alagappauniversity.ac.in',
-  'alainuniversity.ac.ae',
-  'alamancecc.edu',
-  'alamo.edu',
-  'alanyaaku.edu.tr',
-  'alaqsa.edu.ps',
-  'alaska.edu',
-  'alaskapacific.edu',
-  'alasu.edu',
-  'alayen.edu.iq',
-  'alazhar.edu.ps',
-  'alba.acg.edu',
-  'alba.edu.gr',
-  'albaath-univ.edu.sy',
-  'albany.edu',
-  'albanytech.edu',
-  'albemarle.edu',
-  'albion.edu',
-  'alc.edu.au',
-  'alcorn.edu',
-  'aldirasat.edu.pk',
-  'alepuniv.edu.sy',
-  'alex.edu.eg',
-  'alextech.edu',
-  'alfaisal.edu',
-  'alfred.edu',
-  'alfredtech.edu',
-  'algebra.hr',
-  'algonquincollege.com',
-  'alhikmah.edu.ng',
-  'alhosnu.ae',
-  'aliabad.iau.ir',
-  'alkhair.edu.pk',
-  'alldunivpio.org',
-  'alleg.edu',
-  'allegany.edu',
-  'allencc.edu',
-  'allencol.edu',
-  'allencollege.edu',
-  'allenuniversity.edu',
-  'alliant.edu',
-  'alma.edu',
-  'almaarifah.com',
-  'almamonuc.org',
-  'aloma.edu',
-  'alparslan.edu.tr',
-  'alpenacc.edu',
-  'alphagroup.edu',
-  'alquds.edu',
-  'alrasheed-uc.com',
-  'alsadrain.org',
-  'altmeduniversity.com',
-  'altmedworld.net',
-  'alumnes.ub.edu',
-  'alumnos.ui1.es',
-  'aluno.cruzeirodosul.edu.br',
-  'aluno.ifsp.edu.br',
-  'alvernia.edu',
-  'alverno.edu',
-  'alvincollege.edu',
-  'alyamamah.edu.sa',
-  'alzahra.ac.ir',
-  'alzaytoonah.edu.jo',
-  'am.katowice.pl',
-  'am.lodz.pl',
-  'am.lublin.pl',
-  'am.wroc.pl',
-  'amaiu.edu.bh',
-  'amasya.edu.tr',
-  'amb.bydgoszcz.pl',
-  'amb.edu.pl',
-  'ambassador.edu',
-  'ambou.edu.et',
-  'amc.edu.au',
-  'ame.ru',
-  'amercoastuniv.edu',
-  'american-college.com',
-  'american.edu',
-  'amg.gda.pl',
-  'amgd.eu',
-  'amherst.edu',
-  'ami.edu.pk',
-  'amikom.ac.id',
-  'amity.edu',
-  'aml.lv',
-  'amman.edu',
-  'ammanu.edu.jo',
-  'amouduniversity.org',
-  'amrita.edu',
-  'amsterdam.tech',
-  'amti.hit.bg',
-  'amtuni.com',
-  'amu.ac.in',
-  'amu.edu.az',
-  'amu.edu.et',
-  'amu.edu.pl',
-  'amursu.ru',
-  'amuz.bydgoszcz.pl',
-  'amuz.gda.pl',
-  'amuz.krakow.pl',
-  'amuz.lodz.pl',
-  'amuz.poznan.pl',
-  'amuz.wroc.pl',
-  'amwaw.edu.pl',
-  'anadolu.edu.tr',
-  'anahuac.mx',
-  'anc.edu',
-  'ancilla.edu',
-  'ancollege.edu',
-  'andersonuniversity.edu',
-  'andhrauniversity.info',
-  'andong.ac.kr',
-  'andrassyuni.hu',
-  'andrew.ac.jp',
-  'andrewcollege.edu',
-  'andrews.edu',
-  'anefs-edu.ro',
-  'angelicum.org',
-  'angelina.edu',
-  'angelo.edu',
-  'angkor.edu.kh',
-  'anglia.ac.uk',
-  'angrau.net',
-  'anhembi.br',
-  'ankara.edu.tr',
-  'ankarabilim.edu.tr',
-  'ankaramedipol.edu.tr',
-  'annamalaiuniversity.ac.in',
-  'annauniv.edu',
-  'annauniv.edu.in',
-  'anokaramsey.edu',
-  'anokatech.edu',
-  'anselm.edu',
-  'ansu.edu.ng',
-  'antalya.edu.tr',
-  'antioch.edu',
-  'antiochla.edu',
-  'antiochne.edu',
-  'antonianum.ofm.org',
-  'anu.ac.ke',
-  'anu.edu.au',
-  'anuc.edu.gh',
-  'anurag.edu.in',
-  'aomori-u.ac.jp',
-  'aomoricgu.ac.jp',
-  'aos.sk',
-  'aou.edu.eg',
-  'aou.edu.jo',
-  'aou.edu.kw',
-  'aou.edu.om',
-  'aou.org.bh',
-  'aoyama.ac.jp',
-  'ap.edu.pl',
-  'ap.siedlce.pl',
-  'apiit.edu.my',
-  'apiu.edu',
-  'appstate.edu',
-  'apsu.edu',
-  'apsurewa.nic.in',
-  'apu.ac.jp',
-  'apu.edu',
-  'apu.edu.my',
-  'apus.edu',
-  'aqua.sci-nnov.ru',
-  'aquinas-university.edu',
-  'aquinas.edu',
-  'ar.krakow.pl',
-  'ar.lublin.pl',
-  'ar.szczecin.pl',
-  'ar.wroc.pl',
-  'ara.ac.nz',
-  'arabou-lb.edu.lb',
-  'arabou.edu.sa',
-  'arakmu.ac.ir',
-  'araku.ac.ir',
-  'arakut.ac.ir',
-  'araneta.dlsu.edu.ph',
-  'arapahoe.edu',
-  'arbor.edu',
-  'arc.losrios.edu',
-  'arcadia.edu',
-  'archi.ac.ma',
-  'ardahan.edu.tr',
-  'arel.edu.tr',
-  'arellano.edu.ph',
-  'aria.edu.af',
-  'ariel.ac.il',
-  'arizona.edu',
-  'arkansasbaptist.edu',
-  'armmed.am',
-  'armstrong.edu',
-  'arosmu.org',
-  'arquitecturaucv.cl',
-  'art.ac.ir',
-  'art.edu',
-  'art.olsztyn.pl',
-  'artacademy.spb.ru',
-  'arteiasi.ro',
-  'arts.ac.uk',
-  'arts.bg.ac.rs',
-  'arts7.hu',
-  'artuklu.edu.tr',
-  'artun.ee',
-  'artvin.edu.tr',
-  'aru.ac.th',
-  'arums.ac.ir',
-  'arwauniversity.org',
-  'aryainstitutejpr.com',
-  'asa.edu',
-  'asahi-u.ac.jp',
-  'asahikawa-med.ac.jp',
-  'asahikawa-nct.ac.jp',
-  'asahikawa-u.ac.jp',
-  'asau.am',
-  'asaub.edu.bd',
-  'asb.bh',
-  'asbu.edu.tr',
-  'ascc.edu',
-  'ascca.gov.az',
-  'ase.md',
-  'ase.ro',
-  'asfa.gr',
-  'asfh-berlin.de',
-  'ash-college.ac.il',
-  'ashesi.edu.gh',
-  'ashford.edu',
-  'ashitech.ac.jp',
-  'ashiya-u.ac.jp',
-  'ashland.edu',
-  'ashland.kctcs.edu',
-  'ashoka.edu.in',
-  'ashtoncollege.com',
-  'asia-u.ac.jp',
-  'asianust.ac.th',
-  'asmarya.edu.ly',
-  'asmi.edu.kg',
-  'asmildkloster.dk',
-  'asmu.ru',
-  'asnuntuck.edu',
-  'asoiu.edu.az',
-  'asp.gda.pl',
-  'asp.krakow.pl',
-  'asp.lodz.pl',
-  'asp.poznan.pl',
-  'asp.waw.pl',
-  'asp.wroc.pl',
-  'aspen.edu',
-  'aspete.gr',
-  'aspkat.edu.pl',
-  'aspu.ru',
-  'assamuniversity.nic.in',
-  'associate.hkbu.edu.hk',
-  'assumption.edu',
-  'assumptionu.ca',
-  'astate.edu',
-  'aston.ac.uk',
-  'astu.edu.et',
-  'astu.org',
-  'astu.secna.ru',
-  'asu.ac.jp',
-  'asu.edu',
-  'asu.edu.bh',
-  'asu.edu.eg',
-  'asu.edu.et',
-  'asu.edu.jo',
-  'asu.ru',
-  'asub.edu',
-  'asue.am',
-  'asumh.edu',
-  'asun.edu',
-  'asurams.edu',
-  'at.edu.pl',
-  'atauni.edu.tr',
-  'atbu.edu.ng',
-  'atc.edu',
-  'atc2u.com',
-  'ateneo.edu',
-  'atgu.kz',
-  'athabascau.ca',
-  'atharvacoe.ac.in',
-  'athens.edu',
-  'athenstech.edu',
-  'ati.osu.edu',
-  'atilim.edu.tr',
-  'atishdipankaruniversity.edu.bd',
-  'atlantatech.edu',
-  'atlantic.edu',
-  'atlantida.edu.ar',
-  'atmajaya.ac.id',
-  'atomi.ac.jp',
-  'ats.dk',
-  'atsu.edu.ge',
-  'atu.ac.ir',
-  'atu.edu',
-  'atu.edu.gh',
-  'au-plovdiv.bg',
-  'au.dk',
-  'au.edu',
-  'au.edu.af',
-  'au.edu.az',
-  'au.edu.pk',
-  'au.edu.tw',
-  'au.poznan.pl',
-  'aua.ac.ke',
-  'aua.am',
-  'aua.gr',
-  'auaf.edu.af',
-  'auamed.org',
-  'aub-bd.org',
-  'aub.edu.lb',
-  'aubg.bg',
-  'aubih.ba',
-  'auburn.edu',
-  'auc-edu.org',
-  'auc.dk',
-  'auc.edu',
-  'auca.ac.rw',
-  'auca.kg',
-  'aucegypt.edu',
-  'auchaiti.org',
-  'auchipoly.edu.ng',
-  'auckland.ac.nz',
-  'aucklanduni.ac.nz',
-  'aucmed.edu',
-  'aud.edu',
-  'audencia.com',
-  'aue-okinawa.ac.jp',
-  'aue.ae',
-  'aueb.gr',
-  'auf.edu.ph',
-  'aufe.edu.cn',
-  'augie.edu',
-  'augsburg.edu',
-  'augusta.edu',
-  'augustana.ab.ca',
-  'augustana.de',
-  'augustana.edu',
-  'augustatech.edu',
-  'auhw.ac.jp',
-  'aui.ma',
-  'auis.edu.iq',
-  'auk.edu.kw',
-  'aukonline.org',
-  'aul.edu',
-  'aul.edu.lb',
-  'aum.edu',
-  'aum.edu.kw',
-  'aums.ac.ir',
-  'aun.edu.eg',
-  'aun.edu.ng',
-  'aup.edu.ph',
-  'aup.edu.pk',
-  'aup.fr',
-  'aupen.edu.ph',
-  'aur.edu',
-  'aurora.edu',
-  'aus.edu',
-  'aust-abuja.org',
-  'aust.edu',
-  'aust.edu.lb',
-  'austincc.edu',
-  'austincollege.edu',
-  'austral.edu.ar',
-  'aut.ac.ir',
-  'aut.ac.nz',
-  'aut.edu',
-  'auth.gr',
-  'autonoma.edu.co',
-  'avc.edu',
-  'aventis.edu.sg',
-  'averett.edu',
-  'avicenna.hu',
-  'avila.edu',
-  'avondale.edu.au',
-  'avrasya.edu.tr',
-  'avtlg.ru',
-  'avu.org',
-  'awf.edu.pl',
-  'awf.gda.pl',
-  'awf.katowice.pl',
-  'awf.krakow.pl',
-  'awf.poznan.pl',
-  'awf.wroc.pl',
-  'aybu.edu.tr',
-  'aydin.edu.tr',
-  'ayurveduniversity.com',
-  'az-npu.org',
-  'azabu-u.ac.jp',
-  'azc.uam.mx',
-  'azhar.edu.eg',
-  'azmiu.edu.az',
-  'aztu.edu.az',
-  'azwestern.edu',
-  'b-sc.edu',
-  'ba-bautzen.de',
-  'ba.edu.af',
-  'ba.lv',
-  'baa.by',
-  'babcockuni.edu.ng',
-  'babson.edu',
-  'bac.ac.bw',
-  'bac.edu.cn',
-  'bac.edu.my',
-  'badakhshan.edu.af',
-  'baghdadcollege.edu.iq',
-  'baghlan.edu.af',
-  'bahcesehir.edu.tr',
-  'bahria.edu.pk',
-  'baika.ac.jp',
-  'baiko.ac.jp',
-  'bainbridge.edu',
-  'bajio.delasalle.edu.mx',
-  'baker.edu',
-  'bakersfieldcollege.edu',
-  'bakeru.edu',
-  'bakhtalruda.edu.sd',
-  'bakhtar.edu.af',
-  'bakircay.edu.tr',
-  'bakrie.ac.id',
-  'balamand.edu.lb',
-  'balikesir.edu.tr',
-  'bambey.univ.sn',
-  'bamendauniversity.com',
-  'bamu.net',
-  'bamu.nic.in',
-  'banasthali.org',
-  'bandirma.edu.tr',
-  'bangor.ac.uk',
-  'bankurauniv.com',
-  'baqai.edu.pk',
-  'baraodemaua.br',
-  'barcelonagse.eu',
-  'bard.edu',
-  'barnard.edu',
-  'barry.edu',
-  'barstow.edu',
-  'bartin.edu.tr',
-  'bartonccc.edu',
-  'baruch.cuny.edu',
-  'bashedu.ru',
-  'baskent.edu.tr',
-  'bastyr.edu',
-  'basu.ac.ir',
-  'basug.edu.ng',
-  'bates.ctc.edu',
-  'bates.edu',
-  'bath.ac.uk',
-  'bath.edu',
-  'bathspa.ac.uk',
-  'batman.edu.tr',
-  'batu.edu.by',
-  'bau.edu',
-  'bau.edu.bd',
-  'bau.edu.jo',
-  'bau.edu.lb',
-  'bau.nic.in',
-  'bayamon.inter.edu',
-  'bayantech.edu',
-  'bayburt.edu.tr',
-  'baycollege.edu',
-  'baylor.edu',
-  'baypath.edu',
-  'bazeuniversity.edu.ng',
-  'bbauindia.org',
-  'bbc.edu',
-  'bbk.ac.uk',
-  'bbu.ac.lk',
-  'bbu.edu.az',
-  'bbu.edu.kh',
-  'bc.edu',
-  'bc3.edu',
-  'bca.bw',
-  'bcc.cuny.edu',
-  'bccc.edu',
-  'bcit.ca',
-  'bckv.edu.in',
-  'bcm.edu',
-  'bcom.ac.uk',
-  'bcou.ca',
-  'bcu.ac.uk',
-  'bdeb.qc.ca',
-  'bdtf.hu',
-  'bdu.edu.et',
-  'bdu.edu.vn',
-  'bdu.ernet.in',
-  'beaufortccc.edu',
-  'becs.ac.in',
-  'beder.edu.al',
-  'beds.ac.uk',
-  'belhaven.edu',
-  'bellasartes.edu.co',
-  'bellevue.edu',
-  'bellevuecollege.edu',
-  'bellsuniversity.org',
-  'belmont.edu',
-  'belmontcollege.edu',
-  'beloit.edu',
-  'belsut.gomel.by',
-  'bemidjistate.edu',
-  'benadiruniversity.net',
-  'benedict.edu',
-  'benedictine.edu',
-  'bengaluruuniversity.com',
-  'bennet.edu',
-  'bennington.edu',
-  'bentley.edu',
-  'beppu-u.ac.jp',
-  'bercol.bm',
-  'berea.edu',
-  'bergen.edu',
-  'berkeley.edu',
-  'berkeleycitycollege.edu',
-  'berkeleycollege.edu',
-  'berklee.edu',
-  'berkshirecc.edu',
-  'berry.edu',
-  'bethanywv.edu',
-  'bethel.de',
-  'bethel.edu',
-  'bethelks.edu',
-  'bethlehem.edu',
-  'beu.edu.tr',
-  'beun.edu.tr',
-  'beykent.edu.tr',
-  'bezalel.ac.il',
-  'bezmialem.edu.tr',
-  'bfcc.edu',
-  'bfh.ch',
-  'bfsu.edu.cn',
-  'bfu.bg',
-  'bg.ac.rs',
-  'bgam.edu.by',
-  'bgctrustbd.org',
-  'bgsp.edu',
-  'bgsu.edu',
-  'bgu.ac.il',
-  'bgu.ac.jp',
-  'bhagwantuniversity.com',
-  'bham.ac.uk',
-  'bharathi.ernet.in',
-  'bharathuniv.com',
-  'bharatividyapeeth.edu',
-  'bhavuni.edu',
-  'bhc.edu',
-  'bhc.edu.in',
-  'bhcc.mass.edu',
-  'bhms.ch',
-  'bhsu.edu',
-  'bhtafe.edu.au',
-  'bhu.ac.in',
-  'bhu.edu.cn',
-  'bhu.kg',
-  'bhub.ori.nic.in',
-  'bi.no',
-  'bible.ac.kr',
-  'bible.edu',
-  'bicol-u.edu.ph',
-  'bicpu.edu.in',
-  'bifrost.is',
-  'bigbend.edu',
-  'bigpi.biysk.ru',
-  'bigsandy.kctcs.edu',
-  'bihe.org',
-  'biit.edu.pk',
-  'bilecik.edu.tr',
-  'bilgi.edu.tr',
-  'bilkent.edu.tr',
-  'bims.edu.pk',
-  'binary.edu.my',
-  'binghamton.edu',
-  'binghamuni.edu.ng',
-  'bingol.edu.tr',
-  'binus.ac.id',
-  'biola.edu',
-  'bircham.edu',
-  'birjand.ac.ir',
-  'biruni.edu.tr',
-  'birzeit.edu',
-  'bishop.edu',
-  'bisla.sk',
-  'bismarckstate.edu',
-  'bisu.edu.cn',
-  'bit.edu.cn',
-  'biti.edu.cn',
-  'bitmesraranchi.org',
-  'bits-iserlohn.de',
-  'bits-pilani.ac.in',
-  'biu.ac.il',
-  'biu.edu.ng',
-  'biu.education',
-  'biust.ac.bw',
-  'bjaeu.edu.cn',
-  'bjfu.edu.cn',
-  'bjmu.edu.cn',
-  'bjpeu.edu.cn',
-  'bjpu.edu.cn',
-  'bjtu.edu.cn',
-  'bju.edu',
-  'bjucmp.edu.cn',
-  'bke.hu',
-  'blackhawk.edu',
-  'blackrivertech.edu',
-  'bladencc.edu',
-  'blcu.edu.cn',
-  'blinn.edu',
-  'bloomfield.edu',
-  'bloomington.iu.edu',
-  'bloomu.edu',
-  'bluecc.edu',
-  'bluefieldstate.edu',
-  'bluegrass.kctcs.edu',
-  'blueridge.edu',
-  'blueridgectc.edu',
-  'bluffton.edu',
-  'bmc.edu.sa',
-  'bmcc.cuny.edu',
-  'bmcc.edu',
-  'bme.hu',
-  'bmhs.org',
-  'bmi.edu.my',
-  'bmstu.ru',
-  'bmsu.ac.ir',
-  'bnmu.in',
-  'bntu.by',
-  'bnu.edu.cn',
-  'bnu.edu.sd',
-  'bnue.ac.kr',
-  'bogazici.edu.tr',
-  'boisestate.edu',
-  'bojnourd.iau.ir',
-  'boku.ac.at',
-  'bolton.ac.uk',
-  'bond.edu.au',
-  'boothcollege.ca',
-  'borealc.on.ca',
-  'bosasocollege.com',
-  'bost.edu.af',
-  'bothocollege.ac.bw',
-  'bou.ac.bw',
-  'bou.edu.bd',
-  'bournemouth.ac.uk',
-  'bowdoin.edu',
-  'bowenuniversity-edu.org',
-  'bowiestate.edu',
-  'bowlinggreen.kctcs.edu',
-  'bowvalleycollege.ca',
-  'boxhill.edu.au',
-  'bozok.edu.tr',
-  'bpc.edu.iq',
-  'bpc.edu.sa',
-  'bpcc.edu',
-  'bpitindia.edu.in',
-  'bpitindia.in',
-  'bpkihs.edu',
-  'bpu.ac.kr',
-  'bpu.ac.lk',
-  'bpums.ac.ir',
-  'bput.org',
-  'brabu.net',
-  'bracuniversity.net',
-  'brad.ac.uk',
-  'bradley.edu',
-  'brandeis.edu',
-  'brandman.edu',
-  'brandonu.ca',
-  'braou.ac.in',
-  'brauagra.com',
-  'brazcubas.br',
-  'brcc.edu',
-  'brenau.edu',
-  'brescia.edu',
-  'brexgata.eu',
-  'briar-cliff.edu',
-  'bridgemont.edu',
-  'bridgeport.edu',
-  'bridgew.edu',
-  'bridgewater.edu',
-  'brijnet.org',
-  'bris.ac.uk',
-  'bristol.ac.uk',
-  'bristolcc.edu',
-  'brockport.edu',
-  'brocku.ca',
-  'brookdale.edu.ec',
-  'brookdalecc.edu',
-  'brookes.ac.uk',
-  'brookhavencollege.edu',
-  'brookings.edu',
-  'brooklyn.cuny.edu',
-  'broward.edu',
-  'brown.edu',
-  'broyalu.net',
-  'brstu.ru',
-  'brsu.brest.by',
-  'bru.mogilev.by',
-  'brunel.ac.uk',
-  'brunswickcc.edu',
-  'brur.ac.bd',
-  'bryant.edu',
-  'brynmawr.edu',
-  'bs.naist.jp',
-  'bsa.edu.lv',
-  'bsaa.ru',
-  'bsauniv.ac.in',
-  'bsc.edu',
-  'bscc.edu',
-  'bseu.by',
-  'bsl-lausanne.ch',
-  'bsmmu.edu.bd',
-  'bsmrau.edu.bd',
-  'bsmu.by',
-  'bspu.ru',
-  'bspu.unibel.by',
-  'bstu.by',
-  'bstu.ru',
-  'bstu.unibel.by',
-  'bsu-edu.org',
-  'bsu.burnet.ru',
-  'bsu.by',
-  'bsu.edu',
-  'bsu.edu.az',
-  'bsu.edu.cn',
-  'bsu.edu.eg',
-  'bsu.edu.ph',
-  'bsu.edu.ru',
-  'bsuir.by',
-  'bsum.edu.ng',
-  'btc.ac.uk',
-  'btc.ctc.edu',
-  'bth.se',
-  'bton.ac.uk',
-  'btsau.kiev.ua',
-  'btu.bg',
-  'btu.edu.ge',
-  'btu.edu.tr',
-  'btu.ge',
-  'bu.ac.kr',
-  'bu.ac.th',
-  'bu.edu',
-  'bu.edu.af',
-  'bu.edu.bd',
-  'bu.edu.eg',
-  'bu.edu.sa',
-  'buaa.edu.cn',
-  'buap.mx',
-  'bubhopal.nic.in',
-  'bubt.edu.bd',
-  'buc.edu.eg',
-  'buc.edu.om',
-  'buck.ac.uk',
-  'bucknell.edu',
-  'bucks.ac.uk',
-  'bucks.edu',
-  'buct.edu.cn',
-  'budo-u.ac.jp',
-  'buet.ac.bd',
-  'buetk.edu.pk',
-  'buffalo.edu',
-  'buffalostate.edu',
-  'bufs.ac.kr',
-  'bugemauniv.ac.ug',
-  'buh.edu.vn',
-  'buid.ac.ae',
-  'buitms.edu.pk',
-  'buk.by',
-  'buk.edu.ng',
-  'bukkyo-u.ac.jp',
-  'bulehorauniversity.com',
-  'bulsu.edu.ph',
-  'bums.ac.ir',
-  'bundelkhanduniversity.org',
-  'bundenet.com',
-  'bunghatta.ac.id',
-  'bunka-wu.ac.jp',
-  'bunkyo.ac.jp',
-  'bunri-u.ac.jp',
-  'bup.edu.bd',
-  'bupt.edu.cn',
-  'buraouniversity.com',
-  'burdwanuniversity.ac.in',
-  'buse.ac.zw',
-  'busitema.ac.ug',
-  'busogauniversity.ac.ug',
-  'butex.edu.bd',
-  'butler.edu',
-  'butlercc.edu',
-  'butte.edu',
-  'buu.ac.th',
-  'bvu.edu',
-  'bw.edu',
-  'byu.edu',
-  'byuh.edu',
-  'byui.edu',
-  'bzu.edu.pk',
-  'cabrillo.edu',
-  'cabrini.edu',
-  'cacc.edu',
-  'caece.edu.ar',
-  'cafa.edu.cn',
-  'cag.edu.tr',
-  'cahsu.edu',
-  'cal.devry.ca',
-  'calarts.edu',
-  'calbaptist.edu',
-  'calcoast.edu',
-  'caldwell.edu',
-  'calebuniversity.edu.ng',
-  'calhoun.edu',
-  'callutheran.edu',
-  'calpoly.edu',
-  'calsouthern.edu',
-  'calstate.edu',
-  'calstatela.edu',
-  'caltech.edu',
-  'caluniv.ac.in',
-  'calvin.edu',
-  'cam.ac.uk',
-  'camb.linst.ac.uk',
-  'cambriancollege.ca',
-  'camdencc.edu',
-  'cameron.edu',
-  'camk.edu.pl',
-  'camosun.bc.ca',
-  'campbell.edu',
-  'campbellsville.edu',
-  'campus-m-university.de',
-  'campus-saint-marc.com',
-  'campus.fct.unl.pt',
-  'campus.udg.edu',
-  'campus.ul.pt',
-  'campusleon.ugto.mx',
-  'campusm21.de',
-  'canadacollege.edu',
-  'canberra.edu.au',
-  'candidomendes.br',
-  'canisius.edu',
-  'cankaya.edu.tr',
-  'canterbury.ac.nz',
-  'canterbury.ac.uk',
-  'canyons.edu',
-  'capcollege.bc.ca',
-  'capecod.edu',
-  'capella.edu',
-  'capellauniversity.edu',
-  'capital.edu',
-  'captechu.edu',
-  'cardiff.ac.uk',
-  'caribbean.edu',
-  'cariboo.bc.ca',
-  'caritasuni.edu.ng',
-  'carlalbert.edu',
-  'carleton.ca',
-  'carleton.edu',
-  'carlow.edu',
-  'carolinascollege.edu',
-  'carolus-magnus-university.eu',
-  'carrington.edu',
-  'carroll.edu',
-  'carrollcc.edu',
-  'carrollu.edu',
-  'carteret.edu',
-  'carthage.edu',
-  'carver.edu',
-  'cas.dhbw.de',
-  'casa.unimo.it',
-  'casagrande.edu.ec',
-  'cascadia.edu',
-  'case.edu',
-  'caspercollege.edu',
-  'castelobranco.br',
-  'castleton.edu',
-  'cataegu.ac.kr',
-  'catawba.edu',
-  'cau.ac.kr',
-  'cau.edu',
-  'cau.edu.cn',
-  'cau.org.in',
-  'cauc.edu',
-  'cauc.edu.gh',
-  'cavc.ac.uk',
-  'cavendishza.org',
-  'cavern.nmsu.edu',
-  'cayey.upr.edu',
-  'cayuga-cc.edu',
-  'cba.edu.sa',
-  'cbm.iobm.edu.pk',
-  'cbnu.ac.kr',
-  'cbs.de',
-  'cbs.dk',
-  'cbu.edu',
-  'cbu.edu.tr',
-  'cbu.edu.zm',
-  'cbu2000.com',
-  'cca.edu',
-  'ccaa.edu',
-  'ccac.edu',
-  'ccaurora.edu',
-  'ccbc.ca',
-  'ccbc.edu',
-  'ccbcmd.edu',
-  'ccc.commnet.edu',
-  'ccc.edu',
-  'cccc.edu',
-  'cccd.edu',
-  'cccneb.edu',
-  'cccnj.edu',
-  'cccs.edu',
-  'cccti.edu',
-  'cccua.edu',
-  'ccd.edu',
-  'ccis.edu',
-  'ccm.edu',
-  'ccnn.edu',
-  'ccnu.edu.cn',
-  'ccny.cuny.edu',
-  'ccp.edu',
-  'ccri.edu',
-  'ccs.edu.sd',
-  'ccsf.edu',
-  'ccsn.edu',
-  'ccsnh.edu',
-  'ccsu.edu',
-  'ccsuniversity.ac.in',
-  'ccsuniversity.org',
-  'cctech.edu',
-  'cctu.edu.gh',
-  'ccu.edu',
-  'ccu.edu.tw',
-  'ccut.edu.cn',
-  'ccv.edu',
-  'cdb.edu.sv',
-  'cdc.tu.edu.np',
-  'cdkc.edu',
-  'cdnis.edu.hk',
-  'cdu.ac.kr',
-  'cdu.edu.au',
-  'cdu.edu.cn',
-  'cduestc.cn',
-  'cdut.edu.cn',
-  'cdutcm.edu.cn',
-  'ceaprc.org',
-  'cecil.edu',
-  'cecos.edu.pk',
-  'cedarvalleycollege.edu',
-  'cedarville.edu',
-  'cemic.edu.ar',
-  'centenary.edu',
-  'centennialcollege.ca',
-  'central.edu',
-  'central.edu.gh',
-  'central.ucv.ro',
-  'centralaz.edu',
-  'centrale-marseille.fr',
-  'centralesupelec.fr',
-  'centralgatech.edu',
-  'centralstate.edu',
-  'centre.edu',
-  'century.edu',
-  'ceram.edu',
-  'cerritos.edu',
-  'cerrocoso.edu',
-  'ces.edu.co',
-  'cesa.edu.co',
-  'cesbm.ac.in',
-  'cesi.fr',
-  'ceti.mx',
-  'cetys.mx',
-  'ceu.edu',
-  'ceu.edu.mx',
-  'ceu.edu.ph',
-  'ceu.es',
-  'ceu.hu',
-  'ceunix.com.mx',
-  'ceux.mx',
-  'cf.ac.uk',
-  'cfau.edu.cn',
-  'cfcc.edu',
-  'cfpj.com',
-  'cgc.maricopa.edu',
-  'cgcc.cc.or.us',
-  'cgs.edu',
-  'cgu.ac.jp',
-  'cgu.edu',
-  'cgu.edu.tw',
-  'cha.ac.kr',
-  'chabotcollege.edu',
-  'chaffey.edu',
-  'chalmers.se',
-  'chaminade.edu',
-  'champagnat.edu.mx',
-  'champagnat.edu.pe',
-  'champlain.edu',
-  'chandilpolytechnic.org',
-  'changwon.ac.kr',
-  'chapingo.mx',
-  'chapman.edu',
-  'charismauniversity.org',
-  'charusat.ac.in',
-  'chatfield.edu',
-  'chatham.edu',
-  'chattahoocheetech.edu',
-  'chattanoogastate.edu',
-  'chefs.edu',
-  'cheju-e.ac.kr',
-  'cheju.ac.kr',
-  'chelsea.linst.ac.uk',
-  'chemeketa.edu',
-  'chesapeake.edu',
-  'chester.ac.uk',
-  'cheyney.edu',
-  'chiangraicampus.rmutl.ac.th',
-  'chiba-u.ac.jp',
-  'chiba-u.jp',
-  'chikushi.ac.jp',
-  'chinaacademyofart.com',
-  'chinju-e.ac.kr',
-  'chinju.ac.kr',
-  'chitkara.edu.in',
-  'chitkarauniversity.edu.in',
-  'chna.edu.tw',
-  'chnu.cv.ua',
-  'chodang.ac.kr',
-  'chonbuk.ac.kr',
-  'chongju-e.ac.kr',
-  'chongju.ac.kr',
-  'chongshin.ac.kr',
-  'chonju-e.ac.kr',
-  'chonnam.ac.kr',
-  'chopin.edu.pl',
-  'chosun.ac.kr',
-  'christuniversity.in',
-  'chu.edu.tw',
-  'chubu-gu.ac.jp',
-  'chubu.ac.jp',
-  'chugye.ac.kr',
-  'chuhai.edu.hk',
-  'chujo-u.ac.jp',
-  'chuka.ac.ke',
-  'chukyo-u.ac.jp',
-  'chukyogakuin-u.ac.jp',
-  'chula.ac.th',
-  'chungbuk.ac.kr',
-  'chungju.ac.kr',
-  'chungnam.ac.kr',
-  'chungwoon.ac.kr',
-  'chuo-u.ac.jp',
-  'chuv.ch',
-  'chuvsu.ru',
-  'cic-cairo.com',
-  'ciefl.org',
-  'cife.edu.in',
-  'cihanuniversity.edu.iq',
-  'cihts.ac.in',
-  'ciim.ac.cy',
-  'ciit-atd.edu.pk',
-  'ciit-attock.edu.pk',
-  'ciit-wah.edu.pk',
-  'ciit.edu.pk',
-  'ciitlahore.edu.pk',
-  'cincinnatistate.edu',
-  'ciqa.edu.mx',
-  'cisco.edu',
-  'cisisu.edu.cn',
-  'cit.drbit.com.ru',
-  'cit.ie',
-  'citadel.edu',
-  'citchennai.edu.in',
-  'citruscollege.edu',
-  'city.ac.uk',
-  'city.edu.my',
-  'citystgeorges.ac.uk',
-  'citytech.cuny.edu',
-  'cityu.bg',
-  'cityu.edu',
-  'cityu.edu.hk',
-  'cityu.gr',
-  'cityuniversity.edu.bd',
-  'cityuniversity.edu.pk',
-  'ciu.edu.tr',
-  'cje.ac.kr',
-  'cju.ac.kr',
-  'cju.edu.tw',
-  'cku.ac.jp',
-  'cku.ac.kr',
-  'cku.edu.tw',
-  'clackamas.edu',
-  'claeh.edu.uy',
-  'claflin.edu',
-  'claremont.edu',
-  'claremontmckenna.edu',
-  'clarendoncollege.edu',
-  'claretiano.edu.br',
-  'clarion.edu',
-  'clark.edu',
-  'clarke.edu',
-  'clarkson.edu',
-  'clarkstate.edu',
-  'clarku.edu',
-  'clatsopcc.edu',
-  'clayton.edu',
-  'clb.ac.il',
-  'clemson.edu',
-  'clermont-sb.fr',
-  'clevelandcc.edu',
-  'clevelandstatecc.edu',
-  'clinch.edu',
-  'clinton.edu',
-  'clintoncollege.edu',
-  'cloud.edu',
-  'clovis.edu',
-  'clpccd.edu',
-  'clsbe.lisboa.ucp.pt',
-  'cmb.ac.lk',
-  'cmc.edu',
-  'cmc.edu.tw',
-  'cmcc.edu',
-  'cmccd.edu',
-  'cmich.edu',
-  'cmjuniversity.edu.in',
-  'cmmccollege.edu',
-  'cmru.ac.th',
-  'cmu.ac.th',
-  'cmu.ca',
-  'cmu.edu',
-  'cmu.edu.cn',
-  'cmu.edu.ph',
-  'cmvc.ac.th',
-  'cn.edu',
-  'cnam.fr',
-  'cnc.bc.ca',
-  'cncc.edu',
-  'cncnc.edu.cn',
-  'cnearc.fr',
-  'cnm.edu',
-  'cnr.edu',
-  'cnu.ac.kr',
-  'cnu.edu',
-  'cnu.edu.cn',
-  'cnuas.edu',
-  'cnue-e.ac.kr',
-  'cnue.ac.kr',
-  'coa.edu',
-  'coahomacc.edu',
-  'coalrafidain.edu.iq',
-  'coastal.edu',
-  'coastalalabama.edu',
-  'coastalbend.edu',
-  'coastalcarolina.edu',
-  'coastalpines.edu',
-  'coastline.edu',
-  'cob.edu.bs',
-  'cobleskill.edu',
-  'cocc.edu',
-  'cochise.edu',
-  'cocite.pt',
-  'coconino.edu',
-  'cod.edu',
-  'code.berlin',
-  'coe.edu',
-  'coeikere.edu.ng',
-  'coeoju.com',
-  'coeptech.ac.in',
-  'coer.ac.in',
-  'coeruniversity.ac.in',
-  'cofc.edu',
-  'coffeyville.edu',
-  'coker.edu',
-  'colby.edu',
-  'colbycc.edu',
-  'coleurope.eu',
-  'colgate.edu',
-  'colin.edu',
-  'college-de-france.fr',
-  'college.harlaxton.co.uk',
-  'collegeofsanmateo.edu',
-  'collegeofthedesert.edu',
-  'collegeuniversel.ca',
-  'collegium.edu.pl',
-  'collin.edu',
-  'colman.ac.il',
-  'colmayor.edu.co',
-  'colmex.mx',
-  'colorado.edu',
-  'coloradocollege.edu',
-  'coloradomesa.edu',
-  'coloradotech.edu',
-  'colostate.edu',
-  'colsouth.edu',
-  'colum.edu',
-  'columbia.edu',
-  'columbia.edu.py',
-  'columbiabasin.edu',
-  'columbiacollege.ca',
-  'columbiasc.edu',
-  'columbiastate.edu',
-  'columbus.edu',
-  'columbusstate.edu',
-  'columbustech.edu',
-  'com.edu',
-  'compton.edu',
-  'comu.edu.tr',
-  'concordia.ab.ca',
-  'concordia.ca',
-  'conestogac.on.ca',
-  'conncoll.edu',
-  'connect.polyu.hk',
-  'connect.ust.hk',
-  'connorsstate.edu',
-  'conservatoire.ru',
-  'conservatory.az',
-  'conservatory.ru',
-  'contracosta.edu',
-  'cookman.edu',
-  'cooper.edu',
-  'coppin.edu',
-  'cord.edu',
-  'cornell-iowa.edu',
-  'cornell.edu',
-  'cornellcollege.edu',
-  'corning-cc.edu',
-  'cortland.edu',
-  'cos.edu',
-  'cosmiq.edu.pk',
-  'cotc.edu',
-  'coto.edu',
-  'cotr.bc.ca',
-  'cou.ac.bd',
-  'cou.fi',
-  'courtauld.ac.uk',
-  'covenant.edu',
-  'covenantuniversity.edu.ng',
-  'coventry.ac.uk',
-  'cowley.edu',
-  'cpcc.edu',
-  'cpe.fr',
-  'cpit.ac.nz',
-  'cpp.edu',
-  'cppsu.edu.cn',
-  'cptc.edu',
-  'cpu.ac.th',
-  'cpu.edu.cn',
-  'cpu.edu.tw',
-  'cpuic.edu',
-  'cpums.edu.cn',
-  'cput.ac.za',
-  'cqec.net.cn',
-  'cqgyzy.com',
-  'cqmu.edu.cn',
-  'cqnu.edu.cn',
-  'cqtcedu.com',
-  'cqu.edu.au',
-  'cqu.edu.cn',
-  'cquc.edu.cn',
-  'cqupt.edu.cn',
-  'cqust.cn',
-  'cqut.edu.cn',
-  'cqwu.net',
-  'craftonhills.edu',
-  'cranfield.ac.uk',
-  'cravencc.edu',
-  'crawforduniversity.edu.ng',
-  'crc.losrios.edu',
-  'creighton.edu',
-  'crescent-university.edu.ng',
-  'creupi.br',
-  'cribx1.u-bordeaux.fr',
-  'crk.umn.edu',
-  'crowder.edu',
-  'crsmu.com',
-  'crtvu.edu.cn',
-  'crutech.edu.ng',
-  'cs.ac.kr',
-  'cs.lpu.lv',
-  'cs.sunysb.edu',
-  'csauk.ac.in',
-  'csbsju.edu',
-  'csc.edu',
-  'cscc.edu',
-  'csfu.edu.cn',
-  'cshl.edu',
-  'csi.cuny.edu',
-  'csi.edu',
-  'csm.linst.ac.uk',
-  'csmc.edu.tw',
-  'csmd.edu',
-  'csmrouen.com',
-  'csmrouen.net',
-  'csn.edu',
-  'csopp.edu',
-  'csp.edu',
-  'cspi.urc.ac.ru',
-  'csru.edu.cn',
-  'css.edu',
-  'cst.edu',
-  'cstj.qc.ca',
-  'csu.ac.ru',
-  'csu.edu',
-  'csu.edu.au',
-  'csu.edu.cn',
-  'csu.edu.ph',
-  'csub.edu',
-  'csubak.edu',
-  'csuchico.edu',
-  'csuci.edu',
-  'csudh.edu',
-  'csueastbay.edu',
-  'csuep.edu.cn',
-  'csufresno.edu',
-  'csuglobal.edu',
-  'csuhayward.edu',
-  'csulb.edu',
-  'csum.edu',
-  'csumb.edu',
-  'csun.edu',
-  'csuohio.edu',
-  'csupueblo.edu',
-  'csus.edu',
-  'csusb.edu',
-  'csusm.edu',
-  'csustan.edu',
-  'ct.edu',
-  'ctbu.edu.cn',
-  'ctcd.edu',
-  'ctgu.edu.cn',
-  'cti.edu.sa',
-  'ctleuro.ac.cy',
-  'cts.edu',
-  'ctsem.edu',
-  'ctu.edu.vn',
-  'ctuonline.edu',
-  'cu-cdo.edu.ph',
-  'cu.ac.bd',
-  'cu.edu.eg',
-  'cu.edu.ge',
-  'cu.edu.tr',
-  'cua.edu',
-  'cuanschutz.edu',
-  'cuao.edu.co',
-  'cuauhtemoc.edu.mx',
-  'cubidor.com',
-  'cubu.edu',
-  'cuc.ac.jp',
-  'cuc.edu',
-  'cuc.edu.cn',
-  'cuc.edu.co',
-  'cucv.edu.gt',
-  'cue.ac.kr',
-  'cuea.edu',
-  'cueb.edu.cn',
-  'cuet.ac.bd',
-  'cueyatl.uam.mx',
-  'cufe.edu.cn',
-  'cug.edu.cn',
-  'cugb.edu.cn',
-  'cuhk.edu.cn',
-  'cuhk.edu.hk',
-  'cuhupr.clu.edu',
-  'cui.edu.co',
-  'cujae.edu.cu',
-  'cuk.ac.kr',
-  'cumbria.ac.uk',
-  'cumhuriyet.edu.tr',
-  'cumt.edu.cn',
-  'cumtb.edu.cn',
-  'cun.edu.cn',
-  'cuni.cz',
-  'cunima.net',
-  'cunoc.edu.gt',
-  'cuny.edu',
-  'cup.ac.kr',
-  'cup.edu',
-  'cup.edu.kh',
-  'cup.edu.pk',
-  'cupl.edu.cn',
-  'curry.edu',
-  'curtin.edu.au',
-  'curtin.edu.my',
-  'cus.ca',
-  'cus.edu.kh',
-  'cusat.ac.in',
-  'cusit.edu.pk',
-  'cuslm.ca',
-  'cusm.edu',
-  'cust.edu.cn',
-  'cust.edu.pk',
-  'cust.univ-bpclermont.fr',
-  'cut.ac.cy',
-  'cut.ac.za',
-  'cut.ac.zw',
-  'cut.edu.lb',
-  'cutb.edu.co',
-  'cuw.edu',
-  'cuyamaca.edu',
-  'cuz.ac.zw',
-  'cv.edu',
-  'cv.unipiaget.org',
-  'cvcc.edu',
-  'cvcc.vccs.edu',
-  'cvru.ac.in',
-  'cvtc.edu',
-  'cvut.cz',
-  'cwc.edu',
-  'cwidaho.cc',
-  'cwu.edu',
-  'cybermed.edu.my',
-  'cyc.edu.cn',
-  'cycollege.ac.cy',
-  'cycu.edu.tw',
-  'cypresscollege.edu',
-  'cyryxcollege.edu.mv',
-  'cyut.edu.tw',
-  'czu.cz',
-  'd.umn.edu',
-  'da-iict.org',
-  'dabcc.nmsu.edu',
-  'dacc.edu',
-  'dadabhoy.edu.pk',
-  'daebul.ac.kr',
-  'daegu.ac.kr',
-  'daejeon.ac.kr',
-  'daejin.ac.kr',
-  'daemen.edu',
-  'daeshin.ac.kr',
-  'daffodilvarsity.edu.bd',
-  'dah.edu.sa',
-  'daido-it.ac.jp',
-  'daiichi-cps.ac.jp',
-  'daiichi-koudai.ac.jp',
-  'daiichi-ue.ac.jp',
-  'daion.ac.jp',
-  'daishodai.ac.jp',
-  'daito.ac.jp',
-  'dakotacollege.edu',
-  'dal.ca',
-  'dalanjuniversity.edu.sd',
-  'dallascollege.edu',
-  'daltonstate.edu',
-  'damanhour.edu.eg',
-  'damascusuniversity.edu.sy',
-  'dana.edu',
-  'dankook.ac.kr',
-  'dartmouth.edu',
-  'darton.edu',
-  'darulhuda.com',
-  'dau.edu.sa',
-  'dau.lv',
-  'dauphine.fr',
-  'davaodoctors.edu.ph',
-  'davenport.edu',
-  'davidson.edu',
-  'davidsonccc.edu',
-  'davidsondavie.edu',
-  'davietjal.org',
-  'daviscollege.edu',
-  'davuniversity.org',
-  'davv.ac.in',
-  'dawat.edu.af',
-  'dawson.edu',
-  'dawsoncollege.qc.ca',
-  'daystar.ac.ke',
-  'daytonastate.edu',
-  'db.dk',
-  'dbatechuni.org',
-  'dbq.edu',
-  'dbs.tn.nic.in',
-  'dbskkv.org',
-  'dbu.edu',
-  'dbu.edu.et',
-  'dc3.edu',
-  'dcad.edu',
-  'dcatholic.ac.kr',
-  'dcc.edu',
-  'dcc.edu.sa',
-  'dcc.ufmg.br',
-  'dcc.vccs.edu',
-  'dccc.edu',
-  'dcccd.edu',
-  'dceonline.net',
-  'dcet.edu.pk',
-  'dcmail.ca',
-  'dct.ch',
-  'dct.gotevot.edu.sa',
-  'dct.udn.vn',
-  'dctc.edu',
-  'dcu.ie',
-  'ddea.dk',
-  'ddi.uliege.be',
-  'ddu.ac.in',
-  'ddu.edu.et',
-  'ddu.nl',
-  'ddugu.edu.in',
-  'deakin.edu.au',
-  'deanza.edu',
-  'deccancollegepune.ac.in',
-  'defiance.edu',
-  'dehaagsehogeschool.nl',
-  'dehaghan.iau.ir',
-  'dei.ac.in',
-  'dei.edu.gr',
-  'delijanpnu.ac.ir',
-  'delmar.edu',
-  'delta.edu',
-  'deltacollege.edu',
-  'deltastate.edu',
-  'delval.edu',
-  'dendai.ac.jp',
-  'denison.edu',
-  'denmarktech.edu',
-  'denvercollegeofnursing.edu',
-  'depaul.edu',
-  'depauw.edu',
-  'deraya.edu.eg',
-  'derby.ac.uk',
-  'desu.edu',
-  'deu.ac.kr',
-  'deu.edu.tr',
-  'deusto.es',
-  'devinci.fr',
-  'devry.edu',
-  'dewv.edu',
-  'deylaman.ac.ir',
-  'dfh.dk',
-  'dgist.ac.kr',
-  'dgit.gob.mx',
-  'dgu.ru',
-  'dhbw-karlsruhe.de',
-  'dhbw-loerrach.de',
-  'dhbw-mannheim.de',
-  'dhbw-mosbach.de',
-  'dhbw-stuttgart.de',
-  'dhbw-vs.de',
-  'dhbw.de',
-  'dho.edu.tr',
-  'dhu.ac.kr',
-  'dhu.edu.cn',
-  'dhv-speyer.de',
-  'dhxd.edu.vn',
-  'dia.edu.az',
-  'diak.fi',
-  'dias.ie',
-  'dibru.ernet.in',
-  'dickinson.edu',
-  'dickinsonstate.edu',
-  'dicle.edu.tr',
-  'digipen.edu',
-  'diit.edu.ua',
-  'dillard.edu',
-  'dillauniversity.edu.et',
-  'dinus.ac.id',
-  'diploma.de',
-  'disfm.rnu.tn',
-  'dit.ac.tz',
-  'dit.ie',
-  'diu.ac.bd',
-  'diu.edu.bd',
-  'diu.net.bd',
-  'dju.ac.kr',
-  'dkdm.dk',
-  'dkit.ie',
-  'dkut.ac.ke',
-  'dlh.dk',
-  'dliflc.edu',
-  'dlmedu.edu.cn',
-  'dlmu.edu.cn',
-  'dlsu.edu.ph',
-  'dlu.edu.cn',
-  'dlu.edu.vn',
-  'dlufl.edu.cn',
-  'dlut.edu.cn',
-  'dmacc.edu',
-  'dmcg.edu',
-  'dmmmsu.edu.ph',
-  'dmu.ac.uk',
-  'dmu.edu',
-  'dmu.edu.et',
-  'dne.wvnet.edu',
-  'dnu.dp.ua',
-  'dnue.ac.kr',
-  'dnui.edu.cn',
-  'do-johodai.ac.jp',
-  'doane.edu',
-  'dogus.edu.tr',
-  'doho.ac.jp',
-  'dohto.ac.jp',
-  'dokkyo.ac.jp',
-  'dokkyomed.ac.jp',
-  'dom.edu',
-  'dominican.edu',
-  'donau-uni.ac.at',
-  'donga.ac.kr',
-  'dongau.ru',
-  'dongduk.ac.kr',
-  'dongeui.ac.kr',
-  'dongguk.ac.kr',
-  'dongguk.edu',
-  'dongseo.ac.kr',
-  'dongshinu.ac.kr',
-  'donmeduni.com',
-  'donntu.edu.ua',
-  'donnu.edu.ua',
-  'dordt.edu',
-  'doshisha.ac.jp',
-  'dote.hu',
-  'douglas.bc.ca',
-  'dowling.edu',
-  'downstate.edu',
-  'dpc.edu',
-  'dpt-info.u-strasbg.fr',
-  'dpu.ac.th',
-  'dpu.dk',
-  'dpu.edu.tr',
-  'drake.edu',
-  'drakestate.edu',
-  'dravidianuniversity.ac.in',
-  'drew.edu',
-  'drexel.edu',
-  'drk.hu',
-  'drury.edu',
-  'dsc.dm',
-  'dscc.edu',
-  'dsdt.edu',
-  'dshs-koeln.de',
-  'dslcc.edu',
-  'dstu.dp.ua',
-  'dstu.edu.ru',
-  'dsu.ac.kr',
-  'dsu.edu',
-  'dsu.edu.pk',
-  'dswe.wroc.pl',
-  'dtcc.edu',
-  'dti.sk',
-  'dtu.dk',
-  'du.ac.bd',
-  'du.ac.in',
-  'du.ac.ir',
-  'du.edu',
-  'du.edu.eg',
-  'du.edu.om',
-  'du.se',
-  'dubai.rit.edu',
-  'duc.edu.iq',
-  'duep.edu',
-  'duet.ac.bd',
-  'duf.hu',
-  'dufe.edu.cn',
-  'dufs.ac.kr',
-  'duhs.edu.pk',
-  'duke.edu',
-  'duksung.ac.kr',
-  'dumlupinar.edu.tr',
-  'dundee.ac.uk',
-  'dunya.edu.af',
-  'duq.edu',
-  'dur.ac.uk',
-  'durhamtech.edu',
-  'dusit.ac.th',
-  'dut.ac.za',
-  'duth.gr',
-  'duytan.edu.vn',
-  'duzce.edu.tr',
-  'dvc.edu',
-  'dvgu.ru',
-  'dvgups.ru',
-  'dwc-legazpi.edu',
-  'dwc.doshisha.ac.jp',
-  'dwc.edu',
-  'dwu.ac.pg',
-  'dwu.edu',
-  'dypatiluniversity.org',
-  'dytc.ac.kr',
-  'dyu.ac.kr',
-  'dyu.edu.tw',
-  'e3i.univ-tours.fr',
-  'eac.edu',
-  'eada.edu',
-  'eafit.edu.co',
-  'ean.edu.co',
-  'eap.fr',
-  'eap.gr',
-  'eap.net',
-  'earlham.edu',
-  'eas.edu.pl',
-  'eastafricauniversity.net',
-  'eastcentral.edu',
-  'eastcoast.ac.uk',
-  'eastdelta.edu.bd',
-  'eastern.wvnet.edu',
-  'easternct.edu',
-  'easternflorida.edu',
-  'easternuni.edu.bd',
-  'eastfieldcollege.edu',
-  'eastms.edu',
-  'eastsomaliauniversity.com',
-  'eau.ac.th',
-  'eba-muenchen.de',
-  'ebc.mx',
-  'ebs-paris.com',
-  'ebs.de',
-  'ebs.edu',
-  'ebs.ee',
-  'ebsu-edu.net',
-  'ebyu.edu.tr',
-  'ec-lille.fr',
-  'ec-lyon.fr',
-  'ec-nantes.fr',
-  'ecam.be',
-  'ecam.fr',
-  'ecc.edu',
-  'eccc.edu',
-  'ecci.edu.co',
-  'ece.ac.ae',
-  'ece.fr',
-  'eciad.bc.ca',
-  'ecjtu.jx.cn',
-  'eckerd.edu',
-  'ecla.de',
-  'ecnu.edu.cn',
-  'ecok.edu',
-  'ecoles-idrac.com',
-  'ecomp.poli.br',
-  'ecpi.edu',
-  'ecr.edu.co',
-  'ecsc.edu.et',
-  'ecsu.edu',
-  'ecu.edu',
-  'ecu.edu.au',
-  'ecust.edu.cn',
-  'ed.ac.uk',
-  'edcc.edu',
-  'edgecombe.edu',
-  'edgehill.ac.uk',
-  'edgewood.edu',
-  'edhec.ac.ma',
-  'edinboro.edu',
-  'edisonohio.edu',
-  'edogawa-u.ac.jp',
-  'edu.asahikawa-nct.ac.jp',
-  'edu.edhec.com',
-  'edu.escp.eu',
-  'edu.htl-villach.at',
-  'education.ivanovo.ru',
-  'edufr.ch',
-  'eduhk.hk',
-  'eelouniversity.org',
-  'eerie.fr',
-  'efau.org',
-  'efe.hu',
-  'effatcollege.edu.sa',
-  'efh-bochum.de',
-  'efh-freiburg.de',
-  'efh-hannover.de',
-  'efh-reutlingen-ludwigsburg.de',
-  'efhlu.de',
-  'efpg.inpg.fr',
-  'efrei.fr',
-  'egcc.edu',
-  'ege.edu.tr',
-  'egerton.ac.ke',
-  'egs.edu',
-  'eh-darmstadt.de',
-  'ehb.be',
-  'ehc.edu',
-  'ehf.hu',
-  'ehime-u.ac.jp',
-  'ehl.ch',
-  'ehs-dresden.de',
-  'ehsal.be',
-  'ehtp.ac.ma',
-  'ehu.es',
-  'ehu.eus',
-  'eia.edu.co',
-  'eicc.edu',
-  'eichi-u.ac.jp',
-  'eieonline.com',
-  'eigsi.fr',
-  'eiilmuniversity.ac.in',
-  'einsteinmed.edu',
-  'eit.edu.er',
-  'eitc.edu',
-  'eiu.am',
-  'eiu.edu',
-  'eivp-paris.fr',
-  'eiyo.ac.jp',
-  'eksu.edu.ng',
-  'ektu.kz',
-  'eku.edu',
-  'elac.edu',
-  'elcamino.edu',
-  'elcentrocollege.edu',
-  'elgin.edu',
-  'elizabethtown.kctcs.edu',
-  'elmahdi.edu.sd',
-  'elmergib.edu.ly',
-  'elmhurst.edu',
-  'elms.edu',
-  'elon.edu',
-  'elrazicollege.net',
-  'elshoroukacademy.edu.eg',
-  'elsu.ru',
-  'elte.hu',
-  'eltech.ru',
-  'em-lyon.com',
-  'ema.edu.ee',
-  'email.uagm.edu',
-  'email.uophx.edu',
-  'email.uscupstate.edu',
-  'eman-univ.edu.ye',
-  'emanuel.ro',
-  'emc-campus.com',
-  'emcc.edu',
-  'emerson.edu',
-  'emescam.br',
-  'emi.ac.ma',
-  'emi.edu.bo',
-  'emich.edu',
-  'emiratesacademy.edu',
-  'emmanuel.edu',
-  'emory.edu',
-  'emporia.edu',
-  'ems-mainz.de',
-  'emse.fr',
-  'emsfj.com',
-  'emu.edu',
-  'emu.edu.tr',
-  'emu.ee',
-  'en.sjtu.edu.cn',
-  'en.syau.edu.cn',
-  'en.via.dk',
-  'ena.fr',
-  'enac.fr',
-  'enae.es',
-  'enameknes.ac.ma',
-  'enap.uquebec.ca',
-  'enautica.pt',
-  'enderuncolleges.com',
-  'endicott.edu',
-  'enes.unam.mx',
-  'eng.asu.edu.eg',
-  'engec.ru',
-  'english.web.ncku.edu.tw',
-  'enic.fr',
-  'enim.fr',
-  'enise.fr',
-  'enit.fr',
-  'enitab.fr',
-  'enitac.fr',
-  'enitiaa-nantes.fr',
-  'enm.meteo.fr',
-  'enmu.edu',
-  'enpc.fr',
-  'ens-cachan.fr',
-  'ens-fcl.fr',
-  'ens-lyon.fr',
-  'ens-paris-saclay.fr',
-  'ens.fr',
-  'ens2m.fr',
-  'ensae.fr',
-  'ensai.fr',
-  'ensaia.u-nancy.fr',
-  'ensait.fr',
-  'ensam.inra.fr',
-  'ensat.fr',
-  'ensc-lille.fr',
-  'ensc-rennes.fr',
-  'ensccf.univ-bpclermont.fr',
-  'enscm.fr',
-  'enscmu.univ-mulhouse.fr',
-  'enscp.jussieu.fr',
-  'enscpb.u-bordeaux.fr',
-  'ensea.fr',
-  'enseeiht.fr',
-  'ensem.u-nancy.fr',
-  'enserb.u-bordeaux.fr',
-  'ensg.ign.fr',
-  'ensg.u-nancy.fr',
-  'ensic.u-nancy.fr',
-  'ensica.fr',
-  'ensieta.fr',
-  'ensitm.fr',
-  'ensm-ales.fr',
-  'ensm-douai.fr',
-  'ensma.fr',
-  'ensmp.fr',
-  'enspm.u-3mrs.fr',
-  'enst-bretagne.fr',
-  'enst.fr',
-  'ensta.fr',
-  'entpe.fr',
-  'enu.kz',
-  'envt.fr',
-  'eosc.edu',
-  'eou.edu',
-  'epcc.edu',
-  'epf.fr',
-  'epfl.ch',
-  'epfl.edu',
-  'epita.fr',
-  'epitech.al',
-  'epitech.eu',
-  'epitech.net',
-  'epm.br',
-  'epn.edu.ec',
-  'epoka.edu.al',
-  'erau.edu',
-  'erciyes.edu.tr',
-  'erdogan.edu.tr',
-  'eriicta.am',
-  'erzurum.edu.tr',
-  'es.vccs.edu',
-  'esa-purpan.fr',
-  'esad.pt',
-  'esade.edu',
-  'esap.edu.co',
-  'esc-bordeaux.fr',
-  'esc-brest.fr',
-  'esc-grenoble.fr',
-  'esc-lille.fr',
-  'esc-marseille.fr',
-  'esc-normandie.fr',
-  'esc-pau.fr',
-  'esc-reims.edu',
-  'esc-rouen.fr',
-  'esc-toulouse.fr',
-  'esca.ac.ma',
-  'escc.edu',
-  'escdijon.com',
-  'escem.fr',
-  'escna.fr',
-  'escom.fr',
-  'escp.eu',
-  'escp.fr',
-  'escueladepolicia.edu.co',
-  'escuelaing.edu.co',
-  'eselondon.ac.uk',
-  'esenyurt.edu.tr',
-  'eseo.fr',
-  'esf.edu',
-  'eshte.pt',
-  'esiae.fr',
-  'esic.es',
-  'esiea.fr',
-  'esiee.fr',
-  'esigelec.fr',
-  'esim.imt-mrs.fr',
-  'esitpa.org',
-  'eskisehir.edu.tr',
-  'eslsca.fr',
-  'esm-tbilisi.ge',
-  'esmad.ipp.pt',
-  'esme.fr',
-  'esn.ac.lk',
-  'esoft.academy',
-  'espam-formationuc.org',
-  'espci.fr',
-  'espe.edu.ec',
-  'espoch.edu',
-  'espol.edu.ec',
-  'essca.asso.fr',
-  'essec.fr',
-  'essex.ac.uk',
-  'essex.edu',
-  'esstin.u-nancy.fr',
-  'esstu.ru',
-  'estacio.br',
-  'estp.fr',
-  'estrellamountain.edu',
-  'esu.edu',
-  'esut.edu.ng',
-  'etbu.edu',
-  'etf.edu',
-  'eth.edu',
-  'ethz.ch',
-  'etna.io',
-  'etown.edu',
-  'etsmtl.ca',
-  'etsu.edu',
-  'etu.edu.tr',
-  'etu.sorbonne-universite.fr',
-  'etu.unistra.fr',
-  'etu.upmc.fr',
-  'etud.u-pem.fr',
-  'eu.ac.rs',
-  'eu.spb.ru',
-  'euba.sk',
-  'euc.ac.cy',
-  'euclid.int',
-  'eudil.fr',
-  'eufh.de',
-  'eulji.ac.kr',
-  'eum.ac.jp',
-  'eur.nl',
-  'eurasia.edu',
-  'eurazir.kz',
-  'europa-uni.de',
-  'europeaniu.org',
-  'europeanopenuniversity.com',
-  'europeanuniversity.pt',
-  'euruni.edu',
-  'eustatiusmed.edu',
-  'eut.edu.ar',
-  'euv-frankfurt-o.de',
-  'evansville.edu',
-  'evc.edu',
-  'everest.edu',
-  'everettcc.edu',
-  'evergreen.edu',
-  'evfh-berlin.de',
-  'evfh-nuernberg.de',
-  'evms.edu',
-  'evtek.fi',
-  'ewc.edu',
-  'ewc.wy.edu',
-  'ewha.ac.kr',
-  'ewu.edu',
-  'ewubd.edu',
-  'ex.ac.uk',
-  'exed.solvay.edu',
-  'fa.cvut.cz',
-  'fa.ru',
-  'faap.br',
-  'facens.br',
-  'faculdadedombosco.edu.br',
-  'faculdadescuritiba.br',
-  'fae.edu',
-  'fairfield.edu',
-  'fairmontstate.edu',
-  'falavarjan.ac.ir',
-  'falmouth.ac.uk',
-  'famu.cz',
-  'famu.edu',
-  'fandm.edu',
-  'fanshawec.ca',
-  'fanshaweonline.ca',
-  'farmingdale.edu',
-  'faryab.edu.af',
-  'fashir.edu.sd',
-  'fatecie.edu.br',
-  'fatihsultan.edu.tr',
-  'fatima.edu.ph',
-  'fatimacollege.net',
-  'fau.de',
-  'fau.edu',
-  'faulknerstate.edu',
-  'favaloro.edu.ar',
-  'fayoum.edu.eg',
-  'faytechcc.edu',
-  'fbcusl.8k.com',
-  'fbsc.edu.sa',
-  'fbu.edu.tr',
-  'fc.edu',
-  'fcetakoka-edu.net',
-  'fcu.edu.tw',
-  'fdcnet.ac.jp',
-  'fdltcc.edu',
-  'fdu.edu',
-  'featiu.edu.ph',
-  'fecap.br',
-  'federation.edu.au',
-  'fedpoffa.edu.ng',
-  'feituverava.com.br',
-  'fern-fh.de',
-  'fernuni-hagen.de',
-  'ferpi.dem.ru',
-  'ferris.ac.jp',
-  'ferris.edu',
-  'festu.ru',
-  'feu.edu.ph',
-  'ffhs.ch',
-  'fgcu.edu',
-  'fh-aachen.de',
-  'fh-aargau.ch',
-  'fh-aschaffenburg.de',
-  'fh-augsburg.de',
-  'fh-bad-honnef.de',
-  'fh-biberach.de',
-  'fh-bielefeld.de',
-  'fh-bingen.de',
-  'fh-bochum.de',
-  'fh-brandenburg.de',
-  'fh-burgenland.at',
-  'fh-dortmund.de',
-  'fh-eberswalde.de',
-  'fh-erfurt.de',
-  'fh-flensburg.de',
-  'fh-frankfurt.de',
-  'fh-fresenius.de',
-  'fh-furtwangen.de',
-  'fh-gelsenkirchen.de',
-  'fh-giessen.de',
-  'fh-hagenberg.at',
-  'fh-hamburg.de',
-  'fh-hannover.de',
-  'fh-heidelberg.de',
-  'fh-heilbronn.de',
-  'fh-hildesheim.de',
-  'fh-hof.de',
-  'fh-htachur.ch',
-  'fh-htwchur.ch',
-  'fh-hwz.ch',
-  'fh-isny.de',
-  'fh-jena.de',
-  'fh-joanneum.at',
-  'fh-kaernten.ac.at',
-  'fh-karlsruhe.de',
-  'fh-kempten.de',
-  'fh-kiel.de',
-  'fh-kl.de',
-  'fh-koblenz.de',
-  'fh-koeln.de',
-  'fh-konstanz.de',
-  'fh-krems.ac.at',
-  'fh-kufstein.ac.at',
-  'fh-landshut.de',
-  'fh-lausitz.de',
-  'fh-lippe.de',
-  'fh-ludwigshafen.de',
-  'fh-luebeck.de',
-  'fh-mainz.de',
-  'fh-mannheim.de',
-  'fh-merseburg.de',
-  'fh-muenchen.de',
-  'fh-muenster.de',
-  'fh-nb.de',
-  'fh-niederrhein.de',
-  'fh-nordhausen.de',
-  'fh-nuernberg.de',
-  'fh-nuertingen.de',
-  'fh-offenburg.de',
-  'fh-oow.de',
-  'fh-osnabrueck.de',
-  'fh-ottersberg.de',
-  'fh-pforzheim.de',
-  'fh-potsdam.de',
-  'fh-regensburg.de',
-  'fh-reutlingen.de',
-  'fh-riedlingen.de',
-  'fh-rosenheim.de',
-  'fh-rottenburg.de',
-  'fh-sbg.ac.at',
-  'fh-schmalkalden.de',
-  'fh-schwaebischhall.de',
-  'fh-steyr.at',
-  'fh-stpoelten.ac.at',
-  'fh-stralsund.de',
-  'fh-telekom-leipzig.de',
-  'fh-trier.de',
-  'fh-vie.ac.at',
-  'fh-wedel.de',
-  'fh-weihenstephan.de',
-  'fh-weingarten.de',
-  'fh-wels.at',
-  'fh-westkueste.de',
-  'fh-wiesbaden.de',
-  'fh-wolfenbuettel.de',
-  'fh-worms.de',
-  'fh-wuerzburg.de',
-  'fh-zwickau.de',
-  'fhbb.ch',
-  'fhda.edu',
-  'fhdw.bib.de',
-  'fhdw.de',
-  'fhkt.de',
-  'fhm-mittelstand.de',
-  'fhnon.de',
-  'fhnw.ch',
-  'fho.edu.br',
-  'fhoebb.de',
-  'fhs-mannheim.de',
-  'fhs-moritzburg.de',
-  'fhsg.ch',
-  'fhso.ch',
-  'fhsu.edu',
-  'fht-stuttgart.de',
-  'fhtc.edu',
-  'fhtw-berlin.de',
-  'fhv.at',
-  'fhvr.berlin.de',
-  'fhw-berlin.de',
-  'fhw.at',
-  'fhwn.ac.at',
-  'fhwt.de',
-  'fic.br',
-  'fielding.edu',
-  'filine.centro.ru',
-  'filmacademy.hu',
-  'filmowka.lodz.pl',
-  'fimmu.edu.cn',
-  'findlay.edu',
-  'fing.edu.uy',
-  'finki.ukim.mk',
-  'firat.edu.tr',
-  'firstnationsuniversity.ca',
-  'fish-u.ac.jp',
-  'fisk.edu',
-  'fit.ac.jp',
-  'fit.cvut.cz',
-  'fit.edu',
-  'fitfd.edu.pk',
-  'fiu.edu',
-  'fjau.edu.cn',
-  'fjmu.edu.cn',
-  'fjnu.edu.cn',
-  'fjtcm.edu.cn',
-  'fju.edu.tw',
-  'fkcc.edu',
-  'flc.losrios.edu',
-  'flcc.edu',
-  'fletcher.edu',
-  'flinders.edu.au',
-  'floret.edu.pa',
-  'floridapoly.edu',
-  'floridauniversitaria.es',
-  'flsouthern.edu',
-  'fmcc.edu',
-  'fmmu.edu.cn',
-  'fmu.ac.jp',
-  'fmuniv.edu',
-  'fnu.ac.fj',
-  'fom.de',
-  'fomicgroup.cm',
-  'fon.edu.mk',
-  'fontbonne.edu',
-  'fontys.edu',
-  'foothill.edu',
-  'fordham.edu',
-  'forest.lviv.ua',
-  'forsythtech.edu',
-  'fortlewis.edu',
-  'fortscott.edu',
-  'fosu.edu.cn',
-  'foundationu.com',
-  'foundationuniversity.com',
-  'fountainheadcollege.edu',
-  'fountainuniversity.edu.ng',
-  'foxcollege.edu',
-  'fpcc.edu',
-  'fpctx.edu',
-  'fplc.edu',
-  'fpms.ac.be',
-  'fpt.edu.vn',
-  'fpu.ac.jp',
-  'franklin.edu',
-  'franklinpierce.edu',
-  'franko.lviv.ua',
-  'frayluca.edu.mx',
-  'frc.edu',
-  'frederick.ac.cy',
-  'frederick.edu',
-  'fredonia.edu',
-  'freeuni.edu.ge',
-  'fresno.edu',
-  'fresnocitycollege.edu',
-  'fresnostate.edu',
-  'fri.icfre.gov.in',
-  'friends.edu',
-  'frontrange.edu',
-  'frostburg.edu',
-  'fs-students.de',
-  'fs.de',
-  'fsagx.ac.be',
-  'fsc.edu',
-  'fscj.edu',
-  'fsl.cs.sunysb.edu',
-  'fsm.ac.fj',
-  'fspu.edu.cn',
-  'fsriau.ac.ir',
-  'fsu.edu',
-  'fsw.edu',
-  'ftacademy.ru',
-  'ftmsglobal.com',
-  'ftu.edu.vn',
-  'fu-berlin.de',
-  'fua.br',
-  'fuac.edu.co',
-  'fucam.ac.be',
-  'fudan.edu.cn',
-  'fujijoshi.ac.jp',
-  'fujita-hu.ac.jp',
-  'fukui-med.ac.jp',
-  'fukui-u.ac.jp',
-  'fukui-ut.ac.jp',
-  'fukuoka-edu.ac.jp',
-  'fukuoka-int-u.ac.jp',
-  'fukuoka-pu.ac.jp',
-  'fukuoka-u.ac.jp',
-  'fukushima-u.ac.jp',
-  'fukuyama-u.ac.jp',
-  'ful.ac.be',
-  'fullcoll.edu',
-  'fuller.edu',
-  'fullerton.edu',
-  'fullsail.edu',
-  'fums.ac.ir',
-  'funandi.edu.co',
-  'fundepos.ac.cr',
-  'fundp.ac.be',
-  'funlam.edu.co',
-  'fupl.asso.fr',
-  'fupre.edu.ng',
-  'furb.rct-sc.br',
-  'furg.br',
-  'furman.edu',
-  'fusl.ac.be',
-  'futa.edu.ng',
-  'futminna.edu.ng',
-  'futo.edu.ng',
-  'futureuniversity.edu.eg',
-  'futureworks.ac.uk',
-  'futy.edu.ng',
-  'fuuast.edu.pk',
-  'fvcc.edu',
-  'fvsu.edu',
-  'fvtc.edu',
-  'fwu.ac.jp',
-  'fwu.edu.pk',
-  'fzu.edu.cn',
-  'g.fmarion.edu',
-  'g.nsu.ru',
-  'gac.edu',
-  'gachon.ac.kr',
-  'gadsdenstate.edu',
-  'gadsenstate.edu',
-  'gaduniv.edu.sd',
-  'gakusen.ac.jp',
-  'gakushuin.ac.jp',
-  'galencollege.edu',
-  'galilcol.ac.il',
-  'galileo.edu',
-  'gallaudet.edu',
-  'gallus.pl',
-  'gandakiuniversity.edu.np',
-  'gandhara.edu.pk',
-  'gannon.edu',
-  'gantep.edu.tr',
-  'gapps.ntust.edu.tw',
-  'garrettcollege.edu',
-  'gaston.edu',
-  'gasu.ru',
-  'gata.edu.tr',
-  'gatech.edu',
-  'gateway.kctcs.edu',
-  'gatewaycc.edu',
-  'gau.ac.ir',
-  'gau.edu.tr',
-  'gavilan.edu',
-  'gazi.edu.tr',
-  'gbc.edu',
-  'gbcnv.edu',
-  'gbpuat.ac.in',
-  'gbrownc.on.ca',
-  'gbs-ge.ch',
-  'gbuc.edu.gh',
-  'gc.edu',
-  'gcal.ac.uk',
-  'gcc.mass.edu',
-  'gccaz.edu',
-  'gcccks.edu',
-  'gccnj.edu',
-  'gcd.ie',
-  'gcsu.edu',
-  'gcu.ac.uk',
-  'gcu.edu',
-  'gcu.edu.pk',
-  'gcuf.edu.pk',
-  'gdin.edu.cn',
-  'gdrtvu.edu.cn',
-  'gdu.edu.az',
-  'gdufs.edu.cn',
-  'gdut.edu.cn',
-  'gedik.edu.tr',
-  'geidai.ac.jp',
-  'gelisim.edu.tr',
-  'gemsvilleuniversity.com',
-  'genesee.edu',
-  'geneseo.edu',
-  'geneva.edu',
-  'georgefox.edu',
-  'georgetown.edu',
-  'georgian.edu',
-  'georgiancollege.ca',
-  'georgiasouthern.edu',
-  'germanna.edu',
-  'gettysburg.edu',
-  'geziracollege.edu.sd',
-  'gfc.edu',
-  'gfcmsu.edu',
-  'ggc.edu',
-  'ggu.ac.in',
-  'ggu.ac.kr',
-  'ggu.edu',
-  'ghanacu.org',
-  'ghc.edu',
-  'gidatarim.edu.tr',
-  'gift.edu.pk',
-  'gifu-keizai.ac.jp',
-  'gifu-kyoiku.ac.jp',
-  'gifu-pu.ac.jp',
-  'gifu-u.ac.jp',
-  'gijodai.ac.jp',
-  'giki.edu.pk',
-  'gimcheon.ac.kr',
-  'gimpa.edu.gh',
-  'ginue.ac.kr',
-  'gipe.ernet.in',
-  'giresun.edu.tr',
-  'gist.ac.kr',
-  'gist.edu.pk',
-  'gitam.edu',
-  'gitis.net',
-  'giuedu.bz',
-  'gjcatholic.ac.kr',
-  'gju.edu.jo',
-  'gju.ernet.in',
-  'gjue.ac.kr',
-  'gkcem.ac.in',
-  'gkvharidwar.org',
-  'gla.ac.uk',
-  'glam.ac.uk',
-  'glendale.edu',
-  'glenoaks.cc.mi.us',
-  'glion.edu',
-  'global-business-school.org',
-  'global.edu.pk',
-  'glos.ac.uk',
-  'glu.edu.mn',
-  'gluk.ac.ke',
-  'gma.ru',
-  'gmc.cc.ga.us',
-  'gmercyu.edu',
-  'gmi.edu',
-  'gmit.ie',
-  'gmu.ac.ae',
-  'gmu.ac.ir',
-  'gmu.edu',
-  'gnduonline.org',
-  'gnesin-academy.ru',
-  'gnidsr.ac.in',
-  'gnihm.ac.in',
-  'gnipst.ac.in',
-  'gnit.ac.in',
-  'gntc.edu',
-  'gntech.ac.kr',
-  'gnu.ac.kr',
-  'gnue.ac.kr',
-  'gocolumbia.edu',
-  'gogebic.edu',
-  'golapolytechnic.org',
-  'gold.ac.uk',
-  'goldenwestcollege.edu',
-  'gollisuniversity.com',
-  'gonzaga.edu',
-  'gop.edu.tr',
-  'gordon.ac.il',
-  'gorganiau.ir',
-  'gorny-ins.ru',
-  'goshen.edu',
-  'gotoltc.edu',
-  'goucher.edu',
-  'goums.ac.ir',
-  'gouni.edu.ng',
-  'government.ind.in',
-  'govst.edu',
-  'gpc.edu',
-  'gpma.ru',
-  'gptc.edu',
-  'gpu.edu.np',
-  'gpwu.ac.jp',
-  'grace.edu',
-  'graceland.edu',
-  'gram.edu',
-  'grandview.edu',
-  'grayson.edu',
-  'grcc.edu',
-  'gre.ac.uk',
-  'greatbay.edu',
-  'green.edu.bd',
-  'greenheartmed.org',
-  'greenleaf.edu',
-  'greenriver.edu',
-  'greensboro.edu',
-  'greenville.edu',
-  'grenoble-em.com',
-  'grenoble-inp.fr',
-  'gretsauniversity.ac.ke',
-  'griffith.edu.au',
-  'grinnell.edu',
-  'grossmont.edu',
-  'groupe-esa.com',
-  'groupeiscae.ma',
-  'grsmu.by',
-  'grsu.by',
-  'gru.edu',
-  'gruni.edu.ge',
-  'gsa.ac.uk',
-  'gsau.edu.cn',
-  'gsau.edu.ge',
-  'gsba.ch',
-  'gsfcuniversity.ac.in',
-  'gsnu.ac.kr',
-  'gstu.gomel.by',
-  'gsu.edu',
-  'gsu.edu.ng',
-  'gsu.edu.tr',
-  'gsu.unibel.by',
-  'gsut.edu.cn',
-  'gsw.edu',
-  'gsyc.es',
-  'gtc.edu',
-  'gtcc.edu',
-  'gti.spb.ru',
-  'gtu.ac.in',
-  'gtu.edu.ge',
-  'gtu.edu.tr',
-  'gtuc.edu.gh',
-  'gturp.spb.ru',
-  'gu.ac.ug',
-  'gu.edu.af',
-  'gu.edu.lb',
-  'gu.edu.pk',
-  'gu.nic.in',
-  'gu.se',
-  'guangztc.edu.cn',
-  'gubkin.ru',
-  'guc.co.bw',
-  'guc.edu.eg',
-  'guic.edu.pk',
-  'guilan.ac.ir',
-  'guilford.edu',
-  'gujaratuniversity.org.in',
-  'gukit.ru',
-  'gulbargauniversity.kar.nic.in',
-  'gulfcoast.edu',
-  'gulfuniversity.net',
-  'gums.ac.ir',
-  'gumushane.edu.tr',
-  'gunadarma.ac.id',
-  'gunma-u.ac.jp',
-  'guptoncollege.edu',
-  'gurukuluniversity.org',
-  'gust.edu.kw',
-  'gustavus.edu',
-  'guu.ru',
-  'gvltec.edu',
-  'gvsu.edu',
-  'gwangju.ac.kr',
-  'gwcc.commnet.edu',
-  'gwinnetttech.edu',
-  'gwnu.ac.kr',
-  'gwsh.pl',
-  'gwu.edu',
-  'gxmu.edu.cn',
-  'gxnu.edu.cn',
-  'gxtcmu.edu.cn',
-  'gxu.edu.cn',
-  'gxun.edu.cn',
-  'gyte.edu.tr',
-  'gzarts.edu.cn',
-  'gzhtcm.edu.cn',
-  'gzhu.edu.cn',
-  'gznu.edu.cn',
-  'gzsums.edu.cn',
-  'gzu.ac.zw',
-  'gzu.edu.cn',
-  'h-brs.de',
-  'h-bunkyo.ac.jp',
-  'h-da.de',
-  'ha.be',
-  'hacc.edu',
-  'hacettepe.edu.tr',
-  'hachinohe-u.ac.jp',
-  'hagerstowncc.edu',
-  'haifa.ac.il',
-  'haigazian.edu.lb',
-  'hainnu.edu.cn',
-  'hainu.edu.cn',
-  'hajvery.edu.pk',
-  'hakkari.edu.tr',
-  'hakodate-u.ac.jp',
-  'hakuoh.ac.jp',
-  'halic.edu.tr',
-  'halifaxcc.edu',
-  'halifaxuni.ac',
-  'halla.ac.kr',
-  'hallmarkuniversity.edu',
-  'hallym.ac.kr',
-  'hama-med.ac.jp',
-  'hamamatsu-u.ac.jp',
-  'hamdard.edu',
-  'hamdard.edu.pk',
-  'hamilton.edu',
-  'hamk.fi',
-  'hamline.edu',
-  'hampshire.edu',
-  'hamptonu.edu',
-  'hanazono.ac.jp',
-  'hanbat.ac.kr',
-  'hancockcollege.edu',
-  'handong.edu',
-  'hangkong.ac.kr',
-  'hanil.ac.kr',
-  'hanlyo.ac.kr',
-  'hannam.ac.kr',
-  'hannan-u.ac.jp',
-  'hanover.edu',
-  'hansei.ac.kr',
-  'hanseo.ac.kr',
-  'hanseuni.de',
-  'hanshin.ac.kr',
-  'hansung.ac.kr',
-  'hanuniversity.com',
-  'hanyang.ac.kr',
-  'hanze.nl',
-  'hanzhong.ac.kr',
-  'haramaya.edu.et',
-  'harcum.edu',
-  'harding.edu',
-  'harford.edu',
-  'hargeisauniversity.net',
-  'hariricanadian.edu.lb',
-  'harlingen.tstc.edu',
-  'harpercollege.edu',
-  'harran.edu.tr',
-  'harrisburg.psu.edu',
-  'hartford.edu',
-  'hartnell.edu',
-  'hartwick.edu',
-  'harvard.edu',
-  'haskell.edu',
-  'hastings.edu',
-  'hau.edu.ph',
-  'hau.edu.vn',
-  'hau.ernet.in',
-  'hauniv.edu',
-  'haverford.edu',
-  'haw-hamburg.de',
-  'hawaii.edu',
-  'hawaii.hawaii.edu',
-  'hawk.iit.edu',
-  'hawkeyecollege.edu',
-  'hawlermu.org',
-  'haybusak.org',
-  'haywood.edu',
-  'hazard.kctcs.edu',
-  'hb.se',
-  'hbafa.com',
-  'hbc.edu.cn',
-  'hbku.edu.qa',
-  'hbmeu.ac.ae',
-  'hbu.edu',
-  'hbu.edu.cn',
-  'hbv.edu.tr',
-  'hcc.commnet.edu',
-  'hcc.edu',
-  'hccc.edu',
-  'hccfl.edu',
-  'hccs.edu',
-  'hcmuaf.edu.vn',
-  'hcmuarc.edu.vn',
-  'hcmulaw.edu.vn',
-  'hcmupeda.edu.vn',
-  'hcmus.edu.vn',
-  'hcmussh.edu.vn',
-  'hcmut.edu.vn',
-  'hcmute.edu.vn',
-  'hcmutrans.edu.vn',
-  'hct.ac.ae',
-  'hcu-hamburg.de',
-  'hcu.ac.th',
-  'hcu.edu.tw',
-  'hcuge.ch',
-  'hdk.gu.se',
-  'hdm-stuttgart.de',
-  'hdpu.edu.cn',
-  'heartland.edu',
-  'hebau.edu.cn',
-  'hebeiuniteduniversity.com',
-  'hebmu.edu.cn',
-  'hebnu.edu.cn',
-  'hebron.edu',
-  'hebust.edu.cn',
-  'hebut.edu.cn',
-  'hec.ac.ma',
-  'hec.ca',
-  'hec.edu',
-  'hec.fr',
-  'hei.fr',
-  'heidelberg.edu',
-  'heidenheim.dhbw.de',
-  'heilbronn.dhbw.de',
-  'heisei-u.ac.jp',
-  'help.edu.my',
-  'helpnet.uliege.be',
-  'helsinki.fi',
-  'helwan.edu.eg',
-  'hem.ac.ma',
-  'henannu.edu.cn',
-  'henau.edu.cn',
-  'hencc.kctcs.edu',
-  'hendrix.edu',
-  'hennepintech.edu',
-  'henu.edu.cn',
-  'hep-bejune.ch',
-  'hepl.ch',
-  'hepvs.ch',
-  'herkimer.edu',
-  'hertie-school.org',
-  'herts.ac.uk',
-  'herzen.edu.ru',
-  'herzen.spb.ru',
-  'hes-so.ch',
-  'hesperides.edu.es',
-  'hesston.edu',
-  'heuet.edu.cn',
-  'heythrop.ac.uk',
-  'hfb.de',
-  'hfcc.edu',
-  'hff-muenchen.de',
-  'hfg-gmuend.de',
-  'hfh.ch',
-  'hfk-bremen.de',
-  'hfk2020.de',
-  'hfm-detmold.de',
-  'hfmdd.de',
-  'hfmt-koeln.de',
-  'hfp.mhn.de',
-  'hfph.mwn.de',
-  'hfu.edu.tw',
-  'hfut.edu.cn',
-  'hgkz.ch',
-  'hgo.se',
-  'hgtc.edu',
-  'hh.se',
-  'hha.dk',
-  'hhit.edu.cn',
-  'hhl.de',
-  'hho.edu.tr',
-  'hhrtu.com',
-  'hhs.dk',
-  'hhs.se',
-  'hhstu.edu.cn',
-  'hhu.de',
-  'hhu.edu.cn',
-  'hhuc.edu.cn',
-  'hi-tech.ac.jp',
-  'hi.is',
-  'hia.no',
-  'hib.no',
-  'hiba.edu.sy',
-  'hibbing.edu',
-  'hibfs.edu.sd',
-  'hibo.no',
-  'hiete.hu',
-  'hifm.no',
-  'hig.se',
-  'highland.edu',
-  'highlandcc.edu',
-  'highlands.edu',
-  'highline.edu',
-  'highpoint.edu',
-  'hightech.edu',
-  'hiiraanuniversity.info',
-  'hijiyama-u.ac.jp',
-  'hik.se',
-  'hikmah.edu.my',
-  'hil.no',
-  'hillagric.ernet.in',
-  'hillcollege.edu',
-  'hillsdale.edu',
-  'hilo.hawaii.edu',
-  'himeji-du.ac.jp',
-  'himeji-tech.ac.jp',
-  'himh.de',
-  'himolde.no',
-  'hindscc.edu',
-  'hindustanuniv.ac.in',
-  'hiram.edu',
-  'hirogaku-u.ac.jp',
-  'hirojo-u.ac.jp',
-  'hirokoku-u.ac.jp',
-  'hirosaki-u.ac.jp',
-  'hiroshima-cu.ac.jp',
-  'hiroshima-pu.ac.jp',
-  'hiroshima-u.ac.jp',
-  'his.se',
-  'hispano.edu.mx',
-  'hit-u.ac.jp',
-  'hit.ac.jp',
-  'hit.ac.zw',
-  'hit.edu.cn',
-  'hitecuni.edu.pk',
-  'hitit.edu.tr',
-  'hiu.ac.jp',
-  'hj.se',
-  'hjs.uni-heidelberg.de',
-  'hju.ac.jp',
-  'hkapa.edu',
-  'hkbu.edu.hk',
-  'hkg.ac.jp',
-  'hkkk.fi',
-  'hkmu.ac.tz',
-  'hkmu.edu.hk',
-  'hknu.ac.kr',
-  'hkr.se',
-  'hksyu.edu',
-  'hku.edu.tr',
-  'hku.hk',
-  'hku.nl',
-  'hlaflru.edu.cn',
-  'hljcu.edu.cn',
-  'hlju.edu.cn',
-  'hm.edu',
-  'hmc.edu',
-  'hmdk-stuttgart.de',
-  'hmt-leipzig.de',
-  'hmtm-hannover.de',
-  'hmtm.de',
-  'hmu.edu.vn',
-  'hmu.gr',
-  'hnaubenin.org',
-  'hnbgu.ac.in',
-  'hneu.edu.ua',
-  'hnfjxy.cn',
-  'hnluraipur.com',
-  'hnu.edu.cn',
-  'hochschule-bonn-rhein-sieg.de',
-  'hocking.edu',
-  'hoduniv.net.ye',
-  'hofstra.edu',
-  'hogent.be',
-  'hokkai-k-u.ac.jp',
-  'hokkai-s-u.ac.jp',
-  'hokkyodai.ac.jp',
-  'hoku-iryo-u.ac.jp',
-  'hokudai.ac.jp',
-  'hokuriku-u.ac.jp',
-  'hokusei.ac.jp',
-  'hokuyakudai.ac.jp',
-  'holar.is',
-  'hollins.edu',
-  'holmes.edu.au',
-  'holmescc.edu',
-  'holycross.edu',
-  'holyspirit.edu.ph',
-  'honam.ac.kr',
-  'hongik.ac.kr',
-  'honolulu.hawaii.edu',
-  'hood.edu',
-  'hoodseminary.edu',
-  'hope.ac.uk',
-  'hope.edu',
-  'hopeafricauniversity.org',
-  'hopkinsville.kctcs.edu',
-  'hormozgan.ac.ir',
-  'hosei.ac.jp',
-  'hoseo.ac.kr',
-  'hoshi.ac.jp',
-  'hospitalitaliano.edu.ar',
-  'hostos.cuny.edu',
-  'hotelschool.com.au',
-  'hotelschool.nl',
-  'hou.edu.vn',
-  'howard.edu',
-  'howardcc.edu',
-  'howardcollege.edu',
-  'howest.be',
-  'howon.ac.kr',
-  'hpu.edu',
-  'hpuniv.nic.in',
-  'hqgc.net',
-  'hqu.edu.cn',
-  'hr.nl',
-  'hrbeu.edu.cn',
-  'hrbmu.edu.cn',
-  'hrbnu.edu.cn',
-  'hrbucea.edu.cn',
-  'hrbust.edu.cn',
-  'hro.nl',
-  'hs-albsig.de',
-  'hs-anhalt.de',
-  'hs-bremen.de',
-  'hs-bremerhaven.de',
-  'hs-coburg.de',
-  'hs-duesseldorf.de',
-  'hs-esslingen.de',
-  'hs-fulda.de',
-  'hs-hannover.de',
-  'hs-harz.de',
-  'hs-magdeburg.de',
-  'hs-mittweida.de',
-  'hs-neu-ulm.de',
-  'hs-rm.de',
-  'hs-ulm.de',
-  'hs-wismar.de',
-  'hs-zigr.de',
-  'hs.ac.kr',
-  'hsc.colorado.edu',
-  'hsc.edu',
-  'hsc.unt.edu',
-  'hse.ru',
-  'hsleiden.nl',
-  'hslu.ch',
-  'hsr.ch',
-  'hssu.edu',
-  'hstu.ac.bd',
-  'hsu.edu.hk',
-  'hsum-ac.mn',
-  'hsvest.is',
-  'hti.edu.eg',
-  'htl-villach.at',
-  'htl-wels.at',
-  'htu.edu',
-  'htu.edu.gh',
-  'htu.se',
-  'htus.ac.kr',
-  'htw-berlin.de',
-  'htw-dresden.de',
-  'htw-saarland.de',
-  'htwk-leipzig.de',
-  'htwm.de',
-  'hu-berlin.de',
-  'hu.ac.th',
-  'hu.edu.af',
-  'hu.edu.et',
-  'hu.edu.jo',
-  'hu.edu.lb',
-  'hu.edu.pk',
-  'hu.nl',
-  'hua.edu.vn',
-  'hua.gr',
-  'huaf.edu.vn',
-  'hubu.edu.cn',
-  'hud.ac.uk',
-  'hue.ac.jp',
-  'hueuni.edu.vn',
-  'huflit.vnn.vn',
-  'hufs.ac.kr',
-  'huji.ac.il',
-  'hull.ac.uk',
-  'hult.edu',
-  'humanities.mn',
-  'humber.ca',
-  'humbermail.ca',
-  'humboldt.edu',
-  'humg.edu.vn',
-  'hums.ac.ir',
-  'hun.edu.tr',
-  'hunau.net',
-  'hunnu.edu.cn',
-  'hunter.cuny.edu',
-  'huntingdon.edu',
-  'huntington.edu',
-  'huntingtonjuniorcollege.edu',
-  'hupe.hu',
-  'huron.ac.uk',
-  'huronuc.on.ca',
-  'hus.edu.vn',
-  'hust.edu.cn',
-  'hust.edu.vn',
-  'hust.edu.ye',
-  'hut.edu.vn',
-  'hut.fi',
-  'hutchcc.edu',
-  'hva.nl',
-  'hvanneyri.is',
-  'hvcc.edu',
-  'hvtc.edu.vn',
-  'hw.ac.uk',
-  'hwg-lu.de',
-  'hwp-hamburg.de',
-  'hwru.edu.vn',
-  'hws.edu',
-  'hyo-med.ac.jp',
-  'hyogo-dai.ac.jp',
-  'hyogo-u.ac.jp',
-  'hyrcania.ac.ir',
-  'hytu.ac.kr',
-  'hyupsung.ac.kr',
-  'hzau.edu.cn',
-  'hzs.be',
-  'hzu.edu.cn',
-  'i-med.ac.at',
-  'i-u.de',
-  'i.edu.mx',
-  'i4p.edu.my',
-  'iaa.ac.tz',
-  'iaau.edu.kg',
-  'iacademy.ph',
-  'iact.edu.my',
-  'iade.pt',
-  'iae-france.fr',
-  'iaf.inrs.ca',
-  'iaim.ro',
-  'iap.li',
-  'iari.ernet.in',
-  'ias.edu',
-  'iasbs.ac.ir',
-  'iaseduniv.org',
-  'iastate.edu',
-  'iate.obninsk.ru',
-  'iau-ahar.ac.ir',
-  'iau-arak.ac.ir',
-  'iau-boukan.ac.ir',
-  'iau-garmsar.ac.ir',
-  'iau-lahijan.ac.ir',
-  'iau-saveh.ac.ir',
-  'iau-shahrood.ac.ir',
-  'iau-shirvan.ac.ir',
-  'iau-tnb.ac.ir',
-  'iau.edu.sa',
-  'iauardabil.ac.ir',
-  'iauba.ac.ir',
-  'iaubos.ac.ir',
-  'iauctb.ac.ir',
-  'iauh.ac.ir',
-  'iauk.ac.ir',
-  'iaukb.ir',
-  'iaumajlesi.ac.ir',
-  'iaumehriz.com',
-  'iaun.ac.ir',
-  'iauq.ac.ir',
-  'iauro.ac.ir',
-  'iausdj.ac.ir',
-  'iaushab.ac.ir',
-  'iaushiraz.ac.ir',
-  'iausr.ac.ir',
-  'iaut.ac.ir',
-  'iautb.ac.ir',
-  'iautmu.ac.ir',
-  'iauvaramin.ac.ir',
-  'iauyazd.ac.ir',
-  'iavalley.edu',
-  'iba-suk.edu.pk',
-  'iba.edu.pk',
-  'ibaisuniv.edu.bd',
-  'ibaraki.ac.jp',
-  'ibbu.edu.ng',
-  'ibc.ac.th',
-  'ibc.edu',
-  'ibch.ru',
-  'iberoamericana.edu.co',
-  'ibi.spb.ru',
-  'ibnesina.edu.af',
-  'ibnsina.edu.sa',
-  'ibnuchaldun.ac.id',
-  'ibp-moscow.ru',
-  'ibs.uz',
-  'ibss.eu',
-  'ibsu.edu.ge',
-  'ibu.edu.ba',
-  'ibu.edu.tr',
-  'ibub.edu.cn',
-  'ic.ac.uk',
-  'icam.fr',
-  'icb.edu.mn',
-  'icc.ac.jp',
-  'icc.edu',
-  'icci.edu.ky',
-  'iccms.edu',
-  'iccu.ac.kr',
-  'icda.edu.do',
-  'iceit.edu.co',
-  'icesi.edu.co',
-  'icfai.org',
-  'ichec.be',
-  'ici-luzern.com',
-  'ici.edu',
-  'icn-nancy.com',
-  'icp.fr',
-  'ict-toulouse.asso.fr',
-  'ict.edu.om',
-  'icthm.edu.au',
-  'ictp.trieste.it',
-  'icu-edu.org',
-  'icu.ac.jp',
-  'icu.ac.kr',
-  'idc.ac.il',
-  'idti.edu',
-  'idu.edu.tr',
-  'ie.edu',
-  'iecc.edu',
-  'ieec.cust.edu.cn',
-  'ieeu.udm.ru',
-  'iep.u-bordeaux.fr',
-  'iese.edu',
-  'iese.edu.ar',
-  'ieseg.fr',
-  'iet.ru',
-  'ieu.edu.tr',
-  'if-pan.krakow.pl',
-  'ifdtung.if.ua',
-  'ifg.com.pl',
-  'ifheindia.org',
-  'ifm.ac.tz',
-  'ifmo.ru',
-  'ifmparis.fr',
-  'ifp.fr',
-  'ifslearning.ac.uk',
-  'igau.edu.in',
-  'igdir.edu.tr',
-  'igidr.ac.in',
-  'igims.org',
-  'ignou.ac.in',
-  'iha.dk',
-  'ihi-zittau.de',
-  'ihk.dk',
-  'ihr.sas.ac.uk',
-  'ihteamlingue.it',
-  'ihu.edu.gr',
-  'ihu.gr',
-  'iic.edu.my',
-  'iiee.edu.pk',
-  'iihem.ac.ma',
-  'iiit-bh.ac.in',
-  'iiita.com',
-  'iiitb.ac.in',
-  'iiitd.ac.in',
-  'iiitg.ac.in',
-  'iiitkota.ac.in',
-  'iiitm.ac.in',
-  'iiitmk.ac.in',
-  'iiits.in',
-  'iiitvadodara.ac.in',
-  'iimtrichy.ac.in',
-  'iipsindia.org',
-  'iisc.ac.in',
-  'iisc.ernet.in',
-  'iit.ac.lk',
-  'iit.com.na',
-  'iit.edu',
-  'iitb.ac.in',
-  'iitbbs.ac.in',
-  'iitd.ac.in',
-  'iitd.ernet.in',
-  'iitg.ac.in',
-  'iitg.ernet.in',
-  'iitgn.ac.in',
-  'iith.ac.in',
-  'iiti.ac.in',
-  'iitj.ac.in',
-  'iitk.ac.in',
-  'iitkgp.ac.in',
-  'iitkgp.ernet.in',
-  'iitm.ac.in',
-  'iitp.ac.in',
-  'iitr.ac.in',
-  'iitrpr.ac.in',
-  'iiu.edu.my',
-  'iiu.edu.pk',
-  'iiuc.ac.bd',
-  'iiuedu.ie',
-  'ikc.edu.tr',
-  'ikcu.edu.tr',
-  'ikiu.ac.ir',
-  'iksvv.com',
-  'iku.edu.tr',
-  'ikw.ac.kr',
-  'ilam.ac.ir',
-  'ili.ac.in',
-  'iliauni.edu.ge',
-  'ilisagvik.edu',
-  'ilisimatusarfik.gl',
-  'illinois.edu',
-  'illinoisstate.edu',
-  'ilsacollege.edu.na',
-  'ilstu.edu',
-  'imamreza.ac.ir',
-  'imamu.edu.sa',
-  'imau.edu.cn',
-  'imbt.ma',
-  'imc-krems.ac.at',
-  'imd.org',
-  'ime.eb.mil.br',
-  'ime.ru',
-  'imi-luzern.com',
-  'imnu.edu.cn',
-  'impa.br',
-  'impacta.edu.br',
-  'imperial.ac.uk',
-  'imperial.edu',
-  'impu.edu.cn',
-  'imsciences.edu.pk',
-  'imsu.edu.ng',
-  'imt-atlantique.net',
-  'imtlucca.it',
-  'imtu.edu',
-  'imu.edu.cn',
-  'imu.edu.my',
-  'inatek.ac.rw',
-  'inchon-e.ac.kr',
-  'inchon.ac.kr',
-  'indiana.edu',
-  'indianatech.edu',
-  'indianatech.net',
-  'indianhills.edu',
-  'indoamerica.edu.ec',
-  'indonusa.ac.id',
-  'indstate.edu',
-  'indus.edu.pk',
-  'indusuni.ac.in',
-  'indwes.edu',
-  'indycc.edu',
-  'ine.edu.kh',
-  'infnet.edu.br',
-  'info.kma.lt',
-  'inha.ac.kr',
-  'inholland.nl',
-  'inje.ac.kr',
-  'inonu.edu.tr',
-  'inp-fc.fr',
-  'inp.pt',
-  'inpg.edu.br',
-  'inpg.fr',
-  'inpl-nancy.fr',
-  'inpt.ac.ma',
-  'inrs.uquebec.ca',
-  'insa-lyon.fr',
-  'insa-rennes.fr',
-  'insa-rouen.fr',
-  'insa-tlse.fr',
-  'insa-toulouse.fr',
-  'insead.edu',
-  'inseec.fr',
-  'insel.ch',
-  'insper.edu.br',
-  'instedt.edu.my',
-  'institutoteima.ac.pa',
-  'int-evry.fr',
-  'intec.edu.do',
-  'integraluniversity.ac.in',
-  'inteli.edu.br',
-  'inter.edu',
-  'intercollege.ac.cy',
-  'internacional.edu.ec',
-  'international.fh-aalen.de',
-  'internationaluniversity-schoolofmedicine.org',
-  'intstudy.mai.ru',
-  'inu.ac.kr',
-  'inu.edu.jo',
-  'inuaf-studia.pt',
-  'inun.edu.ar',
-  'inverhills.edu',
-  'ioe.ac.uk',
-  'iona.edu',
-  'ionio.gr',
-  'iota.edu.au',
-  'iota.u-psud.fr',
-  'iowacentral.edu',
-  'iowalakes.edu',
-  'ip.kyusan-u.ac.jp',
-  'ipa.edu.sa',
-  'ipb.ac.id',
-  'ipb.edu.my',
-  'ipb.pt',
-  'ipbeja.pt',
-  'ipbl.edu.my',
-  'ipbmm.edu.my',
-  'ipc.dk',
-  'ipc.pt',
-  'ipca.pt',
-  'ipcb.pt',
-  'ipda.edu.my',
-  'ipdbuu.com.cn',
-  'ipfw.edu',
-  'ipg.pt',
-  'ipgkkb.edu.my',
-  'ipgkrajang.edu.my',
-  'ipgkti.edu.my',
-  'ipgmkdri.edu.my',
-  'ipgmksm.edu.my',
-  'ipgmtawau.edu.my',
-  'ipgperlis.edu.my',
-  'ipiaget.org',
-  'ipik.edu.my',
-  'ipip.edu.my',
-  'ipislam.edu.my',
-  'ipkent.edu.my',
-  'ipks.edu.my',
-  'ipl.pt',
-  'ipleiria.pt',
-  'ipm.edu.mo',
-  'ipn.edu.mx',
-  'ipp.pt',
-  'ippm.edu.my',
-  'ipportalegre.pt',
-  'iprm.edu.my',
-  'ips.pt',
-  'ipsa.fr',
-  'ipsah.edu.my',
-  'ipsantarem.pt',
-  'ipsmiri.edu.my',
-  'ipt.pt',
-  'iptaa.edu.my',
-  'iptb.edu.my',
-  'ipteknik.edu.my',
-  'iptho.edu.my',
-  'iptips.edu.my',
-  'ipu.ac.in',
-  'ipu.ac.jp',
-  'ipu.edu.sy',
-  'ipvc.pt',
-  'iqra.edu.pk',
-  'iraquniversity.net',
-  'ircam.fr',
-  'ireste.fr',
-  'irsc.edu',
-  'isa.fupl.asso.fr',
-  'isaacnewtoncr.com',
-  'isab.fr',
-  'isae.ac.rw',
-  'isai.pt',
-  'isalud.edu.ar',
-  'isara.fr',
-  'isave.edu.pt',
-  'isbb.pt',
-  'isbm-school.com',
-  'isbm.org.in',
-  'iscet.pt',
-  'iscte-iul.pt',
-  'iscte.pt',
-  'isctem.ac.mz',
-  'isea.irk.ru',
-  'isea.ru',
-  'isen.fr',
-  'isenshu-u.ac.jp',
-  'isep.fr',
-  'isetr.rnu.tn',
-  'iseu.by',
-  'isfort.ac.ma',
-  'isg.pt',
-  'isg.rnu.tn',
-  'isi.edu',
-  'isical.ac.in',
-  'isikun.edu.tr',
-  'isim.univ-montp2.fr',
-  'isla.pt',
-  'islahonline.org',
-  'islamiccolleges.com',
-  'islamicuniversity.nl',
-  'ism-dortmund.de',
-  'ism.lt',
-  'isma.indi.ru',
-  'ismcm-cesti.fr',
-  'ismdhanbad.ac.in',
-  'ismm.edu.cu',
-  'ismpo.sk',
-  'ismra.fr',
-  'isnm.de',
-  'isothermal.edu',
-  'ispa.pt',
-  'ispab.pt',
-  'ispcmw.rimed.cu',
-  'ispgaya.pt',
-  'ispu.ac.mz',
-  'ispu.ru',
-  'isra.edu.jo',
-  'isra.edu.pk',
-  'isri.ac.mz',
-  'iss.nl',
-  'ist-hochschule.de',
-  'ist.ac.at',
-  'ist.edu.pk',
-  'ista.ac.id',
-  'istanbul.edu.tr',
-  'istanbulticaret.edu.tr',
-  'iste.edu.tr',
-  'istec.pt',
-  'istinye.edu.tr',
-  'istp.pt',
-  'istu.irk.ru',
-  'istu.ru',
-  'isu.ac.ir',
-  'isu.edu',
-  'isu.edu.ph',
-  'isu.edu.tw',
-  'isu.ru',
-  'isuct.ru',
-  'isvouga.com',
-  'iszu.edu.tr',
-  'it-chiba.ac.jp',
-  'it-hiroshima.ac.jp',
-  'ita.br',
-  'ita.mx',
-  'italo.br',
-  'itam.mx',
-  'itascacc.edu',
-  'itats.ac.id',
-  'itb.ac.id',
-  'itb.edu.bn',
-  'itba.edu.ar',
-  'itbmu.org.mm',
-  'itc.edu',
-  'itc.mx',
-  'itc.nl',
-  'itcarlow.ie',
-  'itcr.ac.cr',
-  'itdurango.edu.mx',
-  'ite.edu.sg',
-  'itech.fr',
-  'iteso.mx',
-  'ithaca.edu',
-  'iti.is',
-  'itismalta.com',
-  'itla.edu.do',
-  'itleon.edu.mx',
-  'itm.edu.co',
-  'itmina.edu.mx',
-  'itmindia.edu',
-  'itmo.ru',
-  'itmorelia.edu.mx',
-  'itpu.uz',
-  'itq.edu.mx',
-  'its.ac.id',
-  'itslp.edu.mx',
-  'itsncg.edu.mx',
-  'itsoeh.edu.mx',
-  'itson.mx',
-  'itt-tech.edu',
-  'itt-tech.info',
-  'ittihad.ac.ae',
-  'ittralee.ie',
-  'ittu.edu.tm',
-  'itu.dk',
-  'itu.edu',
-  'itu.edu.pk',
-  'itu.edu.tr',
-  'iu-travnik.com',
-  'iu.ac.bd',
-  'iu.ac.ke',
-  'iu.edu',
-  'iu.edu.iq',
-  'iu.edu.kh',
-  'iu.edu.sa',
-  'iua.edu.ar',
-  'iua.edu.sd',
-  'iuav.unive.it',
-  'iub.edu',
-  'iub.edu.bd',
-  'iub.edu.pk',
-  'iubat.edu',
-  'iubh-fernstudium.de',
-  'iubnt.yar.ru',
-  'iubs.co.uk',
-  'iuc.edu.ar',
-  'iucbc.edu.ar',
-  'iucn.edu.my',
-  'iucs.uncoma.edu.ar',
-  'iuctt.edu.my',
-  'iudehradun.edu.in',
-  'iue.edu.co',
-  'iue.it',
-  'iufs.edu',
-  'iug.edu.gh',
-  'iugaza.edu.ps',
-  'iugna.edu.ar',
-  'iugrad.edu.kn',
-  'iuhimachal.edu.in',
-  'iuhw.ac.jp',
-  'iuil.lu',
-  'iuiu.ac.ug',
-  'iuj.ac.jp',
-  'iujaipur.edu.in',
-  'iujharkhand.edu.in',
-  'iuk.ac.jp',
-  'iuk.ac.kr',
-  'iuk.kg',
-  'iulm.it',
-  'ium.edu.na',
-  'iumeghalaya.edu.in',
-  'iumizoram.edu.in',
-  'iums.ac.ir',
-  'iun.ch',
-  'iunagaland.edu.in',
-  'iunir.edu.ar',
-  'iuo.it',
-  'iuoart.org',
-  'iuokada.edu.ng',
-  'iup.edu',
-  'iupuc.edu',
-  'iupui.edu',
-  'iur.ac.in',
-  'iuraipur.edu.in',
-  'ius.edu',
-  'ius.edu.ba',
-  'iusb.edu',
-  'iuse.edu.es',
-  'iusikkim.edu.in',
-  'iusm.edu.ar',
-  'iusspavia.it',
-  'iust.ac.ir',
-  'iust.edu.sy',
-  'iut.ac.ir',
-  'iutoic-dhaka.edu',
-  'iutripura.edu.in',
-  'ivanovo.ac.ru',
-  'ivc.edu',
-  'ivcc.edu',
-  'ivri.nic.in',
-  'ivytech.edu',
-  'iwakimu.ac.jp',
-  'iwate-med.ac.jp',
-  'iwate-pu.ac.jp',
-  'iwate-u.ac.jp',
-  'iwcc.edu',
-  'iwp.edu',
-  'iwu.edu',
-  'iyte.edu.tr',
-  'iztapalapa.uam.mx',
-  'jabu.edu.ng',
-  'jacksonville-college.edu',
-  'jacobs-university.de',
-  'jadara.edu.jo',
-  'jadavpur.edu',
-  'jainuniversity.org',
-  'jaist.ac.jp',
-  'jalc.edu',
-  'jam.edu.jo',
-  'jamessprunt.edu',
-  'jami.ac.ir',
-  'jamiahamdard.edu',
-  'jammuvarsity.org',
-  'janabadra.ac.id',
-  'janahiau.ac.ir',
-  'jarvis.edu',
-  'jasu.edu.kg',
-  'javeriana.edu.co',
-  'jayabaya.ac.id',
-  'jazanu.edu.sa',
-  'jbc.edu',
-  'jbu.edu',
-  'jccc.edu',
-  'jccmi.edu',
-  'jci.edu.cn',
-  'jcjc.edu',
-  'jcsu.edu',
-  'jct.ac.il',
-  'jct.edu.sa',
-  'jcu.cz',
-  'jcu.edu.au',
-  'jdcc.edu',
-  'jedlik.eu',
-  'jeffco.edu',
-  'jefferson.edu',
-  'jefferson.edu.mx',
-  'jefferson.kctcs.edu',
-  'jeffstateonline.com',
-  'jeju.ac.kr',
-  'jejunu.ac.kr',
-  'jeonju.ac.kr',
-  'jeppiaarcollege.org',
-  'jerashun.edu.jo',
-  'jesus.ac.kr',
-  'jewell.edu',
-  'jfku.edu',
-  'jfn.ac.lk',
-  'jgu.edu.ly',
-  'jh.edu',
-  'jhu.edu',
-  'jhuapl.edu',
-  'jhubc.it',
-  'jic.edu.sa',
-  'jichi.ac.jp',
-  'jiit.ac.in',
-  'jikei.ac.jp',
-  'jinan.edu.lb',
-  'jinnah.edu',
-  'jinnah.edu.pk',
-  'jiscollege.ac.in',
-  'jisiasr.org',
-  'jisiop.org',
-  'jismsr.org',
-  'jissen.ac.jp',
-  'jissp.ac.in',
-  'jisuniversity.ac.in',
-  'jiu.ac.jp',
-  'jiwaji.edu',
-  'jj.ac.kr',
-  'jjay.cuny.edu',
-  'jjc.edu',
-  'jjtu.ac.in',
-  'jju.edu.et',
-  'jkkniu.edu.bd',
-  'jku.at',
-  'jkuat.ac.ke',
-  'jlau.edu.cn',
-  'jlu.edu.cn',
-  'jmi.nic.in',
-  'jmu.edu',
-  'jmu.edu.cn',
-  'jncasr.ac.in',
-  'jnkvv.nic.in',
-  'jntuh.ac.in',
-  'jnu.ac.bd',
-  'jnu.ac.in',
-  'jnu.ac.kr',
-  'jnu.edu.cn',
-  'jnue.ac.kr',
-  'jnujaipur.ac.in',
-  'jobu.ac.jp',
-  'jodhpurnationaluniversity.com',
-  'joensuu.fi',
-  'johncabot.edu',
-  'johnshopkins.edu',
-  'johnstoncc.edu',
-  'jones.edu',
-  'joongbu.ac.kr',
-  'jooust.ac.ke',
-  'josai.ac.jp',
-  'joshibi.ac.jp',
-  'jpte.hu',
-  'jpv.bih.nic.in',
-  'jrnrvu.org',
-  'jscc.edu',
-  'jsu.edu',
-  'jsu.edu.cn',
-  'jsums.edu',
-  'jsust.edu.cn',
-  'jtcc.edu',
-  'jtsa.edu',
-  'ju.ac.ae',
-  'ju.edu',
-  'ju.edu.af',
-  'ju.edu.et',
-  'ju.edu.jo',
-  'ju.edu.sa',
-  'juba.edu.sd',
-  'juc.edu',
-  'judson.edu',
-  'juen.ac.jp',
-  'jum.ru',
-  'jums.ac.ir',
-  'juniata.edu',
-  'juniv.edu',
-  'juntan.k-junshin.ac.jp',
-  'juntendo.ac.jp',
-  'jussieu.fr',
-  'just.edu.jo',
-  'jut.edu.cn',
-  'jutcm.com',
-  'juw.edu.pk',
-  'jvbi.ac.in',
-  'jwcc.edu',
-  'jwu.ac.jp',
-  'jwu.ac.kr',
-  'jwu.edu',
-  'jxau.edu.cn',
-  'jxnu.edu.cn',
-  'jxufe.edu.cn',
-  'jyu.edu.cn',
-  'jyu.fi',
-  'k-state.edu',
-  'kabarak.ac.ke',
-  'kabianga.ac.ke',
-  'kaboora.edu.af',
-  'kabuli.edu.af',
-  'kafkas.edu.tr',
-  'kafna.ac.kr',
-  'kagawa-u.ac.jp',
-  'kagoshima-u.ac.jp',
-  'kai.ru',
-  'kaist.ac.kr',
-  'kaist.edu',
-  'kalingauniversity.com',
-  'kalmsu.ru',
-  'kamakura-u.ac.jp',
-  'kamalolmolk.ac.ir',
-  'kamgu.ru',
-  'kan.edu.af',
-  'kanagawa-it.ac.jp',
-  'kanagawa-u.ac.jp',
-  'kanazawa-bidai.ac.jp',
-  'kanazawa-eco.ac.jp',
-  'kanazawa-gu.ac.jp',
-  'kanazawa-it.ac.jp',
-  'kanazawa-med.ac.jp',
-  'kanazawa-u.ac.jp',
-  'kanchiuniv.ac.in',
-  'kangnam.ac.kr',
-  'kangnung.ac.kr',
-  'kangwon.ac.kr',
-  'kankyo-u.ac.jp',
-  'kannadauniversity.org',
-  'kannuruniversity.ac.in',
-  'kanpuruniversity.org',
-  'kansai-gaidai-u.ac.jp',
-  'kansai-u.ac.jp',
-  'kansascity.edu',
-  'kantiana.ru',
-  'kanto-gakuen.ac.jp',
-  'kanto-gakuin.ac.jp',
-  'kapiolani.hawaii.edu',
-  'kaplan.edu',
-  'karabuk.edu.tr',
-  'karaelmas.edu.tr',
-  'karatay.edu.tr',
-  'karatekin.edu.tr',
-  'karatinauniversity.ac.ke',
-  'karazin.ua',
-  'karch.dk',
-  'kardan.edu.af',
-  'karelia.ru',
-  'karlshochschule.de',
-  'karlsruhe.dhbw.de',
-  'karnatakastateopenuniversity.in',
-  'karpagamuniv.com',
-  'karts.ac.kr',
-  'karuniversity.com',
-  'karunya.edu',
-  'karwan.edu.af',
-  'kasbit.edu.pk',
-  'kashanu.ac.ir',
-  'kashmiruniversity.net',
-  'kaskaskia.edu',
-  'kassalauni.edu.sd',
-  'kastamonu.edu.tr',
-  'kasuportal.net',
-  'kateb.edu.af',
-  'kath-fh-nord.de',
-  'kau.ac.ir',
-  'kau.ac.kr',
-  'kau.edu',
-  'kau.edu.sa',
-  'kau.kz',
-  'kau.se',
-  'kauai.hawaii.edu',
-  'kaums.ac.ir',
-  'kaust.edu.sa',
-  'kawasaki-m.ac.jp',
-  'kaya.ac.kr',
-  'kazanconservatory.ru',
-  'kazeu.kz',
-  'kaznpu.kz',
-  'kazntu.kz',
-  'kaznu.kz',
-  'kbcc.cuny.edu',
-  'kbocc.org',
-  'kbsu.ru',
-  'kbtu.kz',
-  'kbtus.ac.kr',
-  'kbu.ac.jp',
-  'kbu.ac.th',
-  'kbu.edu.my',
-  'kc.edu.gh',
-  'kca.ac.ke',
-  'kcc.edu',
-  'kcgcollege.ac.in',
-  'kckcc.edu',
-  'kcl.ac.uk',
-  'kcmc.ac.tz',
-  'kct.ac.in',
-  'kct.gotevot.edu.sa',
-  'kctcs.edu',
-  'kcu.ac.kr',
-  'kcua.ac.jp',
-  'kdcnet.ac.jp',
-  'kdg.be',
-  'kdischool.ac.kr',
-  'kdpu.edu.ua',
-  'kdu.ac.kr',
-  'kdu.ac.lk',
-  'kdu.edu.my',
-  'kdu.md',
-  'kduniv.ac.kr',
-  'kean.edu',
-  'kec.edu.np',
-  'kee.hu',
-  'keele.ac.uk',
-  'keene.edu',
-  'keiho-u.ac.jp',
-  'keimyung.ac.kr',
-  'keio.ac.jp',
-  'keisen.ac.jp',
-  'keiseruniversity.edu',
-  'keiwa-c.ac.jp',
-  'keller.edu',
-  'kellogg.edu',
-  'kemerburgaz.edu.tr',
-  'kemsu.ru',
-  'kemu.ac.ke',
-  'ken.edu.af',
-  'kennedy.edu.ar',
-  'kennesaw.edu',
-  'kent.edu',
-  'kenyon.edu',
-  'keralauniversity.ac.in',
-  'kettering.edu',
-  'keu.edu.af',
-  'kfb-berlin.de',
-  'kfh-freiburg.de',
-  'kfh-mainz.de',
-  'kfhnw.de',
-  'kfs.edu.eg',
-  'kfsc.edu.sa',
-  'kfu.edu.sa',
-  'kfunigraz.ac.at',
-  'kfupm.edu.sa',
-  'kg.ac.rs',
-  'kgmu.kcn.ru',
-  'kgpu.ru',
-  'kgre.hu',
-  'kgtu.runnet.ru',
-  'kgut.ac.ir',
-  'kgwu.ac.jp',
-  'kh-berlin.de',
-  'khadi.kharkov.ua',
-  'khai.edu',
-  'khas.edu.tr',
-  'khawarizmi.com',
-  'khazar.org',
-  'khi.ac.rw',
-  'khi.is',
-  'khio.no',
-  'khk.be',
-  'khleuven.be',
-  'khlim.be',
-  'khs-linz.ac.at',
-  'khsa.de',
-  'khspu.ru',
-  'khstu.ru',
-  'khu.ac.kr',
-  'khuisf.ac.ir',
-  'ki.se',
-  'kias.edu.my',
-  'kidu-darululum.blogspot.com',
-  'kie.ac.rw',
-  'kiet.edu',
-  'kii.gov.by',
-  'kiit.ac.in',
-  'kiit.edu.pk',
-  'kilaw.edu.kw',
-  'kilgore.edu',
-  'kilian.edu',
-  'kilis.edu.tr',
-  'kimep.kz',
-  'kimi.kohinoor.ac.in',
-  'kindai.ac.jp',
-  'king.edu',
-  'kings.edu',
-  'kingston.ac.uk',
-  'kingston.edu',
-  'kingsu.ab.ca',
-  'kinjo-u.ac.jp',
-  'kiperak.edu.my',
-  'kipsas.edu.my',
-  'kirklareli.edu.tr',
-  'kirkwood.edu',
-  'kirovballet.com',
-  'kirtland.edu',
-  'kish.ac.ir',
-  'kishwaukeecollege.edu',
-  'kisiiuniversity.ac.ke',
-  'kist.ac.rw',
-  'kist.edu.my',
-  'kit.ac.jp',
-  'kit.edu',
-  'kitab.edu.my',
-  'kitakyu-u.ac.jp',
-  'kitami-it.ac.jp',
-  'kitasato-u.ac.jp',
-  'kiu.ac.jp',
-  'kiu.ac.kr',
-  'kiu.ac.ug',
-  'kiu.edu.pk',
-  'kiu.ru',
-  'kiui.ac.jp',
-  'kkot.ac.kr',
-  'kku.ac.th',
-  'kku.edu.sa',
-  'kku.edu.tr',
-  'klamathcc.edu',
-  'klgtu.ru',
-  'kliuc.edu.my',
-  'klmu.edu.my',
-  'kln.ac.lk',
-  'klyuniv.ac.in',
-  'km.isfpnu.ac.ir',
-  'kma.ac.kr',
-  'kma.mk.ua',
-  'kmaritime.ac.kr',
-  'kmbs.edu.kw',
-  'kmc.edu.tw',
-  'kmdc.edu.pk',
-  'kmitl.ac.th',
-  'kmou.ac.kr',
-  'kms.ac.jp',
-  'kmtc.ac.ke',
-  'kmu.ac.ir',
-  'kmu.ac.jp',
-  'kmu.ac.kr',
-  'kmu.edu.af',
-  'kmu.edu.tr',
-  'kmust.edu.cn',
-  'kmutnb.ac.th',
-  'kmutt.ac.th',
-  'knastu.ru',
-  'knau.kg',
-  'knct.ac.jp',
-  'kneu.kiev.ua',
-  'knightsbridgeuniversity.com',
-  'knou.ac.kr',
-  'knox.edu',
-  'knoxvillecollege.edu',
-  'knruhs.telangana.gov.in',
-  'knsu.ac.kr',
-  'kntu.ac.ir',
-  'knu.ua',
-  'knua.ac.kr',
-  'knuba.edu.ua',
-  'knue.ac.kr',
-  'knupe.ac.kr',
-  'knust.edu.gh',
-  'kobe-c.ac.jp',
-  'kobe-cufs.ac.jp',
-  'kobe-du.ac.jp',
-  'kobe-kiu.ac.jp',
-  'kobe-shinwa.ac.jp',
-  'kobe-u.ac.jp',
-  'kobegakuin.ac.jp',
-  'kobepharma-u.ac.jp',
-  'koc.alaska.edu',
-  'kochi-ms.ac.jp',
-  'kochi-tech.ac.jp',
-  'kochi-u.ac.jp',
-  'kochi-wu.ac.jp',
-  'kodolanyi.hu',
-  'kogakkan-u.ac.jp',
-  'kogakuin.ac.jp',
-  'koka.ac.jp',
-  'kokugakuin.ac.jp',
-  'kokushikan.ac.jp',
-  'kolejshahputra.edu.my',
-  'kolejypc.edu.my',
-  'kolieh.com',
-  'komar.edu.iq',
-  'komazawa-u.ac.jp',
-  'konan-u.ac.jp',
-  'konan-wu.ac.jp',
-  'kongju-e.ac.kr',
-  'kongju.ac.kr',
-  'konkuk.ac.kr',
-  'konstfack.se',
-  'konya.edu.tr',
-  'konyang.ac.kr',
-  'kookmin.ac.kr',
-  'kordofan.edu.sd',
-  'korea-u.ac.jp',
-  'korea.ac.kr',
-  'koreatech.ac.kr',
-  'koriyama-kgc.ac.jp',
-  'kornu.ac.kr',
-  'koshien.ac.jp',
-  'kosin.ac.kr',
-  'kou.edu.tr',
-  'koyasan-u.ac.jp',
-  'koyauniversity.org',
-  'kpc.alaska.edu',
-  'kpi.kharkov.ua',
-  'kpi.ua',
-  'kptm.edu.my',
-  'kpu-m.ac.jp',
-  'kpu.ac.jp',
-  'kpu.ac.kr',
-  'krirk.ac.th',
-  'krishnauniversity.ac.in',
-  'kristiania.no',
-  'krok.edu.ua',
-  'krsu.edu.kg',
-  'ks.ac.kr',
-  'ksa.edu.pk',
-  'ksaba.ru',
-  'ksau-hs.edu.sa',
-  'ksbk-do.de',
-  'ksdsu.edu.in',
-  'kse.org.ua',
-  'ksfei.ru',
-  'ksfh.de',
-  'kshosen.ac.jp',
-  'ksit.edu.tw',
-  'kslu.ac.in',
-  'ksmu.kharkov.ua',
-  'ksmu.kursknet.ru',
-  'kspu.kaluga.ru',
-  'kspu.ptz.ru',
-  'kstu.edu.gh',
-  'kstu.edu.ru',
-  'kstu.kg',
-  'kstu.kursk.ru',
-  'kstu.kz',
-  'kstuca.kharkov.ua',
-  'ksu.ac.jp',
-  'ksu.edu',
-  'ksu.edu.sa',
-  'ksu.edu.tr',
-  'ksu.edu.tw',
-  'ksu.edu.ua',
-  'ksu.kst.kz',
-  'ksu.kz',
-  'ksu.ru',
-  'ksucta.kg',
-  'ksuportal.edu.ng',
-  'ksusta.edu.ng',
-  'ksw.edu.pl',
-  'ktd.edu.my',
-  'kth-linz.ac.at',
-  'kth.se',
-  'ktkt-haiduong.edu.vn',
-  'ktokai-u.ac.jp',
-  'ktu.edu',
-  'ktu.edu.gh',
-  'ktu.edu.tr',
-  'ktu.lt',
-  'ktun.edu.tr',
-  'ku-eichstaett.de',
-  'ku.ac.ae',
-  'ku.ac.bd',
-  'ku.ac.ke',
-  'ku.ac.th',
-  'ku.ac.ug',
-  'ku.dk',
-  'ku.edu',
-  'ku.edu.af',
-  'ku.edu.bh',
-  'ku.edu.np',
-  'ku.edu.sa',
-  'ku.edu.tr',
-  'ku.lt',
-  'ku.sk',
-  'kubagro.ru',
-  'kubrussel.ac.be',
-  'kubstu.ru',
-  'kubsu.ru',
-  'kud.ac.in',
-  'kudqi.net.my',
-  'kuet.ac.bd',
-  'kufos.ac.in',
-  'kufs.ac.jp',
-  'kug.ac.at',
-  'kuim.edu.my',
-  'kuin.edu.my',
-  'kuins.ac.jp',
-  'kuis.ac.jp',
-  'kuis.edu.my',
-  'kuk.edu.ng',
-  'kukinfo.com',
-  'kul.lublin.pl',
-  'kulak.kuleuven.be',
-  'kuleuven.be',
-  'kumagaku.ac.jp',
-  'kumamoto-u.ac.jp',
-  'kumaununiversity.org',
-  'kumc.edu',
-  'kumoh.ac.kr',
-  'kums.ac.ir',
-  'kumsa.net',
-  'kunitachi.ac.jp',
-  'kuniv.edu.kw',
-  'kunsan.ac.kr',
-  'kunstakademie-duesseldorf.de',
-  'kunstakademiet.dk',
-  'kure-u.ac.jp',
-  'kursk-uni.ru',
-  'kurume-it.ac.jp',
-  'kurume-u.ac.jp',
-  'kusa.ac.jp',
-  'kushiro-pu.ac.jp',
-  'kust.edu.pk',
-  'kustar.ac.ae',
-  'kustwudil.edu.ng',
-  'kusw.ac.jp',
-  'kut.ac.ir',
-  'kutztown.edu',
-  'kuva.fi',
-  'kuvempu.ac.in',
-  'kuwarangal.com',
-  'kuzstu.ac.ru',
-  'kvcc.edu',
-  'kvcc.me.edu',
-  'kvctc.edu',
-  'kvl.dk',
-  'kw.ac.kr',
-  'kwandong.ac.kr',
-  'kwangju-e.ac.kr',
-  'kwangju.ac.kr',
-  'kwangshin.ac.kr',
-  'kwangwoon.ac.kr',
-  'kwansei.ac.jp',
-  'kwantlen.bc.ca',
-  'kwarapoly.edu.ng',
-  'kwararafauniversity.edu.ng',
-  'kwassui.ac.jp',
-  'kwasu.edu.ng',
-  'kwc-u.ac.jp',
-  'kwu.ac.kr',
-  'kwu.edu',
-  'kwuc.ac.jp',
-  'kwust.ac.ke',
-  'kyokyo-u.ac.jp',
-  'kyonggi.ac.kr',
-  'kyongju.ac.kr',
-  'kyorin-u.ac.jp',
-  'kyoritsu-ph.ac.jp',
-  'kyoritsu-wu.ac.jp',
-  'kyoto-art.ac.jp',
-  'kyoto-phu.ac.jp',
-  'kyoto-seika.ac.jp',
-  'kyoto-su.ac.jp',
-  'kyoto-u.ac.jp',
-  'kyoto-wu.ac.jp',
-  'kyotogakuen-u.ac.jp',
-  'kyrenia.edu.tr',
-  'kysu.edu',
-  'kyu-dent.ac.jp',
-  'kyu.ac.ug',
-  'kyukyo-u.ac.jp',
-  'kyunghee.ac.kr',
-  'kyungil.ac.kr',
-  'kyungnam.ac.kr',
-  'kyungpook.ac.kr',
-  'kyungsung.ac.kr',
-  'kyungwon.ac.kr',
-  'kyushu-id.ac.jp',
-  'kyushu-ns.ac.jp',
-  'kyushu-u.ac.jp',
-  'kyutech.ac.jp',
-  'kzoo.edu',
-  'labette.edu',
-  'laccd.edu',
-  'lacitycollege.edu',
-  'lackawanna.edu',
-  'lacollege.edu',
-  'ladelta.edu',
-  'ladhs.org',
-  'lafayette.edu',
-  'lagcc.cuny.edu',
-  'lagh-univ.dz',
-  'lagrange.edu',
-  'lahc.edu',
-  'laikipia.ac.ke',
-  'lakeareatech.edu',
-  'lakeheadu.ca',
-  'lakeland.cc.il.us',
-  'lakelandcc.edu',
-  'lakemichigancollege.edu',
-  'lama.lv',
-  'lamar.edu',
-  'lamar.org.mx',
-  'lamarcc.edu',
-  'lamarpa.edu',
-  'lambtoncollege.ca',
-  'lamission.edu',
-  'lamk.fi',
-  'lamolina.edu.pe',
-  'lamp.ac.uk',
-  'lampangvc.ac.th',
-  'lancaster.edu.gh',
-  'lancs.ac.uk',
-  'lander.edu',
-  'lanecc.edu',
-  'lanecollege.edu',
-  'laney.edu',
-  'langara.bc.ca',
-  'langara.ca',
-  'langston.edu',
-  'laniertech.edu',
-  'lansbridge.com',
-  'laredo.edu',
-  'lasalle.edu',
-  'lasalle.edu.co',
-  'lasalleuniversities.net',
-  'lasc.edu',
-  'lasell.edu',
-  'lasierra.edu',
-  'laspositascollege.edu',
-  'laspotech.net',
-  'lassencollege.edu',
-  'lasunigeria.org',
-  'latech.edu',
-  'latrobe.edu.au',
-  'lattc.edu',
-  'lau.edu.lb',
-  'laurea.fi',
-  'laurentian.ca',
-  'lauruscollege.edu',
-  'lautech.edu.ng',
-  'lavc.edu',
-  'laverne.edu',
-  'law.cuny.edu',
-  'lawrence.edu',
-  'lawsonstate.edu',
-  'lazarski.pl',
-  'lbcc.edu',
-  'lbhc.edu',
-  'lboro.ac.uk',
-  'lbtu.lv',
-  'lbu.edu.np',
-  'lbwcc.edu',
-  'lc.edu',
-  'lcat.ac.th',
-  'lcc.edu',
-  'lcc.lt',
-  'lccc.edu',
-  'lccc.wy.edu',
-  'lcct.ac.th',
-  'lclark.edu',
-  'lco.edu',
-  'lcsc.edu',
-  'lcst.ac',
-  'lctu.edu.cn',
-  'lcu.edu.ng',
-  'lcwu.edu.pk',
-  'ldceahd.org',
-  'ldcu.edu.ph',
-  'ldsbc.edu',
-  'le.ac.uk',
-  'lecom.edu',
-  'lee.edu',
-  'leeds.ac.uk',
-  'leedsbeckett.ac.uk',
-  'leedstrinity.ac.uk',
-  'leeward.hawaii.edu',
-  'lef.upn.mx',
-  'lefke.edu.tr',
-  'lehigh.edu',
-  'lehman.cuny.edu',
-  'lemoyne.edu',
-  'lenoircc.edu',
-  'leon.uia.mx',
-  'lesley.edu',
-  'lesroches.edu',
-  'lethbridgecollege.ca',
-  'letran.edu',
-  'letu.edu',
-  'leuphana.de',
-  'lewisu.edu',
-  'lfc.edu',
-  'lfcc.edu',
-  'lfze.hu',
-  'lgpu.lg.ua',
-  'lgu.ac.uk',
-  'lhi.is',
-  'lhs.se',
-  'lhu.edu.tw',
-  'lhup.edu',
-  'lib.klte.hu',
-  'liberty.edu',
-  'libopenuniv-edu.org',
-  'liccsalsl.org',
-  'licet.ac.in',
-  'lidapoly.com',
-  'life.hkbu.edu.hk',
-  'limkokwing.edu.my',
-  'limt.co.uk',
-  'limu.edu.ly',
-  'lincoln.ac.nz',
-  'lincoln.ac.uk',
-  'lincoln.edu',
-  'lindenwood.edu',
-  'linfield.edu',
-  'link.cuhk.edu.hk',
-  'linnbenton.edu',
-  'linnstate.edu',
-  'linton.edu.my',
-  'linuwel.nsw.edu.au',
-  'lipscomb.edu',
-  'lis.ac.uk',
-  'lit.edu',
-  'littlehoop.edu',
-  'littlepriest.edu',
-  'liu.edu.lb',
-  'liu.se',
-  'liuc.it',
-  'liunet.edu',
-  'liv.ac.uk',
-  'livingstone.edu',
-  'lixin.edu.cn',
-  'ljmu.ac.uk',
-  'lka.edu.lv',
-  'lka.lt',
-  'lkka.lt',
-  'llcc.edu',
-  'lltc.edu',
-  'llu.edu',
-  'llu.lv',
-  'lma.lv',
-  'lmc.cs.sunysb.edu',
-  'lmta.lt',
-  'lmu.de',
-  'lmu.edu',
-  'lmu.edu.ng',
-  'lmunet.edu',
-  'lmuza.lv',
-  'ln.edu.hk',
-  'ln.hk',
-  'lnipe.edu',
-  'lnmu.bih.nic.in',
-  'lnnu.edu.cn',
-  'lntu.edu.cn',
-  'lnu.edu.cn',
-  'lnu.edu.ua',
-  'lnu.evis.net.ph',
-  'loc.edu',
-  'lockhaven.edu',
-  'london.ac.uk',
-  'londonmet.ac.uk',
-  'lonestar.edu',
-  'longwood.edu',
-  'lorainccc.edu',
-  'loras.edu',
-  'losmedanos.edu',
-  'losrios.edu',
-  'louisburg.edu',
-  'louisiana.edu',
-  'louisville.edu',
-  'lowercolumbia.edu',
-  'loyno.edu',
-  'loyola.edu',
-  'lp.edu.ua',
-  'lpru.ac.th',
-  'lpu.edu.ph',
-  'lpu.in',
-  'lr.edu',
-  'lrc.edu',
-  'lrcc.edu',
-  'lrguas.ch',
-  'lrsc.edu',
-  'lsb.ie',
-  'lsbf.org.uk',
-  'lsc.edu',
-  'lsco.edu',
-  'lse.ac.uk',
-  'lshtm.ac.uk',
-  'lsmu.edu.ua',
-  'lspa.lanet.lv',
-  'lssu.edu',
-  'lsu-visca.edu.ph',
-  'lsu.ac.zw',
-  'lsu.edu',
-  'lsu.edu.az',
-  'lsua.edu',
-  'lsue.edu',
-  'lsus.edu',
-  'ltc.edu.tw',
-  'ltcc.edu',
-  'ltu.bg',
-  'ltu.edu',
-  'ltu.edu.tw',
-  'lu.ac.ir',
-  'lu.lv',
-  'lu.se',
-  'luanar.ac.mw',
-  'luc.edu',
-  'lucknowuniv.org',
-  'luiss.it',
-  'lumei.edu.cn',
-  'lumhs.edu.pk',
-  'lums.ac.ir',
-  'lums.edu.pk',
-  'lumsa.it',
-  'luna.edu',
-  'lunn.sci-nnov.ru',
-  'lus.ac.bd',
-  'lut.fi',
-  'luth.se',
-  'luther.edu',
-  'luthersem.edu',
-  'luz.ve',
-  'luzerne.edu',
-  'lva.lt',
-  'lvc.edu',
-  'lycoming.edu',
-  'lynchburg.edu',
-  'lyndonstate.edu',
-  'lynn.edu',
-  'lynu.edu.cn',
-  'lyon.edu',
-  'lzmc.edu.cn',
-  'lzu.edu.cn',
-  'lzua.lt',
-  'ma.odessa.ua',
-  'maakhiruniversity.net',
-  'macalester.edu',
-  'macauly.cuny.edu',
-  'macc.edu',
-  'maccormac.edu',
-  'macewan.ca',
-  'macfast.org',
-  'machung.ac.id',
-  'mackenzie.br',
-  'macomb.edu',
-  'madenatalelem.com',
-  'madi.ru',
-  'madisoncollege.edu',
-  'madisonville.kctcs.edu',
-  'madonnauniversity.edu.ng',
-  'magadhuniversity.org',
-  'mah.se',
-  'mahendradatta.org',
-  'mahidol.ac.th',
-  'mahsa.edu.my',
-  'mahshahriau.ac.ir',
-  'mail.polimi.it',
-  'mail.sacredheart.edu',
-  'mail.sysu.edu.cn',
-  'mail.xhu.edu.cn',
-  'mail2.sysu.edu.cn',
-  'maimonides.edu.ar',
-  'maine.edu',
-  'majancollege.edu.om',
-  'mak.ac.ug',
-  'mala.bc.ca',
-  'malayeru.ac.ir',
-  'malekanpnu.ac.ir',
-  'malone.edu',
-  'maltepe.edu.tr',
-  'mamasaniiau.ac.ir',
-  'man.ac.uk',
-  'man.radom.pl',
-  'manarat.ac.bd',
-  'manas.kg',
-  'manavrachna.edu.in',
-  'manc.edu',
-  'manchester.ac.uk',
-  'mandela.ac.za',
-  'mandhu.com',
-  'mangaloreuniversity.ac.in',
-  'manhattan.edu',
-  'manhattantech.edu',
-  'manipal.edu',
-  'manipur.nic.in',
-  'manit.ac.in',
-  'mannheim.dhbw.de',
-  'manoa.hawaii.edu',
-  'manor.edu',
-  'mans.edu.eg',
-  'mansfield.edu',
-  'manu.edu.mk',
-  'manuu.ac.in',
-  'mapua.edu.ph',
-  'maranatha.edu',
-  'marcusoldham.vic.edu.au',
-  'margu.mari.ru',
-  'marianna-u.ac.jp',
-  'maricopa.edu',
-  'marietta.edu',
-  'marin.edu',
-  'marionmilitary.edu',
-  'marist.edu',
-  'marlboro.edu',
-  'marmara.edu.tr',
-  'marquette.edu',
-  'marshall.edu',
-  'marshall.tstc.edu',
-  'marstu.mari.ru',
-  'martincc.edu',
-  'marun.edu.tr',
-  'maryam.edu.af',
-  'marymount.edu',
-  'maryville.edu',
-  'maryvillecollege.edu',
-  'marywood.edu',
-  'masdar.ac.ae',
-  'maseno.ac.ke',
-  'massasoit.edu',
-  'massasoit.mass.edu',
-  'massbay.edu',
-  'massey.ac.nz',
-  'masu.ru',
-  'matc.edu',
-  'matci.ac.ma',
-  'matnu.edu.lb',
-  'matsu.alaska.edu',
-  'matsuyama-u.ac.jp',
-  'mau.ac.ir',
-  'maua.br',
-  'may.ie',
-  'maybod.ac.ir',
-  'mayland.edu',
-  'mayo.edu',
-  'maysville.kctcs.edu',
-  'mazums.ac.ir',
-  'mbc.edu',
-  'mbl.edu',
-  'mbro.ac.uk',
-  'mbs.ac.uk',
-  'mbstu.ac.bd',
-  'mbu.ac.th',
-  'mbzuai.ac.ae',
-  'mc.edu',
-  'mc3.edu',
-  'mcad.edu',
-  'mcast.edu.mt',
-  'mcbu.edu.tr',
-  'mcc.commnet.edu',
-  'mcc.edu',
-  'mccc.edu',
-  'mccd.edu',
-  'mcckc.edu',
-  'mccneb.edu',
-  'mccnh.edu',
-  'mcdaniel.edu',
-  'mcdowelltech.edu',
-  'mcg.edu',
-  'mcgill.ca',
-  'mch.mii.lt',
-  'mchenry.edu',
-  'mci.edu',
-  'mcl.edu.ph',
-  'mclennan.edu',
-  'mcm.edu',
-  'mcmaster.ca',
-  'mcneese.edu',
-  'mcpherson.edu',
-  'mcst.edu.sa',
-  'mctc.edu',
-  'mcu.ac.in',
-  'mcu.ac.kr',
-  'mcu.ac.th',
-  'mcu.edu.ph',
-  'mcu.edu.tw',
-  'mcw.edu',
-  'mdc.edu',
-  'mdh.se',
-  'mdis.uz',
-  'mdp.edu.ar',
-  'mdsuajmer.ac.in',
-  'mdu.ac.jp',
-  'mdu.edu.az',
-  'mdurohtak.com',
-  'mdw.ac.at',
-  'mdx.ac.uk',
-  'mec.cuny.edu',
-  'mecc.edu',
-  'mechnik.spb.ru',
-  'med.ic.ac.uk',
-  'med.sgu.ru',
-  'medeniyet.edu.tr',
-  'medilam.hbi.ir',
-  'medin.nsc.ru',
-  'medipol.edu.tr',
-  'mediu.edu.my',
-  'medsab.ac.ir',
-  'meduni-graz.at',
-  'meduniv.lviv.ua',
-  'meduniver.gomel.by',
-  'meduniversity-plovdiv.bg',
-  'meduniwien.at',
-  'mef.edu.tr',
-  'megatrend-edu.net',
-  'megatrend.edu.rs',
-  'mehmetakif.edu.tr',
-  'meiji-u.ac.jp',
-  'meiji.ac.jp',
-  'meijigakuin.ac.jp',
-  'meijo-u.ac.jp',
-  'meikai.ac.jp',
-  'meio-u.ac.jp',
-  'meisei-u.ac.jp',
-  'mejiro.ac.jp',
-  'mekong.edu.kh',
-  'members.rotfl.com',
-  'memphis.edu',
-  'mendelu.cz',
-  'mendocino.edu',
-  'menofia.edu.eg',
-  'mercer.edu',
-  'mercubuana.ac.id',
-  'mercy.edu',
-  'mercyhurst.edu',
-  'mercymavericks.edu',
-  'meredith.edu',
-  'meridiancc.edu',
-  'merkur-fh.org',
-  'merrimack.edu',
-  'merritt.edu',
-  'mersin.edu.tr',
-  'merz-akademie.de',
-  'mesabirange.edu',
-  'mesacc.edu',
-  'mesalands.edu',
-  'mesi.ru',
-  'messiah.edu',
-  'metro-hs.ac.jp',
-  'metro-u.ac.jp',
-  'metropolia.fi',
-  'metropolitan.edu.rs',
-  'metrostate.edu',
-  'metrouni.edu.bd',
-  'metu.edu.tr',
-  'meu.edu.jo',
-  'mfh-iserlohn.de',
-  'mfu.ac.th',
-  'mga.edu',
-  'mgavm.ru',
-  'mgccc.edu',
-  'mgimo.ru',
-  'mgkvp.ac.in',
-  'mgpu.gomel.by',
-  'mgri-rggru.ru',
-  'mgsu.norna.ru',
-  'mgsubikaner.ac.in',
-  'mgu.ac.in',
-  'mgu.ac.jp',
-  'mgu.bg',
-  'mgul.ac.ru',
-  'mguniversity.ac.in',
-  'mh-hannover.de',
-  'mh-luebeck.de',
-  'mh-trossingen.de',
-  'mhcc.edu',
-  'miami.edu',
-  'miamioh.edu',
-  'mica.edu',
-  'middlebury.edu',
-  'middlesbro.ac.uk',
-  'middlesex.mass.edu',
-  'middlesexcc.edu',
-  'midlandstech.edu',
-  'midmich.edu',
-  'midsouthcc.edu',
-  'midwestern.edu',
-  'mie-chukyo-u.ac.jp',
-  'mie-u.ac.jp',
-  'miet.ru',
-  'mif.hu',
-  'miigaik.ru',
-  'miit.ru',
-  'miit.unikl.edu.my',
-  'mil.lv',
-  'miles.edu',
-  'milescc.edu',
-  'millersville.edu',
-  'milligan.edu',
-  'millikin.edu',
-  'millsaps.edu',
-  'mimasaka.ac.jp',
-  'mineralarea.edu',
-  'minerva.edu',
-  'mines-ales.fr',
-  'mines-ales.org',
-  'mines.edu',
-  'mines.u-nancy.fr',
-  'minia.edu.eg',
-  'minneapolis.edu',
-  'minnesota.edu',
-  'minotstateu.edu',
-  'miom.org',
-  'mipt.ru',
-  'miracosta.edu',
-  'mirbis.ru',
-  'mirea.ru',
-  'miryang.ac.kr',
-  'misis.ru',
-  'missioncollege.edu',
-  'missouri.edu',
-  'missouristate.edu',
-  'mist.ac.bd',
-  'mit.edu',
-  'mitchellcc.edu',
-  'mitchelltech.edu',
-  'mitethiopia.edu.et',
-  'mitindia.edu',
-  'mitwpu.edu.in',
-  'miu.ac.ir',
-  'miu.by',
-  'miu.edu.pk',
-  'miu.ru',
-  'miuegypt.edu.eg',
-  'miun.se',
-  'miva.university',
-  'miyakyo-u.ac.jp',
-  'miyasankei-u.ac.jp',
-  'miyazaki-med.ac.jp',
-  'miyazaki-mu.ac.jp',
-  'miyazaki-u.ac.jp',
-  'mjc.edu',
-  'mjpru.ac.in',
-  'mju.ac.kr',
-  'mju.ac.th',
-  'mku.ac.ke',
-  'mku.edu.tr',
-  'mkuhyd.com',
-  'mkv2.mah.nic.in',
-  'ml.refer.org',
-  'mlaw.edu',
-  'mlqu.edu.ph',
-  'mlsbu.ac.uk',
-  'mlsu.ac.in',
-  'mma.ru',
-  'mmarau.ac.ke',
-  'mmc.edu',
-  'mmibordeaux.com',
-  'mmm.edu',
-  'mmsu.edu.ph',
-  'mmu.ac.ke',
-  'mmu.ac.kr',
-  'mmu.ac.tz',
-  'mmu.ac.ug',
-  'mmu.ac.uk',
-  'mmu.edu.my',
-  'mmust.ac.ke',
-  'mnit.ac.in',
-  'mnma.ac.tz',
-  'mnnit.ac.in',
-  'mnstate.edu',
-  'mnsu.edu',
-  'mnsuet.edu.pk',
-  'mnu.edu.mv',
-  'mnwest.edu',
-  'modares.ac.ir',
-  'modern-academy.edu.eg',
-  'moestopo.ac.id',
-  'mofidu.ac.ir',
-  'mogadishuuniversity.com',
-  'mohave.edu',
-  'mohawkcollege.ca',
-  'mokpo.ac.kr',
-  'mokwon.ac.kr',
-  'molloy.edu',
-  'monash.edu',
-  'monash.edu.au',
-  'monash.edu.my',
-  'monmouth.edu',
-  'monmouthcollege.edu',
-  'monroecc.edu',
-  'monroeccc.edu',
-  'monroecollege.edu',
-  'montaigne.u-bordeaux.fr',
-  'montana.edu',
-  'montcalm.edu',
-  'montclair.edu',
-  'montesquieu.u-bordeaux.fr',
-  'montgomery.edu',
-  'montgomerycollege.edu',
-  'montreat.edu',
-  'moodle.ara.ac.nz',
-  'moorelanduniversity.com',
-  'moorparkcollege.edu',
-  'morainepark.edu',
-  'morainevalley.edu',
-  'moravian.edu',
-  'moreheadstate.edu',
-  'morehouse.edu',
-  'morgan.edu',
-  'morgancc.edu',
-  'morioka-u.ac.jp',
-  'morris.edu',
-  'morrisbrown.edu',
-  'morton.edu',
-  'mosbach.dhbw.de',
-  'mosconsv.ru',
-  'mosgu.ru',
-  'most.gov.mm',
-  'motolinia.com.mx',
-  'mouau.edu.ng',
-  'moultrietech.edu',
-  'mountsaintvincent.edu',
-  'moz.ac.at',
-  'mpbou.org',
-  'mpc.edu',
-  'mpcc.edu',
-  'mpei.ac.ru',
-  'mpgu.su',
-  'mpkv.mah.nic.in',
-  'mpu-prague.cz',
-  'mpu.ac.jp',
-  'mq.edu.au',
-  'mrs.umn.edu',
-  'mrsu.ru',
-  'mrt.ac.lk',
-  'mru.ac.ug',
-  'mruni.eu',
-  'msa.ac.za',
-  'msa.eun.eg',
-  'msaab.ru',
-  'msbcollege.edu',
-  'mscc.edu',
-  'mscfs.edu',
-  'mscok.edu',
-  'msdelta.edu',
-  'mseuf.edu.ph',
-  'msgsu.edu.tr',
-  'mshdiau.ac.ir',
-  'msiu.ru',
-  'msj.edu',
-  'msjc.edu',
-  'mslu.by',
-  'msm.edu',
-  'msmary.edu',
-  'msmc.edu',
-  'msoe.edu',
-  'msruas.ac.in',
-  'mssc.edu',
-  'mssm.edu',
-  'msstate.edu',
-  'mst.edu',
-  'msta.ac.ru',
-  'mstc.edu',
-  'mstu.edu.ru',
-  'mstuca.ru',
-  'msu.ac.th',
-  'msu.ac.zw',
-  'msu.edu',
-  'msu.edu.my',
-  'msu.edu.tr',
-  'msu.mogilev.by',
-  'msu.ru',
-  'msua.edu.mn',
-  'msuac.edu.mn',
-  'msubaroda.ac.in',
-  'msubillings.edu',
-  'msuc.edu.ru',
-  'msudenver.edu',
-  'msue.edu.mn',
-  'msuee.ru',
-  'msuie.ru',
-  'msuiit.edu.ph',
-  'msumain.edu.ph',
-  'msun.edu',
-  'msvu.ca',
-  'mta.ca',
-  'mta.ro',
-  'mtc.edu',
-  'mtc.edu.eg',
-  'mtech.edu',
-  'mtholyoke.edu',
-  'mti.edu.eg',
-  'mtroyal.ca',
-  'mtsac.edu',
-  'mtsu.edu',
-  'mtu.ac.kr',
-  'mtu.edu',
-  'mtu.edu.et',
-  'mtu.ie',
-  'mtuci.ru',
-  'mu-luebeck.de',
-  'mu-pleven.bg',
-  'mu-sofia.bg',
-  'mu-varna.bg',
-  'mu.ac.in',
-  'mu.ac.ke',
-  'mu.ac.zm',
-  'mu.edu.et',
-  'mu.edu.sa',
-  'mu.edu.tr',
-  'mu.fapenet.org',
-  'mubabol.ac.ir',
-  'mubas.ac.mw',
-  'muc.edu',
-  'muc.edu.iq',
-  'muccobs.ac.tz',
-  'muchs.ac.tz',
-  'muctr.edu.ru',
-  'muet.edu.pk',
-  'muh.ru',
-  'mui.ac.ir',
-  'muic.mahidol.ac.th',
-  'muk.ac.ir',
-  'mukogawa-u.ac.jp',
-  'mul.edu.pk',
-  'mum.edu',
-  'mums.ac.ir',
-  'mundragon.edu',
-  'muni.cz',
-  'muni.es',
-  'muq.ac.ir',
-  'murdoch.edu.au',
-  'murni.edu.my',
-  'muroran-it.ac.jp',
-  'mursuky.edu',
-  'musabi.ac.jp',
-  'musashi-tech.ac.jp',
-  'musashi.ac.jp',
-  'musashino-music.ac.jp',
-  'musashino-wu.ac.jp',
-  'musc.edu',
-  'muscatcollege.edu.om',
-  'musicacademy.edu.az',
-  'musik-kons.dk',
-  'musikhochschule-muenchen.de',
-  'muskegoncc.edu',
-  'muskingum.edu',
-  'must.ac.ke',
-  'must.ac.mw',
-  'must.ac.ug',
-  'must.edu.eg',
-  'must.edu.mn',
-  'must.edu.mo',
-  'must.edu.my',
-  'must.edu.sy',
-  'mut.ac.th',
-  'mut.ac.za',
-  'mut.edu.lb',
-  'mutah.edu.jo',
-  'muthesius.de',
-  'muw.edu',
-  'mvc.edu',
-  'mvc.edu.ph',
-  'mvcc.edu',
-  'mvsu.edu',
-  'mwc.edu',
-  'mwcc.edu',
-  'mwsc.edu',
-  'mwsu.edu',
-  'mwu.edu.et',
-  'mxcc.commnet.edu',
-  'my-pharm.ac.jp',
-  'my.cityu.edu.hk',
-  'my.ipleiria.pt',
-  'my.sta.uwi.edu',
-  'myara.ara.ac.nz',
-  'mybrcc.edu',
-  'mycambrian.ca',
-  'mylambton.ca',
-  'mylaurier.ca',
-  'mylcp.net',
-  'mymail.mapua.edu.ph',
-  'myongji.ac.kr',
-  'myport.ac.uk',
-  'myport.port.ac.uk',
-  'myscc.ca',
-  'myseneca.ca',
-  'mytum.de',
-  'myu.ac.jp',
-  'myuct.ac.za',
-  'mzumbe.ac.tz',
-  'mzuni.ac.mw',
-  'n-fukushi.ac.jp',
-  'n-nov.mednet.com',
-  'na.edu',
-  'naa.edu.az',
-  'naba.it',
-  'nacc.edu',
-  'nagano.ac.jp',
-  'nagaokaut.ac.jp',
-  'nagarjunauniversity.ac.in',
-  'nagasaki-u.ac.jp',
-  'nagasakipu.ac.jp',
-  'nagauniv.org.in',
-  'nagoya-cu.ac.jp',
-  'nagoya-ku.ac.jp',
-  'nagoya-u.ac.jp',
-  'nagoya-wu.ac.jp',
-  'nagpur-university.com',
-  'nahrainuniv.edu.iq',
-  'nait.ca',
-  'najafabad-uast.ac.ir',
-  'najah.edu',
-  'nakamura-u.ac.jp',
-  'nalandaopenuniversity.info',
-  'nambu.ac.kr',
-  'nan.rmutl.ac.th',
-  'nancy.archi.fr',
-  'nankyudai.ac.jp',
-  'nanzan-u.ac.jp',
-  'napavalley.edu',
-  'napier.ac.uk',
-  'nara-edu.ac.jp',
-  'nara-su.ac.jp',
-  'nara-u.ac.jp',
-  'nara-wu.ac.jp',
-  'naramed-u.ac.jp',
-  'narauc.ac.jp',
-  'narotama.ac.id',
-  'naruto-u.ac.jp',
-  'nashcc.edu',
-  'nashuacc.edu',
-  'natfiz.bg',
-  'nation.ac.th',
-  'nationalmuseumindia.org',
-  'nau.edu',
-  'nau.edu.ua',
-  'nauss.edu.sa',
-  'nauu.kiev.ua',
-  'navarrocollege.edu',
-  'navy.ac.kr',
-  'nawrozuniversity.com',
-  'nayanova.edu',
-  'naz.edu',
-  'nbu.ac.in',
-  'nbu.ac.jp',
-  'nbu.bg',
-  'nbu.edu.cn',
-  'nbu.edu.sa',
-  'nbut.edu.cn',
-  'nc.edu.sd',
-  'nca.edu.pk',
-  'ncat.edu',
-  'ncbc.edu',
-  'ncc.commnet.edu',
-  'ncc.edu',
-  'ncc.metu.edu.tr',
-  'nccc.edu',
-  'nccu.edu',
-  'nccu.edu.tw',
-  'ncepubj.edu.cn',
-  'ncf.edu',
-  'nchu.edu.tw',
-  'nchulc.edu.tw',
-  'ncirl.ie',
-  'ncktc.edu',
-  'ncl-coll.ac.uk',
-  'ncl.ac.uk',
-  'ncmich.edu',
-  'ncmissouri.edu',
-  'ncnu.edu.tw',
-  'ncpes.edu.tw',
-  'ncstatecollege.edu',
-  'ncstu.ru',
-  'ncsu.edu',
-  'ncta.unl.edu',
-  'nctc.edu',
-  'ncu.edu.cn',
-  'ncu.edu.jm',
-  'ncu.edu.tw',
-  'ncue.edu.tw',
-  'ncuindia.edu',
-  'ncut.edu.cn',
-  'ncwc.edu',
-  'ncyu.edu.tw',
-  'nd.edu',
-  'nd.edu.au',
-  'nda.edu.ng',
-  'ndejjeuniversity.ac.ug',
-  'ndhu.edu.tw',
-  'ndmc.ac.jp',
-  'ndmu.edu.ph',
-  'ndpi.uz',
-  'ndri.nic.in',
-  'ndscs.edu',
-  'ndsu.ac.jp',
-  'ndsu.edu',
-  'ndu.ac.jp',
-  'ndu.edu',
-  'ndu.edu.az',
-  'ndu.edu.lb',
-  'ndu.edu.ng',
-  'ndu.fapenet.org',
-  'nduat.nic.in',
-  'ndus.edu',
-  'neau.edu.cn',
-  'nebrwesleyan.edu',
-  'nebuta.ac.jp',
-  'necc.edu',
-  'necc.mass.edu',
-  'neduet.edu.pk',
-  'neelain.edu.sd',
-  'nefu.edu.cn',
-  'nehu.ac.in',
-  'neic.nsk.su',
-  'neijtc.edu.cn',
-  'neit.edu',
-  'nemcc.edu',
-  'nenu.edu.cn',
-  'neo.edu',
-  'neosho.edu',
-  'nes.ru',
-  'netc.edu',
-  'netcomsa.com',
-  'network.rca.ac.uk',
-  'neu.edu',
-  'neu.edu.cn',
-  'neu.edu.ph',
-  'neu.edu.tr',
-  'neu.edu.vn',
-  'neub.edu.bd',
-  'neumann.edu',
-  'neuq.edu.cn',
-  'neusoft.edu.cn',
-  'nevada.edu',
-  'nevsehir.edu.tr',
-  'newasia.bj.edu.cn',
-  'newberry.edu',
-  'newcastle.edu.au',
-  'newcollege.ac.uk',
-  'newcollege.edu',
-  'neweracollege.ac.bw',
-  'newhaven.edu',
-  'newpaltz.edu',
-  'newport.ac.uk',
-  'newports.edu.pk',
-  'newriver.edu',
-  'newtonpaiva.br',
-  'newworld.ac',
-  'nfcc.edu',
-  'nfu.edu.tw',
-  'ngasu.sci-nnov.ru',
-  'ngha.med.sa',
-  'ngu.ac.in',
-  'ngu.ac.jp',
-  'nha-bg.org',
-  'nhc.edu',
-  'nhcc.edu',
-  'nhctc.edu.tw',
-  'nhh.no',
-  'nhltc.edu.tw',
-  'nhti.edu',
-  'nhtv.nl',
-  'nhu.edu.tw',
-  'nhv.se',
-  'ni.ac.rs',
-  'nia.edu.tw',
-  'niab.org.pk',
-  'niacc.edu',
-  'niagara.edu',
-  'niagaracc.suny.edu',
-  'niagaracollege.ca',
-  'nias.ac.jp',
-  'nibm.lk',
-  'nibs.ac.ke',
-  'nic.bc.ca',
-  'nic.edu',
-  'nicc.edu',
-  'nicholls.edu',
-  'nicoletcollege.edu',
-  'nida.ac.th',
-  'nifs-k.ac.jp',
-  'nigde.edu.tr',
-  'nih.no',
-  'nihon-u.ac.jp',
-  'niigata-pharm.ac.jp',
-  'niigata-u.ac.jp',
-  'niigataum.ac.jp',
-  'nilai.edu.my',
-  'nilc.spb.ru',
-  'nileu.edu.eg',
-  'nilevalley.edu.sd',
-  'nimhans.kar.nic.in',
-  'nims.ap.nic.in',
-  'nims.edu.in',
-  'nims.net.in',
-  'nipissingu.ca',
-  'nirmauni.ac.in',
-  'nisantasi.edu.tr',
-  'nishitech.ac.jp',
-  'nishogakusha-u.ac.jp',
-  'nisikyu-u.ac.jp',
-  'nit.ac.in',
-  'nit.ac.ir',
-  'nit.ac.jp',
-  'nita.ac.in',
-  'nitandhra.ac.in',
-  'nitap.in',
-  'nitc.ac.in',
-  'nitdelhi.ac.in',
-  'nitdgp.ac.in',
-  'nitech.ac.jp',
-  'nitgoa.ac.in',
-  'nith.ac.in',
-  'nith.no',
-  'nitie.edu',
-  'nitj.ac.in',
-  'nitjsr.ac.in',
-  'nitk.ac.in',
-  'nitk.edu.in',
-  'nitkkr.net',
-  'nitm.ac.in',
-  'nitmanipur.ac.in',
-  'nitmz.ac.in',
-  'nitnagaland.ac.in',
-  'nitp.ac.in',
-  'nitpy.ac.in',
-  'nitrkl.ac.in',
-  'nitrr.ac.in',
-  'nits.ac.in',
-  'nitsikkim.ac.in',
-  'nitsri.net',
-  'nitt.edu',
-  'nittai.ac.jp',
-  'nituk.ac.in',
-  'nitw.ernet.in',
-  'niu.edu',
-  'niu.edu.tw',
-  'niu.org.uk',
-  'niuitmo.ru',
-  'nivadhana.ac.th',
-  'njau.edu.cn',
-  'njc.edu',
-  'njcu.edu',
-  'njfu.edu.cn',
-  'njim.edu.cn',
-  'njit.edu',
-  'njmu.edu.cn',
-  'njnu.edu.cn',
-  'njtu.edu.cn',
-  'nju.edu.cn',
-  'njuct.edu.cn',
-  'njue.edu.cn',
-  'njupt.edu.cn',
-  'njust.edu.cn',
-  'njutcm.edu.cn',
-  'njuts.cn',
-  'nknu.edu.tw',
-  'nkrriwf.pl',
-  'nku.edu',
-  'nku.edu.tr',
-  'nku.nankai.edu.cn',
-  'nkumbauniversity.ac.ug',
-  'nkust.edu.tw',
-  'nkzu.kz',
-  'nl.edu',
-  'nla.no',
-  'nlc.bc.ca',
-  'nlh.no',
-  'nls.ac.in',
-  'nlu.edu',
-  'nma.bg',
-  'nmaa.edu.af',
-  'nmc.edu',
-  'nmcc.edu',
-  'nmetau.edu.ua',
-  'nmh.no',
-  'nmhu.edu',
-  'nmims.edu',
-  'nmit.ac.nz',
-  'nmjc.edu',
-  'nmmi.edu',
-  'nmmu.ac.za',
-  'nms.ac.jp',
-  'nmsu.edu',
-  'nmsua.edu',
-  'nmt.edu',
-  'nmu.ac.in',
-  'nmu.edu',
-  'nmu.edu.ua',
-  'nmu.org.ua',
-  'nnc.edu',
-  'nntu.sci-nnov.ru',
-  'nny.edu.tr',
-  'noah.edu.gr',
-  'noc.edu',
-  'nodai.ac.jp',
-  'nodak.edu',
-  'nommensen.org',
-  'nooruse.ee',
-  'nordakademie.de',
-  'normandale.edu',
-  'northampton.ac.uk',
-  'northampton.edu',
-  'northark.edu',
-  'northcentralcollege.edu',
-  'northeast.edu',
-  'northeastern.edu',
-  'northeaststate.edu',
-  'northern.edu',
-  'northgatech.edu',
-  'northlakecollege.edu',
-  'northland.edu',
-  'northlandcollege.edu',
-  'northshore.edu',
-  'northsouth.edu',
-  'northumbria.ac.uk',
-  'northwestcollege.edu',
-  'northwestern.edu',
-  'northwesterncollege.edu',
-  'northwestms.edu',
-  'northweststate.edu',
-  'northwood.edu',
-  'norton.edu.kh',
-  'norwich.edu',
-  'nosu.ru',
-  'notredame.ac.jp',
-  'nottingham.ac.uk',
-  'nottingham.edu.cn',
-  'nottingham.edu.my',
-  'nou.edu.ng',
-  'nou.edu.tw',
-  'nova.edu',
-  'novasbe.unl.pt',
-  'novenauniversity.edu.ng',
-  'novsu.ac.ru',
-  'np.ac.rs',
-  'np.edu',
-  'np.edu.sg',
-  'npc.edu',
-  'npcc.edu',
-  'npcts.edu',
-  'nps.edu',
-  'npttc.edu.tw',
-  'npu.edu.ua',
-  'npust.edu.tw',
-  'nr.edu',
-  'nrao.edu',
-  'ns2.uni-ak.ac.at',
-  'nsa.bg',
-  'nsac.ns.ca',
-  'nsau.edu.ru',
-  'nsbm.lk',
-  'nscad.ns.ca',
-  'nscc.edu',
-  'nsmc.edu.cn',
-  'nsmu.ru',
-  'nstu.edu.bd',
-  'nstu.ru',
-  'nsu.ac.jp',
-  'nsu.ac.kr',
-  'nsu.edu',
-  'nsu.edu.np',
-  'nsu.ru',
-  'nsuk.edu.ng',
-  'nsula.edu',
-  'nsuok.edu',
-  'nsut.ac.in',
-  'nsysu.edu.tw',
-  'nt.gov.au',
-  'ntb.ch',
-  'ntc.edu',
-  'ntca.edu.tw',
-  'ntcc.edu',
-  'ntcmn.edu',
-  'ntcn.edu.tw',
-  'ntcpe.edu.tw',
-  'ntctc.edu.tw',
-  'nthu.edu.tw',
-  'ntntc.edu.tw',
-  'ntnu.edu.ng',
-  'ntnu.edu.tw',
-  'ntnu.no',
-  'ntou.edu.tw',
-  'ntptc.edu.tw',
-  'ntpu.edu.tw',
-  'ntruhs.ap.nic.in',
-  'ntti.ac.ke',
-  'ntttc.edu.tw',
-  'ntu.ac.jp',
-  'ntu.ac.uk',
-  'ntu.edu.sg',
-  'ntu.edu.tw',
-  'ntu.kar.net',
-  'ntua.gr',
-  'ntue.edu.tw',
-  'ntust.edu.tw',
-  'ntut.edu.tw',
-  'nu-online.com',
-  'nu.ac.th',
-  'nu.edu',
-  'nu.edu.af',
-  'nu.edu.bd',
-  'nu.edu.eg',
-  'nu.edu.kz',
-  'nu.edu.ph',
-  'nu.edu.pk',
-  'nu.edu.sa',
-  'nua.ac.jp',
-  'nuaa.edu.cn',
-  'nub.ac.bd',
-  'nucba.ac.jp',
-  'nuch.ac.kr',
-  'nudt.edu.cn',
-  'nufs.nakanishi.ac.jp',
-  'nugaaluniversity.com',
-  'nui.ie',
-  'nuigalway.ie',
-  'nuis.ac.jp',
-  'nuist.edu.cn',
-  'nuk.edu.tw',
-  'nul.ls',
-  'nulaoag.com',
-  'num.edu.kh',
-  'num.edu.mn',
-  'numed.ncl.ac.uk',
-  'numl.edu.pk',
-  'nunez.edu',
-  'nung.edu.ua',
-  'nuol.edu.la',
-  'nur.ac.rw',
-  'nur.edu',
-  'nure.ua',
-  'nus.edu',
-  'nus.edu.sg',
-  'nus.edu.ws',
-  'nusaputra.ac.id',
-  'nust.ac.zw',
-  'nust.edu.pk',
-  'nuu.edu.tw',
-  'nuu.uz',
-  'nuv.ac.in',
-  'nv.edu',
-  'nvau.ac.jp',
-  'nvcc.edu',
-  'nvit.bc.ca',
-  'nwacc.edu',
-  'nwau.edu.cn',
-  'nwcc.commnet.edu',
-  'nwciowa.edu',
-  'nwfpuet.edu.pk',
-  'nwfsc.edu',
-  'nwicc.edu',
-  'nwktc.edu',
-  'nwmissouri.edu',
-  'nwnu.edu.cn',
-  'nwpi.ru',
-  'nwpu.edu.cn',
-  'nwscc.edu',
-  'nwtc.edu',
-  'nwu.ac.za',
-  'nwu.edu.cn',
-  'nxmc.edu.cn',
-  'nxu.edu.cn',
-  'nycu.edu.tw',
-  'nyenrode.nl',
-  'nyit.edu',
-  'nyit.edu.bh',
-  'nyit.edu.jo',
-  'nymc.edu',
-  'nyme.hu',
-  'nyp.edu.sg',
-  'nyu.edu',
-  'nyuad.nyu.edu',
-  'nyuniversity.net',
-  'o6u.edu.eg',
-  'oakland.edu',
-  'oaklandcc.edu',
-  'oakton.edu',
-  'oakwood.edu',
-  'oamk.fi',
-  'oau.edu.sd',
-  'oauife.edu.ng',
-  'oberlin.edu',
-  'obihiro.ac.jp',
-  'obirin.ac.jp',
-  'obonguniversity.net',
-  'oc.edu',
-  'ocad.ca',
-  'occc.edu',
-  'ocean.edu',
-  'ocha.ac.jp',
-  'octech.edu',
-  'odc.edu',
-  'odessa.edu',
-  'odisee.be',
-  'odu.edu',
-  'odu.edu.tr',
-  'oduduwauniversity.edu.ng',
-  'oecu.jp',
-  'ogasa.odessa.ua',
-  'ogeecheetech.edu',
-  'ogi.edu',
-  'oglethorpe.edu',
-  'ogr.iu.edu.tr',
-  'ogu.edu.tr',
-  'ohio.edu',
-  'ohkagakuen-u.ac.jp',
-  'ohlone.edu',
-  'ohsu.edu',
-  'ohtani-w.ac.jp',
-  'ohu-u.ac.jp',
-  'ohu.edu.tr',
-  'oist.jp',
-  'oit.ac.jp',
-  'oit.edu',
-  'oita-med.ac.jp',
-  'oita-nhs.ac.jp',
-  'oita-u.ac.jp',
-  'oiu.edu.sd',
-  'oiu.oiu.ac.jp',
-  'oiuw.oiu.ac.jp',
-  'ojaiusd.org',
-  'oka-pu.ac.jp',
-  'okan.edu.tr',
-  'okanagan.bc.ca',
-  'okayama-u.ac.jp',
-  'okbu.edu',
-  'okcu.edu',
-  'okigei.ac.jp',
-  'okinawa-u.ac.jp',
-  'okiu.ac.jp',
-  'okstate.edu',
-  'olemiss.edu',
-  'olivet.edu',
-  'olivetcollege.edu',
-  'ollusa.edu',
-  'olmeca.edu.mx',
-  'olympia.edu.my',
-  'omancollege.edu.om',
-  'omgau.ru',
-  'omgtu.ru',
-  'omgups.ru',
-  'oml.pt',
-  'omsk-osma.ru',
-  'omsk.edu',
-  'omu.edu.ly',
-  'omu.edu.tr',
-  'oneonta.edu',
-  'ontariotechu.ca',
-  'ontariotechu.net',
-  'onu.edu',
-  'onu.edu.ua',
-  'oouagoiwoye.edu.ng',
-  'op.iitg.ac.in',
-  'op.org',
-  'open.ac.uk',
-  'openpolytechnic.ac.nz',
-  'openu.ac.il',
-  'opu.odessa.ua',
-  'oradeauniversity.co',
-  'oradeauniversity.com',
-  'orangecoastcollege.edu',
-  'oregonstate.edu',
-  'orkhon.edu.mn',
-  'ort.edu.uy',
-  'oru.edu',
-  'oru.se',
-  'orun.ru',
-  'oryxschool.qa',
-  'osaft.odessa.ua',
-  'osaka-cu.ac.jp',
-  'osaka-dent.ac.jp',
-  'osaka-gaidai.ac.jp',
-  'osaka-geidai.ac.jp',
-  'osaka-gu.ac.jp',
-  'osaka-kyoiku.ac.jp',
-  'osaka-med.ac.jp',
-  'osaka-sandai.ac.jp',
-  'osaka-shoin.ac.jp',
-  'osaka-u.ac.jp',
-  'osaka-ue.ac.jp',
-  'osaka-wu.ac.jp',
-  'osakac.ac.jp',
-  'osakafu-u.ac.jp',
-  'oshmed.com',
-  'osmania.ac.in',
-  'osmaniye.edu.tr',
-  'osmu.odessa.ua',
-  'ostfalia.de',
-  'ostimteknik.edu.tr',
-  'osu.ac.jp',
-  'osu.cz',
-  'osu.edu',
-  'osu.ru',
-  'osustech.edu.ng',
-  'oswego.edu',
-  'otago.ac.nz',
-  'otani.ac.jp',
-  'otaru-uc.ac.jp',
-  'otc.edu',
-  'oteima.ac.pa',
-  'otemae.ac.jp',
-  'otemon.ac.jp',
-  'oth-aw.de',
-  'otsuma.ac.jp',
-  'otterbein.edu',
-  'ou.ac.lk',
-  'ou.ac.uk',
-  'ou.dk',
-  'ou.edu',
-  'ou.edu.vn',
-  'ou.nl',
-  'ouc.ac.cy',
-  'ouc.edu.cn',
-  'ouhk.edu.hk',
-  'ouhs.ac.jp',
-  'ouk.edu.tw',
-  'oulu.fi',
-  'oum.edu.my',
-  'oups.ac.jp',
-  'ous.ac.jp',
-  'ous.edu.sd',
-  'out.ac.tz',
-  'ovidunivconstanta-edu.org',
-  'owens.edu',
-  'owensboro.kctcs.edu',
-  'owu.edu',
-  'ox.ac.uk',
-  'oxford.ac.uk',
-  'oxnardcollege.edu',
-  'oxy.edu',
-  'oyu.edu.az',
-  'ozarka.edu',
-  'ozarks.edu',
-  'ozu.edu.tr',
-  'ozyegin.edu.tr',
-  'p.lodz.pl',
-  'pa.edu.az',
-  'pac.by',
-  'pace.edu',
-  'pacific.edu',
-  'pacificu.edu',
-  'pacuc.edu.gh',
-  'pacuniversity.ac.ke',
-  'paderborn.de',
-  'padmavatiwomen-univ.org',
-  'pafkiet.edu.pk',
-  'paichai.ac.kr',
-  'paine.edu',
-  'paisley.ac.uk',
-  'pakaims.edu',
-  'pakaims.edu.pk',
-  'pakistanhomoeopathy.com',
-  'palamuruuniversity.ac.in',
-  'palermo.edu',
-  'palmbeachstate.edu',
-  'palomar.edu',
-  'paloverde.edu',
-  'pam.szczecin.pl',
-  'pamir.edu.af',
-  'pamlicocc.edu',
-  'pamukkale.edu.tr',
-  'panam.edu',
-  'pancabudi.ac.id',
-  'panimalar.ac.in',
-  'panimalarengineeringcollegechennai.ac.in',
-  'panola.edu',
-  'panteion.gr',
-  'paramadina.ac.id',
-  'paris-sorbonne.fr',
-  'paris.ensam.fr',
-  'paris4.sorbonne.fr',
-  'parisjc.edu',
-  'parisnanterre.fr',
-  'park.edu',
-  'parkland.edu',
-  'paruluniversity.ac.in',
-  'parwan.edu.af',
-  'pasadena.edu',
-  'pasim.ac.id',
-  'pass26.edu.mk',
-  'patrickhenry.edu',
-  'pau.ac.pg',
-  'pau.edu',
-  'pau.edu.ng',
-  'paulquinn.edu',
-  'pauluniversity.edu.ng',
-  'payap.ac.th',
-  'pb.bialystok.pl',
-  'pbac.edu',
-  'pcc.edu',
-  'pccc.edu',
-  'pcci.edu',
-  'pccu.edu.tw',
-  'pccua.edu',
-  'pcdp.edu.sa',
-  'pcom.edu',
-  'pct.edu',
-  'pctu.edu.vn',
-  'pcu.ac.kr',
-  'pcu.edu.ph',
-  'pcz.czest.pl',
-  'pdc.edu',
-  'pdeu.ac.in',
-  'pdkv.ac.in',
-  'pdn.ac.lk',
-  'pdpu.ac.in',
-  'pdx.edu',
-  'peace.edu',
-  'pec.ac.in',
-  'pedago.pt',
-  'pedagogica.edu.co',
-  'pedu.edu.pk',
-  'peizheng.com.cn',
-  'pembroke.edu',
-  'pennhighlands.edu',
-  'pensacolastate.edu',
-  'pepperdine.edu',
-  'peralta.edu',
-  'perbanas.ac.id',
-  'perbanas.id',
-  'perdanauniversity.edu.my',
-  'perpetualdalta.edu.ph',
-  'peru.edu',
-  'pes.edu',
-  'petra.ac.id',
-  'pfh-goettingen.de',
-  'pfu.edu.ru',
-  'pfw.edu',
-  'pg.gda.pl',
-  'pgcc.edu',
-  'pgia.ac.lk',
-  'pgimer.nic.in',
-  'pglu.ru',
-  'pgu.ac.ir',
-  'ph-erfurt.de',
-  'ph-freiburg.de',
-  'ph-gmuend.de',
-  'ph-gr.ch',
-  'ph-heidelberg.de',
-  'ph-karlsruhe.de',
-  'ph-ludwigsburg.de',
-  'ph-weingarten.de',
-  'pharmi.uz',
-  'phbern.ch',
-  'phcc.edu',
-  'philadelphia.edu.jo',
-  'philander.edu',
-  'philau.edu',
-  'phillips.edu',
-  'philtheol-augustin.de',
-  'phlu.ch',
-  'phoenix.edu',
-  'phoenixcollege.edu',
-  'phsc.edu',
-  'phsg.ch',
-  'phsz.ch',
-  'phtg.ch',
-  'phw.info',
-  'phystech.edu',
-  'phzg.ch',
-  'phzh.ch',
-  'pi.ac.ae',
-  'piau.ac.ir',
-  'picollege.ca',
-  'pics.edu.pk',
-  'pidc.edu.my',
-  'pieas.edu.pk',
-  'piedmontcc.edu',
-  'pierce.ctc.edu',
-  'piercecollege.edu',
-  'pierpont.edu',
-  'pima.edu',
-  'pimsat-khi.edu.pk',
-  'pine.edu.my',
-  'pinetech.edu',
-  'pio.urbe.it',
-  'pirireis.edu.tr',
-  'pit.edu',
-  'pitt.edu',
-  'pittcc.edu',
-  'pittstate.edu',
-  'pitzer.edu',
-  'piu.ac.ke',
-  'piup.edu.my',
-  'pjtau.edu.in',
-  'pjwstk.edu.pl',
-  'pk.edu.pl',
-  'pkb.edu.my',
-  'pkksabah.edu.my',
-  'pkkt.edu.my',
-  'pknu.ac.kr',
-  'pku.edu.cn',
-  'planwel.edu',
-  'platt.edu',
-  'plattsburgh.edu',
-  'plm.edu.ph',
-  'plu.edu',
-  'plymouth.ac.uk',
-  'plymouth.edu',
-  'pma.ph',
-  'pmbs.ac.id',
-  'pmm.edu.my',
-  'pmu.edu.sa',
-  'pnc.edu',
-  'pnj.ac.id',
-  'pnl.ac.id',
-  'pnt.edu.vn',
-  'pntu.edu.ua',
-  'pnu.ac.ir',
-  'pnum.ac.ir',
-  'pnumanila.com.ph',
-  'pnut.ac.ir',
-  'pnw.edu',
-  'pnwu.edu',
-  'pnzgu.ru',
-  'po.opole.pl',
-  'pointpark.edu',
-  'pol.lublin.pl',
-  'polak.edu.lv',
-  'polban.ac.id',
-  'poli.br',
-  'poliba.it',
-  'police.ac.kr',
-  'poligran.edu.co',
-  'poligto.edu.mx',
-  'polijb.edu.my',
-  'poliku.edu.my',
-  'polimas.edu.my',
-  'polimelaka.edu.my',
-  'polimi.it',
-  'polimuadzam.edu.my',
-  'polines.ac.id',
-  'polinpdg.ac.id',
-  'polipd.edu.my',
-  'polisas.edu.my',
-  'politecjic.edu.co',
-  'polito.it',
-  'polito.uz',
-  'polk.edu',
-  'polnep.ac.id',
-  'polsl.gliwice.pl',
-  'polsl.pl',
-  'poltek-malang.ac.id',
-  'poltekpos.ac.id',
-  'poltesa.ac.id',
-  'poly.edu',
-  'polyibadan.edu.ng',
-  'polymtl.ca',
-  'polytech-lille.fr',
-  'polytech-marseille.fr',
-  'polytechnic-kabul.org',
-  'polytechnic.edu.na',
-  'polytechnique.edu',
-  'polytechnique.fr',
-  'polyu.edu.hk',
-  'polyunwana.net',
-  'pomona.edu',
-  'pomorsu.ru',
-  'pondiuni.org',
-  'poole.ac.jp',
-  'pop-to.rnp.br',
-  'popakademie.de',
-  'port.ac.uk',
-  'portervillecollege.edu',
-  'postech.ac.kr',
-  'postech.edu',
-  'pote.hu',
-  'potsdam.edu',
-  'ppcc.edu',
-  'ppke.hu',
-  'ppu.edu',
-  'pr.ac.rs',
-  'praguecollege.cz',
-  'prairiestate.edu',
-  'prathyusha.edu.in',
-  'pratt.edu',
-  'prattcc.edu',
-  'prcc.edu',
-  'pref.shiga.lg.jp',
-  'presby.edu',
-  'presbyuniversity.edu.gh',
-  'prescott.edu',
-  'presidency.edu.bd',
-  'prestonpak.edu.pk',
-  'princeton.edu',
-  'principia.edu',
-  'privatfh-da.de',
-  'privrednaakademija.edu.rs',
-  'prof.infnet.edu.br',
-  'providence.edu',
-  'prz.rzeszow.pl',
-  'psa.edu.my',
-  'psas.edu.my',
-  'pscabha.edu.sa',
-  'psfa.ru',
-  'psgtech.edu',
-  'psis.edu.my',
-  'psma.ru',
-  'psmza.edu.my',
-  'psp.edu.my',
-  'pspu.ac.ru',
-  'pstcc.edu',
-  'pstu.ac.bd',
-  'pstu.ac.ru',
-  'psu-online.edu.ph',
-  'psu.ac.th',
-  'psu.by',
-  'psu.edu',
-  'psu.edu.ph',
-  'psu.edu.sa',
-  'psu.kz',
-  'psu.palawan.edu.ph',
-  'psu.ru',
-  'psut.edu.jo',
-  'psy.lv',
-  'ptc.edu',
-  'ptcdb.edu.ps',
-  'pte.hu',
-  'ptetjnvu.org',
-  'pth-bb.de',
-  'pth-muenster.de',
-  'pthv.de',
-  'pti.edu',
-  'ptit.edu.vn',
-  'ptpl.edu.my',
-  'ptsb.edu.my',
-  'ptss.edu.my',
-  'ptu.ac.in',
-  'ptu.ac.kr',
-  'ptu.ac.th',
-  'ptuk.edu.ps',
-  'ptuniv.ac.kr',
-  'pu-kumamoto.ac.jp',
-  'pu-toyama.ac.jp',
-  'pu.ac.ke',
-  'pu.edu.af',
-  'pu.edu.np',
-  'pu.edu.pk',
-  'pu.edu.tw',
-  'pu.if.ua',
-  'pu.kielce.pl',
-  'pua.edu.eg',
-  'pub.ac.bd',
-  'pub.ro',
-  'puc-rio.br',
-  'puc.ac.bd',
-  'puc.edu',
-  'puc.edu.kh',
-  'puccamp.br',
-  'puce.edu.ec',
-  'puchd.ac.in',
-  'pucit.edu.pk',
-  'pucminas.br',
-  'pucmm.edu.do',
-  'pucp.edu.pe',
-  'pucpr.br',
-  'pucpr.edu',
-  'pucrs.br',
-  'pucsp.br',
-  'puea.ac.ke',
-  'pueblocc.edu',
-  'pufs.ac.kr',
-  'pugc.edu.pk',
-  'pukyong.ac.kr',
-  'pul.it',
-  'pulaskitech.edu',
-  'puls.edu.pl',
-  'punjabiuniversity.ac.in',
-  'puntlandstateuniversity.com',
-  'puo.edu.my',
-  'puonline.bih.nic.in',
-  'pup.edu.ph',
-  'pupr.edu',
-  'purbuniv.edu.np',
-  'purdue.edu',
-  'purduecal.edu',
-  'purdueglobal.edu',
-  'pusan-e.ac.kr',
-  'pusan.ac.kr',
-  'pusavarsity.org.in',
-  'pusc.it',
-  'pusku.edu.ua',
-  'pust.ac.bd',
-  'pust.net',
-  'pust.urbe.it',
-  'put.ac.ir',
-  'put.poznan.pl',
-  'puterabatam.ac.id',
-  'puts.ac.kr',
-  'puv.fi',
-  'pv-ma.bg',
-  'pvamu.edu',
-  'pvc.maricopa.edu',
-  'pvcc.edu',
-  'pw.edu.pl',
-  'pwc.ac.kr',
-  'pwit.ac.ir',
-  'pwr.edu.pl',
-  'pwr.wroc.pl',
-  'pwsc.alaska.edu',
-  'pwst.krakow.pl',
-  'pwsz.eu',
-  'pwsz.pila.pl',
-  'pwu.com',
-  'pwu.edu',
-  'pz.zgora.pl',
-  'pzhu.edu.cn',
-  'qadissuni.edu.iq',
-  'qatar.cmu.edu',
-  'qatar.northwestern.edu',
-  'qau.edu.pk',
-  'qc.cuny.edu',
-  'qc.edu.sa',
-  'qcc.cuny.edu',
-  'qcc.edu',
-  'qdnet.pl',
-  'qdpi.uz',
-  'qdu.edu.cn',
-  'qfnu.edu.cn',
-  'qhnu.edu.cn',
-  'qhrtvu.edu.cn',
-  'qhu.edu.cn',
-  'qiau.ac.ir',
-  'qmul.ac.uk',
-  'qmw.ac.uk',
-  'qom-iau.ac.ir',
-  'qom.ac.ir',
-  'qou.edu',
-  'qu.edu.az',
-  'qu.edu.qa',
-  'qu.edu.sa',
-  'quadratacademy.com',
-  'qub.ac.uk',
-  'queens.edu',
-  'queensu.ca',
-  'queensuniversity.edu.bd',
-  'quest.edu.pk',
-  'questu.ca',
-  'quincy.edu',
-  'quincycollege.edu',
-  'quinnipiac.edu',
-  'qums.ac.ir',
-  'quran-unv.edu.sd',
-  'qurtuba.edu.pk',
-  'qust.edu.cn',
-  'qut.ac.ir',
-  'qut.edu.au',
-  'qvcc.edu',
-  'qzu.edu.cn',
-  'rabindrabharatiuniversity.net',
-  'racc.edu',
-  'radford.edu',
-  'raffles-university.edu.my',
-  'raghebisf.ac.ir',
-  'rah.ru',
-  'rajagiritech.edu.in',
-  'rajalakshmi.org',
-  'rakmhsu.com',
-  'rakuno.ac.jp',
-  'ram.ac.uk',
-  'ramapo.edu',
-  'ramk.fi',
-  'ranchiuniversity.org.in',
-  'randolph.edu',
-  'rangercollege.edu',
-  'rappahannock.edu',
-  'raritanval.edu',
-  'rau.am',
-  'rau.lv',
-  'rau.ro',
-  'raubikaner.org',
-  'rauheshaus.de',
-  'ravensburg.dhbw.de',
-  'razi.ac.ir',
-  'rbc.edu',
-  'rbni.technion.ac.il',
-  'rca.ac.uk',
-  'rcbc.edu',
-  'rcc.edu',
-  'rcc.mass.edu',
-  'rccc.edu',
-  'rccd.edu',
-  'rcm.ac.uk',
-  'rcm.upr.edu',
-  'rcpi.ie',
-  'rcsi-mub.com',
-  'rcsi.ie',
-  'rcsj.edu',
-  'rct.edu.sa',
-  'rctc.edu',
-  'rcu.ac.zw',
-  'rdg.ac.uk',
-  'rdunijbpin.org',
-  'rea.ru',
-  'rectorat-uh2c.ac.ma',
-  'redcross.ac.jp',
-  'redeemer.ca',
-  'redlandscc.edu',
-  'reduaeh.mx',
-  'reduaz.mx',
-  'reduc.edu.cu',
-  'redwoods.edu',
-  'reed.edu',
-  'reedleycollege.edu',
-  'regent-college.edu',
-  'regent.edu',
-  'regent.edu.gh',
-  'regentghana.net',
-  'regis.edu',
-  'reitaku-u.ac.jp',
-  'rennes-sb.com',
-  'reynolds.edu',
-  'rfh-koeln.de',
-  'rfhsm.ac.uk',
-  'rgata.yaroslavl.ru',
-  'rgtu.net',
-  'rgu.ac.in',
-  'rgu.ac.uk',
-  'rh.ac.uk',
-  'rhbnc.ac.uk',
-  'rhodes.edu',
-  'rhodesstate.edu',
-  'rhul.ac.uk',
-  'riarauniversity.ac.ke',
-  'riau.ac.ir',
-  'ribat.edu.sd',
-  'ric.edu',
-  'rice.edu',
-  'richland.edu',
-  'richlandcollege.edu',
-  'richmond.ac.uk',
-  'richmondcc.edu',
-  'rider.edu',
-  'ridgewater.edu',
-  'rihs.edu.af',
-  'rikkyo.ac.jp',
-  'rio.maricopa.edu',
-  'riohondo.edu',
-  'riphah.edu.pk',
-  'ripon.edu',
-  'ris.ac.jp',
-  'rit.edu',
-  'ritchennai.org',
-  'riths.ac.in',
-  'ritsumei.ac.jp',
-  'riv.edu',
-  'riverland.edu',
-  'rivervalley.edu',
-  'riviera.fr',
-  'riyadh.edu.sa',
-  'rjt.ac.lk',
-  'rku.ac.jp',
-  'rlc.edu',
-  'rma.ac.be',
-  'rmc.ca',
-  'rmc.edu',
-  'rmcc.edu',
-  'rmd.ac.in',
-  'rmit.edu.au',
-  'rmit.edu.vn',
-  'rmkcet.ac.in',
-  'rmkec.ac.in',
-  'rmlau.ac.in',
-  'rmu.edu',
-  'rmutp.ac.th',
-  'rmwc.edu',
-  'rnd.iitg.ac.in',
-  'rnu.edu.ng',
-  'roac.nl',
-  'roanestate.edu',
-  'roanoke.edu',
-  'roanokechowan.edu',
-  'robertmorris.edu',
-  'robeson.edu',
-  'rochester.edu',
-  'rockefeller.edu',
-  'rockford.edu',
-  'rockhurst.edu',
-  'rockinghamcc.edu',
-  'rockvalleycollege.edu',
-  'rocky.edu',
-  'roehampton.ac.uk',
-  'roguecc.edu',
-  'rollins.edu',
-  'roosevelt.edu',
-  'rosary.edu',
-  'rose-hulman.edu',
-  'rose.edu',
-  'rosey.ch',
-  'rossu.edu',
-  'roswell.enmu.edu',
-  'rowan.edu',
-  'royalholloway.ac.uk',
-  'royalroads.ca',
-  'rp.edu.sg',
-  'rpcc.edu',
-  'rpi.edu',
-  'rpiva.lv',
-  'rrcc.edu',
-  'rrcc.mnscu.edu',
-  'rshu.ru',
-  'rsm.nl',
-  'rsmu.da.ru',
-  'rsmu.ru',
-  'rsu.ac.th',
-  'rsu.edu',
-  'rsu.edu.sd',
-  'rsu.ru',
-  'rsuh.ru',
-  'rsuniversity.com',
-  'rsute.ru',
-  'rtc.edu',
-  'rtu.ac.in',
-  'rtu.edu.ph',
-  'rtu.lv',
-  'ru.ac.bd',
-  'ru.ac.th',
-  'ru.ac.za',
-  'ru.acad.bg',
-  'ru.is',
-  'ru.lv',
-  'ru.nl',
-  'rua.edu.kh',
-  'rub.edu.bt',
-  'ruc.dk',
-  'ruc.edu.cn',
-  'ruet.ac.bd',
-  'rufa.edu.kh',
-  'rug.ac.be',
-  'rug.edu.sa',
-  'rug.nl',
-  'ruh.ac.lk',
-  'ruhr-uni-bochum.de',
-  'rule.edu.kh',
-  'rumeli.edu.tr',
-  'rumi.ac.ma',
-  'rums.ac.ir',
-  'run.edu.ng',
-  'runshaw.ac.uk',
-  'rupp.edu.kh',
-  'ruraluniversity-chitrakoot.org',
-  'rusangu-university.edu.zm',
-  'rusoil.net',
-  'rustcollege.edu',
-  'rutgers.edu',
-  'rwth-aachen.de',
-  'rwu.edu',
-  'ryerson.ca',
-  'ryukoku.ac.jp',
-  's.eduhk.hk',
-  'saadcollege.com',
-  'sab.ac.lk',
-  'saba.edu.ge',
-  'sabanciuniv.edu',
-  'sabanciuniv.edu.tr',
-  'sabauni.net',
-  'sabi.eu.com',
-  'sac.edu',
-  'sacramento.mticollege.edu',
-  'sacredheart.edu',
-  'sacrocuore.org',
-  'sadat.edu.af',
-  'sadatacademy.edu.eg',
-  'saddleback.edu',
-  'sadjad.ac.ir',
-  'sadra.ac.ir',
-  'saec.ac.in',
-  'saga-med.ac.jp',
-  'saga-u.ac.jp',
-  'sagami-wu.ac.jp',
-  'sagaruniversity.nic.in',
-  'sagchip.edu',
-  'sage.edu',
-  'sagrado.edu',
-  'sagu.edu',
-  'saic.edu',
-  'saintjoe.edu',
-  'saintleo.edu',
-  'saintmarys.edu',
-  'saintpaul.edu',
-  'sairam.edu.in',
-  'sairamit.edu.in',
-  'sait.ca',
-  'saitama-med.ac.jp',
-  'saitama-u.ac.jp',
-  'saitm.edu.lk',
-  'saito.edu.my',
-  'saiu.ac.ug',
-  'sakarya.edu.tr',
-  'sakhgu.sakhalin.ru',
-  'sakushin-u.ac.jp',
-  'salam.edu.af',
-  'salemcc.edu',
-  'salemuniversity.edu.ng',
-  'salford.ac.uk',
-  'salisbury.edu',
-  'salleurl.edu',
-  'salu.edu.pk',
-  'salvador.edu.ar',
-  'samara.university',
-  'sambalpuruniversitypgc.in',
-  'samchok.ac.kr',
-  'samdu.uz',
-  'samford.edu',
-  'samiit.ru',
-  'samk.fi',
-  'sampsoncc.edu',
-  'samsmu.ru',
-  'sanaaguniversity.com',
-  'sanbeda.edu.ph',
-  'sancarlos.edu.py',
-  'sandau.edu.cn',
-  'sandburg.edu',
-  'sandhills.edu',
-  'sandiego.edu',
-  'sangha.ac.kr',
-  'sangji.ac.kr',
-  'sangmyung.ac.kr',
-  'sangu.ge',
-  'sanjuanbautista.edu',
-  'sanjuancollege.edu',
-  'sanko.edu.tr',
-  'sanmartin.edu.co',
-  'sanno.ac.jp',
-  'sans.edu',
-  'sanskrit.nic.in',
-  'santarosa.edu',
-  'sanxiau.edu.cn',
-  'saojudas.br',
-  'sapanet.ru',
-  'sapc.edu',
-  'sapmed.ac.jp',
-  'sapporo-u.ac.jp',
-  'sarjanawiyata.ac.id',
-  'sas-sd.net',
-  'sas.ac.uk',
-  'saskweb.com',
-  'sastra.ac.in',
-  'sastra.edu',
-  'satavahana.ac.in',
-  'sathyabamauniv.ac.in',
-  'sau.ac.bd',
-  'sau.ac.th',
-  'sau.edu',
-  'sau.edu.pk',
-  'sau.edu.tr',
-  'sau.sumy.ua',
-  'sauder.ubc.ca',
-  'saurashtrauniversity.edu',
-  'saut.ac.tz',
-  'sautech.edu',
-  'savannahstate.edu',
-  'savannahtech.edu',
-  'saveetha.ac.in',
-  'saveetha.com',
-  'saveethaengineering.com',
-  'saxion.edu',
-  'sbc.edu',
-  'sbcc.edu',
-  'sbg.ac.at',
-  'sbmu.ac.ir',
-  'sbs.edu',
-  'sbs.edu.cn',
-  'sbu.ac.ir',
-  'sbu.ac.uk',
-  'sbu.edu',
-  'sbu.edu.tr',
-  'sbuniv.edu',
-  'sc.edu',
-  'sc4.edu',
-  'scad.edu',
-  'scar.utoronto.ca',
-  'scau.edu.cn',
-  'scbaghdad.edu.iq',
-  'scc.edu.tw',
-  'scc.losrios.edu',
-  'scc.spokane.edu',
-  'sccc.edu',
-  'scccd.edu',
-  'scciowa.edu',
-  'sccnc.edu',
-  'sccollege.edu',
-  'sccsc.edu',
-  'sccu.edu.cn',
-  'sce.ac.il',
-  'sch.ac.kr',
-  'schiller.edu',
-  'schillerlondon.ac.uk',
-  'schillermadrid.edu',
-  'schillerparis.com',
-  'schillerstrasbourg.com',
-  'schoolcraft.edu',
-  'schreiner.edu',
-  'sciences-po.fr',
-  'sciencespo-rennes.fr',
-  'sciencespo.fr',
-  'sckans.edu',
-  'sclondon.ac',
-  'scnu.ac.kr',
-  'scnu.edu.cn',
-  'scott.ac.ke',
-  'scottsdalecc.edu',
-  'scp.fi',
-  'scranton.edu',
-  'scripps.edu',
-  'scsu.edu',
-  'sct.edu',
-  'sctcc.edu',
-  'sctech.edu',
-  'sctimst.ker.nic.in',
-  'scu.ac.ir',
-  'scu.ac.kr',
-  'scu.edu',
-  'scu.edu.au',
-  'scu.edu.cn',
-  'scu.edu.tw',
-  'scut.edu.cn',
-  'sdada.edu.cn',
-  'sdau.edu.cn',
-  'sdau.edu.in',
-  'sdcc.edu',
-  'sdcity.edu',
-  'sdi.ac.ir',
-  'sdie.edu.cn',
-  'sdju.edu.cn',
-  'sdmesa.edu',
-  'sdmiramar.edu',
-  'sdmu.edu.cn',
-  'sdnu.edu.cn',
-  'sdsmt.edu',
-  'sdstate.edu',
-  'sdsu.edu',
-  'sdu.dk',
-  'sdu.edu.az',
-  'sdu.edu.cn',
-  'sdu.edu.kz',
-  'sdu.edu.tr',
-  'sdufe.edu.cn',
-  'sdust.edu.cn',
-  'sdut.edu.cn',
-  'sdutcm.edu.cn',
-  'seark.edu',
-  'seas.upenn.edu',
-  'seattleantioch.edu',
-  'seattlecentral.edu',
-  'seattlecolleges.edu',
-  'seattleu.edu',
-  'sebhau.edu.ly',
-  'sec.ac.bd',
-  'secon.edu',
-  'secupv.org',
-  'seeu.edu.mk',
-  'segi.edu.my',
-  'sehan.ac.kr',
-  'sehir.edu.tr',
-  'seian.ac.jp',
-  'seigakuin-univ.ac.jp',
-  'seijo.ac.jp',
-  'seikei.ac.jp',
-  'seinan-gu.ac.jp',
-  'seisen-u.ac.jp',
-  'seiwa-u.ac.jp',
-  'sejong.ac.kr',
-  'sek.edu',
-  'seku.ac.ke',
-  'sekuco.org',
-  'selcuk.edu.tr',
-  'selk.de',
-  'selkirk.bc.ca',
-  'selmauniversity.edu',
-  'selu.edu',
-  'selyeuni.sk',
-  'sem-ums.ac.ir',
-  'semgu.kz',
-  'semnan.ac.ir',
-  'semnaniau.ac.ir',
-  'semo.edu',
-  'sempreceub.com',
-  'semyung.ac.kr',
-  'sendaidaigaku.jp',
-  'senecacollege.ca',
-  'senshu-u.ac.jp',
-  'senzoku.ac.jp',
-  'seokyeong.ac.kr',
-  'seonam.ac.kr',
-  'seoul-e.ac.kr',
-  'seoultech.ac.kr',
-  'seowon.ac.kr',
-  'ses.ac.ir',
-  'setsunan.ac.jp',
-  'setur.fo',
-  'seu.ac.bd',
-  'seu.ac.lk',
-  'seu.edu.cn',
-  'seua.am',
-  'sevntu.com.ua',
-  'sevs.sk',
-  'sewanee.edu',
-  'sfa.ba',
-  'sfasu.edu',
-  'sfb.ac.rw',
-  'sfc.edu',
-  'sfcc.edu',
-  'sfccmo.edu',
-  'sfsu.edu',
-  'sfu.ca',
-  'sg-u.ac.jp',
-  'sg.inter.edu',
-  'sgap.ru',
-  'sgau.ru',
-  'sggw.waw.pl',
-  'sgh.waw.pl',
-  'sghms.ac.uk',
-  'sgma.info',
-  'sgma.kz',
-  'sgpgi.ac.in',
-  'sgu.ac.id',
-  'sgu.ac.jp',
-  'sgu.ac.kr',
-  'sgu.edu',
-  'sgu.edu.cn',
-  'sgu.edu.vn',
-  'sgu.ernet.in',
-  'sgu.ru',
-  'sguc.ac.jp',
-  'sgul.ac.uk',
-  'sh-sipopolytechnic.com',
-  'sh.se',
-  'shahed.ac.ir',
-  'shahroodut.ac.ir',
-  'shahryariau.ac.ir',
-  'shakaijigyo.ac.jp',
-  'shams.edu.eg',
-  'shanghaitech.edu.cn',
-  'shannoncollege.com',
-  'sharda.ac.in',
-  'sharif.ac.ir',
-  'sharjah.ac.ae',
-  'shastacollege.edu',
-  'shawnee.edu',
-  'shawneecc.edu',
-  'shawu.edu',
-  'shbu.ac.ir',
-  'shc.edu',
-  'shcc.edu.cn',
-  'shef.ac.uk',
-  'sheffield.ac.uk',
-  'sheltonstate.edu',
-  'shenkar.ac.il',
-  'sheridan.edu',
-  'sheridancollege.ca',
-  'shfu.edu.cn',
-  'shh.fi',
-  'shibaura-it.ac.jp',
-  'shift.edu.cn',
-  'shiga-med.ac.jp',
-  'shiga-u.ac.jp',
-  'shikoku-u.ac.jp',
-  'shimane-med.ac.jp',
-  'shimane-u.ac.jp',
-  'shimonoseki-cu.ac.jp',
-  'shinawatra.ac.th',
-  'shinhan.ac.kr',
-  'shinshu-u.ac.jp',
-  'ship.edu',
-  'shirayuri.ac.jp',
-  'shirazu.ac.ir',
-  'shisu.edu.cn',
-  'shitennoji.ac.jp',
-  'shizuoka.ac.jp',
-  'shmtu.edu.cn',
-  'shmu.ac.ir',
-  'shmu.edu.cn',
-  'shobhituniversity.ac.in',
-  'shodai.ac.jp',
-  'shoin.ac.jp',
-  'shokei-gakuen.ac.jp',
-  'shomal.ac.ir',
-  'shonan-it.ac.jp',
-  'shoreline.edu',
-  'shorter.edu',
-  'shotoku.ac.jp',
-  'shouhua.net.cn',
-  'showa-u.ac.jp',
-  'shoyaku.ac.jp',
-  'shridharuniversity.ac.in',
-  'shsmu.edu.cn',
-  'shspu.edu.cn',
-  'shsu.edu',
-  'shtdu.edu.cn',
-  'shtu.edu.cn',
-  'shtvu.edu.cn',
-  'shu-bg.net',
-  'shu.ac.uk',
-  'shu.edu',
-  'shu.edu.cn',
-  'shu.edu.tw',
-  'shu.smolensk.su',
-  'shuchiin.ac.jp',
-  'shudo-u.ac.jp',
-  'shufe.edu.cn',
-  'shujitsu.ac.jp',
-  'shukutoku.ac.jp',
-  'shumei-u.ac.jp',
-  'shutcm.edu.cn',
-  'shzu.edu.cn',
-  'sia.ae',
-  'siam.edu',
-  'siba.fi',
-  'sibiu.ro',
-  'sibsiu.kemerovo.su',
-  'sic.edu',
-  'sicau.edu.cn',
-  'sicnu.edu.cn',
-  'siena.edu',
-  'sierracollege.edu',
-  'siewerth-akademie.de',
-  'sifc.edu',
-  'sigu7.jussieu.fr',
-  'siirt.edu.tr',
-  'sil.edu.pe',
-  'silla.ac.kr',
-  'silpakorn.edu',
-  'sim.edu.sg',
-  'simhapuriuniv.ac.in',
-  'simmons.edu',
-  'simmonscollegeky.edu',
-  'simons-rock.edu',
-  'simpson.edu',
-  'simt.edu.la',
-  'sinclair.edu',
-  'singaporetech.edu.sg',
-  'singhaniauniversity.ac.in',
-  'singidunum.edu.rs',
-  'sinnaruniv.edu.sd',
-  'sinop.edu.tr',
-  'sinus.ac.id',
-  'sipi.edu',
-  'sirnak.edu.tr',
-  'sisekaitse.ee',
-  'siskiyous.edu',
-  'sissa.it',
-  'sisu.edu.cn',
-  'sit.ac.jp',
-  'siu-heidelberg.de',
-  'siu.ac.jp',
-  'siu.edu',
-  'siu.edu.bd',
-  'siu.edu.in',
-  'siue.edu',
-  'siust.edu.sy',
-  'sjc.edu',
-  'sjca.edu',
-  'sjcc.edu',
-  'sjcme.edu',
-  'sjcsf.edu',
-  'sjdlc.com',
-  'sjp.ac.lk',
-  'sjrstate.edu',
-  'sjs.ac.kr',
-  'sjsm.org',
-  'sjsmit.edu.tw',
-  'sjsu.edu',
-  'sjsv.nic.in',
-  'sjtu.edu.cn',
-  'sju.edu',
-  'sjvc.edu',
-  'sjzu.edu.cn',
-  'ska.khio.no',
-  'skagit.edu',
-  'skc.edu',
-  'skema.edu',
-  'skhu.ac.kr',
-  'skidmore.edu',
-  'skku.ac.kr',
-  'skku.edu',
-  'skltshu.ac.in',
-  'skmu.edu.in',
-  'sku.ac.ir',
-  'skuastkashmir.ac.in',
-  'skums.ac.ir',
-  'skuniv.ac.kr',
-  'skuniv.ap.nic.in',
-  'skylinecollege.edu',
-  'skylineuniversity.com',
-  'sl.psu.edu',
-  'slam.katowice.pl',
-  'slbsrsv.ac.in',
-  'slc-sflu.edu.ph',
-  'slc.edu',
-  'slcc.edu',
-  'slcn.ac.jp',
-  'sliate.net',
-  'sliit.lk',
-  'slu.cz',
-  'slu.edu',
-  'slu.edu.ph',
-  'slu.se',
-  'smarcos.br',
-  'smc.edu',
-  'smcc.edu',
-  'smccd.edu',
-  'smccme.edu',
-  'smcks.edu',
-  'smcm.edu',
-  'smcsc.edu',
-  'smcvt.edu',
-  'smith.edu',
-  'smithseminary.org',
-  'smiu.edu.pk',
-  'smkfomra.net',
-  'smmu.edu.cn',
-  'smolny-un.spb.ru',
-  'smsu.edu',
-  'smtafe.wa.edu.au',
-  'smtu.ru',
-  'smu.ac.kr',
-  'smu.ac.uk',
-  'smu.ac.za',
-  'smu.ca',
-  'smu.edu',
-  'smu.edu.in',
-  'smu.edu.ph',
-  'smu.edu.sg',
-  'smumn.edu',
-  'sndt.edu',
-  'snead.edu',
-  'snhu.edu',
-  'snnu.edu.cn',
-  'snow.edu',
-  'sns.it',
-  'snspa.ro',
-  'snu.ac.kr',
-  'snu.edu',
-  'snu.edu.ua',
-  'snue.ac.kr',
-  'snuniv.ac.in',
-  'snut.ac.kr',
-  'soai.ac.jp',
-  'soas.ac.uk',
-  'soauniversity.ac.in',
-  'socc.edu',
-  'sofia.edu',
-  'sogang.ac.kr',
-  'sohag-univ.edu.eg',
-  'soharuni.edu.om',
-  'soka.ac.jp',
-  'soken.ac.jp',
-  'solacc.edu',
-  'solano.edu',
-  'solent.ac.uk',
-  'solusi.ac.zw',
-  'somaiya.edu',
-  'somerset.kctcs.edu',
-  'somtech.org',
-  'songwon.ac.kr',
-  'sonoda-u.ac.jp',
-  'sonoma.edu',
-  'sookmyung.ac.kr',
-  'soongsil.ac.kr',
-  'sophia.ac.jp',
-  'soran.edu.iq',
-  'sorbon.fr',
-  'sorbonne-universite.fr',
-  'sorbonne.ae',
-  'sote.hu',
-  'sothebysinstitutelondon.com',
-  'soton.ac.uk',
-  'sou.edu',
-  'southalabama.edu',
-  'southark.edu',
-  'southasianuniversity.org',
-  'southcentral.edu',
-  'southeast.edu',
-  'southeast.kctcs.edu',
-  'southeasterntech.edu',
-  'southeastmissourihospitalcollege.edu',
-  'southeastmn.edu',
-  'southeasttech.edu',
-  'southern.edu',
-  'southern.edu.bd',
-  'southernct.edu',
-  'southernwv.edu',
-  'southflorida.edu',
-  'southgatech.edu',
-  'southmetrotafe.wa.edu.au',
-  'southmountaincc.edu',
-  'southplainscollege.edu',
-  'southside.edu',
-  'southwest.tn.edu',
-  'southwestern.edu',
-  'southwesterncc.edu',
-  'southwestgatech.edu',
-  'sowela.edu',
-  'sowmesaraiau.ac.ir',
-  'sp.edu.sg',
-  'sp.senac.br',
-  'spa.ac.in',
-  'spartanmed.org',
-  'spbau.ru',
-  'spbgasu.ru',
-  'spbgau.spb.ru',
-  'spbguki.ru',
-  'spbiir.ru',
-  'spbstu.ru',
-  'spbtei.ru',
-  'spbu.ru',
-  'spbuwc.ru',
-  'spcc.edu',
-  'spcollege.edu',
-  'spcpa.ru',
-  'spiruharet.ro',
-  'spjain.org',
-  'spmi.edu.ru',
-  'spnu.ac.ir',
-  'spokanefalls.edu',
-  'spscc.ctc.edu',
-  'spsmb.cz',
-  'spsmma.com',
-  'spu.ac.jp',
-  'spu.ac.ke',
-  'spu.ac.th',
-  'spu.ac.za',
-  'spu.ba',
-  'spu.edu',
-  'spu.edu.ph',
-  'spuniv.org',
-  'spuvvn.edu',
-  'squ.edu.om',
-  'squareit.edu.in',
-  'srbiau.ac.ir',
-  'src.edu',
-  'srh-berlin.de',
-  'sriramachandra.edu.in',
-  'srisathyasai.org.in',
-  'srkdc.org',
-  'srmap.edu.in',
-  'srmeaswari.ac.in',
-  'srmuniv.ac.in',
-  'srtmun.org',
-  'srttu.edu',
-  'sru.edu',
-  'sru.edu.kh',
-  'sruc.ac.uk',
-  'ssaa.ru',
-  'ssaba.smr.ru',
-  'ssau.ru',
-  'ssc.edu',
-  'sscc.edu',
-  'sscok.edu',
-  'sse.army.gr',
-  'sse.gr',
-  'ssea.runnet.ru',
-  'ssees.ac.uk',
-  'sseriga.edu.lv',
-  'sseu.ru',
-  'ssgmce.org',
-  'ssms.edu.pk',
-  'ssmu.ru',
-  'ssn.edu.in',
-  'ssst.edu.ba',
-  'sssup.it',
-  'ssttu.samara.ru',
-  'sstu-edu.ru',
-  'sstu.samara.ru',
-  'ssu.ac.ir',
-  'ssu.ac.jp',
-  'ssu.ac.kr',
-  'ssu.edu.ng',
-  'ssu.edu.ph',
-  'ssu.komi.com',
-  'ssu.samara.ru',
-  'ssuet.edu.pk',
-  'ssus.ac.in',
-  'ssvv.up.nic.in',
-  'st-and.ac.uk',
-  'st-andrews.ac.uk',
-  'st-aug.edu',
-  'st-georgen.uni-frankfurt.de',
-  'st-patricks.ac.uk',
-  'sta.uwi.edu',
-  'staffs.ac.uk',
-  'stallions.abac.edu',
-  'stamford.edu',
-  'stamforduniversity.edu.bd',
-  'stan.ac.id',
-  'stanford.edu',
-  'stankin.ru',
-  'stanly.edu',
-  'starkstate.edu',
-  'stavsu.ru',
-  'stb.iau.ir',
-  'stcc.edu',
-  'stcecilia.br',
-  'stchas.edu',
-  'stcl.edu',
-  'stclairc.on.ca',
-  'stclairconnect.ca',
-  'stclements.edu.nu',
-  'stcloudstate.edu',
-  'std.kyrenia.edu.tr',
-  'stedwards.edu',
-  'stenden.com',
-  'stephens.edu',
-  'stetson.edu',
-  'stevens.edu',
-  'stevenscollege.edu',
-  'stevenson.edu',
-  'stfrancis.edu',
-  'stfx.ca',
-  'stgc.uwa.edu.au',
-  'stikes-ppni.ac.id',
-  'stikesrsanwarmedika.ac.id',
-  'stillman.edu',
-  'stir.ac.uk',
-  'stjohn.ac.th',
-  'stjohns.edu',
-  'stjosephs.ac.in',
-  'stjosephstechnology.ac.in',
-  'stjosephtanzania.com',
-  'stkate.edu',
-  'stlawu.edu',
-  'stlcop.edu',
-  'stmartin.edu',
-  'stmarys-ca.edu',
-  'stmarys.ac.uk',
-  'stmarys.ca',
-  'stmarytx.edu',
-  'stmatthews.edu',
-  'stmu.org',
-  'stockholm-fu.com',
-  'stockton.edu',
-  'stolaf.edu',
-  'stonechild.edu',
-  'stonehill.edu',
-  'stonybrook.edu',
-  'stonybrookmedicine.edu',
-  'stou.ac.th',
-  'stptrisakti.ac.id',
-  'stratford.edu',
-  'strath.ac.uk',
-  'strathmore.edu',
-  'strayer.edu',
-  'strose.edu',
-  'stthom.edu',
-  'stthomas.edu',
-  'stthomasu.ca',
-  'sttu.ac.ir',
-  'stu.ac.kr',
-  'stu.edu',
-  'stu.edu.cn',
-  'stu.edu.gh',
-  'stu.gcu.edu.cn',
-  'stu.lipetsk.ru',
-  'stu.ru',
-  'stu.xhu.edu.cn',
-  'stuba.sk',
-  'stud.hs-hannover.de',
-  'stud.vilniustech.lt',
-  'studbocconi.it',
-  'student.42.fr',
-  'student.42.us.org',
-  'student.aau.dk',
-  'student.ccm.edu',
-  'student.eit.edu.au',
-  'student.g.nwu.ac.za',
-  'student.gsa.ac.uk',
-  'student.hs-anhalt.de',
-  'student.karazin.ua',
-  'student.kuleuven.be',
-  'student.lamk.fi',
-  'student.laurea.fi',
-  'student.lboro.ac.uk',
-  'student.lut.fi',
-  'student.maastrichtuniversity.nl',
-  'student.murdoch.edu.au',
-  'student.purdueglobal.edu',
-  'student.scad.edu',
-  'student.spsmb.cz',
-  'student.staffs.ac.uk',
-  'student.tudelft.nl',
-  'student.uliege.be',
-  'student.uml.edu',
-  'student.unisg.ch',
-  'student.upt.ro',
-  'student.uts.edu.au',
-  'student.wab.edu.pl',
-  'student.westherts.ac.uk',
-  'students.finki.ukim.mk',
-  'students.jedlik.eu',
-  'students.olin.edu',
-  'students.vizja.pl',
-  'stut.edu.tw',
-  'stvincent.edu',
-  'stw.de',
-  'su.ac.th',
-  'su.digitaluniversity.ac',
-  'su.edu',
-  'su.edu.eg',
-  'su.edu.et',
-  'su.edu.ly',
-  'su.edu.ph',
-  'su.edu.sa',
-  'su.edu.ye',
-  'su.lt',
-  'su.se',
-  'suagm.edu',
-  'suai.ru',
-  'suanet.ac.tz',
-  'subr.edu',
-  'suc.edu.om',
-  'suda.edu.cn',
-  'sues.edu.cn',
-  'suez.edu.eg',
-  'suffolk.edu',
-  'sugino.ac.jp',
-  'sugiyama-u.ac.jp',
-  'suh-edu.com',
-  'suit.edu.pk',
-  'sullivan.edu',
-  'sulross.edu',
-  'suma.kobe-wu.ac.jp',
-  'sumdu.edu.ua',
-  'summitunivofla.edu',
-  'sums.ac.ir',
-  'sun.ac.jp',
-  'sun.ac.za',
-  'sunchon.ac.kr',
-  'sunderland.ac.uk',
-  'sungkyul.ac.kr',
-  'sungshin.ac.kr',
-  'sunmoon.ac.kr',
-  'suno.edu',
-  'sunway.edu.my',
-  'suny.oneonta.edu',
-  'sunybroome.edu',
-  'sunycentral.edu',
-  'sunycgcc.edu',
-  'sunydutchess.edu',
-  'sunyit.edu',
-  'sunyjcc.edu',
-  'sunyjefferson.edu',
-  'sunymaritime.edu',
-  'sunyocc.edu',
-  'sunyorange.edu',
-  'sunyrockland.edu',
-  'sunysccc.edu',
-  'sunysullivan.edu',
-  'sunywcc.edu',
-  'supaero.fr',
-  'supbiotech.fr',
-  'supco-amiens.fr',
-  'supco-montpellier.fr',
-  'supelec.fr',
-  'superior.edu.pk',
-  'supsi.ch',
-  'suptelecom.net.ma',
-  'surgu.wsnet.ru',
-  'surrey.ac.uk',
-  'surry.edu',
-  'surtech.edu.in',
-  'surugadai.ac.jp',
-  'suscc.edu',
-  'susla.edu',
-  'susqu.edu',
-  'suss.edu.sg',
-  'sussex.ac.uk',
-  'sussex.edu',
-  'sust.edu',
-  'sustc.edu.cn',
-  'sustech.edu',
-  'sut.ac.ir',
-  'sut.ac.jp',
-  'sut.ac.th',
-  'sut.ru',
-  'sutd.edu.sg',
-  'sutd.ru',
-  'sutech.ac.ir',
-  'suu.edu',
-  'suwon.ac.kr',
-  'suwoncatholic.ac.kr',
-  'suzuka-iu.ac.jp',
-  'suzuka-u.ac.jp',
-  'svbpuctm.org',
-  'svcc.edu',
-  'svce.ac.in',
-  'sve-mo.ba',
-  'svimstpt.ap.nic.in',
-  'svnit.ac.in',
-  'svsu.edu',
-  'svu.edu',
-  'svu.edu.eg',
-  'svuni.ap.nic.in',
-  'svuonline.org',
-  'sw.edu',
-  'swac.edu',
-  'swan.ac.uk',
-  'swansea.ac.uk',
-  'swarthmore.edu',
-  'swau.edu.cn',
-  'swc.tc',
-  'swcc.edu',
-  'swccd.edu',
-  'swcciowa.edu',
-  'swfc.edu.cn',
-  'swic.edu',
-  'swin.edu.au',
-  'swinburne.edu.my',
-  'swissmc.ch',
-  'swissu.org',
-  'swjtu.edu.cn',
-  'swmed.edu',
-  'swmich.edu',
-  'swnu.edu.cn',
-  'swps.edu.pl',
-  'swps.pl',
-  'swpu.edu.cn',
-  'swri.edu',
-  'swsm.cn',
-  'swt.edu',
-  'swtc.edu',
-  'swtjc.net',
-  'swu.ac.jp',
-  'swu.ac.kr',
-  'swu.ac.th',
-  'swu.bg',
-  'swu.edu.ph',
-  'swufe.edu.cn',
-  'swun.edu.cn',
-  'swupl.edu.cn',
-  'swust.edu.cn',
-  'swuyc.edu.cn',
-  'sx.ac.uk',
-  'sxau.edu.cn',
-  'sxu.edu',
-  'sxu.edu.cn',
-  'sydney.edu.au',
-  'syict.edu.cn',
-  'synergy.ru',
-  'synergy.university',
-  'syphu.edu.cn',
-  'sypu.edu.cn',
-  'syr.edu',
-  'sytu.edu.cn',
-  'syu.ac.kr',
-  'syu.edu.cn',
-  'szabist.edu.pk',
-  'sze.hu',
-  'szie.hu',
-  'szu.edu.af',
-  'szu.edu.cn',
-  'szu.sk',
-  't-komazawa.ac.jp',
-  't-kougei.ac.jp',
-  'tabari.ac.ir',
-  'tabor.edu',
-  'tabriziau.ac.ir',
-  'tabrizu.ac.ir',
-  'tachibana-u.ac.jp',
-  'tacomacc.edu',
-  'taegu-e.ac.kr',
-  'taegu.ac.kr',
-  'taejae.ac.kr',
-  'taejon.ac.kr',
-  'taeshin.ac.kr',
-  'tafe.wa.edu.au',
-  'taftcollege.edu',
-  'taftu.edu',
-  'taibahu.edu.sa',
-  'tais.ac.jp',
-  'taizun.net',
-  'taj.edu.my',
-  'tajagroun.tj',
-  'takachiho.ac.jp',
-  'takamatsu-u.ac.jp',
-  'takara-univ.ac.jp',
-  'takushoku-u.ac.jp',
-  'talladega.edu',
-  'tamabi.ac.jp',
-  'tamagawa.ac.jp',
-  'tamiluniversity.ac.in',
-  'tamiu.edu',
-  'tamu.edu',
-  'tamuc.edu',
-  'tamucc.edu',
-  'tamuk.edu',
-  'tane.edu.ua',
-  'tansianuniversity.edu.ng',
-  'tanta.edu.eg',
-  'tanuvas.com',
-  'taoistcollege.org.sg',
-  'tarc.edu.my',
-  'tarleton.edu',
-  'tarsus.edu.tr',
-  'tart.spb.ru',
-  'tashgiv.uz',
-  'tasued.edu.ng',
-  'tau.ac.il',
-  'tau.ac.kr',
-  'tau.edu.tr',
-  'tauedu.org',
-  'tayi.uz',
-  'taylors.edu.my',
-  'tayloru.edu',
-  'taynguyenuni.edu.vn',
-  'tbcc.cc.or.us',
-  'tbgu.ac.jp',
-  'tbs.edu',
-  'tbzmed.ac.ir',
-  'tc3.edu',
-  'tcc.edu',
-  'tcc.fl.edu',
-  'tccd.edu',
-  'tcd.ie',
-  'tce.edu',
-  'tcicollege.edu',
-  'tcioe.edu.np',
-  'tcl.edu',
-  'tcm.ac.uk',
-  'tcnj.edu',
-  'tct.ac.ir',
-  'tctc.edu',
-  'tcu.edu',
-  'tcu.edu.tw',
-  'tcue.ac.jp',
-  'tdc.ac.jp',
-  'tdiu.uz',
-  'tdtu.uz',
-  'teak.fi',
-  'tec.mx',
-  'tecbc.mx',
-  'technet.com.br',
-  'technikum-wien.at',
-  'technion.ac.il',
-  'techniqueedu.com',
-  'tecmilenio.mx',
-  'tedu.edu.tr',
-  'tees.ac.uk',
-  'teh-lavasan.pnu.ac.ir',
-  'teikyo-u.ac.jp',
-  'telanganauniversity.ac.in',
-  'telkomuniversity.ac.id',
-  'teluguuniversity.ac.in',
-  'teluq.uquebec.ca',
-  'temple.edu',
-  'templejc.edu',
-  'tenri-u.ac.jp',
-  'teologi.dk',
-  'tepeyac.edu.mx',
-  'termnet.co.jp',
-  'terra.edu',
-  'tesc.edu',
-  'tesu.edu',
-  'teu.ac.jp',
-  'texarkanacollege.edu',
-  'texascollege.edu',
-  'tezu.ernet.in',
-  'tezuka-gu.ac.jp',
-  'tezukayama-u.ac.jp',
-  'tfh-berlin.de',
-  'tfh-bochum.de',
-  'tfh-wildau.de',
-  'tfi.uz',
-  'tfu.ac.jp',
-  'tgnu.tarena.tj',
-  'tgpi.ttn.ru',
-  'tgsha.ru',
-  'th-brandenburg.de',
-  'th-deg.de',
-  'th-koeln.de',
-  'th-rosenheim.de',
-  'tha.de',
-  'theatrins-yar.ru',
-  'thenewcollege.edu.in',
-  'thenicc.edu',
-  'theonest.edu.lb',
-  'thh-friedensau.de',
-  'thi.de',
-  'thierryschool.org',
-  'thiqaruni.org',
-  'thk.edu.tr',
-  'thm.de',
-  'thmu.edu.tw',
-  'thomas.edu',
-  'thomasmore.be',
-  'thomasmore.edu',
-  'thu.de',
-  'thu.edu.tw',
-  'thums.ac.ir',
-  'thunderbird.edu',
-  'thuniv.net',
-  'tiaa.edu.ge',
-  'tiau.ac.ir',
-  'ticaret.edu.tr',
-  'ties.com.mx',
-  'tiet.ac.in',
-  'tietgen.dk',
-  'tiffin.edu',
-  'tiffinprague.cz',
-  'tiho-hannover.de',
-  'tiim.uz',
-  'tijmu.edu.cn',
-  'tilburguniversity.edu',
-  'tilburguniversity.nl',
-  'timacad.ru',
-  'timis.ac.jp',
-  'tinaztepe.edu.tr',
-  'tip.edu.pk',
-  'tishreen.edu.sy',
-  'tiss.edu',
-  'tit.ac.kr',
-  'titech.ac.jp',
-  'tiu.ac.jp',
-  'tiu.tj',
-  'tiu.uz',
-  'tjarts.edu.cn',
-  'tjcu.edu.cn',
-  'tjmu.edu.cn',
-  'tjnu.edu.cn',
-  'tjpu.edu.cn',
-  'tjrtvu.edu.cn',
-  'tju.edu',
-  'tju.edu.cn',
-  'tjufe.edu.cn',
-  'tjut.edu.cn',
-  'tkbf.hu',
-  'tktk.ee',
-  'tku.ac.jp',
-  'tku.edu.tw',
-  'tltsu.ru',
-  'tlu.ee',
-  'tma.uz',
-  'tmbu.org',
-  'tmc.edu.tw',
-  'tmcc.edu',
-  'tmd.ac.jp',
-  'tmit.ac.jp',
-  'tmmu.edu.cn',
-  'tmtc.edu.tw',
-  'tmu.ac.ir',
-  'tmv.edu.in',
-  'tnca.edu.tw',
-  'tncc.edu',
-  'tndalu.org',
-  'tnmeyah.net',
-  'tnmmu.ac.in',
-  'tnstate.edu',
-  'tntech.edu',
-  'tnu.crimea.ua',
-  'tnuni.sk',
-  'tnuniv.ac.in',
-  'tnut.ac.kr',
-  'tocc.edu',
-  'toho-music.ac.jp',
-  'toho-u.ac.jp',
-  'tohoku-gakuin.ac.jp',
-  'tohoku-pharm.ac.jp',
-  'tohoku.ac.jp',
-  'tohomusic.ac.jp',
-  'tohtech.ac.jp',
-  'tohwa-u.ac.jp',
-  'toin.ac.jp',
-  'tojo.ac.jp',
-  'tokai.ac.jp',
-  'tokaigakuen-u.ac.jp',
-  'tokaijoshi-u.ac.jp',
-  'tokiwa.ac.jp',
-  'tokoha-u.ac.jp',
-  'tokushima-u.ac.jp',
-  'tokuyama-u.ac.jp',
-  'tokyo-kasei.ac.jp',
-  'tokyo-med.ac.jp',
-  'tokyo-ondai.ac.jp',
-  'tokyo-u-fish.ac.jp',
-  'toledo.br',
-  'toledoprudente.edu.br',
-  'tongji.edu.cn',
-  'tonichi-kokusai-u.ac.jp',
-  'topkapi.edu.tr',
-  'toronto.edu',
-  'torontomu.ca',
-  'toros.edu.tr',
-  'torrens.edu.au',
-  'tosho-u.ac.jp',
-  'tottori-u.ac.jp',
-  'toua-u.ac.jp',
-  'tougaloo.edu',
-  'tourism.edu.az',
-  'touro.edu',
-  'touro.ru',
-  'towson.edu',
-  'toyaku.ac.jp',
-  'toyama-mpu.ac.jp',
-  'toyama-u.ac.jp',
-  'toyo.ac.jp',
-  'toyoeiwa.ac.jp',
-  'toyogakuen-u.ac.jp',
-  'toyota-ti.ac.jp',
-  'tp.edu.sg',
-  'tpec.edu.tw',
-  'tpmcollege.edu.my',
-  'tpu.fi',
-  'tpu.ru',
-  'trakya.edu.tr',
-  'transy.edu',
-  'trcc.commnet.edu',
-  'trcc.edu',
-  'trenholmstate.edu',
-  'trenton.edu',
-  'trentu.ca',
-  'tri-c.edu',
-  'tribhuvan-university.edu.np',
-  'tricountycc.edu',
-  'trident.edu',
-  'tridenttech.edu',
-  'trincoll.edu',
-  'trine.edu',
-  'trinidadstate.edu',
-  'trinity-cm.ac.uk',
-  'trinity.edu',
-  'trinity.edu.gh',
-  'trinity.utoronto.ca',
-  'trinitybiblecollege.edu',
-  'trinitycollegebristol.ac.uk',
-  'trinitydc.edu',
-  'tripurauniv.in',
-  'trisakti.ac.id',
-  'triton.edu',
-  'troy.edu',
-  'tru.ca',
-  'truman.edu',
-  'truni.sk',
-  'trunojoyo.ac.id',
-  'tshmc.org',
-  'tsi.lv',
-  'tsinghua.edu.cn',
-  'tsma.ru',
-  'tsmu.edu',
-  'tsogu.ru',
-  'tspu.edu.ru',
-  'tstu.ru',
-  'tstu.tver.ru',
-  'tsu.ac.th',
-  'tsu.edu',
-  'tsu.edu.ge',
-  'tsu.ru',
-  'tsu.tula.ru',
-  'tsuab.ru',
-  'tsuda.ac.jp',
-  'tsufl.edu',
-  'tsukuba.ac.jp',
-  'tsuniversity.edu.ng',
-  'tsure.ru',
-  'tsuru.ac.jp',
-  'tsurumi-u.ac.jp',
-  'tsvu.nic.in',
-  'ttc.ryazan.ru',
-  'ttit.edu.tw',
-  'ttmc.edu.cn',
-  'ttu.edu',
-  'ttu.edu.gh',
-  'ttu.edu.jo',
-  'ttu.edu.tw',
-  'ttu.ee',
-  'ttuhsc.edu',
-  'tu-berlin.de',
-  'tu-braunschweig.de',
-  'tu-bryansk.ru',
-  'tu-bs.de',
-  'tu-chel.ac.ru',
-  'tu-chemnitz.de',
-  'tu-clausthal.de',
-  'tu-cottbus.de',
-  'tu-darmstadt.de',
-  'tu-dortmund.de',
-  'tu-dresden.de',
-  'tu-freiberg.de',
-  'tu-ilmenau.de',
-  'tu-sofia.bg',
-  'tu-varna.acad.bg',
-  'tu.ac.th',
-  'tu.edu.af',
-  'tu.edu.iq',
-  'tu.edu.sa',
-  'tu.edu.te.ua',
-  'tu.kielce.pl',
-  'tu.koszalin.pl',
-  'tua.edu.au',
-  'tuad.ac.jp',
-  'tuaf.edu.vn',
-  'tuat.ac.jp',
-  'tuc.gr',
-  'tucsonu.edu',
-  'tudelft.nl',
-  'tudublin.ie',
-  'tue.nl',
-  'tuf.edu.pk',
-  'tufs.ac.jp',
-  'tufts.edu',
-  'tugab.bg',
-  'tugraz.at',
-  'tuhh.de',
-  'tui.edu',
-  'tuiasi.ro',
-  'tuins.ac.jp',
-  'tuis.ac.jp',
-  'tuit.uz',
-  'tuj.ac.jp',
-  'tuke.sk',
-  'tukenya.ac.ke',
-  'tukkk.fi',
-  'tulane.edu',
-  'tulsacc.edu',
-  'tum.ac.ke',
-  'tum.de',
-  'tum.edu',
-  'tumaini.ac.tz',
-  'tumkuruniversity.ac.in',
-  'tums.ac.ir',
-  'tunceli.edu.tr',
-  'tuniv.szczecin.pl',
-  'tunxis.edu',
-  'tup.edu.ph',
-  'tup.km.ua',
-  'turathun.com',
-  'turiba.lv',
-  'turkistan.kz',
-  'tus.ie',
-  'tusculum.edu',
-  'tuskegee.edu',
-  'tusol.org',
-  'tusom.org',
-  'tusur.ru',
-  'tut.ac.jp',
-  'tut.ac.za',
-  'tut.fi',
-  'tuvsu.ru',
-  'tuwien.ac.at',
-  'tuzvo.sk',
-  'tvcc.cc',
-  'tvcc.edu',
-  'tvu.ac.uk',
-  'tvuni.in',
-  'tvz.hr',
-  'twcpe.ac.jp',
-  'twcu.ac.jp',
-  'twmu.ac.jp',
-  'twu.ca',
-  'twu.edu',
-  'txstate.edu',
-  'txwes.edu',
-  'tyszkiewicz.edu.pl',
-  'tyut.edu.cn',
-  'tzc.edu.cn',
-  'u-3mrs.fr',
-  'u-air.ac.jp',
-  'u-aizu.ac.jp',
-  'u-bordeaux2.fr',
-  'u-bourgogne.fr',
-  'u-bunkyo.ac.jp',
-  'u-cergy.fr',
-  'u-clermont1.fr',
-  'u-gakugei.ac.jp',
-  'u-grenoble3.fr',
-  'u-keiai.ac.jp',
-  'u-paris10.fr',
-  'u-paris2.fr',
-  'u-pec.fr',
-  'u-pem.fr',
-  'u-picardie.fr',
-  'u-psud.fr',
-  'u-ryukyu.ac.jp',
-  'u-sacred-heart.ac.jp',
-  'u-shizuoka-ken.ac.jp',
-  'u-szeged.hu',
-  'u-tokai.ac.jp',
-  'u-tokyo.ac.jp',
-  'u1.ac.kr',
-  'u7nc.uvt.rnu.tn',
-  'ua.ac.be',
-  'ua.edu',
-  'ua.edu.ph',
-  'ua.es',
-  'ua.pt',
-  'uaa.alaska.edu',
-  'uaa.edu.py',
-  'uaa.mx',
-  'uaaan.mx',
-  'uaar.edu.pk',
-  'uab.edu',
-  'uab.edu.bo',
-  'uab.es',
-  'uab.ro',
-  'uabc.mx',
-  'uabcs.mx',
-  'uabjb.edu.bo',
-  'uabjo.mx',
-  'uabobo.ci',
-  'uac.bj',
-  'uac.edu.co',
-  'uac.pt',
-  'uaca.ac.cr',
-  'uacam.mx',
-  'uaccb.edu',
-  'uacch.edu',
-  'uaccm.edu',
-  'uacg.bg',
-  'uach.cl',
-  'uach.mx',
-  'uacj.mx',
-  'uacm.edu.mx',
-  'uaconcagua.cl',
-  'uad.ac.id',
-  'uad.edu.mx',
-  'uade.edu.ar',
-  'uadec.mx',
-  'uader.edu.ar',
-  'uady.mx',
-  'uae.ac.ma',
-  'uae.edu.sv',
-  'uaed.edu.mx',
-  'uaem.mx',
-  'uaemex.mx',
-  'uaeu.ac.ae',
-  'uaf.edu',
-  'uaf.edu.pk',
-  'uaf.mx',
-  'uafam.edu.do',
-  'uafs.edu',
-  'uag.mx',
-  'uagraria.edu.ec',
-  'uagrm.edu.bo',
-  'uagro.mx',
-  'uah.edu',
-  'uah.es',
-  'uahb.sn',
-  'uahurtado.cl',
-  'uai.cl',
-  'uai.edu.ar',
-  'uaic.ro',
-  'uajms.edu.bo',
-  'uajy.ac.id',
-  'uakron.edu',
-  'ual.mx',
-  'ualberta.ca',
-  'ualg.pt',
-  'ualm.es',
-  'ualr.edu',
-  'uam.edu.co',
-  'uam.edu.ng',
-  'uam.edu.ni',
-  'uam.es',
-  'uam.mx',
-  'uam.refer.ne',
-  'uamerica.edu.co',
-  'uamericana.edu.py',
-  'uamericas.cl',
-  'uamont.edu',
-  'uams.be',
-  'uams.edu',
-  'uamsa.net',
-  'uan.ao',
-  'uan.mx',
-  'uanarino.edu.co',
-  'uancv.edu.pe',
-  'uandes.cl',
-  'uandina.edu.pe',
-  'uane.edu.mx',
-  'uanl.mx',
-  'uantof.cl',
-  'uantwerpen.be',
-  'uap-bd.edu',
-  'uap.edu.pe',
-  'uap.edu.ph',
-  'uap.edu.py',
-  'uapa.edu.do',
-  'uapa.ru',
-  'uapar.edu',
-  'uapb.edu',
-  'uapnet.edu.bo',
-  'uaq.mx',
-  'uark.edu',
-  'uartdcluj.ro',
-  'uas.alaska.edu',
-  'uas.cl',
-  'uas.edu.sg',
-  'uas.mx',
-  'uasb.edu.bo',
-  'uasb.edu.ec',
-  'uasbng.kar.nic.in',
-  'uasd.edu.do',
-  'uasd.net',
-  'uaslp.mx',
-  'uasm.md',
-  'uasnet.mx',
-  'uast.ac.ir',
-  'uasys.edu',
-  'uat.edu',
-  'uat.edu.al',
-  'uat.mx',
-  'uat.ro',
-  'uatf.edu.bo',
-  'uatla.pt',
-  'uatx.mx',
-  'uav.ro',
-  'uax.es',
-  'uaysen.cl',
-  'uazuay.edu.ec',
-  'ub.ac.id',
-  'ub.bw',
-  'ub.edu.ar',
-  'ub.edu.bi',
-  'ub.edu.bz',
-  'ub.edu.ph',
-  'ub.edu.pl',
-  'ub.es',
-  'ub.ro',
-  'uba.ar',
-  'uba.edu.ve',
-  'ubac.edu.mx',
-  'ubaguio.edu',
-  'ubalt.edu',
-  'ubaya.ac.id',
-  'ubbcluj.ro',
-  'ubc.ca',
-  'ubd.edu.bn',
-  'ubfc.fr',
-  'ubhara.ac.id',
-  'ubharajaya.ac.id',
-  'ubi.edu',
-  'ubi.pt',
-  'ubiobio.cl',
-  'ubishops.ca',
-  'ubm.ac.id',
-  'ubm.ro',
-  'ubohiggins.cl',
-  'ubolivariana.cl',
-  'ubouake.ci',
-  'ubp.edu.ar',
-  'ubritanica.cl',
-  'ubt.edu.al',
-  'ubu.ac.th',
-  'ubu.es',
-  'ubuea.cm',
-  'ubv.edu.ve',
-  'uc-bcf.edu.ph',
-  'uc.cl',
-  'uc.edu',
-  'uc.edu.kh',
-  'uc.edu.py',
-  'uc.edu.ve',
-  'uc.pt',
-  'uc.rnu.tn',
-  'uc3m.es',
-  'uca.ac.cr',
-  'uca.edu',
-  'uca.edu.ar',
-  'uca.edu.ni',
-  'uca.edu.sv',
-  'uca.es',
-  'uca.fr',
-  'ucaat.com',
-  'ucaazo.edu.ec',
-  'ucab.edu.ve',
-  'ucacue.edu.ec',
-  'ucad.edu.sv',
-  'ucad.sn',
-  'ucaldas.edu.co',
-  'ucalgary.ca',
-  'ucalp.edu.ar',
-  'ucam.ac.ma',
-  'ucam.edu',
-  'ucan.edu',
-  'ucapanama.org',
-  'ucas.edu.ps',
-  'ucasal.net',
-  'ucat.edu.ve',
-  'ucateci.edu.do',
-  'ucatolica.ac.cr',
-  'ucatolica.edu.co',
-  'ucatolicamz.edu.co',
-  'ucauca.edu.co',
-  'ucavila.es',
-  'ucb.br',
-  'ucb.edu.bh',
-  'ucb.edu.bo',
-  'ucb.edu.pr',
-  'ucbc.org',
-  'ucbcba.edu.bo',
-  'ucbscz.edu.bo',
-  'ucbtja.edu.bo',
-  'ucbukavu.ac.cd',
-  'ucc.edu',
-  'ucc.edu.co',
-  'ucc.edu.gh',
-  'ucc.edu.ni',
-  'ucc.ie',
-  'uccaribe.edu',
-  'uccb.ns.ca',
-  'uccm.md',
-  'uccor.edu.ar',
-  'uccr.edu',
-  'uccs.edu',
-  'uccuyo.edu.ar',
-  'ucd.ac.ma',
-  'ucd.ie',
-  'ucdavis.edu',
-  'ucdconnect.ie',
-  'ucdenver.edu',
-  'uce.edu.do',
-  'ucel.edu.ar',
-  'ucem.edu.mx',
-  'ucem.edu.ni',
-  'ucema.edu.ar',
-  'ucentral.cl',
-  'ucentral.edu.co',
-  'ucentral.edu.ec',
-  'ucervantes.cl',
-  'uces.edu.ar',
-  'uceva.edu.co',
-  'ucf.edu',
-  'ucf.edu.cu',
-  'ucg.br',
-  'ucg.cg.ac.yu',
-  'ucg.ie',
-  'uch.edu.ar',
-  'uch.edu.pe',
-  'uchastings.edu',
-  'uchaswv.edu',
-  'uchceu.es',
-  'uchicago.edu',
-  'uchile.cl',
-  'uci.ac.cr',
-  'uci.edu',
-  'ucimed.com',
-  'ucine.edu.ar',
-  'ucinf.cl',
-  'ucj.edu.sa',
-  'uck.ac.rw',
-  'ucl.ac.be',
-  'ucl.ac.uk',
-  'ucla.edu',
-  'ucla.edu.ve',
-  'uclah.edu.mx',
-  'uclan.ac.uk',
-  'uclive.ac.nz',
-  'uclm.es',
-  'uclouvain.be',
-  'uclv.edu.cu',
-  'ucm.ac.mz',
-  'ucm.cl',
-  'ucm.es',
-  'ucm.sk',
-  'ucmerced.edu',
-  'ucmo.edu',
-  'ucn.cl',
-  'ucn.edu.co',
-  'ucna.info',
-  'ucne.edu.do',
-  'ucnh.org',
-  'uco.edu',
-  'uco.edu.co',
-  'uco.es',
-  'uco.fr',
-  'ucol.mx',
-  'ucom.edu.py',
-  'ucongres.edu.ar',
-  'uconn.edu',
-  'ucop.edu',
-  'ucp.br',
-  'ucp.edu.ar',
-  'ucp.edu.pk',
-  'ucp.pt',
-  'ucpel.tche.br',
-  'ucpr.edu.co',
-  'ucr.ac.cr',
-  'ucr.edu',
-  'ucs.ac.uk',
-  'ucs.mun.ca',
-  'ucs.tche.br',
-  'ucsa.edu.py',
-  'ucsal.br',
-  'ucsal.edu.br',
-  'ucsb.edu',
-  'ucsc.cl',
-  'ucsc.edu',
-  'ucsd.edu',
-  'ucsd.edu.do',
-  'ucse.edu.ar',
-  'ucsf.edu',
-  'ucsf.edu.ar',
-  'ucsg.edu.ec',
-  'ucsh.cl',
-  'ucsi.edu.my',
-  'ucsm.edu.pe',
-  'ucsur.edu.pe',
-  'ucsy.edu.mm',
-  'uct.ac.za',
-  'uct.edu.ec',
-  'uct.edu.vn',
-  'uctem.cl',
-  'ucti.edu.my',
-  'uctm.edu',
-  'ucu.ac.ug',
-  'ucu.edu.ar',
-  'ucu.edu.uy',
-  'ucuenca.edu.ec',
-  'ucv.cl',
-  'ucv.edu.pe',
-  'ucv.edu.ph',
-  'ucv.es',
-  'ucv.ve',
-  'ucy.ac.cy',
-  'ucyt.edu.ni',
-  'ud.ac.ae',
-  'ud.edu.sa',
-  'ud.edu.vn',
-  'uda.ac.id',
-  'uda.ad',
-  'uda.cl',
-  'uda.edu.ar',
-  'udabol.edu.bo',
-  'udallas.edu',
-  'udayton.edu',
-  'udb.ac.id',
-  'udb.sn',
-  'udc.edu',
-  'udc.es',
-  'udc.gal',
-  'udca.edu.co',
-  'udch.edu.pe',
-  'ude.edu.uy',
-  'udea.edu.co',
-  'udec.cl',
-  'udec.edu.mx',
-  'udeci.edu.mx',
-  'udeh.edu.mx',
-  'udel.edu',
-  'udelas.ac.pa',
-  'udelmar.cl',
-  'udelosandes.edu.bo',
-  'udem.edu.co',
-  'udem.edu.mx',
-  'udem.edu.ni',
-  'udemm.edu.ar',
-  'udenar.edu.co',
-  'udep.edu.pe',
-  'udes.edu.co',
-  'udesa.edu.ar',
-  'udesanmiguel.edu.mx',
-  'udesarrollo.cl',
-  'udesc.br',
-  'udesmontagnes.org',
-  'udg.co.cu',
-  'udg.es',
-  'udg.mx',
-  'udh.edu.pe',
-  'udi.edu',
-  'udistrital.edu.co',
-  'udk-berlin.de',
-  'udl.edu.pe',
-  'udl.es',
-  'udla.mx',
-  'udlap.mx',
-  'udm.edu.my',
-  'udmercy.edu',
-  'udo.edu',
-  'udo.edu.ve',
-  'udo.mx',
-  'udom.ac.tz',
-  'udoym.edu.do',
-  'udp.cl',
-  'uds.edu.gh',
-  'udsm.ac.tz',
-  'udusok.edu.ng',
-  'udv.edu.mx',
-  'ue-varna.bg',
-  'ue.edu.ph',
-  'ue.edu.pk',
-  'uea.ac.uk',
-  'uea.edu.sn',
-  'ueab.ac.ke',
-  'uean.edu.ar',
-  'ueb.isfun.net',
-  'uec.ac.jp',
-  'uece.br',
-  'uees.edu.ec',
-  'uees.edu.sv',
-  'uef.ru',
-  'uefs.br',
-  'ueh.edu.ht',
-  'ueh.edu.vn',
-  'uel.ac.uk',
-  'uel.br',
-  'uem.br',
-  'uem.es',
-  'uem.mz',
-  'uem.ro',
-  'uema.br',
-  'uenf.br',
-  'uenogakuen.ac.jp',
-  'uenp.edu.br',
-  'uep.educ.ph',
-  'uepb.edu.br',
-  'uepg.br',
-  'uerj.br',
-  'uerm.edu.ph',
-  'uern.br',
-  'ues.edu.sv',
-  'uesb.br',
-  'uesc.br',
-  'uesiglo21.edu.ar',
-  'uespi.br',
-  'uestc.edu.cn',
-  'uet.edu',
-  'uet.vnu.edu.vn',
-  'uettaxila.edu.pk',
-  'uevora.pt',
-  'uew.edu.gh',
-  'uexternado.edu.co',
-  'uf3ceu.es',
-  'ufabc.edu.br',
-  'ufac.br',
-  'ufal.br',
-  'ufar.am',
-  'ufasta.edu.ar',
-  'ufba.br',
-  'ufc.br',
-  'ufcg.edu.br',
-  'ufe.edu.eg',
-  'ufes.br',
-  'uff.br',
-  'ufg.br',
-  'ufg.edu.sv',
-  'ufgd.edu.br',
-  'ufh.ac.za',
-  'ufhec.edu.do',
-  'ufidelitas.ac.cr',
-  'ufinis.cl',
-  'ufjf.br',
-  'ufl.edu',
-  'ufla.br',
-  'uflo.edu.ar',
-  'ufm.edu.gt',
-  'ufm.edu.mx',
-  'ufma.br',
-  'ufmg.br',
-  'ufms.br',
-  'ufmt.br',
-  'ufn.edu.br',
-  'ufop.br',
-  'ufp.nc',
-  'ufp.pt',
-  'ufpa.br',
-  'ufpb.br',
-  'ufpe.br',
-  'ufpel.tche.br',
-  'ufpi.br',
-  'ufpr.br',
-  'ufps.edu.co',
-  'ufram.edu.mx',
-  'ufrgs.br',
-  'ufrj.br',
-  'ufrn.br',
-  'ufro.cl',
-  'ufromail.cl',
-  'ufrpe.br',
-  'ufrrj.br',
-  'ufs.ac.za',
-  'ufs.br',
-  'ufsc.br',
-  'ufscar.br',
-  'ufsia.ac.be',
-  'ufsj.edu.br',
-  'ufsm.br',
-  'uft-plovdiv.bg',
-  'uft.edu.ve',
-  'uftm.edu.br',
-  'ufu.br',
-  'ufuk.edu.tr',
-  'ufv.br',
-  'ufv.ca',
-  'ufv.es',
-  'ufvjm.edu.br',
-  'ug.edu.ec',
-  'ug.edu.gh',
-  'uga.edu',
-  'ugaf.rnu.tn',
-  'ugal.ro',
-  'uganc.org',
-  'ugatu.ac.ru',
-  'ugb.edu.sv',
-  'ugb.sn',
-  'ugd.edu.ar',
-  'ugd.edu.mk',
-  'ugent.be',
-  'ugf.br',
-  'ugf.edu',
-  'ugm.ac.id',
-  'ugm.cl',
-  'ugma.edu.ve',
-  'ugr.edu.ar',
-  'ugr.es',
-  'ugrancolombia.edu.co',
-  'ugrasu.ru',
-  'ugs.ed.ao',
-  'ugsha.ru',
-  'ugto.mx',
-  'uh.cu',
-  'uh.edu',
-  'uh1.ac.ma',
-  'uh2m.ac.ma',
-  'uha.fr',
-  'uhasselt.be',
-  'uhb.fr',
-  'uhcno.edu',
-  'uhd.edu',
-  'uhd.edu.iq',
-  'uheeyc.edu.cn',
-  'uhispam.edu.ni',
-  'uhispanoamericana.ac.cr',
-  'uho.edu.cu',
-  'uhp-nancy.fr',
-  'uhs.ac.kr',
-  'uhsa.ag',
-  'uhu.es',
-  'ui.ac.id',
-  'ui.ac.ir',
-  'ui.edu.ng',
-  'ui.phinma.edu.ph',
-  'ui1.es',
-  'uia.ac.cr',
-  'uia.es',
-  'uia.mx',
-  'uiah.fi',
-  'uib.es',
-  'uib.kz',
-  'uib.no',
-  'uibe.edu.cn',
-  'uibk.ac.at',
-  'uic.edu',
-  'uic.edu.mx',
-  'uic.es',
-  'uic.globe.com.ph',
-  'uidaho.edu',
-  'uigv.edu.pe',
-  'uii.ac.id',
-  'uii.sever.ru',
-  'uika-bogor.ac.id',
-  'uileon.edu.mx',
-  'uiliria.org',
-  'uimp.es',
-  'uindy.edu',
-  'uinjkt.ac.id',
-  'uinternacional.pt',
-  'uio.no',
-  'uiowa.edu',
-  'uir.ac.id',
-  'uir.ac.ma',
-  'uis.edu',
-  'uis.edu.co',
-  'uis.no',
-  'uisek.cl',
-  'uisrael.ec',
-  'uist.edu.mk',
-  'uisu.ac.id',
-  'uit.no',
-  'uitec.ac.jp',
-  'uitm.edu.my',
-  'uits.edu.bd',
-  'uiu.ac.bd',
-  'uiu.edu',
-  'uiuc.edu',
-  'uiw.edu',
-  'uiwtx.edu',
-  'uiz.ac.ma',
-  'uj.ac.za',
-  'uj.edu',
-  'uj.edu.pl',
-  'uj.rnu.tn',
-  'ujaen.es',
-  'ujap.edu.ve',
-  'ujat.mx',
-  'ujcv.edu.hn',
-  'ujed.mx',
-  'ujep.cz',
-  'ujf-grenoble.fr',
-  'uji.es',
-  'ujmd.edu.sv',
-  'ujmv.edu',
-  'ujn.edu.cn',
-  'ujnk.org',
-  'ujsierra.mx',
-  'ujso.cl',
-  'uk.ac.ir',
-  'ukc.ac.uk',
-  'ukdw.ac.id',
-  'ukf.sk',
-  'ukh.ac',
-  'uki.ac.id',
-  'ukim.edu.mk',
-  'ukim.mk',
-  'ukings.ns.ca',
-  'ukit-tomohon.org',
-  'uklo.edu.mk',
-  'ukm.my',
-  'ukma.kiev.ua',
-  'ukrfa.kharkov.ua',
-  'ukrida.ac.id',
-  'uksw.edu',
-  'uksw.edu.pl',
-  'uktech.ac.in',
-  'uku.fi',
-  'uky.edu',
-  'ukzn.ac.za',
-  'ul.ac.za',
-  'ul.edu.lb',
-  'ul.ie',
-  'ul.pt',
-  'ula.edu.mx',
-  'ula.ve',
-  'ulaanbaatar.edu.mn',
-  'ulab.edu.bd',
-  'ulacit.ac.cr',
-  'ulacit.ac.pa',
-  'uladech.edu.pe',
-  'ulagos.cl',
-  'ulaicavr.com',
-  'ulam.edu.ni',
-  'ulangola.net',
-  'ulapland.fi',
-  'ulare.cl',
-  'ulasalle.ac.cr',
-  'ulat.ac.pa',
-  'ulatina.ac.cr',
-  'ulaval.ca',
-  'ulb.ac.be',
-  'ulb.be',
-  'ulbra.br',
-  'ulbsibiu.ro',
-  'ulbu.bi',
-  'uleam.edu.ec',
-  'uleth.ca',
-  'ulicori.ac.cr',
-  'uliege.be',
-  'ulim.md',
-  'ulima.edu.pe',
-  'ulivingstonia.com',
-  'ulk.ac.rw',
-  'ull.es',
-  'ulm.edu',
-  'uloyola.es',
-  'ulpgc.es',
-  'ulsa.edu.mx',
-  'ulsab.edu.mx',
-  'ulsac.edu.mx',
-  'ulsan.ac.kr',
-  'ulsop.ac.uk',
-  'ulspu.ru',
-  'ulst.ac.uk',
-  'ulster.ac.uk',
-  'ulstu.ru',
-  'ulsu.ru',
-  'ult.ens.tn',
-  'uludag.edu.tr',
-  'ulusiada.pt',
-  'ulusofona.pt',
-  'um-rdc.org',
-  'um.ac.id',
-  'um.ac.ir',
-  'um.cityu.edu.hk',
-  'um.edu.ar',
-  'um.edu.mo',
-  'um.edu.mt',
-  'um.edu.my',
-  'um.edu.uy',
-  'um.es',
-  'um.rnu.tn',
-  'um.si',
-  'um1ygn.edu.mm',
-  'um5a.ac.ma',
-  'um5s.ac.ma',
-  'uma.ac.in',
-  'uma.ac.ir',
-  'uma.co.ao',
-  'uma.edu.py',
-  'uma.edu.sv',
-  'uma.es',
-  'uma.pt',
-  'uma.rnu.tn',
-  'umad.edu.mx',
-  'umag.cl',
-  'umaha.ac.id',
-  'umaine.edu',
-  'uman.edu.mx',
-  'umanitoba.ca',
-  'umanizales.edu.co',
-  'umar.mx',
-  'umariana.edu.co',
-  'umaritima.cl',
-  'umaryland.edu',
-  'umass.edu',
-  'umassd.edu',
-  'umayor.cl',
-  'umaza.edu.ar',
-  'umb.edu',
-  'umb.edu.co',
-  'umb.edu.pe',
-  'umb.no',
-  'umb.sk',
-  'umbb.dz',
-  'umbc.edu',
-  'umc.br',
-  'umc.edu',
-  'umc.edu.dz',
-  'umca.net',
-  'umcc.cu',
-  'umce.cl',
-  'umcollege.com',
-  'umcs.lublin.pl',
-  'umd.edu',
-  'umdearborn.edu',
-  'umds.ac.jp',
-  'umds.ac.uk',
-  'ume.cl',
-  'umes.edu',
-  'umf.maine.edu',
-  'umfcluj.ro',
-  'umfiasi.ro',
-  'umfk.maine.edu',
-  'umflint.edu',
-  'umft.ro',
-  'umftgm.ro',
-  'umg.edu.gt',
-  'umh.ac.be',
-  'umh.es',
-  'umhelena.edu',
-  'umi-mdn.edu',
-  'umi.ac.id',
-  'umi.edu.mx',
-  'umi.edu.pk',
-  'umich.edu',
-  'umich.mx',
-  'umindanao.edu.ph',
-  'uminho.pt',
-  'umit-tirol.at',
-  'umit.at',
-  'umj.ac.id',
-  'umk.ac.id',
-  'umk.edu.my',
-  'umkc.edu',
-  'uml.edu',
-  'umla.edu.mx',
-  'umm.ac.id',
-  'umm.edu.mx',
-  'umm.maine.edu',
-  'ummg.edu.mm',
-  'ummgl.ac.id',
-  'ummto.dz',
-  'umn.edu',
-  'umne.edu.mx',
-  'umng.edu.co',
-  'umo.edu',
-  'umoar.edu.sv',
-  'umoderna.pt',
-  'umoncton.ca',
-  'umontemorelos.edu.mx',
-  'umontpellier.fr',
-  'umontreal.ca',
-  'ump.ac.ma',
-  'ump.ac.za',
-  'ump.edu.my',
-  'umpi.maine.edu',
-  'umpqua.edu',
-  'umr.edu',
-  'ums.ac.id',
-  'ums.edu.my',
-  'umsa.edu.ar',
-  'umsa.edu.mx',
-  'umsanet.edu.bo',
-  'umsha.ac.ir',
-  'umsida.ac.id',
-  'umsl.edu',
-  'umss.edu.bo',
-  'umst-edu.com',
-  'umsu.ac.id',
-  'umsu.ac.ir',
-  'umsystem.edu',
-  'umt.edu',
-  'umt.edu.my',
-  'umt.edu.pk',
-  'umtech.edu.my',
-  'umu.ac.ug',
-  'umu.se',
-  'umuc.edu',
-  'umutarapolytech.ac.rw',
-  'umw.edu',
-  'umwestern.edu',
-  'umy.ac.id',
-  'umyu.edu.ng',
-  'umz.ac.ir',
-  'un.edu.mx',
-  'un.mx',
-  'una.ac.cr',
-  'una.an',
-  'una.edu',
-  'una.edu.ar',
-  'una.edu.ni',
-  'una.edu.ve',
-  'una.py',
-  'unaab.edu.ng',
-  'unab.cl',
-  'unab.edu.ar',
-  'unab.edu.co',
-  'unab.edu.sv',
-  'unac.edu.co',
-  'unac.edu.pe',
-  'unacar.mx',
-  'unach.edu.ec',
-  'unach.mx',
-  'unachi.ac.pa',
-  'unachile.cl',
-  'unad.edu.co',
-  'unad.edu.do',
-  'unadeca.ac.cr',
-  'unadp.ac.pa',
-  'unaerp.br',
-  'unah.edu.hn',
-  'unahur.edu.ar',
-  'unai.edu',
-  'unair.ac.id',
-  'unaj.edu.ar',
-  'unak.is',
-  'unal.edu.co',
-  'unam.ac.cr',
-  'unam.edu.ar',
-  'unam.mx',
-  'unam.na',
-  'unama.br',
-  'unan.edu.ni',
-  'unand.ac.id',
-  'unap.cl',
-  'unap.edu.pe',
-  'unapec.edu.do',
-  'unapiquitos.edu.pe',
-  'unarte.ro',
-  'unas.ac.id',
-  'unas.edu.pe',
-  'unasa.edu.sv',
-  'unasam.edu.pe',
-  'unat.ens.tn',
-  'unatc.ro',
-  'unau.edu.ar',
-  'unaula.edu.co',
-  'unav.es',
-  'unavarra.es',
-  'unb.br',
-  'unb.ca',
-  'unbc.ca',
-  'unbeg.edu.sd',
-  'unbi.ba',
-  'unbosque.edu.co',
-  'unbsj.ca',
-  'unc.edu',
-  'unc.edu.ar',
-  'unc.edu.pe',
-  'unc.edu.ph',
-  'unca.edu',
-  'unca.edu.ar',
-  'uncaus.edu.ar',
-  'uncc.edu',
-  'uncen.ac.id',
-  'uncfsu.edu',
-  'uncg.edu',
-  'unco.edu',
-  'uncoma.edu.ar',
-  'uncp.edu.pe',
-  'uncu.edu.ar',
-  'uncw.edu',
-  'und.edu',
-  'undac.edu.pe',
-  'undana.ac.id',
-  'undav.edu.ar',
-  'undec.edu.ar',
-  'undef.edu.ar',
-  'undelta.edu.ar',
-  'undh.org',
-  'undip.ac.id',
-  'une.edu',
-  'une.edu.au',
-  'une.edu.mx',
-  'une.edu.pe',
-  'une.edu.py',
-  'une.edu.ve',
-  'uneatlantico.es',
-  'uneb.br',
-  'unec.edu.az',
-  'uned.ac.cr',
-  'uned.es',
-  'unefa.edu.do',
-  'unefa.edu.ve',
-  'unefm.edu.ve',
-  'uneg.edu.ve',
-  'unej.ac.id',
-  'unellez.edu.ve',
-  'unem.edu',
-  'unep.edu.ph',
-  'uneph.org',
-  'uner.edu.ar',
-  'unerg.edu.ve',
-  'unermb.edu.ve',
-  'unes.edu.mx',
-  'unesa.ac.id',
-  'unesc.rct-sc.br',
-  'unesco-ihe.org',
-  'unesp.br',
-  'unesr.edu.ve',
-  'unesur.edu.ve',
-  'unet.edu.ve',
-  'unev-rd.edu.do',
-  'unex.es',
-  'unexpo.edu.ve',
-  'unf.edu',
-  'unf.edu.ar',
-  'unfa.cl',
-  'unfv.edu.pe',
-  'ung.ac.id',
-  'ung.br',
-  'ung.edu',
-  'ung.si',
-  'unge.gq',
-  'ungs.edu.ar',
-  'unh.edu',
-  'unhalu.ac.id',
-  'unhamzah.ac.id',
-  'unhas.ac.id',
-  'unheval.edu.pe',
-  'uni-agro.grodno.by',
-  'uni-augsburg.de',
-  'uni-bamberg.de',
-  'uni-bayreuth.de',
-  'uni-bge.hu',
-  'uni-bielefeld.de',
-  'uni-bonn.de',
-  'uni-bremen.de',
-  'uni-corvinus.hu',
-  'uni-dubna.ru',
-  'uni-duesseldorf.de',
-  'uni-duisburg-essen.de',
-  'uni-erfurt.de',
-  'uni-erlangen.de',
-  'uni-flensburg.de',
-  'uni-frankfurt.de',
-  'uni-freiburg.de',
-  'uni-giessen.de',
-  'uni-goettingen.de',
-  'uni-greifswald.de',
-  'uni-halle.de',
-  'uni-hamburg.de',
-  'uni-hannover.de',
-  'uni-heidelberg.de',
-  'uni-hildesheim.de',
-  'uni-hohenheim.de',
-  'uni-jena.de',
-  'uni-kassel.de',
-  'uni-kiel.de',
-  'uni-kl.de',
-  'uni-klu.ac.at',
-  'uni-koblenz-landau.de',
-  'uni-koeln.de',
-  'uni-konstanz.de',
-  'uni-leipzig.de',
-  'uni-lj.si',
-  'uni-lueneburg.de',
-  'uni-magdeburg.de',
-  'uni-mainz.de',
-  'uni-mannheim.de',
-  'uni-marburg.de',
-  'uni-miskolc.hu',
-  'uni-muenchen.de',
-  'uni-muenster.de',
-  'uni-mysore.ac.in',
-  'uni-nke.hu',
-  'uni-obuda.hu',
-  'uni-oldenburg.de',
-  'uni-osnabrueck.de',
-  'uni-paderborn.de',
-  'uni-pannon.hu',
-  'uni-passau.de',
-  'uni-plovdiv.bg',
-  'uni-potsdam.de',
-  'uni-pr.edu',
-  'uni-prizren.com',
-  'uni-regensburg.de',
-  'uni-rostock.de',
-  'uni-ruse.bg',
-  'uni-saarland.de',
-  'uni-siegen.de',
-  'uni-sofia.bg',
-  'uni-speyer.de',
-  'uni-stuttgart.de',
-  'uni-svishtov.bg',
-  'uni-sz.bg',
-  'uni-trier.de',
-  'uni-tuebingen.de',
-  'uni-ulm.de',
-  'uni-vechta.de',
-  'uni-vologda.ac.ru',
-  'uni-vt.bg',
-  'uni-weimar.de',
-  'uni-wh.de',
-  'uni-wuerzburg.de',
-  'uni-wuppertal.de',
-  'uni.edu',
-  'uni.edu.ni',
-  'uni.edu.pe',
-  'uni.li',
-  'uni.lodz.pl',
-  'uni.lu',
-  'uni.opole.pl',
-  'uni.pt',
-  'uni.sydney.edu.au',
-  'uni.torun.pl',
-  'uni.udm.ru',
-  'uni.wroc.pl',
-  'uni9.edu.br',
-  'unia.ao',
-  'uniaam.uia.es',
-  'uniacc.cl',
-  'uniactiva.com',
-  'uniag.sk',
-  'uniamazonia.edu.co',
-  'unian.it',
-  'uniandes.edu.co',
-  'uniara.com.br',
-  'uniara.edu.br',
-  'uniara.uia.es',
-  'uniatlantico.edu.co',
-  'unib.ac.id',
-  'unib.br',
-  'uniba.it',
-  'uniba.sk',
-  'uniban.br',
-  'uniband.org',
-  'unibas.ch',
-  'unibas.it',
-  'unibda.net',
-  'unibe.ac.cr',
-  'unibe.ch',
-  'unibe.edu.do',
-  'uniben.edu',
-  'unibg.it',
-  'unibl.org',
-  'unibo.edu.ar',
-  'unibo.it',
-  'unibocconi.it',
-  'unibosco.br',
-  'uniboyaca.edu.co',
-  'unibrasil.com.br',
-  'unibs.it',
-  'unibuc.ro',
-  'unibuja.edu.ng',
-  'unibw-hamburg.de',
-  'unibw-muenchen.de',
-  'unibz.it',
-  'unic.ac.cy',
-  'unica.cu',
-  'unica.edu.do',
-  'unica.edu.mx',
-  'unica.edu.ni',
-  'unica.edu.pe',
-  'unica.edu.ve',
-  'unica.it',
-  'unicach.edu.mx',
-  'unicaen.fr',
-  'unicah.edu',
-  'unical.ac.in',
-  'unical.edu.ng',
-  'unical.it',
-  'unicam.it',
-  'unicamp.br',
-  'unicampus.it',
-  'unican.es',
-  'unicap.br',
-  'unicaribe.edu.do',
-  'unicartagena.edu.co',
-  'unicas.it',
-  'unicastelo.br',
-  'unicatt.it',
-  'unice.fr',
-  'unicen.edu.ar',
-  'unicen.edu.bo',
-  'unicesar.edu.co',
-  'uniceub.br',
-  'unich.it',
-  'unicid.br',
-  'unicit.cl',
-  'unicit.edu.ni',
-  'unico.edu.sv',
-  'unicordoba.edu.co',
-  'unicruz.tche.br',
-  'unicsul.br',
-  'unict.it',
-  'unida.edu.py',
-  'unidavi.rct-sc.br',
-  'unideb.hu',
-  'unidu.hr',
-  'uniecampus.it',
-  'uniedpa.com',
-  'uniel.edu.al',
-  'uniese.it',
-  'unifacs.br',
-  'unifap.br',
-  'unife.edu.pe',
-  'unife.it',
-  'unifei.edu.br',
-  'unifenas.br',
-  'unifeso.edu.br',
-  'unifg.it',
-  'unifi.it',
-  'unifiji.ac.fj',
-  'unifor.br',
-  'unifr.ch',
-  'unifran.br',
-  'unifranz.edu.bo',
-  'unig.br',
-  'unige.ch',
-  'unige.it',
-  'unigoa.ac.in',
-  'unigoias.com.br',
-  'unigoro.ac.id',
-  'unigranrio.br',
-  'unigre.it',
-  'unigre.urbe.it',
-  'uniguajira.edu.co',
-  'unijos.edu.ng',
-  'unijui.tche.br',
-  'unik-kediri.ac.id',
-  'unika.ac.id',
-  'unikal.ac.id',
-  'unikin.cd',
-  'unikino.mx',
-  'unikis.ac.cd',
-  'unikl.edu.my',
-  'unikom.ac.id',
-  'unikuljis.edu.bo',
-  'unil.ch',
-  'unila.ac.id',
-  'unilag.edu.ng',
-  'unilak.ac.id',
-  'unilasalle.fr',
-  'unile.it',
-  'unileoben.ac.at',
-  'unileon.es',
-  'unilib.neva.ru',
-  'unilibre.edu.co',
-  'unilim.fr',
-  'unilink.it',
-  'unillanos.edu.co',
-  'unilorin.edu.ng',
-  'unilu.ac.cd',
-  'unilu.ch',
-  'uniludes.ch',
-  'unilurio.ac.mz',
-  'unilus.ac.zm',
-  'unima.ac.id',
-  'unima.ac.mw',
-  'unima.mw',
-  'unimaas.nl',
-  'unimagdalena.edu.co',
-  'unimaid.edu.ng',
-  'unimap.edu.my',
-  'unimar.br',
-  'unimas.my',
-  'unimayab.edu.mx',
-  'unimc.it',
-  'unime.it',
-  'unimed.ac.id',
-  'unimelb.edu',
-  'unimelb.edu.au',
-  'unimep.br',
-  'unimes.com.br',
-  'unimes.fr',
-  'unimet.edu.ve',
-  'unimetro.edu.co',
-  'unimetro.edu.hn',
-  'unimetroangola.com',
-  'unimex.edu.mx',
-  'unimi.it',
-  'unimib.it',
-  'unimkar.edu.ng',
-  'unimol.it',
-  'unimonte.br',
-  'unimontes.br',
-  'unimoron.edu.ar',
-  'unin.hr',
-  'unina.it',
-  'unina2.it',
-  'uninav.it',
-  'unincca.edu.co',
-  'unine.ch',
-  'uninorte.edu.co',
-  'uninorte.edu.py',
-  'uninova.sk',
-  'uninove.br',
-  'uninp.edu.rs',
-  'uninsubria.it',
-  'uninus.ac.id',
-  'unioeste.br',
-  'union.edu',
-  'unios.hr',
-  'uniosun.edu.ng',
-  'uniovi.es',
-  'unip-objetivo.br',
-  'unipa.it',
-  'unipamplona.edu.co',
-  'unipasby.ac.id',
-  'unipavaresia.edu.al',
-  'unipaz.edu.co',
-  'unipd.it',
-  'unipdu.ac.id',
-  'unipe.br',
-  'unipe.edu.ar',
-  'unipg.it',
-  'unipi.gr',
-  'unipi.it',
-  'unipiloto.edu.co',
-  'unipli.com.br',
-  'unipo.sk',
-  'uniport.edu.ng',
-  'unipr.it',
-  'unipu.hr',
-  'unipune.ernet.in',
-  'unipv.it',
-  'uniq.edu',
-  'uniquindio.edu.co',
-  'unir.br',
-  'unira.ac.id',
-  'uniraj.org',
-  'unirazak.edu.my',
-  'unirc.it',
-  'uniremhos.edu.do',
-  'uniri.hr',
-  'unirio.br',
-  'unirioja.es',
-  'uniroma1.it',
-  'uniroma2.eu',
-  'uniroma3.it',
-  'unirsm.sm',
-  'unis.edu.gt',
-  'unis.sn',
-  'unisa.ac.za',
-  'unisa.br',
-  'unisa.edu.au',
-  'unisa.it',
-  'unisabana.edu.co',
-  'unisal.it',
-  'unisannio.it',
-  'unisantos.com.br',
-  'unisba.ac.id',
-  'unisc.br',
-  'unisel.edu.my',
-  'unisey.ac.sc',
-  'unisg.ch',
-  'unisg.it',
-  'unishabunia.org',
-  'unishivaji.ac.in',
-  'unishk.edu.al',
-  'unisi.it',
-  'unisilvaner.info',
-  'unisimonbolivar.edu.co',
-  'unisinos.br',
-  'unisinucartagena.edu.co',
-  'unisma.ac.id',
-  'unismuh.ac.id',
-  'unisob.na.it',
-  'unispital.ch',
-  'unisri.ac.id',
-  'uniss.it',
-  'unissa.edu.bn',
-  'unissula.ac.id',
-  'unist.ac.kr',
-  'unist.hr',
-  'unistangerang.ac.id',
-  'unistra.fr',
-  'unistrapg.it',
-  'unistrasi.it',
-  'unisucre.edu.co',
-  'unisul.br',
-  'uniswa.sz',
-  'unisza.edu.my',
-  'unit.br',
-  'unita.edu.ec',
-  'unitar.edu.my',
-  'unitau.br',
-  'unitbv.ro',
-  'unite.edu.mk',
-  'unite.it',
-  'unitec.edu',
-  'unitec.edu.ve',
-  'unitec.mx',
-  'unitech.ac.pg',
-  'uniten.edu.my',
-  'unitir.edu.al',
-  'unitn.it',
-  'unito.it',
-  'unitomo.ac.id',
-  'unitru.edu.pe',
-  'units.it',
-  'unitus.it',
-  'unity.edu',
-  'uniube.br',
-  'uniud.it',
-  'uniurb.it',
-  'uniuyo.edu.ng',
-  'univ-ab.pt',
-  'univ-ag.fr',
-  'univ-alger.dz',
-  'univ-alger3.dz',
-  'univ-amu.fr',
-  'univ-angers.fr',
-  'univ-annaba.dz',
-  'univ-antananarivo.mg',
-  'univ-antilles.fr',
-  'univ-antsiranana.mg',
-  'univ-artois.fr',
-  'univ-avignon.fr',
-  'univ-bangui.net',
-  'univ-batna.dz',
-  'univ-bejaia.dz',
-  'univ-biskra.dz',
-  'univ-blida.dz',
-  'univ-bpclermont.fr',
-  'univ-brest.fr',
-  'univ-catholyon.fr',
-  'univ-chlef.dz',
-  'univ-cocody.ci',
-  'univ-corse.fr',
-  'univ-douala.com',
-  'univ-dschang.org',
-  'univ-emir.dz',
-  'univ-evry.fr',
-  'univ-fcomte.fr',
-  'univ-fianar.mg',
-  'univ-grenoble-alpes.fr',
-  'univ-guelma.dz',
-  'univ-ibntofail.ac.ma',
-  'univ-inpt.fr',
-  'univ-jfc.fr',
-  'univ-jijel.dz',
-  'univ-k.rnu.tn',
-  'univ-kag.org',
-  'univ-lehavre.fr',
-  'univ-lemans.fr',
-  'univ-lille1.fr',
-  'univ-lille2.fr',
-  'univ-lille3.fr',
-  'univ-littoral.fr',
-  'univ-lome.tg',
-  'univ-lorraine.fr',
-  'univ-lr.fr',
-  'univ-lyon1.fr',
-  'univ-lyon2.fr',
-  'univ-lyon3.fr',
-  'univ-mahajanga.mg',
-  'univ-metz.fr',
-  'univ-mlv.fr',
-  'univ-mngb.net',
-  'univ-montp1.fr',
-  'univ-montp2.fr',
-  'univ-montp3.fr',
-  'univ-mosta.dz',
-  'univ-msila.dz',
-  'univ-mulhouse.fr',
-  'univ-nancy2.fr',
-  'univ-nantes.fr',
-  'univ-ndere.cm',
-  'univ-ndjamena.org',
-  'univ-nkc.mr',
-  'univ-oeb.dz',
-  'univ-oran.dz',
-  'univ-orleans.fr',
-  'univ-ouaga.bf',
-  'univ-ouargla.dz',
-  'univ-oujda.ac.ma',
-  'univ-ovidius.ro',
-  'univ-paris-diderot.fr',
-  'univ-paris1.fr',
-  'univ-paris12.fr',
-  'univ-paris13.fr',
-  'univ-paris3.fr',
-  'univ-paris5.fr',
-  'univ-paris8.fr',
-  'univ-pau.fr',
-  'univ-perp.fr',
-  'univ-poitiers.fr',
-  'univ-reims.fr',
-  'univ-rennes1.fr',
-  'univ-rennes2.fr',
-  'univ-reunion.fr',
-  'univ-rouen.fr',
-  'univ-saida.dz',
-  'univ-sante.edu.kh',
-  'univ-savoie.fr',
-  'univ-sba.dz',
-  'univ-setif.dz',
-  'univ-skikda.dz',
-  'univ-st-etienne.fr',
-  'univ-tebessa.dz',
-  'univ-thies.sn',
-  'univ-tiaret.dz',
-  'univ-tlemcen.dz',
-  'univ-tln.fr',
-  'univ-tlse1.fr',
-  'univ-tlse2.fr',
-  'univ-tlse3.fr',
-  'univ-toamasina.mg',
-  'univ-toliara.mg',
-  'univ-toulouse.fr',
-  'univ-tours.fr',
-  'univ-ubs.fr',
-  'univ-usto.dz',
-  'univ-valenciennes.fr',
-  'univ-zig.sn',
-  'univ.edu.dj',
-  'univ.gda.pl',
-  'univ.kiev.ua',
-  'univ.rzeszow.pl',
-  'univ.szczecin.pl',
-  'univ.uzhgorod.ua',
-  'univa.mx',
-  'univagro-iasi.ro',
-  'unival.edu.ni',
-  'univale.br',
-  'univali.rct-sc.br',
-  'univalle.edu',
-  'univalle.edu.co',
-  'univap.br',
-  'univaq.it',
-  'univas.edu.mx',
-  'univasf.edu.br',
-  'univcb.ro',
-  'univchapultepec.edu.mx',
-  'univd.edu.ua',
-  'unive.it',
-  'univen.ac.za',
-  'univer.kharkov.ua',
-  'univer.omsk.su',
-  'univermed-cdgm.ro',
-  'universidad-monteavila.edu.ve',
-  'universidad-policial.edu.ar',
-  'universidad.edu.uy',
-  'universidadarcis.cl',
-  'universidadatlantico.org',
-  'universidadbrauliocarrillo.com',
-  'universidadcentral.com',
-  'universidaddeleon.edu.mx',
-  'universidade-autonoma.pt',
-  'universidadean.edu.co',
-  'universidadlaconcordia.edu.mx',
-  'universidadmotolinia.edu.mx',
-  'universidadnotarial.edu.ar',
-  'universidadpedagogica.com',
-  'universidadsalesiana.edu.mx',
-  'universidadsanjosecr.com',
-  'universitas-trilogi.ac.id',
-  'universitateamaritima.ro',
-  'universite-paris-saclay.fr',
-  'universite-yde2.org',
-  'universiteitleiden.nl',
-  'universitekongo.org',
-  'university.kg',
-  'university.kherson.ua',
-  'university.tversu.ru',
-  'universitycanadawest.ca',
-  'universitycollege.ac.in',
-  'universityliberia.org',
-  'universityofbohol.com',
-  'universityofcebu.edu.ph',
-  'universityofgalway.ie',
-  'universityofsomalia.net',
-  'universo.br',
-  'universum-ks.org',
-  'univesp.br',
-  'univet.hu',
-  'univgb.rnu.tn',
-  'univie.ac.at',
-  'univillarica.mx',
-  'univlora.edu.al',
-  'univman.edu.ph',
-  'univmed.fr',
-  'univo.edu.sv',
-  'univpancasila.ac.id',
-  'univr.it',
-  'univsul.org',
-  'uniwa.gr',
-  'uniwest.ac.za',
-  'uniyar.ac.ru',
-  'uniza.sk',
-  'unizambeze.ac.mz',
-  'unizar.es',
-  'unizd.hr',
-  'unizg.hr',
-  'unizh.ch',
-  'unizik.edu.ng',
-  'unizulu.ac.za',
-  'unizwa.edu.om',
-  'unj.ac.id',
-  'unja.ac.id',
-  'unjani.ac.id',
-  'unjbg.edu.pe',
-  'unjfsc.edu.pe',
-  'unju.edu.ar',
-  'unk.edu',
-  'unkhair.ac.id',
-  'unklab.ac.id',
-  'unkorce.edu.al',
-  'unkris.ac.id',
-  'unl.ac.uk',
-  'unl.edu',
-  'unl.edu.ar',
-  'unl.edu.ec',
-  'unl.pt',
-  'unla.edu.ar',
-  'unla.edu.mx',
-  'unlam.ac.id',
-  'unlam.edu.ar',
-  'unlar.edu.ar',
-  'unlc.edu.ar',
-  'unlp.edu.ar',
-  'unlpam.edu.ar',
-  'unlu.edu.ar',
-  'unlv.edu',
-  'unlz.edu.ar',
-  'unm.ac.id',
-  'unm.edu',
-  'unm.edu.ar',
-  'unmas.org',
-  'unmb.ro',
-  'unmer-madiun.ac.id',
-  'unmer.ac.id',
-  'unmo.ba',
-  'unmsm.edu.pe',
-  'unmuhjember.ac.id',
-  'unmuhmataram.com',
-  'unmul.ac.id',
-  'unn.ac.ru',
-  'unn.edu.ng',
-  'unne.edu.ar',
-  'unnes.ac.id',
-  'unnet.es',
-  'unnoba.edu.ar',
-  'uno-r.edu.ph',
-  'uno.edu',
-  'uno.edu.ar',
-  'uno.mx',
-  'unochapeco.edu.br',
-  'unoesc.edu.br',
-  'unoeste.br',
-  'unom.ac.in',
-  'unomaha.edu',
-  'unp.ac.id',
-  'unp.br',
-  'unp.edu.ar',
-  'unp.edu.pe',
-  'unp.edu.ph',
-  'unpa.edu.ar',
-  'unpad.ac.id',
-  'unpak.ac.id',
-  'unpar.ac.id',
-  'unpas.ac.id',
-  'unpatti.ac.id',
-  'unpaz.edu.ar',
-  'unphu.edu.do',
-  'unpilar.edu.ar',
-  'unprg.edu.pe',
-  'unq.edu.ar',
-  'unr.ac.id',
-  'unr.edu',
-  'unr.edu.ar',
-  'unraf.edu.ar',
-  'unram.ac.id',
-  'unrc.edu.ar',
-  'unri.ac.id',
-  'unrn.edu.ar',
-  'unrt.edu.ar',
-  'uns.ac.id',
-  'uns.ac.rs',
-  'uns.edu.ar',
-  'uns.edu.pe',
-  'unsa.ba',
-  'unsa.edu.ar',
-  'unsa.edu.pe',
-  'unsaac.edu.pe',
-  'unsada.ac.id',
-  'unsada.edu.ar',
-  'unsam.edu.ar',
-  'unsch.edu.pe',
-  'unse.edu.ar',
-  'unsil.ac.id',
-  'unsj.edu.ar',
-  'unsl.edu.ar',
-  'unslp.edu.bo',
-  'unsm.edu.pe',
-  'unsoed.ac.id',
-  'unsrat.ac.id',
-  'unsri.ac.id',
-  'unssa.edu.sv',
-  'unssa.rs.ba',
-  'unsta.edu.ar',
-  'unsw.edu.au',
-  'unswagati-crb.ac.id',
-  'unsxx.edu.bo',
-  'unsyiah.ac.id',
-  'unt.edu',
-  'unt.edu.ar',
-  'untad.ac.id',
-  'untag-banyuwangi.ac.id',
-  'untag-jkt.org',
-  'untag-smd.ac.id',
-  'untag.ac.id',
-  'untagcirebon.info',
-  'untagsmg.ac.id',
-  'untan.ac.id',
-  'untar.ac.id',
-  'untdallas.edu',
-  'untdf.edu.ar',
-  'unthsc.edu',
-  'untidar.ac.id',
-  'untirta.ac.id',
-  'untref.edu.ar',
-  'untumbes.edu.pe',
-  'untz.ba',
-  'unu.edu',
-  'unu.edu.pe',
-  'unu.edu.sd',
-  'unud.ac.id',
-  'unum.edu.mx',
-  'unva.cz',
-  'unvi.edu.ba',
-  'unvime.edu.ar',
-  'unvm.edu.ar',
-  'unw.edu.pk',
-  'unwe.acad.bg',
-  'unwiku.ac.id',
-  'uny.ac.id',
-  'unyp.cz',
-  'unyt.edu.al',
-  'unza.zm',
-  'unze.ba',
-  'uo.edu.cu',
-  'uoa.gr',
-  'uoalmuthana.edu.iq',
-  'uoanbar.edu.iq',
-  'uob.edu.bh',
-  'uob.edu.ly',
-  'uob.edu.pk',
-  'uob.ga',
-  'uobabylon.edu.iq',
-  'uobaghdad.edu.iq',
-  'uobasrah.edu.iq',
-  'uoc.edu',
-  'uoc.es',
-  'uoc.gr',
-  'uod.ac',
-  'uod.edu.do',
-  'uoda.edu.bd',
-  'uodiyala.edu.iq',
-  'uoe.edu.pk',
-  'uoeh-u.ac.jp',
-  'uoeld.ac.ke',
-  'uofd.edu.sd',
-  'uofg.edu.sd',
-  'uofk.edu',
-  'uog.ac.pg',
-  'uog.edu',
-  'uog.edu.et',
-  'uog.edu.gy',
-  'uog.edu.pk',
-  'uogj.edu.al',
-  'uoguelph.ca',
-  'uoh.edu.sa',
-  'uohyd.ernet.in',
-  'uoi.gr',
-  'uoit.ca',
-  'uojazeera.com',
-  'uok.ac.in',
-  'uok.ac.ir',
-  'uok.edu.pk',
-  'uok.edu.sy',
-  'uokerbala.edu.iq',
-  'uokirkuk.edu.iq',
-  'uokufa.edu.iq',
-  'uol.de',
-  'uol.edu.pk',
-  'uom.ac.mu',
-  'uom.edu.mx',
-  'uom.edu.pk',
-  'uom.gr',
-  'uomisan.edu.iq',
-  'uomosul.edu.iq',
-  'uomustansiriyah.edu.iq',
-  'uonbi.ac.ke',
-  'uop.edu',
-  'uop.edu.jo',
-  'uop.gr',
-  'uopeople.edu',
-  'uor.edu',
-  'uor.org',
-  'uoradea.ro',
-  'uoregon.edu',
-  'uos.ac.kr',
-  'uos.edu.pk',
-  'uosa.uar.net',
-  'uot.edu.ly',
-  'uotechnology.edu.iq',
-  'uottawa.ca',
-  'uou.ac.in',
-  'uou.edu.ps',
-  'uovs.ac.za',
-  'uow.edu.au',
-  'uowasit.edu.iq',
-  'uowdubai.ac.ae',
-  'uowm.gr',
-  'uowmail.edu.au',
-  'uoz.ac.ir',
-  'up.ac.mz',
-  'up.ac.pa',
-  'up.ac.za',
-  'up.edu',
-  'up.edu.pe',
-  'up.edu.ps',
-  'up.mx',
-  'up.pt',
-  'up.univ-mrs.fr',
-  'up45.ac.id',
-  'upa.cl',
-  'upa.ro',
-  'upacifico.cl',
-  'upacifico.edu.ec',
-  'upaep.mx',
-  'upal.edu',
-  'upan.edu.sv',
-  'upana.edu.gt',
-  'upang.edu.ph',
-  'upao.edu.pe',
-  'upatras.gr',
-  'upb.edu',
-  'upb.edu.co',
-  'upb.edu.ph',
-  'upb.pitt.edu',
-  'upc-rdc.cd',
-  'upc.edu',
-  'upc.edu.pe',
-  'upce.cz',
-  'upch.edu.pe',
-  'upci.edu.pe',
-  'upco.es',
-  'upct.es',
-  'upd.edu.ph',
-  'upds.edu.bo',
-  'upe.br',
-  'upe.edu.ar',
-  'upe.edu.py',
-  'upe.poli.br',
-  'upeace.org',
-  'upei.ca',
-  'upel.edu.ve',
-  'upenn.edu',
-  'upes.ac.in',
-  'upes.edu.sv',
-  'upesh.edu',
-  'upet.ro',
-  'upeu.edu.pe',
-  'upf.edu',
-  'upf.es',
-  'upf.pf',
-  'upf.tche.br',
-  'upg-ploiesti.ro',
-  'uph.edu',
-  'uphighschoolcebu.edu.ph',
-  'uphr.edu.ph',
-  'upi.edu',
-  'upiig.ipn.mx',
-  'upike.edu',
-  'upis.br',
-  'upit.ro',
-  'upj.pitt.edu',
-  'upjs.sk',
-  'upla.edu.pe',
-  'uplb.edu.ph',
-  'uplearnbusinessschool.com',
-  'upm.ac.ma',
-  'upm.edu.my',
-  'upm.edu.ph',
-  'upm.es',
-  'upm.moldnet.md',
-  'upm.ro',
-  'upmc.com',
-  'upmc.edu',
-  'upmc.fr',
-  'upmf-grenoble.fr',
-  'upmin.edu.ph',
-  'upn.mx',
-  'upnfm.edu.hn',
-  'upng.ac.pg',
-  'upnjatim.ac.id',
-  'upnorte.edu.pe',
-  'upnvj.ac.id',
-  'upnyk.ac.id',
-  'upo.es',
-  'upol.cz',
-  'upoli.edu.ni',
-  'uponic.edu.ni',
-  'uportu.pt',
-  'upou.org',
-  'upr-ponce.upr.edu',
-  'upr.ac.id',
-  'upr.clu.edu',
-  'upr.edu',
-  'upr.edu.cu',
-  'upr.si',
-  'upra.edu',
-  'upra.org',
-  'uprag.edu',
-  'uprb.edu',
-  'uprc.edu',
-  'uprm.edu',
-  'uprrp.edu',
-  'uprutuado.edu',
-  'ups-tlse.fr',
-  'ups.edu',
-  'ups.edu.ec',
-  'ups.urbe.it',
-  'upsa.edu.bo',
-  'upsa.es',
-  'upsb.edu.pe',
-  'upsi.edu.my',
-  'upsjb.edu.pe',
-  'upstegal.ac.id',
-  'upt.al',
-  'upt.edu.pe',
-  'upt.pitt.edu',
-  'upt.ro',
-  'uptc.edu.co',
-  'uptu.ac.in',
-  'upv.edu.ph',
-  'upv.es',
-  'uq.edu.au',
-  'uqac.ca',
-  'uqam.ca',
-  'uqar.uquebec.ca',
-  'uqat.uquebec.ca',
-  'uqo.ca',
-  'uqroo.mx',
-  'uqtr.uquebec.ca',
-  'uqu.edu.sa',
-  'uquebec.ca',
-  'ur.mx',
-  'uraccan.edu.ni',
-  'urbancollege.edu',
-  'urbaniana.edu',
-  'urbe.edu',
-  'urc.ac.ru',
-  'urc.edu.ph',
-  'urca.br',
-  'urcamp.tche.br',
-  'uregina.ca',
-  'urfu.ru',
-  'uri.br',
-  'uri.edu',
-  'urich.edu',
-  'urjc.es',
-  'url.edu.gt',
-  'url.es',
-  'urmh.edu.mx',
-  'urmia.ac.ir',
-  'urosario.edu.co',
-  'urp.edu.pe',
-  'urse.edu.mx',
-  'ursinus.edu',
-  'uru.edu',
-  'urural.edu.gt',
-  'urv.es',
-  'us.edu.pl',
-  'us.es',
-  'usa.edu',
-  'usa.edu.ph',
-  'usa.edu.pk',
-  'usaaa.ru',
-  'usab-tm.ro',
-  'usab.ro',
-  'usac.edu.gt',
-  'usac.edu.mx',
-  'usaca.edu.co',
-  'usach.cl',
-  'usafa.af.mil',
-  'usafa.edu',
-  'usaim.edu',
-  'usak.edu.tr',
-  'usal.es',
-  'usalesiana.edu.bo',
-  'usam.ac.cr',
-  'usam.edu.sv',
-  'usam.md',
-  'usamvcluj.ro',
-  'usanandres.cl',
-  'usanpedro.edu.pe',
-  'usao.edu',
-  'usap.edu',
-  'usart.ru',
-  'usask.ca',
-  'usat.edu.pe',
-  'usat.ms',
-  'usb.ac.ir',
-  'usb.edu.co',
-  'usb.edu.mx',
-  'usb.md',
-  'usb.ve',
-  'usbmed.edu.co',
-  'usc.ac.ir',
-  'usc.br',
-  'usc.edu',
-  'usc.edu.au',
-  'usc.edu.cn',
-  'usc.edu.ph',
-  'usc.edu.tt',
-  'usc.es',
-  'usc.gal',
-  'usca.edu',
-  'uscb.edu',
-  'uscga.edu',
-  'uscon.ru',
-  'usd.ac.id',
-  'usd.edu',
-  'usek.edu.lb',
-  'usenghor-francophonie.org',
-  'usep.edu.ph',
-  'userena.cl',
-  'usergioarboleda.edu.co',
-  'usf.br',
-  'usf.com.mx',
-  'usf.edu',
-  'usfca.edu',
-  'usfea.ru',
-  'usfq.edu.ec',
-  'usfx.edu.bo',
-  'usfx.info',
-  'ush.sd',
-  'usherb.ca',
-  'ushs.u-strasbg.fr',
-  'usi.ac.id',
-  'usi.ch',
-  'usi.edu',
-  'usin.edu.sv',
-  'usindh.edu.pk',
-  'usiu.ac.ke',
-  'usiu.edu',
-  'usj.edu.lb',
-  'usj.edu.mo',
-  'usj.es',
-  'usjc.uwaterloo.ca',
-  'usjr.edu.ph',
-  'uskudar.edu.tr',
-  'usl.edu',
-  'usla.ru',
-  'usls.edu',
-  'usm.ac.id',
-  'usm.cl',
-  'usm.edu',
-  'usm.edu.ec',
-  'usm.edu.ph',
-  'usm.maine.edu',
-  'usm.md',
-  'usm.my',
-  'usm.trompo.com',
-  'usma.ac.pa',
-  'usma.edu',
-  'usmba.ac.ma',
-  'usmf.md',
-  'usmga.ru',
-  'usmma.edu',
-  'usmp.edu.pe',
-  'usms.edu.pk',
-  'usmtu.edu.ua',
-  'usna.edu',
-  'usoms.poznan.pl',
-  'uson.mx',
-  'usonsonate.edu.sv',
-  'usouixfalls.edu',
-  'usp.ac.fj',
-  'usp.ac.jp',
-  'usp.br',
-  'usp.edu.pe',
-  'usp.ph',
-  'usps.edu.hn',
-  'uspsantapaula.com',
-  'uspt.edu.ar',
-  'usq.edu.au',
-  'uss.cl',
-  'uss.edu.pe',
-  'uss.rnu.tn',
-  'usst.edu.cn',
-  'ust.ac.kr',
-  'ust.cl',
-  'ust.edu',
-  'ust.edu.ng',
-  'ust.edu.ph',
-  'ust.edu.sd',
-  'ust.hk',
-  'ust.md',
-  'usta.edu.co',
-  'ustanne.ednet.ns.ca',
-  'ustb.edu.cn',
-  'ustb.edu.pk',
-  'ustboniface.mb.ca',
-  'ustc.ac.bd',
-  'ustc.edu',
-  'ustc.edu.cn',
-  'usth.edu.vn',
-  'usthb.dz',
-  'ustmb.ac.ir',
-  'ustpaul.ca',
-  'usu.ac.id',
-  'usu.br',
-  'usu.edu',
-  'usu.ru',
-  'usudbury.com',
-  'usue.ru',
-  'usuft.kiev.ua',
-  'usuhs.mil',
-  'usurcolombia.com',
-  'usv.ro',
-  'uswr.ac.ir',
-  'usyd.edu.au',
-  'ut.ac.id',
-  'ut.ac.ir',
-  'ut.edu',
-  'ut.edu.co',
-  'ut.edu.sa',
-  'ut.ee',
-  'ut.pr',
-  'uta.cl',
-  'uta.edu',
-  'uta.edu.ec',
-  'uta.fi',
-  'utad-petel-edu.org',
-  'utad.pt',
-  'utadeo.edu.co',
-  'utah.edu',
-  'utahtech.edu',
-  'utaipei.edu.tw',
-  'utalca.cl',
-  'utanga.co.ao',
-  'utar.edu.my',
-  'utas.edu.au',
-  'utb.cz',
-  'utb.edu',
-  'utb.edu.ec',
-  'utbm.fr',
-  'utc.edu',
-  'utc.edu.ec',
-  'utc.fr',
-  'utcb.ro',
-  'utcc.ac.th',
-  'utch.edu.co',
-  'utcluj.ro',
-  'utd.edu',
-  'utdallas.edu',
-  'utdt.edu',
-  'ute.edu.do',
-  'ute.edu.ec',
-  'utea.edu.pe',
-  'utec.edu.pe',
-  'utec.edu.sv',
-  'utech.edu.jm',
-  'utelvt.edu.ec',
-  'utem.cl',
-  'utem.edu.my',
-  'utep.edu',
-  'uteq.edu.ec',
-  'utesa.edu',
-  'utesur.edu.do',
-  'utexas.edu',
-  'utfpr.edu.br',
-  'utfsm.cl',
-  'utg.edu.gm',
-  'utgjiu.ro',
-  'uth.edu.pl',
-  'uth.gr',
-  'uth.hn',
-  'uth.pl',
-  'uthm.edu.my',
-  'utibet.edu.cn',
-  'utica.edu',
-  'utk.edu',
-  'utkaluniv.org',
-  'utl.pt',
-  'utla.edu.sv',
-  'utm.ac.mu',
-  'utm.edu',
-  'utm.edu.ec',
-  'utm.md',
-  'utm.mx',
-  'utm.my',
-  'utm.rnu.tn',
-  'utm.ro',
-  'utm.utoronto.ca',
-  'utmachala.edu.ec',
-  'utmb.edu',
-  'utmn.ru',
-  'utn.edu.ar',
-  'utn.edu.ec',
-  'utneza.edu.mx',
-  'uto.edu.bo',
-  'utoledo.edu',
-  'utoronto.ca',
-  'utp.ac.id',
-  'utp.ac.pa',
-  'utp.edu.co',
-  'utp.edu.my',
-  'utp.edu.pe',
-  'utp.edu.pl',
-  'utpb.edu',
-  'utpl.edu.ec',
-  'utpp.edu.kh',
-  'utrgv.edu',
-  'uts.edu.au',
-  'utsa.edu',
-  'utsam.edu.ec',
-  'utsouthwestern.edu',
-  'utsunomiya-u.ac.jp',
-  'utt.edu.tt',
-  'utt.fr',
-  'utt.ro',
-  'uttyler.edu',
-  'utu.fi',
-  'utulsa.edu',
-  'utunis.rnu.tn',
-  'utur.ac.cr',
-  'utwente.nl',
-  'uu.ac.kr',
-  'uu.edu',
-  'uu.nl',
-  'uu.se',
-  'uuc.edu.et',
-  'uum.edu.my',
-  'uumail.in',
-  'uut.ac.ir',
-  'uv.cl',
-  'uv.edu.ph',
-  'uv.es',
-  'uv.mx',
-  'uva.br',
-  'uva.es',
-  'uva.nl',
-  'uvanet.br',
-  'uvas.edu.pk',
-  'uvauga.ru',
-  'uvb.edu.mx',
-  'uveritas.ac.cr',
-  'uvg.edu.gt',
-  'uvg1.net',
-  'uvh.nl',
-  'uvi.edu',
-  'uvic.ca',
-  'uvic.es',
-  'uvigo.es',
-  'uvigo.gal',
-  'uvipro.cl',
-  'uvm.cl',
-  'uvm.edu',
-  'uvm.edu.ve',
-  'uvm.sk',
-  'uvmnet.edu',
-  'uvs.edu',
-  'uvsc.edu',
-  'uvsq.fr',
-  'uvt.edu.mx',
-  'uvt.rnu.tn',
-  'uvt.ro',
-  'uvu.edu',
-  'uvu.edu.cn',
-  'uvvg.ro',
-  'uw.edu',
-  'uw.edu.pk',
-  'uw.edu.pl',
-  'uwa.edu.au',
-  'uwasa.fi',
-  'uwaterloo.ca',
-  'uwc.ac.za',
-  'uwc.edu',
-  'uwcm.ac.uk',
-  'uwe.ac.uk',
-  'uwec.edu',
-  'uwed.uz',
-  'uwf.edu',
-  'uwgb.edu',
-  'uwi.tt',
-  'uwic.ac.uk',
-  'uwichill.edu.bb',
-  'uwiener.edu.pe',
-  'uwimona.edu.jm',
-  'uwindsor.ca',
-  'uwinnipeg.ca',
-  'uwlax.edu',
-  'uwm.edu',
-  'uwm.edu.pl',
-  'uwo.ca',
-  'uwosh.edu',
-  'uwp.edu',
-  'uwplatt.edu',
-  'uwrf.edu',
-  'uws.edu.au',
-  'uwsa.edu',
-  'uwsp.edu',
-  'uwstout.edu',
-  'uwsuper.edu',
-  'uwu.ac.lk',
-  'uww.edu',
-  'uwyo.edu',
-  'uxac.edu.mx',
-  'uy1.uninet.cm',
-  'uz.ac.zw',
-  'uz.rnu.tn',
-  'uzh.ch',
-  'uzimauniversity.ac.ke',
-  'uzswlu.uz',
-  'va.lv',
-  'valahia.ro',
-  'valdosta.edu',
-  'valenciacollege.edu',
-  'valleycollege.edu',
-  'valpo.edu',
-  'vancouver.wsu.edu',
-  'vanderbilt.edu',
-  'vaniercollege.qc.ca',
-  'vassar.edu',
-  'vbspu.ac.in',
-  'vbu.co.in',
-  'vcc.ca',
-  'vcc.edu',
-  'vccs.edu',
-  'vcsu.nodak.edu',
-  'vcu.edu',
-  'vdu.edu.ua',
-  'vdu.lt',
-  'velammal.edu.in',
-  'velammalitech.edu.in',
-  'venta.lv',
-  'venturacollege.edu',
-  'ver.ucc.mx',
-  'veritas.edu.ng',
-  'vermontlaw.edu',
-  'vern.hr',
-  'vernoncollege.edu',
-  'vesalius.edu',
-  'vet-alfort.fr',
-  'vet-lyon.fr',
-  'vet-nantes.fr',
-  'veths.no',
-  'vfmac.edu',
-  'vfrta.ru',
-  'vfu.bg',
-  'vfu.cz',
-  'vgafk.ru',
-  'vgasa.ru',
-  'vgcc.edu',
-  'vgmu.vitebsk.by',
-  'vgta.vrn.ru',
-  'vgtu.lt',
-  'vgu.edu.vn',
-  'vhcc.edu',
-  'vic.edu',
-  'victoria-uni.ch',
-  'victoriacollege.edu',
-  'vicu.utoronto.ca',
-  'videndjurs.dk',
-  'vidyasagar.ac.in',
-  'vieup.ru',
-  'vignanuniversity.org',
-  'vikramuniversity.org',
-  'villanova.edu',
-  'villanueva.edu',
-  'vimaru.edu.vn',
-  'vinayakamissions.com',
-  'virginia.edu',
-  'virginiawestern.edu',
-  'vistula.edu.pl',
-  'visva-bharati.ac.in',
-  'vit.ac.in',
-  'vitbhopal.ac.in',
-  'viu.edu.pa',
-  'viu.es',
-  'vjc.edu',
-  'vkgu.kz',
-  'vksu-ara.org',
-  'vlekho.be',
-  'vlerick.be',
-  'vlerick.com',
-  'vlsu.ru',
-  'vmi.edu',
-  'vmou.ac.in',
-  'vmuf.edu.ph',
-  'vnitnagpur.ac.in',
-  'vnmu.vn.ua',
-  'vnu.edu.vn',
-  'vnuhcm.edu.vn',
-  'voenmeh.ru',
-  'volstate.edu',
-  'volsu.ru',
-  'voorhees.edu',
-  'vorstu.ac.ru',
-  'vpa.ac.lk',
-  'vpu.lt',
-  'vru.ac.ir',
-  'vsau.ru',
-  'vsavm.com',
-  'vsb.cz',
-  'vscht.cz',
-  'vsci.cz',
-  'vse.cz',
-  'vsgaki.burnet.ru',
-  'vsgtu.eastsib.ru',
-  'vslib.cz',
-  'vsm.sk',
-  'vsma.info',
-  'vsmu.sk',
-  'vsp.cz',
-  'vspu.ac.ru',
-  'vspu.kirov.ru',
-  'vspu.ru',
-  'vssladkovicovo.sk',
-  'vssut.ac.in',
-  'vssvalzbety.sk',
-  'vstecb.cz',
-  'vstu.ru',
-  'vstu.vinnica.ua',
-  'vstu.vitebsk.by',
-  'vsu.by',
-  'vsu.edu',
-  'vsu.ru',
-  'vsvu.sk',
-  'vt.edu',
-  'vtc.edu',
-  'vtu.ac.in',
-  'vu-wien.ac.at',
-  'vu.ac.th',
-  'vu.edu.au',
-  'vu.edu.pk',
-  'vu.lt',
-  'vu.nl',
-  'vub.ac.be',
-  'vub.be',
-  'vul.edu',
-  'vumk.eu',
-  'vut.ac.za',
-  'vut.cz',
-  'vutbr.cz',
-  'vuu.edu',
-  'vuw.ac.nz',
-  'vvc.edu',
-  'vvsaz.org',
-  'vvsu.ru',
-  'vvu.edu.gh',
-  'vwc.edu',
-  'vxu.se',
-  'w-hs.de',
-  'wab.edu.pl',
-  'wabash.edu',
-  'waco.tstc.edu',
-  'wageningenuniversity.nl',
-  'wagner.edu',
-  'wahmedicalcollege.edu.pk',
-  'waikato.ac.nz',
-  'wakayama-med.ac.jp',
-  'wakayama-u.ac.jp',
-  'wakefield.ac.uk',
-  'wakehealth.edu',
-  'waketech.edu',
-  'wakf.org',
-  'wakhok.ac.jp',
-  'wako.ac.jp',
-  'waldenu.edu',
-  'wales.ac.uk',
-  'wallace.edu',
-  'wallacestate.edu',
-  'wallawalla.edu',
-  'walshcollege.edu',
-  'warnborough.edu',
-  'warren-wilson.edu',
-  'warren.edu',
-  'wartburg.edu',
-  'warwick.ac.uk',
-  'waseda.ac.jp',
-  'washcoll.edu',
-  'washington.edu',
-  'washjeff.edu',
-  'watc.edu',
-  'waubonsee.edu',
-  'wayne.edu',
-  'wayne.uakron.edu',
-  'waynecc.edu',
-  'waynesburg.edu',
-  'wayo.ac.jp',
-  'wbu.edu',
-  'wbuafs.nic.in',
-  'wbut.net',
-  'wc.edu',
-  'wcc.vccs.edu',
-  'wcc.yccd.edu',
-  'wccc.edu',
-  'wccc.me.edu',
-  'wcccd.edu',
-  'wccnet.edu',
-  'wccs.edu',
-  'wcjc.edu',
-  'wcslc.edu',
-  'wcsu.edu',
-  'wctc.edu',
-  'wcu.edu',
-  'wcums.edu.cn',
-  'wcupa.edu',
-  'wdsdjxy.com',
-  'wdt.edu',
-  'wdu.edu.ng',
-  'web.prover.com.br',
-  'weber.edu',
-  'webster.ac.at',
-  'webster.ac.th',
-  'webster.ch',
-  'webster.edu',
-  'weizmann.ac.il',
-  'wellesley.edu',
-  'wells.edu',
-  'wellspringuniversity.edu.ng',
-  'wenk.be',
-  'wesley.edu',
-  'wesleyan.edu',
-  'wesleyan.edu.ph',
-  'westal.edu',
-  'westcoastuniversity-edu.com',
-  'westcoastuniversity.bz',
-  'westcoastuniversity.edu',
-  'western.edu',
-  'western.edu.kh',
-  'westernsydney.edu.au',
-  'westerntc.edu',
-  'westernu.edu',
-  'westfield.mass.edu',
-  'westga.edu',
-  'westgatech.edu',
-  'westherts.ac.uk',
-  'westhill.edu.mx',
-  'westhillscollege.com',
-  'westkentucky.kctcs.edu',
-  'westliberty.edu',
-  'westminster-mo.edu',
-  'westminster.ac.uk',
-  'westminster.edu',
-  'westminster.edu.my',
-  'westminsteru.edu',
-  'westmont.edu',
-  'westshore.edu',
-  'westtexas.tstc.edu',
-  'westvalley.edu',
-  'wetcc.edu',
-  'wfu.edu',
-  'wgalil.ac.il',
-  'wgu.edu',
-  'whapu.edu.cn',
-  'whatcom.ctc.edu',
-  'wheaton.edu',
-  'wheatonma.edu',
-  'whitman.edu',
-  'whittier.edu',
-  'whitworth.edu',
-  'whoi.edu',
-  'whtu.edu.cn',
-  'whu-koblenz.de',
-  'whu.edu',
-  'whu.edu.cn',
-  'whut.edu.cn',
-  'wichita.edu',
-  'wicida.ac.id',
-  'widener.edu',
-  'widyagama.ac.id',
-  'widyakarya.ac.id',
-  'widyatama.ac.id',
-  'wijayakusumasby.ac.id',
-  'wilberforce.edu',
-  'wileyc.edu',
-  'wilkes.edu',
-  'wilkescc.edu',
-  'willamette.edu',
-  'williamgilbert.co.uk',
-  'williams.edu',
-  'willistonstate.edu',
-  'wilmina.ac.jp',
-  'wilmington.edu',
-  'wilmu.edu',
-  'wilsoncc.edu',
-  'wiltech.edu',
-  'wima.ac.id',
-  'wimbledon.ac.uk',
-  'windesheim.nl',
-  'windsor.edu',
-  'windward.hawaii.edu',
-  'wingate.edu',
-  'winona.edu',
-  'winthrop.edu',
-  'wiregrass.edu',
-  'wisc.edu',
-  'wise.edu.jo',
-  'wisnuwardhana.ac.id',
-  'wit.edu',
-  'wit.ie',
-  'witc.edu',
-  'witcc.edu',
-  'wits.ac.za',
-  'wittenberg.edu',
-  'wittenborg.eu',
-  'wiu.edu',
-  'wiu.edu.sy',
-  'wiut.uz',
-  'wjc.edu',
-  'wkau.kz',
-  'wku.ac.kr',
-  'wku.edu',
-  'wku.edu.et',
-  'wlac.edu',
-  'wlc.edu',
-  'wlodkowic.pl',
-  'wlsc.wvnet.edu',
-  'wlu.ca',
-  'wlu.edu',
-  'wlv.ac.uk',
-  'wm.edu',
-  'wma.edu',
-  'wmc.edu',
-  'wmcc.edu',
-  'wmich.edu',
-  'wmitchell.edu',
-  'wmpenn.edu',
-  'wmsu.edu.ph',
-  'wmu.se',
-  'wmwoods.edu',
-  'wnc.edu',
-  'wncc.edu',
-  'wne.edu',
-  'wnec.edu',
-  'wnmu.edu',
-  'wofford.edu',
-  'wonkwang.ac.kr',
-  'woodbury.edu',
-  'wooster.edu',
-  'woosuk.ac.kr',
-  'worc.ac.uk',
-  'worwic.edu',
-  'wosc.edu',
-  'wou.edu.my',
-  'wp.missouristate.edu',
-  'wpcc.edu',
-  'wpi.edu',
-  'wpu.edu.sy',
-  'wpunj.edu',
-  'wright.edu',
-  'ws.edu',
-  'wsb-nlu.edu.pl',
-  'wsb.poznan.pl',
-  'wsb.toi.tarnow.pl',
-  'wsc.ac.uk',
-  'wscc.edu',
-  'wsei.lublin.pl',
-  'wsfiz.edu.pl',
-  'wsh.edu.pl',
-  'wship.edu.pl',
-  'wsinf.edu.pl',
-  'wsisiz.edu.pl',
-  'wsiz.rzeszow.pl',
-  'wsm.gdynia.pl',
-  'wsm.szczecin.pl',
-  'wsm.whu.edu.cn',
-  'wsms.edu.pl',
-  'wsp.bydgoszcz.pl',
-  'wsp.czest.pl',
-  'wsp.krakow.pl',
-  'wsp.slupsk.pl',
-  'wsp.zgora.pl',
-  'wspiz.edu.pl',
-  'wsps.waw.pl',
-  'wsptwpwaw.edu.pl',
-  'wssu.edu',
-  'wsu.ac.kr',
-  'wsu.ac.za',
-  'wsu.edu',
-  'wsu.edu.et',
-  'wsub.waw.pl',
-  'wsz-pou.edu.pl',
-  'wsz.pl',
-  'wszib.krakow.pl',
-  'wszim.edu.pl',
-  'wtamu.edu',
-  'wtc.edu',
-  'wts.edu',
-  'wtusm.edu.cn',
-  'wu-wien.ac.at',
-  'wu.ac.at',
-  'wu.ac.th',
-  'wu.edu.az',
-  'wu.edu.et',
-  'wua.ac.zw',
-  'wuacc.edu',
-  'wub.edu',
-  'wuhee.edu.cn',
-  'wuni.edu.et',
-  'wustl.edu',
-  'wustoportal.edu.ng',
-  'wvc.edu',
-  'wvncc.edu',
-  'wvstate.edu',
-  'wvsu.edu.ph',
-  'wvu.edu',
-  'wvwc.edu',
-  'wwcc.edu',
-  'wwcc.wy.edu',
-  'wwu.de',
-  'wwu.edu',
-  'www-ecpm.u-strasbg.fr',
-  'www-en.hnu.edu.cn',
-  'www-engees.u-strasbg.fr',
-  'www-ensais.u-strasbg.fr',
-  'www-ensps.u-strasbg.fr',
-  'www-ulp.u-strasbg.fr',
-  'www-urs.u-strasbg.fr',
-  'www.clcillinois.edu',
-  'www.clcmn.edu',
-  'www.cuesta.edu',
-  'www.eacc.edu',
-  'www.esmad.ipp.pt',
-  'www.fdtc.edu',
-  'www.ojc.edu',
-  'www.sunyacc.edu',
-  'www.sunyulster.edu',
-  'www.tjc.edu',
-  'www.yewon.ac.kr',
-  'www.yongin.ac.kr',
-  'www.youngsan.ac.kr',
-  'www.ysu.ac.kr',
-  'www2.mozcom.com',
-  'www3.sunysuffolk.edu',
-  'wxuli.edu.cn',
-  'wyb.ac.lk',
-  'wyu.edu.cn',
-  'wzmu.net',
-  'wzu.edu.cn',
-  'xafa.edu.cn',
-  'xahu.edu.cn',
-  'xauat.edu.cn',
-  'xaut.edu.cn',
-  'xavier.edu',
-  'xhcom.edu.cn',
-  'xhu.edu.cn',
-  'xidian.edu.cn',
-  'xiju.edu.cn',
-  'xisu.edu.cn',
-  'xjau.edu.cn',
-  'xjnu.edu.cn',
-  'xjtlu.edu.cn',
-  'xjtu.edu.cn',
-  'xju.edu.cn',
-  'xjufe.edu.cn',
-  'xmu.edu.cn',
-  'xtnu.edu.cn',
-  'xtu.edu.cn',
-  'xu.edu.ph',
-  'xula.edu',
-  'xz.edu.rs',
-  'xza.cn',
-  'xzmy.edu.cn',
-  'xznu.edu.cn',
-  'yabatech.edu.ng',
-  'yacambu.edu.ve',
-  'yai.ac.id',
-  'yale-nus.edu.sg',
-  'yale.edu',
-  'yalova.edu.tr',
-  'yama.sut.ac.jp',
-  'yamagata-u.ac.jp',
-  'yamaguchi-pu.ac.jp',
-  'yamaguchi-u.ac.jp',
-  'yamanashi-med.ac.jp',
-  'yamanashi.ac.jp',
-  'yangtzeu.edu.cn',
-  'yarsi.ac.id',
-  'yasar.edu.tr',
-  'yasuda-u.ac.jp',
-  'yau.edu.cn',
-  'yazduni.ac.ir',
-  'ybu.edu.cn',
-  'ybu.edu.tr',
-  'ybust.edu.cn',
-  'yc.edu',
-  'yc.yccd.edu',
-  'yccc.edu',
-  'ycmou.com',
-  'ycp.edu',
-  'yds.edu.vn',
-  'yeditepe.edu.tr',
-  'yeniyuzyil.edu.tr',
-  'yeungnam.ac.kr',
-  'ygu.ac.jp',
-  'yhc.edu',
-  'yic.edu.sa',
-  'yildiz.edu.tr',
-  'yizhuan.com',
-  'yma.ac.ru',
-  'ynau.edu.cn',
-  'yncrea.fr',
-  'ynnu.edu.cn',
-  'ynu.ac.jp',
-  'ynu.edu.cn',
-  'yokkaichi-u.ac.jp',
-  'yokohama-cu.ac.jp',
-  'yonsei.ac.kr',
-  'york.ac.uk',
-  'york.cuny.edu',
-  'yorksj.ac.uk',
-  'yorktech.edu',
-  'yorku.ca',
-  'yosemite.edu',
-  'yosu.ac.kr',
-  'ypu.edu.sy',
-  'ysmu.am',
-  'ysparmaruniversity.org',
-  'yspu.yar.ru',
-  'ystu.yar.ru',
-  'ysu.am',
-  'ysu.edu',
-  'ysu.edu.cn',
-  'ysu.ru',
-  'ytet.edu.cn',
-  'yti.edu',
-  'yti.edu.sa',
-  'ytnc.edu.cn',
-  'ytu.edu.cn',
-  'yu.ac.ir',
-  'yu.edu',
-  'yu.edu.jo',
-  'yuc.edu.sa',
-  'yukoncollege.yk.ca',
-  'yuksekihtisasuniversitesi.edu.tr',
-  'yums.ac.ir',
-  'yuniv.net',
-  'yuntech.edu.tw',
-  'yvc.ac.il',
-  'yvcc.edu',
-  'yyu.edu.tr',
-  'yznu.cn',
-  'yzu.edu.cn',
-  'yzu.edu.tw',
-  'zamanuniversity.edu.kh',
-  'zamorano.edu',
-  'zanestate.edu',
-  'zaou.ac.zm',
-  'zawiya.edu.pk',
-  'zcu.cz',
-  'zdmu.ac.ir',
-  'zdsoft.com.cn',
-  'zegu.ac.zw',
-  'zetechcollege.com',
-  'zgfxy.cn',
-  'zhaw.ch',
-  'zhdk.ch',
-  'zhezu.kz',
-  'zhgu.kz',
-  'zhnut.edu.cn',
-  'zhwin.ch',
-  'zjfc.edu.cn',
-  'zjgsu.edu.cn',
-  'zjnu.edu.cn',
-  'zjou.edu.cn',
-  'zju.edu.cn',
-  'zjut.edu.cn',
-  'zntu.edu.ua',
-  'znu.ac.ir',
-  'znu.edu.ua',
-  'znuel.net',
-  'znufe.edu.cn',
-  'zokei.ac.jp',
-  'zou.ac.zw',
-  'zpsb.szczecin.pl',
-  'zpu.edu.jo',
-  'zsb.scfai.edu.cn',
-  'zsem.hr',
-  'zstu.edu.cn',
-  'zsu.edu.cn',
-  'zu.ac.ae',
-  'zu.edu.eg',
-  'zu.edu.ly',
-  'zu.edu.pk',
-  'zucghana.org',
-  'zums.ac.ir',
-  'zut.edu.pl',
-  'zuyd.nl',
-  'zzgc.edu.cn',
-  'zzut.edu.cn',
-]);
+export const universityDomains = `
+29mayis.edu.tr
+4cd.edu
+a-aarhus.dk
+a2.keio.jp
+aabu.edu.jo
+aacc.edu
+aada.edu
+aaidu.org
+aalto.fi
+aambfs.edu.eg
+aamu.edu
+aasa.ac.jp
+aast.edu
+aastu.org
+aau.ac.in
+aau.dk
+aau.edu.et
+aau.edu.jo
+aau.edu.sd
+aaua.edu.ng
+aauekpoma.edu.ng
+aauj.edu
+aauni.edu
+abac.edu
+abasyn.edu.pk
+abcnash.edu
+abdn.ac.uk
+aber.ac.uk
+aberdeen.ac.uk
+abertay.ac.uk
+abiapoly.edu.ng
+ablaikhan.kz
+abm.ac.bw
+abo.fi
+absparis.com
+absu.edu.ng
+abtech.edu
+abu.ac.jp
+abu.edu.ng
+abuad.edu.ng
+ac-aix-marseille.fr
+ac-besancon.fr
+ac-bordeaux.fr
+ac-creteil.fr
+ac-mayotte.fr
+ac-orleans-tours.fr
+ac-paris.fr
+ac.ac.cy
+academia.cl
+academiaga.ru
+academy.mia.by
+academy.sumy.ua
+academyart.edu
+acadiau.ca
+accimt.ac.lk
+acd.ac.ae
+ace.tamut.edu
+aceondo-ng.com
+acg.gr
+achievers.edu.ng
+acibadem.edu.tr
+acighana.org
+ackonline.com
+acms.edu.my
+acmt.ac.ir
+acofi.edu
+acs.edu.au
+acs350.org
+act.edu
+act.gotevot.edu.sa
+acts.ac.kr
+actx.edu
+acu.edu
+acu.edu.au
+acu.edu.ng
+ad.unc.edu
+ada.edu.az
+adamson.edu.ph
+adanabtu.edu.tr
+adau.edu.az
+adda.edu.az
+addu.edu.ph
+adelaide.edu.au
+adelekeuniversity.edu.ng
+adelphi.edu
+adenuniversity.edu.ye
+adfa.oz.au
+adiban.ac.ir
+aditya.ac.in
+adiyaman.edu.tr
+admiu.edu.az
+admu.edu.ph
+adnu.edu.ph
+adpu.edu.az
+adrian.edu
+adsu.edu.ng
+adtu.in
+adu.ac.ae
+adu.edu.az
+adu.edu.et
+adu.edu.tr
+adygnet.ru
+adzu.edu.ph
+ae.katowice.pl
+ae.krakow.pl
+ae.poznan.pl
+ae.wroc.pl
+aea.asso.fr
+aecwb.edu.in
+aefs.edu.al
+aegean.gr
+ael.ru
+aereshogeschool.nl
+aeu.edu.kh
+aeu.edu.my
+afa.ac.kr
+afeka.ac.il
+afghanuniversity.edu.af
+afi-ue.sn
+afit.edu
+africau.edu
+afu.edu.np
+agh.edu.pl
+agma.astranet.ru
+agnesscott.edu
+agr.unideb.hu
+agrar.uz
+agri.edu.tr
+agriun.almaty.kz
+agro.roazhon.inra.fr
+agroparistech.fr
+agrosupdijon.fr
+ags.edu
+agsm.gr
+agtu.ru
+agu.ae
+agu.edu.bh
+agu.edu.tr
+ah.dk
+ahap.edu.tr
+ahduni.edu.in
+ahe.edu.pl
+ahfad.edu.sd
+ahgaff.edu
+ahievran.edu.tr
+ahliauniversity.org
+ahlulbaitonline.com
+ahmu.edu.cn
+ahnu.edu.cn
+aho.no
+ahsdxy.ah.edu.cn
+ahtcm.edu.cn
+ahu.edu.cn
+ahu.edu.jo
+aic.edu
+aichi-edu.ac.jp
+aichi-fam-u.ac.jp
+aichi-gakuin.ac.jp
+aichi-med-u.ac.jp
+aichi-pu.ac.jp
+aichi-u.ac.jp
+aii.edu
+aiims.ac.in
+aikoku-u.ac.jp
+aims.edu
+aimst.edu.my
+aiou.edu.pk
+ais.edu.sg
+aisct.org
+aisectuniversity.ac.in
+aistedaab.ro
+ait.ac.th
+ait.ie
+aitech.ac.jp
+aiu.ac.ke
+aiu.edu.gm
+aiu.edu.my
+aiu.edu.sy
+aiub.edu
+aiuniv.edu
+ajku.edu.pk
+ajman.ac.ae
+ajou.ac.kr
+ajums.ac.ir
+akad.de
+akademiaearteve.edu.al
+akademiapz.sk
+akbild.ac.at
+akdeniz.edu.tr
+akeihou-u.ac.jp
+akfarmitseda.ac.id
+akfaryarsiptk.ac.id
+akhbaracademy.edu.eg
+akita-u.ac.jp
+akprind.ac.id
+aksaray.edu.tr
+aktsu.kz
+aku.edu
+aku.edu.et
+aku.edu.tr
+aku.sk
+akutech.edu.ng
+al-edu.com
+al.infnet.edu.br
+alagappauniversity.ac.in
+alainuniversity.ac.ae
+alamancecc.edu
+alamo.edu
+alanyaaku.edu.tr
+alaqsa.edu.ps
+alaska.edu
+alaskapacific.edu
+alasu.edu
+alayen.edu.iq
+alazhar.edu.ps
+alba.acg.edu
+alba.edu.gr
+albaath-univ.edu.sy
+albany.edu
+albanytech.edu
+albemarle.edu
+albion.edu
+alc.edu.au
+alcorn.edu
+aldirasat.edu.pk
+alepuniv.edu.sy
+alex.edu.eg
+alextech.edu
+alfaisal.edu
+alfred.edu
+alfredtech.edu
+algebra.hr
+algonquincollege.com
+alhikmah.edu.ng
+alhosnu.ae
+aliabad.iau.ir
+alkhair.edu.pk
+alldunivpio.org
+alleg.edu
+allegany.edu
+allencc.edu
+allencol.edu
+allencollege.edu
+allenuniversity.edu
+alliant.edu
+alma.edu
+almaarifah.com
+almamonuc.org
+aloma.edu
+alparslan.edu.tr
+alpenacc.edu
+alphagroup.edu
+alquds.edu
+alrasheed-uc.com
+alsadrain.org
+altmeduniversity.com
+altmedworld.net
+alumnes.ub.edu
+alumnos.ui1.es
+aluno.cruzeirodosul.edu.br
+aluno.ifsp.edu.br
+alvernia.edu
+alverno.edu
+alvincollege.edu
+alyamamah.edu.sa
+alzahra.ac.ir
+alzaytoonah.edu.jo
+am.katowice.pl
+am.lodz.pl
+am.lublin.pl
+am.wroc.pl
+amaiu.edu.bh
+amasya.edu.tr
+amb.bydgoszcz.pl
+amb.edu.pl
+ambassador.edu
+ambou.edu.et
+amc.edu.au
+ame.ru
+amercoastuniv.edu
+american-college.com
+american.edu
+amg.gda.pl
+amgd.eu
+amherst.edu
+ami.edu.pk
+amikom.ac.id
+amity.edu
+aml.lv
+amman.edu
+ammanu.edu.jo
+amouduniversity.org
+amrita.edu
+amsterdam.tech
+amti.hit.bg
+amtuni.com
+amu.ac.in
+amu.edu.az
+amu.edu.et
+amu.edu.pl
+amursu.ru
+amuz.bydgoszcz.pl
+amuz.gda.pl
+amuz.krakow.pl
+amuz.lodz.pl
+amuz.poznan.pl
+amuz.wroc.pl
+amwaw.edu.pl
+anadolu.edu.tr
+anahuac.mx
+anc.edu
+ancilla.edu
+ancollege.edu
+andersonuniversity.edu
+andhrauniversity.info
+andong.ac.kr
+andrassyuni.hu
+andrew.ac.jp
+andrewcollege.edu
+andrews.edu
+anefs-edu.ro
+angelicum.org
+angelina.edu
+angelo.edu
+angkor.edu.kh
+anglia.ac.uk
+angrau.net
+anhembi.br
+ankara.edu.tr
+ankarabilim.edu.tr
+ankaramedipol.edu.tr
+annamalaiuniversity.ac.in
+annauniv.edu
+annauniv.edu.in
+anokaramsey.edu
+anokatech.edu
+anselm.edu
+ansu.edu.ng
+antalya.edu.tr
+antioch.edu
+antiochla.edu
+antiochne.edu
+antonianum.ofm.org
+anu.ac.ke
+anu.edu.au
+anuc.edu.gh
+anurag.edu.in
+aomori-u.ac.jp
+aomoricgu.ac.jp
+aos.sk
+aou.edu.eg
+aou.edu.jo
+aou.edu.kw
+aou.edu.om
+aou.org.bh
+aoyama.ac.jp
+ap.edu.pl
+ap.siedlce.pl
+apiit.edu.my
+apiu.edu
+appstate.edu
+apsu.edu
+apsurewa.nic.in
+apu.ac.jp
+apu.edu
+apu.edu.my
+apus.edu
+aqua.sci-nnov.ru
+aquinas-university.edu
+aquinas.edu
+ar.krakow.pl
+ar.lublin.pl
+ar.szczecin.pl
+ar.wroc.pl
+ara.ac.nz
+arabou-lb.edu.lb
+arabou.edu.sa
+arakmu.ac.ir
+araku.ac.ir
+arakut.ac.ir
+araneta.dlsu.edu.ph
+arapahoe.edu
+arbor.edu
+arc.losrios.edu
+arcadia.edu
+archi.ac.ma
+ardahan.edu.tr
+arel.edu.tr
+arellano.edu.ph
+aria.edu.af
+ariel.ac.il
+arizona.edu
+arkansasbaptist.edu
+armmed.am
+armstrong.edu
+arosmu.org
+arquitecturaucv.cl
+art.ac.ir
+art.edu
+art.olsztyn.pl
+artacademy.spb.ru
+arteiasi.ro
+arts.ac.uk
+arts.bg.ac.rs
+arts7.hu
+artuklu.edu.tr
+artun.ee
+artvin.edu.tr
+aru.ac.th
+arums.ac.ir
+arwauniversity.org
+aryainstitutejpr.com
+asa.edu
+asahi-u.ac.jp
+asahikawa-med.ac.jp
+asahikawa-nct.ac.jp
+asahikawa-u.ac.jp
+asau.am
+asaub.edu.bd
+asb.bh
+asbu.edu.tr
+ascc.edu
+ascca.gov.az
+ase.md
+ase.ro
+asfa.gr
+asfh-berlin.de
+ash-college.ac.il
+ashesi.edu.gh
+ashford.edu
+ashitech.ac.jp
+ashiya-u.ac.jp
+ashland.edu
+ashland.kctcs.edu
+ashoka.edu.in
+ashtoncollege.com
+asia-u.ac.jp
+asianust.ac.th
+asmarya.edu.ly
+asmi.edu.kg
+asmildkloster.dk
+asmu.ru
+asnuntuck.edu
+asoiu.edu.az
+asp.gda.pl
+asp.krakow.pl
+asp.lodz.pl
+asp.poznan.pl
+asp.waw.pl
+asp.wroc.pl
+aspen.edu
+aspete.gr
+aspkat.edu.pl
+aspu.ru
+assamuniversity.nic.in
+associate.hkbu.edu.hk
+assumption.edu
+assumptionu.ca
+astate.edu
+aston.ac.uk
+astu.edu.et
+astu.org
+astu.secna.ru
+asu.ac.jp
+asu.edu
+asu.edu.bh
+asu.edu.eg
+asu.edu.et
+asu.edu.jo
+asu.ru
+asub.edu
+asue.am
+asumh.edu
+asun.edu
+asurams.edu
+at.edu.pl
+atauni.edu.tr
+atbu.edu.ng
+atc.edu
+atc2u.com
+ateneo.edu
+atgu.kz
+athabascau.ca
+atharvacoe.ac.in
+athens.edu
+athenstech.edu
+ati.osu.edu
+atilim.edu.tr
+atishdipankaruniversity.edu.bd
+atlantatech.edu
+atlantic.edu
+atlantida.edu.ar
+atmajaya.ac.id
+atomi.ac.jp
+ats.dk
+atsu.edu.ge
+atu.ac.ir
+atu.edu
+atu.edu.gh
+au-plovdiv.bg
+au.dk
+au.edu
+au.edu.af
+au.edu.az
+au.edu.pk
+au.edu.tw
+au.poznan.pl
+aua.ac.ke
+aua.am
+aua.gr
+auaf.edu.af
+auamed.org
+aub-bd.org
+aub.edu.lb
+aubg.bg
+aubih.ba
+auburn.edu
+auc-edu.org
+auc.dk
+auc.edu
+auca.ac.rw
+auca.kg
+aucegypt.edu
+auchaiti.org
+auchipoly.edu.ng
+auckland.ac.nz
+aucklanduni.ac.nz
+aucmed.edu
+aud.edu
+audencia.com
+aue-okinawa.ac.jp
+aue.ae
+aueb.gr
+auf.edu.ph
+aufe.edu.cn
+augie.edu
+augsburg.edu
+augusta.edu
+augustana.ab.ca
+augustana.de
+augustana.edu
+augustatech.edu
+auhw.ac.jp
+aui.ma
+auis.edu.iq
+auk.edu.kw
+aukonline.org
+aul.edu
+aul.edu.lb
+aum.edu
+aum.edu.kw
+aums.ac.ir
+aun.edu.eg
+aun.edu.ng
+aup.edu.ph
+aup.edu.pk
+aup.fr
+aupen.edu.ph
+aur.edu
+aurora.edu
+aus.edu
+aust-abuja.org
+aust.edu
+aust.edu.lb
+austincc.edu
+austincollege.edu
+austral.edu.ar
+aut.ac.ir
+aut.ac.nz
+aut.edu
+auth.gr
+autonoma.edu.co
+avc.edu
+aventis.edu.sg
+averett.edu
+avicenna.hu
+avila.edu
+avondale.edu.au
+avrasya.edu.tr
+avtlg.ru
+avu.org
+awf.edu.pl
+awf.gda.pl
+awf.katowice.pl
+awf.krakow.pl
+awf.poznan.pl
+awf.wroc.pl
+aybu.edu.tr
+aydin.edu.tr
+ayurveduniversity.com
+az-npu.org
+azabu-u.ac.jp
+azc.uam.mx
+azhar.edu.eg
+azmiu.edu.az
+aztu.edu.az
+azwestern.edu
+b-sc.edu
+ba-bautzen.de
+ba.edu.af
+ba.lv
+baa.by
+babcockuni.edu.ng
+babson.edu
+bac.ac.bw
+bac.edu.cn
+bac.edu.my
+badakhshan.edu.af
+baghdadcollege.edu.iq
+baghlan.edu.af
+bahcesehir.edu.tr
+bahria.edu.pk
+baika.ac.jp
+baiko.ac.jp
+bainbridge.edu
+bajio.delasalle.edu.mx
+baker.edu
+bakersfieldcollege.edu
+bakeru.edu
+bakhtalruda.edu.sd
+bakhtar.edu.af
+bakircay.edu.tr
+bakrie.ac.id
+balamand.edu.lb
+balikesir.edu.tr
+bambey.univ.sn
+bamendauniversity.com
+bamu.net
+bamu.nic.in
+banasthali.org
+bandirma.edu.tr
+bangor.ac.uk
+bankurauniv.com
+baqai.edu.pk
+baraodemaua.br
+barcelonagse.eu
+bard.edu
+barnard.edu
+barry.edu
+barstow.edu
+bartin.edu.tr
+bartonccc.edu
+baruch.cuny.edu
+bashedu.ru
+baskent.edu.tr
+bastyr.edu
+basu.ac.ir
+basug.edu.ng
+bates.ctc.edu
+bates.edu
+bath.ac.uk
+bath.edu
+bathspa.ac.uk
+batman.edu.tr
+batu.edu.by
+bau.edu
+bau.edu.bd
+bau.edu.jo
+bau.edu.lb
+bau.nic.in
+bayamon.inter.edu
+bayantech.edu
+bayburt.edu.tr
+baycollege.edu
+baylor.edu
+baypath.edu
+bazeuniversity.edu.ng
+bbauindia.org
+bbc.edu
+bbk.ac.uk
+bbu.ac.lk
+bbu.edu.az
+bbu.edu.kh
+bc.edu
+bc3.edu
+bca.bw
+bcc.cuny.edu
+bccc.edu
+bcit.ca
+bckv.edu.in
+bcm.edu
+bcom.ac.uk
+bcou.ca
+bcu.ac.uk
+bdeb.qc.ca
+bdtf.hu
+bdu.edu.et
+bdu.edu.vn
+bdu.ernet.in
+beaufortccc.edu
+becs.ac.in
+beder.edu.al
+beds.ac.uk
+belhaven.edu
+bellasartes.edu.co
+bellevue.edu
+bellevuecollege.edu
+bellsuniversity.org
+belmont.edu
+belmontcollege.edu
+beloit.edu
+belsut.gomel.by
+bemidjistate.edu
+benadiruniversity.net
+benedict.edu
+benedictine.edu
+bengaluruuniversity.com
+bennet.edu
+bennington.edu
+bentley.edu
+beppu-u.ac.jp
+bercol.bm
+berea.edu
+bergen.edu
+berkeley.edu
+berkeleycitycollege.edu
+berkeleycollege.edu
+berklee.edu
+berkshirecc.edu
+berry.edu
+bethanywv.edu
+bethel.de
+bethel.edu
+bethelks.edu
+bethlehem.edu
+beu.edu.tr
+beun.edu.tr
+beykent.edu.tr
+bezalel.ac.il
+bezmialem.edu.tr
+bfcc.edu
+bfh.ch
+bfsu.edu.cn
+bfu.bg
+bg.ac.rs
+bgam.edu.by
+bgctrustbd.org
+bgsp.edu
+bgsu.edu
+bgu.ac.il
+bgu.ac.jp
+bhagwantuniversity.com
+bham.ac.uk
+bharathi.ernet.in
+bharathuniv.com
+bharatividyapeeth.edu
+bhavuni.edu
+bhc.edu
+bhc.edu.in
+bhcc.mass.edu
+bhms.ch
+bhsu.edu
+bhtafe.edu.au
+bhu.ac.in
+bhu.edu.cn
+bhu.kg
+bhub.ori.nic.in
+bi.no
+bible.ac.kr
+bible.edu
+bicol-u.edu.ph
+bicpu.edu.in
+bifrost.is
+bigbend.edu
+bigpi.biysk.ru
+bigsandy.kctcs.edu
+bihe.org
+biit.edu.pk
+bilecik.edu.tr
+bilgi.edu.tr
+bilkent.edu.tr
+bims.edu.pk
+binary.edu.my
+binghamton.edu
+binghamuni.edu.ng
+bingol.edu.tr
+binus.ac.id
+biola.edu
+bircham.edu
+birjand.ac.ir
+biruni.edu.tr
+birzeit.edu
+bishop.edu
+bisla.sk
+bismarckstate.edu
+bisu.edu.cn
+bit.edu.cn
+biti.edu.cn
+bitmesraranchi.org
+bits-iserlohn.de
+bits-pilani.ac.in
+biu.ac.il
+biu.edu.ng
+biu.education
+biust.ac.bw
+bjaeu.edu.cn
+bjfu.edu.cn
+bjmu.edu.cn
+bjpeu.edu.cn
+bjpu.edu.cn
+bjtu.edu.cn
+bju.edu
+bjucmp.edu.cn
+bke.hu
+blackhawk.edu
+blackrivertech.edu
+bladencc.edu
+blcu.edu.cn
+blinn.edu
+bloomfield.edu
+bloomington.iu.edu
+bloomu.edu
+bluecc.edu
+bluefieldstate.edu
+bluegrass.kctcs.edu
+blueridge.edu
+blueridgectc.edu
+bluffton.edu
+bmc.edu.sa
+bmcc.cuny.edu
+bmcc.edu
+bme.hu
+bmhs.org
+bmi.edu.my
+bmstu.ru
+bmsu.ac.ir
+bnmu.in
+bntu.by
+bnu.edu.cn
+bnu.edu.sd
+bnue.ac.kr
+bogazici.edu.tr
+boisestate.edu
+bojnourd.iau.ir
+boku.ac.at
+bolton.ac.uk
+bond.edu.au
+boothcollege.ca
+borealc.on.ca
+bosasocollege.com
+bost.edu.af
+bothocollege.ac.bw
+bou.ac.bw
+bou.edu.bd
+bournemouth.ac.uk
+bowdoin.edu
+bowenuniversity-edu.org
+bowiestate.edu
+bowlinggreen.kctcs.edu
+bowvalleycollege.ca
+boxhill.edu.au
+bozok.edu.tr
+bpc.edu.iq
+bpc.edu.sa
+bpcc.edu
+bpitindia.edu.in
+bpitindia.in
+bpkihs.edu
+bpu.ac.kr
+bpu.ac.lk
+bpums.ac.ir
+bput.org
+brabu.net
+bracuniversity.net
+brad.ac.uk
+bradley.edu
+brandeis.edu
+brandman.edu
+brandonu.ca
+braou.ac.in
+brauagra.com
+brazcubas.br
+brcc.edu
+brenau.edu
+brescia.edu
+brexgata.eu
+briar-cliff.edu
+bridgemont.edu
+bridgeport.edu
+bridgew.edu
+bridgewater.edu
+brijnet.org
+bris.ac.uk
+bristol.ac.uk
+bristolcc.edu
+brockport.edu
+brocku.ca
+brookdale.edu.ec
+brookdalecc.edu
+brookes.ac.uk
+brookhavencollege.edu
+brookings.edu
+brooklyn.cuny.edu
+broward.edu
+brown.edu
+broyalu.net
+brstu.ru
+brsu.brest.by
+bru.mogilev.by
+brunel.ac.uk
+brunswickcc.edu
+brur.ac.bd
+bryant.edu
+brynmawr.edu
+bs.naist.jp
+bsa.edu.lv
+bsaa.ru
+bsauniv.ac.in
+bsc.edu
+bscc.edu
+bseu.by
+bsl-lausanne.ch
+bsmmu.edu.bd
+bsmrau.edu.bd
+bsmu.by
+bspu.ru
+bspu.unibel.by
+bstu.by
+bstu.ru
+bstu.unibel.by
+bsu-edu.org
+bsu.burnet.ru
+bsu.by
+bsu.edu
+bsu.edu.az
+bsu.edu.cn
+bsu.edu.eg
+bsu.edu.ph
+bsu.edu.ru
+bsuir.by
+bsum.edu.ng
+btc.ac.uk
+btc.ctc.edu
+bth.se
+bton.ac.uk
+btsau.kiev.ua
+btu.bg
+btu.edu.ge
+btu.edu.tr
+btu.ge
+bu.ac.kr
+bu.ac.th
+bu.edu
+bu.edu.af
+bu.edu.bd
+bu.edu.eg
+bu.edu.sa
+buaa.edu.cn
+buap.mx
+bubhopal.nic.in
+bubt.edu.bd
+buc.edu.eg
+buc.edu.om
+buck.ac.uk
+bucknell.edu
+bucks.ac.uk
+bucks.edu
+buct.edu.cn
+budo-u.ac.jp
+buet.ac.bd
+buetk.edu.pk
+buffalo.edu
+buffalostate.edu
+bufs.ac.kr
+bugemauniv.ac.ug
+buh.edu.vn
+buid.ac.ae
+buitms.edu.pk
+buk.by
+buk.edu.ng
+bukkyo-u.ac.jp
+bulehorauniversity.com
+bulsu.edu.ph
+bums.ac.ir
+bundelkhanduniversity.org
+bundenet.com
+bunghatta.ac.id
+bunka-wu.ac.jp
+bunkyo.ac.jp
+bunri-u.ac.jp
+bup.edu.bd
+bupt.edu.cn
+buraouniversity.com
+burdwanuniversity.ac.in
+buse.ac.zw
+busitema.ac.ug
+busogauniversity.ac.ug
+butex.edu.bd
+butler.edu
+butlercc.edu
+butte.edu
+buu.ac.th
+bvu.edu
+bw.edu
+byu.edu
+byuh.edu
+byui.edu
+bzu.edu.pk
+cabrillo.edu
+cabrini.edu
+cacc.edu
+caece.edu.ar
+cafa.edu.cn
+cag.edu.tr
+cahsu.edu
+cal.devry.ca
+calarts.edu
+calbaptist.edu
+calcoast.edu
+caldwell.edu
+calebuniversity.edu.ng
+calhoun.edu
+callutheran.edu
+calpoly.edu
+calsouthern.edu
+calstate.edu
+calstatela.edu
+caltech.edu
+caluniv.ac.in
+calvin.edu
+cam.ac.uk
+camb.linst.ac.uk
+cambriancollege.ca
+camdencc.edu
+cameron.edu
+camk.edu.pl
+camosun.bc.ca
+campbell.edu
+campbellsville.edu
+campus-m-university.de
+campus-saint-marc.com
+campus.fct.unl.pt
+campus.udg.edu
+campus.ul.pt
+campusleon.ugto.mx
+campusm21.de
+canadacollege.edu
+canberra.edu.au
+candidomendes.br
+canisius.edu
+cankaya.edu.tr
+canterbury.ac.nz
+canterbury.ac.uk
+canyons.edu
+capcollege.bc.ca
+capecod.edu
+capella.edu
+capellauniversity.edu
+capital.edu
+captechu.edu
+cardiff.ac.uk
+caribbean.edu
+cariboo.bc.ca
+caritasuni.edu.ng
+carlalbert.edu
+carleton.ca
+carleton.edu
+carlow.edu
+carolinascollege.edu
+carolus-magnus-university.eu
+carrington.edu
+carroll.edu
+carrollcc.edu
+carrollu.edu
+carteret.edu
+carthage.edu
+carver.edu
+cas.dhbw.de
+casa.unimo.it
+casagrande.edu.ec
+cascadia.edu
+case.edu
+caspercollege.edu
+castelobranco.br
+castleton.edu
+cataegu.ac.kr
+catawba.edu
+cau.ac.kr
+cau.edu
+cau.edu.cn
+cau.org.in
+cauc.edu
+cauc.edu.gh
+cavc.ac.uk
+cavendishza.org
+cavern.nmsu.edu
+cayey.upr.edu
+cayuga-cc.edu
+cba.edu.sa
+cbm.iobm.edu.pk
+cbnu.ac.kr
+cbs.de
+cbs.dk
+cbu.edu
+cbu.edu.tr
+cbu.edu.zm
+cbu2000.com
+cca.edu
+ccaa.edu
+ccac.edu
+ccaurora.edu
+ccbc.ca
+ccbc.edu
+ccbcmd.edu
+ccc.commnet.edu
+ccc.edu
+cccc.edu
+cccd.edu
+cccneb.edu
+cccnj.edu
+cccs.edu
+cccti.edu
+cccua.edu
+ccd.edu
+ccis.edu
+ccm.edu
+ccnn.edu
+ccnu.edu.cn
+ccny.cuny.edu
+ccp.edu
+ccri.edu
+ccs.edu.sd
+ccsf.edu
+ccsn.edu
+ccsnh.edu
+ccsu.edu
+ccsuniversity.ac.in
+ccsuniversity.org
+cctech.edu
+cctu.edu.gh
+ccu.edu
+ccu.edu.tw
+ccut.edu.cn
+ccv.edu
+cdb.edu.sv
+cdc.tu.edu.np
+cdkc.edu
+cdnis.edu.hk
+cdu.ac.kr
+cdu.edu.au
+cdu.edu.cn
+cduestc.cn
+cdut.edu.cn
+cdutcm.edu.cn
+ceaprc.org
+cecil.edu
+cecos.edu.pk
+cedarvalleycollege.edu
+cedarville.edu
+cemic.edu.ar
+centenary.edu
+centennialcollege.ca
+central.edu
+central.edu.gh
+central.ucv.ro
+centralaz.edu
+centrale-marseille.fr
+centralesupelec.fr
+centralgatech.edu
+centralstate.edu
+centre.edu
+century.edu
+ceram.edu
+cerritos.edu
+cerrocoso.edu
+ces.edu.co
+cesa.edu.co
+cesbm.ac.in
+cesi.fr
+ceti.mx
+cetys.mx
+ceu.edu
+ceu.edu.mx
+ceu.edu.ph
+ceu.es
+ceu.hu
+ceunix.com.mx
+ceux.mx
+cf.ac.uk
+cfau.edu.cn
+cfcc.edu
+cfpj.com
+cgc.maricopa.edu
+cgcc.cc.or.us
+cgs.edu
+cgu.ac.jp
+cgu.edu
+cgu.edu.tw
+cha.ac.kr
+chabotcollege.edu
+chaffey.edu
+chalmers.se
+chaminade.edu
+champagnat.edu.mx
+champagnat.edu.pe
+champlain.edu
+chandilpolytechnic.org
+changwon.ac.kr
+chapingo.mx
+chapman.edu
+charismauniversity.org
+charusat.ac.in
+chatfield.edu
+chatham.edu
+chattahoocheetech.edu
+chattanoogastate.edu
+chefs.edu
+cheju-e.ac.kr
+cheju.ac.kr
+chelsea.linst.ac.uk
+chemeketa.edu
+chesapeake.edu
+chester.ac.uk
+cheyney.edu
+chiangraicampus.rmutl.ac.th
+chiba-u.ac.jp
+chiba-u.jp
+chikushi.ac.jp
+chinaacademyofart.com
+chinju-e.ac.kr
+chinju.ac.kr
+chitkara.edu.in
+chitkarauniversity.edu.in
+chna.edu.tw
+chnu.cv.ua
+chodang.ac.kr
+chonbuk.ac.kr
+chongju-e.ac.kr
+chongju.ac.kr
+chongshin.ac.kr
+chonju-e.ac.kr
+chonnam.ac.kr
+chopin.edu.pl
+chosun.ac.kr
+christuniversity.in
+chu.edu.tw
+chubu-gu.ac.jp
+chubu.ac.jp
+chugye.ac.kr
+chuhai.edu.hk
+chujo-u.ac.jp
+chuka.ac.ke
+chukyo-u.ac.jp
+chukyogakuin-u.ac.jp
+chula.ac.th
+chungbuk.ac.kr
+chungju.ac.kr
+chungnam.ac.kr
+chungwoon.ac.kr
+chuo-u.ac.jp
+chuv.ch
+chuvsu.ru
+cic-cairo.com
+ciefl.org
+cife.edu.in
+cihanuniversity.edu.iq
+cihts.ac.in
+ciim.ac.cy
+ciit-atd.edu.pk
+ciit-attock.edu.pk
+ciit-wah.edu.pk
+ciit.edu.pk
+ciitlahore.edu.pk
+cincinnatistate.edu
+ciqa.edu.mx
+cisco.edu
+cisisu.edu.cn
+cit.drbit.com.ru
+cit.ie
+citadel.edu
+citchennai.edu.in
+citruscollege.edu
+city.ac.uk
+city.edu.my
+citystgeorges.ac.uk
+citytech.cuny.edu
+cityu.bg
+cityu.edu
+cityu.edu.hk
+cityu.gr
+cityuniversity.edu.bd
+cityuniversity.edu.pk
+ciu.edu.tr
+cje.ac.kr
+cju.ac.kr
+cju.edu.tw
+cku.ac.jp
+cku.ac.kr
+cku.edu.tw
+clackamas.edu
+claeh.edu.uy
+claflin.edu
+claremont.edu
+claremontmckenna.edu
+clarendoncollege.edu
+claretiano.edu.br
+clarion.edu
+clark.edu
+clarke.edu
+clarkson.edu
+clarkstate.edu
+clarku.edu
+clatsopcc.edu
+clayton.edu
+clb.ac.il
+clemson.edu
+clermont-sb.fr
+clevelandcc.edu
+clevelandstatecc.edu
+clinch.edu
+clinton.edu
+clintoncollege.edu
+cloud.edu
+clovis.edu
+clpccd.edu
+clsbe.lisboa.ucp.pt
+cmb.ac.lk
+cmc.edu
+cmc.edu.tw
+cmcc.edu
+cmccd.edu
+cmich.edu
+cmjuniversity.edu.in
+cmmccollege.edu
+cmru.ac.th
+cmu.ac.th
+cmu.ca
+cmu.edu
+cmu.edu.cn
+cmu.edu.ph
+cmvc.ac.th
+cn.edu
+cnam.fr
+cnc.bc.ca
+cncc.edu
+cncnc.edu.cn
+cnearc.fr
+cnm.edu
+cnr.edu
+cnu.ac.kr
+cnu.edu
+cnu.edu.cn
+cnuas.edu
+cnue-e.ac.kr
+cnue.ac.kr
+coa.edu
+coahomacc.edu
+coalrafidain.edu.iq
+coastal.edu
+coastalalabama.edu
+coastalbend.edu
+coastalcarolina.edu
+coastalpines.edu
+coastline.edu
+cob.edu.bs
+cobleskill.edu
+cocc.edu
+cochise.edu
+cocite.pt
+coconino.edu
+cod.edu
+code.berlin
+coe.edu
+coeikere.edu.ng
+coeoju.com
+coeptech.ac.in
+coer.ac.in
+coeruniversity.ac.in
+cofc.edu
+coffeyville.edu
+coker.edu
+colby.edu
+colbycc.edu
+coleurope.eu
+colgate.edu
+colin.edu
+college-de-france.fr
+college.harlaxton.co.uk
+collegeofsanmateo.edu
+collegeofthedesert.edu
+collegeuniversel.ca
+collegium.edu.pl
+collin.edu
+colman.ac.il
+colmayor.edu.co
+colmex.mx
+colorado.edu
+coloradocollege.edu
+coloradomesa.edu
+coloradotech.edu
+colostate.edu
+colsouth.edu
+colum.edu
+columbia.edu
+columbia.edu.py
+columbiabasin.edu
+columbiacollege.ca
+columbiasc.edu
+columbiastate.edu
+columbus.edu
+columbusstate.edu
+columbustech.edu
+com.edu
+compton.edu
+comu.edu.tr
+concordia.ab.ca
+concordia.ca
+conestogac.on.ca
+conncoll.edu
+connect.polyu.hk
+connect.ust.hk
+connorsstate.edu
+conservatoire.ru
+conservatory.az
+conservatory.ru
+contracosta.edu
+cookman.edu
+cooper.edu
+coppin.edu
+cord.edu
+cornell-iowa.edu
+cornell.edu
+cornellcollege.edu
+corning-cc.edu
+cortland.edu
+cos.edu
+cosmiq.edu.pk
+cotc.edu
+coto.edu
+cotr.bc.ca
+cou.ac.bd
+cou.fi
+courtauld.ac.uk
+covenant.edu
+covenantuniversity.edu.ng
+coventry.ac.uk
+cowley.edu
+cpcc.edu
+cpe.fr
+cpit.ac.nz
+cpp.edu
+cppsu.edu.cn
+cptc.edu
+cpu.ac.th
+cpu.edu.cn
+cpu.edu.tw
+cpuic.edu
+cpums.edu.cn
+cput.ac.za
+cqec.net.cn
+cqgyzy.com
+cqmu.edu.cn
+cqnu.edu.cn
+cqtcedu.com
+cqu.edu.au
+cqu.edu.cn
+cquc.edu.cn
+cqupt.edu.cn
+cqust.cn
+cqut.edu.cn
+cqwu.net
+craftonhills.edu
+cranfield.ac.uk
+cravencc.edu
+crawforduniversity.edu.ng
+crc.losrios.edu
+creighton.edu
+crescent-university.edu.ng
+creupi.br
+cribx1.u-bordeaux.fr
+crk.umn.edu
+crowder.edu
+crsmu.com
+crtvu.edu.cn
+crutech.edu.ng
+cs.ac.kr
+cs.lpu.lv
+cs.sunysb.edu
+csauk.ac.in
+csbsju.edu
+csc.edu
+cscc.edu
+csfu.edu.cn
+cshl.edu
+csi.cuny.edu
+csi.edu
+csm.linst.ac.uk
+csmc.edu.tw
+csmd.edu
+csmrouen.com
+csmrouen.net
+csn.edu
+csopp.edu
+csp.edu
+cspi.urc.ac.ru
+csru.edu.cn
+css.edu
+cst.edu
+cstj.qc.ca
+csu.ac.ru
+csu.edu
+csu.edu.au
+csu.edu.cn
+csu.edu.ph
+csub.edu
+csubak.edu
+csuchico.edu
+csuci.edu
+csudh.edu
+csueastbay.edu
+csuep.edu.cn
+csufresno.edu
+csuglobal.edu
+csuhayward.edu
+csulb.edu
+csum.edu
+csumb.edu
+csun.edu
+csuohio.edu
+csupueblo.edu
+csus.edu
+csusb.edu
+csusm.edu
+csustan.edu
+ct.edu
+ctbu.edu.cn
+ctcd.edu
+ctgu.edu.cn
+cti.edu.sa
+ctleuro.ac.cy
+cts.edu
+ctsem.edu
+ctu.edu.vn
+ctuonline.edu
+cu-cdo.edu.ph
+cu.ac.bd
+cu.edu.eg
+cu.edu.ge
+cu.edu.tr
+cua.edu
+cuanschutz.edu
+cuao.edu.co
+cuauhtemoc.edu.mx
+cubidor.com
+cubu.edu
+cuc.ac.jp
+cuc.edu
+cuc.edu.cn
+cuc.edu.co
+cucv.edu.gt
+cue.ac.kr
+cuea.edu
+cueb.edu.cn
+cuet.ac.bd
+cueyatl.uam.mx
+cufe.edu.cn
+cug.edu.cn
+cugb.edu.cn
+cuhk.edu.cn
+cuhk.edu.hk
+cuhupr.clu.edu
+cui.edu.co
+cujae.edu.cu
+cuk.ac.kr
+cumbria.ac.uk
+cumhuriyet.edu.tr
+cumt.edu.cn
+cumtb.edu.cn
+cun.edu.cn
+cuni.cz
+cunima.net
+cunoc.edu.gt
+cuny.edu
+cup.ac.kr
+cup.edu
+cup.edu.kh
+cup.edu.pk
+cupl.edu.cn
+curry.edu
+curtin.edu.au
+curtin.edu.my
+cus.ca
+cus.edu.kh
+cusat.ac.in
+cusit.edu.pk
+cuslm.ca
+cusm.edu
+cust.edu.cn
+cust.edu.pk
+cust.univ-bpclermont.fr
+cut.ac.cy
+cut.ac.za
+cut.ac.zw
+cut.edu.lb
+cutb.edu.co
+cuw.edu
+cuyamaca.edu
+cuz.ac.zw
+cv.edu
+cv.unipiaget.org
+cvcc.edu
+cvcc.vccs.edu
+cvru.ac.in
+cvtc.edu
+cvut.cz
+cwc.edu
+cwidaho.cc
+cwu.edu
+cybermed.edu.my
+cyc.edu.cn
+cycollege.ac.cy
+cycu.edu.tw
+cypresscollege.edu
+cyryxcollege.edu.mv
+cyut.edu.tw
+czu.cz
+d.umn.edu
+da-iict.org
+dabcc.nmsu.edu
+dacc.edu
+dadabhoy.edu.pk
+daebul.ac.kr
+daegu.ac.kr
+daejeon.ac.kr
+daejin.ac.kr
+daemen.edu
+daeshin.ac.kr
+daffodilvarsity.edu.bd
+dah.edu.sa
+daido-it.ac.jp
+daiichi-cps.ac.jp
+daiichi-koudai.ac.jp
+daiichi-ue.ac.jp
+daion.ac.jp
+daishodai.ac.jp
+daito.ac.jp
+dakotacollege.edu
+dal.ca
+dalanjuniversity.edu.sd
+dallascollege.edu
+daltonstate.edu
+damanhour.edu.eg
+damascusuniversity.edu.sy
+dana.edu
+dankook.ac.kr
+dartmouth.edu
+darton.edu
+darulhuda.com
+dau.edu.sa
+dau.lv
+dauphine.fr
+davaodoctors.edu.ph
+davenport.edu
+davidson.edu
+davidsonccc.edu
+davidsondavie.edu
+davietjal.org
+daviscollege.edu
+davuniversity.org
+davv.ac.in
+dawat.edu.af
+dawson.edu
+dawsoncollege.qc.ca
+daystar.ac.ke
+daytonastate.edu
+db.dk
+dbatechuni.org
+dbq.edu
+dbs.tn.nic.in
+dbskkv.org
+dbu.edu
+dbu.edu.et
+dc3.edu
+dcad.edu
+dcatholic.ac.kr
+dcc.edu
+dcc.edu.sa
+dcc.ufmg.br
+dcc.vccs.edu
+dccc.edu
+dcccd.edu
+dceonline.net
+dcet.edu.pk
+dcmail.ca
+dct.ch
+dct.gotevot.edu.sa
+dct.udn.vn
+dctc.edu
+dcu.ie
+ddea.dk
+ddi.uliege.be
+ddu.ac.in
+ddu.edu.et
+ddu.nl
+ddugu.edu.in
+deakin.edu.au
+deanza.edu
+deccancollegepune.ac.in
+defiance.edu
+dehaagsehogeschool.nl
+dehaghan.iau.ir
+dei.ac.in
+dei.edu.gr
+delijanpnu.ac.ir
+delmar.edu
+delta.edu
+deltacollege.edu
+deltastate.edu
+delval.edu
+dendai.ac.jp
+denison.edu
+denmarktech.edu
+denvercollegeofnursing.edu
+depaul.edu
+depauw.edu
+deraya.edu.eg
+derby.ac.uk
+desu.edu
+deu.ac.kr
+deu.edu.tr
+deusto.es
+devinci.fr
+devry.edu
+dewv.edu
+deylaman.ac.ir
+dfh.dk
+dgist.ac.kr
+dgit.gob.mx
+dgu.ru
+dhbw-karlsruhe.de
+dhbw-loerrach.de
+dhbw-mannheim.de
+dhbw-mosbach.de
+dhbw-stuttgart.de
+dhbw-vs.de
+dhbw.de
+dho.edu.tr
+dhu.ac.kr
+dhu.edu.cn
+dhv-speyer.de
+dhxd.edu.vn
+dia.edu.az
+diak.fi
+dias.ie
+dibru.ernet.in
+dickinson.edu
+dickinsonstate.edu
+dicle.edu.tr
+digipen.edu
+diit.edu.ua
+dillard.edu
+dillauniversity.edu.et
+dinus.ac.id
+diploma.de
+disfm.rnu.tn
+dit.ac.tz
+dit.ie
+diu.ac.bd
+diu.edu.bd
+diu.net.bd
+dju.ac.kr
+dkdm.dk
+dkit.ie
+dkut.ac.ke
+dlh.dk
+dliflc.edu
+dlmedu.edu.cn
+dlmu.edu.cn
+dlsu.edu.ph
+dlu.edu.cn
+dlu.edu.vn
+dlufl.edu.cn
+dlut.edu.cn
+dmacc.edu
+dmcg.edu
+dmmmsu.edu.ph
+dmu.ac.uk
+dmu.edu
+dmu.edu.et
+dne.wvnet.edu
+dnu.dp.ua
+dnue.ac.kr
+dnui.edu.cn
+do-johodai.ac.jp
+doane.edu
+dogus.edu.tr
+doho.ac.jp
+dohto.ac.jp
+dokkyo.ac.jp
+dokkyomed.ac.jp
+dom.edu
+dominican.edu
+donau-uni.ac.at
+donga.ac.kr
+dongau.ru
+dongduk.ac.kr
+dongeui.ac.kr
+dongguk.ac.kr
+dongguk.edu
+dongseo.ac.kr
+dongshinu.ac.kr
+donmeduni.com
+donntu.edu.ua
+donnu.edu.ua
+dordt.edu
+doshisha.ac.jp
+dote.hu
+douglas.bc.ca
+dowling.edu
+downstate.edu
+dpc.edu
+dpt-info.u-strasbg.fr
+dpu.ac.th
+dpu.dk
+dpu.edu.tr
+drake.edu
+drakestate.edu
+dravidianuniversity.ac.in
+drew.edu
+drexel.edu
+drk.hu
+drury.edu
+dsc.dm
+dscc.edu
+dsdt.edu
+dshs-koeln.de
+dslcc.edu
+dstu.dp.ua
+dstu.edu.ru
+dsu.ac.kr
+dsu.edu
+dsu.edu.pk
+dswe.wroc.pl
+dtcc.edu
+dti.sk
+dtu.dk
+du.ac.bd
+du.ac.in
+du.ac.ir
+du.edu
+du.edu.eg
+du.edu.om
+du.se
+dubai.rit.edu
+duc.edu.iq
+duep.edu
+duet.ac.bd
+duf.hu
+dufe.edu.cn
+dufs.ac.kr
+duhs.edu.pk
+duke.edu
+duksung.ac.kr
+dumlupinar.edu.tr
+dundee.ac.uk
+dunya.edu.af
+duq.edu
+dur.ac.uk
+durhamtech.edu
+dusit.ac.th
+dut.ac.za
+duth.gr
+duytan.edu.vn
+duzce.edu.tr
+dvc.edu
+dvgu.ru
+dvgups.ru
+dwc-legazpi.edu
+dwc.doshisha.ac.jp
+dwc.edu
+dwu.ac.pg
+dwu.edu
+dypatiluniversity.org
+dytc.ac.kr
+dyu.ac.kr
+dyu.edu.tw
+e3i.univ-tours.fr
+eac.edu
+eada.edu
+eafit.edu.co
+ean.edu.co
+eap.fr
+eap.gr
+eap.net
+earlham.edu
+eas.edu.pl
+eastafricauniversity.net
+eastcentral.edu
+eastcoast.ac.uk
+eastdelta.edu.bd
+eastern.wvnet.edu
+easternct.edu
+easternflorida.edu
+easternuni.edu.bd
+eastfieldcollege.edu
+eastms.edu
+eastsomaliauniversity.com
+eau.ac.th
+eba-muenchen.de
+ebc.mx
+ebs-paris.com
+ebs.de
+ebs.edu
+ebs.ee
+ebsu-edu.net
+ebyu.edu.tr
+ec-lille.fr
+ec-lyon.fr
+ec-nantes.fr
+ecam.be
+ecam.fr
+ecc.edu
+eccc.edu
+ecci.edu.co
+ece.ac.ae
+ece.fr
+eciad.bc.ca
+ecjtu.jx.cn
+eckerd.edu
+ecla.de
+ecnu.edu.cn
+ecok.edu
+ecoles-idrac.com
+ecomp.poli.br
+ecpi.edu
+ecr.edu.co
+ecsc.edu.et
+ecsu.edu
+ecu.edu
+ecu.edu.au
+ecust.edu.cn
+ed.ac.uk
+edcc.edu
+edgecombe.edu
+edgehill.ac.uk
+edgewood.edu
+edhec.ac.ma
+edinboro.edu
+edisonohio.edu
+edogawa-u.ac.jp
+edu.asahikawa-nct.ac.jp
+edu.edhec.com
+edu.escp.eu
+edu.htl-villach.at
+education.ivanovo.ru
+edufr.ch
+eduhk.hk
+eelouniversity.org
+eerie.fr
+efau.org
+efe.hu
+effatcollege.edu.sa
+efh-bochum.de
+efh-freiburg.de
+efh-hannover.de
+efh-reutlingen-ludwigsburg.de
+efhlu.de
+efpg.inpg.fr
+efrei.fr
+egcc.edu
+ege.edu.tr
+egerton.ac.ke
+egs.edu
+eh-darmstadt.de
+ehb.be
+ehc.edu
+ehf.hu
+ehime-u.ac.jp
+ehl.ch
+ehs-dresden.de
+ehsal.be
+ehtp.ac.ma
+ehu.es
+ehu.eus
+eia.edu.co
+eicc.edu
+eichi-u.ac.jp
+eieonline.com
+eigsi.fr
+eiilmuniversity.ac.in
+einsteinmed.edu
+eit.edu.er
+eitc.edu
+eiu.am
+eiu.edu
+eivp-paris.fr
+eiyo.ac.jp
+eksu.edu.ng
+ektu.kz
+eku.edu
+elac.edu
+elcamino.edu
+elcentrocollege.edu
+elgin.edu
+elizabethtown.kctcs.edu
+elmahdi.edu.sd
+elmergib.edu.ly
+elmhurst.edu
+elms.edu
+elon.edu
+elrazicollege.net
+elshoroukacademy.edu.eg
+elsu.ru
+elte.hu
+eltech.ru
+em-lyon.com
+ema.edu.ee
+email.uagm.edu
+email.uophx.edu
+email.uscupstate.edu
+eman-univ.edu.ye
+emanuel.ro
+emc-campus.com
+emcc.edu
+emerson.edu
+emescam.br
+emi.ac.ma
+emi.edu.bo
+emich.edu
+emiratesacademy.edu
+emmanuel.edu
+emory.edu
+emporia.edu
+ems-mainz.de
+emse.fr
+emsfj.com
+emu.edu
+emu.edu.tr
+emu.ee
+en.sjtu.edu.cn
+en.syau.edu.cn
+en.via.dk
+ena.fr
+enac.fr
+enae.es
+enameknes.ac.ma
+enap.uquebec.ca
+enautica.pt
+enderuncolleges.com
+endicott.edu
+enes.unam.mx
+eng.asu.edu.eg
+engec.ru
+english.web.ncku.edu.tw
+enic.fr
+enim.fr
+enise.fr
+enit.fr
+enitab.fr
+enitac.fr
+enitiaa-nantes.fr
+enm.meteo.fr
+enmu.edu
+enpc.fr
+ens-cachan.fr
+ens-fcl.fr
+ens-lyon.fr
+ens-paris-saclay.fr
+ens.fr
+ens2m.fr
+ensae.fr
+ensai.fr
+ensaia.u-nancy.fr
+ensait.fr
+ensam.inra.fr
+ensat.fr
+ensc-lille.fr
+ensc-rennes.fr
+ensccf.univ-bpclermont.fr
+enscm.fr
+enscmu.univ-mulhouse.fr
+enscp.jussieu.fr
+enscpb.u-bordeaux.fr
+ensea.fr
+enseeiht.fr
+ensem.u-nancy.fr
+enserb.u-bordeaux.fr
+ensg.ign.fr
+ensg.u-nancy.fr
+ensic.u-nancy.fr
+ensica.fr
+ensieta.fr
+ensitm.fr
+ensm-ales.fr
+ensm-douai.fr
+ensma.fr
+ensmp.fr
+enspm.u-3mrs.fr
+enst-bretagne.fr
+enst.fr
+ensta.fr
+entpe.fr
+enu.kz
+envt.fr
+eosc.edu
+eou.edu
+epcc.edu
+epf.fr
+epfl.ch
+epfl.edu
+epita.fr
+epitech.al
+epitech.eu
+epitech.net
+epm.br
+epn.edu.ec
+epoka.edu.al
+erau.edu
+erciyes.edu.tr
+erdogan.edu.tr
+eriicta.am
+erzurum.edu.tr
+es.vccs.edu
+esa-purpan.fr
+esad.pt
+esade.edu
+esap.edu.co
+esc-bordeaux.fr
+esc-brest.fr
+esc-grenoble.fr
+esc-lille.fr
+esc-marseille.fr
+esc-normandie.fr
+esc-pau.fr
+esc-reims.edu
+esc-rouen.fr
+esc-toulouse.fr
+esca.ac.ma
+escc.edu
+escdijon.com
+escem.fr
+escna.fr
+escom.fr
+escp.eu
+escp.fr
+escueladepolicia.edu.co
+escuelaing.edu.co
+eselondon.ac.uk
+esenyurt.edu.tr
+eseo.fr
+esf.edu
+eshte.pt
+esiae.fr
+esic.es
+esiea.fr
+esiee.fr
+esigelec.fr
+esim.imt-mrs.fr
+esitpa.org
+eskisehir.edu.tr
+eslsca.fr
+esm-tbilisi.ge
+esmad.ipp.pt
+esme.fr
+esn.ac.lk
+esoft.academy
+espam-formationuc.org
+espci.fr
+espe.edu.ec
+espoch.edu
+espol.edu.ec
+essca.asso.fr
+essec.fr
+essex.ac.uk
+essex.edu
+esstin.u-nancy.fr
+esstu.ru
+estacio.br
+estp.fr
+estrellamountain.edu
+esu.edu
+esut.edu.ng
+etbu.edu
+etf.edu
+eth.edu
+ethz.ch
+etna.io
+etown.edu
+etsmtl.ca
+etsu.edu
+etu.edu.tr
+etu.sorbonne-universite.fr
+etu.unistra.fr
+etu.upmc.fr
+etud.u-pem.fr
+eu.ac.rs
+eu.spb.ru
+euba.sk
+euc.ac.cy
+euclid.int
+eudil.fr
+eufh.de
+eulji.ac.kr
+eum.ac.jp
+eur.nl
+eurasia.edu
+eurazir.kz
+europa-uni.de
+europeaniu.org
+europeanopenuniversity.com
+europeanuniversity.pt
+euruni.edu
+eustatiusmed.edu
+eut.edu.ar
+euv-frankfurt-o.de
+evansville.edu
+evc.edu
+everest.edu
+everettcc.edu
+evergreen.edu
+evfh-berlin.de
+evfh-nuernberg.de
+evms.edu
+evtek.fi
+ewc.edu
+ewc.wy.edu
+ewha.ac.kr
+ewu.edu
+ewubd.edu
+ex.ac.uk
+exed.solvay.edu
+fa.cvut.cz
+fa.ru
+faap.br
+facens.br
+faculdadedombosco.edu.br
+faculdadescuritiba.br
+fae.edu
+fairfield.edu
+fairmontstate.edu
+falavarjan.ac.ir
+falmouth.ac.uk
+famu.cz
+famu.edu
+fandm.edu
+fanshawec.ca
+fanshaweonline.ca
+farmingdale.edu
+faryab.edu.af
+fashir.edu.sd
+fatecie.edu.br
+fatihsultan.edu.tr
+fatima.edu.ph
+fatimacollege.net
+fau.de
+fau.edu
+faulknerstate.edu
+favaloro.edu.ar
+fayoum.edu.eg
+faytechcc.edu
+fbcusl.8k.com
+fbsc.edu.sa
+fbu.edu.tr
+fc.edu
+fcetakoka-edu.net
+fcu.edu.tw
+fdcnet.ac.jp
+fdltcc.edu
+fdu.edu
+featiu.edu.ph
+fecap.br
+federation.edu.au
+fedpoffa.edu.ng
+feituverava.com.br
+fern-fh.de
+fernuni-hagen.de
+ferpi.dem.ru
+ferris.ac.jp
+ferris.edu
+festu.ru
+feu.edu.ph
+ffhs.ch
+fgcu.edu
+fh-aachen.de
+fh-aargau.ch
+fh-aschaffenburg.de
+fh-augsburg.de
+fh-bad-honnef.de
+fh-biberach.de
+fh-bielefeld.de
+fh-bingen.de
+fh-bochum.de
+fh-brandenburg.de
+fh-burgenland.at
+fh-dortmund.de
+fh-eberswalde.de
+fh-erfurt.de
+fh-flensburg.de
+fh-frankfurt.de
+fh-fresenius.de
+fh-furtwangen.de
+fh-gelsenkirchen.de
+fh-giessen.de
+fh-hagenberg.at
+fh-hamburg.de
+fh-hannover.de
+fh-heidelberg.de
+fh-heilbronn.de
+fh-hildesheim.de
+fh-hof.de
+fh-htachur.ch
+fh-htwchur.ch
+fh-hwz.ch
+fh-isny.de
+fh-jena.de
+fh-joanneum.at
+fh-kaernten.ac.at
+fh-karlsruhe.de
+fh-kempten.de
+fh-kiel.de
+fh-kl.de
+fh-koblenz.de
+fh-koeln.de
+fh-konstanz.de
+fh-krems.ac.at
+fh-kufstein.ac.at
+fh-landshut.de
+fh-lausitz.de
+fh-lippe.de
+fh-ludwigshafen.de
+fh-luebeck.de
+fh-mainz.de
+fh-mannheim.de
+fh-merseburg.de
+fh-muenchen.de
+fh-muenster.de
+fh-nb.de
+fh-niederrhein.de
+fh-nordhausen.de
+fh-nuernberg.de
+fh-nuertingen.de
+fh-offenburg.de
+fh-oow.de
+fh-osnabrueck.de
+fh-ottersberg.de
+fh-pforzheim.de
+fh-potsdam.de
+fh-regensburg.de
+fh-reutlingen.de
+fh-riedlingen.de
+fh-rosenheim.de
+fh-rottenburg.de
+fh-sbg.ac.at
+fh-schmalkalden.de
+fh-schwaebischhall.de
+fh-steyr.at
+fh-stpoelten.ac.at
+fh-stralsund.de
+fh-telekom-leipzig.de
+fh-trier.de
+fh-vie.ac.at
+fh-wedel.de
+fh-weihenstephan.de
+fh-weingarten.de
+fh-wels.at
+fh-westkueste.de
+fh-wiesbaden.de
+fh-wolfenbuettel.de
+fh-worms.de
+fh-wuerzburg.de
+fh-zwickau.de
+fhbb.ch
+fhda.edu
+fhdw.bib.de
+fhdw.de
+fhkt.de
+fhm-mittelstand.de
+fhnon.de
+fhnw.ch
+fho.edu.br
+fhoebb.de
+fhs-mannheim.de
+fhs-moritzburg.de
+fhsg.ch
+fhso.ch
+fhsu.edu
+fht-stuttgart.de
+fhtc.edu
+fhtw-berlin.de
+fhv.at
+fhvr.berlin.de
+fhw-berlin.de
+fhw.at
+fhwn.ac.at
+fhwt.de
+fic.br
+fielding.edu
+filine.centro.ru
+filmacademy.hu
+filmowka.lodz.pl
+fimmu.edu.cn
+findlay.edu
+fing.edu.uy
+finki.ukim.mk
+firat.edu.tr
+firstnationsuniversity.ca
+fish-u.ac.jp
+fisk.edu
+fit.ac.jp
+fit.cvut.cz
+fit.edu
+fitfd.edu.pk
+fiu.edu
+fjau.edu.cn
+fjmu.edu.cn
+fjnu.edu.cn
+fjtcm.edu.cn
+fju.edu.tw
+fkcc.edu
+flc.losrios.edu
+flcc.edu
+fletcher.edu
+flinders.edu.au
+floret.edu.pa
+floridapoly.edu
+floridauniversitaria.es
+flsouthern.edu
+fmcc.edu
+fmmu.edu.cn
+fmu.ac.jp
+fmuniv.edu
+fnu.ac.fj
+fom.de
+fomicgroup.cm
+fon.edu.mk
+fontbonne.edu
+fontys.edu
+foothill.edu
+fordham.edu
+forest.lviv.ua
+forsythtech.edu
+fortlewis.edu
+fortscott.edu
+fosu.edu.cn
+foundationu.com
+foundationuniversity.com
+fountainheadcollege.edu
+fountainuniversity.edu.ng
+foxcollege.edu
+fpcc.edu
+fpctx.edu
+fplc.edu
+fpms.ac.be
+fpt.edu.vn
+fpu.ac.jp
+franklin.edu
+franklinpierce.edu
+franko.lviv.ua
+frayluca.edu.mx
+frc.edu
+frederick.ac.cy
+frederick.edu
+fredonia.edu
+freeuni.edu.ge
+fresno.edu
+fresnocitycollege.edu
+fresnostate.edu
+fri.icfre.gov.in
+friends.edu
+frontrange.edu
+frostburg.edu
+fs-students.de
+fs.de
+fsagx.ac.be
+fsc.edu
+fscj.edu
+fsl.cs.sunysb.edu
+fsm.ac.fj
+fspu.edu.cn
+fsriau.ac.ir
+fsu.edu
+fsw.edu
+ftacademy.ru
+ftmsglobal.com
+ftu.edu.vn
+fu-berlin.de
+fua.br
+fuac.edu.co
+fucam.ac.be
+fudan.edu.cn
+fujijoshi.ac.jp
+fujita-hu.ac.jp
+fukui-med.ac.jp
+fukui-u.ac.jp
+fukui-ut.ac.jp
+fukuoka-edu.ac.jp
+fukuoka-int-u.ac.jp
+fukuoka-pu.ac.jp
+fukuoka-u.ac.jp
+fukushima-u.ac.jp
+fukuyama-u.ac.jp
+ful.ac.be
+fullcoll.edu
+fuller.edu
+fullerton.edu
+fullsail.edu
+fums.ac.ir
+funandi.edu.co
+fundepos.ac.cr
+fundp.ac.be
+funlam.edu.co
+fupl.asso.fr
+fupre.edu.ng
+furb.rct-sc.br
+furg.br
+furman.edu
+fusl.ac.be
+futa.edu.ng
+futminna.edu.ng
+futo.edu.ng
+futureuniversity.edu.eg
+futureworks.ac.uk
+futy.edu.ng
+fuuast.edu.pk
+fvcc.edu
+fvsu.edu
+fvtc.edu
+fwu.ac.jp
+fwu.edu.pk
+fzu.edu.cn
+g.fmarion.edu
+g.nsu.ru
+gac.edu
+gachon.ac.kr
+gadsdenstate.edu
+gadsenstate.edu
+gaduniv.edu.sd
+gakusen.ac.jp
+gakushuin.ac.jp
+galencollege.edu
+galilcol.ac.il
+galileo.edu
+gallaudet.edu
+gallus.pl
+gandakiuniversity.edu.np
+gandhara.edu.pk
+gannon.edu
+gantep.edu.tr
+gapps.ntust.edu.tw
+garrettcollege.edu
+gaston.edu
+gasu.ru
+gata.edu.tr
+gatech.edu
+gateway.kctcs.edu
+gatewaycc.edu
+gau.ac.ir
+gau.edu.tr
+gavilan.edu
+gazi.edu.tr
+gbc.edu
+gbcnv.edu
+gbpuat.ac.in
+gbrownc.on.ca
+gbs-ge.ch
+gbuc.edu.gh
+gc.edu
+gcal.ac.uk
+gcc.mass.edu
+gccaz.edu
+gcccks.edu
+gccnj.edu
+gcd.ie
+gcsu.edu
+gcu.ac.uk
+gcu.edu
+gcu.edu.pk
+gcuf.edu.pk
+gdin.edu.cn
+gdrtvu.edu.cn
+gdu.edu.az
+gdufs.edu.cn
+gdut.edu.cn
+gedik.edu.tr
+geidai.ac.jp
+gelisim.edu.tr
+gemsvilleuniversity.com
+genesee.edu
+geneseo.edu
+geneva.edu
+georgefox.edu
+georgetown.edu
+georgian.edu
+georgiancollege.ca
+georgiasouthern.edu
+germanna.edu
+gettysburg.edu
+geziracollege.edu.sd
+gfc.edu
+gfcmsu.edu
+ggc.edu
+ggu.ac.in
+ggu.ac.kr
+ggu.edu
+ghanacu.org
+ghc.edu
+gidatarim.edu.tr
+gift.edu.pk
+gifu-keizai.ac.jp
+gifu-kyoiku.ac.jp
+gifu-pu.ac.jp
+gifu-u.ac.jp
+gijodai.ac.jp
+giki.edu.pk
+gimcheon.ac.kr
+gimpa.edu.gh
+ginue.ac.kr
+gipe.ernet.in
+giresun.edu.tr
+gist.ac.kr
+gist.edu.pk
+gitam.edu
+gitis.net
+giuedu.bz
+gjcatholic.ac.kr
+gju.edu.jo
+gju.ernet.in
+gjue.ac.kr
+gkcem.ac.in
+gkvharidwar.org
+gla.ac.uk
+glam.ac.uk
+glendale.edu
+glenoaks.cc.mi.us
+glion.edu
+global-business-school.org
+global.edu.pk
+glos.ac.uk
+glu.edu.mn
+gluk.ac.ke
+gma.ru
+gmc.cc.ga.us
+gmercyu.edu
+gmi.edu
+gmit.ie
+gmu.ac.ae
+gmu.ac.ir
+gmu.edu
+gnduonline.org
+gnesin-academy.ru
+gnidsr.ac.in
+gnihm.ac.in
+gnipst.ac.in
+gnit.ac.in
+gntc.edu
+gntech.ac.kr
+gnu.ac.kr
+gnue.ac.kr
+gocolumbia.edu
+gogebic.edu
+golapolytechnic.org
+gold.ac.uk
+goldenwestcollege.edu
+gollisuniversity.com
+gonzaga.edu
+gop.edu.tr
+gordon.ac.il
+gorganiau.ir
+gorny-ins.ru
+goshen.edu
+gotoltc.edu
+goucher.edu
+goums.ac.ir
+gouni.edu.ng
+government.ind.in
+govst.edu
+gpc.edu
+gpma.ru
+gptc.edu
+gpu.edu.np
+gpwu.ac.jp
+grace.edu
+graceland.edu
+gram.edu
+grandview.edu
+grayson.edu
+grcc.edu
+gre.ac.uk
+greatbay.edu
+green.edu.bd
+greenheartmed.org
+greenleaf.edu
+greenriver.edu
+greensboro.edu
+greenville.edu
+grenoble-em.com
+grenoble-inp.fr
+gretsauniversity.ac.ke
+griffith.edu.au
+grinnell.edu
+grossmont.edu
+groupe-esa.com
+groupeiscae.ma
+grsmu.by
+grsu.by
+gru.edu
+gruni.edu.ge
+gsa.ac.uk
+gsau.edu.cn
+gsau.edu.ge
+gsba.ch
+gsfcuniversity.ac.in
+gsnu.ac.kr
+gstu.gomel.by
+gsu.edu
+gsu.edu.ng
+gsu.edu.tr
+gsu.unibel.by
+gsut.edu.cn
+gsw.edu
+gsyc.es
+gtc.edu
+gtcc.edu
+gti.spb.ru
+gtu.ac.in
+gtu.edu.ge
+gtu.edu.tr
+gtuc.edu.gh
+gturp.spb.ru
+gu.ac.ug
+gu.edu.af
+gu.edu.lb
+gu.edu.pk
+gu.nic.in
+gu.se
+guangztc.edu.cn
+gubkin.ru
+guc.co.bw
+guc.edu.eg
+guic.edu.pk
+guilan.ac.ir
+guilford.edu
+gujaratuniversity.org.in
+gukit.ru
+gulbargauniversity.kar.nic.in
+gulfcoast.edu
+gulfuniversity.net
+gums.ac.ir
+gumushane.edu.tr
+gunadarma.ac.id
+gunma-u.ac.jp
+guptoncollege.edu
+gurukuluniversity.org
+gust.edu.kw
+gustavus.edu
+guu.ru
+gvltec.edu
+gvsu.edu
+gwangju.ac.kr
+gwcc.commnet.edu
+gwinnetttech.edu
+gwnu.ac.kr
+gwsh.pl
+gwu.edu
+gxmu.edu.cn
+gxnu.edu.cn
+gxtcmu.edu.cn
+gxu.edu.cn
+gxun.edu.cn
+gyte.edu.tr
+gzarts.edu.cn
+gzhtcm.edu.cn
+gzhu.edu.cn
+gznu.edu.cn
+gzsums.edu.cn
+gzu.ac.zw
+gzu.edu.cn
+h-brs.de
+h-bunkyo.ac.jp
+h-da.de
+ha.be
+hacc.edu
+hacettepe.edu.tr
+hachinohe-u.ac.jp
+hagerstowncc.edu
+haifa.ac.il
+haigazian.edu.lb
+hainnu.edu.cn
+hainu.edu.cn
+hajvery.edu.pk
+hakkari.edu.tr
+hakodate-u.ac.jp
+hakuoh.ac.jp
+halic.edu.tr
+halifaxcc.edu
+halifaxuni.ac
+halla.ac.kr
+hallmarkuniversity.edu
+hallym.ac.kr
+hama-med.ac.jp
+hamamatsu-u.ac.jp
+hamdard.edu
+hamdard.edu.pk
+hamilton.edu
+hamk.fi
+hamline.edu
+hampshire.edu
+hamptonu.edu
+hanazono.ac.jp
+hanbat.ac.kr
+hancockcollege.edu
+handong.edu
+hangkong.ac.kr
+hanil.ac.kr
+hanlyo.ac.kr
+hannam.ac.kr
+hannan-u.ac.jp
+hanover.edu
+hansei.ac.kr
+hanseo.ac.kr
+hanseuni.de
+hanshin.ac.kr
+hansung.ac.kr
+hanuniversity.com
+hanyang.ac.kr
+hanze.nl
+hanzhong.ac.kr
+haramaya.edu.et
+harcum.edu
+harding.edu
+harford.edu
+hargeisauniversity.net
+hariricanadian.edu.lb
+harlingen.tstc.edu
+harpercollege.edu
+harran.edu.tr
+harrisburg.psu.edu
+hartford.edu
+hartnell.edu
+hartwick.edu
+harvard.edu
+haskell.edu
+hastings.edu
+hau.edu.ph
+hau.edu.vn
+hau.ernet.in
+hauniv.edu
+haverford.edu
+haw-hamburg.de
+hawaii.edu
+hawaii.hawaii.edu
+hawk.iit.edu
+hawkeyecollege.edu
+hawlermu.org
+haybusak.org
+haywood.edu
+hazard.kctcs.edu
+hb.se
+hbafa.com
+hbc.edu.cn
+hbku.edu.qa
+hbmeu.ac.ae
+hbu.edu
+hbu.edu.cn
+hbv.edu.tr
+hcc.commnet.edu
+hcc.edu
+hccc.edu
+hccfl.edu
+hccs.edu
+hcmuaf.edu.vn
+hcmuarc.edu.vn
+hcmulaw.edu.vn
+hcmupeda.edu.vn
+hcmus.edu.vn
+hcmussh.edu.vn
+hcmut.edu.vn
+hcmute.edu.vn
+hcmutrans.edu.vn
+hct.ac.ae
+hcu-hamburg.de
+hcu.ac.th
+hcu.edu.tw
+hcuge.ch
+hdk.gu.se
+hdm-stuttgart.de
+hdpu.edu.cn
+heartland.edu
+hebau.edu.cn
+hebeiuniteduniversity.com
+hebmu.edu.cn
+hebnu.edu.cn
+hebron.edu
+hebust.edu.cn
+hebut.edu.cn
+hec.ac.ma
+hec.ca
+hec.edu
+hec.fr
+hei.fr
+heidelberg.edu
+heidenheim.dhbw.de
+heilbronn.dhbw.de
+heisei-u.ac.jp
+help.edu.my
+helpnet.uliege.be
+helsinki.fi
+helwan.edu.eg
+hem.ac.ma
+henannu.edu.cn
+henau.edu.cn
+hencc.kctcs.edu
+hendrix.edu
+hennepintech.edu
+henu.edu.cn
+hep-bejune.ch
+hepl.ch
+hepvs.ch
+herkimer.edu
+hertie-school.org
+herts.ac.uk
+herzen.edu.ru
+herzen.spb.ru
+hes-so.ch
+hesperides.edu.es
+hesston.edu
+heuet.edu.cn
+heythrop.ac.uk
+hfb.de
+hfcc.edu
+hff-muenchen.de
+hfg-gmuend.de
+hfh.ch
+hfk-bremen.de
+hfk2020.de
+hfm-detmold.de
+hfmdd.de
+hfmt-koeln.de
+hfp.mhn.de
+hfph.mwn.de
+hfu.edu.tw
+hfut.edu.cn
+hgkz.ch
+hgo.se
+hgtc.edu
+hh.se
+hha.dk
+hhit.edu.cn
+hhl.de
+hho.edu.tr
+hhrtu.com
+hhs.dk
+hhs.se
+hhstu.edu.cn
+hhu.de
+hhu.edu.cn
+hhuc.edu.cn
+hi-tech.ac.jp
+hi.is
+hia.no
+hib.no
+hiba.edu.sy
+hibbing.edu
+hibfs.edu.sd
+hibo.no
+hiete.hu
+hifm.no
+hig.se
+highland.edu
+highlandcc.edu
+highlands.edu
+highline.edu
+highpoint.edu
+hightech.edu
+hiiraanuniversity.info
+hijiyama-u.ac.jp
+hik.se
+hikmah.edu.my
+hil.no
+hillagric.ernet.in
+hillcollege.edu
+hillsdale.edu
+hilo.hawaii.edu
+himeji-du.ac.jp
+himeji-tech.ac.jp
+himh.de
+himolde.no
+hindscc.edu
+hindustanuniv.ac.in
+hiram.edu
+hirogaku-u.ac.jp
+hirojo-u.ac.jp
+hirokoku-u.ac.jp
+hirosaki-u.ac.jp
+hiroshima-cu.ac.jp
+hiroshima-pu.ac.jp
+hiroshima-u.ac.jp
+his.se
+hispano.edu.mx
+hit-u.ac.jp
+hit.ac.jp
+hit.ac.zw
+hit.edu.cn
+hitecuni.edu.pk
+hitit.edu.tr
+hiu.ac.jp
+hj.se
+hjs.uni-heidelberg.de
+hju.ac.jp
+hkapa.edu
+hkbu.edu.hk
+hkg.ac.jp
+hkkk.fi
+hkmu.ac.tz
+hkmu.edu.hk
+hknu.ac.kr
+hkr.se
+hksyu.edu
+hku.edu.tr
+hku.hk
+hku.nl
+hlaflru.edu.cn
+hljcu.edu.cn
+hlju.edu.cn
+hm.edu
+hmc.edu
+hmdk-stuttgart.de
+hmt-leipzig.de
+hmtm-hannover.de
+hmtm.de
+hmu.edu.vn
+hmu.gr
+hnaubenin.org
+hnbgu.ac.in
+hneu.edu.ua
+hnfjxy.cn
+hnluraipur.com
+hnu.edu.cn
+hochschule-bonn-rhein-sieg.de
+hocking.edu
+hoduniv.net.ye
+hofstra.edu
+hogent.be
+hokkai-k-u.ac.jp
+hokkai-s-u.ac.jp
+hokkyodai.ac.jp
+hoku-iryo-u.ac.jp
+hokudai.ac.jp
+hokuriku-u.ac.jp
+hokusei.ac.jp
+hokuyakudai.ac.jp
+holar.is
+hollins.edu
+holmes.edu.au
+holmescc.edu
+holycross.edu
+holyspirit.edu.ph
+honam.ac.kr
+hongik.ac.kr
+honolulu.hawaii.edu
+hood.edu
+hoodseminary.edu
+hope.ac.uk
+hope.edu
+hopeafricauniversity.org
+hopkinsville.kctcs.edu
+hormozgan.ac.ir
+hosei.ac.jp
+hoseo.ac.kr
+hoshi.ac.jp
+hospitalitaliano.edu.ar
+hostos.cuny.edu
+hotelschool.com.au
+hotelschool.nl
+hou.edu.vn
+howard.edu
+howardcc.edu
+howardcollege.edu
+howest.be
+howon.ac.kr
+hpu.edu
+hpuniv.nic.in
+hqgc.net
+hqu.edu.cn
+hr.nl
+hrbeu.edu.cn
+hrbmu.edu.cn
+hrbnu.edu.cn
+hrbucea.edu.cn
+hrbust.edu.cn
+hro.nl
+hs-albsig.de
+hs-anhalt.de
+hs-bremen.de
+hs-bremerhaven.de
+hs-coburg.de
+hs-duesseldorf.de
+hs-esslingen.de
+hs-fulda.de
+hs-hannover.de
+hs-harz.de
+hs-magdeburg.de
+hs-mittweida.de
+hs-neu-ulm.de
+hs-rm.de
+hs-ulm.de
+hs-wismar.de
+hs-zigr.de
+hs.ac.kr
+hsc.colorado.edu
+hsc.edu
+hsc.unt.edu
+hse.ru
+hsleiden.nl
+hslu.ch
+hsr.ch
+hssu.edu
+hstu.ac.bd
+hsu.edu.hk
+hsum-ac.mn
+hsvest.is
+hti.edu.eg
+htl-villach.at
+htl-wels.at
+htu.edu
+htu.edu.gh
+htu.se
+htus.ac.kr
+htw-berlin.de
+htw-dresden.de
+htw-saarland.de
+htwk-leipzig.de
+htwm.de
+hu-berlin.de
+hu.ac.th
+hu.edu.af
+hu.edu.et
+hu.edu.jo
+hu.edu.lb
+hu.edu.pk
+hu.nl
+hua.edu.vn
+hua.gr
+huaf.edu.vn
+hubu.edu.cn
+hud.ac.uk
+hue.ac.jp
+hueuni.edu.vn
+huflit.vnn.vn
+hufs.ac.kr
+huji.ac.il
+hull.ac.uk
+hult.edu
+humanities.mn
+humber.ca
+humbermail.ca
+humboldt.edu
+humg.edu.vn
+hums.ac.ir
+hun.edu.tr
+hunau.net
+hunnu.edu.cn
+hunter.cuny.edu
+huntingdon.edu
+huntington.edu
+huntingtonjuniorcollege.edu
+hupe.hu
+huron.ac.uk
+huronuc.on.ca
+hus.edu.vn
+hust.edu.cn
+hust.edu.vn
+hust.edu.ye
+hut.edu.vn
+hut.fi
+hutchcc.edu
+hva.nl
+hvanneyri.is
+hvcc.edu
+hvtc.edu.vn
+hw.ac.uk
+hwg-lu.de
+hwp-hamburg.de
+hwru.edu.vn
+hws.edu
+hyo-med.ac.jp
+hyogo-dai.ac.jp
+hyogo-u.ac.jp
+hyrcania.ac.ir
+hytu.ac.kr
+hyupsung.ac.kr
+hzau.edu.cn
+hzs.be
+hzu.edu.cn
+i-med.ac.at
+i-u.de
+i.edu.mx
+i4p.edu.my
+iaa.ac.tz
+iaau.edu.kg
+iacademy.ph
+iact.edu.my
+iade.pt
+iae-france.fr
+iaf.inrs.ca
+iaim.ro
+iap.li
+iari.ernet.in
+ias.edu
+iasbs.ac.ir
+iaseduniv.org
+iastate.edu
+iate.obninsk.ru
+iau-ahar.ac.ir
+iau-arak.ac.ir
+iau-boukan.ac.ir
+iau-garmsar.ac.ir
+iau-lahijan.ac.ir
+iau-saveh.ac.ir
+iau-shahrood.ac.ir
+iau-shirvan.ac.ir
+iau-tnb.ac.ir
+iau.edu.sa
+iauardabil.ac.ir
+iauba.ac.ir
+iaubos.ac.ir
+iauctb.ac.ir
+iauh.ac.ir
+iauk.ac.ir
+iaukb.ir
+iaumajlesi.ac.ir
+iaumehriz.com
+iaun.ac.ir
+iauq.ac.ir
+iauro.ac.ir
+iausdj.ac.ir
+iaushab.ac.ir
+iaushiraz.ac.ir
+iausr.ac.ir
+iaut.ac.ir
+iautb.ac.ir
+iautmu.ac.ir
+iauvaramin.ac.ir
+iauyazd.ac.ir
+iavalley.edu
+iba-suk.edu.pk
+iba.edu.pk
+ibaisuniv.edu.bd
+ibaraki.ac.jp
+ibbu.edu.ng
+ibc.ac.th
+ibc.edu
+ibch.ru
+iberoamericana.edu.co
+ibi.spb.ru
+ibnesina.edu.af
+ibnsina.edu.sa
+ibnuchaldun.ac.id
+ibp-moscow.ru
+ibs.uz
+ibss.eu
+ibsu.edu.ge
+ibu.edu.ba
+ibu.edu.tr
+ibub.edu.cn
+ic.ac.uk
+icam.fr
+icb.edu.mn
+icc.ac.jp
+icc.edu
+icci.edu.ky
+iccms.edu
+iccu.ac.kr
+icda.edu.do
+iceit.edu.co
+icesi.edu.co
+icfai.org
+ichec.be
+ici-luzern.com
+ici.edu
+icn-nancy.com
+icp.fr
+ict-toulouse.asso.fr
+ict.edu.om
+icthm.edu.au
+ictp.trieste.it
+icu-edu.org
+icu.ac.jp
+icu.ac.kr
+idc.ac.il
+idti.edu
+idu.edu.tr
+ie.edu
+iecc.edu
+ieec.cust.edu.cn
+ieeu.udm.ru
+iep.u-bordeaux.fr
+iese.edu
+iese.edu.ar
+ieseg.fr
+iet.ru
+ieu.edu.tr
+if-pan.krakow.pl
+ifdtung.if.ua
+ifg.com.pl
+ifheindia.org
+ifm.ac.tz
+ifmo.ru
+ifmparis.fr
+ifp.fr
+ifslearning.ac.uk
+igau.edu.in
+igdir.edu.tr
+igidr.ac.in
+igims.org
+ignou.ac.in
+iha.dk
+ihi-zittau.de
+ihk.dk
+ihr.sas.ac.uk
+ihteamlingue.it
+ihu.edu.gr
+ihu.gr
+iic.edu.my
+iiee.edu.pk
+iihem.ac.ma
+iiit-bh.ac.in
+iiita.com
+iiitb.ac.in
+iiitd.ac.in
+iiitg.ac.in
+iiitkota.ac.in
+iiitm.ac.in
+iiitmk.ac.in
+iiits.in
+iiitvadodara.ac.in
+iimtrichy.ac.in
+iipsindia.org
+iisc.ac.in
+iisc.ernet.in
+iit.ac.lk
+iit.com.na
+iit.edu
+iitb.ac.in
+iitbbs.ac.in
+iitd.ac.in
+iitd.ernet.in
+iitg.ac.in
+iitg.ernet.in
+iitgn.ac.in
+iith.ac.in
+iiti.ac.in
+iitj.ac.in
+iitk.ac.in
+iitkgp.ac.in
+iitkgp.ernet.in
+iitm.ac.in
+iitp.ac.in
+iitr.ac.in
+iitrpr.ac.in
+iiu.edu.my
+iiu.edu.pk
+iiuc.ac.bd
+iiuedu.ie
+ikc.edu.tr
+ikcu.edu.tr
+ikiu.ac.ir
+iksvv.com
+iku.edu.tr
+ikw.ac.kr
+ilam.ac.ir
+ili.ac.in
+iliauni.edu.ge
+ilisagvik.edu
+ilisimatusarfik.gl
+illinois.edu
+illinoisstate.edu
+ilsacollege.edu.na
+ilstu.edu
+imamreza.ac.ir
+imamu.edu.sa
+imau.edu.cn
+imbt.ma
+imc-krems.ac.at
+imd.org
+ime.eb.mil.br
+ime.ru
+imi-luzern.com
+imnu.edu.cn
+impa.br
+impacta.edu.br
+imperial.ac.uk
+imperial.edu
+impu.edu.cn
+imsciences.edu.pk
+imsu.edu.ng
+imt-atlantique.net
+imtlucca.it
+imtu.edu
+imu.edu.cn
+imu.edu.my
+inatek.ac.rw
+inchon-e.ac.kr
+inchon.ac.kr
+indiana.edu
+indianatech.edu
+indianatech.net
+indianhills.edu
+indoamerica.edu.ec
+indonusa.ac.id
+indstate.edu
+indus.edu.pk
+indusuni.ac.in
+indwes.edu
+indycc.edu
+ine.edu.kh
+infnet.edu.br
+info.kma.lt
+inha.ac.kr
+inholland.nl
+inje.ac.kr
+inonu.edu.tr
+inp-fc.fr
+inp.pt
+inpg.edu.br
+inpg.fr
+inpl-nancy.fr
+inpt.ac.ma
+inrs.uquebec.ca
+insa-lyon.fr
+insa-rennes.fr
+insa-rouen.fr
+insa-tlse.fr
+insa-toulouse.fr
+insead.edu
+inseec.fr
+insel.ch
+insper.edu.br
+instedt.edu.my
+institutoteima.ac.pa
+int-evry.fr
+intec.edu.do
+integraluniversity.ac.in
+inteli.edu.br
+inter.edu
+intercollege.ac.cy
+internacional.edu.ec
+international.fh-aalen.de
+internationaluniversity-schoolofmedicine.org
+intstudy.mai.ru
+inu.ac.kr
+inu.edu.jo
+inuaf-studia.pt
+inun.edu.ar
+inverhills.edu
+ioe.ac.uk
+iona.edu
+ionio.gr
+iota.edu.au
+iota.u-psud.fr
+iowacentral.edu
+iowalakes.edu
+ip.kyusan-u.ac.jp
+ipa.edu.sa
+ipb.ac.id
+ipb.edu.my
+ipb.pt
+ipbeja.pt
+ipbl.edu.my
+ipbmm.edu.my
+ipc.dk
+ipc.pt
+ipca.pt
+ipcb.pt
+ipda.edu.my
+ipdbuu.com.cn
+ipfw.edu
+ipg.pt
+ipgkkb.edu.my
+ipgkrajang.edu.my
+ipgkti.edu.my
+ipgmkdri.edu.my
+ipgmksm.edu.my
+ipgmtawau.edu.my
+ipgperlis.edu.my
+ipiaget.org
+ipik.edu.my
+ipip.edu.my
+ipislam.edu.my
+ipkent.edu.my
+ipks.edu.my
+ipl.pt
+ipleiria.pt
+ipm.edu.mo
+ipn.edu.mx
+ipp.pt
+ippm.edu.my
+ipportalegre.pt
+iprm.edu.my
+ips.pt
+ipsa.fr
+ipsah.edu.my
+ipsantarem.pt
+ipsmiri.edu.my
+ipt.pt
+iptaa.edu.my
+iptb.edu.my
+ipteknik.edu.my
+iptho.edu.my
+iptips.edu.my
+ipu.ac.in
+ipu.ac.jp
+ipu.edu.sy
+ipvc.pt
+iqra.edu.pk
+iraquniversity.net
+ircam.fr
+ireste.fr
+irsc.edu
+isa.fupl.asso.fr
+isaacnewtoncr.com
+isab.fr
+isae.ac.rw
+isai.pt
+isalud.edu.ar
+isara.fr
+isave.edu.pt
+isbb.pt
+isbm-school.com
+isbm.org.in
+iscet.pt
+iscte-iul.pt
+iscte.pt
+isctem.ac.mz
+isea.irk.ru
+isea.ru
+isen.fr
+isenshu-u.ac.jp
+isep.fr
+isetr.rnu.tn
+iseu.by
+isfort.ac.ma
+isg.pt
+isg.rnu.tn
+isi.edu
+isical.ac.in
+isikun.edu.tr
+isim.univ-montp2.fr
+isla.pt
+islahonline.org
+islamiccolleges.com
+islamicuniversity.nl
+ism-dortmund.de
+ism.lt
+isma.indi.ru
+ismcm-cesti.fr
+ismdhanbad.ac.in
+ismm.edu.cu
+ismpo.sk
+ismra.fr
+isnm.de
+isothermal.edu
+ispa.pt
+ispab.pt
+ispcmw.rimed.cu
+ispgaya.pt
+ispu.ac.mz
+ispu.ru
+isra.edu.jo
+isra.edu.pk
+isri.ac.mz
+iss.nl
+ist-hochschule.de
+ist.ac.at
+ist.edu.pk
+ista.ac.id
+istanbul.edu.tr
+istanbulticaret.edu.tr
+iste.edu.tr
+istec.pt
+istinye.edu.tr
+istp.pt
+istu.irk.ru
+istu.ru
+isu.ac.ir
+isu.edu
+isu.edu.ph
+isu.edu.tw
+isu.ru
+isuct.ru
+isvouga.com
+iszu.edu.tr
+it-chiba.ac.jp
+it-hiroshima.ac.jp
+ita.br
+ita.mx
+italo.br
+itam.mx
+itascacc.edu
+itats.ac.id
+itb.ac.id
+itb.edu.bn
+itba.edu.ar
+itbmu.org.mm
+itc.edu
+itc.mx
+itc.nl
+itcarlow.ie
+itcr.ac.cr
+itdurango.edu.mx
+ite.edu.sg
+itech.fr
+iteso.mx
+ithaca.edu
+iti.is
+itismalta.com
+itla.edu.do
+itleon.edu.mx
+itm.edu.co
+itmina.edu.mx
+itmindia.edu
+itmo.ru
+itmorelia.edu.mx
+itpu.uz
+itq.edu.mx
+its.ac.id
+itslp.edu.mx
+itsncg.edu.mx
+itsoeh.edu.mx
+itson.mx
+itt-tech.edu
+itt-tech.info
+ittihad.ac.ae
+ittralee.ie
+ittu.edu.tm
+itu.dk
+itu.edu
+itu.edu.pk
+itu.edu.tr
+iu-travnik.com
+iu.ac.bd
+iu.ac.ke
+iu.edu
+iu.edu.iq
+iu.edu.kh
+iu.edu.sa
+iua.edu.ar
+iua.edu.sd
+iuav.unive.it
+iub.edu
+iub.edu.bd
+iub.edu.pk
+iubat.edu
+iubh-fernstudium.de
+iubnt.yar.ru
+iubs.co.uk
+iuc.edu.ar
+iucbc.edu.ar
+iucn.edu.my
+iucs.uncoma.edu.ar
+iuctt.edu.my
+iudehradun.edu.in
+iue.edu.co
+iue.it
+iufs.edu
+iug.edu.gh
+iugaza.edu.ps
+iugna.edu.ar
+iugrad.edu.kn
+iuhimachal.edu.in
+iuhw.ac.jp
+iuil.lu
+iuiu.ac.ug
+iuj.ac.jp
+iujaipur.edu.in
+iujharkhand.edu.in
+iuk.ac.jp
+iuk.ac.kr
+iuk.kg
+iulm.it
+ium.edu.na
+iumeghalaya.edu.in
+iumizoram.edu.in
+iums.ac.ir
+iun.ch
+iunagaland.edu.in
+iunir.edu.ar
+iuo.it
+iuoart.org
+iuokada.edu.ng
+iup.edu
+iupuc.edu
+iupui.edu
+iur.ac.in
+iuraipur.edu.in
+ius.edu
+ius.edu.ba
+iusb.edu
+iuse.edu.es
+iusikkim.edu.in
+iusm.edu.ar
+iusspavia.it
+iust.ac.ir
+iust.edu.sy
+iut.ac.ir
+iutoic-dhaka.edu
+iutripura.edu.in
+ivanovo.ac.ru
+ivc.edu
+ivcc.edu
+ivri.nic.in
+ivytech.edu
+iwakimu.ac.jp
+iwate-med.ac.jp
+iwate-pu.ac.jp
+iwate-u.ac.jp
+iwcc.edu
+iwp.edu
+iwu.edu
+iyte.edu.tr
+iztapalapa.uam.mx
+jabu.edu.ng
+jacksonville-college.edu
+jacobs-university.de
+jadara.edu.jo
+jadavpur.edu
+jainuniversity.org
+jaist.ac.jp
+jalc.edu
+jam.edu.jo
+jamessprunt.edu
+jami.ac.ir
+jamiahamdard.edu
+jammuvarsity.org
+janabadra.ac.id
+janahiau.ac.ir
+jarvis.edu
+jasu.edu.kg
+javeriana.edu.co
+jayabaya.ac.id
+jazanu.edu.sa
+jbc.edu
+jbu.edu
+jccc.edu
+jccmi.edu
+jci.edu.cn
+jcjc.edu
+jcsu.edu
+jct.ac.il
+jct.edu.sa
+jcu.cz
+jcu.edu.au
+jdcc.edu
+jedlik.eu
+jeffco.edu
+jefferson.edu
+jefferson.edu.mx
+jefferson.kctcs.edu
+jeffstateonline.com
+jeju.ac.kr
+jejunu.ac.kr
+jeonju.ac.kr
+jeppiaarcollege.org
+jerashun.edu.jo
+jesus.ac.kr
+jewell.edu
+jfku.edu
+jfn.ac.lk
+jgu.edu.ly
+jh.edu
+jhu.edu
+jhuapl.edu
+jhubc.it
+jic.edu.sa
+jichi.ac.jp
+jiit.ac.in
+jikei.ac.jp
+jinan.edu.lb
+jinnah.edu
+jinnah.edu.pk
+jiscollege.ac.in
+jisiasr.org
+jisiop.org
+jismsr.org
+jissen.ac.jp
+jissp.ac.in
+jisuniversity.ac.in
+jiu.ac.jp
+jiwaji.edu
+jj.ac.kr
+jjay.cuny.edu
+jjc.edu
+jjtu.ac.in
+jju.edu.et
+jkkniu.edu.bd
+jku.at
+jkuat.ac.ke
+jlau.edu.cn
+jlu.edu.cn
+jmi.nic.in
+jmu.edu
+jmu.edu.cn
+jncasr.ac.in
+jnkvv.nic.in
+jntuh.ac.in
+jnu.ac.bd
+jnu.ac.in
+jnu.ac.kr
+jnu.edu.cn
+jnue.ac.kr
+jnujaipur.ac.in
+jobu.ac.jp
+jodhpurnationaluniversity.com
+joensuu.fi
+johncabot.edu
+johnshopkins.edu
+johnstoncc.edu
+jones.edu
+joongbu.ac.kr
+jooust.ac.ke
+josai.ac.jp
+joshibi.ac.jp
+jpte.hu
+jpv.bih.nic.in
+jrnrvu.org
+jscc.edu
+jsu.edu
+jsu.edu.cn
+jsums.edu
+jsust.edu.cn
+jtcc.edu
+jtsa.edu
+ju.ac.ae
+ju.edu
+ju.edu.af
+ju.edu.et
+ju.edu.jo
+ju.edu.sa
+juba.edu.sd
+juc.edu
+judson.edu
+juen.ac.jp
+jum.ru
+jums.ac.ir
+juniata.edu
+juniv.edu
+juntan.k-junshin.ac.jp
+juntendo.ac.jp
+jussieu.fr
+just.edu.jo
+jut.edu.cn
+jutcm.com
+juw.edu.pk
+jvbi.ac.in
+jwcc.edu
+jwu.ac.jp
+jwu.ac.kr
+jwu.edu
+jxau.edu.cn
+jxnu.edu.cn
+jxufe.edu.cn
+jyu.edu.cn
+jyu.fi
+k-state.edu
+kabarak.ac.ke
+kabianga.ac.ke
+kaboora.edu.af
+kabuli.edu.af
+kafkas.edu.tr
+kafna.ac.kr
+kagawa-u.ac.jp
+kagoshima-u.ac.jp
+kai.ru
+kaist.ac.kr
+kaist.edu
+kalingauniversity.com
+kalmsu.ru
+kamakura-u.ac.jp
+kamalolmolk.ac.ir
+kamgu.ru
+kan.edu.af
+kanagawa-it.ac.jp
+kanagawa-u.ac.jp
+kanazawa-bidai.ac.jp
+kanazawa-eco.ac.jp
+kanazawa-gu.ac.jp
+kanazawa-it.ac.jp
+kanazawa-med.ac.jp
+kanazawa-u.ac.jp
+kanchiuniv.ac.in
+kangnam.ac.kr
+kangnung.ac.kr
+kangwon.ac.kr
+kankyo-u.ac.jp
+kannadauniversity.org
+kannuruniversity.ac.in
+kanpuruniversity.org
+kansai-gaidai-u.ac.jp
+kansai-u.ac.jp
+kansascity.edu
+kantiana.ru
+kanto-gakuen.ac.jp
+kanto-gakuin.ac.jp
+kapiolani.hawaii.edu
+kaplan.edu
+karabuk.edu.tr
+karaelmas.edu.tr
+karatay.edu.tr
+karatekin.edu.tr
+karatinauniversity.ac.ke
+karazin.ua
+karch.dk
+kardan.edu.af
+karelia.ru
+karlshochschule.de
+karlsruhe.dhbw.de
+karnatakastateopenuniversity.in
+karpagamuniv.com
+karts.ac.kr
+karuniversity.com
+karunya.edu
+karwan.edu.af
+kasbit.edu.pk
+kashanu.ac.ir
+kashmiruniversity.net
+kaskaskia.edu
+kassalauni.edu.sd
+kastamonu.edu.tr
+kasuportal.net
+kateb.edu.af
+kath-fh-nord.de
+kau.ac.ir
+kau.ac.kr
+kau.edu
+kau.edu.sa
+kau.kz
+kau.se
+kauai.hawaii.edu
+kaums.ac.ir
+kaust.edu.sa
+kawasaki-m.ac.jp
+kaya.ac.kr
+kazanconservatory.ru
+kazeu.kz
+kaznpu.kz
+kazntu.kz
+kaznu.kz
+kbcc.cuny.edu
+kbocc.org
+kbsu.ru
+kbtu.kz
+kbtus.ac.kr
+kbu.ac.jp
+kbu.ac.th
+kbu.edu.my
+kc.edu.gh
+kca.ac.ke
+kcc.edu
+kcgcollege.ac.in
+kckcc.edu
+kcl.ac.uk
+kcmc.ac.tz
+kct.ac.in
+kct.gotevot.edu.sa
+kctcs.edu
+kcu.ac.kr
+kcua.ac.jp
+kdcnet.ac.jp
+kdg.be
+kdischool.ac.kr
+kdpu.edu.ua
+kdu.ac.kr
+kdu.ac.lk
+kdu.edu.my
+kdu.md
+kduniv.ac.kr
+kean.edu
+kec.edu.np
+kee.hu
+keele.ac.uk
+keene.edu
+keiho-u.ac.jp
+keimyung.ac.kr
+keio.ac.jp
+keisen.ac.jp
+keiseruniversity.edu
+keiwa-c.ac.jp
+keller.edu
+kellogg.edu
+kemerburgaz.edu.tr
+kemsu.ru
+kemu.ac.ke
+ken.edu.af
+kennedy.edu.ar
+kennesaw.edu
+kent.edu
+kenyon.edu
+keralauniversity.ac.in
+kettering.edu
+keu.edu.af
+kfb-berlin.de
+kfh-freiburg.de
+kfh-mainz.de
+kfhnw.de
+kfs.edu.eg
+kfsc.edu.sa
+kfu.edu.sa
+kfunigraz.ac.at
+kfupm.edu.sa
+kg.ac.rs
+kgmu.kcn.ru
+kgpu.ru
+kgre.hu
+kgtu.runnet.ru
+kgut.ac.ir
+kgwu.ac.jp
+kh-berlin.de
+khadi.kharkov.ua
+khai.edu
+khas.edu.tr
+khawarizmi.com
+khazar.org
+khi.ac.rw
+khi.is
+khio.no
+khk.be
+khleuven.be
+khlim.be
+khs-linz.ac.at
+khsa.de
+khspu.ru
+khstu.ru
+khu.ac.kr
+khuisf.ac.ir
+ki.se
+kias.edu.my
+kidu-darululum.blogspot.com
+kie.ac.rw
+kiet.edu
+kii.gov.by
+kiit.ac.in
+kiit.edu.pk
+kilaw.edu.kw
+kilgore.edu
+kilian.edu
+kilis.edu.tr
+kimep.kz
+kimi.kohinoor.ac.in
+kindai.ac.jp
+king.edu
+kings.edu
+kingston.ac.uk
+kingston.edu
+kingsu.ab.ca
+kinjo-u.ac.jp
+kiperak.edu.my
+kipsas.edu.my
+kirklareli.edu.tr
+kirkwood.edu
+kirovballet.com
+kirtland.edu
+kish.ac.ir
+kishwaukeecollege.edu
+kisiiuniversity.ac.ke
+kist.ac.rw
+kist.edu.my
+kit.ac.jp
+kit.edu
+kitab.edu.my
+kitakyu-u.ac.jp
+kitami-it.ac.jp
+kitasato-u.ac.jp
+kiu.ac.jp
+kiu.ac.kr
+kiu.ac.ug
+kiu.edu.pk
+kiu.ru
+kiui.ac.jp
+kkot.ac.kr
+kku.ac.th
+kku.edu.sa
+kku.edu.tr
+klamathcc.edu
+klgtu.ru
+kliuc.edu.my
+klmu.edu.my
+kln.ac.lk
+klyuniv.ac.in
+km.isfpnu.ac.ir
+kma.ac.kr
+kma.mk.ua
+kmaritime.ac.kr
+kmbs.edu.kw
+kmc.edu.tw
+kmdc.edu.pk
+kmitl.ac.th
+kmou.ac.kr
+kms.ac.jp
+kmtc.ac.ke
+kmu.ac.ir
+kmu.ac.jp
+kmu.ac.kr
+kmu.edu.af
+kmu.edu.tr
+kmust.edu.cn
+kmutnb.ac.th
+kmutt.ac.th
+knastu.ru
+knau.kg
+knct.ac.jp
+kneu.kiev.ua
+knightsbridgeuniversity.com
+knou.ac.kr
+knox.edu
+knoxvillecollege.edu
+knruhs.telangana.gov.in
+knsu.ac.kr
+kntu.ac.ir
+knu.ua
+knua.ac.kr
+knuba.edu.ua
+knue.ac.kr
+knupe.ac.kr
+knust.edu.gh
+kobe-c.ac.jp
+kobe-cufs.ac.jp
+kobe-du.ac.jp
+kobe-kiu.ac.jp
+kobe-shinwa.ac.jp
+kobe-u.ac.jp
+kobegakuin.ac.jp
+kobepharma-u.ac.jp
+koc.alaska.edu
+kochi-ms.ac.jp
+kochi-tech.ac.jp
+kochi-u.ac.jp
+kochi-wu.ac.jp
+kodolanyi.hu
+kogakkan-u.ac.jp
+kogakuin.ac.jp
+koka.ac.jp
+kokugakuin.ac.jp
+kokushikan.ac.jp
+kolejshahputra.edu.my
+kolejypc.edu.my
+kolieh.com
+komar.edu.iq
+komazawa-u.ac.jp
+konan-u.ac.jp
+konan-wu.ac.jp
+kongju-e.ac.kr
+kongju.ac.kr
+konkuk.ac.kr
+konstfack.se
+konya.edu.tr
+konyang.ac.kr
+kookmin.ac.kr
+kordofan.edu.sd
+korea-u.ac.jp
+korea.ac.kr
+koreatech.ac.kr
+koriyama-kgc.ac.jp
+kornu.ac.kr
+koshien.ac.jp
+kosin.ac.kr
+kou.edu.tr
+koyasan-u.ac.jp
+koyauniversity.org
+kpc.alaska.edu
+kpi.kharkov.ua
+kpi.ua
+kptm.edu.my
+kpu-m.ac.jp
+kpu.ac.jp
+kpu.ac.kr
+krirk.ac.th
+krishnauniversity.ac.in
+kristiania.no
+krok.edu.ua
+krsu.edu.kg
+ks.ac.kr
+ksa.edu.pk
+ksaba.ru
+ksau-hs.edu.sa
+ksbk-do.de
+ksdsu.edu.in
+kse.org.ua
+ksfei.ru
+ksfh.de
+kshosen.ac.jp
+ksit.edu.tw
+kslu.ac.in
+ksmu.kharkov.ua
+ksmu.kursknet.ru
+kspu.kaluga.ru
+kspu.ptz.ru
+kstu.edu.gh
+kstu.edu.ru
+kstu.kg
+kstu.kursk.ru
+kstu.kz
+kstuca.kharkov.ua
+ksu.ac.jp
+ksu.edu
+ksu.edu.sa
+ksu.edu.tr
+ksu.edu.tw
+ksu.edu.ua
+ksu.kst.kz
+ksu.kz
+ksu.ru
+ksucta.kg
+ksuportal.edu.ng
+ksusta.edu.ng
+ksw.edu.pl
+ktd.edu.my
+kth-linz.ac.at
+kth.se
+ktkt-haiduong.edu.vn
+ktokai-u.ac.jp
+ktu.edu
+ktu.edu.gh
+ktu.edu.tr
+ktu.lt
+ktun.edu.tr
+ku-eichstaett.de
+ku.ac.ae
+ku.ac.bd
+ku.ac.ke
+ku.ac.th
+ku.ac.ug
+ku.dk
+ku.edu
+ku.edu.af
+ku.edu.bh
+ku.edu.np
+ku.edu.sa
+ku.edu.tr
+ku.lt
+ku.sk
+kubagro.ru
+kubrussel.ac.be
+kubstu.ru
+kubsu.ru
+kud.ac.in
+kudqi.net.my
+kuet.ac.bd
+kufos.ac.in
+kufs.ac.jp
+kug.ac.at
+kuim.edu.my
+kuin.edu.my
+kuins.ac.jp
+kuis.ac.jp
+kuis.edu.my
+kuk.edu.ng
+kukinfo.com
+kul.lublin.pl
+kulak.kuleuven.be
+kuleuven.be
+kumagaku.ac.jp
+kumamoto-u.ac.jp
+kumaununiversity.org
+kumc.edu
+kumoh.ac.kr
+kums.ac.ir
+kumsa.net
+kunitachi.ac.jp
+kuniv.edu.kw
+kunsan.ac.kr
+kunstakademie-duesseldorf.de
+kunstakademiet.dk
+kure-u.ac.jp
+kursk-uni.ru
+kurume-it.ac.jp
+kurume-u.ac.jp
+kusa.ac.jp
+kushiro-pu.ac.jp
+kust.edu.pk
+kustar.ac.ae
+kustwudil.edu.ng
+kusw.ac.jp
+kut.ac.ir
+kutztown.edu
+kuva.fi
+kuvempu.ac.in
+kuwarangal.com
+kuzstu.ac.ru
+kvcc.edu
+kvcc.me.edu
+kvctc.edu
+kvl.dk
+kw.ac.kr
+kwandong.ac.kr
+kwangju-e.ac.kr
+kwangju.ac.kr
+kwangshin.ac.kr
+kwangwoon.ac.kr
+kwansei.ac.jp
+kwantlen.bc.ca
+kwarapoly.edu.ng
+kwararafauniversity.edu.ng
+kwassui.ac.jp
+kwasu.edu.ng
+kwc-u.ac.jp
+kwu.ac.kr
+kwu.edu
+kwuc.ac.jp
+kwust.ac.ke
+kyokyo-u.ac.jp
+kyonggi.ac.kr
+kyongju.ac.kr
+kyorin-u.ac.jp
+kyoritsu-ph.ac.jp
+kyoritsu-wu.ac.jp
+kyoto-art.ac.jp
+kyoto-phu.ac.jp
+kyoto-seika.ac.jp
+kyoto-su.ac.jp
+kyoto-u.ac.jp
+kyoto-wu.ac.jp
+kyotogakuen-u.ac.jp
+kyrenia.edu.tr
+kysu.edu
+kyu-dent.ac.jp
+kyu.ac.ug
+kyukyo-u.ac.jp
+kyunghee.ac.kr
+kyungil.ac.kr
+kyungnam.ac.kr
+kyungpook.ac.kr
+kyungsung.ac.kr
+kyungwon.ac.kr
+kyushu-id.ac.jp
+kyushu-ns.ac.jp
+kyushu-u.ac.jp
+kyutech.ac.jp
+kzoo.edu
+labette.edu
+laccd.edu
+lacitycollege.edu
+lackawanna.edu
+lacollege.edu
+ladelta.edu
+ladhs.org
+lafayette.edu
+lagcc.cuny.edu
+lagh-univ.dz
+lagrange.edu
+lahc.edu
+laikipia.ac.ke
+lakeareatech.edu
+lakeheadu.ca
+lakeland.cc.il.us
+lakelandcc.edu
+lakemichigancollege.edu
+lama.lv
+lamar.edu
+lamar.org.mx
+lamarcc.edu
+lamarpa.edu
+lambtoncollege.ca
+lamission.edu
+lamk.fi
+lamolina.edu.pe
+lamp.ac.uk
+lampangvc.ac.th
+lancaster.edu.gh
+lancs.ac.uk
+lander.edu
+lanecc.edu
+lanecollege.edu
+laney.edu
+langara.bc.ca
+langara.ca
+langston.edu
+laniertech.edu
+lansbridge.com
+laredo.edu
+lasalle.edu
+lasalle.edu.co
+lasalleuniversities.net
+lasc.edu
+lasell.edu
+lasierra.edu
+laspositascollege.edu
+laspotech.net
+lassencollege.edu
+lasunigeria.org
+latech.edu
+latrobe.edu.au
+lattc.edu
+lau.edu.lb
+laurea.fi
+laurentian.ca
+lauruscollege.edu
+lautech.edu.ng
+lavc.edu
+laverne.edu
+law.cuny.edu
+lawrence.edu
+lawsonstate.edu
+lazarski.pl
+lbcc.edu
+lbhc.edu
+lboro.ac.uk
+lbtu.lv
+lbu.edu.np
+lbwcc.edu
+lc.edu
+lcat.ac.th
+lcc.edu
+lcc.lt
+lccc.edu
+lccc.wy.edu
+lcct.ac.th
+lclark.edu
+lco.edu
+lcsc.edu
+lcst.ac
+lctu.edu.cn
+lcu.edu.ng
+lcwu.edu.pk
+ldceahd.org
+ldcu.edu.ph
+ldsbc.edu
+le.ac.uk
+lecom.edu
+lee.edu
+leeds.ac.uk
+leedsbeckett.ac.uk
+leedstrinity.ac.uk
+leeward.hawaii.edu
+lef.upn.mx
+lefke.edu.tr
+lehigh.edu
+lehman.cuny.edu
+lemoyne.edu
+lenoircc.edu
+leon.uia.mx
+lesley.edu
+lesroches.edu
+lethbridgecollege.ca
+letran.edu
+letu.edu
+leuphana.de
+lewisu.edu
+lfc.edu
+lfcc.edu
+lfze.hu
+lgpu.lg.ua
+lgu.ac.uk
+lhi.is
+lhs.se
+lhu.edu.tw
+lhup.edu
+lib.klte.hu
+liberty.edu
+libopenuniv-edu.org
+liccsalsl.org
+licet.ac.in
+lidapoly.com
+life.hkbu.edu.hk
+limkokwing.edu.my
+limt.co.uk
+limu.edu.ly
+lincoln.ac.nz
+lincoln.ac.uk
+lincoln.edu
+lindenwood.edu
+linfield.edu
+link.cuhk.edu.hk
+linnbenton.edu
+linnstate.edu
+linton.edu.my
+linuwel.nsw.edu.au
+lipscomb.edu
+lis.ac.uk
+lit.edu
+littlehoop.edu
+littlepriest.edu
+liu.edu.lb
+liu.se
+liuc.it
+liunet.edu
+liv.ac.uk
+livingstone.edu
+lixin.edu.cn
+ljmu.ac.uk
+lka.edu.lv
+lka.lt
+lkka.lt
+llcc.edu
+lltc.edu
+llu.edu
+llu.lv
+lma.lv
+lmc.cs.sunysb.edu
+lmta.lt
+lmu.de
+lmu.edu
+lmu.edu.ng
+lmunet.edu
+lmuza.lv
+ln.edu.hk
+ln.hk
+lnipe.edu
+lnmu.bih.nic.in
+lnnu.edu.cn
+lntu.edu.cn
+lnu.edu.cn
+lnu.edu.ua
+lnu.evis.net.ph
+loc.edu
+lockhaven.edu
+london.ac.uk
+londonmet.ac.uk
+lonestar.edu
+longwood.edu
+lorainccc.edu
+loras.edu
+losmedanos.edu
+losrios.edu
+louisburg.edu
+louisiana.edu
+louisville.edu
+lowercolumbia.edu
+loyno.edu
+loyola.edu
+lp.edu.ua
+lpru.ac.th
+lpu.edu.ph
+lpu.in
+lr.edu
+lrc.edu
+lrcc.edu
+lrguas.ch
+lrsc.edu
+lsb.ie
+lsbf.org.uk
+lsc.edu
+lsco.edu
+lse.ac.uk
+lshtm.ac.uk
+lsmu.edu.ua
+lspa.lanet.lv
+lssu.edu
+lsu-visca.edu.ph
+lsu.ac.zw
+lsu.edu
+lsu.edu.az
+lsua.edu
+lsue.edu
+lsus.edu
+ltc.edu.tw
+ltcc.edu
+ltu.bg
+ltu.edu
+ltu.edu.tw
+lu.ac.ir
+lu.lv
+lu.se
+luanar.ac.mw
+luc.edu
+lucknowuniv.org
+luiss.it
+lumei.edu.cn
+lumhs.edu.pk
+lums.ac.ir
+lums.edu.pk
+lumsa.it
+luna.edu
+lunn.sci-nnov.ru
+lus.ac.bd
+lut.fi
+luth.se
+luther.edu
+luthersem.edu
+luz.ve
+luzerne.edu
+lva.lt
+lvc.edu
+lycoming.edu
+lynchburg.edu
+lyndonstate.edu
+lynn.edu
+lynu.edu.cn
+lyon.edu
+lzmc.edu.cn
+lzu.edu.cn
+lzua.lt
+ma.odessa.ua
+maakhiruniversity.net
+macalester.edu
+macauly.cuny.edu
+macc.edu
+maccormac.edu
+macewan.ca
+macfast.org
+machung.ac.id
+mackenzie.br
+macomb.edu
+madenatalelem.com
+madi.ru
+madisoncollege.edu
+madisonville.kctcs.edu
+madonnauniversity.edu.ng
+magadhuniversity.org
+mah.se
+mahendradatta.org
+mahidol.ac.th
+mahsa.edu.my
+mahshahriau.ac.ir
+mail.polimi.it
+mail.sacredheart.edu
+mail.sysu.edu.cn
+mail.xhu.edu.cn
+mail2.sysu.edu.cn
+maimonides.edu.ar
+maine.edu
+majancollege.edu.om
+mak.ac.ug
+mala.bc.ca
+malayeru.ac.ir
+malekanpnu.ac.ir
+malone.edu
+maltepe.edu.tr
+mamasaniiau.ac.ir
+man.ac.uk
+man.radom.pl
+manarat.ac.bd
+manas.kg
+manavrachna.edu.in
+manc.edu
+manchester.ac.uk
+mandela.ac.za
+mandhu.com
+mangaloreuniversity.ac.in
+manhattan.edu
+manhattantech.edu
+manipal.edu
+manipur.nic.in
+manit.ac.in
+mannheim.dhbw.de
+manoa.hawaii.edu
+manor.edu
+mans.edu.eg
+mansfield.edu
+manu.edu.mk
+manuu.ac.in
+mapua.edu.ph
+maranatha.edu
+marcusoldham.vic.edu.au
+margu.mari.ru
+marianna-u.ac.jp
+maricopa.edu
+marietta.edu
+marin.edu
+marionmilitary.edu
+marist.edu
+marlboro.edu
+marmara.edu.tr
+marquette.edu
+marshall.edu
+marshall.tstc.edu
+marstu.mari.ru
+martincc.edu
+marun.edu.tr
+maryam.edu.af
+marymount.edu
+maryville.edu
+maryvillecollege.edu
+marywood.edu
+masdar.ac.ae
+maseno.ac.ke
+massasoit.edu
+massasoit.mass.edu
+massbay.edu
+massey.ac.nz
+masu.ru
+matc.edu
+matci.ac.ma
+matnu.edu.lb
+matsu.alaska.edu
+matsuyama-u.ac.jp
+mau.ac.ir
+maua.br
+may.ie
+maybod.ac.ir
+mayland.edu
+mayo.edu
+maysville.kctcs.edu
+mazums.ac.ir
+mbc.edu
+mbl.edu
+mbro.ac.uk
+mbs.ac.uk
+mbstu.ac.bd
+mbu.ac.th
+mbzuai.ac.ae
+mc.edu
+mc3.edu
+mcad.edu
+mcast.edu.mt
+mcbu.edu.tr
+mcc.commnet.edu
+mcc.edu
+mccc.edu
+mccd.edu
+mcckc.edu
+mccneb.edu
+mccnh.edu
+mcdaniel.edu
+mcdowelltech.edu
+mcg.edu
+mcgill.ca
+mch.mii.lt
+mchenry.edu
+mci.edu
+mcl.edu.ph
+mclennan.edu
+mcm.edu
+mcmaster.ca
+mcneese.edu
+mcpherson.edu
+mcst.edu.sa
+mctc.edu
+mcu.ac.in
+mcu.ac.kr
+mcu.ac.th
+mcu.edu.ph
+mcu.edu.tw
+mcw.edu
+mdc.edu
+mdh.se
+mdis.uz
+mdp.edu.ar
+mdsuajmer.ac.in
+mdu.ac.jp
+mdu.edu.az
+mdurohtak.com
+mdw.ac.at
+mdx.ac.uk
+mec.cuny.edu
+mecc.edu
+mechnik.spb.ru
+med.ic.ac.uk
+med.sgu.ru
+medeniyet.edu.tr
+medilam.hbi.ir
+medin.nsc.ru
+medipol.edu.tr
+mediu.edu.my
+medsab.ac.ir
+meduni-graz.at
+meduniv.lviv.ua
+meduniver.gomel.by
+meduniversity-plovdiv.bg
+meduniwien.at
+mef.edu.tr
+megatrend-edu.net
+megatrend.edu.rs
+mehmetakif.edu.tr
+meiji-u.ac.jp
+meiji.ac.jp
+meijigakuin.ac.jp
+meijo-u.ac.jp
+meikai.ac.jp
+meio-u.ac.jp
+meisei-u.ac.jp
+mejiro.ac.jp
+mekong.edu.kh
+members.rotfl.com
+memphis.edu
+mendelu.cz
+mendocino.edu
+menofia.edu.eg
+mercer.edu
+mercubuana.ac.id
+mercy.edu
+mercyhurst.edu
+mercymavericks.edu
+meredith.edu
+meridiancc.edu
+merkur-fh.org
+merrimack.edu
+merritt.edu
+mersin.edu.tr
+merz-akademie.de
+mesabirange.edu
+mesacc.edu
+mesalands.edu
+mesi.ru
+messiah.edu
+metro-hs.ac.jp
+metro-u.ac.jp
+metropolia.fi
+metropolitan.edu.rs
+metrostate.edu
+metrouni.edu.bd
+metu.edu.tr
+meu.edu.jo
+mfh-iserlohn.de
+mfu.ac.th
+mga.edu
+mgavm.ru
+mgccc.edu
+mgimo.ru
+mgkvp.ac.in
+mgpu.gomel.by
+mgri-rggru.ru
+mgsu.norna.ru
+mgsubikaner.ac.in
+mgu.ac.in
+mgu.ac.jp
+mgu.bg
+mgul.ac.ru
+mguniversity.ac.in
+mh-hannover.de
+mh-luebeck.de
+mh-trossingen.de
+mhcc.edu
+miami.edu
+miamioh.edu
+mica.edu
+middlebury.edu
+middlesbro.ac.uk
+middlesex.mass.edu
+middlesexcc.edu
+midlandstech.edu
+midmich.edu
+midsouthcc.edu
+midwestern.edu
+mie-chukyo-u.ac.jp
+mie-u.ac.jp
+miet.ru
+mif.hu
+miigaik.ru
+miit.ru
+miit.unikl.edu.my
+mil.lv
+miles.edu
+milescc.edu
+millersville.edu
+milligan.edu
+millikin.edu
+millsaps.edu
+mimasaka.ac.jp
+mineralarea.edu
+minerva.edu
+mines-ales.fr
+mines-ales.org
+mines.edu
+mines.u-nancy.fr
+minia.edu.eg
+minneapolis.edu
+minnesota.edu
+minotstateu.edu
+miom.org
+mipt.ru
+miracosta.edu
+mirbis.ru
+mirea.ru
+miryang.ac.kr
+misis.ru
+missioncollege.edu
+missouri.edu
+missouristate.edu
+mist.ac.bd
+mit.edu
+mitchellcc.edu
+mitchelltech.edu
+mitethiopia.edu.et
+mitindia.edu
+mitwpu.edu.in
+miu.ac.ir
+miu.by
+miu.edu.pk
+miu.ru
+miuegypt.edu.eg
+miun.se
+miva.university
+miyakyo-u.ac.jp
+miyasankei-u.ac.jp
+miyazaki-med.ac.jp
+miyazaki-mu.ac.jp
+miyazaki-u.ac.jp
+mjc.edu
+mjpru.ac.in
+mju.ac.kr
+mju.ac.th
+mku.ac.ke
+mku.edu.tr
+mkuhyd.com
+mkv2.mah.nic.in
+ml.refer.org
+mlaw.edu
+mlqu.edu.ph
+mlsbu.ac.uk
+mlsu.ac.in
+mma.ru
+mmarau.ac.ke
+mmc.edu
+mmibordeaux.com
+mmm.edu
+mmsu.edu.ph
+mmu.ac.ke
+mmu.ac.kr
+mmu.ac.tz
+mmu.ac.ug
+mmu.ac.uk
+mmu.edu.my
+mmust.ac.ke
+mnit.ac.in
+mnma.ac.tz
+mnnit.ac.in
+mnstate.edu
+mnsu.edu
+mnsuet.edu.pk
+mnu.edu.mv
+mnwest.edu
+modares.ac.ir
+modern-academy.edu.eg
+moestopo.ac.id
+mofidu.ac.ir
+mogadishuuniversity.com
+mohave.edu
+mohawkcollege.ca
+mokpo.ac.kr
+mokwon.ac.kr
+molloy.edu
+monash.edu
+monash.edu.au
+monash.edu.my
+monmouth.edu
+monmouthcollege.edu
+monroecc.edu
+monroeccc.edu
+monroecollege.edu
+montaigne.u-bordeaux.fr
+montana.edu
+montcalm.edu
+montclair.edu
+montesquieu.u-bordeaux.fr
+montgomery.edu
+montgomerycollege.edu
+montreat.edu
+moodle.ara.ac.nz
+moorelanduniversity.com
+moorparkcollege.edu
+morainepark.edu
+morainevalley.edu
+moravian.edu
+moreheadstate.edu
+morehouse.edu
+morgan.edu
+morgancc.edu
+morioka-u.ac.jp
+morris.edu
+morrisbrown.edu
+morton.edu
+mosbach.dhbw.de
+mosconsv.ru
+mosgu.ru
+most.gov.mm
+motolinia.com.mx
+mouau.edu.ng
+moultrietech.edu
+mountsaintvincent.edu
+moz.ac.at
+mpbou.org
+mpc.edu
+mpcc.edu
+mpei.ac.ru
+mpgu.su
+mpkv.mah.nic.in
+mpu-prague.cz
+mpu.ac.jp
+mq.edu.au
+mrs.umn.edu
+mrsu.ru
+mrt.ac.lk
+mru.ac.ug
+mruni.eu
+msa.ac.za
+msa.eun.eg
+msaab.ru
+msbcollege.edu
+mscc.edu
+mscfs.edu
+mscok.edu
+msdelta.edu
+mseuf.edu.ph
+msgsu.edu.tr
+mshdiau.ac.ir
+msiu.ru
+msj.edu
+msjc.edu
+mslu.by
+msm.edu
+msmary.edu
+msmc.edu
+msoe.edu
+msruas.ac.in
+mssc.edu
+mssm.edu
+msstate.edu
+mst.edu
+msta.ac.ru
+mstc.edu
+mstu.edu.ru
+mstuca.ru
+msu.ac.th
+msu.ac.zw
+msu.edu
+msu.edu.my
+msu.edu.tr
+msu.mogilev.by
+msu.ru
+msua.edu.mn
+msuac.edu.mn
+msubaroda.ac.in
+msubillings.edu
+msuc.edu.ru
+msudenver.edu
+msue.edu.mn
+msuee.ru
+msuie.ru
+msuiit.edu.ph
+msumain.edu.ph
+msun.edu
+msvu.ca
+mta.ca
+mta.ro
+mtc.edu
+mtc.edu.eg
+mtech.edu
+mtholyoke.edu
+mti.edu.eg
+mtroyal.ca
+mtsac.edu
+mtsu.edu
+mtu.ac.kr
+mtu.edu
+mtu.edu.et
+mtu.ie
+mtuci.ru
+mu-luebeck.de
+mu-pleven.bg
+mu-sofia.bg
+mu-varna.bg
+mu.ac.in
+mu.ac.ke
+mu.ac.zm
+mu.edu.et
+mu.edu.sa
+mu.edu.tr
+mu.fapenet.org
+mubabol.ac.ir
+mubas.ac.mw
+muc.edu
+muc.edu.iq
+muccobs.ac.tz
+muchs.ac.tz
+muctr.edu.ru
+muet.edu.pk
+muh.ru
+mui.ac.ir
+muic.mahidol.ac.th
+muk.ac.ir
+mukogawa-u.ac.jp
+mul.edu.pk
+mum.edu
+mums.ac.ir
+mundragon.edu
+muni.cz
+muni.es
+muq.ac.ir
+murdoch.edu.au
+murni.edu.my
+muroran-it.ac.jp
+mursuky.edu
+musabi.ac.jp
+musashi-tech.ac.jp
+musashi.ac.jp
+musashino-music.ac.jp
+musashino-wu.ac.jp
+musc.edu
+muscatcollege.edu.om
+musicacademy.edu.az
+musik-kons.dk
+musikhochschule-muenchen.de
+muskegoncc.edu
+muskingum.edu
+must.ac.ke
+must.ac.mw
+must.ac.ug
+must.edu.eg
+must.edu.mn
+must.edu.mo
+must.edu.my
+must.edu.sy
+mut.ac.th
+mut.ac.za
+mut.edu.lb
+mutah.edu.jo
+muthesius.de
+muw.edu
+mvc.edu
+mvc.edu.ph
+mvcc.edu
+mvsu.edu
+mwc.edu
+mwcc.edu
+mwsc.edu
+mwsu.edu
+mwu.edu.et
+mxcc.commnet.edu
+my-pharm.ac.jp
+my.cityu.edu.hk
+my.ipleiria.pt
+my.sta.uwi.edu
+myara.ara.ac.nz
+mybrcc.edu
+mycambrian.ca
+mylambton.ca
+mylaurier.ca
+mylcp.net
+mymail.mapua.edu.ph
+myongji.ac.kr
+myport.ac.uk
+myport.port.ac.uk
+myscc.ca
+myseneca.ca
+mytum.de
+myu.ac.jp
+myuct.ac.za
+mzumbe.ac.tz
+mzuni.ac.mw
+n-fukushi.ac.jp
+n-nov.mednet.com
+na.edu
+naa.edu.az
+naba.it
+nacc.edu
+nagano.ac.jp
+nagaokaut.ac.jp
+nagarjunauniversity.ac.in
+nagasaki-u.ac.jp
+nagasakipu.ac.jp
+nagauniv.org.in
+nagoya-cu.ac.jp
+nagoya-ku.ac.jp
+nagoya-u.ac.jp
+nagoya-wu.ac.jp
+nagpur-university.com
+nahrainuniv.edu.iq
+nait.ca
+najafabad-uast.ac.ir
+najah.edu
+nakamura-u.ac.jp
+nalandaopenuniversity.info
+nambu.ac.kr
+nan.rmutl.ac.th
+nancy.archi.fr
+nankyudai.ac.jp
+nanzan-u.ac.jp
+napavalley.edu
+napier.ac.uk
+nara-edu.ac.jp
+nara-su.ac.jp
+nara-u.ac.jp
+nara-wu.ac.jp
+naramed-u.ac.jp
+narauc.ac.jp
+narotama.ac.id
+naruto-u.ac.jp
+nashcc.edu
+nashuacc.edu
+natfiz.bg
+nation.ac.th
+nationalmuseumindia.org
+nau.edu
+nau.edu.ua
+nauss.edu.sa
+nauu.kiev.ua
+navarrocollege.edu
+navy.ac.kr
+nawrozuniversity.com
+nayanova.edu
+naz.edu
+nbu.ac.in
+nbu.ac.jp
+nbu.bg
+nbu.edu.cn
+nbu.edu.sa
+nbut.edu.cn
+nc.edu.sd
+nca.edu.pk
+ncat.edu
+ncbc.edu
+ncc.commnet.edu
+ncc.edu
+ncc.metu.edu.tr
+nccc.edu
+nccu.edu
+nccu.edu.tw
+ncepubj.edu.cn
+ncf.edu
+nchu.edu.tw
+nchulc.edu.tw
+ncirl.ie
+ncktc.edu
+ncl-coll.ac.uk
+ncl.ac.uk
+ncmich.edu
+ncmissouri.edu
+ncnu.edu.tw
+ncpes.edu.tw
+ncstatecollege.edu
+ncstu.ru
+ncsu.edu
+ncta.unl.edu
+nctc.edu
+ncu.edu.cn
+ncu.edu.jm
+ncu.edu.tw
+ncue.edu.tw
+ncuindia.edu
+ncut.edu.cn
+ncwc.edu
+ncyu.edu.tw
+nd.edu
+nd.edu.au
+nda.edu.ng
+ndejjeuniversity.ac.ug
+ndhu.edu.tw
+ndmc.ac.jp
+ndmu.edu.ph
+ndpi.uz
+ndri.nic.in
+ndscs.edu
+ndsu.ac.jp
+ndsu.edu
+ndu.ac.jp
+ndu.edu
+ndu.edu.az
+ndu.edu.lb
+ndu.edu.ng
+ndu.fapenet.org
+nduat.nic.in
+ndus.edu
+neau.edu.cn
+nebrwesleyan.edu
+nebuta.ac.jp
+necc.edu
+necc.mass.edu
+neduet.edu.pk
+neelain.edu.sd
+nefu.edu.cn
+nehu.ac.in
+neic.nsk.su
+neijtc.edu.cn
+neit.edu
+nemcc.edu
+nenu.edu.cn
+neo.edu
+neosho.edu
+nes.ru
+netc.edu
+netcomsa.com
+network.rca.ac.uk
+neu.edu
+neu.edu.cn
+neu.edu.ph
+neu.edu.tr
+neu.edu.vn
+neub.edu.bd
+neumann.edu
+neuq.edu.cn
+neusoft.edu.cn
+nevada.edu
+nevsehir.edu.tr
+newasia.bj.edu.cn
+newberry.edu
+newcastle.edu.au
+newcollege.ac.uk
+newcollege.edu
+neweracollege.ac.bw
+newhaven.edu
+newpaltz.edu
+newport.ac.uk
+newports.edu.pk
+newriver.edu
+newtonpaiva.br
+newworld.ac
+nfcc.edu
+nfu.edu.tw
+ngasu.sci-nnov.ru
+ngha.med.sa
+ngu.ac.in
+ngu.ac.jp
+nha-bg.org
+nhc.edu
+nhcc.edu
+nhctc.edu.tw
+nhh.no
+nhltc.edu.tw
+nhti.edu
+nhtv.nl
+nhu.edu.tw
+nhv.se
+ni.ac.rs
+nia.edu.tw
+niab.org.pk
+niacc.edu
+niagara.edu
+niagaracc.suny.edu
+niagaracollege.ca
+nias.ac.jp
+nibm.lk
+nibs.ac.ke
+nic.bc.ca
+nic.edu
+nicc.edu
+nicholls.edu
+nicoletcollege.edu
+nida.ac.th
+nifs-k.ac.jp
+nigde.edu.tr
+nih.no
+nihon-u.ac.jp
+niigata-pharm.ac.jp
+niigata-u.ac.jp
+niigataum.ac.jp
+nilai.edu.my
+nilc.spb.ru
+nileu.edu.eg
+nilevalley.edu.sd
+nimhans.kar.nic.in
+nims.ap.nic.in
+nims.edu.in
+nims.net.in
+nipissingu.ca
+nirmauni.ac.in
+nisantasi.edu.tr
+nishitech.ac.jp
+nishogakusha-u.ac.jp
+nisikyu-u.ac.jp
+nit.ac.in
+nit.ac.ir
+nit.ac.jp
+nita.ac.in
+nitandhra.ac.in
+nitap.in
+nitc.ac.in
+nitdelhi.ac.in
+nitdgp.ac.in
+nitech.ac.jp
+nitgoa.ac.in
+nith.ac.in
+nith.no
+nitie.edu
+nitj.ac.in
+nitjsr.ac.in
+nitk.ac.in
+nitk.edu.in
+nitkkr.net
+nitm.ac.in
+nitmanipur.ac.in
+nitmz.ac.in
+nitnagaland.ac.in
+nitp.ac.in
+nitpy.ac.in
+nitrkl.ac.in
+nitrr.ac.in
+nits.ac.in
+nitsikkim.ac.in
+nitsri.net
+nitt.edu
+nittai.ac.jp
+nituk.ac.in
+nitw.ernet.in
+niu.edu
+niu.edu.tw
+niu.org.uk
+niuitmo.ru
+nivadhana.ac.th
+njau.edu.cn
+njc.edu
+njcu.edu
+njfu.edu.cn
+njim.edu.cn
+njit.edu
+njmu.edu.cn
+njnu.edu.cn
+njtu.edu.cn
+nju.edu.cn
+njuct.edu.cn
+njue.edu.cn
+njupt.edu.cn
+njust.edu.cn
+njutcm.edu.cn
+njuts.cn
+nknu.edu.tw
+nkrriwf.pl
+nku.edu
+nku.edu.tr
+nku.nankai.edu.cn
+nkumbauniversity.ac.ug
+nkust.edu.tw
+nkzu.kz
+nl.edu
+nla.no
+nlc.bc.ca
+nlh.no
+nls.ac.in
+nlu.edu
+nma.bg
+nmaa.edu.af
+nmc.edu
+nmcc.edu
+nmetau.edu.ua
+nmh.no
+nmhu.edu
+nmims.edu
+nmit.ac.nz
+nmjc.edu
+nmmi.edu
+nmmu.ac.za
+nms.ac.jp
+nmsu.edu
+nmsua.edu
+nmt.edu
+nmu.ac.in
+nmu.edu
+nmu.edu.ua
+nmu.org.ua
+nnc.edu
+nntu.sci-nnov.ru
+nny.edu.tr
+noah.edu.gr
+noc.edu
+nodai.ac.jp
+nodak.edu
+nommensen.org
+nooruse.ee
+nordakademie.de
+normandale.edu
+northampton.ac.uk
+northampton.edu
+northark.edu
+northcentralcollege.edu
+northeast.edu
+northeastern.edu
+northeaststate.edu
+northern.edu
+northgatech.edu
+northlakecollege.edu
+northland.edu
+northlandcollege.edu
+northshore.edu
+northsouth.edu
+northumbria.ac.uk
+northwestcollege.edu
+northwestern.edu
+northwesterncollege.edu
+northwestms.edu
+northweststate.edu
+northwood.edu
+norton.edu.kh
+norwich.edu
+nosu.ru
+notredame.ac.jp
+nottingham.ac.uk
+nottingham.edu.cn
+nottingham.edu.my
+nou.edu.ng
+nou.edu.tw
+nova.edu
+novasbe.unl.pt
+novenauniversity.edu.ng
+novsu.ac.ru
+np.ac.rs
+np.edu
+np.edu.sg
+npc.edu
+npcc.edu
+npcts.edu
+nps.edu
+npttc.edu.tw
+npu.edu.ua
+npust.edu.tw
+nr.edu
+nrao.edu
+ns2.uni-ak.ac.at
+nsa.bg
+nsac.ns.ca
+nsau.edu.ru
+nsbm.lk
+nscad.ns.ca
+nscc.edu
+nsmc.edu.cn
+nsmu.ru
+nstu.edu.bd
+nstu.ru
+nsu.ac.jp
+nsu.ac.kr
+nsu.edu
+nsu.edu.np
+nsu.ru
+nsuk.edu.ng
+nsula.edu
+nsuok.edu
+nsut.ac.in
+nsysu.edu.tw
+nt.gov.au
+ntb.ch
+ntc.edu
+ntca.edu.tw
+ntcc.edu
+ntcmn.edu
+ntcn.edu.tw
+ntcpe.edu.tw
+ntctc.edu.tw
+nthu.edu.tw
+ntntc.edu.tw
+ntnu.edu.ng
+ntnu.edu.tw
+ntnu.no
+ntou.edu.tw
+ntptc.edu.tw
+ntpu.edu.tw
+ntruhs.ap.nic.in
+ntti.ac.ke
+ntttc.edu.tw
+ntu.ac.jp
+ntu.ac.uk
+ntu.edu.sg
+ntu.edu.tw
+ntu.kar.net
+ntua.gr
+ntue.edu.tw
+ntust.edu.tw
+ntut.edu.tw
+nu-online.com
+nu.ac.th
+nu.edu
+nu.edu.af
+nu.edu.bd
+nu.edu.eg
+nu.edu.kz
+nu.edu.ph
+nu.edu.pk
+nu.edu.sa
+nua.ac.jp
+nuaa.edu.cn
+nub.ac.bd
+nucba.ac.jp
+nuch.ac.kr
+nudt.edu.cn
+nufs.nakanishi.ac.jp
+nugaaluniversity.com
+nui.ie
+nuigalway.ie
+nuis.ac.jp
+nuist.edu.cn
+nuk.edu.tw
+nul.ls
+nulaoag.com
+num.edu.kh
+num.edu.mn
+numed.ncl.ac.uk
+numl.edu.pk
+nunez.edu
+nung.edu.ua
+nuol.edu.la
+nur.ac.rw
+nur.edu
+nure.ua
+nus.edu
+nus.edu.sg
+nus.edu.ws
+nusaputra.ac.id
+nust.ac.zw
+nust.edu.pk
+nuu.edu.tw
+nuu.uz
+nuv.ac.in
+nv.edu
+nvau.ac.jp
+nvcc.edu
+nvit.bc.ca
+nwacc.edu
+nwau.edu.cn
+nwcc.commnet.edu
+nwciowa.edu
+nwfpuet.edu.pk
+nwfsc.edu
+nwicc.edu
+nwktc.edu
+nwmissouri.edu
+nwnu.edu.cn
+nwpi.ru
+nwpu.edu.cn
+nwscc.edu
+nwtc.edu
+nwu.ac.za
+nwu.edu.cn
+nxmc.edu.cn
+nxu.edu.cn
+nycu.edu.tw
+nyenrode.nl
+nyit.edu
+nyit.edu.bh
+nyit.edu.jo
+nymc.edu
+nyme.hu
+nyp.edu.sg
+nyu.edu
+nyuad.nyu.edu
+nyuniversity.net
+o6u.edu.eg
+oakland.edu
+oaklandcc.edu
+oakton.edu
+oakwood.edu
+oamk.fi
+oau.edu.sd
+oauife.edu.ng
+oberlin.edu
+obihiro.ac.jp
+obirin.ac.jp
+obonguniversity.net
+oc.edu
+ocad.ca
+occc.edu
+ocean.edu
+ocha.ac.jp
+octech.edu
+odc.edu
+odessa.edu
+odisee.be
+odu.edu
+odu.edu.tr
+oduduwauniversity.edu.ng
+oecu.jp
+ogasa.odessa.ua
+ogeecheetech.edu
+ogi.edu
+oglethorpe.edu
+ogr.iu.edu.tr
+ogu.edu.tr
+ohio.edu
+ohkagakuen-u.ac.jp
+ohlone.edu
+ohsu.edu
+ohtani-w.ac.jp
+ohu-u.ac.jp
+ohu.edu.tr
+oist.jp
+oit.ac.jp
+oit.edu
+oita-med.ac.jp
+oita-nhs.ac.jp
+oita-u.ac.jp
+oiu.edu.sd
+oiu.oiu.ac.jp
+oiuw.oiu.ac.jp
+ojaiusd.org
+oka-pu.ac.jp
+okan.edu.tr
+okanagan.bc.ca
+okayama-u.ac.jp
+okbu.edu
+okcu.edu
+okigei.ac.jp
+okinawa-u.ac.jp
+okiu.ac.jp
+okstate.edu
+olemiss.edu
+olivet.edu
+olivetcollege.edu
+ollusa.edu
+olmeca.edu.mx
+olympia.edu.my
+omancollege.edu.om
+omgau.ru
+omgtu.ru
+omgups.ru
+oml.pt
+omsk-osma.ru
+omsk.edu
+omu.edu.ly
+omu.edu.tr
+oneonta.edu
+ontariotechu.ca
+ontariotechu.net
+onu.edu
+onu.edu.ua
+oouagoiwoye.edu.ng
+op.iitg.ac.in
+op.org
+open.ac.uk
+openpolytechnic.ac.nz
+openu.ac.il
+opu.odessa.ua
+oradeauniversity.co
+oradeauniversity.com
+orangecoastcollege.edu
+oregonstate.edu
+orkhon.edu.mn
+ort.edu.uy
+oru.edu
+oru.se
+orun.ru
+oryxschool.qa
+osaft.odessa.ua
+osaka-cu.ac.jp
+osaka-dent.ac.jp
+osaka-gaidai.ac.jp
+osaka-geidai.ac.jp
+osaka-gu.ac.jp
+osaka-kyoiku.ac.jp
+osaka-med.ac.jp
+osaka-sandai.ac.jp
+osaka-shoin.ac.jp
+osaka-u.ac.jp
+osaka-ue.ac.jp
+osaka-wu.ac.jp
+osakac.ac.jp
+osakafu-u.ac.jp
+oshmed.com
+osmania.ac.in
+osmaniye.edu.tr
+osmu.odessa.ua
+ostfalia.de
+ostimteknik.edu.tr
+osu.ac.jp
+osu.cz
+osu.edu
+osu.ru
+osustech.edu.ng
+oswego.edu
+otago.ac.nz
+otani.ac.jp
+otaru-uc.ac.jp
+otc.edu
+oteima.ac.pa
+otemae.ac.jp
+otemon.ac.jp
+oth-aw.de
+otsuma.ac.jp
+otterbein.edu
+ou.ac.lk
+ou.ac.uk
+ou.dk
+ou.edu
+ou.edu.vn
+ou.nl
+ouc.ac.cy
+ouc.edu.cn
+ouhk.edu.hk
+ouhs.ac.jp
+ouk.edu.tw
+oulu.fi
+oum.edu.my
+oups.ac.jp
+ous.ac.jp
+ous.edu.sd
+out.ac.tz
+ovidunivconstanta-edu.org
+owens.edu
+owensboro.kctcs.edu
+owu.edu
+ox.ac.uk
+oxford.ac.uk
+oxnardcollege.edu
+oxy.edu
+oyu.edu.az
+ozarka.edu
+ozarks.edu
+ozu.edu.tr
+ozyegin.edu.tr
+p.lodz.pl
+pa.edu.az
+pac.by
+pace.edu
+pacific.edu
+pacificu.edu
+pacuc.edu.gh
+pacuniversity.ac.ke
+paderborn.de
+padmavatiwomen-univ.org
+pafkiet.edu.pk
+paichai.ac.kr
+paine.edu
+paisley.ac.uk
+pakaims.edu
+pakaims.edu.pk
+pakistanhomoeopathy.com
+palamuruuniversity.ac.in
+palermo.edu
+palmbeachstate.edu
+palomar.edu
+paloverde.edu
+pam.szczecin.pl
+pamir.edu.af
+pamlicocc.edu
+pamukkale.edu.tr
+panam.edu
+pancabudi.ac.id
+panimalar.ac.in
+panimalarengineeringcollegechennai.ac.in
+panola.edu
+panteion.gr
+paramadina.ac.id
+paris-sorbonne.fr
+paris.ensam.fr
+paris4.sorbonne.fr
+parisjc.edu
+parisnanterre.fr
+park.edu
+parkland.edu
+paruluniversity.ac.in
+parwan.edu.af
+pasadena.edu
+pasim.ac.id
+pass26.edu.mk
+patrickhenry.edu
+pau.ac.pg
+pau.edu
+pau.edu.ng
+paulquinn.edu
+pauluniversity.edu.ng
+payap.ac.th
+pb.bialystok.pl
+pbac.edu
+pcc.edu
+pccc.edu
+pcci.edu
+pccu.edu.tw
+pccua.edu
+pcdp.edu.sa
+pcom.edu
+pct.edu
+pctu.edu.vn
+pcu.ac.kr
+pcu.edu.ph
+pcz.czest.pl
+pdc.edu
+pdeu.ac.in
+pdkv.ac.in
+pdn.ac.lk
+pdpu.ac.in
+pdx.edu
+peace.edu
+pec.ac.in
+pedago.pt
+pedagogica.edu.co
+pedu.edu.pk
+peizheng.com.cn
+pembroke.edu
+pennhighlands.edu
+pensacolastate.edu
+pepperdine.edu
+peralta.edu
+perbanas.ac.id
+perbanas.id
+perdanauniversity.edu.my
+perpetualdalta.edu.ph
+peru.edu
+pes.edu
+petra.ac.id
+pfh-goettingen.de
+pfu.edu.ru
+pfw.edu
+pg.gda.pl
+pgcc.edu
+pgia.ac.lk
+pgimer.nic.in
+pglu.ru
+pgu.ac.ir
+ph-erfurt.de
+ph-freiburg.de
+ph-gmuend.de
+ph-gr.ch
+ph-heidelberg.de
+ph-karlsruhe.de
+ph-ludwigsburg.de
+ph-weingarten.de
+pharmi.uz
+phbern.ch
+phcc.edu
+philadelphia.edu.jo
+philander.edu
+philau.edu
+phillips.edu
+philtheol-augustin.de
+phlu.ch
+phoenix.edu
+phoenixcollege.edu
+phsc.edu
+phsg.ch
+phsz.ch
+phtg.ch
+phw.info
+phystech.edu
+phzg.ch
+phzh.ch
+pi.ac.ae
+piau.ac.ir
+picollege.ca
+pics.edu.pk
+pidc.edu.my
+pieas.edu.pk
+piedmontcc.edu
+pierce.ctc.edu
+piercecollege.edu
+pierpont.edu
+pima.edu
+pimsat-khi.edu.pk
+pine.edu.my
+pinetech.edu
+pio.urbe.it
+pirireis.edu.tr
+pit.edu
+pitt.edu
+pittcc.edu
+pittstate.edu
+pitzer.edu
+piu.ac.ke
+piup.edu.my
+pjtau.edu.in
+pjwstk.edu.pl
+pk.edu.pl
+pkb.edu.my
+pkksabah.edu.my
+pkkt.edu.my
+pknu.ac.kr
+pku.edu.cn
+planwel.edu
+platt.edu
+plattsburgh.edu
+plm.edu.ph
+plu.edu
+plymouth.ac.uk
+plymouth.edu
+pma.ph
+pmbs.ac.id
+pmm.edu.my
+pmu.edu.sa
+pnc.edu
+pnj.ac.id
+pnl.ac.id
+pnt.edu.vn
+pntu.edu.ua
+pnu.ac.ir
+pnum.ac.ir
+pnumanila.com.ph
+pnut.ac.ir
+pnw.edu
+pnwu.edu
+pnzgu.ru
+po.opole.pl
+pointpark.edu
+pol.lublin.pl
+polak.edu.lv
+polban.ac.id
+poli.br
+poliba.it
+police.ac.kr
+poligran.edu.co
+poligto.edu.mx
+polijb.edu.my
+poliku.edu.my
+polimas.edu.my
+polimelaka.edu.my
+polimi.it
+polimuadzam.edu.my
+polines.ac.id
+polinpdg.ac.id
+polipd.edu.my
+polisas.edu.my
+politecjic.edu.co
+polito.it
+polito.uz
+polk.edu
+polnep.ac.id
+polsl.gliwice.pl
+polsl.pl
+poltek-malang.ac.id
+poltekpos.ac.id
+poltesa.ac.id
+poly.edu
+polyibadan.edu.ng
+polymtl.ca
+polytech-lille.fr
+polytech-marseille.fr
+polytechnic-kabul.org
+polytechnic.edu.na
+polytechnique.edu
+polytechnique.fr
+polyu.edu.hk
+polyunwana.net
+pomona.edu
+pomorsu.ru
+pondiuni.org
+poole.ac.jp
+pop-to.rnp.br
+popakademie.de
+port.ac.uk
+portervillecollege.edu
+postech.ac.kr
+postech.edu
+pote.hu
+potsdam.edu
+ppcc.edu
+ppke.hu
+ppu.edu
+pr.ac.rs
+praguecollege.cz
+prairiestate.edu
+prathyusha.edu.in
+pratt.edu
+prattcc.edu
+prcc.edu
+pref.shiga.lg.jp
+presby.edu
+presbyuniversity.edu.gh
+prescott.edu
+presidency.edu.bd
+prestonpak.edu.pk
+princeton.edu
+principia.edu
+privatfh-da.de
+privrednaakademija.edu.rs
+prof.infnet.edu.br
+providence.edu
+prz.rzeszow.pl
+psa.edu.my
+psas.edu.my
+pscabha.edu.sa
+psfa.ru
+psgtech.edu
+psis.edu.my
+psma.ru
+psmza.edu.my
+psp.edu.my
+pspu.ac.ru
+pstcc.edu
+pstu.ac.bd
+pstu.ac.ru
+psu-online.edu.ph
+psu.ac.th
+psu.by
+psu.edu
+psu.edu.ph
+psu.edu.sa
+psu.kz
+psu.palawan.edu.ph
+psu.ru
+psut.edu.jo
+psy.lv
+ptc.edu
+ptcdb.edu.ps
+pte.hu
+ptetjnvu.org
+pth-bb.de
+pth-muenster.de
+pthv.de
+pti.edu
+ptit.edu.vn
+ptpl.edu.my
+ptsb.edu.my
+ptss.edu.my
+ptu.ac.in
+ptu.ac.kr
+ptu.ac.th
+ptuk.edu.ps
+ptuniv.ac.kr
+pu-kumamoto.ac.jp
+pu-toyama.ac.jp
+pu.ac.ke
+pu.edu.af
+pu.edu.np
+pu.edu.pk
+pu.edu.tw
+pu.if.ua
+pu.kielce.pl
+pua.edu.eg
+pub.ac.bd
+pub.ro
+puc-rio.br
+puc.ac.bd
+puc.edu
+puc.edu.kh
+puccamp.br
+puce.edu.ec
+puchd.ac.in
+pucit.edu.pk
+pucminas.br
+pucmm.edu.do
+pucp.edu.pe
+pucpr.br
+pucpr.edu
+pucrs.br
+pucsp.br
+puea.ac.ke
+pueblocc.edu
+pufs.ac.kr
+pugc.edu.pk
+pukyong.ac.kr
+pul.it
+pulaskitech.edu
+puls.edu.pl
+punjabiuniversity.ac.in
+puntlandstateuniversity.com
+puo.edu.my
+puonline.bih.nic.in
+pup.edu.ph
+pupr.edu
+purbuniv.edu.np
+purdue.edu
+purduecal.edu
+purdueglobal.edu
+pusan-e.ac.kr
+pusan.ac.kr
+pusavarsity.org.in
+pusc.it
+pusku.edu.ua
+pust.ac.bd
+pust.net
+pust.urbe.it
+put.ac.ir
+put.poznan.pl
+puterabatam.ac.id
+puts.ac.kr
+puv.fi
+pv-ma.bg
+pvamu.edu
+pvc.maricopa.edu
+pvcc.edu
+pw.edu.pl
+pwc.ac.kr
+pwit.ac.ir
+pwr.edu.pl
+pwr.wroc.pl
+pwsc.alaska.edu
+pwst.krakow.pl
+pwsz.eu
+pwsz.pila.pl
+pwu.com
+pwu.edu
+pz.zgora.pl
+pzhu.edu.cn
+qadissuni.edu.iq
+qatar.cmu.edu
+qatar.northwestern.edu
+qau.edu.pk
+qc.cuny.edu
+qc.edu.sa
+qcc.cuny.edu
+qcc.edu
+qdnet.pl
+qdpi.uz
+qdu.edu.cn
+qfnu.edu.cn
+qhnu.edu.cn
+qhrtvu.edu.cn
+qhu.edu.cn
+qiau.ac.ir
+qmul.ac.uk
+qmw.ac.uk
+qom-iau.ac.ir
+qom.ac.ir
+qou.edu
+qu.edu.az
+qu.edu.qa
+qu.edu.sa
+quadratacademy.com
+qub.ac.uk
+queens.edu
+queensu.ca
+queensuniversity.edu.bd
+quest.edu.pk
+questu.ca
+quincy.edu
+quincycollege.edu
+quinnipiac.edu
+qums.ac.ir
+quran-unv.edu.sd
+qurtuba.edu.pk
+qust.edu.cn
+qut.ac.ir
+qut.edu.au
+qvcc.edu
+qzu.edu.cn
+rabindrabharatiuniversity.net
+racc.edu
+radford.edu
+raffles-university.edu.my
+raghebisf.ac.ir
+rah.ru
+rajagiritech.edu.in
+rajalakshmi.org
+rakmhsu.com
+rakuno.ac.jp
+ram.ac.uk
+ramapo.edu
+ramk.fi
+ranchiuniversity.org.in
+randolph.edu
+rangercollege.edu
+rappahannock.edu
+raritanval.edu
+rau.am
+rau.lv
+rau.ro
+raubikaner.org
+rauheshaus.de
+ravensburg.dhbw.de
+razi.ac.ir
+rbc.edu
+rbni.technion.ac.il
+rca.ac.uk
+rcbc.edu
+rcc.edu
+rcc.mass.edu
+rccc.edu
+rccd.edu
+rcm.ac.uk
+rcm.upr.edu
+rcpi.ie
+rcsi-mub.com
+rcsi.ie
+rcsj.edu
+rct.edu.sa
+rctc.edu
+rcu.ac.zw
+rdg.ac.uk
+rdunijbpin.org
+rea.ru
+rectorat-uh2c.ac.ma
+redcross.ac.jp
+redeemer.ca
+redlandscc.edu
+reduaeh.mx
+reduaz.mx
+reduc.edu.cu
+redwoods.edu
+reed.edu
+reedleycollege.edu
+regent-college.edu
+regent.edu
+regent.edu.gh
+regentghana.net
+regis.edu
+reitaku-u.ac.jp
+rennes-sb.com
+reynolds.edu
+rfh-koeln.de
+rfhsm.ac.uk
+rgata.yaroslavl.ru
+rgtu.net
+rgu.ac.in
+rgu.ac.uk
+rh.ac.uk
+rhbnc.ac.uk
+rhodes.edu
+rhodesstate.edu
+rhul.ac.uk
+riarauniversity.ac.ke
+riau.ac.ir
+ribat.edu.sd
+ric.edu
+rice.edu
+richland.edu
+richlandcollege.edu
+richmond.ac.uk
+richmondcc.edu
+rider.edu
+ridgewater.edu
+rihs.edu.af
+rikkyo.ac.jp
+rio.maricopa.edu
+riohondo.edu
+riphah.edu.pk
+ripon.edu
+ris.ac.jp
+rit.edu
+ritchennai.org
+riths.ac.in
+ritsumei.ac.jp
+riv.edu
+riverland.edu
+rivervalley.edu
+riviera.fr
+riyadh.edu.sa
+rjt.ac.lk
+rku.ac.jp
+rlc.edu
+rma.ac.be
+rmc.ca
+rmc.edu
+rmcc.edu
+rmd.ac.in
+rmit.edu.au
+rmit.edu.vn
+rmkcet.ac.in
+rmkec.ac.in
+rmlau.ac.in
+rmu.edu
+rmutp.ac.th
+rmwc.edu
+rnd.iitg.ac.in
+rnu.edu.ng
+roac.nl
+roanestate.edu
+roanoke.edu
+roanokechowan.edu
+robertmorris.edu
+robeson.edu
+rochester.edu
+rockefeller.edu
+rockford.edu
+rockhurst.edu
+rockinghamcc.edu
+rockvalleycollege.edu
+rocky.edu
+roehampton.ac.uk
+roguecc.edu
+rollins.edu
+roosevelt.edu
+rosary.edu
+rose-hulman.edu
+rose.edu
+rosey.ch
+rossu.edu
+roswell.enmu.edu
+rowan.edu
+royalholloway.ac.uk
+royalroads.ca
+rp.edu.sg
+rpcc.edu
+rpi.edu
+rpiva.lv
+rrcc.edu
+rrcc.mnscu.edu
+rshu.ru
+rsm.nl
+rsmu.da.ru
+rsmu.ru
+rsu.ac.th
+rsu.edu
+rsu.edu.sd
+rsu.ru
+rsuh.ru
+rsuniversity.com
+rsute.ru
+rtc.edu
+rtu.ac.in
+rtu.edu.ph
+rtu.lv
+ru.ac.bd
+ru.ac.th
+ru.ac.za
+ru.acad.bg
+ru.is
+ru.lv
+ru.nl
+rua.edu.kh
+rub.edu.bt
+ruc.dk
+ruc.edu.cn
+ruet.ac.bd
+rufa.edu.kh
+rug.ac.be
+rug.edu.sa
+rug.nl
+ruh.ac.lk
+ruhr-uni-bochum.de
+rule.edu.kh
+rumeli.edu.tr
+rumi.ac.ma
+rums.ac.ir
+run.edu.ng
+runshaw.ac.uk
+rupp.edu.kh
+ruraluniversity-chitrakoot.org
+rusangu-university.edu.zm
+rusoil.net
+rustcollege.edu
+rutgers.edu
+rwth-aachen.de
+rwu.edu
+ryerson.ca
+ryukoku.ac.jp
+s.eduhk.hk
+saadcollege.com
+sab.ac.lk
+saba.edu.ge
+sabanciuniv.edu
+sabanciuniv.edu.tr
+sabauni.net
+sabi.eu.com
+sac.edu
+sacramento.mticollege.edu
+sacredheart.edu
+sacrocuore.org
+sadat.edu.af
+sadatacademy.edu.eg
+saddleback.edu
+sadjad.ac.ir
+sadra.ac.ir
+saec.ac.in
+saga-med.ac.jp
+saga-u.ac.jp
+sagami-wu.ac.jp
+sagaruniversity.nic.in
+sagchip.edu
+sage.edu
+sagrado.edu
+sagu.edu
+saic.edu
+saintjoe.edu
+saintleo.edu
+saintmarys.edu
+saintpaul.edu
+sairam.edu.in
+sairamit.edu.in
+sait.ca
+saitama-med.ac.jp
+saitama-u.ac.jp
+saitm.edu.lk
+saito.edu.my
+saiu.ac.ug
+sakarya.edu.tr
+sakhgu.sakhalin.ru
+sakushin-u.ac.jp
+salam.edu.af
+salemcc.edu
+salemuniversity.edu.ng
+salford.ac.uk
+salisbury.edu
+salleurl.edu
+salu.edu.pk
+salvador.edu.ar
+samara.university
+sambalpuruniversitypgc.in
+samchok.ac.kr
+samdu.uz
+samford.edu
+samiit.ru
+samk.fi
+sampsoncc.edu
+samsmu.ru
+sanaaguniversity.com
+sanbeda.edu.ph
+sancarlos.edu.py
+sandau.edu.cn
+sandburg.edu
+sandhills.edu
+sandiego.edu
+sangha.ac.kr
+sangji.ac.kr
+sangmyung.ac.kr
+sangu.ge
+sanjuanbautista.edu
+sanjuancollege.edu
+sanko.edu.tr
+sanmartin.edu.co
+sanno.ac.jp
+sans.edu
+sanskrit.nic.in
+santarosa.edu
+sanxiau.edu.cn
+saojudas.br
+sapanet.ru
+sapc.edu
+sapmed.ac.jp
+sapporo-u.ac.jp
+sarjanawiyata.ac.id
+sas-sd.net
+sas.ac.uk
+saskweb.com
+sastra.ac.in
+sastra.edu
+satavahana.ac.in
+sathyabamauniv.ac.in
+sau.ac.bd
+sau.ac.th
+sau.edu
+sau.edu.pk
+sau.edu.tr
+sau.sumy.ua
+sauder.ubc.ca
+saurashtrauniversity.edu
+saut.ac.tz
+sautech.edu
+savannahstate.edu
+savannahtech.edu
+saveetha.ac.in
+saveetha.com
+saveethaengineering.com
+saxion.edu
+sbc.edu
+sbcc.edu
+sbg.ac.at
+sbmu.ac.ir
+sbs.edu
+sbs.edu.cn
+sbu.ac.ir
+sbu.ac.uk
+sbu.edu
+sbu.edu.tr
+sbuniv.edu
+sc.edu
+sc4.edu
+scad.edu
+scar.utoronto.ca
+scau.edu.cn
+scbaghdad.edu.iq
+scc.edu.tw
+scc.losrios.edu
+scc.spokane.edu
+sccc.edu
+scccd.edu
+scciowa.edu
+sccnc.edu
+sccollege.edu
+sccsc.edu
+sccu.edu.cn
+sce.ac.il
+sch.ac.kr
+schiller.edu
+schillerlondon.ac.uk
+schillermadrid.edu
+schillerparis.com
+schillerstrasbourg.com
+schoolcraft.edu
+schreiner.edu
+sciences-po.fr
+sciencespo-rennes.fr
+sciencespo.fr
+sckans.edu
+sclondon.ac
+scnu.ac.kr
+scnu.edu.cn
+scott.ac.ke
+scottsdalecc.edu
+scp.fi
+scranton.edu
+scripps.edu
+scsu.edu
+sct.edu
+sctcc.edu
+sctech.edu
+sctimst.ker.nic.in
+scu.ac.ir
+scu.ac.kr
+scu.edu
+scu.edu.au
+scu.edu.cn
+scu.edu.tw
+scut.edu.cn
+sdada.edu.cn
+sdau.edu.cn
+sdau.edu.in
+sdcc.edu
+sdcity.edu
+sdi.ac.ir
+sdie.edu.cn
+sdju.edu.cn
+sdmesa.edu
+sdmiramar.edu
+sdmu.edu.cn
+sdnu.edu.cn
+sdsmt.edu
+sdstate.edu
+sdsu.edu
+sdu.dk
+sdu.edu.az
+sdu.edu.cn
+sdu.edu.kz
+sdu.edu.tr
+sdufe.edu.cn
+sdust.edu.cn
+sdut.edu.cn
+sdutcm.edu.cn
+seark.edu
+seas.upenn.edu
+seattleantioch.edu
+seattlecentral.edu
+seattlecolleges.edu
+seattleu.edu
+sebhau.edu.ly
+sec.ac.bd
+secon.edu
+secupv.org
+seeu.edu.mk
+segi.edu.my
+sehan.ac.kr
+sehir.edu.tr
+seian.ac.jp
+seigakuin-univ.ac.jp
+seijo.ac.jp
+seikei.ac.jp
+seinan-gu.ac.jp
+seisen-u.ac.jp
+seiwa-u.ac.jp
+sejong.ac.kr
+sek.edu
+seku.ac.ke
+sekuco.org
+selcuk.edu.tr
+selk.de
+selkirk.bc.ca
+selmauniversity.edu
+selu.edu
+selyeuni.sk
+sem-ums.ac.ir
+semgu.kz
+semnan.ac.ir
+semnaniau.ac.ir
+semo.edu
+sempreceub.com
+semyung.ac.kr
+sendaidaigaku.jp
+senecacollege.ca
+senshu-u.ac.jp
+senzoku.ac.jp
+seokyeong.ac.kr
+seonam.ac.kr
+seoul-e.ac.kr
+seoultech.ac.kr
+seowon.ac.kr
+ses.ac.ir
+setsunan.ac.jp
+setur.fo
+seu.ac.bd
+seu.ac.lk
+seu.edu.cn
+seua.am
+sevntu.com.ua
+sevs.sk
+sewanee.edu
+sfa.ba
+sfasu.edu
+sfb.ac.rw
+sfc.edu
+sfcc.edu
+sfccmo.edu
+sfsu.edu
+sfu.ca
+sg-u.ac.jp
+sg.inter.edu
+sgap.ru
+sgau.ru
+sggw.waw.pl
+sgh.waw.pl
+sghms.ac.uk
+sgma.info
+sgma.kz
+sgpgi.ac.in
+sgu.ac.id
+sgu.ac.jp
+sgu.ac.kr
+sgu.edu
+sgu.edu.cn
+sgu.edu.vn
+sgu.ernet.in
+sgu.ru
+sguc.ac.jp
+sgul.ac.uk
+sh-sipopolytechnic.com
+sh.se
+shahed.ac.ir
+shahroodut.ac.ir
+shahryariau.ac.ir
+shakaijigyo.ac.jp
+shams.edu.eg
+shanghaitech.edu.cn
+shannoncollege.com
+sharda.ac.in
+sharif.ac.ir
+sharjah.ac.ae
+shastacollege.edu
+shawnee.edu
+shawneecc.edu
+shawu.edu
+shbu.ac.ir
+shc.edu
+shcc.edu.cn
+shef.ac.uk
+sheffield.ac.uk
+sheltonstate.edu
+shenkar.ac.il
+sheridan.edu
+sheridancollege.ca
+shfu.edu.cn
+shh.fi
+shibaura-it.ac.jp
+shift.edu.cn
+shiga-med.ac.jp
+shiga-u.ac.jp
+shikoku-u.ac.jp
+shimane-med.ac.jp
+shimane-u.ac.jp
+shimonoseki-cu.ac.jp
+shinawatra.ac.th
+shinhan.ac.kr
+shinshu-u.ac.jp
+ship.edu
+shirayuri.ac.jp
+shirazu.ac.ir
+shisu.edu.cn
+shitennoji.ac.jp
+shizuoka.ac.jp
+shmtu.edu.cn
+shmu.ac.ir
+shmu.edu.cn
+shobhituniversity.ac.in
+shodai.ac.jp
+shoin.ac.jp
+shokei-gakuen.ac.jp
+shomal.ac.ir
+shonan-it.ac.jp
+shoreline.edu
+shorter.edu
+shotoku.ac.jp
+shouhua.net.cn
+showa-u.ac.jp
+shoyaku.ac.jp
+shridharuniversity.ac.in
+shsmu.edu.cn
+shspu.edu.cn
+shsu.edu
+shtdu.edu.cn
+shtu.edu.cn
+shtvu.edu.cn
+shu-bg.net
+shu.ac.uk
+shu.edu
+shu.edu.cn
+shu.edu.tw
+shu.smolensk.su
+shuchiin.ac.jp
+shudo-u.ac.jp
+shufe.edu.cn
+shujitsu.ac.jp
+shukutoku.ac.jp
+shumei-u.ac.jp
+shutcm.edu.cn
+shzu.edu.cn
+sia.ae
+siam.edu
+siba.fi
+sibiu.ro
+sibsiu.kemerovo.su
+sic.edu
+sicau.edu.cn
+sicnu.edu.cn
+siena.edu
+sierracollege.edu
+siewerth-akademie.de
+sifc.edu
+sigu7.jussieu.fr
+siirt.edu.tr
+sil.edu.pe
+silla.ac.kr
+silpakorn.edu
+sim.edu.sg
+simhapuriuniv.ac.in
+simmons.edu
+simmonscollegeky.edu
+simons-rock.edu
+simpson.edu
+simt.edu.la
+sinclair.edu
+singaporetech.edu.sg
+singhaniauniversity.ac.in
+singidunum.edu.rs
+sinnaruniv.edu.sd
+sinop.edu.tr
+sinus.ac.id
+sipi.edu
+sirnak.edu.tr
+sisekaitse.ee
+siskiyous.edu
+sissa.it
+sisu.edu.cn
+sit.ac.jp
+siu-heidelberg.de
+siu.ac.jp
+siu.edu
+siu.edu.bd
+siu.edu.in
+siue.edu
+siust.edu.sy
+sjc.edu
+sjca.edu
+sjcc.edu
+sjcme.edu
+sjcsf.edu
+sjdlc.com
+sjp.ac.lk
+sjrstate.edu
+sjs.ac.kr
+sjsm.org
+sjsmit.edu.tw
+sjsu.edu
+sjsv.nic.in
+sjtu.edu.cn
+sju.edu
+sjvc.edu
+sjzu.edu.cn
+ska.khio.no
+skagit.edu
+skc.edu
+skema.edu
+skhu.ac.kr
+skidmore.edu
+skku.ac.kr
+skku.edu
+skltshu.ac.in
+skmu.edu.in
+sku.ac.ir
+skuastkashmir.ac.in
+skums.ac.ir
+skuniv.ac.kr
+skuniv.ap.nic.in
+skylinecollege.edu
+skylineuniversity.com
+sl.psu.edu
+slam.katowice.pl
+slbsrsv.ac.in
+slc-sflu.edu.ph
+slc.edu
+slcc.edu
+slcn.ac.jp
+sliate.net
+sliit.lk
+slu.cz
+slu.edu
+slu.edu.ph
+slu.se
+smarcos.br
+smc.edu
+smcc.edu
+smccd.edu
+smccme.edu
+smcks.edu
+smcm.edu
+smcsc.edu
+smcvt.edu
+smith.edu
+smithseminary.org
+smiu.edu.pk
+smkfomra.net
+smmu.edu.cn
+smolny-un.spb.ru
+smsu.edu
+smtafe.wa.edu.au
+smtu.ru
+smu.ac.kr
+smu.ac.uk
+smu.ac.za
+smu.ca
+smu.edu
+smu.edu.in
+smu.edu.ph
+smu.edu.sg
+smumn.edu
+sndt.edu
+snead.edu
+snhu.edu
+snnu.edu.cn
+snow.edu
+sns.it
+snspa.ro
+snu.ac.kr
+snu.edu
+snu.edu.ua
+snue.ac.kr
+snuniv.ac.in
+snut.ac.kr
+soai.ac.jp
+soas.ac.uk
+soauniversity.ac.in
+socc.edu
+sofia.edu
+sogang.ac.kr
+sohag-univ.edu.eg
+soharuni.edu.om
+soka.ac.jp
+soken.ac.jp
+solacc.edu
+solano.edu
+solent.ac.uk
+solusi.ac.zw
+somaiya.edu
+somerset.kctcs.edu
+somtech.org
+songwon.ac.kr
+sonoda-u.ac.jp
+sonoma.edu
+sookmyung.ac.kr
+soongsil.ac.kr
+sophia.ac.jp
+soran.edu.iq
+sorbon.fr
+sorbonne-universite.fr
+sorbonne.ae
+sote.hu
+sothebysinstitutelondon.com
+soton.ac.uk
+sou.edu
+southalabama.edu
+southark.edu
+southasianuniversity.org
+southcentral.edu
+southeast.edu
+southeast.kctcs.edu
+southeasterntech.edu
+southeastmissourihospitalcollege.edu
+southeastmn.edu
+southeasttech.edu
+southern.edu
+southern.edu.bd
+southernct.edu
+southernwv.edu
+southflorida.edu
+southgatech.edu
+southmetrotafe.wa.edu.au
+southmountaincc.edu
+southplainscollege.edu
+southside.edu
+southwest.tn.edu
+southwestern.edu
+southwesterncc.edu
+southwestgatech.edu
+sowela.edu
+sowmesaraiau.ac.ir
+sp.edu.sg
+sp.senac.br
+spa.ac.in
+spartanmed.org
+spbau.ru
+spbgasu.ru
+spbgau.spb.ru
+spbguki.ru
+spbiir.ru
+spbstu.ru
+spbtei.ru
+spbu.ru
+spbuwc.ru
+spcc.edu
+spcollege.edu
+spcpa.ru
+spiruharet.ro
+spjain.org
+spmi.edu.ru
+spnu.ac.ir
+spokanefalls.edu
+spscc.ctc.edu
+spsmb.cz
+spsmma.com
+spu.ac.jp
+spu.ac.ke
+spu.ac.th
+spu.ac.za
+spu.ba
+spu.edu
+spu.edu.ph
+spuniv.org
+spuvvn.edu
+squ.edu.om
+squareit.edu.in
+srbiau.ac.ir
+src.edu
+srh-berlin.de
+sriramachandra.edu.in
+srisathyasai.org.in
+srkdc.org
+srmap.edu.in
+srmeaswari.ac.in
+srmuniv.ac.in
+srtmun.org
+srttu.edu
+sru.edu
+sru.edu.kh
+sruc.ac.uk
+ssaa.ru
+ssaba.smr.ru
+ssau.ru
+ssc.edu
+sscc.edu
+sscok.edu
+sse.army.gr
+sse.gr
+ssea.runnet.ru
+ssees.ac.uk
+sseriga.edu.lv
+sseu.ru
+ssgmce.org
+ssms.edu.pk
+ssmu.ru
+ssn.edu.in
+ssst.edu.ba
+sssup.it
+ssttu.samara.ru
+sstu-edu.ru
+sstu.samara.ru
+ssu.ac.ir
+ssu.ac.jp
+ssu.ac.kr
+ssu.edu.ng
+ssu.edu.ph
+ssu.komi.com
+ssu.samara.ru
+ssuet.edu.pk
+ssus.ac.in
+ssvv.up.nic.in
+st-and.ac.uk
+st-andrews.ac.uk
+st-aug.edu
+st-georgen.uni-frankfurt.de
+st-patricks.ac.uk
+sta.uwi.edu
+staffs.ac.uk
+stallions.abac.edu
+stamford.edu
+stamforduniversity.edu.bd
+stan.ac.id
+stanford.edu
+stankin.ru
+stanly.edu
+starkstate.edu
+stavsu.ru
+stb.iau.ir
+stcc.edu
+stcecilia.br
+stchas.edu
+stcl.edu
+stclairc.on.ca
+stclairconnect.ca
+stclements.edu.nu
+stcloudstate.edu
+std.kyrenia.edu.tr
+stedwards.edu
+stenden.com
+stephens.edu
+stetson.edu
+stevens.edu
+stevenscollege.edu
+stevenson.edu
+stfrancis.edu
+stfx.ca
+stgc.uwa.edu.au
+stikes-ppni.ac.id
+stikesrsanwarmedika.ac.id
+stillman.edu
+stir.ac.uk
+stjohn.ac.th
+stjohns.edu
+stjosephs.ac.in
+stjosephstechnology.ac.in
+stjosephtanzania.com
+stkate.edu
+stlawu.edu
+stlcop.edu
+stmartin.edu
+stmarys-ca.edu
+stmarys.ac.uk
+stmarys.ca
+stmarytx.edu
+stmatthews.edu
+stmu.org
+stockholm-fu.com
+stockton.edu
+stolaf.edu
+stonechild.edu
+stonehill.edu
+stonybrook.edu
+stonybrookmedicine.edu
+stou.ac.th
+stptrisakti.ac.id
+stratford.edu
+strath.ac.uk
+strathmore.edu
+strayer.edu
+strose.edu
+stthom.edu
+stthomas.edu
+stthomasu.ca
+sttu.ac.ir
+stu.ac.kr
+stu.edu
+stu.edu.cn
+stu.edu.gh
+stu.gcu.edu.cn
+stu.lipetsk.ru
+stu.ru
+stu.xhu.edu.cn
+stuba.sk
+stud.hs-hannover.de
+stud.vilniustech.lt
+studbocconi.it
+student.42.fr
+student.42.us.org
+student.aau.dk
+student.ccm.edu
+student.eit.edu.au
+student.g.nwu.ac.za
+student.gsa.ac.uk
+student.hs-anhalt.de
+student.karazin.ua
+student.kuleuven.be
+student.lamk.fi
+student.laurea.fi
+student.lboro.ac.uk
+student.lut.fi
+student.maastrichtuniversity.nl
+student.murdoch.edu.au
+student.purdueglobal.edu
+student.scad.edu
+student.spsmb.cz
+student.staffs.ac.uk
+student.tudelft.nl
+student.uliege.be
+student.uml.edu
+student.unisg.ch
+student.upt.ro
+student.uts.edu.au
+student.wab.edu.pl
+student.westherts.ac.uk
+students.finki.ukim.mk
+students.jedlik.eu
+students.olin.edu
+students.vizja.pl
+stut.edu.tw
+stvincent.edu
+stw.de
+su.ac.th
+su.digitaluniversity.ac
+su.edu
+su.edu.eg
+su.edu.et
+su.edu.ly
+su.edu.ph
+su.edu.sa
+su.edu.ye
+su.lt
+su.se
+suagm.edu
+suai.ru
+suanet.ac.tz
+subr.edu
+suc.edu.om
+suda.edu.cn
+sues.edu.cn
+suez.edu.eg
+suffolk.edu
+sugino.ac.jp
+sugiyama-u.ac.jp
+suh-edu.com
+suit.edu.pk
+sullivan.edu
+sulross.edu
+suma.kobe-wu.ac.jp
+sumdu.edu.ua
+summitunivofla.edu
+sums.ac.ir
+sun.ac.jp
+sun.ac.za
+sunchon.ac.kr
+sunderland.ac.uk
+sungkyul.ac.kr
+sungshin.ac.kr
+sunmoon.ac.kr
+suno.edu
+sunway.edu.my
+suny.oneonta.edu
+sunybroome.edu
+sunycentral.edu
+sunycgcc.edu
+sunydutchess.edu
+sunyit.edu
+sunyjcc.edu
+sunyjefferson.edu
+sunymaritime.edu
+sunyocc.edu
+sunyorange.edu
+sunyrockland.edu
+sunysccc.edu
+sunysullivan.edu
+sunywcc.edu
+supaero.fr
+supbiotech.fr
+supco-amiens.fr
+supco-montpellier.fr
+supelec.fr
+superior.edu.pk
+supsi.ch
+suptelecom.net.ma
+surgu.wsnet.ru
+surrey.ac.uk
+surry.edu
+surtech.edu.in
+surugadai.ac.jp
+suscc.edu
+susla.edu
+susqu.edu
+suss.edu.sg
+sussex.ac.uk
+sussex.edu
+sust.edu
+sustc.edu.cn
+sustech.edu
+sut.ac.ir
+sut.ac.jp
+sut.ac.th
+sut.ru
+sutd.edu.sg
+sutd.ru
+sutech.ac.ir
+suu.edu
+suwon.ac.kr
+suwoncatholic.ac.kr
+suzuka-iu.ac.jp
+suzuka-u.ac.jp
+svbpuctm.org
+svcc.edu
+svce.ac.in
+sve-mo.ba
+svimstpt.ap.nic.in
+svnit.ac.in
+svsu.edu
+svu.edu
+svu.edu.eg
+svuni.ap.nic.in
+svuonline.org
+sw.edu
+swac.edu
+swan.ac.uk
+swansea.ac.uk
+swarthmore.edu
+swau.edu.cn
+swc.tc
+swcc.edu
+swccd.edu
+swcciowa.edu
+swfc.edu.cn
+swic.edu
+swin.edu.au
+swinburne.edu.my
+swissmc.ch
+swissu.org
+swjtu.edu.cn
+swmed.edu
+swmich.edu
+swnu.edu.cn
+swps.edu.pl
+swps.pl
+swpu.edu.cn
+swri.edu
+swsm.cn
+swt.edu
+swtc.edu
+swtjc.net
+swu.ac.jp
+swu.ac.kr
+swu.ac.th
+swu.bg
+swu.edu.ph
+swufe.edu.cn
+swun.edu.cn
+swupl.edu.cn
+swust.edu.cn
+swuyc.edu.cn
+sx.ac.uk
+sxau.edu.cn
+sxu.edu
+sxu.edu.cn
+sydney.edu.au
+syict.edu.cn
+synergy.ru
+synergy.university
+syphu.edu.cn
+sypu.edu.cn
+syr.edu
+sytu.edu.cn
+syu.ac.kr
+syu.edu.cn
+szabist.edu.pk
+sze.hu
+szie.hu
+szu.edu.af
+szu.edu.cn
+szu.sk
+t-komazawa.ac.jp
+t-kougei.ac.jp
+tabari.ac.ir
+tabor.edu
+tabriziau.ac.ir
+tabrizu.ac.ir
+tachibana-u.ac.jp
+tacomacc.edu
+taegu-e.ac.kr
+taegu.ac.kr
+taejae.ac.kr
+taejon.ac.kr
+taeshin.ac.kr
+tafe.wa.edu.au
+taftcollege.edu
+taftu.edu
+taibahu.edu.sa
+tais.ac.jp
+taizun.net
+taj.edu.my
+tajagroun.tj
+takachiho.ac.jp
+takamatsu-u.ac.jp
+takara-univ.ac.jp
+takushoku-u.ac.jp
+talladega.edu
+tamabi.ac.jp
+tamagawa.ac.jp
+tamiluniversity.ac.in
+tamiu.edu
+tamu.edu
+tamuc.edu
+tamucc.edu
+tamuk.edu
+tane.edu.ua
+tansianuniversity.edu.ng
+tanta.edu.eg
+tanuvas.com
+taoistcollege.org.sg
+tarc.edu.my
+tarleton.edu
+tarsus.edu.tr
+tart.spb.ru
+tashgiv.uz
+tasued.edu.ng
+tau.ac.il
+tau.ac.kr
+tau.edu.tr
+tauedu.org
+tayi.uz
+taylors.edu.my
+tayloru.edu
+taynguyenuni.edu.vn
+tbcc.cc.or.us
+tbgu.ac.jp
+tbs.edu
+tbzmed.ac.ir
+tc3.edu
+tcc.edu
+tcc.fl.edu
+tccd.edu
+tcd.ie
+tce.edu
+tcicollege.edu
+tcioe.edu.np
+tcl.edu
+tcm.ac.uk
+tcnj.edu
+tct.ac.ir
+tctc.edu
+tcu.edu
+tcu.edu.tw
+tcue.ac.jp
+tdc.ac.jp
+tdiu.uz
+tdtu.uz
+teak.fi
+tec.mx
+tecbc.mx
+technet.com.br
+technikum-wien.at
+technion.ac.il
+techniqueedu.com
+tecmilenio.mx
+tedu.edu.tr
+tees.ac.uk
+teh-lavasan.pnu.ac.ir
+teikyo-u.ac.jp
+telanganauniversity.ac.in
+telkomuniversity.ac.id
+teluguuniversity.ac.in
+teluq.uquebec.ca
+temple.edu
+templejc.edu
+tenri-u.ac.jp
+teologi.dk
+tepeyac.edu.mx
+termnet.co.jp
+terra.edu
+tesc.edu
+tesu.edu
+teu.ac.jp
+texarkanacollege.edu
+texascollege.edu
+tezu.ernet.in
+tezuka-gu.ac.jp
+tezukayama-u.ac.jp
+tfh-berlin.de
+tfh-bochum.de
+tfh-wildau.de
+tfi.uz
+tfu.ac.jp
+tgnu.tarena.tj
+tgpi.ttn.ru
+tgsha.ru
+th-brandenburg.de
+th-deg.de
+th-koeln.de
+th-rosenheim.de
+tha.de
+theatrins-yar.ru
+thenewcollege.edu.in
+thenicc.edu
+theonest.edu.lb
+thh-friedensau.de
+thi.de
+thierryschool.org
+thiqaruni.org
+thk.edu.tr
+thm.de
+thmu.edu.tw
+thomas.edu
+thomasmore.be
+thomasmore.edu
+thu.de
+thu.edu.tw
+thums.ac.ir
+thunderbird.edu
+thuniv.net
+tiaa.edu.ge
+tiau.ac.ir
+ticaret.edu.tr
+ties.com.mx
+tiet.ac.in
+tietgen.dk
+tiffin.edu
+tiffinprague.cz
+tiho-hannover.de
+tiim.uz
+tijmu.edu.cn
+tilburguniversity.edu
+tilburguniversity.nl
+timacad.ru
+timis.ac.jp
+tinaztepe.edu.tr
+tip.edu.pk
+tishreen.edu.sy
+tiss.edu
+tit.ac.kr
+titech.ac.jp
+tiu.ac.jp
+tiu.tj
+tiu.uz
+tjarts.edu.cn
+tjcu.edu.cn
+tjmu.edu.cn
+tjnu.edu.cn
+tjpu.edu.cn
+tjrtvu.edu.cn
+tju.edu
+tju.edu.cn
+tjufe.edu.cn
+tjut.edu.cn
+tkbf.hu
+tktk.ee
+tku.ac.jp
+tku.edu.tw
+tltsu.ru
+tlu.ee
+tma.uz
+tmbu.org
+tmc.edu.tw
+tmcc.edu
+tmd.ac.jp
+tmit.ac.jp
+tmmu.edu.cn
+tmtc.edu.tw
+tmu.ac.ir
+tmv.edu.in
+tnca.edu.tw
+tncc.edu
+tndalu.org
+tnmeyah.net
+tnmmu.ac.in
+tnstate.edu
+tntech.edu
+tnu.crimea.ua
+tnuni.sk
+tnuniv.ac.in
+tnut.ac.kr
+tocc.edu
+toho-music.ac.jp
+toho-u.ac.jp
+tohoku-gakuin.ac.jp
+tohoku-pharm.ac.jp
+tohoku.ac.jp
+tohomusic.ac.jp
+tohtech.ac.jp
+tohwa-u.ac.jp
+toin.ac.jp
+tojo.ac.jp
+tokai.ac.jp
+tokaigakuen-u.ac.jp
+tokaijoshi-u.ac.jp
+tokiwa.ac.jp
+tokoha-u.ac.jp
+tokushima-u.ac.jp
+tokuyama-u.ac.jp
+tokyo-kasei.ac.jp
+tokyo-med.ac.jp
+tokyo-ondai.ac.jp
+tokyo-u-fish.ac.jp
+toledo.br
+toledoprudente.edu.br
+tongji.edu.cn
+tonichi-kokusai-u.ac.jp
+topkapi.edu.tr
+toronto.edu
+torontomu.ca
+toros.edu.tr
+torrens.edu.au
+tosho-u.ac.jp
+tottori-u.ac.jp
+toua-u.ac.jp
+tougaloo.edu
+tourism.edu.az
+touro.edu
+touro.ru
+towson.edu
+toyaku.ac.jp
+toyama-mpu.ac.jp
+toyama-u.ac.jp
+toyo.ac.jp
+toyoeiwa.ac.jp
+toyogakuen-u.ac.jp
+toyota-ti.ac.jp
+tp.edu.sg
+tpec.edu.tw
+tpmcollege.edu.my
+tpu.fi
+tpu.ru
+trakya.edu.tr
+transy.edu
+trcc.commnet.edu
+trcc.edu
+trenholmstate.edu
+trenton.edu
+trentu.ca
+tri-c.edu
+tribhuvan-university.edu.np
+tricountycc.edu
+trident.edu
+tridenttech.edu
+trincoll.edu
+trine.edu
+trinidadstate.edu
+trinity-cm.ac.uk
+trinity.edu
+trinity.edu.gh
+trinity.utoronto.ca
+trinitybiblecollege.edu
+trinitycollegebristol.ac.uk
+trinitydc.edu
+tripurauniv.in
+trisakti.ac.id
+triton.edu
+troy.edu
+tru.ca
+truman.edu
+truni.sk
+trunojoyo.ac.id
+tshmc.org
+tsi.lv
+tsinghua.edu.cn
+tsma.ru
+tsmu.edu
+tsogu.ru
+tspu.edu.ru
+tstu.ru
+tstu.tver.ru
+tsu.ac.th
+tsu.edu
+tsu.edu.ge
+tsu.ru
+tsu.tula.ru
+tsuab.ru
+tsuda.ac.jp
+tsufl.edu
+tsukuba.ac.jp
+tsuniversity.edu.ng
+tsure.ru
+tsuru.ac.jp
+tsurumi-u.ac.jp
+tsvu.nic.in
+ttc.ryazan.ru
+ttit.edu.tw
+ttmc.edu.cn
+ttu.edu
+ttu.edu.gh
+ttu.edu.jo
+ttu.edu.tw
+ttu.ee
+ttuhsc.edu
+tu-berlin.de
+tu-braunschweig.de
+tu-bryansk.ru
+tu-bs.de
+tu-chel.ac.ru
+tu-chemnitz.de
+tu-clausthal.de
+tu-cottbus.de
+tu-darmstadt.de
+tu-dortmund.de
+tu-dresden.de
+tu-freiberg.de
+tu-ilmenau.de
+tu-sofia.bg
+tu-varna.acad.bg
+tu.ac.th
+tu.edu.af
+tu.edu.iq
+tu.edu.sa
+tu.edu.te.ua
+tu.kielce.pl
+tu.koszalin.pl
+tua.edu.au
+tuad.ac.jp
+tuaf.edu.vn
+tuat.ac.jp
+tuc.gr
+tucsonu.edu
+tudelft.nl
+tudublin.ie
+tue.nl
+tuf.edu.pk
+tufs.ac.jp
+tufts.edu
+tugab.bg
+tugraz.at
+tuhh.de
+tui.edu
+tuiasi.ro
+tuins.ac.jp
+tuis.ac.jp
+tuit.uz
+tuj.ac.jp
+tuke.sk
+tukenya.ac.ke
+tukkk.fi
+tulane.edu
+tulsacc.edu
+tum.ac.ke
+tum.de
+tum.edu
+tumaini.ac.tz
+tumkuruniversity.ac.in
+tums.ac.ir
+tunceli.edu.tr
+tuniv.szczecin.pl
+tunxis.edu
+tup.edu.ph
+tup.km.ua
+turathun.com
+turiba.lv
+turkistan.kz
+tus.ie
+tusculum.edu
+tuskegee.edu
+tusol.org
+tusom.org
+tusur.ru
+tut.ac.jp
+tut.ac.za
+tut.fi
+tuvsu.ru
+tuwien.ac.at
+tuzvo.sk
+tvcc.cc
+tvcc.edu
+tvu.ac.uk
+tvuni.in
+tvz.hr
+twcpe.ac.jp
+twcu.ac.jp
+twmu.ac.jp
+twu.ca
+twu.edu
+txstate.edu
+txwes.edu
+tyszkiewicz.edu.pl
+tyut.edu.cn
+tzc.edu.cn
+u-3mrs.fr
+u-air.ac.jp
+u-aizu.ac.jp
+u-bordeaux2.fr
+u-bourgogne.fr
+u-bunkyo.ac.jp
+u-cergy.fr
+u-clermont1.fr
+u-gakugei.ac.jp
+u-grenoble3.fr
+u-keiai.ac.jp
+u-paris10.fr
+u-paris2.fr
+u-pec.fr
+u-pem.fr
+u-picardie.fr
+u-psud.fr
+u-ryukyu.ac.jp
+u-sacred-heart.ac.jp
+u-shizuoka-ken.ac.jp
+u-szeged.hu
+u-tokai.ac.jp
+u-tokyo.ac.jp
+u1.ac.kr
+u7nc.uvt.rnu.tn
+ua.ac.be
+ua.edu
+ua.edu.ph
+ua.es
+ua.pt
+uaa.alaska.edu
+uaa.edu.py
+uaa.mx
+uaaan.mx
+uaar.edu.pk
+uab.edu
+uab.edu.bo
+uab.es
+uab.ro
+uabc.mx
+uabcs.mx
+uabjb.edu.bo
+uabjo.mx
+uabobo.ci
+uac.bj
+uac.edu.co
+uac.pt
+uaca.ac.cr
+uacam.mx
+uaccb.edu
+uacch.edu
+uaccm.edu
+uacg.bg
+uach.cl
+uach.mx
+uacj.mx
+uacm.edu.mx
+uaconcagua.cl
+uad.ac.id
+uad.edu.mx
+uade.edu.ar
+uadec.mx
+uader.edu.ar
+uady.mx
+uae.ac.ma
+uae.edu.sv
+uaed.edu.mx
+uaem.mx
+uaemex.mx
+uaeu.ac.ae
+uaf.edu
+uaf.edu.pk
+uaf.mx
+uafam.edu.do
+uafs.edu
+uag.mx
+uagraria.edu.ec
+uagrm.edu.bo
+uagro.mx
+uah.edu
+uah.es
+uahb.sn
+uahurtado.cl
+uai.cl
+uai.edu.ar
+uaic.ro
+uajms.edu.bo
+uajy.ac.id
+uakron.edu
+ual.mx
+ualberta.ca
+ualg.pt
+ualm.es
+ualr.edu
+uam.edu.co
+uam.edu.ng
+uam.edu.ni
+uam.es
+uam.mx
+uam.refer.ne
+uamerica.edu.co
+uamericana.edu.py
+uamericas.cl
+uamont.edu
+uams.be
+uams.edu
+uamsa.net
+uan.ao
+uan.mx
+uanarino.edu.co
+uancv.edu.pe
+uandes.cl
+uandina.edu.pe
+uane.edu.mx
+uanl.mx
+uantof.cl
+uantwerpen.be
+uap-bd.edu
+uap.edu.pe
+uap.edu.ph
+uap.edu.py
+uapa.edu.do
+uapa.ru
+uapar.edu
+uapb.edu
+uapnet.edu.bo
+uaq.mx
+uark.edu
+uartdcluj.ro
+uas.alaska.edu
+uas.cl
+uas.edu.sg
+uas.mx
+uasb.edu.bo
+uasb.edu.ec
+uasbng.kar.nic.in
+uasd.edu.do
+uasd.net
+uaslp.mx
+uasm.md
+uasnet.mx
+uast.ac.ir
+uasys.edu
+uat.edu
+uat.edu.al
+uat.mx
+uat.ro
+uatf.edu.bo
+uatla.pt
+uatx.mx
+uav.ro
+uax.es
+uaysen.cl
+uazuay.edu.ec
+ub.ac.id
+ub.bw
+ub.edu.ar
+ub.edu.bi
+ub.edu.bz
+ub.edu.ph
+ub.edu.pl
+ub.es
+ub.ro
+uba.ar
+uba.edu.ve
+ubac.edu.mx
+ubaguio.edu
+ubalt.edu
+ubaya.ac.id
+ubbcluj.ro
+ubc.ca
+ubd.edu.bn
+ubfc.fr
+ubhara.ac.id
+ubharajaya.ac.id
+ubi.edu
+ubi.pt
+ubiobio.cl
+ubishops.ca
+ubm.ac.id
+ubm.ro
+ubohiggins.cl
+ubolivariana.cl
+ubouake.ci
+ubp.edu.ar
+ubritanica.cl
+ubt.edu.al
+ubu.ac.th
+ubu.es
+ubuea.cm
+ubv.edu.ve
+uc-bcf.edu.ph
+uc.cl
+uc.edu
+uc.edu.kh
+uc.edu.py
+uc.edu.ve
+uc.pt
+uc.rnu.tn
+uc3m.es
+uca.ac.cr
+uca.edu
+uca.edu.ar
+uca.edu.ni
+uca.edu.sv
+uca.es
+uca.fr
+ucaat.com
+ucaazo.edu.ec
+ucab.edu.ve
+ucacue.edu.ec
+ucad.edu.sv
+ucad.sn
+ucaldas.edu.co
+ucalgary.ca
+ucalp.edu.ar
+ucam.ac.ma
+ucam.edu
+ucan.edu
+ucapanama.org
+ucas.edu.ps
+ucasal.net
+ucat.edu.ve
+ucateci.edu.do
+ucatolica.ac.cr
+ucatolica.edu.co
+ucatolicamz.edu.co
+ucauca.edu.co
+ucavila.es
+ucb.br
+ucb.edu.bh
+ucb.edu.bo
+ucb.edu.pr
+ucbc.org
+ucbcba.edu.bo
+ucbscz.edu.bo
+ucbtja.edu.bo
+ucbukavu.ac.cd
+ucc.edu
+ucc.edu.co
+ucc.edu.gh
+ucc.edu.ni
+ucc.ie
+uccaribe.edu
+uccb.ns.ca
+uccm.md
+uccor.edu.ar
+uccr.edu
+uccs.edu
+uccuyo.edu.ar
+ucd.ac.ma
+ucd.ie
+ucdavis.edu
+ucdconnect.ie
+ucdenver.edu
+uce.edu.do
+ucel.edu.ar
+ucem.edu.mx
+ucem.edu.ni
+ucema.edu.ar
+ucentral.cl
+ucentral.edu.co
+ucentral.edu.ec
+ucervantes.cl
+uces.edu.ar
+uceva.edu.co
+ucf.edu
+ucf.edu.cu
+ucg.br
+ucg.cg.ac.yu
+ucg.ie
+uch.edu.ar
+uch.edu.pe
+uchastings.edu
+uchaswv.edu
+uchceu.es
+uchicago.edu
+uchile.cl
+uci.ac.cr
+uci.edu
+ucimed.com
+ucine.edu.ar
+ucinf.cl
+ucj.edu.sa
+uck.ac.rw
+ucl.ac.be
+ucl.ac.uk
+ucla.edu
+ucla.edu.ve
+uclah.edu.mx
+uclan.ac.uk
+uclive.ac.nz
+uclm.es
+uclouvain.be
+uclv.edu.cu
+ucm.ac.mz
+ucm.cl
+ucm.es
+ucm.sk
+ucmerced.edu
+ucmo.edu
+ucn.cl
+ucn.edu.co
+ucna.info
+ucne.edu.do
+ucnh.org
+uco.edu
+uco.edu.co
+uco.es
+uco.fr
+ucol.mx
+ucom.edu.py
+ucongres.edu.ar
+uconn.edu
+ucop.edu
+ucp.br
+ucp.edu.ar
+ucp.edu.pk
+ucp.pt
+ucpel.tche.br
+ucpr.edu.co
+ucr.ac.cr
+ucr.edu
+ucs.ac.uk
+ucs.mun.ca
+ucs.tche.br
+ucsa.edu.py
+ucsal.br
+ucsal.edu.br
+ucsb.edu
+ucsc.cl
+ucsc.edu
+ucsd.edu
+ucsd.edu.do
+ucse.edu.ar
+ucsf.edu
+ucsf.edu.ar
+ucsg.edu.ec
+ucsh.cl
+ucsi.edu.my
+ucsm.edu.pe
+ucsur.edu.pe
+ucsy.edu.mm
+uct.ac.za
+uct.edu.ec
+uct.edu.vn
+uctem.cl
+ucti.edu.my
+uctm.edu
+ucu.ac.ug
+ucu.edu.ar
+ucu.edu.uy
+ucuenca.edu.ec
+ucv.cl
+ucv.edu.pe
+ucv.edu.ph
+ucv.es
+ucv.ve
+ucy.ac.cy
+ucyt.edu.ni
+ud.ac.ae
+ud.edu.sa
+ud.edu.vn
+uda.ac.id
+uda.ad
+uda.cl
+uda.edu.ar
+udabol.edu.bo
+udallas.edu
+udayton.edu
+udb.ac.id
+udb.sn
+udc.edu
+udc.es
+udc.gal
+udca.edu.co
+udch.edu.pe
+ude.edu.uy
+udea.edu.co
+udec.cl
+udec.edu.mx
+udeci.edu.mx
+udeh.edu.mx
+udel.edu
+udelas.ac.pa
+udelmar.cl
+udelosandes.edu.bo
+udem.edu.co
+udem.edu.mx
+udem.edu.ni
+udemm.edu.ar
+udenar.edu.co
+udep.edu.pe
+udes.edu.co
+udesa.edu.ar
+udesanmiguel.edu.mx
+udesarrollo.cl
+udesc.br
+udesmontagnes.org
+udg.co.cu
+udg.es
+udg.mx
+udh.edu.pe
+udi.edu
+udistrital.edu.co
+udk-berlin.de
+udl.edu.pe
+udl.es
+udla.mx
+udlap.mx
+udm.edu.my
+udmercy.edu
+udo.edu
+udo.edu.ve
+udo.mx
+udom.ac.tz
+udoym.edu.do
+udp.cl
+uds.edu.gh
+udsm.ac.tz
+udusok.edu.ng
+udv.edu.mx
+ue-varna.bg
+ue.edu.ph
+ue.edu.pk
+uea.ac.uk
+uea.edu.sn
+ueab.ac.ke
+uean.edu.ar
+ueb.isfun.net
+uec.ac.jp
+uece.br
+uees.edu.ec
+uees.edu.sv
+uef.ru
+uefs.br
+ueh.edu.ht
+ueh.edu.vn
+uel.ac.uk
+uel.br
+uem.br
+uem.es
+uem.mz
+uem.ro
+uema.br
+uenf.br
+uenogakuen.ac.jp
+uenp.edu.br
+uep.educ.ph
+uepb.edu.br
+uepg.br
+uerj.br
+uerm.edu.ph
+uern.br
+ues.edu.sv
+uesb.br
+uesc.br
+uesiglo21.edu.ar
+uespi.br
+uestc.edu.cn
+uet.edu
+uet.vnu.edu.vn
+uettaxila.edu.pk
+uevora.pt
+uew.edu.gh
+uexternado.edu.co
+uf3ceu.es
+ufabc.edu.br
+ufac.br
+ufal.br
+ufar.am
+ufasta.edu.ar
+ufba.br
+ufc.br
+ufcg.edu.br
+ufe.edu.eg
+ufes.br
+uff.br
+ufg.br
+ufg.edu.sv
+ufgd.edu.br
+ufh.ac.za
+ufhec.edu.do
+ufidelitas.ac.cr
+ufinis.cl
+ufjf.br
+ufl.edu
+ufla.br
+uflo.edu.ar
+ufm.edu.gt
+ufm.edu.mx
+ufma.br
+ufmg.br
+ufms.br
+ufmt.br
+ufn.edu.br
+ufop.br
+ufp.nc
+ufp.pt
+ufpa.br
+ufpb.br
+ufpe.br
+ufpel.tche.br
+ufpi.br
+ufpr.br
+ufps.edu.co
+ufram.edu.mx
+ufrgs.br
+ufrj.br
+ufrn.br
+ufro.cl
+ufromail.cl
+ufrpe.br
+ufrrj.br
+ufs.ac.za
+ufs.br
+ufsc.br
+ufscar.br
+ufsia.ac.be
+ufsj.edu.br
+ufsm.br
+uft-plovdiv.bg
+uft.edu.ve
+uftm.edu.br
+ufu.br
+ufuk.edu.tr
+ufv.br
+ufv.ca
+ufv.es
+ufvjm.edu.br
+ug.edu.ec
+ug.edu.gh
+uga.edu
+ugaf.rnu.tn
+ugal.ro
+uganc.org
+ugatu.ac.ru
+ugb.edu.sv
+ugb.sn
+ugd.edu.ar
+ugd.edu.mk
+ugent.be
+ugf.br
+ugf.edu
+ugm.ac.id
+ugm.cl
+ugma.edu.ve
+ugr.edu.ar
+ugr.es
+ugrancolombia.edu.co
+ugrasu.ru
+ugs.ed.ao
+ugsha.ru
+ugto.mx
+uh.cu
+uh.edu
+uh1.ac.ma
+uh2m.ac.ma
+uha.fr
+uhasselt.be
+uhb.fr
+uhcno.edu
+uhd.edu
+uhd.edu.iq
+uheeyc.edu.cn
+uhispam.edu.ni
+uhispanoamericana.ac.cr
+uho.edu.cu
+uhp-nancy.fr
+uhs.ac.kr
+uhsa.ag
+uhu.es
+ui.ac.id
+ui.ac.ir
+ui.edu.ng
+ui.phinma.edu.ph
+ui1.es
+uia.ac.cr
+uia.es
+uia.mx
+uiah.fi
+uib.es
+uib.kz
+uib.no
+uibe.edu.cn
+uibk.ac.at
+uic.edu
+uic.edu.mx
+uic.es
+uic.globe.com.ph
+uidaho.edu
+uigv.edu.pe
+uii.ac.id
+uii.sever.ru
+uika-bogor.ac.id
+uileon.edu.mx
+uiliria.org
+uimp.es
+uindy.edu
+uinjkt.ac.id
+uinternacional.pt
+uio.no
+uiowa.edu
+uir.ac.id
+uir.ac.ma
+uis.edu
+uis.edu.co
+uis.no
+uisek.cl
+uisrael.ec
+uist.edu.mk
+uisu.ac.id
+uit.no
+uitec.ac.jp
+uitm.edu.my
+uits.edu.bd
+uiu.ac.bd
+uiu.edu
+uiuc.edu
+uiw.edu
+uiwtx.edu
+uiz.ac.ma
+uj.ac.za
+uj.edu
+uj.edu.pl
+uj.rnu.tn
+ujaen.es
+ujap.edu.ve
+ujat.mx
+ujcv.edu.hn
+ujed.mx
+ujep.cz
+ujf-grenoble.fr
+uji.es
+ujmd.edu.sv
+ujmv.edu
+ujn.edu.cn
+ujnk.org
+ujsierra.mx
+ujso.cl
+uk.ac.ir
+ukc.ac.uk
+ukdw.ac.id
+ukf.sk
+ukh.ac
+uki.ac.id
+ukim.edu.mk
+ukim.mk
+ukings.ns.ca
+ukit-tomohon.org
+uklo.edu.mk
+ukm.my
+ukma.kiev.ua
+ukrfa.kharkov.ua
+ukrida.ac.id
+uksw.edu
+uksw.edu.pl
+uktech.ac.in
+uku.fi
+uky.edu
+ukzn.ac.za
+ul.ac.za
+ul.edu.lb
+ul.ie
+ul.pt
+ula.edu.mx
+ula.ve
+ulaanbaatar.edu.mn
+ulab.edu.bd
+ulacit.ac.cr
+ulacit.ac.pa
+uladech.edu.pe
+ulagos.cl
+ulaicavr.com
+ulam.edu.ni
+ulangola.net
+ulapland.fi
+ulare.cl
+ulasalle.ac.cr
+ulat.ac.pa
+ulatina.ac.cr
+ulaval.ca
+ulb.ac.be
+ulb.be
+ulbra.br
+ulbsibiu.ro
+ulbu.bi
+uleam.edu.ec
+uleth.ca
+ulicori.ac.cr
+uliege.be
+ulim.md
+ulima.edu.pe
+ulivingstonia.com
+ulk.ac.rw
+ull.es
+ulm.edu
+uloyola.es
+ulpgc.es
+ulsa.edu.mx
+ulsab.edu.mx
+ulsac.edu.mx
+ulsan.ac.kr
+ulsop.ac.uk
+ulspu.ru
+ulst.ac.uk
+ulster.ac.uk
+ulstu.ru
+ulsu.ru
+ult.ens.tn
+uludag.edu.tr
+ulusiada.pt
+ulusofona.pt
+um-rdc.org
+um.ac.id
+um.ac.ir
+um.cityu.edu.hk
+um.edu.ar
+um.edu.mo
+um.edu.mt
+um.edu.my
+um.edu.uy
+um.es
+um.rnu.tn
+um.si
+um1ygn.edu.mm
+um5a.ac.ma
+um5s.ac.ma
+uma.ac.in
+uma.ac.ir
+uma.co.ao
+uma.edu.py
+uma.edu.sv
+uma.es
+uma.pt
+uma.rnu.tn
+umad.edu.mx
+umag.cl
+umaha.ac.id
+umaine.edu
+uman.edu.mx
+umanitoba.ca
+umanizales.edu.co
+umar.mx
+umariana.edu.co
+umaritima.cl
+umaryland.edu
+umass.edu
+umassd.edu
+umayor.cl
+umaza.edu.ar
+umb.edu
+umb.edu.co
+umb.edu.pe
+umb.no
+umb.sk
+umbb.dz
+umbc.edu
+umc.br
+umc.edu
+umc.edu.dz
+umca.net
+umcc.cu
+umce.cl
+umcollege.com
+umcs.lublin.pl
+umd.edu
+umdearborn.edu
+umds.ac.jp
+umds.ac.uk
+ume.cl
+umes.edu
+umf.maine.edu
+umfcluj.ro
+umfiasi.ro
+umfk.maine.edu
+umflint.edu
+umft.ro
+umftgm.ro
+umg.edu.gt
+umh.ac.be
+umh.es
+umhelena.edu
+umi-mdn.edu
+umi.ac.id
+umi.edu.mx
+umi.edu.pk
+umich.edu
+umich.mx
+umindanao.edu.ph
+uminho.pt
+umit-tirol.at
+umit.at
+umj.ac.id
+umk.ac.id
+umk.edu.my
+umkc.edu
+uml.edu
+umla.edu.mx
+umm.ac.id
+umm.edu.mx
+umm.maine.edu
+ummg.edu.mm
+ummgl.ac.id
+ummto.dz
+umn.edu
+umne.edu.mx
+umng.edu.co
+umo.edu
+umoar.edu.sv
+umoderna.pt
+umoncton.ca
+umontemorelos.edu.mx
+umontpellier.fr
+umontreal.ca
+ump.ac.ma
+ump.ac.za
+ump.edu.my
+umpi.maine.edu
+umpqua.edu
+umr.edu
+ums.ac.id
+ums.edu.my
+umsa.edu.ar
+umsa.edu.mx
+umsanet.edu.bo
+umsha.ac.ir
+umsida.ac.id
+umsl.edu
+umss.edu.bo
+umst-edu.com
+umsu.ac.id
+umsu.ac.ir
+umsystem.edu
+umt.edu
+umt.edu.my
+umt.edu.pk
+umtech.edu.my
+umu.ac.ug
+umu.se
+umuc.edu
+umutarapolytech.ac.rw
+umw.edu
+umwestern.edu
+umy.ac.id
+umyu.edu.ng
+umz.ac.ir
+un.edu.mx
+un.mx
+una.ac.cr
+una.an
+una.edu
+una.edu.ar
+una.edu.ni
+una.edu.ve
+una.py
+unaab.edu.ng
+unab.cl
+unab.edu.ar
+unab.edu.co
+unab.edu.sv
+unac.edu.co
+unac.edu.pe
+unacar.mx
+unach.edu.ec
+unach.mx
+unachi.ac.pa
+unachile.cl
+unad.edu.co
+unad.edu.do
+unadeca.ac.cr
+unadp.ac.pa
+unaerp.br
+unah.edu.hn
+unahur.edu.ar
+unai.edu
+unair.ac.id
+unaj.edu.ar
+unak.is
+unal.edu.co
+unam.ac.cr
+unam.edu.ar
+unam.mx
+unam.na
+unama.br
+unan.edu.ni
+unand.ac.id
+unap.cl
+unap.edu.pe
+unapec.edu.do
+unapiquitos.edu.pe
+unarte.ro
+unas.ac.id
+unas.edu.pe
+unasa.edu.sv
+unasam.edu.pe
+unat.ens.tn
+unatc.ro
+unau.edu.ar
+unaula.edu.co
+unav.es
+unavarra.es
+unb.br
+unb.ca
+unbc.ca
+unbeg.edu.sd
+unbi.ba
+unbosque.edu.co
+unbsj.ca
+unc.edu
+unc.edu.ar
+unc.edu.pe
+unc.edu.ph
+unca.edu
+unca.edu.ar
+uncaus.edu.ar
+uncc.edu
+uncen.ac.id
+uncfsu.edu
+uncg.edu
+unco.edu
+uncoma.edu.ar
+uncp.edu.pe
+uncu.edu.ar
+uncw.edu
+und.edu
+undac.edu.pe
+undana.ac.id
+undav.edu.ar
+undec.edu.ar
+undef.edu.ar
+undelta.edu.ar
+undh.org
+undip.ac.id
+une.edu
+une.edu.au
+une.edu.mx
+une.edu.pe
+une.edu.py
+une.edu.ve
+uneatlantico.es
+uneb.br
+unec.edu.az
+uned.ac.cr
+uned.es
+unefa.edu.do
+unefa.edu.ve
+unefm.edu.ve
+uneg.edu.ve
+unej.ac.id
+unellez.edu.ve
+unem.edu
+unep.edu.ph
+uneph.org
+uner.edu.ar
+unerg.edu.ve
+unermb.edu.ve
+unes.edu.mx
+unesa.ac.id
+unesc.rct-sc.br
+unesco-ihe.org
+unesp.br
+unesr.edu.ve
+unesur.edu.ve
+unet.edu.ve
+unev-rd.edu.do
+unex.es
+unexpo.edu.ve
+unf.edu
+unf.edu.ar
+unfa.cl
+unfv.edu.pe
+ung.ac.id
+ung.br
+ung.edu
+ung.si
+unge.gq
+ungs.edu.ar
+unh.edu
+unhalu.ac.id
+unhamzah.ac.id
+unhas.ac.id
+unheval.edu.pe
+uni-agro.grodno.by
+uni-augsburg.de
+uni-bamberg.de
+uni-bayreuth.de
+uni-bge.hu
+uni-bielefeld.de
+uni-bonn.de
+uni-bremen.de
+uni-corvinus.hu
+uni-dubna.ru
+uni-duesseldorf.de
+uni-duisburg-essen.de
+uni-erfurt.de
+uni-erlangen.de
+uni-flensburg.de
+uni-frankfurt.de
+uni-freiburg.de
+uni-giessen.de
+uni-goettingen.de
+uni-greifswald.de
+uni-halle.de
+uni-hamburg.de
+uni-hannover.de
+uni-heidelberg.de
+uni-hildesheim.de
+uni-hohenheim.de
+uni-jena.de
+uni-kassel.de
+uni-kiel.de
+uni-kl.de
+uni-klu.ac.at
+uni-koblenz-landau.de
+uni-koeln.de
+uni-konstanz.de
+uni-leipzig.de
+uni-lj.si
+uni-lueneburg.de
+uni-magdeburg.de
+uni-mainz.de
+uni-mannheim.de
+uni-marburg.de
+uni-miskolc.hu
+uni-muenchen.de
+uni-muenster.de
+uni-mysore.ac.in
+uni-nke.hu
+uni-obuda.hu
+uni-oldenburg.de
+uni-osnabrueck.de
+uni-paderborn.de
+uni-pannon.hu
+uni-passau.de
+uni-plovdiv.bg
+uni-potsdam.de
+uni-pr.edu
+uni-prizren.com
+uni-regensburg.de
+uni-rostock.de
+uni-ruse.bg
+uni-saarland.de
+uni-siegen.de
+uni-sofia.bg
+uni-speyer.de
+uni-stuttgart.de
+uni-svishtov.bg
+uni-sz.bg
+uni-trier.de
+uni-tuebingen.de
+uni-ulm.de
+uni-vechta.de
+uni-vologda.ac.ru
+uni-vt.bg
+uni-weimar.de
+uni-wh.de
+uni-wuerzburg.de
+uni-wuppertal.de
+uni.edu
+uni.edu.ni
+uni.edu.pe
+uni.li
+uni.lodz.pl
+uni.lu
+uni.opole.pl
+uni.pt
+uni.sydney.edu.au
+uni.torun.pl
+uni.udm.ru
+uni.wroc.pl
+uni9.edu.br
+unia.ao
+uniaam.uia.es
+uniacc.cl
+uniactiva.com
+uniag.sk
+uniamazonia.edu.co
+unian.it
+uniandes.edu.co
+uniara.com.br
+uniara.edu.br
+uniara.uia.es
+uniatlantico.edu.co
+unib.ac.id
+unib.br
+uniba.it
+uniba.sk
+uniban.br
+uniband.org
+unibas.ch
+unibas.it
+unibda.net
+unibe.ac.cr
+unibe.ch
+unibe.edu.do
+uniben.edu
+unibg.it
+unibl.org
+unibo.edu.ar
+unibo.it
+unibocconi.it
+unibosco.br
+uniboyaca.edu.co
+unibrasil.com.br
+unibs.it
+unibuc.ro
+unibuja.edu.ng
+unibw-hamburg.de
+unibw-muenchen.de
+unibz.it
+unic.ac.cy
+unica.cu
+unica.edu.do
+unica.edu.mx
+unica.edu.ni
+unica.edu.pe
+unica.edu.ve
+unica.it
+unicach.edu.mx
+unicaen.fr
+unicah.edu
+unical.ac.in
+unical.edu.ng
+unical.it
+unicam.it
+unicamp.br
+unicampus.it
+unican.es
+unicap.br
+unicaribe.edu.do
+unicartagena.edu.co
+unicas.it
+unicastelo.br
+unicatt.it
+unice.fr
+unicen.edu.ar
+unicen.edu.bo
+unicesar.edu.co
+uniceub.br
+unich.it
+unicid.br
+unicit.cl
+unicit.edu.ni
+unico.edu.sv
+unicordoba.edu.co
+unicruz.tche.br
+unicsul.br
+unict.it
+unida.edu.py
+unidavi.rct-sc.br
+unideb.hu
+unidu.hr
+uniecampus.it
+uniedpa.com
+uniel.edu.al
+uniese.it
+unifacs.br
+unifap.br
+unife.edu.pe
+unife.it
+unifei.edu.br
+unifenas.br
+unifeso.edu.br
+unifg.it
+unifi.it
+unifiji.ac.fj
+unifor.br
+unifr.ch
+unifran.br
+unifranz.edu.bo
+unig.br
+unige.ch
+unige.it
+unigoa.ac.in
+unigoias.com.br
+unigoro.ac.id
+unigranrio.br
+unigre.it
+unigre.urbe.it
+uniguajira.edu.co
+unijos.edu.ng
+unijui.tche.br
+unik-kediri.ac.id
+unika.ac.id
+unikal.ac.id
+unikin.cd
+unikino.mx
+unikis.ac.cd
+unikl.edu.my
+unikom.ac.id
+unikuljis.edu.bo
+unil.ch
+unila.ac.id
+unilag.edu.ng
+unilak.ac.id
+unilasalle.fr
+unile.it
+unileoben.ac.at
+unileon.es
+unilib.neva.ru
+unilibre.edu.co
+unilim.fr
+unilink.it
+unillanos.edu.co
+unilorin.edu.ng
+unilu.ac.cd
+unilu.ch
+uniludes.ch
+unilurio.ac.mz
+unilus.ac.zm
+unima.ac.id
+unima.ac.mw
+unima.mw
+unimaas.nl
+unimagdalena.edu.co
+unimaid.edu.ng
+unimap.edu.my
+unimar.br
+unimas.my
+unimayab.edu.mx
+unimc.it
+unime.it
+unimed.ac.id
+unimelb.edu
+unimelb.edu.au
+unimep.br
+unimes.com.br
+unimes.fr
+unimet.edu.ve
+unimetro.edu.co
+unimetro.edu.hn
+unimetroangola.com
+unimex.edu.mx
+unimi.it
+unimib.it
+unimkar.edu.ng
+unimol.it
+unimonte.br
+unimontes.br
+unimoron.edu.ar
+unin.hr
+unina.it
+unina2.it
+uninav.it
+unincca.edu.co
+unine.ch
+uninorte.edu.co
+uninorte.edu.py
+uninova.sk
+uninove.br
+uninp.edu.rs
+uninsubria.it
+uninus.ac.id
+unioeste.br
+union.edu
+unios.hr
+uniosun.edu.ng
+uniovi.es
+unip-objetivo.br
+unipa.it
+unipamplona.edu.co
+unipasby.ac.id
+unipavaresia.edu.al
+unipaz.edu.co
+unipd.it
+unipdu.ac.id
+unipe.br
+unipe.edu.ar
+unipg.it
+unipi.gr
+unipi.it
+unipiloto.edu.co
+unipli.com.br
+unipo.sk
+uniport.edu.ng
+unipr.it
+unipu.hr
+unipune.ernet.in
+unipv.it
+uniq.edu
+uniquindio.edu.co
+unir.br
+unira.ac.id
+uniraj.org
+unirazak.edu.my
+unirc.it
+uniremhos.edu.do
+uniri.hr
+unirio.br
+unirioja.es
+uniroma1.it
+uniroma2.eu
+uniroma3.it
+unirsm.sm
+unis.edu.gt
+unis.sn
+unisa.ac.za
+unisa.br
+unisa.edu.au
+unisa.it
+unisabana.edu.co
+unisal.it
+unisannio.it
+unisantos.com.br
+unisba.ac.id
+unisc.br
+unisel.edu.my
+unisey.ac.sc
+unisg.ch
+unisg.it
+unishabunia.org
+unishivaji.ac.in
+unishk.edu.al
+unisi.it
+unisilvaner.info
+unisimonbolivar.edu.co
+unisinos.br
+unisinucartagena.edu.co
+unisma.ac.id
+unismuh.ac.id
+unisob.na.it
+unispital.ch
+unisri.ac.id
+uniss.it
+unissa.edu.bn
+unissula.ac.id
+unist.ac.kr
+unist.hr
+unistangerang.ac.id
+unistra.fr
+unistrapg.it
+unistrasi.it
+unisucre.edu.co
+unisul.br
+uniswa.sz
+unisza.edu.my
+unit.br
+unita.edu.ec
+unitar.edu.my
+unitau.br
+unitbv.ro
+unite.edu.mk
+unite.it
+unitec.edu
+unitec.edu.ve
+unitec.mx
+unitech.ac.pg
+uniten.edu.my
+unitir.edu.al
+unitn.it
+unito.it
+unitomo.ac.id
+unitru.edu.pe
+units.it
+unitus.it
+unity.edu
+uniube.br
+uniud.it
+uniurb.it
+uniuyo.edu.ng
+univ-ab.pt
+univ-ag.fr
+univ-alger.dz
+univ-alger3.dz
+univ-amu.fr
+univ-angers.fr
+univ-annaba.dz
+univ-antananarivo.mg
+univ-antilles.fr
+univ-antsiranana.mg
+univ-artois.fr
+univ-avignon.fr
+univ-bangui.net
+univ-batna.dz
+univ-bejaia.dz
+univ-biskra.dz
+univ-blida.dz
+univ-bpclermont.fr
+univ-brest.fr
+univ-catholyon.fr
+univ-chlef.dz
+univ-cocody.ci
+univ-corse.fr
+univ-douala.com
+univ-dschang.org
+univ-emir.dz
+univ-evry.fr
+univ-fcomte.fr
+univ-fianar.mg
+univ-grenoble-alpes.fr
+univ-guelma.dz
+univ-ibntofail.ac.ma
+univ-inpt.fr
+univ-jfc.fr
+univ-jijel.dz
+univ-k.rnu.tn
+univ-kag.org
+univ-lehavre.fr
+univ-lemans.fr
+univ-lille1.fr
+univ-lille2.fr
+univ-lille3.fr
+univ-littoral.fr
+univ-lome.tg
+univ-lorraine.fr
+univ-lr.fr
+univ-lyon1.fr
+univ-lyon2.fr
+univ-lyon3.fr
+univ-mahajanga.mg
+univ-metz.fr
+univ-mlv.fr
+univ-mngb.net
+univ-montp1.fr
+univ-montp2.fr
+univ-montp3.fr
+univ-mosta.dz
+univ-msila.dz
+univ-mulhouse.fr
+univ-nancy2.fr
+univ-nantes.fr
+univ-ndere.cm
+univ-ndjamena.org
+univ-nkc.mr
+univ-oeb.dz
+univ-oran.dz
+univ-orleans.fr
+univ-ouaga.bf
+univ-ouargla.dz
+univ-oujda.ac.ma
+univ-ovidius.ro
+univ-paris-diderot.fr
+univ-paris1.fr
+univ-paris12.fr
+univ-paris13.fr
+univ-paris3.fr
+univ-paris5.fr
+univ-paris8.fr
+univ-pau.fr
+univ-perp.fr
+univ-poitiers.fr
+univ-reims.fr
+univ-rennes1.fr
+univ-rennes2.fr
+univ-reunion.fr
+univ-rouen.fr
+univ-saida.dz
+univ-sante.edu.kh
+univ-savoie.fr
+univ-sba.dz
+univ-setif.dz
+univ-skikda.dz
+univ-st-etienne.fr
+univ-tebessa.dz
+univ-thies.sn
+univ-tiaret.dz
+univ-tlemcen.dz
+univ-tln.fr
+univ-tlse1.fr
+univ-tlse2.fr
+univ-tlse3.fr
+univ-toamasina.mg
+univ-toliara.mg
+univ-toulouse.fr
+univ-tours.fr
+univ-ubs.fr
+univ-usto.dz
+univ-valenciennes.fr
+univ-zig.sn
+univ.edu.dj
+univ.gda.pl
+univ.kiev.ua
+univ.rzeszow.pl
+univ.szczecin.pl
+univ.uzhgorod.ua
+univa.mx
+univagro-iasi.ro
+unival.edu.ni
+univale.br
+univali.rct-sc.br
+univalle.edu
+univalle.edu.co
+univap.br
+univaq.it
+univas.edu.mx
+univasf.edu.br
+univcb.ro
+univchapultepec.edu.mx
+univd.edu.ua
+unive.it
+univen.ac.za
+univer.kharkov.ua
+univer.omsk.su
+univermed-cdgm.ro
+universidad-monteavila.edu.ve
+universidad-policial.edu.ar
+universidad.edu.uy
+universidadarcis.cl
+universidadatlantico.org
+universidadbrauliocarrillo.com
+universidadcentral.com
+universidaddeleon.edu.mx
+universidade-autonoma.pt
+universidadean.edu.co
+universidadlaconcordia.edu.mx
+universidadmotolinia.edu.mx
+universidadnotarial.edu.ar
+universidadpedagogica.com
+universidadsalesiana.edu.mx
+universidadsanjosecr.com
+universitas-trilogi.ac.id
+universitateamaritima.ro
+universite-paris-saclay.fr
+universite-yde2.org
+universiteitleiden.nl
+universitekongo.org
+university.kg
+university.kherson.ua
+university.tversu.ru
+universitycanadawest.ca
+universitycollege.ac.in
+universityliberia.org
+universityofbohol.com
+universityofcebu.edu.ph
+universityofgalway.ie
+universityofsomalia.net
+universo.br
+universum-ks.org
+univesp.br
+univet.hu
+univgb.rnu.tn
+univie.ac.at
+univillarica.mx
+univlora.edu.al
+univman.edu.ph
+univmed.fr
+univo.edu.sv
+univpancasila.ac.id
+univr.it
+univsul.org
+uniwa.gr
+uniwest.ac.za
+uniyar.ac.ru
+uniza.sk
+unizambeze.ac.mz
+unizar.es
+unizd.hr
+unizg.hr
+unizh.ch
+unizik.edu.ng
+unizulu.ac.za
+unizwa.edu.om
+unj.ac.id
+unja.ac.id
+unjani.ac.id
+unjbg.edu.pe
+unjfsc.edu.pe
+unju.edu.ar
+unk.edu
+unkhair.ac.id
+unklab.ac.id
+unkorce.edu.al
+unkris.ac.id
+unl.ac.uk
+unl.edu
+unl.edu.ar
+unl.edu.ec
+unl.pt
+unla.edu.ar
+unla.edu.mx
+unlam.ac.id
+unlam.edu.ar
+unlar.edu.ar
+unlc.edu.ar
+unlp.edu.ar
+unlpam.edu.ar
+unlu.edu.ar
+unlv.edu
+unlz.edu.ar
+unm.ac.id
+unm.edu
+unm.edu.ar
+unmas.org
+unmb.ro
+unmer-madiun.ac.id
+unmer.ac.id
+unmo.ba
+unmsm.edu.pe
+unmuhjember.ac.id
+unmuhmataram.com
+unmul.ac.id
+unn.ac.ru
+unn.edu.ng
+unne.edu.ar
+unnes.ac.id
+unnet.es
+unnoba.edu.ar
+uno-r.edu.ph
+uno.edu
+uno.edu.ar
+uno.mx
+unochapeco.edu.br
+unoesc.edu.br
+unoeste.br
+unom.ac.in
+unomaha.edu
+unp.ac.id
+unp.br
+unp.edu.ar
+unp.edu.pe
+unp.edu.ph
+unpa.edu.ar
+unpad.ac.id
+unpak.ac.id
+unpar.ac.id
+unpas.ac.id
+unpatti.ac.id
+unpaz.edu.ar
+unphu.edu.do
+unpilar.edu.ar
+unprg.edu.pe
+unq.edu.ar
+unr.ac.id
+unr.edu
+unr.edu.ar
+unraf.edu.ar
+unram.ac.id
+unrc.edu.ar
+unri.ac.id
+unrn.edu.ar
+unrt.edu.ar
+uns.ac.id
+uns.ac.rs
+uns.edu.ar
+uns.edu.pe
+unsa.ba
+unsa.edu.ar
+unsa.edu.pe
+unsaac.edu.pe
+unsada.ac.id
+unsada.edu.ar
+unsam.edu.ar
+unsch.edu.pe
+unse.edu.ar
+unsil.ac.id
+unsj.edu.ar
+unsl.edu.ar
+unslp.edu.bo
+unsm.edu.pe
+unsoed.ac.id
+unsrat.ac.id
+unsri.ac.id
+unssa.edu.sv
+unssa.rs.ba
+unsta.edu.ar
+unsw.edu.au
+unswagati-crb.ac.id
+unsxx.edu.bo
+unsyiah.ac.id
+unt.edu
+unt.edu.ar
+untad.ac.id
+untag-banyuwangi.ac.id
+untag-jkt.org
+untag-smd.ac.id
+untag.ac.id
+untagcirebon.info
+untagsmg.ac.id
+untan.ac.id
+untar.ac.id
+untdallas.edu
+untdf.edu.ar
+unthsc.edu
+untidar.ac.id
+untirta.ac.id
+untref.edu.ar
+untumbes.edu.pe
+untz.ba
+unu.edu
+unu.edu.pe
+unu.edu.sd
+unud.ac.id
+unum.edu.mx
+unva.cz
+unvi.edu.ba
+unvime.edu.ar
+unvm.edu.ar
+unw.edu.pk
+unwe.acad.bg
+unwiku.ac.id
+uny.ac.id
+unyp.cz
+unyt.edu.al
+unza.zm
+unze.ba
+uo.edu.cu
+uoa.gr
+uoalmuthana.edu.iq
+uoanbar.edu.iq
+uob.edu.bh
+uob.edu.ly
+uob.edu.pk
+uob.ga
+uobabylon.edu.iq
+uobaghdad.edu.iq
+uobasrah.edu.iq
+uoc.edu
+uoc.es
+uoc.gr
+uod.ac
+uod.edu.do
+uoda.edu.bd
+uodiyala.edu.iq
+uoe.edu.pk
+uoeh-u.ac.jp
+uoeld.ac.ke
+uofd.edu.sd
+uofg.edu.sd
+uofk.edu
+uog.ac.pg
+uog.edu
+uog.edu.et
+uog.edu.gy
+uog.edu.pk
+uogj.edu.al
+uoguelph.ca
+uoh.edu.sa
+uohyd.ernet.in
+uoi.gr
+uoit.ca
+uojazeera.com
+uok.ac.in
+uok.ac.ir
+uok.edu.pk
+uok.edu.sy
+uokerbala.edu.iq
+uokirkuk.edu.iq
+uokufa.edu.iq
+uol.de
+uol.edu.pk
+uom.ac.mu
+uom.edu.mx
+uom.edu.pk
+uom.gr
+uomisan.edu.iq
+uomosul.edu.iq
+uomustansiriyah.edu.iq
+uonbi.ac.ke
+uop.edu
+uop.edu.jo
+uop.gr
+uopeople.edu
+uor.edu
+uor.org
+uoradea.ro
+uoregon.edu
+uos.ac.kr
+uos.edu.pk
+uosa.uar.net
+uot.edu.ly
+uotechnology.edu.iq
+uottawa.ca
+uou.ac.in
+uou.edu.ps
+uovs.ac.za
+uow.edu.au
+uowasit.edu.iq
+uowdubai.ac.ae
+uowm.gr
+uowmail.edu.au
+uoz.ac.ir
+up.ac.mz
+up.ac.pa
+up.ac.za
+up.edu
+up.edu.pe
+up.edu.ps
+up.mx
+up.pt
+up.univ-mrs.fr
+up45.ac.id
+upa.cl
+upa.ro
+upacifico.cl
+upacifico.edu.ec
+upaep.mx
+upal.edu
+upan.edu.sv
+upana.edu.gt
+upang.edu.ph
+upao.edu.pe
+upatras.gr
+upb.edu
+upb.edu.co
+upb.edu.ph
+upb.pitt.edu
+upc-rdc.cd
+upc.edu
+upc.edu.pe
+upce.cz
+upch.edu.pe
+upci.edu.pe
+upco.es
+upct.es
+upd.edu.ph
+upds.edu.bo
+upe.br
+upe.edu.ar
+upe.edu.py
+upe.poli.br
+upeace.org
+upei.ca
+upel.edu.ve
+upenn.edu
+upes.ac.in
+upes.edu.sv
+upesh.edu
+upet.ro
+upeu.edu.pe
+upf.edu
+upf.es
+upf.pf
+upf.tche.br
+upg-ploiesti.ro
+uph.edu
+uphighschoolcebu.edu.ph
+uphr.edu.ph
+upi.edu
+upiig.ipn.mx
+upike.edu
+upis.br
+upit.ro
+upj.pitt.edu
+upjs.sk
+upla.edu.pe
+uplb.edu.ph
+uplearnbusinessschool.com
+upm.ac.ma
+upm.edu.my
+upm.edu.ph
+upm.es
+upm.moldnet.md
+upm.ro
+upmc.com
+upmc.edu
+upmc.fr
+upmf-grenoble.fr
+upmin.edu.ph
+upn.mx
+upnfm.edu.hn
+upng.ac.pg
+upnjatim.ac.id
+upnorte.edu.pe
+upnvj.ac.id
+upnyk.ac.id
+upo.es
+upol.cz
+upoli.edu.ni
+uponic.edu.ni
+uportu.pt
+upou.org
+upr-ponce.upr.edu
+upr.ac.id
+upr.clu.edu
+upr.edu
+upr.edu.cu
+upr.si
+upra.edu
+upra.org
+uprag.edu
+uprb.edu
+uprc.edu
+uprm.edu
+uprrp.edu
+uprutuado.edu
+ups-tlse.fr
+ups.edu
+ups.edu.ec
+ups.urbe.it
+upsa.edu.bo
+upsa.es
+upsb.edu.pe
+upsi.edu.my
+upsjb.edu.pe
+upstegal.ac.id
+upt.al
+upt.edu.pe
+upt.pitt.edu
+upt.ro
+uptc.edu.co
+uptu.ac.in
+upv.edu.ph
+upv.es
+uq.edu.au
+uqac.ca
+uqam.ca
+uqar.uquebec.ca
+uqat.uquebec.ca
+uqo.ca
+uqroo.mx
+uqtr.uquebec.ca
+uqu.edu.sa
+uquebec.ca
+ur.mx
+uraccan.edu.ni
+urbancollege.edu
+urbaniana.edu
+urbe.edu
+urc.ac.ru
+urc.edu.ph
+urca.br
+urcamp.tche.br
+uregina.ca
+urfu.ru
+uri.br
+uri.edu
+urich.edu
+urjc.es
+url.edu.gt
+url.es
+urmh.edu.mx
+urmia.ac.ir
+urosario.edu.co
+urp.edu.pe
+urse.edu.mx
+ursinus.edu
+uru.edu
+urural.edu.gt
+urv.es
+us.edu.pl
+us.es
+usa.edu
+usa.edu.ph
+usa.edu.pk
+usaaa.ru
+usab-tm.ro
+usab.ro
+usac.edu.gt
+usac.edu.mx
+usaca.edu.co
+usach.cl
+usafa.af.mil
+usafa.edu
+usaim.edu
+usak.edu.tr
+usal.es
+usalesiana.edu.bo
+usam.ac.cr
+usam.edu.sv
+usam.md
+usamvcluj.ro
+usanandres.cl
+usanpedro.edu.pe
+usao.edu
+usap.edu
+usart.ru
+usask.ca
+usat.edu.pe
+usat.ms
+usb.ac.ir
+usb.edu.co
+usb.edu.mx
+usb.md
+usb.ve
+usbmed.edu.co
+usc.ac.ir
+usc.br
+usc.edu
+usc.edu.au
+usc.edu.cn
+usc.edu.ph
+usc.edu.tt
+usc.es
+usc.gal
+usca.edu
+uscb.edu
+uscga.edu
+uscon.ru
+usd.ac.id
+usd.edu
+usek.edu.lb
+usenghor-francophonie.org
+usep.edu.ph
+userena.cl
+usergioarboleda.edu.co
+usf.br
+usf.com.mx
+usf.edu
+usfca.edu
+usfea.ru
+usfq.edu.ec
+usfx.edu.bo
+usfx.info
+ush.sd
+usherb.ca
+ushs.u-strasbg.fr
+usi.ac.id
+usi.ch
+usi.edu
+usin.edu.sv
+usindh.edu.pk
+usiu.ac.ke
+usiu.edu
+usj.edu.lb
+usj.edu.mo
+usj.es
+usjc.uwaterloo.ca
+usjr.edu.ph
+uskudar.edu.tr
+usl.edu
+usla.ru
+usls.edu
+usm.ac.id
+usm.cl
+usm.edu
+usm.edu.ec
+usm.edu.ph
+usm.maine.edu
+usm.md
+usm.my
+usm.trompo.com
+usma.ac.pa
+usma.edu
+usmba.ac.ma
+usmf.md
+usmga.ru
+usmma.edu
+usmp.edu.pe
+usms.edu.pk
+usmtu.edu.ua
+usna.edu
+usoms.poznan.pl
+uson.mx
+usonsonate.edu.sv
+usouixfalls.edu
+usp.ac.fj
+usp.ac.jp
+usp.br
+usp.edu.pe
+usp.ph
+usps.edu.hn
+uspsantapaula.com
+uspt.edu.ar
+usq.edu.au
+uss.cl
+uss.edu.pe
+uss.rnu.tn
+usst.edu.cn
+ust.ac.kr
+ust.cl
+ust.edu
+ust.edu.ng
+ust.edu.ph
+ust.edu.sd
+ust.hk
+ust.md
+usta.edu.co
+ustanne.ednet.ns.ca
+ustb.edu.cn
+ustb.edu.pk
+ustboniface.mb.ca
+ustc.ac.bd
+ustc.edu
+ustc.edu.cn
+usth.edu.vn
+usthb.dz
+ustmb.ac.ir
+ustpaul.ca
+usu.ac.id
+usu.br
+usu.edu
+usu.ru
+usudbury.com
+usue.ru
+usuft.kiev.ua
+usuhs.mil
+usurcolombia.com
+usv.ro
+uswr.ac.ir
+usyd.edu.au
+ut.ac.id
+ut.ac.ir
+ut.edu
+ut.edu.co
+ut.edu.sa
+ut.ee
+ut.pr
+uta.cl
+uta.edu
+uta.edu.ec
+uta.fi
+utad-petel-edu.org
+utad.pt
+utadeo.edu.co
+utah.edu
+utahtech.edu
+utaipei.edu.tw
+utalca.cl
+utanga.co.ao
+utar.edu.my
+utas.edu.au
+utb.cz
+utb.edu
+utb.edu.ec
+utbm.fr
+utc.edu
+utc.edu.ec
+utc.fr
+utcb.ro
+utcc.ac.th
+utch.edu.co
+utcluj.ro
+utd.edu
+utdallas.edu
+utdt.edu
+ute.edu.do
+ute.edu.ec
+utea.edu.pe
+utec.edu.pe
+utec.edu.sv
+utech.edu.jm
+utelvt.edu.ec
+utem.cl
+utem.edu.my
+utep.edu
+uteq.edu.ec
+utesa.edu
+utesur.edu.do
+utexas.edu
+utfpr.edu.br
+utfsm.cl
+utg.edu.gm
+utgjiu.ro
+uth.edu.pl
+uth.gr
+uth.hn
+uth.pl
+uthm.edu.my
+utibet.edu.cn
+utica.edu
+utk.edu
+utkaluniv.org
+utl.pt
+utla.edu.sv
+utm.ac.mu
+utm.edu
+utm.edu.ec
+utm.md
+utm.mx
+utm.my
+utm.rnu.tn
+utm.ro
+utm.utoronto.ca
+utmachala.edu.ec
+utmb.edu
+utmn.ru
+utn.edu.ar
+utn.edu.ec
+utneza.edu.mx
+uto.edu.bo
+utoledo.edu
+utoronto.ca
+utp.ac.id
+utp.ac.pa
+utp.edu.co
+utp.edu.my
+utp.edu.pe
+utp.edu.pl
+utpb.edu
+utpl.edu.ec
+utpp.edu.kh
+utrgv.edu
+uts.edu.au
+utsa.edu
+utsam.edu.ec
+utsouthwestern.edu
+utsunomiya-u.ac.jp
+utt.edu.tt
+utt.fr
+utt.ro
+uttyler.edu
+utu.fi
+utulsa.edu
+utunis.rnu.tn
+utur.ac.cr
+utwente.nl
+uu.ac.kr
+uu.edu
+uu.nl
+uu.se
+uuc.edu.et
+uum.edu.my
+uumail.in
+uut.ac.ir
+uv.cl
+uv.edu.ph
+uv.es
+uv.mx
+uva.br
+uva.es
+uva.nl
+uvanet.br
+uvas.edu.pk
+uvauga.ru
+uvb.edu.mx
+uveritas.ac.cr
+uvg.edu.gt
+uvg1.net
+uvh.nl
+uvi.edu
+uvic.ca
+uvic.es
+uvigo.es
+uvigo.gal
+uvipro.cl
+uvm.cl
+uvm.edu
+uvm.edu.ve
+uvm.sk
+uvmnet.edu
+uvs.edu
+uvsc.edu
+uvsq.fr
+uvt.edu.mx
+uvt.rnu.tn
+uvt.ro
+uvu.edu
+uvu.edu.cn
+uvvg.ro
+uw.edu
+uw.edu.pk
+uw.edu.pl
+uwa.edu.au
+uwasa.fi
+uwaterloo.ca
+uwc.ac.za
+uwc.edu
+uwcm.ac.uk
+uwe.ac.uk
+uwec.edu
+uwed.uz
+uwf.edu
+uwgb.edu
+uwi.tt
+uwic.ac.uk
+uwichill.edu.bb
+uwiener.edu.pe
+uwimona.edu.jm
+uwindsor.ca
+uwinnipeg.ca
+uwlax.edu
+uwm.edu
+uwm.edu.pl
+uwo.ca
+uwosh.edu
+uwp.edu
+uwplatt.edu
+uwrf.edu
+uws.edu.au
+uwsa.edu
+uwsp.edu
+uwstout.edu
+uwsuper.edu
+uwu.ac.lk
+uww.edu
+uwyo.edu
+uxac.edu.mx
+uy1.uninet.cm
+uz.ac.zw
+uz.rnu.tn
+uzh.ch
+uzimauniversity.ac.ke
+uzswlu.uz
+va.lv
+valahia.ro
+valdosta.edu
+valenciacollege.edu
+valleycollege.edu
+valpo.edu
+vancouver.wsu.edu
+vanderbilt.edu
+vaniercollege.qc.ca
+vassar.edu
+vbspu.ac.in
+vbu.co.in
+vcc.ca
+vcc.edu
+vccs.edu
+vcsu.nodak.edu
+vcu.edu
+vdu.edu.ua
+vdu.lt
+velammal.edu.in
+velammalitech.edu.in
+venta.lv
+venturacollege.edu
+ver.ucc.mx
+veritas.edu.ng
+vermontlaw.edu
+vern.hr
+vernoncollege.edu
+vesalius.edu
+vet-alfort.fr
+vet-lyon.fr
+vet-nantes.fr
+veths.no
+vfmac.edu
+vfrta.ru
+vfu.bg
+vfu.cz
+vgafk.ru
+vgasa.ru
+vgcc.edu
+vgmu.vitebsk.by
+vgta.vrn.ru
+vgtu.lt
+vgu.edu.vn
+vhcc.edu
+vic.edu
+victoria-uni.ch
+victoriacollege.edu
+vicu.utoronto.ca
+videndjurs.dk
+vidyasagar.ac.in
+vieup.ru
+vignanuniversity.org
+vikramuniversity.org
+villanova.edu
+villanueva.edu
+vimaru.edu.vn
+vinayakamissions.com
+virginia.edu
+virginiawestern.edu
+vistula.edu.pl
+visva-bharati.ac.in
+vit.ac.in
+vitbhopal.ac.in
+viu.edu.pa
+viu.es
+vjc.edu
+vkgu.kz
+vksu-ara.org
+vlekho.be
+vlerick.be
+vlerick.com
+vlsu.ru
+vmi.edu
+vmou.ac.in
+vmuf.edu.ph
+vnitnagpur.ac.in
+vnmu.vn.ua
+vnu.edu.vn
+vnuhcm.edu.vn
+voenmeh.ru
+volstate.edu
+volsu.ru
+voorhees.edu
+vorstu.ac.ru
+vpa.ac.lk
+vpu.lt
+vru.ac.ir
+vsau.ru
+vsavm.com
+vsb.cz
+vscht.cz
+vsci.cz
+vse.cz
+vsgaki.burnet.ru
+vsgtu.eastsib.ru
+vslib.cz
+vsm.sk
+vsma.info
+vsmu.sk
+vsp.cz
+vspu.ac.ru
+vspu.kirov.ru
+vspu.ru
+vssladkovicovo.sk
+vssut.ac.in
+vssvalzbety.sk
+vstecb.cz
+vstu.ru
+vstu.vinnica.ua
+vstu.vitebsk.by
+vsu.by
+vsu.edu
+vsu.ru
+vsvu.sk
+vt.edu
+vtc.edu
+vtu.ac.in
+vu-wien.ac.at
+vu.ac.th
+vu.edu.au
+vu.edu.pk
+vu.lt
+vu.nl
+vub.ac.be
+vub.be
+vul.edu
+vumk.eu
+vut.ac.za
+vut.cz
+vutbr.cz
+vuu.edu
+vuw.ac.nz
+vvc.edu
+vvsaz.org
+vvsu.ru
+vvu.edu.gh
+vwc.edu
+vxu.se
+w-hs.de
+wab.edu.pl
+wabash.edu
+waco.tstc.edu
+wageningenuniversity.nl
+wagner.edu
+wahmedicalcollege.edu.pk
+waikato.ac.nz
+wakayama-med.ac.jp
+wakayama-u.ac.jp
+wakefield.ac.uk
+wakehealth.edu
+waketech.edu
+wakf.org
+wakhok.ac.jp
+wako.ac.jp
+waldenu.edu
+wales.ac.uk
+wallace.edu
+wallacestate.edu
+wallawalla.edu
+walshcollege.edu
+warnborough.edu
+warren-wilson.edu
+warren.edu
+wartburg.edu
+warwick.ac.uk
+waseda.ac.jp
+washcoll.edu
+washington.edu
+washjeff.edu
+watc.edu
+waubonsee.edu
+wayne.edu
+wayne.uakron.edu
+waynecc.edu
+waynesburg.edu
+wayo.ac.jp
+wbu.edu
+wbuafs.nic.in
+wbut.net
+wc.edu
+wcc.vccs.edu
+wcc.yccd.edu
+wccc.edu
+wccc.me.edu
+wcccd.edu
+wccnet.edu
+wccs.edu
+wcjc.edu
+wcslc.edu
+wcsu.edu
+wctc.edu
+wcu.edu
+wcums.edu.cn
+wcupa.edu
+wdsdjxy.com
+wdt.edu
+wdu.edu.ng
+web.prover.com.br
+weber.edu
+webster.ac.at
+webster.ac.th
+webster.ch
+webster.edu
+weizmann.ac.il
+wellesley.edu
+wells.edu
+wellspringuniversity.edu.ng
+wenk.be
+wesley.edu
+wesleyan.edu
+wesleyan.edu.ph
+westal.edu
+westcoastuniversity-edu.com
+westcoastuniversity.bz
+westcoastuniversity.edu
+western.edu
+western.edu.kh
+westernsydney.edu.au
+westerntc.edu
+westernu.edu
+westfield.mass.edu
+westga.edu
+westgatech.edu
+westherts.ac.uk
+westhill.edu.mx
+westhillscollege.com
+westkentucky.kctcs.edu
+westliberty.edu
+westminster-mo.edu
+westminster.ac.uk
+westminster.edu
+westminster.edu.my
+westminsteru.edu
+westmont.edu
+westshore.edu
+westtexas.tstc.edu
+westvalley.edu
+wetcc.edu
+wfu.edu
+wgalil.ac.il
+wgu.edu
+whapu.edu.cn
+whatcom.ctc.edu
+wheaton.edu
+wheatonma.edu
+whitman.edu
+whittier.edu
+whitworth.edu
+whoi.edu
+whtu.edu.cn
+whu-koblenz.de
+whu.edu
+whu.edu.cn
+whut.edu.cn
+wichita.edu
+wicida.ac.id
+widener.edu
+widyagama.ac.id
+widyakarya.ac.id
+widyatama.ac.id
+wijayakusumasby.ac.id
+wilberforce.edu
+wileyc.edu
+wilkes.edu
+wilkescc.edu
+willamette.edu
+williamgilbert.co.uk
+williams.edu
+willistonstate.edu
+wilmina.ac.jp
+wilmington.edu
+wilmu.edu
+wilsoncc.edu
+wiltech.edu
+wima.ac.id
+wimbledon.ac.uk
+windesheim.nl
+windsor.edu
+windward.hawaii.edu
+wingate.edu
+winona.edu
+winthrop.edu
+wiregrass.edu
+wisc.edu
+wise.edu.jo
+wisnuwardhana.ac.id
+wit.edu
+wit.ie
+witc.edu
+witcc.edu
+wits.ac.za
+wittenberg.edu
+wittenborg.eu
+wiu.edu
+wiu.edu.sy
+wiut.uz
+wjc.edu
+wkau.kz
+wku.ac.kr
+wku.edu
+wku.edu.et
+wlac.edu
+wlc.edu
+wlodkowic.pl
+wlsc.wvnet.edu
+wlu.ca
+wlu.edu
+wlv.ac.uk
+wm.edu
+wma.edu
+wmc.edu
+wmcc.edu
+wmich.edu
+wmitchell.edu
+wmpenn.edu
+wmsu.edu.ph
+wmu.se
+wmwoods.edu
+wnc.edu
+wncc.edu
+wne.edu
+wnec.edu
+wnmu.edu
+wofford.edu
+wonkwang.ac.kr
+woodbury.edu
+wooster.edu
+woosuk.ac.kr
+worc.ac.uk
+worwic.edu
+wosc.edu
+wou.edu.my
+wp.missouristate.edu
+wpcc.edu
+wpi.edu
+wpu.edu.sy
+wpunj.edu
+wright.edu
+ws.edu
+wsb-nlu.edu.pl
+wsb.poznan.pl
+wsb.toi.tarnow.pl
+wsc.ac.uk
+wscc.edu
+wsei.lublin.pl
+wsfiz.edu.pl
+wsh.edu.pl
+wship.edu.pl
+wsinf.edu.pl
+wsisiz.edu.pl
+wsiz.rzeszow.pl
+wsm.gdynia.pl
+wsm.szczecin.pl
+wsm.whu.edu.cn
+wsms.edu.pl
+wsp.bydgoszcz.pl
+wsp.czest.pl
+wsp.krakow.pl
+wsp.slupsk.pl
+wsp.zgora.pl
+wspiz.edu.pl
+wsps.waw.pl
+wsptwpwaw.edu.pl
+wssu.edu
+wsu.ac.kr
+wsu.ac.za
+wsu.edu
+wsu.edu.et
+wsub.waw.pl
+wsz-pou.edu.pl
+wsz.pl
+wszib.krakow.pl
+wszim.edu.pl
+wtamu.edu
+wtc.edu
+wts.edu
+wtusm.edu.cn
+wu-wien.ac.at
+wu.ac.at
+wu.ac.th
+wu.edu.az
+wu.edu.et
+wua.ac.zw
+wuacc.edu
+wub.edu
+wuhee.edu.cn
+wuni.edu.et
+wustl.edu
+wustoportal.edu.ng
+wvc.edu
+wvncc.edu
+wvstate.edu
+wvsu.edu.ph
+wvu.edu
+wvwc.edu
+wwcc.edu
+wwcc.wy.edu
+wwu.de
+wwu.edu
+www-ecpm.u-strasbg.fr
+www-en.hnu.edu.cn
+www-engees.u-strasbg.fr
+www-ensais.u-strasbg.fr
+www-ensps.u-strasbg.fr
+www-ulp.u-strasbg.fr
+www-urs.u-strasbg.fr
+www.clcillinois.edu
+www.clcmn.edu
+www.cuesta.edu
+www.eacc.edu
+www.esmad.ipp.pt
+www.fdtc.edu
+www.ojc.edu
+www.sunyacc.edu
+www.sunyulster.edu
+www.tjc.edu
+www.yewon.ac.kr
+www.yongin.ac.kr
+www.youngsan.ac.kr
+www.ysu.ac.kr
+www2.mozcom.com
+www3.sunysuffolk.edu
+wxuli.edu.cn
+wyb.ac.lk
+wyu.edu.cn
+wzmu.net
+wzu.edu.cn
+xafa.edu.cn
+xahu.edu.cn
+xauat.edu.cn
+xaut.edu.cn
+xavier.edu
+xhcom.edu.cn
+xhu.edu.cn
+xidian.edu.cn
+xiju.edu.cn
+xisu.edu.cn
+xjau.edu.cn
+xjnu.edu.cn
+xjtlu.edu.cn
+xjtu.edu.cn
+xju.edu.cn
+xjufe.edu.cn
+xmu.edu.cn
+xtnu.edu.cn
+xtu.edu.cn
+xu.edu.ph
+xula.edu
+xz.edu.rs
+xza.cn
+xzmy.edu.cn
+xznu.edu.cn
+yabatech.edu.ng
+yacambu.edu.ve
+yai.ac.id
+yale-nus.edu.sg
+yale.edu
+yalova.edu.tr
+yama.sut.ac.jp
+yamagata-u.ac.jp
+yamaguchi-pu.ac.jp
+yamaguchi-u.ac.jp
+yamanashi-med.ac.jp
+yamanashi.ac.jp
+yangtzeu.edu.cn
+yarsi.ac.id
+yasar.edu.tr
+yasuda-u.ac.jp
+yau.edu.cn
+yazduni.ac.ir
+ybu.edu.cn
+ybu.edu.tr
+ybust.edu.cn
+yc.edu
+yc.yccd.edu
+yccc.edu
+ycmou.com
+ycp.edu
+yds.edu.vn
+yeditepe.edu.tr
+yeniyuzyil.edu.tr
+yeungnam.ac.kr
+ygu.ac.jp
+yhc.edu
+yic.edu.sa
+yildiz.edu.tr
+yizhuan.com
+yma.ac.ru
+ynau.edu.cn
+yncrea.fr
+ynnu.edu.cn
+ynu.ac.jp
+ynu.edu.cn
+yokkaichi-u.ac.jp
+yokohama-cu.ac.jp
+yonsei.ac.kr
+york.ac.uk
+york.cuny.edu
+yorksj.ac.uk
+yorktech.edu
+yorku.ca
+yosemite.edu
+yosu.ac.kr
+ypu.edu.sy
+ysmu.am
+ysparmaruniversity.org
+yspu.yar.ru
+ystu.yar.ru
+ysu.am
+ysu.edu
+ysu.edu.cn
+ysu.ru
+ytet.edu.cn
+yti.edu
+yti.edu.sa
+ytnc.edu.cn
+ytu.edu.cn
+yu.ac.ir
+yu.edu
+yu.edu.jo
+yuc.edu.sa
+yukoncollege.yk.ca
+yuksekihtisasuniversitesi.edu.tr
+yums.ac.ir
+yuniv.net
+yuntech.edu.tw
+yvc.ac.il
+yvcc.edu
+yyu.edu.tr
+yznu.cn
+yzu.edu.cn
+yzu.edu.tw
+zamanuniversity.edu.kh
+zamorano.edu
+zanestate.edu
+zaou.ac.zm
+zawiya.edu.pk
+zcu.cz
+zdmu.ac.ir
+zdsoft.com.cn
+zegu.ac.zw
+zetechcollege.com
+zgfxy.cn
+zhaw.ch
+zhdk.ch
+zhezu.kz
+zhgu.kz
+zhnut.edu.cn
+zhwin.ch
+zjfc.edu.cn
+zjgsu.edu.cn
+zjnu.edu.cn
+zjou.edu.cn
+zju.edu.cn
+zjut.edu.cn
+zntu.edu.ua
+znu.ac.ir
+znu.edu.ua
+znuel.net
+znufe.edu.cn
+zokei.ac.jp
+zou.ac.zw
+zpsb.szczecin.pl
+zpu.edu.jo
+zsb.scfai.edu.cn
+zsem.hr
+zstu.edu.cn
+zsu.edu.cn
+zu.ac.ae
+zu.edu.eg
+zu.edu.ly
+zu.edu.pk
+zucghana.org
+zums.ac.ir
+zut.edu.pl
+zuyd.nl
+zzgc.edu.cn
+zzut.edu.cn`;
+
+export const universityDomainsSet = new Set(universityDomains.split('\n'));

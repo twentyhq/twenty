@@ -7,7 +7,8 @@ import { filterOutIcsAttachments } from 'src/modules/messaging/message-import-ma
 import { filterOutInternals } from 'src/modules/messaging/message-import-manager/utils/filter-out-internals.util';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { isMessageSenderMatchingHandles } from 'src/modules/messaging/message-import-manager/utils/is-message-sender-matching-handles.util';
-import { isPersonalOrInstitutionalEmail } from 'src/utils/is-personal-or-institutional-email';
+import { isInstitutionalEmail } from 'src/utils/is-institutional-email';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 export const filterEmails = (
   primaryHandle: string,
@@ -24,7 +25,10 @@ export const filterEmails = (
     blocklist,
   );
 
-  const messagesWithoutInternals = isPersonalOrInstitutionalEmail(primaryHandle)
+  const isSharedDomain =
+    !isWorkEmail(primaryHandle) || isInstitutionalEmail(primaryHandle);
+
+  const messagesWithoutInternals = isSharedDomain
     ? messagesWithoutBlocklisted
     : filterOutInternals(primaryHandle, messagesWithoutBlocklisted);
 

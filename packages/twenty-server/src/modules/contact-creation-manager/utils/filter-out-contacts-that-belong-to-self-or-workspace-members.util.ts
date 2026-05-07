@@ -4,7 +4,8 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { isPersonalOrInstitutionalDomain } from 'src/utils/is-personal-or-institutional-email';
+import { isInstitutionalDomain } from 'src/utils/is-institutional-email';
+import { isWorkDomain } from 'src/utils/is-work-email';
 
 export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   contacts: Contact[],
@@ -41,7 +42,8 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   return contacts.filter(
     (contact) =>
       (isDifferentDomain(contact, selfDomainName) ||
-        isPersonalOrInstitutionalDomain(selfDomainName)) &&
+        !isWorkDomain(selfDomainName) ||
+        isInstitutionalDomain(selfDomainName)) &&
       // @ts-expect-error legacy noImplicitAny
       !workspaceMembersMap[contact.handle.toLowerCase()] &&
       !allHandles.includes(contact.handle.toLowerCase()),
