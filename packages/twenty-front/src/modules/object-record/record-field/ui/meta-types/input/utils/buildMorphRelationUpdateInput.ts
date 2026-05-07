@@ -2,7 +2,7 @@ import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMet
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { buildRecordWithAllMorphObjectIdsToNull } from '@/object-record/record-field/ui/meta-types/input/utils/buildRecordWithAllMorphObjectIdsToNull';
 import { type RelationType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName } from 'twenty-shared/utils';
+import { computeMorphRelationGqlFieldName } from 'twenty-shared/utils';
 
 export const buildMorphRelationUpdateInput = ({
   morphRelations,
@@ -45,7 +45,7 @@ export const buildMorphRelationUpdateInput = ({
     );
   }
 
-  const computedFieldName = computeMorphRelationFieldName({
+  const computedFieldName = computeMorphRelationGqlFieldName({
     fieldName,
     relationType,
     targetObjectMetadataNameSingular: targetObjectMetadataItem.nameSingular,
