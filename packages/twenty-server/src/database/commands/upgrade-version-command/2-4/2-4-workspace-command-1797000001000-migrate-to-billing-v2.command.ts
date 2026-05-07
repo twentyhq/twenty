@@ -34,9 +34,9 @@ type WorkflowPriceInfo = {
   creditAmount: number | null;
 };
 
-@RegisteredWorkspaceCommand('2.3.0', 1797000001000)
+@RegisteredWorkspaceCommand('2.4.0', 1797000001000)
 @Command({
-  name: 'upgrade:2-3:migrate-to-billing-v2',
+  name: 'upgrade:2-4:migrate-to-billing-v2',
   description:
     'Swap WORKFLOW_NODE_EXECUTION subscription items to RESOURCE_CREDIT for all V1 workspaces',
 })

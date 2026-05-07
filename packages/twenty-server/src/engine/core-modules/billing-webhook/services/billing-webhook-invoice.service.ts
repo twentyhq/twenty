@@ -103,13 +103,16 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
+    const trialEnd = isDefined(subscription.trialEnd)
+      ? Math.floor(subscription.trialEnd.getTime() / 1000)
+      : undefined;
+
+    const TRIAL_END_TOLERANCE_SECONDS = 60;
+
     const isFirstPeriodAfterTrial =
-      isDefined(subscription.trialEnd) &&
+      isDefined(trialEnd) &&
       isDefined(periodStart) &&
-      Math.abs(
-        periodStart - Math.floor(subscription.trialEnd.getTime() / 1000),
-      ) <
-        2 * 60 * 60;
+      Math.abs(periodStart - trialEnd) <= TRIAL_END_TOLERANCE_SECONDS;
 
     if (periodStart && !isFirstPeriodAfterTrial) {
       await this.processRollover(

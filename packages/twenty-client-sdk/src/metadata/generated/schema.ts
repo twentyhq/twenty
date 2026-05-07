@@ -1145,13 +1145,14 @@ export type BillingUsageType = 'METERED' | 'LICENSED'
 
 
 /** The different billing products available */
-export type BillingProductKey = 'BASE_PRODUCT' | 'WORKFLOW_NODE_EXECUTION'
+export type BillingProductKey = 'BASE_PRODUCT' | 'RESOURCE_CREDIT' | 'WORKFLOW_NODE_EXECUTION'
 
 export interface BillingPriceLicensed {
     recurringInterval: SubscriptionInterval
     unitAmount: Scalars['Float']
     stripePriceId: Scalars['String']
     priceUsageType: BillingUsageType
+    creditAmount?: Scalars['Float']
     __typename: 'BillingPriceLicensed'
 }
 
@@ -1244,7 +1245,8 @@ export interface BillingMeteredProductUsage {
 
 export interface BillingPlan {
     planKey: BillingPlanKey
-    licensedProducts: BillingLicensedProduct[]
+    baseProducts: BillingLicensedProduct[]
+    resourceCreditProducts: BillingLicensedProduct[]
     meteredProducts: BillingMeteredProduct[]
     __typename: 'BillingPlan'
 }
@@ -4079,6 +4081,7 @@ export interface BillingPriceLicensedGenqlSelection{
     unitAmount?: boolean | number
     stripePriceId?: boolean | number
     priceUsageType?: boolean | number
+    creditAmount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4177,7 +4180,8 @@ export interface BillingMeteredProductUsageGenqlSelection{
 
 export interface BillingPlanGenqlSelection{
     planKey?: boolean | number
-    licensedProducts?: BillingLicensedProductGenqlSelection
+    baseProducts?: BillingLicensedProductGenqlSelection
+    resourceCreditProducts?: BillingLicensedProductGenqlSelection
     meteredProducts?: BillingMeteredProductGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -8629,6 +8633,7 @@ export const enumBillingUsageType = {
 
 export const enumBillingProductKey = {
    BASE_PRODUCT: 'BASE_PRODUCT' as const,
+   RESOURCE_CREDIT: 'RESOURCE_CREDIT' as const,
    WORKFLOW_NODE_EXECUTION: 'WORKFLOW_NODE_EXECUTION' as const
 }
 
