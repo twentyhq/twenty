@@ -142,6 +142,12 @@ export class WorkspaceSchemaEnumManagerService {
       );
     }
 
+    const isTransactionAlreadyActive = queryRunner.isTransactionActive;
+
+    if (!isTransactionAlreadyActive) {
+      await queryRunner.startTransaction();
+    }
+
     try {
       const columnName = columnDefinition.name;
 
