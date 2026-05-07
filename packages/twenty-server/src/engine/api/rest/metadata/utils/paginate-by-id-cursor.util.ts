@@ -2,7 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type FindOptionsOrder,
+  type FindManyOptions,
   type FindOptionsWhere,
   LessThan,
   MoreThan,
@@ -27,7 +27,11 @@ export const paginateByIdCursor = async <T extends { id: string }>({
   limit: number;
   startingAfter?: string;
   endingBefore?: string;
-}): Promise<{ items: T[]; pageInfo: RestCursorPageInfo }> => {
+}): Promise<{
+  items: T[];
+  pageInfo: RestCursorPageInfo;
+  totalCount: number;
+}> => {
   if (isDefined(startingAfter) && isDefined(endingBefore)) {
     throw new BadRequestException(
       `'starting_after' and 'ending_before' cannot be used together.`,
@@ -42,11 +46,16 @@ export const paginateByIdCursor = async <T extends { id: string }>({
       ? { id: LessThan(startingAfter) }
       : {};
 
-  const rows = await repository.find({
-    where: { ...where, ...idCondition } as FindOptionsWhere<T>,
-    order: { id: isBackward ? 'ASC' : 'DESC' } as FindOptionsOrder<T>,
+  const findOptions = {
+    where: { ...where, ...idCondition },
+    order: { id: isBackward ? 'ASC' : 'DESC' },
     take: limit + 1,
-  });
+  } as FindManyOptions<T>;
+
+  const [rows, totalCount] = await Promise.all([
+    repository.find(findOptions),
+    repository.count({ where }),
+  ]);
 
   const hasMore = rows.length > limit;
   const items = hasMore ? rows.slice(0, limit) : rows;
@@ -62,5 +71,6 @@ export const paginateByIdCursor = async <T extends { id: string }>({
       startCursor: items[0]?.id ?? null,
       endCursor: items[items.length - 1]?.id ?? null,
     },
+    totalCount,
   };
 };

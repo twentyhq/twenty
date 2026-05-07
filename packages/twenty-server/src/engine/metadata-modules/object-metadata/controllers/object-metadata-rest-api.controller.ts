@@ -69,8 +69,9 @@ export class ObjectMetadataRestApiController {
   ): Promise<{
     data: ObjectMetadataWithFieldsDTO[];
     pageInfo: RestCursorPageInfo;
+    totalCount: number;
   }> {
-    const { items, pageInfo } = await paginateByIdCursor({
+    const { items, pageInfo, totalCount } = await paginateByIdCursor({
       repository: this.objectMetadataRepository,
       where: { workspaceId },
       limit: parseLimitRestRequest(request),
@@ -87,7 +88,7 @@ export class ObjectMetadataRestApiController {
       this.toObjectWithFieldsDto(object, fields.get(object.id) ?? []),
     );
 
-    return { data, pageInfo };
+    return { data, pageInfo, totalCount };
   }
 
   @Get(':id')

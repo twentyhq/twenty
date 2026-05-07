@@ -30,6 +30,7 @@ export const getFindManyResponse200 = (
                   endCursor: { type: 'string', format: 'uuid' },
                 },
               },
+              totalCount: { type: 'integer' },
             },
           },
         },

@@ -61,8 +61,12 @@ export class FieldMetadataRestApiController {
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<{ data: FieldMetadataDTO[]; pageInfo: RestCursorPageInfo }> {
-    const { items, pageInfo } = await paginateByIdCursor({
+  ): Promise<{
+    data: FieldMetadataDTO[];
+    pageInfo: RestCursorPageInfo;
+    totalCount: number;
+  }> {
+    const { items, pageInfo, totalCount } = await paginateByIdCursor({
       repository: this.fieldMetadataRepository,
       where: { workspaceId },
       limit: parseLimitRestRequest(request),
@@ -73,6 +77,7 @@ export class FieldMetadataRestApiController {
     return {
       data: items.map(fromFieldMetadataEntityToFieldMetadataDto),
       pageInfo,
+      totalCount,
     };
   }
 
