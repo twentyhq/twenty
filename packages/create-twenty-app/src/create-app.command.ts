@@ -125,6 +125,8 @@ export class CreateAppCommand {
             } else {
               console.log(chalk.yellow(`\n${startResult.error.message}`));
             }
+          } else {
+            this.logServerSkipped();
           }
         }
       }
@@ -320,6 +322,13 @@ export class CreateAppCommand {
   }
 
   private async shouldStartServer(autoConfirm?: boolean): Promise<boolean> {
+    console.log(
+      chalk.white(
+        '\n  A local Twenty instance is required for app development.\n' +
+          '  It provides the API and schema your application connects to.\n',
+      ),
+    );
+
     if (checkDockerRunning() && containerExists()) {
       if (autoConfirm) {
         return true;
@@ -355,6 +364,17 @@ export class CreateAppCommand {
     return startDocker;
   }
 
+  private logServerSkipped(): void {
+    console.log(
+      chalk.gray(
+        '\n  To start a Twenty instance later:\n' +
+          '     yarn twenty server start\n\n' +
+          '  To connect to a remote instance instead:\n' +
+          '     yarn twenty remote add\n',
+      ),
+    );
+  }
+
   private async promptConnectToLocal(serverUrl: string): Promise<boolean> {
     console.log(
       chalk.white(
@@ -376,7 +396,8 @@ export class CreateAppCommand {
     if (!shouldAuthenticate) {
       console.log(
         chalk.gray(
-          'Authentication skipped. Run `yarn twenty remote add --local` manually.',
+          '\n  Authentication skipped. To authenticate later:\n' +
+            `     yarn twenty remote add --local\n`,
         ),
       );
 
