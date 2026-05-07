@@ -213,6 +213,9 @@ export default {
             "updatedAt": [
                 4
             ],
+            "isConfigured": [
+                6
+            ],
             "__typename": [
                 1
             ]
