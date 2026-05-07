@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -13,9 +13,11 @@ import { CreatePermissionFlagDefinitionInput } from 'src/engine/metadata-modules
 import { PermissionFlagDefinitionDTO } from 'src/engine/metadata-modules/permission-flag-definition/dtos/permission-flag-definition.dto';
 import { UpdatePermissionFlagDefinitionInput } from 'src/engine/metadata-modules/permission-flag-definition/dtos/update-permission-flag-definition.input';
 import { PermissionFlagDefinitionService } from 'src/engine/metadata-modules/permission-flag-definition/permission-flag-definition.service';
+import { PermissionFlagDefinitionGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permission-flag-definition/utils/permission-flag-definition-graphql-api-exception.filter';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @UseGuards(WorkspaceAuthGuard)
+@UseFilters(PermissionFlagDefinitionGraphqlApiExceptionFilter)
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => PermissionFlagDefinitionDTO)
 export class PermissionFlagDefinitionResolver {

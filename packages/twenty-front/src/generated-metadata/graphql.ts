@@ -200,6 +200,7 @@ export enum AllMetadataName {
   pageLayoutTab = 'pageLayoutTab',
   pageLayoutWidget = 'pageLayoutWidget',
   permissionFlag = 'permissionFlag',
+  permissionFlagDefinition = 'permissionFlagDefinition',
   role = 'role',
   roleTarget = 'roleTarget',
   rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
@@ -1146,6 +1147,19 @@ export type CreatePageLayoutWidgetInput = {
   position?: InputMaybe<Scalars['JSON']>;
   title: Scalars['String'];
   type: WidgetType;
+};
+
+export type CreatePermissionFlagDefinitionInput = {
+  category: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  iconKey?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  isRelevantForAgents?: InputMaybe<Scalars['Boolean']>;
+  isRelevantForApiKeys?: InputMaybe<Scalars['Boolean']>;
+  isRelevantForUsers?: InputMaybe<Scalars['Boolean']>;
+  key: Scalars['String'];
+  label: Scalars['String'];
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateRoleInput = {
@@ -2373,6 +2387,7 @@ export type Mutation = {
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
+  createPermissionFlagDefinition: PermissionFlagDefinition;
   createPublicDomain: PublicDomain;
   createSAMLIdentityProvider: SetupSso;
   createSkill: Skill;
@@ -2401,6 +2416,7 @@ export type Mutation = {
   deleteOneLogicFunction: LogicFunction;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
+  deletePermissionFlagDefinition: PermissionFlagDefinition;
   deletePublicDomain: Scalars['Boolean'];
   deleteQueuedChatMessage: Scalars['Boolean'];
   deleteSSOIdentityProvider: DeleteSso;
@@ -2508,6 +2524,7 @@ export type Mutation = {
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
+  updatePermissionFlagDefinition: PermissionFlagDefinition;
   updateSkill: Skill;
   updateUserEmail: Scalars['Boolean'];
   updateView: View;
@@ -2724,6 +2741,11 @@ export type MutationCreatePageLayoutWidgetArgs = {
 };
 
 
+export type MutationCreatePermissionFlagDefinitionArgs = {
+  input: CreatePermissionFlagDefinitionInput;
+};
+
+
 export type MutationCreatePublicDomainArgs = {
   domain: Scalars['String'];
 };
@@ -2856,6 +2878,11 @@ export type MutationDeleteOneObjectArgs = {
 
 export type MutationDeleteOneRoleArgs = {
   roleId: Scalars['UUID'];
+};
+
+
+export type MutationDeletePermissionFlagDefinitionArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -3382,6 +3409,11 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 };
 
 
+export type MutationUpdatePermissionFlagDefinitionArgs = {
+  input: UpdatePermissionFlagDefinitionInput;
+};
+
+
 export type MutationUpdateSkillArgs = {
   input: UpdateSkillInput;
 };
@@ -3903,6 +3935,24 @@ export type PermissionFlag = {
   roleId: Scalars['UUID'];
 };
 
+export type PermissionFlagDefinition = {
+  __typename?: 'PermissionFlagDefinition';
+  applicationId: Scalars['UUID'];
+  category: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  iconKey?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isCustom: Scalars['Boolean'];
+  isRelevantForAgents: Scalars['Boolean'];
+  isRelevantForApiKeys: Scalars['Boolean'];
+  isRelevantForUsers: Scalars['Boolean'];
+  key: Scalars['String'];
+  label: Scalars['String'];
+  universalIdentifier: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export enum PermissionFlagType {
   AI = 'AI',
   AI_SETTINGS = 'AI_SETTINGS',
@@ -4151,6 +4201,8 @@ export type Query = {
   object: Object;
   objectRecordCounts: Array<ObjectRecordCount>;
   objects: ObjectConnection;
+  permissionFlagDefinition?: Maybe<PermissionFlagDefinition>;
+  permissionFlagDefinitions: Array<PermissionFlagDefinition>;
   pieChartData: PieChartData;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
@@ -4503,6 +4555,11 @@ export type QueryObjectArgs = {
 export type QueryObjectsArgs = {
   filter?: ObjectFilter;
   paging?: CursorPaging;
+};
+
+
+export type QueryPermissionFlagDefinitionArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -5160,6 +5217,23 @@ export type UpdatePageLayoutWithTabsInput = {
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   tabs: Array<UpdatePageLayoutTabWithWidgetsInput>;
   type: PageLayoutType;
+};
+
+export type UpdatePermissionFlagDefinitionInput = {
+  /** The id of the permission flag definition to update */
+  id: Scalars['UUID'];
+  /** The fields to update */
+  update: UpdatePermissionFlagDefinitionInputUpdates;
+};
+
+export type UpdatePermissionFlagDefinitionInputUpdates = {
+  category?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  iconKey?: InputMaybe<Scalars['String']>;
+  isRelevantForAgents?: InputMaybe<Scalars['Boolean']>;
+  isRelevantForApiKeys?: InputMaybe<Scalars['Boolean']>;
+  isRelevantForUsers?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateRoleInput = {

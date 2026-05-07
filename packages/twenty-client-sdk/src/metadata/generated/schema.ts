@@ -2490,13 +2490,31 @@ export interface MessageFolder {
 
 export type MessageFolderPendingSyncAction = 'FOLDER_DELETION' | 'NONE'
 
+export interface PermissionFlagDefinition {
+    id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    key: Scalars['String']
+    label: Scalars['String']
+    description?: Scalars['String']
+    iconKey?: Scalars['String']
+    category: Scalars['String']
+    isRelevantForAgents: Scalars['Boolean']
+    isRelevantForUsers: Scalars['Boolean']
+    isRelevantForApiKeys: Scalars['Boolean']
+    isCustom: Scalars['Boolean']
+    applicationId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'PermissionFlagDefinition'
+}
+
 export interface CollectionHash {
     collectionName: AllMetadataName
     hash: Scalars['String']
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'permissionFlagDefinition' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -2603,6 +2621,8 @@ export interface Query {
     myCalendarChannels: CalendarChannel[]
     webhooks: Webhook[]
     webhook?: Webhook
+    permissionFlagDefinitions: PermissionFlagDefinition[]
+    permissionFlagDefinition?: PermissionFlagDefinition
     minimalMetadata: MinimalMetadata
     chatThreads: AgentChatThread[]
     chatThread: AgentChatThread
@@ -2775,6 +2795,9 @@ export interface Mutation {
     createWebhook: Webhook
     updateWebhook: Webhook
     deleteWebhook: Webhook
+    createPermissionFlagDefinition: PermissionFlagDefinition
+    updatePermissionFlagDefinition: PermissionFlagDefinition
+    deletePermissionFlagDefinition: PermissionFlagDefinition
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
     stopAgentChatStream: Scalars['Boolean']
@@ -5502,6 +5525,25 @@ export interface MessageFolderGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PermissionFlagDefinitionGenqlSelection{
+    id?: boolean | number
+    universalIdentifier?: boolean | number
+    key?: boolean | number
+    label?: boolean | number
+    description?: boolean | number
+    iconKey?: boolean | number
+    category?: boolean | number
+    isRelevantForAgents?: boolean | number
+    isRelevantForUsers?: boolean | number
+    isRelevantForApiKeys?: boolean | number
+    isCustom?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CollectionHashGenqlSelection{
     collectionName?: boolean | number
     hash?: boolean | number
@@ -5636,6 +5678,8 @@ export interface QueryGenqlSelection{
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    permissionFlagDefinitions?: PermissionFlagDefinitionGenqlSelection
+    permissionFlagDefinition?: (PermissionFlagDefinitionGenqlSelection & { __args: {id: Scalars['UUID']} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     chatThreads?: AgentChatThreadGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -5829,6 +5873,9 @@ export interface MutationGenqlSelection{
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createPermissionFlagDefinition?: (PermissionFlagDefinitionGenqlSelection & { __args: {input: CreatePermissionFlagDefinitionInput} })
+    updatePermissionFlagDefinition?: (PermissionFlagDefinitionGenqlSelection & { __args: {input: UpdatePermissionFlagDefinitionInput} })
+    deletePermissionFlagDefinition?: (PermissionFlagDefinitionGenqlSelection & { __args: {id: Scalars['UUID']} })
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileIds?: (Scalars['UUID'][] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
@@ -6215,6 +6262,16 @@ id: Scalars['UUID'],
 update: UpdateWebhookInputUpdates}
 
 export interface UpdateWebhookInputUpdates {targetUrl?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
+
+export interface CreatePermissionFlagDefinitionInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),key: Scalars['String'],label: Scalars['String'],description?: (Scalars['String'] | null),iconKey?: (Scalars['String'] | null),category: Scalars['String'],isRelevantForAgents?: (Scalars['Boolean'] | null),isRelevantForUsers?: (Scalars['Boolean'] | null),isRelevantForApiKeys?: (Scalars['Boolean'] | null)}
+
+export interface UpdatePermissionFlagDefinitionInput {
+/** The id of the permission flag definition to update */
+id: Scalars['UUID'],
+/** The fields to update */
+update: UpdatePermissionFlagDefinitionInputUpdates}
+
+export interface UpdatePermissionFlagDefinitionInputUpdates {label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),iconKey?: (Scalars['String'] | null),category?: (Scalars['String'] | null),isRelevantForAgents?: (Scalars['Boolean'] | null),isRelevantForUsers?: (Scalars['Boolean'] | null),isRelevantForApiKeys?: (Scalars['Boolean'] | null)}
 
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
@@ -8167,6 +8224,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const PermissionFlagDefinition_possibleTypes: string[] = ['PermissionFlagDefinition']
+    export const isPermissionFlagDefinition = (obj?: { __typename?: any } | null): obj is PermissionFlagDefinition => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPermissionFlagDefinition"')
+      return PermissionFlagDefinition_possibleTypes.includes(obj.__typename)
+    }
+
+
+
     const CollectionHash_possibleTypes: string[] = ['CollectionHash']
     export const isCollectionHash = (obj?: { __typename?: any } | null): obj is CollectionHash => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
@@ -8852,6 +8917,7 @@ export const enumAllMetadataName = {
    commandMenuItem: 'commandMenuItem' as const,
    navigationMenuItem: 'navigationMenuItem' as const,
    permissionFlag: 'permissionFlag' as const,
+   permissionFlagDefinition: 'permissionFlagDefinition' as const,
    objectPermission: 'objectPermission' as const,
    fieldPermission: 'fieldPermission' as const,
    frontComponent: 'frontComponent' as const,

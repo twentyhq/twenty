@@ -109,7 +109,7 @@ export abstract class WorkspaceCommandRunner<
     }
 
     try {
-      await this.workspaceIteratorService.iterate({
+      const report = await this.workspaceIteratorService.iterate({
         workspaceIds:
           options.workspaceId && options.workspaceId.size > 0
             ? Array.from(options.workspaceId)
@@ -128,6 +128,10 @@ export abstract class WorkspaceCommandRunner<
           });
         },
       });
+
+      if (report.fail.length > 0) {
+        throw new Error(`Command failed for ${report.fail.length} workspace(s)`);
+      }
 
       this.logger.log(chalk.blue('Command completed!'));
     } catch (error) {

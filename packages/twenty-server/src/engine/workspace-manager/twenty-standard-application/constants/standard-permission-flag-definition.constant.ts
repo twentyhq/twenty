@@ -231,16 +231,6 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForUsers: true,
     isRelevantForApiKeys: false,
   },
-  WEB_SEARCH_TOOL: {
-    universalIdentifier: '20202021-1001-4001-9001-00000000001a',
-    label: 'Web Search',
-    description: 'Search the web via configured action tools (e.g. Exa)',
-    iconKey: 'IconWorld',
-    category: 'tool',
-    isRelevantForAgents: true,
-    isRelevantForUsers: false,
-    isRelevantForApiKeys: false,
-  },
   IMPORT_CSV: {
     universalIdentifier: '20202021-1001-4001-9001-000000000016',
     label: 'Import CSV',
