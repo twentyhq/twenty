@@ -382,7 +382,8 @@
                       "developers/extend/apps/config/overview",
                       "developers/extend/apps/config/application",
                       "developers/extend/apps/config/roles",
-                      "developers/extend/apps/config/install-hooks"
+                      "developers/extend/apps/config/install-hooks",
+                      "developers/extend/apps/config/public-assets"
                     ]
                   },
                   {
@@ -414,8 +415,15 @@
                       "developers/extend/apps/layout/command-menu-items"
                     ]
                   },
-                  "developers/extend/apps/cli-and-testing",
-                  "developers/extend/apps/publishing"
+                  {
+                    "group": "Operations",
+                    "pages": [
+                      "developers/extend/apps/operations/overview",
+                      "developers/extend/apps/operations/cli",
+                      "developers/extend/apps/operations/testing",
+                      "developers/extend/apps/operations/publishing"
+                    ]
+                  }
                 ]
               },
               {
@@ -5452,6 +5460,14 @@
     {
       "source": "/developers/extend/apps/data/roles",
       "destination": "/developers/extend/apps/config/roles"
+    },
+    {
+      "source": "/developers/extend/apps/cli-and-testing",
+      "destination": "/developers/extend/apps/operations/overview"
+    },
+    {
+      "source": "/developers/extend/apps/publishing",
+      "destination": "/developers/extend/apps/operations/publishing"
     },
     {
       "source": "/developers/extend/apps/logic-functions",

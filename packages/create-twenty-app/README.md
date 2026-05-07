@@ -52,7 +52,7 @@ Full documentation is available at **[docs.twenty.com/developers/extend/apps](ht
 
 - [Getting Started](https://docs.twenty.com/developers/extend/apps/getting-started) — step-by-step setup, project structure, server management, CI
 - [Building Apps](https://docs.twenty.com/developers/extend/apps/building) — entity definitions, API clients, testing
-- [Publishing](https://docs.twenty.com/developers/extend/apps/publishing) — deploy, npm publish, marketplace
+- [Publishing](https://docs.twenty.com/developers/extend/apps/operations/publishing) — deploy, npm publish, marketplace
 
 ## Troubleshooting
 

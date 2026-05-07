@@ -8,6 +8,7 @@
     - https://docs.twenty.com/developers/extend/apps/config/application.md
     - https://docs.twenty.com/developers/extend/apps/config/roles.md
     - https://docs.twenty.com/developers/extend/apps/config/install-hooks.md
+    - https://docs.twenty.com/developers/extend/apps/config/public-assets.md
 - Data:
     - https://docs.twenty.com/developers/extend/apps/data/overview.md
     - https://docs.twenty.com/developers/extend/apps/data/objects.md
@@ -26,8 +27,10 @@
     - https://docs.twenty.com/developers/extend/apps/layout/front-components.md
     - https://docs.twenty.com/developers/extend/apps/layout/command-menu-items.md
 - Operations:
-    - https://docs.twenty.com/developers/extend/apps/cli-and-testing.md
-    - https://docs.twenty.com/developers/extend/apps/publishing.md
+    - https://docs.twenty.com/developers/extend/apps/operations/overview.md
+    - https://docs.twenty.com/developers/extend/apps/operations/cli.md
+    - https://docs.twenty.com/developers/extend/apps/operations/testing.md
+    - https://docs.twenty.com/developers/extend/apps/operations/publishing.md
 - Rich app example: https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/postcard
 
 ## UUID requirement

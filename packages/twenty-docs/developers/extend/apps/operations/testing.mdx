@@ -1,64 +1,10 @@
 ---
-title: CLI & Testing
-description: CLI commands, testing setup, public assets, npm packages, remotes, and CI configuration.
-icon: "terminal"
+title: Testing
+description: Vitest setup, integration tests against a real Twenty server, type checking, and CI with GitHub Actions.
+icon: "flask"
 ---
 
-## Public assets (`public/` folder)
-
-The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
-
-Files placed in `public/` are:
-
-- **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
-- **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
-- **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
-- **Used for marketplace metadata** — the `logoUrl` and `screenshots` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published.
-- **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-- **Included in builds** — `yarn twenty build` bundles all public assets into the distribution output.
-
-### Accessing public assets with `getPublicAssetUrl`
-
-Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
-
-**In a logic function:**
-
-```ts src/logic-functions/send-invoice.ts
-import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
-
-const handler = async (): Promise<any> => {
-  const logoUrl = getPublicAssetUrl('logo.png');
-  const invoiceUrl = getPublicAssetUrl('templates/invoice.png');
-
-  // Fetch the file content (no auth required — public endpoint)
-  const response = await fetch(invoiceUrl);
-  const buffer = await response.arrayBuffer();
-
-  return { logoUrl, size: buffer.byteLength };
-};
-
-export default defineLogicFunction({
-  universalIdentifier: 'a1b2c3d4-...',
-  name: 'send-invoice',
-  description: 'Sends an invoice with the app logo',
-  timeoutSeconds: 10,
-  handler,
-});
-```
-
-**In a front component:**
-
-```tsx src/front-components/company-card.tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
-
-export default defineFrontComponent(() => {
-  const logoUrl = getPublicAssetUrl('logo.png');
-
-  return <img src={logoUrl} alt="App logo" />;
-});
-```
-
-The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+The SDK provides programmatic APIs that let you build, deploy, install, and uninstall your app from test code. Combined with [Vitest](https://vitest.dev/) and the typed API clients, you can write integration tests that verify your app works end-to-end against a real Twenty server.
 
 ## Using npm packages
 
@@ -118,11 +64,7 @@ The build step uses esbuild to produce a single self-contained file per logic fu
 
 Both environments have `twenty-client-sdk/core` and `twenty-client-sdk/metadata` available as pre-provided modules — these are not bundled but resolved at runtime by the server.
 
-## Testing your app
-
-The SDK provides programmatic APIs that let you build, deploy, install, and uninstall your app from test code. Combined with [Vitest](https://vitest.dev/) and the typed API clients, you can write integration tests that verify your app works end-to-end against a real Twenty server.
-
-### Setup
+## Setup
 
 The scaffolded app already includes Vitest. If you set it up manually, install the dependencies:
 
@@ -196,7 +138,7 @@ beforeAll(async () => {
 });
 ```
 
-### Programmatic SDK APIs
+## Programmatic SDK APIs
 
 The `twenty-sdk/cli` subpath exports functions you can call directly from test code:
 
@@ -209,7 +151,7 @@ The `twenty-sdk/cli` subpath exports functions you can call directly from test c
 
 Each function returns a result object with `success: boolean` and either `data` or `error`.
 
-### Writing an integration test
+## Writing an integration test
 
 Here is a full example that builds, deploys, and installs the app, then verifies it appears in the workspace:
 
@@ -274,7 +216,7 @@ describe('App installation', () => {
 });
 ```
 
-### Running tests
+## Running tests
 
 Make sure your local Twenty server is running, then:
 
@@ -288,7 +230,7 @@ Or in watch mode during development:
 yarn test:watch
 ```
 
-### Type checking
+## Type checking
 
 You can also run type checking on your app without running tests:
 
@@ -297,81 +239,6 @@ yarn twenty typecheck
 ```
 
 This runs `tsc --noEmit` and reports any type errors.
-
-## CLI reference
-
-Beyond `dev`, `build`, `add`, and `typecheck`, the CLI provides commands for executing functions, viewing logs, and managing app installations.
-
-### Executing functions (`yarn twenty exec`)
-
-Run a logic function manually without triggering it via HTTP, cron, or database event:
-
-```bash filename="Terminal"
-# Execute by function name
-yarn twenty exec -n create-new-post-card
-
-# Execute by universalIdentifier
-yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
-
-# Pass a JSON payload
-yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
-
-# Execute the post-install function
-yarn twenty exec --postInstall
-```
-
-### Viewing function logs (`yarn twenty logs`)
-
-Stream execution logs for your app's logic functions:
-
-```bash filename="Terminal"
-# Stream all function logs
-yarn twenty logs
-
-# Filter by function name
-yarn twenty logs -n create-new-post-card
-
-# Filter by universalIdentifier
-yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
-```
-
-<Note>
-This is different from `yarn twenty server logs`, which shows the Docker container logs. `yarn twenty logs` shows your app's function execution logs from the Twenty server.
-</Note>
-
-### Uninstalling an app (`yarn twenty uninstall`)
-
-Remove your app from the active workspace:
-
-```bash filename="Terminal"
-yarn twenty uninstall
-
-# Skip the confirmation prompt
-yarn twenty uninstall --yes
-```
-
-## Managing remotes
-
-A **remote** is a Twenty server that your app connects to. During setup, the scaffolder creates one for you automatically. You can add more remotes or switch between them at any time.
-
-```bash filename="Terminal"
-# Add a new remote (opens a browser for OAuth login)
-yarn twenty remote add
-
-# Connect to a local Twenty server (auto-detects port 2020 or 3000)
-yarn twenty remote add --local
-
-# Add a remote non-interactively (useful for CI)
-yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
-
-# List all configured remotes
-yarn twenty remote list
-
-# Switch the active remote
-yarn twenty remote switch <name>
-```
-
-Your credentials are stored in `~/.twenty/config.json`.
 
 ## CI with GitHub Actions
 
