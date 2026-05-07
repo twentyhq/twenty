@@ -99,4 +99,13 @@ describe('enqueueLogicFunctionExecution', () => {
       }),
     ).rejects.toThrow(/exactly one of name or universalIdentifier/);
   });
+
+  it('treats empty universalIdentifier as missing', async () => {
+    await expect(
+      enqueueLogicFunctionExecution({
+        universalIdentifier: '',
+        payload: {},
+      }),
+    ).rejects.toThrow(/exactly one of name or universalIdentifier/);
+  });
 });

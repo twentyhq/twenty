@@ -3,7 +3,6 @@ import {
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 
 const ENQUEUE_LOGIC_FUNCTION_TIMEOUT_MS = 10_000;
 
@@ -30,7 +29,7 @@ export const enqueueLogicFunctionExecution = async (
     );
   }
 
-  const hasUniversalIdentifier = isDefined(params.universalIdentifier);
+  const hasUniversalIdentifier = isNonEmptyString(params.universalIdentifier);
   const hasName = isNonEmptyString(params.name);
 
   if (hasUniversalIdentifier === hasName) {
