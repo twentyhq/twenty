@@ -96,9 +96,9 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         buildArgs(buildFlatDefinition({ key: '' })),
       );
 
-      expect(result.errors.map((error) => error.code)).toContain(
+      expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_KEY,
-      );
+      ]);
     });
 
     it('rejects an unknown permission type', () => {
@@ -110,9 +110,9 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         ),
       );
 
-      expect(result.errors.map((error) => error.code)).toContain(
+      expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_PERMISSION_TYPE,
-      );
+      ]);
     });
 
     it('rejects a duplicate key in the same workspace', () => {
@@ -128,9 +128,9 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         buildArgs(buildFlatDefinition({ key: 'EXISTING_KEY' }), optimisticMaps),
       );
 
-      expect(result.errors.map((error) => error.code)).toContain(
+      expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_ALREADY_EXISTS,
-      );
+      ]);
     });
 
     it('rejects a duplicate universal identifier', () => {
@@ -149,9 +149,9 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         ),
       );
 
-      expect(result.errors.map((error) => error.code)).toContain(
+      expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_ALREADY_EXISTS,
-      );
+      ]);
     });
   });
 
@@ -193,9 +193,9 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionUpdate']
       >[0]);
 
-      expect(result.errors.map((error) => error.code)).toContain(
+      expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_KEY_IMMUTABLE,
-      );
+      ]);
     });
 
     it('returns not-found if no existing definition matches the universalIdentifier', () => {
@@ -210,9 +210,9 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionUpdate']
       >[0]);
 
-      expect(result.errors.map((error) => error.code)).toContain(
+      expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_NOT_FOUND,
-      );
+      ]);
     });
 
     it('rejects updating a standard definition from a custom application', () => {
@@ -239,9 +239,9 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionUpdate']
       >[0]);
 
-      expect(result.errors.map((error) => error.code)).toContain(
+      expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_IS_STANDARD,
-      );
+      ]);
     });
 
     it('rejects updating to an unknown permission type', () => {
@@ -263,9 +263,9 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionUpdate']
       >[0]);
 
-      expect(result.errors.map((error) => error.code)).toContain(
+      expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_PERMISSION_TYPE,
-      );
+      ]);
     });
   });
 
@@ -304,9 +304,9 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionDeletion']
       >[0]);
 
-      expect(result.errors.map((error) => error.code)).toContain(
+      expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_NOT_FOUND,
-      );
+      ]);
     });
 
     it('rejects deleting a standard definition from a custom application', () => {
@@ -333,9 +333,9 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionDeletion']
       >[0]);
 
-      expect(result.errors.map((error) => error.code)).toContain(
+      expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_IS_STANDARD,
-      );
+      ]);
     });
 
     it('rejects deleting a definition while roles still grant its key', () => {
@@ -369,9 +369,9 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionDeletion']
       >[0]);
 
-      expect(result.errors.map((error) => error.code)).toContain(
+      expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_IN_USE,
-      );
+      ]);
     });
   });
 

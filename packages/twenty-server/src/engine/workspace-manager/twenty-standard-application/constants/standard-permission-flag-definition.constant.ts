@@ -2,15 +2,6 @@ import { type PermissionFlagType } from 'twenty-shared/constants';
 
 import { type PermissionFlagDefinitionPermissionType } from 'src/engine/metadata-modules/permission-flag-definition/constants/permission-flag-definition-permission-type.constant';
 
-// Each entry maps a PermissionFlagType enum key to a stable universalIdentifier
-// plus the metadata used to render the flag in the Roles UI. Adding a new
-// built-in flag requires:
-//   1. Adding it to PermissionFlagType in twenty-shared/src/constants/PermissionFlagType.ts
-//   2. Adding an entry below with a fresh universalIdentifier
-//   3. Running the upgrade migration so existing workspaces seed the new row.
-// The Record<PermissionFlagType, ...> satisfies clause below makes step 2 a
-// compile-time requirement — adding a new enum value without an entry will fail typecheck.
-
 export type StandardPermissionFlagDefinitionMetadata = {
   universalIdentifier: string;
   label: string;
@@ -24,7 +15,7 @@ export type StandardPermissionFlagDefinitionMetadata = {
 
 export const STANDARD_PERMISSION_FLAG_DEFINITION = {
   API_KEYS_AND_WEBHOOKS: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000001',
+    universalIdentifier: '20202020-1001-4001-9001-000000000001',
     label: 'API Keys and Webhooks',
     description: 'Manage API keys and webhooks',
     iconKey: 'IconApi',
@@ -34,7 +25,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   WORKSPACE: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000002',
+    universalIdentifier: '20202020-1001-4001-9001-000000000002',
     label: 'Workspace',
     description: 'Manage workspace settings',
     iconKey: 'IconBuildingSkyscraper',
@@ -44,7 +35,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   WORKSPACE_MEMBERS: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000003',
+    universalIdentifier: '20202020-1001-4001-9001-000000000003',
     label: 'Workspace Members',
     description: 'Manage workspace members',
     iconKey: 'IconUsers',
@@ -54,7 +45,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   ROLES: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000004',
+    universalIdentifier: '20202020-1001-4001-9001-000000000004',
     label: 'Roles',
     description: 'Manage roles and permissions',
     iconKey: 'IconShieldLock',
@@ -64,7 +55,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   DATA_MODEL: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000005',
+    universalIdentifier: '20202020-1001-4001-9001-000000000005',
     label: 'Data Model',
     description: 'Manage objects and fields',
     iconKey: 'IconHierarchy2',
@@ -74,7 +65,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   SECURITY: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000006',
+    universalIdentifier: '20202020-1001-4001-9001-000000000006',
     label: 'Security',
     description: 'Manage security settings',
     iconKey: 'IconLock',
@@ -84,7 +75,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   WORKFLOWS: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000007',
+    universalIdentifier: '20202020-1001-4001-9001-000000000007',
     label: 'Workflows',
     description: 'Manage workflows and logic functions',
     iconKey: 'IconSettingsAutomation',
@@ -94,7 +85,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   IMPERSONATE: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000008',
+    universalIdentifier: '20202020-1001-4001-9001-000000000008',
     label: 'Impersonate',
     description: 'Impersonate other workspace members',
     iconKey: 'IconUser',
@@ -104,7 +95,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   SSO_BYPASS: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000009',
+    universalIdentifier: '20202020-1001-4001-9001-000000000009',
     label: 'SSO Bypass',
     description: 'Bypass single sign-on requirements',
     iconKey: 'IconKey',
@@ -114,7 +105,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   APPLICATIONS: {
-    universalIdentifier: '20202021-1001-4001-9001-00000000000a',
+    universalIdentifier: '20202020-1001-4001-9001-00000000000a',
     label: 'Applications',
     description: 'Manage installed applications',
     iconKey: 'IconApps',
@@ -124,7 +115,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   MARKETPLACE_APPS: {
-    universalIdentifier: '20202021-1001-4001-9001-00000000000b',
+    universalIdentifier: '20202020-1001-4001-9001-00000000000b',
     label: 'Marketplace Apps',
     description: 'Browse and install marketplace apps',
     iconKey: 'IconShoppingBag',
@@ -134,7 +125,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   LAYOUTS: {
-    universalIdentifier: '20202021-1001-4001-9001-00000000000c',
+    universalIdentifier: '20202020-1001-4001-9001-00000000000c',
     label: 'Layouts',
     description: 'Manage page layouts',
     iconKey: 'IconLayout',
@@ -144,7 +135,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   BILLING: {
-    universalIdentifier: '20202021-1001-4001-9001-00000000000d',
+    universalIdentifier: '20202020-1001-4001-9001-00000000000d',
     label: 'Billing',
     description: 'Manage billing and subscriptions',
     iconKey: 'IconCreditCard',
@@ -154,7 +145,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   AI_SETTINGS: {
-    universalIdentifier: '20202021-1001-4001-9001-00000000000e',
+    universalIdentifier: '20202020-1001-4001-9001-00000000000e',
     label: 'AI Settings',
     description: 'Manage AI provider settings',
     iconKey: 'IconBrain',
@@ -164,7 +155,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   AI: {
-    universalIdentifier: '20202021-1001-4001-9001-00000000000f',
+    universalIdentifier: '20202020-1001-4001-9001-00000000000f',
     label: 'AI',
     description: 'Use AI features',
     iconKey: 'IconSparkles',
@@ -174,7 +165,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: true,
   },
   VIEWS: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000010',
+    universalIdentifier: '20202020-1001-4001-9001-000000000010',
     label: 'Views',
     description: 'Read and write views',
     iconKey: 'IconLayoutGrid',
@@ -184,7 +175,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: true,
   },
   UPLOAD_FILE: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000011',
+    universalIdentifier: '20202020-1001-4001-9001-000000000011',
     label: 'Upload File',
     description: 'Upload files to the workspace',
     iconKey: 'IconUpload',
@@ -194,7 +185,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: true,
   },
   DOWNLOAD_FILE: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000012',
+    universalIdentifier: '20202020-1001-4001-9001-000000000012',
     label: 'Download File',
     description: 'Download files from the workspace',
     iconKey: 'IconDownload',
@@ -204,7 +195,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: true,
   },
   SEND_EMAIL_TOOL: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000013',
+    universalIdentifier: '20202020-1001-4001-9001-000000000013',
     label: 'Send Email',
     description: 'Send emails on behalf of users',
     iconKey: 'IconAt',
@@ -214,7 +205,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   HTTP_REQUEST_TOOL: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000014',
+    universalIdentifier: '20202020-1001-4001-9001-000000000014',
     label: 'HTTP Request',
     description: 'Make outbound HTTP requests',
     iconKey: 'IconApi',
@@ -224,7 +215,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   CODE_INTERPRETER_TOOL: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000015',
+    universalIdentifier: '20202020-1001-4001-9001-000000000015',
     label: 'Code Interpreter',
     description: 'Run code to analyze files and data',
     iconKey: 'IconCode',
@@ -234,7 +225,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   IMPORT_CSV: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000016',
+    universalIdentifier: '20202020-1001-4001-9001-000000000016',
     label: 'Import CSV',
     description: 'Import records from CSV files',
     iconKey: 'IconFileImport',
@@ -244,7 +235,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   EXPORT_CSV: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000017',
+    universalIdentifier: '20202020-1001-4001-9001-000000000017',
     label: 'Export CSV',
     description: 'Export records to CSV files',
     iconKey: 'IconFileExport',
@@ -254,7 +245,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   CONNECTED_ACCOUNTS: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000018',
+    universalIdentifier: '20202020-1001-4001-9001-000000000018',
     label: 'Connected Accounts',
     description: 'Read connected email and calendar accounts',
     iconKey: 'IconMail',
@@ -264,7 +255,7 @@ export const STANDARD_PERMISSION_FLAG_DEFINITION = {
     isRelevantForApiKeys: false,
   },
   PROFILE_INFORMATION: {
-    universalIdentifier: '20202021-1001-4001-9001-000000000019',
+    universalIdentifier: '20202020-1001-4001-9001-000000000019',
     label: 'Profile Information',
     description: 'Read profile information',
     iconKey: 'IconUser',
