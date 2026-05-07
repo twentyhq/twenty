@@ -49,7 +49,10 @@ export class OIDCAuthGuard extends AuthGuard('openidconnect') {
       };
     }
 
-    throw new Error('Invalid OIDC identity provider params');
+    throw new AuthException(
+      'Invalid OIDC identity provider params',
+      AuthExceptionCode.INVALID_DATA,
+    );
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

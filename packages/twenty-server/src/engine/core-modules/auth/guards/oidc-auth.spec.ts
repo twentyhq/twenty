@@ -135,4 +135,24 @@ describe('OIDCAuthGuard', () => {
     await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(false);
     expect(guardRedirectService.dispatchErrorFromGuard).toHaveBeenCalled();
   });
+
+  it('should handle missing state param and identityProviderId with AuthException', async () => {
+    const mockedRequest = createMockedRequest({}, {});
+
+    mockExecutionContext = createMockExecutionContext(mockedRequest);
+
+    await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(false);
+    expect(guardRedirectService.dispatchErrorFromGuard).toHaveBeenCalled();
+    expect(ssoService.findSSOIdentityProviderById).not.toHaveBeenCalled();
+  });
+
+  it('should handle malformed state param with AuthException', async () => {
+    const mockedRequest = createMockedRequest({}, { state: 'not-json' });
+
+    mockExecutionContext = createMockExecutionContext(mockedRequest);
+
+    await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(false);
+    expect(guardRedirectService.dispatchErrorFromGuard).toHaveBeenCalled();
+    expect(ssoService.findSSOIdentityProviderById).not.toHaveBeenCalled();
+  });
 });
