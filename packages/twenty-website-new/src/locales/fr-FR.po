@@ -559,6 +559,12 @@ msgstr ""
 msgid "around it"
 msgstr ""
 
+#. js-lingui-id: Tt5T6+
+#: src/sections/Menu/data.ts
+#: src/sections/Footer/data.ts
+msgid "Articles"
+msgstr ""
+
 #. js-lingui-id: yYKNWp
 #: src/app/[locale]/(home)/page.tsx
 msgid "Assemble, iterate and adapt a robust CRM,"
@@ -1642,6 +1648,11 @@ msgstr ""
 msgid "How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone."
 msgstr ""
 
+#. js-lingui-id: xalbpT
+#: src/lib/website-routing/static-website-routes.ts
+msgid "Ideas from the team building Twenty on open source CRM, customer data, GTM systems, and building software that lasts."
+msgstr ""
+
 #. js-lingui-id: l0JGUk
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Impersonate users"
@@ -2337,6 +2348,11 @@ msgstr ""
 #. js-lingui-id: gSQVmr
 #: src/sections/Helped/components/Card.tsx
 msgid "Read the case"
+msgstr ""
+
+#. js-lingui-id: 0ybw+o
+#: src/sections/Menu/data.ts
+msgid "Read Twenty insights"
 msgstr ""
 
 #. js-lingui-id: EqCbT9
@@ -3126,6 +3142,11 @@ msgstr ""
 #. js-lingui-id: G4fKLP
 #: src/app/[locale]/partners/testimonials.data.ts
 msgid "Twenty Apps opens the door to building products, not just implementations. For example, we're developing a WhatsApp Business integration that any Twenty’s client could get. That's a recurring revenue stream we wouldn't have if we were just configuring someone else's platform."
+msgstr ""
+
+#. js-lingui-id: q9UWVC
+#: src/lib/website-routing/static-website-routes.ts
+msgid "Twenty Articles — Open Source CRM Insights"
 msgstr ""
 
 #. js-lingui-id: mkTfZ1

@@ -51,6 +51,7 @@ type ApplicationRegistration {
   logoUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
+  isConfigured: Boolean!
 }
 
 enum ApplicationRegistrationSourceType {

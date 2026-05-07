@@ -4,7 +4,10 @@ import { isObjectWithId } from '@/object-record/record-field/ui/utils/junction/i
 import { type ExtractedTargetRecord } from '@/object-record/record-field/ui/utils/junction/types/ExtractedTargetRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationGqlFieldName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type ExtractTargetRecordsFromJunctionArgs = {
   junctionRecords: ObjectRecord[] | undefined | null;
@@ -85,7 +88,7 @@ const extractFromMorphRelationField = (
   }
 
   for (const morphRelation of morphRelations) {
-    const computedFieldName = computeMorphRelationFieldName({
+    const computedFieldName = computeMorphRelationGqlFieldName({
       fieldName: morphRelation.sourceFieldMetadata.name,
       relationType: morphRelation.type,
       targetObjectMetadataNameSingular:
