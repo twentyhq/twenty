@@ -36,8 +36,8 @@ your-app/
 
 | Entity | Purpose | Docs |
 |--------|---------|------|
-| **Application** | App identity, default role, variables | [Application Config](/developers/extend/apps/data/application) |
-| **Role** | Permission sets on objects and fields | [Roles & Permissions](/developers/extend/apps/data/roles) |
+| **Application** | App identity, default role, variables | [Application Config](/developers/extend/apps/config/application) |
+| **Role** | Permission sets on objects and fields | [Roles & Permissions](/developers/extend/apps/config/roles) |
 | **Object** | Custom record types with fields | [Objects](/developers/extend/apps/data/objects) |
 | **Field** | Add fields to objects from other apps | [Extending Objects](/developers/extend/apps/data/extending-objects) |
 | **Relation** | Bidirectional links between objects | [Relations](/developers/extend/apps/data/relations) |
@@ -78,7 +78,7 @@ your-app/
 
 - **`yarn twenty dev`** — watches your source files and live-syncs changes to a connected Twenty server. The typed API client is regenerated automatically when the schema changes.
 - **`yarn twenty build`** — compiles TypeScript, bundles logic functions and front components with esbuild, and produces a manifest.
-- **Pre/post-install hooks** — optional logic functions that run during installation. See [Logic Functions](/developers/extend/apps/logic/logic-functions) for details.
+- **Pre/post-install hooks** — optional functions that run during installation. See [Install Hooks](/developers/extend/apps/config/install-hooks) for details.
 
 ## Scaffolding entities with `yarn twenty add`
 
@@ -138,8 +138,11 @@ yarn twenty add logicFunction --path src/custom-folder
 ## Next steps
 
 <CardGroup cols={2}>
+  <Card title="Config" icon="screwdriver-wrench" href="/developers/extend/apps/config/overview">
+    Application identity, default role, and install hooks.
+  </Card>
   <Card title="Data" icon="database" href="/developers/extend/apps/data/overview">
-    Application, roles, objects, fields, relations.
+    Objects, fields, and bidirectional relations.
   </Card>
   <Card title="Logic" icon="bolt" href="/developers/extend/apps/logic/overview">
     Logic functions, skills, agents, and OAuth connections.

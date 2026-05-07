@@ -1,38 +1,31 @@
 ---
 title: Overview
-description: Shape the data inside a workspace — application identity, roles, objects, fields, and relations.
+description: Shape the data your app adds to a workspace — objects, fields, and relations.
 icon: "database"
 ---
 
-A Twenty app's **data layer** is everything the app contributes to the shape of a workspace — the new record types it adds, how those records connect to standard objects like Person and Company, and the permissions the app holds on the data it touches.
+A Twenty app's **data layer** is the data your app *adds* to a workspace — the new record types it declares, the columns it adds to existing objects, and how those records connect to each other.
 
 ```text
 ┌──────────────────────────────────────────────────┐
-│ Application — identity, default role, metadata   │
-│                                                  │
-│   ┌────────────────────────────────────────────┐ │
-│   │ Role — what objects and fields the app's   │ │
-│   │ logic functions can read and write         │ │
-│   └────────────────────────────────────────────┘ │
-│                                                  │
-│   ┌────────────────────────────────────────────┐ │
-│   │ Object — a record type, e.g. PostCard      │ │
-│   │    ├─ Field     (name, type, label)        │ │
-│   │    ├─ Field                                │ │
-│   │    └─ Relation  (link to another object)   │ │
-│   └────────────────────────────────────────────┘ │
+│ Object — a record type, e.g. PostCard            │
+│    ├─ Field     (name, type, label)              │
+│    ├─ Field                                      │
+│    └─ Relation  (link to another object)         │
+└──────────────────────────────────────────────────┘
+            │
+            ├── lives in your app, OR
+            │
+            ▼
+┌──────────────────────────────────────────────────┐
+│ Standard / other apps' objects                   │
+│    └─ Field added by your app via defineField    │
 └──────────────────────────────────────────────────┘
 ```
 
 ## In this section
 
 <CardGroup cols={2}>
-  <Card title="Application Config" icon="rocket" href="/developers/extend/apps/data/application">
-    `defineApplication` — identity, default role, variables, marketplace metadata.
-  </Card>
-  <Card title="Roles & Permissions" icon="shield-halved" href="/developers/extend/apps/data/roles">
-    `defineRole` — what your functions can read and write.
-  </Card>
   <Card title="Objects" icon="table" href="/developers/extend/apps/data/objects">
     `defineObject` — declare new record types with their own fields.
   </Card>
@@ -48,14 +41,12 @@ A Twenty app's **data layer** is everything the app contributes to the shape of 
 
 | Entity | Purpose | Defined with |
 |--------|---------|--------------|
-| **Application** | The app itself — identifier, display name, default role, marketplace metadata | `defineApplication()` |
-| **Role** | A permission set: which objects and fields the app's logic functions can access | `defineRole()` |
 | **Object** | A new custom record type (e.g. PostCard, Invoice) with its own fields | `defineObject()` |
 | **Field** | A column on an object. Standalone fields can extend objects you didn't create (e.g. add `loyaltyTier` to Company) | `defineField()` |
 | **Relation** | A bidirectional link between two objects — both sides declared as fields | `defineField()` with `FieldType.RELATION` |
 
-The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/`, `src/fields/`, `src/roles/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
+The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/` and `src/fields/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
 
 <Note>
-Looking for **Connections** (Linear, GitHub, Slack OAuth)? Those live under [Logic](/developers/extend/apps/logic/connections), since they exist to be called *from* logic functions rather than to add new data shapes.
+Looking for **Application Config** or **Roles & Permissions**? Those describe the app itself rather than the data it adds — they live under [Config](/developers/extend/apps/config/overview). Looking for **Connections** (Linear, GitHub, Slack OAuth)? Those exist to be called *from* logic functions and live under [Logic](/developers/extend/apps/logic/connections).
 </Note>

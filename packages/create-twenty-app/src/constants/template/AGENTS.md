@@ -3,10 +3,13 @@
 - Getting started:
     - https://docs.twenty.com/developers/extend/apps/getting-started.md
     - https://docs.twenty.com/developers/extend/apps/building.md
+- Config:
+    - https://docs.twenty.com/developers/extend/apps/config/overview.md
+    - https://docs.twenty.com/developers/extend/apps/config/application.md
+    - https://docs.twenty.com/developers/extend/apps/config/roles.md
+    - https://docs.twenty.com/developers/extend/apps/config/install-hooks.md
 - Data:
     - https://docs.twenty.com/developers/extend/apps/data/overview.md
-    - https://docs.twenty.com/developers/extend/apps/data/application.md
-    - https://docs.twenty.com/developers/extend/apps/data/roles.md
     - https://docs.twenty.com/developers/extend/apps/data/objects.md
     - https://docs.twenty.com/developers/extend/apps/data/extending-objects.md
     - https://docs.twenty.com/developers/extend/apps/data/relations.md

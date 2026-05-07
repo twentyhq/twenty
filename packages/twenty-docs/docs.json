@@ -377,11 +377,18 @@
                   "developers/extend/apps/getting-started",
                   "developers/extend/apps/building",
                   {
+                    "group": "Config",
+                    "pages": [
+                      "developers/extend/apps/config/overview",
+                      "developers/extend/apps/config/application",
+                      "developers/extend/apps/config/roles",
+                      "developers/extend/apps/config/install-hooks"
+                    ]
+                  },
+                  {
                     "group": "Data",
                     "pages": [
                       "developers/extend/apps/data/overview",
-                      "developers/extend/apps/data/application",
-                      "developers/extend/apps/data/roles",
                       "developers/extend/apps/data/objects",
                       "developers/extend/apps/data/extending-objects",
                       "developers/extend/apps/data/relations"
@@ -5437,6 +5444,14 @@
     {
       "source": "/developers/extend/apps/data/data-model",
       "destination": "/developers/extend/apps/data/overview"
+    },
+    {
+      "source": "/developers/extend/apps/data/application",
+      "destination": "/developers/extend/apps/config/application"
+    },
+    {
+      "source": "/developers/extend/apps/data/roles",
+      "destination": "/developers/extend/apps/config/roles"
     },
     {
       "source": "/developers/extend/apps/logic-functions",
