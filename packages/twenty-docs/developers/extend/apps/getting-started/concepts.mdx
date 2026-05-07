@@ -8,7 +8,7 @@ Twenty apps are TypeScript packages that extend your workspace with custom objec
 
 ## How apps work
 
-An app is a collection of **entities** declared using `defineEntity()` functions from the `twenty-sdk` package. The SDK detects these declarations via AST analysis at build time and produces a **manifest** — a complete description of what your app adds to a workspace.
+An app is a collection of **entities** declared using `defineEntity()` functions from the `twenty-sdk` package. The SDK detects these declarations via AST analysis at build time and produces a **manifest** — a complete description of what your app adds to a workspace. These functions validate your configuration at build time and provide IDE autocompletion and type safety.
 
 ```
 your-app/
