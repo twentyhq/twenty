@@ -24,7 +24,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           gh api repos/twentyhq/ci-privileged/dispatches \
-            -f event_type=pr-auto-draft \
+            -f event_type=convert-pr-to-draft \
             -f "client_payload[pr_number]=$PR_NUMBER" \
             -f "client_payload[pr_node_id]=$PR_NODE_ID" \
             -f "client_payload[repo]=$REPO"
