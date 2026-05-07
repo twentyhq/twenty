@@ -1,10 +1,10 @@
 ---
 title: Роли и разрешения
-description: Укажите, к каким объектам и полям логические функции и фронтенд‑компоненты вашего приложения могут выполнять чтение и запись.
+description: Укажите, к каким объектам и полям функции логики и фронтенд‑компоненты вашего приложения имеют доступ на чтение и запись.
 icon: shield-halved
 ---
 
-**Роль** — это набор разрешений: какие объекты приложение может читать или изменять, какие поля оно может видеть и какие возможности платформенного уровня оно может использовать. Все логические функции и фронтенд‑компоненты каждого приложения наследуют разрешения роли, объявленной как `defaultRoleUniversalIdentifier` в [`defineApplication`](/l/ru/developers/extend/apps/config/application).
+**Роль** — это набор разрешений: какие объекты приложение может читать или изменять, какие поля оно может видеть и какие возможности платформенного уровня оно может использовать. Функции логики и фронтенд‑компоненты каждого приложения наследуют разрешения роли, помеченной с помощью `defineApplicationRole()` (см. раздел [Роль функции по умолчанию](#the-default-function-role) ниже).
 
 ```ts src/roles/restricted-company-role.ts
 import {
@@ -51,15 +51,15 @@ export default defineRole({
 
 ## Роль функции по умолчанию
 
-Когда вы генерируете новое приложение, CLI создаёт файл роли по умолчанию:
+Когда вы создаёте новое приложение с помощью шаблона, CLI создаёт файл роли по умолчанию, объявленный с помощью `defineApplicationRole()`:
 
 ```ts src/roles/default-role.ts
-import { defineRole, PermissionFlag } from 'twenty-sdk/define';
+import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
-export default defineRole({
+export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
@@ -77,10 +77,13 @@ export default defineRole({
 });
 ```
 
-Значение `universalIdentifier` этой роли указывается в `application-config.ts` как `defaultRoleUniversalIdentifier`:
+`defineApplicationRole()` — это тонкая обёртка вокруг `defineRole()`, которая помечает **ту** роль, которая используется как роль приложения по умолчанию во время установки. Проверка идентична `defineRole`, но конвейер сборки автоматически подключает его `universalIdentifier` к полю `defaultRoleUniversalIdentifier` манифеста приложения — поэтому вам не нужно ссылаться на него из [`defineApplication`](/l/ru/developers/extend/apps/config/application) самостоятельно.
 
-* **`*.role.ts`** определяет, что может делать роль.
-* **`application-config.ts`** указывает на эту роль, чтобы ваши функции наследовали её права.
+Заметки:
+
+* Допускается ровно **один** вызов `defineApplicationRole(...)` на приложение — сборка манифеста завершится с ошибкой, если будет найдено более одного.
+* Используйте `defineRole()` (а не `defineApplicationRole()`) для любых **дополнительных** ролей, которые ставятся вместе с вашим приложением.
+* Явная установка `defaultRoleUniversalIdentifier` в `defineApplication()` всё ещё поддерживается для обратной совместимости, но считается устаревшей по сравнению с `defineApplicationRole()`.
 
 ## Лучшие практики
 

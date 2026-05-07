@@ -1,10 +1,10 @@
 ---
 title: Элементы меню команд
-description: Выводите front-компоненты как быстрые действия и элементы командного меню (Cmd+K) с помощью `defineCommandMenuItem`.
+description: Отображайте фронтенд-компоненты как быстрые действия и элементы командного меню (Cmd+K) с помощью `defineCommandMenuItem`.
 icon: terminal
 ---
 
-**Элемент командного меню** — это мост между пользователем и [front-компонентом](/l/ru/developers/extend/apps/layout/front-components). Он регистрирует компонент в командном меню Twenty (Cmd+K) и, при необходимости, как закреплённую кнопку быстрого действия в правом верхнем углу страницы.
+**Элемент командного меню** — это мост между пользователем и [фронтенд-компонентом](/l/ru/developers/extend/apps/layout/front-components). Он регистрирует компонент в командном меню Twenty (Cmd+K) и, при необходимости, как закреплённую кнопку быстрого действия в правом верхнем углу страницы.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -36,9 +36,9 @@ export default defineCommandMenuItem({
 
 ## Команды без интерфейса
 
-Элемент командного меню в паре с [front-компонентом без интерфейса](/l/ru/developers/extend/apps/layout/front-components#headless-vs-non-headless) — идиоматичный способ предоставить действие в один клик: выполнить код, перейти по навигации или подтвердить и выполнить действие. Страница Front Components описывает [SDK Command components](/l/ru/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`), которые реализуют шаблон «действие и размонтирование».
+Элемент командного меню в паре с [фронтенд-компонентом без интерфейса](/l/ru/developers/extend/apps/layout/front-components#headless-vs-non-headless) — идиоматичный способ предоставить действие в один клик: выполнить код, перейти или подтвердить и выполнить. Страница Front Components описывает [SDK Command components](/l/ru/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`), которые реализуют шаблон «действие и размонтирование».
 
-Типичный поток:
+Типичный сценарий:
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

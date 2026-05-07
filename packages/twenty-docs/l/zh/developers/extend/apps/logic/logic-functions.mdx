@@ -4,7 +4,7 @@ description: 定义具有 HTTP、cron 和数据库事件触发器的服务端 Ty
 icon: bolt
 ---
 
-逻辑函数是在 Twenty 平台上运行的服务端 TypeScript 函数。 它们可以由 HTTP 请求、cron 调度或数据库事件触发——也可以作为工具暴露给 AI 代理。
+逻辑函数是在 Twenty 平台上运行的服务端 TypeScript 函数。 它们可以由 HTTP 请求、cron 调度或数据库事件触发——也可以作为工具暴露给 AI 智能体。
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="定义逻辑函数及其触发器">
@@ -54,7 +54,7 @@ export default defineLogicFunction({
 * **httpRoute**：在 **`/s/` 端点**下通过 HTTP 路径和方法公开你的函数：
 > 例如 `path: '/post-card/create'` 可在 `https://your-twenty-server.com/s/post-card/create` 调用
 * **cron**：使用 CRON 表达式按计划运行你的函数。
-* **databaseEvent**：在工作空间对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
+* **databaseEvent**：在工作区对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
 > 例如 `person.updated`、`*.created`、`company.*`
 
 <Note>
@@ -185,7 +185,7 @@ export default defineLogicFunction({
 关键点：
 
 * 函数可以混用这些入口 — 同时声明 `toolTriggerSettings` 和 `workflowActionTriggerSettings`，即可在 chat 和工作流构建器中同时公开它。
-* `toolTriggerSettings.inputSchema` 和 `workflowActionTriggerSettings.inputSchema` 均为可选。 如果省略，清单构建器会根据处理器源代码进行推断（AI 工具使用 JSON Schema，工作流操作使用 Twenty 的 `InputSchema`）。 当你需要更丰富的类型时，可显式提供一个 — 例如，在工作流构建器中使用对 `FieldMetadataType` 友好的字段（如 `CURRENCY` 或 `RELATION`），或提供 AI 代理可读取的 `description` 字段：
+* `toolTriggerSettings.inputSchema` 和 `workflowActionTriggerSettings.inputSchema` 均为可选。 如果省略，清单构建器会根据处理器源代码进行推断（AI 工具使用 JSON Schema，工作流操作使用 Twenty 的 `InputSchema`）。 当你需要更丰富的类型时，可显式提供一个 — 例如，在工作流构建器中使用对 `FieldMetadataType` 友好的字段（如 `CURRENCY` 或 `RELATION`），或提供 AI 智能体可读取的 `description` 字段：
 
 ```ts
 export default defineLogicFunction({
@@ -371,5 +371,5 @@ console.log(uploadedFile);
   * `TWENTY_API_URL`——Twenty API 的基础 URL
   * `TWENTY_APP_ACCESS_TOKEN`——作用域限定为你的应用默认函数角色的短期密钥
 
-  你无需将这些值传递给客户端——它们会自动从 `process.env` 读取。 API 密钥的权限由你的 `application-config.ts` 中 `defaultRoleUniversalIdentifier` 引用的角色决定。
+  你无需将这些值传递给客户端——它们会自动从 `process.env` 读取。 API 密钥的权限由使用 `defineApplicationRole()` 声明的角色（或在 `application-config.ts` 中通过 `defaultRoleUniversalIdentifier` 引用的角色）决定。
 </Note>

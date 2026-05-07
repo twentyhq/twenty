@@ -370,5 +370,5 @@ Pontos-chave:
   * `TWENTY_API_URL` — URL base da API do Twenty
   * `TWENTY_APP_ACCESS_TOKEN` — Chave de curta duração com escopo para o papel de função padrão do seu aplicativo
 
-  Você **não** precisa passá-las para os clientes — eles leem de `process.env` automaticamente. As permissões da chave de API são determinadas pelo papel referenciado em `defaultRoleUniversalIdentifier` no seu `application-config.ts`.
+  Você **não** precisa passá-las para os clientes — eles leem de `process.env` automaticamente. As permissões da chave de API são determinadas pelo papel declarado com `defineApplicationRole()` (ou referenciado via `defaultRoleUniversalIdentifier` em `application-config.ts`).
 </Note>

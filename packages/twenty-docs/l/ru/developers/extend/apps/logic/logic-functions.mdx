@@ -370,5 +370,5 @@ console.log(uploadedFile);
   * `TWENTY_API_URL` — базовый URL API Twenty
   * `TWENTY_APP_ACCESS_TOKEN` — краткоживущий ключ, ограниченный ролью функции по умолчанию вашего приложения
 
-  Вам не нужно передавать их клиентам — они автоматически читаются из `process.env`. Права ключа API определяются ролью, указанной в `defaultRoleUniversalIdentifier` в вашем `application-config.ts`.
+  Вам не нужно передавать их клиентам — они автоматически читаются из `process.env`. Права ключа API определяются ролью, объявленной с помощью `defineApplicationRole()` (или указанной через `defaultRoleUniversalIdentifier` в `application-config.ts`).
 </Note>

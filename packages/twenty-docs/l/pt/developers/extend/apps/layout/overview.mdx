@@ -26,7 +26,7 @@ A **camada de layout** de um app do Twenty é tudo o que o usuário vê: onde o 
 ## Nesta seção
 
 <CardGroup cols={2}>
-  <Card title="Visualizações" icon="lista" href="/l/pt/developers/extend/apps/layout/views">
+  <Card title="Visualizações" icon="list" href="/l/pt/developers/extend/apps/layout/views">
     `defineView` — configurações salvas de lista: colunas visíveis, filtros, grupos.
   </Card>
   <Card title="Itens do menu de navegação" icon="bars" href="/l/pt/developers/extend/apps/layout/navigation-menu-items">
@@ -39,18 +39,18 @@ A **camada de layout** de um app do Twenty é tudo o que o usuário vê: onde o 
     `defineFrontComponent` — componentes React em sandbox que são renderizados dentro do Twenty.
   </Card>
   <Card title="Itens do menu de comandos" icon="terminal" href="/l/pt/developers/extend/apps/layout/command-menu-items">
-    `defineCommandMenuItem` — registra front components como entradas Cmd+K e ações rápidas.
+    `defineCommandMenuItem` — registra componentes de front-end como entradas no Cmd+K e ações rápidas.
   </Card>
 </CardGroup>
 
 ## Onde o app aparece
 
-| Superfície                                  | O que controla                                                                                | Entidade                                  |
-| ------------------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Barra lateral**                           | Uma entrada personalizada que aponta para uma visualização salva ou URL externa               | `defineNavigationMenuItem`                |
-| **Lista de registros**                      | Uma configuração salva para uma lista de um objeto — colunas visíveis, ordem, filtros, grupos | `defineView`                              |
-| **Página de detalhes do registro**          | As abas e widgets em uma página de registro (do seu próprio objeto ou de um padrão)           | `definePageLayout`, `definePageLayoutTab` |
-| **Dentro de qualquer uma das opções acima** | Um widget React personalizado — botões, formulários, dashboards, integrações                  | `defineFrontComponent`                    |
-| **Menu de comandos (Cmd+K)**                | Uma ação rápida fixada ou comando oculto                                                      | `defineCommandMenuItem`                   |
+| Superfície                                  | O que controla                                                                             | Entidade                                  |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------- |
+| **Barra lateral**                           | Uma entrada personalizada que aponta para uma visualização salva ou URL externa            | `defineNavigationMenuItem`                |
+| **Lista de registros**                      | Uma configuração salva para um objeto — colunas visíveis, ordem, filtros, grupos           | `defineView`                              |
+| **Página de detalhes do registro**          | As abas e widgets em uma página de registro (do seu próprio objeto ou de um objeto padrão) | `definePageLayout`, `definePageLayoutTab` |
+| **Dentro de qualquer uma das opções acima** | Um widget React personalizado — botões, formulários, dashboards, integrações               | `defineFrontComponent`                    |
+| **Menu de comandos (Cmd+K)**                | Uma ação rápida fixada ou comando oculto                                                   | `defineCommandMenuItem`                   |
 
-Os front components são executados dentro de um Web Worker isolado usando Remote DOM — eles são renderizados *nativamente* na página (não dentro de um iframe), mas não podem acessar diretamente a página host ou o DOM. A comunicação com o Twenty acontece por meio de uma API de host com passagem de mensagens.
+Os componentes de front-end são executados dentro de um Web Worker isolado usando Remote DOM — eles são renderizados *nativamente* na página (não dentro de um iframe), mas não podem acessar diretamente a página host ou o DOM. A comunicação com o Twenty acontece por meio de uma API de host com passagem de mensagens.

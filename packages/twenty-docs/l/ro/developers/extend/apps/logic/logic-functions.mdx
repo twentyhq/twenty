@@ -371,5 +371,5 @@ Puncte cheie:
   * `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
   * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației
 
-  Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul referențiat în `defaultRoleUniversalIdentifier` din `application-config.ts`.
+  Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul declarat cu `defineApplicationRole()` (sau referențiat prin `defaultRoleUniversalIdentifier` în `application-config.ts`).
 </Note>

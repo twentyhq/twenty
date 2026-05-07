@@ -4,7 +4,7 @@ description: Uygulamanızın mantık fonksiyonlarının ve ön bileşenlerinin h
 icon: shield-halved
 ---
 
-Bir **rol**, bir izin kümesidir: bir uygulamanın hangi nesneleri okuyup yazabileceğini, hangi alanları görebileceğini ve hangi platform düzeyindeki yetenekleri kullanabileceğini tanımlar. Her uygulamanın mantık fonksiyonları ve ön bileşenleri, [`defineApplication`](/l/tr/developers/extend/apps/config/application) içinde `defaultRoleUniversalIdentifier` olarak beyan edilen rolün izinlerini devralır.
+Bir **rol**, bir izin kümesidir: bir uygulamanın hangi nesneleri okuyup yazabileceğini, hangi alanları görebileceğini ve hangi platform düzeyindeki yetenekleri kullanabileceğini tanımlar. Her uygulamanın mantık fonksiyonları ve ön bileşenleri, `defineApplicationRole()` ile işaretlenmiş rolün izinlerini devralır (aşağıda [Varsayılan fonksiyon rolü](#the-default-function-role) bölümüne bakın).
 
 ```ts src/roles/restricted-company-role.ts
 import {
@@ -51,15 +51,15 @@ export default defineRole({
 
 ## Varsayılan fonksiyon rolü
 
-Yeni bir uygulama iskeleti oluşturduğunuzda, CLI varsayılan bir rol dosyası oluşturur:
+Yeni bir uygulama iskeleti oluşturduğunuzda, CLI `defineApplicationRole()` ile bildirilen varsayılan bir rol dosyası oluşturur:
 
 ```ts src/roles/default-role.ts
-import { defineRole, PermissionFlag } from 'twenty-sdk/define';
+import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
-export default defineRole({
+export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
@@ -77,10 +77,13 @@ export default defineRole({
 });
 ```
 
-Bu rolün `universalIdentifier` değeri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` olarak referans verilir:
+`defineApplicationRole()`, yükleme sırasında uygulamanızın varsayılanı olarak kullanılan **rolü** işaretleyen, `defineRole()` etrafında ince bir sarmalayıcıdır. Doğrulama, `defineRole` ile aynıdır, ancak derleme hattı `universalIdentifier` değerini uygulama manifestindeki `defaultRoleUniversalIdentifier` alanına otomatik olarak bağlar — bu nedenle onu [`defineApplication`](/l/tr/developers/extend/apps/config/application) içinden kendiniz referans göstermeniz gerekmez.
 
-* **`*.role.ts`** rolün neler yapabileceğini beyan eder.
-* **`application-config.ts`** bu role işaret eder, böylece fonksiyonlarınız onun izinlerini devralır.
+Notlar:
+
+* Uygulama başına tam olarak **bir** `defineApplicationRole(...)`a izin verilir — birden fazla bulursa manifest derlemesi başarısız olur.
+* Uygulamanızın birlikte sunduğu **ek** roller için `defineApplicationRole()` değil, `defineRole()` kullanın.
+* `defineApplication()` üzerinde `defaultRoleUniversalIdentifier` değerini açıkça ayarlamak geriye dönük uyumluluk için hâlâ desteklenmektedir, ancak `defineApplicationRole()` lehine kullanımdan kaldırılmıştır.
 
 ## En İyi Uygulamalar
 

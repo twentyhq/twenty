@@ -101,7 +101,7 @@ Daha ayrıntılı çıktı (derleme günlükleri, eşitleme istekleri, hata izle
   <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Your Apps listesinde My twenty app gösteriliyor" />
 </div>
 
-**My twenty app**'e tıklayarak **application registration**'ı görüntüleyin — uygulamanızı tanımlayan (ad, tanımlayıcı, OAuth kimlik bilgileri, kaynak) sunucu düzeyinde bir kayıttır. Tek bir kayıt, aynı sunucudaki birden çok çalışma alanına kurulabilir.
+**My twenty app**'e tıklayarak **uygulama kaydını** görüntüleyin — uygulamanızı tanımlayan (ad, tanımlayıcı, OAuth kimlik bilgileri, kaynak) sunucu düzeyinde bir kayıttır. Tek bir kayıt, aynı sunucudaki birden çok çalışma alanına kurulabilir.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Uygulama kaydı ayrıntıları" />
@@ -131,7 +131,7 @@ yarn twenty dev --once
 Her iki mod da geliştirme modunda bir sunucuya ve kimliği doğrulanmış bir uzak uca ihtiyaç duyar.
 
 <Warning>
-Geliştirme modu yalnızca geliştirme ortamında (`NODE_ENV=development`) çalışan Twenty örneklerinde kullanılabilir. Üretim örnekleri, geliştirme eşitleme isteklerini reddeder — üretim sunucularına dağıtmak için `yarn twenty deploy` kullanın. Bkz. [Publishing](/l/tr/developers/extend/apps/operations/publishing).
+Geliştirme modu yalnızca geliştirme ortamında (`NODE_ENV=development`) çalışan Twenty örneklerinde kullanılabilir. Üretim örnekleri, geliştirme eşitleme isteklerini reddeder — üretim sunucularına dağıtmak için `yarn twenty deploy` kullanın. Bkz. [Yayımlama](/l/tr/developers/extend/apps/operations/publishing).
 </Warning>
 
 ---
@@ -144,7 +144,7 @@ Daha kapsamlı bir projeyle başlamak için `--example` kullanın (özel nesnele
 npx create-twenty-app@latest my-twenty-app --example postcard
 ```
 
-Örnekler [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) dizininde yer alır. Ayrıca `yarn twenty add` ile mevcut bir projeye tek tek varlıklar için iskelet oluşturabilirsiniz — bkz. [Scaffolding](/l/tr/developers/extend/apps/getting-started/scaffolding).
+Örnekler [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) dizininde yer alır. Ayrıca `yarn twenty add` ile mevcut bir projeye tek tek varlıklar için iskelet oluşturabilirsiniz — bkz. [İskelet Oluşturma](/l/tr/developers/extend/apps/getting-started/scaffolding).
 
 ---
 
@@ -154,14 +154,14 @@ Uygulamalar **varlıklardan** oluşur — her biri tek bir `export default` içe
 
 | Varlık                    | Ne yapar                                                                                                  |
 | ------------------------- | --------------------------------------------------------------------------------------------------------- |
-| **Nesneler ve Alanlar**   | Özel veri modelleri (Post Card, Invoice vb.) tipli alanlarla                                              |
+| **Nesneler ve Alanlar**   | Özel veri modelleri (Post Card, Invoice vb.) tiplendirilmiş alanlarla                                     |
 | **Mantıksal işlevler**    | HTTP rotaları, cron zamanlamaları veya veritabanı olayları tarafından tetiklenen sunucu tarafı TypeScript |
 | **Ön uç bileşenleri**     | Twenty'nin arayüzünde görüntülenen React bileşenleri (yan panel, widget'lar, komut menüsü)                |
 | **Beceriler ve Aracılar** | Yapay zeka yetenekleri — yeniden kullanılabilir yönergeler ve otonom asistanlar                           |
 | **Görünümler ve Gezinme** | Önceden yapılandırılmış liste görünümleri ve kenar çubuğu menü öğeleri                                    |
 | **Sayfa düzenleri**       | Sekmeler ve widget'lar içeren özel kayıt ayrıntı sayfaları                                                |
 
-Tam başvuru: [Concepts](/l/tr/developers/extend/apps/getting-started/concepts).
+Tam başvuru: [Kavramlar](/l/tr/developers/extend/apps/getting-started/concepts).
 
 ## Sonraki adımlar
 
@@ -173,12 +173,12 @@ Tam başvuru: [Concepts](/l/tr/developers/extend/apps/getting-started/concepts).
     Nesneler, alanlar ve çift yönlü ilişkiler.
   </Card>
   <Card title="Mantık" icon="bolt" href="/l/tr/developers/extend/apps/logic/overview">
-    Mantık fonksiyonları, beceriler, aracılar ve OAuth bağlantıları.
+    Mantık işlevleri, beceriler, aracılar ve OAuth bağlantıları.
   </Card>
   <Card title="Düzen" icon="table-columns" href="/l/tr/developers/extend/apps/layout/overview">
-    Görünümler, gezinme, sayfa düzenleri, ön bileşenler.
+    Görünümler, gezinme, sayfa düzenleri, ön uç bileşenleri.
   </Card>
   <Card title="İşlemler" icon="rocket" href="/l/tr/developers/extend/apps/operations/overview">
-    CLI, test, uzaklar, CI ve uygulamanızı yayımlama.
+    CLI, test, uzak uçlar, CI ve uygulamanızı yayımlama.
   </Card>
 </CardGroup>

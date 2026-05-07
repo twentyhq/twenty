@@ -4,7 +4,7 @@ description: Legen Sie fest, welche Objekte und Felder die Logikfunktionen und F
 icon: shield-halved
 ---
 
-Eine **Rolle** ist ein Berechtigungssatz: welche Objekte eine App lesen oder schreiben kann, welche Felder sie sehen kann und welche plattformbezogenen Funktionen sie nutzen kann. Alle Logikfunktionen und Frontend-Komponenten einer App erben die Berechtigungen der Rolle, die in [`defineApplication`](/l/de/developers/extend/apps/config/application) als `defaultRoleUniversalIdentifier` deklariert ist.
+Eine **Rolle** ist ein Berechtigungssatz: welche Objekte eine App lesen oder schreiben kann, welche Felder sie sehen kann und welche plattformbezogenen Funktionen sie nutzen kann. Alle Logikfunktionen und Frontend-Komponenten einer App erben die Berechtigungen der Rolle, die mit `defineApplicationRole()` markiert ist (siehe [Die Standardfunktionsrolle](#the-default-function-role) unten).
 
 ```ts src/roles/restricted-company-role.ts
 import {
@@ -51,15 +51,15 @@ export default defineRole({
 
 ## Die Standard-Funktionsrolle
 
-Wenn Sie eine neue App erzeugen, erstellt die CLI eine Standard-Rolldatei:
+Wenn Sie eine neue App erzeugen, erstellt die CLI eine Datei für die Standardrolle, die mit `defineApplicationRole()` deklariert ist:
 
 ```ts src/roles/default-role.ts
-import { defineRole, PermissionFlag } from 'twenty-sdk/define';
+import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
-export default defineRole({
+export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
@@ -77,10 +77,13 @@ export default defineRole({
 });
 ```
 
-Der `universalIdentifier` dieser Rolle wird in `application-config.ts` als `defaultRoleUniversalIdentifier` referenziert:
+`defineApplicationRole()` ist ein dünner Wrapper um `defineRole()`, der **die** Rolle kennzeichnet, die zum Installationszeitpunkt als Standardrolle Ihrer Anwendung verwendet wird. Die Validierung ist identisch zu `defineRole`, aber die Build-Pipeline verdrahtet deren `universalIdentifier` automatisch in das `defaultRoleUniversalIdentifier` des Anwendungsmanifests – sodass Sie es nicht selbst aus [`defineApplication`](/l/de/developers/extend/apps/config/application) referenzieren müssen.
 
-* **`*.role.ts`** deklariert, was die Rolle darf.
-* **`application-config.ts`** verweist auf diese Rolle, sodass Ihre Funktionen deren Berechtigungen erben.
+Notizen:
+
+* Genau **eine** `defineApplicationRole(...)` ist pro App zulässig – der Manifest-Build schlägt fehl, wenn mehr als eine gefunden wird.
+* Verwenden Sie `defineRole()` (nicht `defineApplicationRole()`) für alle **zusätzlichen** Rollen, die Ihre App mitliefert.
+* Das explizite Setzen von `defaultRoleUniversalIdentifier` in `defineApplication()` wird für die Abwärtskompatibilität weiterhin unterstützt, ist aber zugunsten von `defineApplicationRole()` veraltet.
 
 ## Beste Praktiken
 

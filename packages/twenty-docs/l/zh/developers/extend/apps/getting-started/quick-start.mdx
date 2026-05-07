@@ -123,10 +123,10 @@ yarn twenty dev
 yarn twenty dev --once
 ```
 
-| 命令                       | 行为                               | 适用场景                           |
-| ------------------------ | -------------------------------- | ------------------------------ |
-| `yarn twenty dev`        | 监视并在每次更改时重新同步。 持续运行，直到你将其停止。     | 交互式本地开发。                       |
-| `yarn twenty dev --once` | 单次构建与同步，成功时以 `0` 退出，失败时以 `1` 退出。 | CI、pre-commit 钩子、AI 代理、脚本化工作流。 |
+| 命令                       | 行为                               | 适用场景                            |
+| ------------------------ | -------------------------------- | ------------------------------- |
+| `yarn twenty dev`        | 监视并在每次更改时重新同步。 持续运行，直到你将其停止。     | 交互式本地开发。                        |
+| `yarn twenty dev --once` | 单次构建与同步，成功时以 `0` 退出，失败时以 `1` 退出。 | CI、pre-commit 钩子、AI 智能体、脚本化工作流。 |
 
 两种模式都需要处于开发模式的服务器和已认证的远程。
 
@@ -167,13 +167,13 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 
 <CardGroup cols={2}>
   <Card title="配置" icon="screwdriver-wrench" href="/l/zh/developers/extend/apps/config/overview">
-    应用身份、默认角色、安装钩子、公共资源。
+    应用标识、默认角色、安装钩子、公共资源。
   </Card>
   <Card title="数据" icon="database" href="/l/zh/developers/extend/apps/data/overview">
     对象、字段和双向关系。
   </Card>
   <Card title="逻辑" icon="bolt" href="/l/zh/developers/extend/apps/logic/overview">
-    逻辑函数、技能、代理和 OAuth 连接。
+    逻辑函数、技能、智能体和 OAuth 连接。
   </Card>
   <Card title="布局" icon="table-columns" href="/l/zh/developers/extend/apps/layout/overview">
     视图、导航、页面布局、前端组件。

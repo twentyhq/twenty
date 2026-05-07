@@ -7,9 +7,9 @@ icon: bolt
 Mantık işlevleri, Twenty platformunda çalışan sunucu tarafı TypeScript işlevleridir. HTTP istekleri, cron zamanlamaları veya veritabanı olayları tarafından tetiklenebilirler — ve ayrıca yapay zekâ ajanları için araçlar olarak sunulabilirler.
 
 <AccordionGroup>
-<Accordion title="defineLogicFunction" description="Mantık fonksiyonlarını ve tetikleyicilerini tanımlayın">
+<Accordion title="defineLogicFunction" description="Mantık işlevlerini ve tetikleyicilerini tanımlayın">
 
-Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir yapılandırmayı dışa aktarmak için `defineLogicFunction()` kullanır.
+Her işlev dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir yapılandırmayı dışa aktarmak için `defineLogicFunction()` kullanır.
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -51,14 +51,14 @@ export default defineLogicFunction({
 ```
 
 Kullanılabilir tetikleyici türleri:
-* **httpRoute**: Fonksiyonunuzu bir HTTP yolu ve yöntemiyle **`/s/` uç noktasının altında** kullanıma sunar:
+* **httpRoute**: İşlevinizi bir HTTP yolu ve yöntemiyle **`/s/` uç noktasının altında** kullanıma sunar:
 > örn. `path: '/post-card/create'` `https://your-twenty-server.com/s/post-card/create` adresinden çağrılabilir
-* **cron**: Bir CRON ifadesi kullanarak fonksiyonunuzu bir zamanlamayla çalıştırır.
-* **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme fonksiyonu tetikler.
+* **cron**: Bir CRON ifadesi kullanarak işlevinizi bir zamanlamayla çalıştırır.
+* **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme işlevi tetikler.
 > örn. `person.updated`, `*.created`, `company.*`
 
 <Note>
-Bir fonksiyonu CLI kullanarak manuel olarak da çalıştırabilirsiniz:
+Bir işlevi CLI kullanarak manuel olarak da çalıştırabilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
@@ -371,5 +371,5 @@ console.log(uploadedFile);
   * `TWENTY_API_URL` — Twenty API'nin temel URL'si
   * `TWENTY_APP_ACCESS_TOKEN` — Uygulamanızın varsayılan işlev rolü kapsamında kısa ömürlü bir anahtar
 
-  Bunları istemcilere iletmeniz gerekmez — otomatik olarak `process.env`'den okurlar. API anahtarının izinleri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` ile referans verilen role göre belirlenir.
+  Bunları istemcilere iletmeniz gerekmez — otomatik olarak `process.env`'den okurlar. API anahtarının izinleri, `defineApplicationRole()` ile bildirilen role (veya `application-config.ts` içindeki `defaultRoleUniversalIdentifier` üzerinden referans verilen role) göre belirlenir.
 </Note>

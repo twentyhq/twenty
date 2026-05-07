@@ -83,11 +83,11 @@ export default defineObject({
 * `yarn twenty add object` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz. [Mimari → Varlık iskeleti oluşturma](/l/tr/developers/extend/apps/getting-started/scaffolding) bölümüne bakın.
 
 <Note>
-**Temel alanlar otomatik olarak eklenir.** Özel bir nesne tanımladığınızda Twenty, sizin için `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt` gibi standart alanlar oluşturur. Bunları `fields` dizinizde bildirmenize gerek yok — yalnızca özel alanlarınızı. Aynı ada sahip bir alan bildirerek varsayılan bir alanı geçersiz kılabilirsiniz, ancak bu nadiren iyi bir fikirdir.
+**Temel alanlar otomatik olarak eklenir.** Özel bir nesne tanımladığınızda Twenty, sizin için `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt` gibi standart alanlar oluşturur. Bunları `fields` dizinizde bildirmenize gerek yok — yalnızca özel alanlarınızı ekleyin. Aynı ada sahip bir alan bildirerek varsayılan bir alanı geçersiz kılabilirsiniz, ancak bu nadiren iyi bir fikirdir.
 </Note>
 
 ## Sırada ne var
 
 * **Bu nesneyi diğerlerine bağlayın** — çift yönlü ilişki modeli için [İlişkiler](/l/tr/developers/extend/apps/data/relations) bölümüne bakın.
-* **Diğer uygulamalardaki nesnelere alanlar ekleyin** — `defineField()` için [Nesimleri Genişletme](/l/tr/developers/extend/apps/data/extending-objects) bölümüne bakın.
+* **Diğer uygulamalardaki nesnelere alanlar ekleyin** — `defineField()` için [Nesneleri Genişletme](/l/tr/developers/extend/apps/data/extending-objects) bölümüne bakın.
 * **Bu nesneyi arayüzde görüntüleyin** — kenar çubuğuna yerleştirmek için [Görünümler](/l/tr/developers/extend/apps/layout/views) ve [Gezinme Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/navigation-menu-items) bölümlerine bakın.

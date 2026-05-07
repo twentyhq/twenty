@@ -13,7 +13,6 @@ Her uygulamanın, tam olarak bir adet `defineApplication` çağrısı olması ge
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
@@ -27,7 +26,6 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -35,12 +33,13 @@ Notlar:
 
 * `universalIdentifier` alanları, size ait deterministik kimliklerdir. Bunları bir kez oluşturun ve senkronizasyonlar boyunca kararlı tutun.
 * `applicationVariables`, fonksiyonlarınız ve ön uç bileşenleriniz için ortam değişkenlerine dönüşür (örn. `DEFAULT_RECIPIENT_NAME`, `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
-* `defaultRoleUniversalIdentifier`, [`defineRole()`](/l/tr/developers/extend/apps/config/roles) ile tanımlanmış bir role referans vermelidir.
+* Varsayılan rol, [`defineApplicationRole()`](/l/tr/developers/extend/apps/config/roles) ile işaretlenmiş rol dosyasından otomatik olarak algılanır — onu `defineApplication()` içinden belirtmenize gerek yoktur.
 * Kurulum öncesi ve kurulum sonrası fonksiyonlar manifest derlemesi sırasında otomatik olarak algılanır — bunlara `defineApplication()` içinde referans vermeniz gerekmez.
+* Geriye dönük uyumluluk için `defaultRoleUniversalIdentifier` değerini açıkça geçmek hâlâ desteklenmektedir, ancak `defineApplicationRole()` lehine kullanımdan kaldırılmıştır.
 
 ## Varsayılan fonksiyon rolü
 
-`defaultRoleUniversalIdentifier`, uygulamanın mantık fonksiyonlarının ve ön uç bileşenlerinin nelere erişebileceğini kontrol eder:
+[`defineApplicationRole()`](/l/tr/developers/extend/apps/config/roles) ile bildirilen rol, uygulamanın logic fonksiyonlarının ve front bileşenlerinin neye erişebileceğini kontrol eder:
 
 * `TWENTY_APP_ACCESS_TOKEN` olarak enjekte edilen çalışma zamanı belirteci bu rolden türetilir.
 * Türlendirilmiş API istemcisi, o role tanınan izinlerle sınırlandırılır.

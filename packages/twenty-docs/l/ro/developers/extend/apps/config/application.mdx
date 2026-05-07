@@ -13,7 +13,6 @@ Fiecare aplicație trebuie să aibă exact un apel `defineApplication`. Acesta d
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
@@ -27,7 +26,6 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -35,12 +33,13 @@ Notițe:
 
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți. Generați-le o singură dată și mențineți-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile și componentele front-end (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` trebuie să facă referire la un rol definit cu [`defineRole()`](/l/ro/developers/extend/apps/config/roles).
+* Rolul implicit este detectat automat din fișierul de rol marcat cu [`defineApplicationRole()`](/l/ro/developers/extend/apps/config/roles) — nu este nevoie să îl referi din `defineApplication()`.
 * Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului — nu trebuie să le referiți în `defineApplication()`.
+* Transmiterea explicită a `defaultRoleUniversalIdentifier` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`.
 
 ## Rol implicit pentru funcții
 
-`defaultRoleUniversalIdentifier` controlează la ce pot avea acces funcțiile logice și componentele front-end ale aplicației:
+Rolul declarat cu [`defineApplicationRole()`](/l/ro/developers/extend/apps/config/roles) controlează la ce pot avea acces funcțiile logice și componentele de interfață ale aplicației:
 
 * Tokenul de runtime injectat ca `TWENTY_APP_ACCESS_TOKEN` este derivat din acest rol.
 * Clientul API tipizat este restricționat la permisiunile acordate acelui rol.
