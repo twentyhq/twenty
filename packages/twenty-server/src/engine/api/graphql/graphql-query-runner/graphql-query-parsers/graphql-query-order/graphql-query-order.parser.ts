@@ -10,6 +10,8 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {
   buildOrderByColumnExpression,
+  getSelectOptionValuesSortedByPosition,
+  isSelectFieldType,
   shouldCastToText,
   shouldUseCaseInsensitiveOrder,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
@@ -143,6 +145,18 @@ export class GraphqlQueryOrderFieldParser {
             fieldName,
           );
 
+          const selectOptionValues =
+            isSelectFieldType(fieldMetadata.type) &&
+            Array.isArray(fieldMetadata.options) &&
+            fieldMetadata.options.length > 0
+              ? getSelectOptionValuesSortedByPosition(
+                  fieldMetadata.options as {
+                    position: number;
+                    value: string;
+                  }[],
+                )
+              : undefined;
+
           orderByConditions[columnExpression] = {
             ...convertOrderByToFindOptionsOrder(
               orderByDirection,
@@ -150,6 +164,7 @@ export class GraphqlQueryOrderFieldParser {
             ),
             useLower: shouldUseCaseInsensitiveOrder(fieldMetadata.type),
             castToText: shouldCastToText(fieldMetadata.type),
+            selectOptionValues,
           };
         }
       }
@@ -256,6 +271,18 @@ export class GraphqlQueryOrderFieldParser {
         nestedFieldMetadata.name,
       );
 
+      const nestedSelectOptionValues =
+        isSelectFieldType(nestedFieldMetadata.type) &&
+        Array.isArray(nestedFieldMetadata.options) &&
+        nestedFieldMetadata.options.length > 0
+          ? getSelectOptionValuesSortedByPosition(
+              nestedFieldMetadata.options as {
+                position: number;
+                value: string;
+              }[],
+            )
+          : undefined;
+
       return {
         orderBy: {
           [columnExpression]: {
@@ -265,6 +292,7 @@ export class GraphqlQueryOrderFieldParser {
             ),
             useLower: shouldUseCaseInsensitiveOrder(nestedFieldMetadata.type),
             castToText: shouldCastToText(nestedFieldMetadata.type),
+            selectOptionValues: nestedSelectOptionValues,
           },
         },
         joinInfo,

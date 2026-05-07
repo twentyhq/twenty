@@ -193,14 +193,25 @@ export class GraphqlQueryParser {
             ? `"${parts[0]}"."${parts[1]}"`
             : `"${orderByField}"`;
 
-        // Build column expression with optional ::text cast and LOWER()
+        // Build column expression: ARRAY_POSITION for SELECT fields, LOWER for TEXT
         let columnExpr = quotedColumn;
 
-        if (orderByCondition.castToText) {
-          columnExpr = `${columnExpr}::text`;
-        }
-        if (orderByCondition.useLower) {
-          columnExpr = `LOWER(${columnExpr})`;
+        if (
+          orderByCondition.selectOptionValues &&
+          orderByCondition.selectOptionValues.length > 0
+        ) {
+          const arrayLiteral = orderByCondition.selectOptionValues
+            .map((v) => `'${v.replace(/'/g, "''")}'`)
+            .join(', ');
+
+          columnExpr = `ARRAY_POSITION(ARRAY[${arrayLiteral}], ${quotedColumn})`;
+        } else {
+          if (orderByCondition.castToText) {
+            columnExpr = `${columnExpr}::text`;
+          }
+          if (orderByCondition.useLower) {
+            columnExpr = `LOWER(${columnExpr})`;
+          }
         }
 
         return `${columnExpr} ${orderByCondition.order}${nullsCondition}`;
