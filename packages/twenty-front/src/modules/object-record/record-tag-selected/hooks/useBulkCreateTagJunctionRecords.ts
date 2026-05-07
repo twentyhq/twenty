@@ -4,12 +4,14 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
-import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationGqlFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 type UseBulkCreateTagJunctionRecordsArgs = {
@@ -47,7 +49,7 @@ export const useBulkCreateTagJunctionRecords = ({
     : undefined;
 
   const targetJoinColumnName = isDefined(targetField)
-    ? getJoinColumnName(targetField.settings)
+    ? computeRelationGqlFieldJoinColumnName({ name: targetField.name })
     : undefined;
 
   const isConfigValid =
