@@ -1,11 +1,6 @@
 import path from 'path';
 
 import { msg } from '@lingui/core/macro';
-import { FileFolder } from 'twenty-shared/types';
-import {
-  FileDeletionJob,
-  type FileDeletionJobData,
-} from 'src/engine/core-modules/file/jobs/file-deletion.job';
 import {
   FieldMetadataType,
   type FieldMetadataSettingsMapping,
@@ -582,19 +577,6 @@ export class FilesFieldSync {
 
     if (fileIds.toRemove.size > 0) {
       await this.fileRepository.softDelete([...fileIds.toRemove]);
-
-      if (this.internalContext.messageQueueService) {
-        for (const fileId of fileIds.toRemove) {
-          this.internalContext.messageQueueService.add<FileDeletionJobData>(
-            FileDeletionJob.name,
-            {
-              workspaceId: this.internalContext.workspaceId,
-              fileId,
-              fileFolder: FileFolder.FilesField,
-            },
-          );
-        }
-      }
     }
   }
 

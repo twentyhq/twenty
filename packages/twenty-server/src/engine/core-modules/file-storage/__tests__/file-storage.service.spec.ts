@@ -146,6 +146,5 @@ describe('FileStorageService', () => {
         expect(result).toBeNull();
       });
     });
-
   });
 });

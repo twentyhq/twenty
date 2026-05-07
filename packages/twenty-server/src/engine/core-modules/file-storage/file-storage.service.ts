@@ -152,7 +152,6 @@ export class FileStorageService {
     });
   }
 
-
   async deleteApplicationFiles({
     applicationUniversalIdentifier,
     workspaceId,

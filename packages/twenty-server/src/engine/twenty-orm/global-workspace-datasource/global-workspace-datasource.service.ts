@@ -9,9 +9,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -28,8 +25,6 @@ export class GlobalWorkspaceDataSourceService
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
-    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -60,8 +55,6 @@ export class GlobalWorkspaceDataSourceService
       this.workspaceEventEmitter,
       this.coreDataSource,
     );
-    this.globalWorkspaceDataSource.messageQueueService =
-      this.messageQueueService;
 
     await this.globalWorkspaceDataSource.initialize();
 

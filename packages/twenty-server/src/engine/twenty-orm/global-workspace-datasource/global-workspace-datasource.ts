@@ -25,7 +25,6 @@ import { type WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/wo
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 type CreateQueryBuilderOptions = {
@@ -35,7 +34,6 @@ type CreateQueryBuilderOptions = {
 export class GlobalWorkspaceDataSource extends DataSource {
   readonly eventEmitterService: WorkspaceEventEmitter;
   readonly coreDataSource: DataSource;
-  messageQueueService?: MessageQueueService;
   private _isConstructing = true;
   dataSourceWithOverridenCreateQueryBuilder: GlobalWorkspaceDataSource;
 
