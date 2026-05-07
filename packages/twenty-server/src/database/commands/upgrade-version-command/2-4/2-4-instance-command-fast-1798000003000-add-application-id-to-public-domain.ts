@@ -15,13 +15,13 @@ export class AddApplicationIdToPublicDomainFastInstanceCommand
       `CREATE INDEX "IDX_PUBLIC_DOMAIN_APPLICATION_ID" ON "core"."publicDomain" ("applicationId")`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."publicDomain" ADD CONSTRAINT "FK_PUBLIC_DOMAIN_APPLICATION_ID" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."publicDomain" ADD CONSTRAINT "FK_39f1ad35993f3994cd5400e81a0" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."publicDomain" DROP CONSTRAINT "FK_PUBLIC_DOMAIN_APPLICATION_ID"`,
+      `ALTER TABLE "core"."publicDomain" DROP CONSTRAINT "FK_39f1ad35993f3994cd5400e81a0"`,
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_PUBLIC_DOMAIN_APPLICATION_ID"`,
