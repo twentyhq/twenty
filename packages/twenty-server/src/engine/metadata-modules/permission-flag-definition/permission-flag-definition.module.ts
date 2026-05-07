@@ -8,6 +8,7 @@ import { FlatPermissionFlagDefinitionModule } from 'src/engine/metadata-modules/
 import { PermissionFlagDefinitionEntity } from 'src/engine/metadata-modules/permission-flag-definition/entities/permission-flag-definition.entity';
 import { PermissionFlagDefinitionResolver } from 'src/engine/metadata-modules/permission-flag-definition/permission-flag-definition.resolver';
 import { PermissionFlagDefinitionService } from 'src/engine/metadata-modules/permission-flag-definition/permission-flag-definition.service';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -22,6 +23,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceCacheStorageModule,
     ApplicationModule,
     FlatPermissionFlagDefinitionModule,
+    PermissionsModule,
   ],
   providers: [
     PermissionFlagDefinitionService,
