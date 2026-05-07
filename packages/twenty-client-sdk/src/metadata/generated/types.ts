@@ -5659,7 +5659,7 @@ export default {
             "iconKey": [
                 1
             ],
-            "category": [
+            "permissionType": [
                 1
             ],
             "isRelevantForAgents": [
@@ -10751,7 +10751,7 @@ export default {
             "iconKey": [
                 1
             ],
-            "category": [
+            "permissionType": [
                 1
             ],
             "isRelevantForAgents": [
@@ -10788,7 +10788,7 @@ export default {
             "iconKey": [
                 1
             ],
-            "category": [
+            "permissionType": [
                 1
             ],
             "isRelevantForAgents": [

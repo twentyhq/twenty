@@ -24,7 +24,7 @@ export const permissionFlagDefinitionGraphqlApiExceptionHandler = (
         throw new ForbiddenError(error);
       case PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_INPUT:
       case PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_KEY:
-      case PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_CATEGORY:
+      case PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_PERMISSION_TYPE:
       case PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_KEY_IMMUTABLE:
       case PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_APPLICATION_IMMUTABLE:
       case PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_IN_USE:

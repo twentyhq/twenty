@@ -34,7 +34,7 @@ export const fromCreatePermissionFlagDefinitionInputToFlatPermissionFlagDefiniti
       label,
       description: description ?? null,
       iconKey: iconKey ?? null,
-      category: createPermissionFlagDefinitionInput.category,
+      permissionType: createPermissionFlagDefinitionInput.permissionType,
       isRelevantForAgents:
         createPermissionFlagDefinitionInput.isRelevantForAgents ?? false,
       isRelevantForUsers:

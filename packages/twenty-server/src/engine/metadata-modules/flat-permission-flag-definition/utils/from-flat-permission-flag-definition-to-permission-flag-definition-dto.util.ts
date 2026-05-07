@@ -10,7 +10,7 @@ export const fromFlatPermissionFlagDefinitionToPermissionFlagDefinitionDto = (
   label: flatDefinition.label,
   description: flatDefinition.description,
   iconKey: flatDefinition.iconKey,
-  category: flatDefinition.category,
+  permissionType: flatDefinition.permissionType,
   isRelevantForAgents: flatDefinition.isRelevantForAgents,
   isRelevantForUsers: flatDefinition.isRelevantForUsers,
   isRelevantForApiKeys: flatDefinition.isRelevantForApiKeys,

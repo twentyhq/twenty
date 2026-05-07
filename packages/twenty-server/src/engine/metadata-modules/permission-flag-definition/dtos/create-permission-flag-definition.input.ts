@@ -10,6 +10,10 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import {
+  PERMISSION_FLAG_DEFINITION_PERMISSION_TYPES,
+  type PermissionFlagDefinitionPermissionType,
+} from 'src/engine/metadata-modules/permission-flag-definition/constants/permission-flag-definition-permission-type.constant';
 
 @InputType()
 export class CreatePermissionFlagDefinitionInput {
@@ -43,9 +47,9 @@ export class CreatePermissionFlagDefinitionInput {
   @Field({ nullable: true })
   iconKey?: string;
 
-  @IsIn(['settings', 'tool'])
-  @Field()
-  category: 'settings' | 'tool';
+  @IsIn(PERMISSION_FLAG_DEFINITION_PERMISSION_TYPES)
+  @Field(() => String)
+  permissionType: PermissionFlagDefinitionPermissionType;
 
   @IsBoolean()
   @IsOptional()

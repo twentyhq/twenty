@@ -1,11 +1,8 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatPermissionFlagDefinitionModule } from 'src/engine/metadata-modules/flat-permission-flag-definition/flat-permission-flag-definition.module';
-import { PermissionFlagDefinitionEntity } from 'src/engine/metadata-modules/permission-flag-definition/entities/permission-flag-definition.entity';
 import { PermissionFlagDefinitionResolver } from 'src/engine/metadata-modules/permission-flag-definition/permission-flag-definition.resolver';
 import { PermissionFlagDefinitionService } from 'src/engine/metadata-modules/permission-flag-definition/permission-flag-definition.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -14,10 +11,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      ApplicationEntity,
-      PermissionFlagDefinitionEntity,
-    ]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
     WorkspaceCacheStorageModule,

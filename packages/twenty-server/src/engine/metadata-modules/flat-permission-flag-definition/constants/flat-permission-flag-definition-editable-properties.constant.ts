@@ -4,7 +4,7 @@ export const FLAT_PERMISSION_FLAG_DEFINITION_EDITABLE_PROPERTIES = [
   'label',
   'description',
   'iconKey',
-  'category',
+  'permissionType',
   'isRelevantForAgents',
   'isRelevantForUsers',
   'isRelevantForApiKeys',

@@ -1150,7 +1150,6 @@ export type CreatePageLayoutWidgetInput = {
 };
 
 export type CreatePermissionFlagDefinitionInput = {
-  category: Scalars['String'];
   description?: InputMaybe<Scalars['String']>;
   iconKey?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['UUID']>;
@@ -1159,6 +1158,7 @@ export type CreatePermissionFlagDefinitionInput = {
   isRelevantForUsers?: InputMaybe<Scalars['Boolean']>;
   key: Scalars['String'];
   label: Scalars['String'];
+  permissionType: Scalars['String'];
   universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
 
@@ -3938,7 +3938,6 @@ export type PermissionFlag = {
 export type PermissionFlagDefinition = {
   __typename?: 'PermissionFlagDefinition';
   applicationId: Scalars['UUID'];
-  category: Scalars['String'];
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
   iconKey?: Maybe<Scalars['String']>;
@@ -3949,6 +3948,7 @@ export type PermissionFlagDefinition = {
   isRelevantForUsers: Scalars['Boolean'];
   key: Scalars['String'];
   label: Scalars['String'];
+  permissionType: Scalars['String'];
   universalIdentifier: Scalars['UUID'];
   updatedAt: Scalars['DateTime'];
 };
@@ -5227,13 +5227,13 @@ export type UpdatePermissionFlagDefinitionInput = {
 };
 
 export type UpdatePermissionFlagDefinitionInputUpdates = {
-  category?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
   iconKey?: InputMaybe<Scalars['String']>;
   isRelevantForAgents?: InputMaybe<Scalars['Boolean']>;
   isRelevantForApiKeys?: InputMaybe<Scalars['Boolean']>;
   isRelevantForUsers?: InputMaybe<Scalars['Boolean']>;
   label?: InputMaybe<Scalars['String']>;
+  permissionType?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateRoleInput = {

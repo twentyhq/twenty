@@ -2497,7 +2497,7 @@ export interface PermissionFlagDefinition {
     label: Scalars['String']
     description?: Scalars['String']
     iconKey?: Scalars['String']
-    category: Scalars['String']
+    permissionType: Scalars['String']
     isRelevantForAgents: Scalars['Boolean']
     isRelevantForUsers: Scalars['Boolean']
     isRelevantForApiKeys: Scalars['Boolean']
@@ -5532,7 +5532,7 @@ export interface PermissionFlagDefinitionGenqlSelection{
     label?: boolean | number
     description?: boolean | number
     iconKey?: boolean | number
-    category?: boolean | number
+    permissionType?: boolean | number
     isRelevantForAgents?: boolean | number
     isRelevantForUsers?: boolean | number
     isRelevantForApiKeys?: boolean | number
@@ -6263,7 +6263,7 @@ update: UpdateWebhookInputUpdates}
 
 export interface UpdateWebhookInputUpdates {targetUrl?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 
-export interface CreatePermissionFlagDefinitionInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),key: Scalars['String'],label: Scalars['String'],description?: (Scalars['String'] | null),iconKey?: (Scalars['String'] | null),category: Scalars['String'],isRelevantForAgents?: (Scalars['Boolean'] | null),isRelevantForUsers?: (Scalars['Boolean'] | null),isRelevantForApiKeys?: (Scalars['Boolean'] | null)}
+export interface CreatePermissionFlagDefinitionInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),key: Scalars['String'],label: Scalars['String'],description?: (Scalars['String'] | null),iconKey?: (Scalars['String'] | null),permissionType: Scalars['String'],isRelevantForAgents?: (Scalars['Boolean'] | null),isRelevantForUsers?: (Scalars['Boolean'] | null),isRelevantForApiKeys?: (Scalars['Boolean'] | null)}
 
 export interface UpdatePermissionFlagDefinitionInput {
 /** The id of the permission flag definition to update */
@@ -6271,7 +6271,7 @@ id: Scalars['UUID'],
 /** The fields to update */
 update: UpdatePermissionFlagDefinitionInputUpdates}
 
-export interface UpdatePermissionFlagDefinitionInputUpdates {label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),iconKey?: (Scalars['String'] | null),category?: (Scalars['String'] | null),isRelevantForAgents?: (Scalars['Boolean'] | null),isRelevantForUsers?: (Scalars['Boolean'] | null),isRelevantForApiKeys?: (Scalars['Boolean'] | null)}
+export interface UpdatePermissionFlagDefinitionInputUpdates {label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),iconKey?: (Scalars['String'] | null),permissionType?: (Scalars['String'] | null),isRelevantForAgents?: (Scalars['Boolean'] | null),isRelevantForUsers?: (Scalars['Boolean'] | null),isRelevantForApiKeys?: (Scalars['Boolean'] | null)}
 
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 

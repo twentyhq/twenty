@@ -13,10 +13,7 @@ import { permissionFlagDefinitionGraphqlApiExceptionHandler } from 'src/engine/m
 export class PermissionFlagDefinitionGraphqlApiExceptionFilter
   implements ExceptionFilter
 {
-  catch(
-    exception: PermissionFlagDefinitionException,
-    _host: ExecutionContext,
-  ) {
+  catch(exception: PermissionFlagDefinitionException, _host: ExecutionContext) {
     return permissionFlagDefinitionGraphqlApiExceptionHandler(exception);
   }
 }

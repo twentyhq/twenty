@@ -2847,7 +2847,7 @@ type PermissionFlagDefinition {
   label: String!
   description: String
   iconKey: String
-  category: String!
+  permissionType: String!
   isRelevantForAgents: Boolean!
   isRelevantForUsers: Boolean!
   isRelevantForApiKeys: Boolean!
@@ -4232,7 +4232,7 @@ input CreatePermissionFlagDefinitionInput {
   label: String!
   description: String
   iconKey: String
-  category: String!
+  permissionType: String!
   isRelevantForAgents: Boolean
   isRelevantForUsers: Boolean
   isRelevantForApiKeys: Boolean
@@ -4250,7 +4250,7 @@ input UpdatePermissionFlagDefinitionInputUpdates {
   label: String
   description: String
   iconKey: String
-  category: String
+  permissionType: String
   isRelevantForAgents: Boolean
   isRelevantForUsers: Boolean
   isRelevantForApiKeys: Boolean

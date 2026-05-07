@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type PermissionFlagDefinitionPermissionType } from 'src/engine/metadata-modules/permission-flag-definition/constants/permission-flag-definition-permission-type.constant';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('permissionFlagDefinition')
@@ -33,7 +34,7 @@ export class PermissionFlagDefinitionEntity extends SyncableEntity {
   iconKey: string | null;
 
   @Column({ nullable: false, type: 'varchar' })
-  category: 'settings' | 'tool';
+  permissionType: PermissionFlagDefinitionPermissionType;
 
   @Column({ nullable: false, type: 'boolean', default: false })
   isRelevantForAgents: boolean;

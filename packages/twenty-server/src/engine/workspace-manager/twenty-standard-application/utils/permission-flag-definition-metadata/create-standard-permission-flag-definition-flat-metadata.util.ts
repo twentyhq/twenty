@@ -31,7 +31,7 @@ export const createStandardPermissionFlagDefinitionFlatMetadata = ({
     label: metadata.label,
     description: metadata.description,
     iconKey: metadata.iconKey,
-    category: metadata.category,
+    permissionType: metadata.permissionType,
     isRelevantForAgents: metadata.isRelevantForAgents,
     isRelevantForUsers: metadata.isRelevantForUsers,
     isRelevantForApiKeys: metadata.isRelevantForApiKeys,

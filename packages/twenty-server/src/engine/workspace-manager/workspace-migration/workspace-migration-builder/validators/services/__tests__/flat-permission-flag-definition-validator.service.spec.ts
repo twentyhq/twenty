@@ -7,6 +7,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { type FlatPermissionFlagDefinition } from 'src/engine/metadata-modules/flat-permission-flag-definition/types/flat-permission-flag-definition.type';
+import { type PermissionFlagDefinitionPermissionType } from 'src/engine/metadata-modules/permission-flag-definition/constants/permission-flag-definition-permission-type.constant';
 import { PermissionFlagDefinitionExceptionCode } from 'src/engine/metadata-modules/permission-flag-definition/permission-flag-definition.exception';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { FlatPermissionFlagDefinitionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-definition-validator.service';
@@ -21,7 +22,7 @@ const buildFlatDefinition = (
     label: 'Test Flag',
     description: 'A flag for tests',
     iconKey: 'IconTest',
-    category: 'tool',
+    permissionType: 'tool',
     isRelevantForAgents: true,
     isRelevantForUsers: false,
     isRelevantForApiKeys: false,
@@ -100,17 +101,17 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
       );
     });
 
-    it('rejects an unknown category', () => {
+    it('rejects an unknown permission type', () => {
       const result = service.validateFlatPermissionFlagDefinitionCreation(
         buildArgs(
           buildFlatDefinition({
-            category: 'invalid' as 'settings' | 'tool',
+            permissionType: 'invalid' as PermissionFlagDefinitionPermissionType,
           }),
         ),
       );
 
       expect(result.errors.map((error) => error.code)).toContain(
-        PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_CATEGORY,
+        PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_PERMISSION_TYPE,
       );
     });
 
@@ -131,9 +132,50 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_ALREADY_EXISTS,
       );
     });
+
+    it('rejects a duplicate universal identifier', () => {
+      const existing = buildFlatDefinition();
+      const optimisticMaps = buildEmptyMaps();
+      optimisticMaps.byUniversalIdentifier[existing.universalIdentifier] =
+        existing;
+
+      const result = service.validateFlatPermissionFlagDefinitionCreation(
+        buildArgs(
+          buildFlatDefinition({
+            id: '00000000-0000-0000-0000-000000000002',
+            key: 'ANOTHER_TEST_FLAG',
+          }),
+          optimisticMaps,
+        ),
+      );
+
+      expect(result.errors.map((error) => error.code)).toContain(
+        PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_ALREADY_EXISTS,
+      );
+    });
   });
 
   describe('validateFlatPermissionFlagDefinitionUpdate', () => {
+    it('passes for a valid update', () => {
+      const existing = buildFlatDefinition();
+      const optimisticMaps = buildEmptyMaps();
+      optimisticMaps.byUniversalIdentifier[existing.universalIdentifier] =
+        existing;
+
+      const result = service.validateFlatPermissionFlagDefinitionUpdate({
+        universalIdentifier: existing.universalIdentifier,
+        flatEntityUpdate: { label: 'Updated Label' },
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+          flatPermissionFlagDefinitionMaps: optimisticMaps,
+        },
+        buildOptions: {} as never,
+      } as unknown as Parameters<
+        FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionUpdate']
+      >[0]);
+
+      expect(result.errors).toHaveLength(0);
+    });
+
     it('rejects updating the immutable key field', () => {
       const existing = buildFlatDefinition({ key: 'ORIGINAL_KEY' });
       const optimisticMaps = buildEmptyMaps();
@@ -172,9 +214,101 @@ describe('FlatPermissionFlagDefinitionValidatorService', () => {
         PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_NOT_FOUND,
       );
     });
+
+    it('rejects updating a standard definition from a custom application', () => {
+      const existing = buildFlatDefinition({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      });
+      const optimisticMaps = buildEmptyMaps();
+      optimisticMaps.byUniversalIdentifier[existing.universalIdentifier] =
+        existing;
+
+      const result = service.validateFlatPermissionFlagDefinitionUpdate({
+        universalIdentifier: existing.universalIdentifier,
+        flatEntityUpdate: { label: 'Updated Label' },
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+          flatPermissionFlagDefinitionMaps: optimisticMaps,
+        },
+        buildOptions: {
+          isSystemBuild: false,
+          applicationUniversalIdentifier:
+            '00000000-0000-0000-0000-000000000aaa',
+        },
+      } as unknown as Parameters<
+        FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionUpdate']
+      >[0]);
+
+      expect(result.errors.map((error) => error.code)).toContain(
+        PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_IS_STANDARD,
+      );
+    });
+
+    it('rejects updating to an unknown permission type', () => {
+      const existing = buildFlatDefinition();
+      const optimisticMaps = buildEmptyMaps();
+      optimisticMaps.byUniversalIdentifier[existing.universalIdentifier] =
+        existing;
+
+      const result = service.validateFlatPermissionFlagDefinitionUpdate({
+        universalIdentifier: existing.universalIdentifier,
+        flatEntityUpdate: {
+          permissionType: 'invalid' as PermissionFlagDefinitionPermissionType,
+        },
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+          flatPermissionFlagDefinitionMaps: optimisticMaps,
+        },
+        buildOptions: {} as never,
+      } as unknown as Parameters<
+        FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionUpdate']
+      >[0]);
+
+      expect(result.errors.map((error) => error.code)).toContain(
+        PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_PERMISSION_TYPE,
+      );
+    });
   });
 
   describe('validateFlatPermissionFlagDefinitionDeletion', () => {
+    it('passes for a valid deletion', () => {
+      const existing = buildFlatDefinition();
+      const optimisticMaps = buildEmptyMaps();
+      optimisticMaps.byUniversalIdentifier[existing.universalIdentifier] =
+        existing;
+
+      const result = service.validateFlatPermissionFlagDefinitionDeletion({
+        flatEntityToValidate: existing,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+          flatPermissionFlagDefinitionMaps: optimisticMaps,
+          flatPermissionFlagMaps: buildEmptyPermissionFlagMaps(),
+        },
+        buildOptions: {} as never,
+      } as unknown as Parameters<
+        FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionDeletion']
+      >[0]);
+
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('returns not-found if no existing definition matches the universalIdentifier', () => {
+      const result = service.validateFlatPermissionFlagDefinitionDeletion({
+        flatEntityToValidate: buildFlatDefinition({
+          universalIdentifier: '00000000-0000-0000-0000-deadbeefdead',
+        }),
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+          flatPermissionFlagDefinitionMaps: buildEmptyMaps(),
+          flatPermissionFlagMaps: buildEmptyPermissionFlagMaps(),
+        },
+        buildOptions: {} as never,
+      } as unknown as Parameters<
+        FlatPermissionFlagDefinitionValidatorService['validateFlatPermissionFlagDefinitionDeletion']
+      >[0]);
+
+      expect(result.errors.map((error) => error.code)).toContain(
+        PermissionFlagDefinitionExceptionCode.PERMISSION_FLAG_DEFINITION_NOT_FOUND,
+      );
+    });
+
     it('rejects deleting a standard definition from a custom application', () => {
       const existing = buildFlatDefinition({
         applicationUniversalIdentifier:

@@ -6,6 +6,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { PERMISSION_FLAG_DEFINITION_PERMISSION_TYPES } from 'src/engine/metadata-modules/permission-flag-definition/constants/permission-flag-definition-permission-type.constant';
 import { PermissionFlagDefinitionExceptionCode } from 'src/engine/metadata-modules/permission-flag-definition/permission-flag-definition.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { isCallerTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-caller-twenty-standard-app.util';
@@ -13,8 +14,6 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-
-const VALID_CATEGORIES = ['settings', 'tool'] as const;
 
 @Injectable()
 export class FlatPermissionFlagDefinitionValidatorService {
@@ -78,14 +77,14 @@ export class FlatPermissionFlagDefinitionValidatorService {
     }
 
     if (
-      !VALID_CATEGORIES.includes(
-        flatPermissionFlagDefinitionToValidate.category as (typeof VALID_CATEGORIES)[number],
+      !PERMISSION_FLAG_DEFINITION_PERMISSION_TYPES.includes(
+        flatPermissionFlagDefinitionToValidate.permissionType,
       )
     ) {
       validationResult.errors.push({
-        code: PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_CATEGORY,
-        message: t`Permission flag definition category must be 'settings' or 'tool'`,
-        userFriendlyMessage: msg`Invalid category`,
+        code: PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_PERMISSION_TYPE,
+        message: t`Permission flag definition permission type must be 'settings' or 'tool'`,
+        userFriendlyMessage: msg`Invalid permission type`,
       });
     }
 
@@ -152,15 +151,15 @@ export class FlatPermissionFlagDefinitionValidatorService {
     }
 
     if (
-      isDefined(flatEntityUpdate.category) &&
-      !VALID_CATEGORIES.includes(
-        flatEntityUpdate.category as (typeof VALID_CATEGORIES)[number],
+      isDefined(flatEntityUpdate.permissionType) &&
+      !PERMISSION_FLAG_DEFINITION_PERMISSION_TYPES.includes(
+        flatEntityUpdate.permissionType,
       )
     ) {
       validationResult.errors.push({
-        code: PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_CATEGORY,
-        message: t`Permission flag definition category must be 'settings' or 'tool'`,
-        userFriendlyMessage: msg`Invalid category`,
+        code: PermissionFlagDefinitionExceptionCode.INVALID_PERMISSION_FLAG_DEFINITION_PERMISSION_TYPE,
+        message: t`Permission flag definition permission type must be 'settings' or 'tool'`,
+        userFriendlyMessage: msg`Invalid permission type`,
       });
     }
 

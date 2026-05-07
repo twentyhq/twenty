@@ -18,7 +18,7 @@ export class PermissionFlagDefinitionSyncableEntityFastInstanceCommand
         "label" varchar NOT NULL,
         "description" text,
         "iconKey" varchar,
-        "category" varchar NOT NULL,
+        "permissionType" varchar NOT NULL,
         "isRelevantForAgents" boolean NOT NULL DEFAULT false,
         "isRelevantForUsers" boolean NOT NULL DEFAULT false,
         "isRelevantForApiKeys" boolean NOT NULL DEFAULT false,
@@ -55,17 +55,19 @@ export class PermissionFlagDefinitionSyncableEntityFastInstanceCommand
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."permissionFlagDefinition" DROP CONSTRAINT "FK_PERMISSION_FLAG_DEFINITION_APPLICATION"`,
+      `ALTER TABLE "core"."permissionFlagDefinition" DROP CONSTRAINT IF EXISTS "FK_PERMISSION_FLAG_DEFINITION_APPLICATION"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."permissionFlagDefinition" DROP CONSTRAINT "FK_PERMISSION_FLAG_DEFINITION_WORKSPACE"`,
+      `ALTER TABLE "core"."permissionFlagDefinition" DROP CONSTRAINT IF EXISTS "FK_PERMISSION_FLAG_DEFINITION_WORKSPACE"`,
     );
     await queryRunner.query(
-      `DROP INDEX "core"."IDX_PERMISSION_FLAG_DEFINITION_WORKSPACE_UNIVERSAL_IDENTIFIER"`,
+      `DROP INDEX IF EXISTS "core"."IDX_PERMISSION_FLAG_DEFINITION_WORKSPACE_UNIVERSAL_IDENTIFIER"`,
     );
     await queryRunner.query(
-      `DROP INDEX "core"."IDX_PERMISSION_FLAG_DEFINITION_APPLICATION_ID"`,
+      `DROP INDEX IF EXISTS "core"."IDX_PERMISSION_FLAG_DEFINITION_APPLICATION_ID"`,
     );
-    await queryRunner.query(`DROP TABLE "core"."permissionFlagDefinition"`);
+    await queryRunner.query(
+      `DROP TABLE IF EXISTS "core"."permissionFlagDefinition"`,
+    );
   }
 }

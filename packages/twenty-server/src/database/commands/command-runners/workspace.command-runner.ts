@@ -130,7 +130,9 @@ export abstract class WorkspaceCommandRunner<
       });
 
       if (report.fail.length > 0) {
-        throw new Error(`Command failed for ${report.fail.length} workspace(s)`);
+        throw new Error(
+          `Command failed for ${report.fail.length} workspace(s)`,
+        );
       }
 
       this.logger.log(chalk.blue('Command completed!'));
