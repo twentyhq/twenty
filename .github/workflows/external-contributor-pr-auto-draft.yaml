@@ -4,6 +4,9 @@ on:
   pull_request_target:
     types: [opened]
 
+permissions:
+  pull-requests: write
+
 jobs:
   convert-to-draft:
     if: |
@@ -17,20 +20,22 @@ jobs:
       - name: Convert to draft
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
         run: |
-          gh api graphql -f query='
+          gh api graphql -f query="
             mutation {
-              convertPullRequestToDraft(input: {pullRequestId: "${{ github.event.pull_request.node_id }}"}) {
+              convertPullRequestToDraft(input: {pullRequestId: \"$PR_NODE_ID\"}) {
                 pullRequest { isDraft }
               }
             }
-          '
+          "
 
       - name: Welcome comment
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "👋 Thanks for contributing to Twenty!
+          gh pr comment "$PR_NUMBER" --repo ${{ github.repository }} --body "👋 Thanks for contributing to Twenty!
 
           Your PR has been set to draft while you work on it. Once you're done, mark it as **Ready for review** and our automated checks will run.
 
