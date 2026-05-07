@@ -20,6 +20,7 @@ export type BuildPageMetadataInput = {
   path: string;
   title: MessageDescriptor;
   description: MessageDescriptor;
+  locales?: readonly AppLocale[];
   ogImage?: string;
   type?: 'website' | 'article';
   extend?: Metadata;
@@ -40,9 +41,10 @@ const localizePath = (locale: AppLocale, normalizedPath: string): string => {
 
 const buildLanguageAlternates = (
   normalizedPath: string,
+  locales: readonly AppLocale[],
 ): Record<string, string> => {
   const languages: Record<string, string> = {};
-  for (const locale of PUBLIC_APP_LOCALE_LIST) {
+  for (const locale of locales) {
     languages[locale] = localizePath(locale, normalizedPath);
   }
   languages['x-default'] = localizePath(SOURCE_LOCALE, normalizedPath);
@@ -54,6 +56,7 @@ export function buildPageMetadata({
   path,
   title,
   description,
+  locales = PUBLIC_APP_LOCALE_LIST,
   ogImage,
   type = 'website',
   extend,
@@ -83,7 +86,7 @@ export function buildPageMetadata({
     description: resolvedDescription,
     alternates: {
       canonical,
-      languages: buildLanguageAlternates(normalizedPath),
+      languages: buildLanguageAlternates(normalizedPath, locales),
     },
     openGraph: {
       title: resolvedTitle,

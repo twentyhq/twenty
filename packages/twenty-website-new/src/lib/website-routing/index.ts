@@ -1,3 +1,4 @@
+export { ARTICLE_ROUTES } from './article-routes';
 export { CUSTOMER_STORY_ROUTES } from './customer-story-routes';
 export { STATIC_WEBSITE_ROUTES } from './static-website-routes';
 export type { WebsiteRoute, WebsiteRouteId } from './types';

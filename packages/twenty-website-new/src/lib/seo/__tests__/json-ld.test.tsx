@@ -1,4 +1,6 @@
 import {
+  buildArticleListJsonLd,
+  buildArticleJsonLd,
   buildFaqPageJsonLd,
   buildOrganizationJsonLd,
   buildReleaseListJsonLd,
@@ -164,5 +166,64 @@ describe('buildReleaseListJsonLd', () => {
     };
 
     expect(data.itemListElement[0].item).not.toHaveProperty('datePublished');
+  });
+});
+
+describe('articles JSON-LD', () => {
+  const post = {
+    author: 'Twenty',
+    content: 'Body',
+    date: '2026-05-06',
+    description: 'A practical CRM article.',
+    draft: false,
+    readingTimeMinutes: 3,
+    slug: 'practical-crm-article',
+    tags: ['CRM'],
+    title: 'Practical CRM Article',
+  };
+
+  it('builds a Blog schema for the articles index', () => {
+    const data = buildArticleListJsonLd([post]) as {
+      '@type': string;
+      blogPost: Array<Record<string, unknown>>;
+    };
+
+    expect(data).toMatchObject({
+      '@type': 'Blog',
+      name: 'Twenty Articles',
+      url: 'https://example.test/articles',
+    });
+    expect(data.blogPost[0]).toMatchObject({
+      '@type': 'BlogPosting',
+      headline: 'Practical CRM Article',
+      url: 'https://example.test/articles/practical-crm-article',
+      datePublished: '2026-05-06',
+      author: {
+        '@type': 'Organization',
+        name: 'Twenty',
+      },
+    });
+  });
+
+  it('builds a BlogPosting schema for an article page', () => {
+    const data = buildArticleJsonLd(post);
+
+    expect(data).toMatchObject({
+      '@type': 'BlogPosting',
+      headline: 'Practical CRM Article',
+      description: 'A practical CRM article.',
+      url: 'https://example.test/articles/practical-crm-article',
+      mainEntityOfPage: 'https://example.test/articles/practical-crm-article',
+      datePublished: '2026-05-06',
+      author: {
+        '@type': 'Organization',
+        name: 'Twenty',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Twenty',
+        url: 'https://example.test',
+      },
+    });
   });
 });
