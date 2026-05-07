@@ -17,9 +17,9 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredWorkspaceCommand('2.3.0', 1778000000000)
+@RegisteredWorkspaceCommand('2.4.0', 1778000000000)
 @Command({
-  name: 'upgrade:2-3:rebuild-unique-phone-indexes',
+  name: 'upgrade:2-4:rebuild-unique-phone-indexes',
   description:
     'Rebuild unique phone field indexes to include the phone calling code column.',
 })
