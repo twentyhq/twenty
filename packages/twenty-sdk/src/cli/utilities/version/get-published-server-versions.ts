@@ -108,7 +108,10 @@ const fetchFromDockerHub = async (): Promise<
         continue;
       }
 
-      versions.push({ name: tag.name, lastUpdatedAt });
+      versions.push({
+        name: tag.name.replace(/^v/, ''),
+        lastUpdatedAt,
+      });
     }
 
     versions.sort((a, b) => {

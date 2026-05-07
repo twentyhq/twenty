@@ -24,7 +24,7 @@ export const getLocalServerVersion = (
       return null;
     }
 
-    return match[1].trim();
+    return match[1].trim().replace(/^v/, '');
   } catch {
     return null;
   }

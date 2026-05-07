@@ -28,6 +28,11 @@ export const DevUiVersionRow = ({
     daysBehind !== null &&
     daysBehind > STALE_THRESHOLD_DAYS;
 
+  const isUpToDate =
+    localServerVersion !== null &&
+    latestServerVersion !== null &&
+    localServerVersion === latestServerVersion;
+
   return (
     <Box>
       <Text dimColor>Versions: </Text>
@@ -39,18 +44,17 @@ export const DevUiVersionRow = ({
           <Text color={isStale ? 'yellow' : undefined}>
             v{localServerVersion}
           </Text>
+          {isUpToDate && <Text color="green"> ✓ latest</Text>}
+          {isStale && latestServerVersion !== null && (
+            <>
+              <Text color="yellow"> → v{latestServerVersion}</Text>
+              {daysBehind !== null && (
+                <Text dimColor> ({daysBehind}d behind)</Text>
+              )}
+            </>
+          )}
         </>
       )}
-      {latestServerVersion !== null &&
-        latestServerVersion !== localServerVersion && (
-          <>
-            <Text dimColor> • Latest </Text>
-            <Text>v{latestServerVersion}</Text>
-            {isStale && daysBehind !== null && (
-              <Text color="yellow"> ({daysBehind}d behind)</Text>
-            )}
-          </>
-        )}
     </Box>
   );
 };
