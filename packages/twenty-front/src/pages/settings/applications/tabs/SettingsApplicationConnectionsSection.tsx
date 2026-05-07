@@ -1,15 +1,20 @@
-import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
-import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
-import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
   H2Title,
+  IconChevronRight,
   IconPlus,
   IconUser,
   IconUsers,
@@ -19,18 +24,14 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { DeleteConnectedAccountDocument } from '~/generated-metadata/graphql';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useMyAppConnectedAccounts } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
 
-const StyledRowRightContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
+const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
+  'minmax(0, 1fr) 160px 180px 36px';
 
 const StyledFooter = styled.div`
   display: flex;
@@ -38,10 +39,11 @@ const StyledFooter = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
-// Inline split button: a "Add connection" CTA whose click opens a small
-// Dropdown menu with the two visibility choices ("Just for me" / "Workspace
-// shared"). Replaces an earlier full-screen modal that didn't match the
-// rest of the settings UI.
+const StyledTableRowsContainer = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  padding: ${themeCssVariables.spacing[2]} 0;
+`;
+
 const AddConnectionDropdown = ({
   provider,
   onPick,
@@ -97,13 +99,11 @@ export const SettingsApplicationConnectionsSection = ({
   applicationId: string;
 }) => {
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { connectionProviders, loading } =
     useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts } = useMyAppConnectedAccounts();
-  const [deleteConnectedAccount] = useMutation(DeleteConnectedAccountDocument, {
-    refetchQueries: [{ query: GET_MY_CONNECTED_ACCOUNTS }],
-  });
 
   if (loading || connectionProviders.length === 0) {
     return null;
@@ -133,58 +133,77 @@ export const SettingsApplicationConnectionsSection = ({
               />
             )}
             {providerConnections.length > 0 && (
-              <SettingsListCard
-                items={providerConnections.map((connection) => ({
-                  id: connection.id,
-                  label: connection.name ?? connection.handle,
-                  // GraphQL types `visibility` as `string`; the column is
-                  // constrained to one of these two values at write time.
-                  visibility: connection.visibility as 'user' | 'workspace',
-                  authFailedAt: connection.authFailedAt,
-                  providerName: provider.name,
-                }))}
-                getItemLabel={(item) => item.label}
-                RowRightComponent={({ item }) => (
-                  <StyledRowRightContainer>
-                    <Status
-                      color={item.visibility === 'workspace' ? 'blue' : 'gray'}
-                      text={
-                        item.visibility === 'workspace'
-                          ? t`Workspace`
-                          : t`Just me`
+              <Table>
+                <TableRow
+                  gridTemplateColumns={
+                    CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS
+                  }
+                >
+                  <TableHeader>{t`Connection`}</TableHeader>
+                  <TableHeader>{t`Status`}</TableHeader>
+                  <TableHeader>{t`Visibility`}</TableHeader>
+                  <TableHeader />
+                </TableRow>
+                <StyledTableRowsContainer>
+                  {providerConnections.map((connection) => (
+                    <TableRow
+                      key={connection.id}
+                      gridTemplateColumns={
+                        CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS
                       }
-                    />
-                    {item.authFailedAt && (
-                      <Status color="red" text={t`Reconnect needed`} />
-                    )}
-                    {item.authFailedAt && (
-                      <Button
-                        title={t`Reconnect`}
-                        variant="secondary"
-                        accent="blue"
-                        size="small"
-                        onClick={() =>
-                          triggerAppOAuth({
-                            applicationId,
-                            providerName: item.providerName,
-                            visibility: item.visibility,
-                            reconnectingConnectedAccountId: item.id,
-                          })
-                        }
-                      />
-                    )}
-                    <Button
-                      title={t`Delete`}
-                      variant="secondary"
-                      accent="danger"
-                      size="small"
-                      onClick={() =>
-                        deleteConnectedAccount({ variables: { id: item.id } })
-                      }
-                    />
-                  </StyledRowRightContainer>
-                )}
-              />
+                      to={getSettingsPath(
+                        SettingsPath.ApplicationConnectionDetail,
+                        {
+                          applicationId,
+                          connectedAccountId: connection.id,
+                        },
+                      )}
+                    >
+                      <TableCell
+                        clickable
+                        minWidth="0"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        whiteSpace="nowrap"
+                      >
+                        {connection.name ?? connection.handle}
+                      </TableCell>
+                      <TableCell clickable>
+                        {connection.authFailedAt ? (
+                          <Status color="red" text={t`Reconnect needed`} />
+                        ) : (
+                          <Status color="green" text={t`Connected`} />
+                        )}
+                      </TableCell>
+                      <TableCell clickable>
+                        <Status
+                          color={
+                            connection.visibility === 'workspace'
+                              ? 'blue'
+                              : 'gray'
+                          }
+                          text={
+                            connection.visibility === 'workspace'
+                              ? t`Workspace shared`
+                              : t`Just for me`
+                          }
+                        />
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        color={themeCssVariables.font.color.tertiary}
+                        padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
+                      >
+                        <IconChevronRight
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                          color={theme.font.color.light}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </StyledTableRowsContainer>
+              </Table>
             )}
             {isClientCredentialsConfigured && (
               <StyledFooter>
