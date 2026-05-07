@@ -290,6 +290,50 @@ describe('Generate Column Definitions', () => {
         ]),
       );
     });
+
+    it('should serialize normalized unique phone defaults from metadata input', () => {
+      const phonesField = getFlatFieldMetadataMock({
+        universalIdentifier: 'phone',
+        objectMetadataId: mockObjectId,
+        type: FieldMetadataType.PHONES,
+        name: 'phone',
+        isUnique: true,
+        defaultValue: {
+          primaryPhoneNumber: '',
+          primaryPhoneCountryCode: '',
+          primaryPhoneCallingCode: '',
+          additionalPhones: null,
+        },
+      });
+
+      const columns = generateColumnDefinitions({
+        flatFieldMetadata: phonesField,
+        flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
+      });
+
+      expect(columns).toHaveLength(4);
+      expect(columns).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: 'phonePrimaryPhoneNumber',
+            default: 'NULL',
+          }),
+          expect.objectContaining({
+            name: 'phonePrimaryPhoneCountryCode',
+            default: "''::text",
+          }),
+          expect.objectContaining({
+            name: 'phonePrimaryPhoneCallingCode',
+            default: 'NULL',
+          }),
+          expect.objectContaining({
+            name: 'phoneAdditionalPhones',
+            default: 'NULL',
+          }),
+        ]),
+      );
+    });
   });
 
   describe('Default Value Schema Generation', () => {

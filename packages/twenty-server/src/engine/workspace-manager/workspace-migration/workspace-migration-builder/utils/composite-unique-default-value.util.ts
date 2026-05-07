@@ -24,6 +24,22 @@ const isCompositeDefaultValue = (
 const stripSurroundingQuotes = (value: string): string =>
   value.startsWith("'") && value.endsWith("'") ? value.slice(1, -1) : value;
 
+const formatDefaultValueForWorkspaceSchema = (
+  defaultValue?: FieldMetadataDefaultValueForAnyType,
+) => {
+  if (!isDefined(defaultValue) || defaultValue === 'NULL') {
+    return null;
+  }
+
+  if (typeof defaultValue === 'string') {
+    return defaultValue.startsWith("'") && defaultValue.endsWith("'")
+      ? defaultValue
+      : `'${defaultValue}'`;
+  }
+
+  return defaultValue;
+};
+
 const getCompositePropertyDefaultValueFromFieldDefaultValue = ({
   defaultValue,
   compositeProperty,
@@ -92,7 +108,7 @@ export const getCompositePropertyDefaultValueForWorkspaceSchema = ({
     return null;
   }
 
-  return defaultValue;
+  return formatDefaultValueForWorkspaceSchema(defaultValue);
 };
 
 export const canCompositeFieldDefaultValueBeUsedInUniqueIndex = ({

@@ -53,6 +53,22 @@ describe('composite unique default value utils', () => {
     expect(canUseDefaultValue).toBe(true);
   });
 
+  it('should allow unique composite defaults with normalized empty strings from metadata input', () => {
+    const canUseDefaultValue = canCompositeFieldDefaultValueBeUsedInUniqueIndex(
+      {
+        compositeProperties: phonesCompositeType.properties,
+        defaultValue: {
+          primaryPhoneNumber: '',
+          primaryPhoneCountryCode: '',
+          primaryPhoneCallingCode: '',
+          additionalPhones: null,
+        },
+      },
+    );
+
+    expect(canUseDefaultValue).toBe(true);
+  });
+
   it('should reject unique composite defaults when all indexed properties are non-null', () => {
     const canUseDefaultValue = canCompositeFieldDefaultValueBeUsedInUniqueIndex(
       {
@@ -100,5 +116,38 @@ describe('composite unique default value utils', () => {
         parentFieldMetadata,
       }),
     ).toBe("'+1'");
+  });
+
+  it('should serialize normalized non-indexed string defaults as SQL string literals', () => {
+    const parentFieldMetadata = {
+      isUnique: true,
+      defaultValue: {
+        primaryPhoneNumber: '',
+        primaryPhoneCountryCode: 'US',
+        primaryPhoneCallingCode: '',
+        additionalPhones: null,
+      },
+    };
+
+    expect(
+      getCompositePropertyDefaultValueForWorkspaceSchema({
+        compositeProperty: primaryPhoneNumberProperty,
+        parentFieldMetadata,
+      }),
+    ).toBeNull();
+
+    expect(
+      getCompositePropertyDefaultValueForWorkspaceSchema({
+        compositeProperty: primaryPhoneCountryCodeProperty,
+        parentFieldMetadata,
+      }),
+    ).toBe("'US'");
+
+    expect(
+      getCompositePropertyDefaultValueForWorkspaceSchema({
+        compositeProperty: primaryPhoneCallingCodeProperty,
+        parentFieldMetadata,
+      }),
+    ).toBeNull();
   });
 });
