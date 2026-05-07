@@ -234,9 +234,9 @@ Verfügbare Hooks:
 | Hook                                          | Gibt zurück          | Beschreibung                                                                |
 | --------------------------------------------- | -------------------- | --------------------------------------------------------------------------- |
 | `useUserId()`                                 | `string` oder `null` | Die ID des aktuellen Benutzers                                              |
-| `useSelectedRecordIds()`                      | `Zeichenkette[]`     | Alle ausgewählten Datensatz-IDs (leeres Array, wenn keine ausgewählt sind)  |
+| `useSelectedRecordIds()`                      | `string[]`           | Alle ausgewählten Datensatz-IDs (leeres Array, wenn keine ausgewählt sind)  |
 | `useRecordId()`                               | `string` oder `null` | **Veraltet.** Verwenden Sie stattdessen `useSelectedRecordIds()`            |
-| `useFrontComponentId()`                       | `Zeichenkette`       | Die ID dieser Komponenteninstanz                                            |
+| `useFrontComponentId()`                       | `string`             | Die ID dieser Komponenteninstanz                                            |
 | `useFrontComponentExecutionContext(selector)` | variiert             | Zugriff auf den vollständigen Ausführungskontext mit einer Selektorfunktion |
 
 ## Host-Kommunikations-API

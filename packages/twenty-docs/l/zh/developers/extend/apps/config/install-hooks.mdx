@@ -1,12 +1,12 @@
 ---
-title: 安装 Hooks
-description: 在安装之前或之后运行逻辑——播种数据、备份记录、验证升级。
+title: 安装钩子
+description: 在安装之前或之后运行逻辑——预置数据、备份记录、验证升级。
 icon: wrench
 ---
 
-安装 hooks 是在安装或升级生命周期期间运行的特殊逻辑函数。 它们与常规的[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)共享相同的处理程序运行时，并接收 `InstallPayload`，但它们使用自己的定义函数声明——`definePostInstallLogicFunction()` 和 `definePreInstallLogicFunction()`——并且存在于普通触发模型（HTTP、cron、数据库事件）之外。
+安装钩子是在安装或升级生命周期期间运行的特殊逻辑函数。 它们与常规的[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)共享相同的处理程序运行时，并接收 `InstallPayload`，但它们使用自己的定义函数声明——`definePostInstallLogicFunction()` 和 `definePreInstallLogicFunction()`——并且存在于普通触发模型（HTTP、cron、数据库事件）之外。
 
-每个应用**最多只能定义一个安装前函数**和**最多一个安装后函数**。 如果检测到多个其中任意一种，清单构建将报错。
+每个应用**最多只能定义一个安装前函数**和**最多一个安装后函数**。 如果检测到任一类型多于一个，清单构建将报错。
 
 ```
 ┌─────────────────────────────────────────────────────────────┐

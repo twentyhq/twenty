@@ -26,7 +26,7 @@ A **camada de configuração** de uma aplicação Twenty é o que descreve a apl
        └──────────────────────────────────┘
 ```
 
-## Nesta seção
+## Nesta secção
 
 <CardGroup cols={2}>
   <Card title="Configuração da aplicação" icon="rocket" href="/l/pt/developers/extend/apps/config/application">
@@ -36,15 +36,15 @@ A **camada de configuração** de uma aplicação Twenty é o que descreve a apl
     `defineRole` — declara o que as funções de lógica da sua aplicação podem ler e escrever.
   </Card>
   <Card title="Hooks de instalação" icon="wrench" href="/l/pt/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` e `definePostInstallLogicFunction` — fazem cópias de segurança dos dados, pré-preenchem valores padrão, validam atualizações.
+    `definePreInstallLogicFunction` e `definePostInstallLogicFunction` — criam cópias de segurança dos dados, inicializam valores predefinidos, validam atualizações.
   </Card>
 </CardGroup>
 
 ## Como as peças se relacionam
 
 * A **Aplicação** é o ponto de entrada. Cada aplicação tem exatamente uma chamada `defineApplication()`, e esta aponta para uma **Função** como predefinida.
-* A **Função** controla o que as funções de lógica e os componentes de interface da aplicação podem ler e escrever. Siga o princípio do menor privilégio: conceda apenas as permissões de que o seu código realmente necessita.
-* Os **Hooks de instalação** são executados durante a instalação ou atualização — o pré-instalação antes da migração de metadados (para que possa recusar uma atualização arriscada) e o pós-instalação depois da migração (para que possa pré-preencher dados padrão com base no novo esquema).
+* A **Função** controla o que as funções de lógica e os componentes de front-end da aplicação podem ler e escrever. Siga o princípio do menor privilégio: conceda apenas as permissões de que o seu código realmente necessita.
+* Os **Hooks de instalação** são executados durante a instalação ou atualização — a pré-instalação antes da migração de metadados (para que possa recusar uma atualização arriscada) e a pós-instalação após a migração (para que possa inicializar dados predefinidos com base no novo esquema).
 
 <Note>
 Os hooks de instalação partilham o ambiente de execução de [função de lógica](/l/pt/developers/extend/apps/logic/logic-functions) — a mesma assinatura de handler, as mesmas variáveis de ambiente, o mesmo cliente de API tipado — mas são declarados com as suas próprias funções "define" e vivem fora do modelo de disparo normal (HTTP, cron, eventos de base de dados).

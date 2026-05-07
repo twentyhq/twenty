@@ -42,8 +42,8 @@ Bir Twenty uygulamasının **config katmanı**, uygulamayı *platforma tanımlar
 
 ## Parçaların birbiriyle ilişkisi
 
-* **Application** giriş noktasıdır. Her uygulamada tam olarak bir `defineApplication()` çağrısı vardır ve bu çağrı bir **Role**’a varsayılan olarak işaret eder.
-* **Role**, uygulamanın mantık fonksiyonlarının ve ön bileşenlerinin neleri okuyup yazabildiğini kontrol eder. En az ayrıcalık ilkesini izleyin: kodunuzun gerçekten ihtiyaç duyduğu izinleri verin.
+* **Application** giriş noktasıdır. Her uygulamada tam olarak bir `defineApplication()` çağrısı vardır ve bu çağrı varsayılan olarak bir **Rol**e işaret eder.
+* **Rol**, uygulamanın mantık fonksiyonlarının ve ön bileşenlerinin neleri okuyup yazabildiğini kontrol eder. En az ayrıcalık ilkesini izleyin: kodunuzun gerçekten ihtiyaç duyduğu izinleri verin.
 * **Install Hooks**, kurulum veya yükseltme sırasında çalışır — ön kurulum, metadata migrasyonundan önce (böylece riskli bir yükseltmeyi reddedebilir), son kurulum migrasyondan sonra (böylece yeni şemaya karşı varsayılan verileri tohumlayabilir).
 
 <Note>

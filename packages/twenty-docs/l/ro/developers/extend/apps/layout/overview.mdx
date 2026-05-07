@@ -26,10 +26,10 @@ icon: table-columns
 ## În această secțiune
 
 <CardGroup cols={2}>
-  <Card title="Vizualizări" icon="listă" href="/l/ro/developers/extend/apps/layout/views">
-    `defineView` — configurații salvate de liste: coloane vizibile, filtre, grupuri.
+  <Card title="Vizualizări" icon="list" href="/l/ro/developers/extend/apps/layout/views">
+    `defineView` — configurații salvate pentru liste: coloane vizibile, filtre, grupuri.
   </Card>
-  <Card title="Elemente din meniul de navigare" icon="bars" href="/l/ro/developers/extend/apps/layout/navigation-menu-items">
+  <Card title="Elemente de meniu de navigare" icon="bars" href="/l/ro/developers/extend/apps/layout/navigation-menu-items">
     `defineNavigationMenuItem` — intrări în bara laterală care trimit către vizualizări sau URL-uri externe.
   </Card>
   <Card title="Layouturi de pagină" icon="table-columns" href="/l/ro/developers/extend/apps/layout/page-layouts">
@@ -39,7 +39,7 @@ icon: table-columns
     `defineFrontComponent` — componente React izolate care rulează în interiorul Twenty.
   </Card>
   <Card title="Elemente din meniul de comenzi" icon="terminal" href="/l/ro/developers/extend/apps/layout/command-menu-items">
-    `defineCommandMenuItem` — înregistrează componente front ca intrări Cmd+K și acțiuni rapide.
+    `defineCommandMenuItem` — înregistrează componente front-end ca intrări Cmd+K și acțiuni rapide.
   </Card>
 </CardGroup>
 
@@ -49,7 +49,7 @@ icon: table-columns
 | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | **Bară laterală**                                  | O intrare personalizată care face legătura către o vizualizare salvată sau un URL extern                | `defineNavigationMenuItem`                |
 | **Listă de înregistrări**                          | O configurație salvată pentru un obiect — coloane vizibile, ordine, filtre, grupuri                     | `defineView`                              |
-| **Pagină de detalii a înregistrării**              | Filele și widgeturile de pe o pagină de înregistrare (ale propriului tău obiect sau ale unuia standard) | `definePageLayout`, `definePageLayoutTab` |
+| **Pagină de detalii a unei înregistrări**          | Filele și widgeturile de pe o pagină de înregistrare (ale propriului tău obiect sau ale unuia standard) | `definePageLayout`, `definePageLayoutTab` |
 | **În interiorul oricăreia dintre cele de mai sus** | Un widget React personalizat — butoane, formulare, dashboarduri, integrări                              | `defineFrontComponent`                    |
 | **Meniul de comenzi (Cmd+K)**                      | O acțiune rapidă fixată sau o comandă ascunsă                                                           | `defineCommandMenuItem`                   |
 

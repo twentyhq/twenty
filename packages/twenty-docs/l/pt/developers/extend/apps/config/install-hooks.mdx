@@ -6,7 +6,7 @@ icon: wrench
 
 Hooks de instalação são funções de lógica especiais que são executadas durante o ciclo de vida de instalação ou atualização. Elas compartilham o mesmo runtime de handler que as [logic functions](/l/pt/developers/extend/apps/logic/logic-functions) normais e recebem um `InstallPayload`, mas são declaradas com suas próprias funções de definição — `definePostInstallLogicFunction()` e `definePreInstallLogicFunction()` — e ficam fora do modelo de gatilhos normal (HTTP, cron, eventos de banco de dados).
 
-Cada aplicativo pode definir **no máximo uma pré-instalação** e **no máximo uma pós-instalação**. A geração do manifesto apresentará erro se mais de uma de cada for detectada.
+Cada aplicativo pode definir no máximo uma função de pré-instalação e no máximo uma função de pós-instalação. A geração do manifesto apresentará erro se mais de uma de cada for detectada.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐

@@ -136,15 +136,15 @@ export const createLinearIssueHandler = async (input: {
 
 Jede Verbindung hat:
 
-| Feld               | Beschreibung                                                                                                                       |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `id`               | Eindeutige Zeilen-ID; an `getConnection(id)` übergeben, um eine einzelne Verbindung erneut abzurufen                               |
-| `sichtbarkeit`     | `'user'` (privat für ein Mitglied des Arbeitsbereichs) oder `'workspace'` (mit allen Mitgliedern geteilt)                          |
-| `geltungsbereiche` | Vom Upstream-Anbieter gewährte OAuth-Berechtigungen (unabhängig von `visibility` — diese sind nicht miteinander verknüpft)         |
-| `userWorkspaceId`  | Die userWorkspace-ID des Eigentümers — nützlich, um "die Verbindung des anfragenden Benutzers" in HTTP-Routen-Triggern auszuwählen |
-| `accessToken`      | Frisches OAuth-Zugriffstoken (wird bei Ablauf automatisch erneuert)                                                                |
-| `name` / `handle`  | Anzeigename der Verbindung (automatisch beim OAuth-Callback abgeleitet, vom Benutzer umbenennbar)                                  |
-| `authFailedAt`     | Gesetzt, wenn die jüngste Aktualisierung fehlgeschlagen ist; der Benutzer muss die Verbindung erneut herstellen                    |
+| Feld              | Beschreibung                                                                                                                       |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | Eindeutige Zeilen-ID; an `getConnection(id)` übergeben, um eine einzelne Verbindung erneut abzurufen                               |
+| `visibility`      | `'user'` (privat für ein Mitglied des Arbeitsbereichs) oder `'workspace'` (mit allen Mitgliedern geteilt)                          |
+| `scopes`          | Vom Upstream-Anbieter gewährte OAuth-Berechtigungen (unabhängig von `visibility` — diese sind nicht miteinander verknüpft)         |
+| `userWorkspaceId` | Die userWorkspace-ID des Eigentümers — nützlich, um "die Verbindung des anfragenden Benutzers" in HTTP-Routen-Triggern auszuwählen |
+| `accessToken`     | Frisches OAuth-Zugriffstoken (wird bei Ablauf automatisch erneuert)                                                                |
+| `name` / `handle` | Anzeigename der Verbindung (automatisch beim OAuth-Callback abgeleitet, vom Benutzer umbenennbar)                                  |
+| `authFailedAt`    | Gesetzt, wenn die jüngste Aktualisierung fehlgeschlagen ist; der Benutzer muss die Verbindung erneut herstellen                    |
 
 Hauptpunkte:
 

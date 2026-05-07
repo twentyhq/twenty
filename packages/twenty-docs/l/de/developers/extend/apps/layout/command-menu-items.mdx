@@ -1,10 +1,10 @@
 ---
 title: Befehlsmenü-Einträge
-description: Stelle Front-Komponenten als Schnellaktionen und Einträge im Befehlsmenü (Cmd+K) mit defineCommandMenuItem bereit.
+description: Stellen Sie Front-Komponenten als Schnellaktionen und Einträge im Befehlsmenü (Cmd+K) mit defineCommandMenuItem bereit.
 icon: Terminal
 ---
 
-Ein **Befehlsmenü-Eintrag** ist die Brücke zwischen dem Benutzer und einer [Front-Komponente](/l/de/developers/extend/apps/layout/front-components). Er registriert die Komponente im Twenty-Befehlsmenü (Cmd+K) und optional als angeheftete Schnellaktions-Schaltfläche in der oberen rechten Ecke der Seite.
+Ein **Befehlsmenü-Eintrag** ist die Brücke zwischen dem Benutzer und einer [Front-Komponente](/l/de/developers/extend/apps/layout/front-components). Er registriert die Komponente im Twenty-Befehlsmenü (Cmd+K) und zeigt sie optional als angeheftete Schnellaktionsschaltfläche oben rechts auf der Seite an.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -36,7 +36,7 @@ export default defineCommandMenuItem({
 
 ## Headless-Befehle
 
-Ein Befehlsmenü-Eintrag, der mit einer [Headless-Front-Komponente](/l/de/developers/extend/apps/layout/front-components#headless-vs-non-headless) gekoppelt ist, ist die idiomatische Art, eine One-Click-Aktion bereitzustellen – Code ausführen, navigieren oder bestätigen und ausführen. Die Seite „Front Components" behandelt die [SDK Command-Komponenten](/l/de/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`), die das Action-and-Unmount-Muster handhaben.
+Ein Befehlsmenü-Eintrag, der mit einer [Headless-Front-Komponente](/l/de/developers/extend/apps/layout/front-components#headless-vs-non-headless) gekoppelt ist, ist die idiomatische Art, eine One-Click-Aktion bereitzustellen – Code ausführen, navigieren oder bestätigen und ausführen. Die Seite „Front Components“ behandelt die [SDK Command-Komponenten](/l/de/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`), die das Action-and-Unmount-Muster handhaben.
 
 Ein typischer Ablauf:
 
@@ -107,24 +107,24 @@ export default defineCommandMenuItem({
 
 Diese repräsentieren den aktuellen Zustand der Seite:
 
-| Variable                       | Typ            | Beschreibung                                                    |
-| ------------------------------ | -------------- | --------------------------------------------------------------- |
-| `pageType`                     | `Zeichenkette` | Aktueller Seitentyp (z. B. 'RecordIndexPage', 'RecordShowPage') |
-| `isInSidePanel`                | `boolean`      | Ob die Komponente in einem Seitenpanel gerendert wird           |
-| `numberOfSelectedRecords`      | `number`       | Anzahl der aktuell ausgewählten Datensätze                      |
-| `isSelectAll`                  | `boolean`      | Ob „Alle auswählen“ aktiv ist                                   |
-| `selectedRecords`              | `array`        | Die ausgewählten Datensatzobjekte                               |
-| `favoriteRecordIds`            | `array`        | IDs der favorisierten Datensätze                                |
-| `objectPermissions`            | `object`       | Berechtigungen für den aktuellen Objekttyp                      |
-| `targetObjectReadPermissions`  | `object`       | Leseberechtigungen für das Zielobjekt                           |
-| `targetObjectWritePermissions` | `object`       | Schreibberechtigungen für das Zielobjekt                        |
-| `featureFlags`                 | `object`       | Aktive Feature-Flags                                            |
-| `objectMetadataItem`           | `object`       | Metadaten des aktuellen Objekttyps                              |
-| `hasAnySoftDeleteFilterOnView` | `boolean`      | Ob die aktuelle Ansicht einen Soft-Delete-Filter hat            |
+| Variable                       | Typ       | Beschreibung                                                    |
+| ------------------------------ | --------- | --------------------------------------------------------------- |
+| `pageType`                     | `string`  | Aktueller Seitentyp (z. B. 'RecordIndexPage', 'RecordShowPage') |
+| `isInSidePanel`                | `boolean` | Ob die Komponente in einem Seitenpanel gerendert wird           |
+| `numberOfSelectedRecords`      | `number`  | Anzahl der aktuell ausgewählten Datensätze                      |
+| `isSelectAll`                  | `boolean` | Ob „Alle auswählen“ aktiv ist                                   |
+| `selectedRecords`              | `array`   | Die ausgewählten Datensatzobjekte                               |
+| `favoriteRecordIds`            | `array`   | IDs der favorisierten Datensätze                                |
+| `objectPermissions`            | `object`  | Berechtigungen für den aktuellen Objekttyp                      |
+| `targetObjectReadPermissions`  | `object`  | Leseberechtigungen für das Zielobjekt                           |
+| `targetObjectWritePermissions` | `object`  | Schreibberechtigungen für das Zielobjekt                        |
+| `featureFlags`                 | `object`  | Aktive Feature-Flags                                            |
+| `objectMetadataItem`           | `object`  | Metadaten des aktuellen Objekttyps                              |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Ob die aktuelle Ansicht einen Soft-Delete-Filter hat            |
 
 ### Operatoren
 
-Kombiniere Variablen zu booleschen Ausdrücken:
+Kombinieren Sie Variablen zu booleschen Ausdrücken:
 
 | Operator                            | Beschreibung                                                                                |
 | ----------------------------------- | ------------------------------------------------------------------------------------------- |

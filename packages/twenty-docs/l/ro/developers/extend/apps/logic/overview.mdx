@@ -40,13 +40,13 @@ icon: bolt
 
 O funcție de logică alege unul sau mai multe declanșatoare — fiecare intrare de mai jos este un câmp separat pe `defineLogicFunction()`:
 
-| Declanșator                | Când rulează                                                      | Setare                          |
-| -------------------------- | ----------------------------------------------------------------- | ------------------------------- |
-| **Rută HTTP**              | O cerere ajunge la endpointul tău `/s/\<path>`   | `httpRouteTriggerSettings`      |
-| **Cron**                   | Se potrivește o expresie CRON                                     | `cronTriggerSettings`           |
-| **Eveniment baza de date** | O înregistrare din workspace este creată, actualizată sau ștearsă | `databaseEventTriggerSettings`  |
-| **Instrument IA**          | O funcționalitate Twenty IA decide să apeleze funcția ta          | `toolTriggerSettings`           |
-| **Acțiune Workflow**       | Un pas din workflow îți invocă funcția                            | `workflowActionTriggerSettings` |
+| Declanșator                   | Când rulează                                                      | Setare                          |
+| ----------------------------- | ----------------------------------------------------------------- | ------------------------------- |
+| **Rută HTTP**                 | O cerere ajunge la endpointul tău `/s/\<path>`   | `httpRouteTriggerSettings`      |
+| **Cron**                      | O expresie CRON se potrivește                                     | `cronTriggerSettings`           |
+| **Eveniment de bază de date** | O înregistrare din workspace este creată, actualizată sau ștearsă | `databaseEventTriggerSettings`  |
+| **Instrument IA**             | O funcționalitate IA din Twenty decide să apeleze funcția ta      | `toolTriggerSettings`           |
+| **Acțiune Workflow**          | Un pas din workflow îți invocă funcția                            | `workflowActionTriggerSettings` |
 
 Funcțiile rulează în sandbox, în procese Node.js izolate și accesează workspace-ul printr-un client API cu tipuri, limitat la rolul declarat în [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
 

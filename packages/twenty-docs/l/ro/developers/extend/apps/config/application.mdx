@@ -33,7 +33,7 @@ Notițe:
 
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți. Generați-le o singură dată și mențineți-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile și componentele front-end (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
-* Rolul implicit este detectat automat din fișierul de rol marcat cu [`defineApplicationRole()`](/l/ro/developers/extend/apps/config/roles) — nu este nevoie să îl referi din `defineApplication()`.
+* Rolul implicit este detectat automat din fișierul de rol marcat cu [`defineApplicationRole()`](/l/ro/developers/extend/apps/config/roles) — nu este necesar să faci referire la el în `defineApplication()`.
 * Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului — nu trebuie să le referiți în `defineApplication()`.
 * Transmiterea explicită a `defaultRoleUniversalIdentifier` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`.
 
