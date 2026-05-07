@@ -29,7 +29,10 @@ import { SendEmailService } from 'src/modules/messaging/message-outbound-manager
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter)
-@UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.SEND_EMAIL_TOOL))
+@UseGuards(
+  WorkspaceAuthGuard,
+  SettingsPermissionGuard(PermissionFlagType.SEND_EMAIL_TOOL),
+)
 export class SendEmailResolver {
   private readonly logger = new Logger(SendEmailResolver.name);
 
