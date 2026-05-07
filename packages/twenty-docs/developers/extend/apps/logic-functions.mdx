@@ -76,6 +76,28 @@ yarn twenty logs
 ```
 </Note>
 
+#### enqueueLogicFunctionExecution
+
+Inside your logic function handler — regardless of trigger (HTTP route, cron, database event, tool, workflow action, or install hook) — you can enqueue **another** function that belongs to the **same application** on the worker queue. Import it from `twenty-sdk/logic-function`:
+
+```ts
+import {
+  enqueueLogicFunctionExecution,
+  type RoutePayload,
+} from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { jobId, status } = await enqueueLogicFunctionExecution({
+    universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+    payload: { fromWebhook: true },
+  });
+
+  return { accepted: true, jobId, status };
+};
+```
+
+Pass **exactly one** of `name` or `universalIdentifier`.
+
 #### Route trigger payload
 
 When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the
