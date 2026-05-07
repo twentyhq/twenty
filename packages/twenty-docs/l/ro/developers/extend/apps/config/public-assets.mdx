@@ -1,0 +1,59 @@
+---
+title: Public Assets
+description: Ship static files — images, icons, fonts — alongside your app via the public/ folder.
+icon: folder-open
+---
+
+Folderul `public/` din rădăcina aplicației conține fișiere statice — imagini, pictograme, fonturi sau orice alte resurse de care are nevoie aplicația la rulare. Aceste fișiere sunt incluse automat în build-uri, sincronizate în timpul modului de dezvoltare și încărcate pe server.
+
+Fișierele plasate în `public/` sunt:
+
+* **Accesibile public** — odată sincronizate pe server, resursele sunt servite la un URL public. Nu este necesară autentificarea pentru a le accesa.
+* **Disponibile în componentele frontend** — folosiți URL-urile resurselor pentru a afișa imagini, pictograme sau orice media în componentele React.
+* **Disponibile în funcțiile logice** — referiți URL-urile resurselor în e-mailuri, răspunsuri API sau orice logică pe server.
+* **Utilizate pentru metadatele marketplace-ului** — câmpurile `logoUrl` și `screenshots` din `defineApplication()` fac referire la fișiere din acest folder (de ex., `public/logo.png`). Acestea sunt afișate în marketplace când aplicația este publicată.
+* **Sincronizate automat în modul de dezvoltare** — când adăugați, actualizați sau ștergeți un fișier în `public/`, acesta este sincronizat automat cu serverul. Nu este nevoie de repornire.
+* **Incluse în build-uri** — `yarn twenty build` împachetează toate resursele publice în outputul de distribuție.
+
+## Accesarea resurselor publice cu `getPublicAssetUrl`
+
+Utilizați helperul `getPublicAssetUrl` din `twenty-sdk` pentru a obține URL-ul complet al unui fișier din directorul `public/`. Funcționează atât în funcții logice, cât și în componente frontend.
+
+**Într-o funcție logică:**
+
+```ts src/logic-functions/send-invoice.ts
+import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const handler = async (): Promise<any> => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+  const invoiceUrl = getPublicAssetUrl('templates/invoice.png');
+
+  // Fetch the file content (no auth required — public endpoint)
+  const response = await fetch(invoiceUrl);
+  const buffer = await response.arrayBuffer();
+
+  return { logoUrl, size: buffer.byteLength };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'a1b2c3d4-...',
+  name: 'send-invoice',
+  description: 'Sends an invoice with the app logo',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+**Într-o componentă frontend:**
+
+```tsx src/front-components/company-card.tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+export default defineFrontComponent(() => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+
+  return <img src={logoUrl} alt="App logo" />;
+});
+```
+
+Argumentul `path` este relativ la folderul `public/` al aplicației. Atât `getPublicAssetUrl('logo.png')`, cât și `getPublicAssetUrl('public/logo.png')` se rezolvă la același URL — prefixul `public/` este eliminat automat dacă este prezent.

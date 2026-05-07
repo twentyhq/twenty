@@ -1,0 +1,102 @@
+---
+title: Page Layouts
+description: Customize record detail pages — tabs, widgets, and where front components render — using definePageLayout and definePageLayoutTab.
+icon: table-columns
+---
+
+A **page layout** controls how a record's detail page is arranged: which tabs appear and what widgets they contain. Use `definePageLayout()` to declare a layout for an object you own, or `definePageLayoutTab()` to add a single tab to a layout that already exists (yours or a standard Twenty one).
+
+| Use case                                                               | Entity                |
+| ---------------------------------------------------------------------- | --------------------- |
+| Define the entire layout for a record page on an object you own        | `definePageLayout`    |
+| Add one tab to an existing layout (your own object, or a standard one) | `definePageLayoutTab` |
+
+## definePageLayout
+
+Use this when you own the entire detail page — typically for a custom object you defined yourself.
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+### Key points
+
+* `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
+* `objectUniversalIdentifier` specifies which object this layout applies to.
+* Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`CANVAS` for free-form layout).
+* Each `widget` inside a tab can render a [front component](/l/tr/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
+* `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+
+## definePageLayoutTab
+
+Use this when you only want to **add** a tab to an existing layout — for example, an analytics tab on the standard Company page, or an AI summary tab attached to your own object's layout.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+### Key points
+
+* `pageLayoutUniversalIdentifier` is **required** and must point to a page layout that already exists at install time — either a standard Twenty layout or one defined by your own app. Cross-app references to layouts owned by another installed app are not supported today. When the parent layout is missing, installation fails with a clear validation error.
+* `widgets` are scoped to this tab only — they reference [front components](/l/tr/developers/extend/apps/layout/front-components), views, etc. exactly like widgets defined inline in `definePageLayout`.
+* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
+* Use this instead of `definePageLayout` when you only want to add to an existing layout. Use `definePageLayout` when you own the entire layout.

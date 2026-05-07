@@ -1,0 +1,144 @@
+---
+title: Command Menu Items
+description: Surface front components as quick actions and command menu (Cmd+K) entries with defineCommandMenuItem.
+icon: terminal
+---
+
+A **command menu item** is the bridge between the user and a [front component](/l/de/developers/extend/apps/layout/front-components). It registers the component in Twenty's command menu (Cmd+K) and, optionally, as a pinned quick-action button in the top-right corner of the page.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+## Configuration fields
+
+| Field                                   | Required | Description                                                                                                                                                                    |
+| --------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | Yes      | Stable unique ID for the command                                                                                                                                               |
+| `label`                                 | Yes      | Full label shown in the command menu (Cmd+K)                                                                                                                                   |
+| `frontComponentUniversalIdentifier`     | Yes      | The `universalIdentifier` of the front component this command opens                                                                                                            |
+| `shortLabel`                            | No       | Shorter label displayed on the pinned quick-action button                                                                                                                      |
+| `icon`                                  | No       | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`)                                                                                                        |
+| `isPinned`                              | No       | When `true`, shows the command as a quick-action button in the top-right corner of the page                                                                                    |
+| `availabilityType`                      | No       | Controls where the command appears: `'GLOBAL'` (always available), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
+| `availabilityObjectUniversalIdentifier` | No       | Restrict the command to pages of a specific object type (e.g. only on Company records)                                                                                         |
+| `conditionalAvailabilityExpression`     | No       | A boolean expression that dynamically controls visibility (see below)                                                                                                          |
+
+## Headless commands
+
+A command menu item paired with a [headless front component](/l/de/developers/extend/apps/layout/front-components#headless-vs-non-headless) is the idiomatic way to ship a one-click action — run code, navigate, or confirm and execute. The Front Components page covers the [SDK Command components](/l/de/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) that handle the action-and-unmount pattern.
+
+A typical flow:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+## Conditional availability expressions
+
+The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
+
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  objectPermissions,
+  everyEquals,
+} from 'twenty-sdk/front-component';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
+});
+```
+
+### Context variables
+
+These represent the current state of the page:
+
+| Variable                       | Type      | Description                                                      |
+| ------------------------------ | --------- | ---------------------------------------------------------------- |
+| `pageType`                     | `string`  | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Whether the component is rendered in a side panel                |
+| `numberOfSelectedRecords`      | `number`  | Number of currently selected records                             |
+| `isSelectAll`                  | `boolean` | Whether "select all" is active                                   |
+| `selectedRecords`              | `array`   | The selected record objects                                      |
+| `favoriteRecordIds`            | `array`   | IDs of favorited records                                         |
+| `objectPermissions`            | `object`  | Permissions for the current object type                          |
+| `targetObjectReadPermissions`  | `object`  | Read permissions for the target object                           |
+| `targetObjectWritePermissions` | `object`  | Write permissions for the target object                          |
+| `featureFlags`                 | `object`  | Active feature flags                                             |
+| `objectMetadataItem`           | `object`  | Metadata of the current object type                              |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter                |
+
+### Operators
+
+Combine variables into boolean expressions:
+
+| Operator                            | Description                                                       |
+| ----------------------------------- | ----------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` if the value is not null/undefined                         |
+| `isNonEmptyString(value)`           | `true` if the value is a non-empty string                         |
+| `includes(array, value)`            | `true` if the array contains the value                            |
+| `includesEvery(array, prop, value)` | `true` if every item's property includes the value                |
+| `every(array, prop)`                | `true` if the property is truthy on every item                    |
+| `everyDefined(array, prop)`         | `true` if the property is defined on every item                   |
+| `everyEquals(array, prop, value)`   | `true` if the property equals the value on every item             |
+| `some(array, prop)`                 | `true` if the property is truthy on at least one item             |
+| `someDefined(array, prop)`          | `true` if the property is defined on at least one item            |
+| `someEquals(array, prop, value)`    | `true` if the property equals the value on at least one item      |
+| `someNonEmptyString(array, prop)`   | `true` if the property is a non-empty string on at least one item |
+| `none(array, prop)`                 | `true` if the property is falsy on every item                     |
+| `noneDefined(array, prop)`          | `true` if the property is undefined on every item                 |
+| `noneEquals(array, prop, value)`    | `true` if the property does not equal the value on any item       |

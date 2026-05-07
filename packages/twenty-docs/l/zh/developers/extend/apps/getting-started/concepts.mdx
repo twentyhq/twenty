@@ -1,0 +1,101 @@
+---
+title: Concepts
+description: How Twenty apps work — entity model, sandboxing, and the install lifecycle.
+icon: sitemap
+---
+
+Twenty apps are TypeScript packages that extend your workspace with custom objects, logic, UI components, and AI capabilities. They run on the Twenty platform with full sandboxing and permission controls.
+
+## How apps work
+
+An app is a collection of **entities** declared using `defineEntity()` functions from the `twenty-sdk` package. The SDK detects these declarations via AST analysis at build time and produces a **manifest** — a complete description of what your app adds to a workspace. These functions validate your configuration at build time and provide IDE autocompletion and type safety.
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **File organization is up to you.** Entity detection is AST-based — the SDK finds `export default defineEntity(...)` calls regardless of where the file lives. The folder structure above is a convention, not a requirement.
+</Note>
+
+## Entity types
+
+| Entity                   | Purpose                                    | Docs                                                                          |
+| ------------------------ | ------------------------------------------ | ----------------------------------------------------------------------------- |
+| **Application**          | App identity, default role, variables      | [Application Config](/l/zh/developers/extend/apps/config/application)              |
+| **Role**                 | Permission sets on objects and fields      | [Roles & Permissions](/l/zh/developers/extend/apps/config/roles)                   |
+| **Object**               | Custom record types with fields            | [Objects](/l/zh/developers/extend/apps/data/objects)                               |
+| **Field**                | Add fields to objects from other apps      | [Extending Objects](/l/zh/developers/extend/apps/data/extending-objects)           |
+| **Relation**             | Bidirectional links between objects        | [Relations](/l/zh/developers/extend/apps/data/relations)                           |
+| **Logic Function**       | Server-side TypeScript with triggers       | [Logic Functions](/l/zh/developers/extend/apps/logic/logic-functions)              |
+| **Skill**                | Reusable AI agent instructions             | [Skills & Agents](/l/zh/developers/extend/apps/logic/skills-and-agents)            |
+| **Agent**                | AI assistants with custom prompts          | [Skills & Agents](/l/zh/developers/extend/apps/logic/skills-and-agents)            |
+| **Connection Provider**  | OAuth credentials for third-party APIs     | [Connections](/l/zh/developers/extend/apps/logic/connections)                      |
+| **View**                 | Pre-configured record list views           | [Views](/l/zh/developers/extend/apps/layout/views)                                 |
+| **Navigation Menu Item** | Custom sidebar entries                     | [Navigation Menu Items](/l/zh/developers/extend/apps/layout/navigation-menu-items) |
+| **Page Layout**          | Tabs and widgets on a record's detail page | [Page Layouts](/l/zh/developers/extend/apps/layout/page-layouts)                   |
+| **Front Component**      | Sandboxed React UI inside Twenty           | [Front Components](/l/zh/developers/extend/apps/layout/front-components)           |
+| **Command Menu Item**    | Quick actions and Cmd+K entries            | [Command Menu Items](/l/zh/developers/extend/apps/layout/command-menu-items)       |
+
+## Sandboxing
+
+* **Logic functions** run in isolated Node.js processes on the server. They only access data through the typed API client, scoped to the app's role permissions.
+* **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes). They communicate with Twenty via a message-passing host API.
+* **Permissions** are enforced at the API level. The runtime token (`TWENTY_APP_ACCESS_TOKEN`) is derived from the role defined in `defineApplication()`.
+
+## App lifecycle
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty build → yarn twenty deploy                │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — watches your source files and live-syncs changes to a connected Twenty server. The typed API client is regenerated automatically when the schema changes.
+* **`yarn twenty build`** — compiles TypeScript, bundles logic functions and front components with esbuild, and produces a manifest.
+* **Pre/post-install hooks** — optional functions that run during installation. See [Install Hooks](/l/zh/developers/extend/apps/config/install-hooks) for details.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Config" icon="screwdriver-wrench" href="/l/zh/developers/extend/apps/config/overview">
+    Application identity, default role, and install hooks.
+  </Card>
+  <Card title="Data" icon="database" href="/l/zh/developers/extend/apps/data/overview">
+    Objects, fields, and bidirectional relations.
+  </Card>
+  <Card title="Logic" icon="bolt" href="/l/zh/developers/extend/apps/logic/overview">
+    Logic functions, skills, agents, and OAuth connections.
+  </Card>
+  <Card title="Layout" icon="table-columns" href="/l/zh/developers/extend/apps/layout/overview">
+    Views, navigation, page layouts, front components.
+  </Card>
+  <Card title="Operations" icon="rocket" href="/l/zh/developers/extend/apps/operations/overview">
+    CLI, testing, remotes, CI, and publishing your app.
+  </Card>
+</CardGroup>

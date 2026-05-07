@@ -1,0 +1,51 @@
+---
+title: Overview
+description: Configure the app itself — its identity, default permissions, and what runs at install time.
+icon: screwdriver-wrench
+---
+
+A Twenty app's **config layer** is what describes the app *to the platform* — its identity, the permissions it holds, and the code that runs during install or upgrade. These declarations don't add new data shapes or runtime behavior; they tell Twenty *who the app is* and *how to set it up*.
+
+```text
+┌────────────────────────────────────────────────────────┐
+│ Application — identity, default role, variables,       │
+│               marketplace metadata                     │
+│                                                        │
+│   ┌──────────────────────────────────────────────────┐ │
+│   │ Role — what the app's logic functions can read   │ │
+│   │ and write (referenced by Application)            │ │
+│   └──────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────┘
+                          │
+                          ▼  (at install / upgrade time)
+       ┌──────────────────────────────────┐
+       │ Pre-install hook                 │  before metadata migration
+       └──────────────────────────────────┘
+       ┌──────────────────────────────────┐
+       │ Post-install hook                │  after metadata migration
+       └──────────────────────────────────┘
+```
+
+## In this section
+
+<CardGroup cols={2}>
+  <Card title="Application Config" icon="rocket" href="/l/zh/developers/extend/apps/config/application">
+    `defineApplication` — identity, default role, variables, marketplace metadata.
+  </Card>
+  <Card title="Roles & Permissions" icon="shield-halved" href="/l/zh/developers/extend/apps/config/roles">
+    `defineRole` — declare what your app's logic functions can read and write.
+  </Card>
+  <Card title="Install Hooks" icon="wrench" href="/l/zh/developers/extend/apps/config/install-hooks">
+    `definePreInstallLogicFunction` and `definePostInstallLogicFunction` — back up data, seed defaults, validate upgrades.
+  </Card>
+</CardGroup>
+
+## How the pieces relate
+
+* **Application** is the entry point. Every app has exactly one `defineApplication()` call, and it points at one **Role** as its default.
+* The **Role** controls what the app's logic functions and front components can read and write. Follow least-privilege: only grant the permissions your code actually needs.
+* **Install Hooks** run during install or upgrade — pre-install before the metadata migration (so it can refuse a risky upgrade), post-install after the migration (so it can seed default data against the new schema).
+
+<Note>
+Install hooks share the [logic function](/l/zh/developers/extend/apps/logic/logic-functions) runtime — same handler signature, same environment variables, same typed API client — but they're declared with their own define functions and live outside the regular trigger model (HTTP, cron, database events).
+</Note>

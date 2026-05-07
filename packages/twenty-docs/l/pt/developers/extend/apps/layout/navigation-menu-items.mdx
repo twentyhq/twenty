@@ -1,0 +1,44 @@
+---
+title: Navigation Menu Items
+description: Add custom entries to the workspace sidebar — links to saved views or external URLs.
+icon: bars
+---
+
+A **navigation menu item** is an entry in the left sidebar. Use `defineNavigationMenuItem()` to ship custom sidebar links — typically one per [view](/l/pt/developers/extend/apps/layout/views) you ship — or to point at external URLs.
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## Pontos-chave
+
+* `type` determines what the menu item links to. Each type pairs with a specific identifier field:
+
+  | Tipo                                 | O que faz                            | Required field                                                                |
+  | ------------------------------------ | ------------------------------------ | ----------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | Opens a saved view                   | `viewUniversalIdentifier`                                                     |
+  | `NavigationMenuItemType.LINK`        | Opens an external URL                | `link`                                                                        |
+  | `NavigationMenuItemType.FOLDER`      | Groups nested items under a label    | `name` (and child items reference the folder via `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.OBJECT`      | Opens an object's default index page | `targetObjectUniversalIdentifier`                                             |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | Opens a standalone page layout       | `pageLayoutUniversalIdentifier`                                               |
+
+* `position` controls ordering in the sidebar.
+
+* `icon` and `color` are optional and customize how the entry looks.
+
+* `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent.
+
+<Note>
+**Common pitfall:** creating an object without an associated view + navigation menu item makes that object invisible to users. Unless it's a technical/internal object, every custom object should have a default view *and* a sidebar entry pointing at it.
+</Note>

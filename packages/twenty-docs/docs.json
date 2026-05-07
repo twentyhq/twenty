@@ -374,65 +374,15 @@
               {
                 "group": "Apps",
                 "pages": [
-                  {
-                    "group": "Getting Started",
-                    "pages": [
-                      "developers/extend/apps/getting-started/quick-start",
-                      "developers/extend/apps/getting-started/concepts",
-                      "developers/extend/apps/getting-started/project-structure",
-                      "developers/extend/apps/getting-started/local-server",
-                      "developers/extend/apps/getting-started/scaffolding",
-                      "developers/extend/apps/getting-started/troubleshooting"
-                    ]
-                  },
-                  {
-                    "group": "Config",
-                    "pages": [
-                      "developers/extend/apps/config/overview",
-                      "developers/extend/apps/config/application",
-                      "developers/extend/apps/config/roles",
-                      "developers/extend/apps/config/install-hooks",
-                      "developers/extend/apps/config/public-assets"
-                    ]
-                  },
-                  {
-                    "group": "Data",
-                    "pages": [
-                      "developers/extend/apps/data/overview",
-                      "developers/extend/apps/data/objects",
-                      "developers/extend/apps/data/extending-objects",
-                      "developers/extend/apps/data/relations"
-                    ]
-                  },
-                  {
-                    "group": "Logic",
-                    "pages": [
-                      "developers/extend/apps/logic/overview",
-                      "developers/extend/apps/logic/logic-functions",
-                      "developers/extend/apps/logic/skills-and-agents",
-                      "developers/extend/apps/logic/connections"
-                    ]
-                  },
-                  {
-                    "group": "Layout",
-                    "pages": [
-                      "developers/extend/apps/layout/overview",
-                      "developers/extend/apps/layout/views",
-                      "developers/extend/apps/layout/navigation-menu-items",
-                      "developers/extend/apps/layout/page-layouts",
-                      "developers/extend/apps/layout/front-components",
-                      "developers/extend/apps/layout/command-menu-items"
-                    ]
-                  },
-                  {
-                    "group": "Operations",
-                    "pages": [
-                      "developers/extend/apps/operations/overview",
-                      "developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/testing",
-                      "developers/extend/apps/operations/publishing"
-                    ]
-                  }
+                  "developers/extend/apps/getting-started",
+                  "developers/extend/apps/building",
+                  "developers/extend/apps/data-model",
+                  "developers/extend/apps/logic-functions",
+                  "developers/extend/apps/front-components",
+                  "developers/extend/apps/layout",
+                  "developers/extend/apps/skills-and-agents",
+                  "developers/extend/apps/cli-and-testing",
+                  "developers/extend/apps/publishing"
                 ]
               },
               {

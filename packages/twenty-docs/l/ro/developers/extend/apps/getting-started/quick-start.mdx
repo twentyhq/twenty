@@ -1,0 +1,184 @@
+---
+title: Pornire rapidă
+icon: rocket
+description: Creați prima dvs. aplicație Twenty în câteva minute.
+---
+
+## Cerințe
+
+* **Node.js 24+** — [Descărcați](https://nodejs.org/)
+* **Yarn 4** — vine împreună cu Node prin Corepack. Activați-l: `corepack enable`
+* **Docker** — [Descărcați](https://www.docker.com/products/docker-desktop/). Necesar pentru a rula un server Twenty local. Omiteți dacă rulați deja Twenty în altă parte.
+
+Crearea unei aplicații Twenty are trei faze. Generatorul le reunește într-o singură comandă pe calea optimă, dar fiecare fază este un concept separat — când ceva eșuează, dacă știți în ce fază sunteți, știți ce trebuie să corectați.
+
+| Fază                    | Ce faceți                                        | Instrument                    | Rezultat                       |
+| ----------------------- | ------------------------------------------------ | ----------------------------- | ------------------------------ |
+| **1. Creați scheletul** | Generați codul sursă al aplicației               | `npx create-twenty-app`       | Un proiect TypeScript pe disc  |
+| **2. Rulați un server** | Porniți un server Twenty cu care să sincronizați | Docker + `yarn twenty server` | O instanță Twenty care rulează |
+| **3. Sincronizați**     | Sincronizați în timp real codul cu serverul      | `yarn twenty dev`             | Modificările apar în UI        |
+
+---
+
+## Faza 1 — Creați scheletul proiectului
+
+Creați o nouă aplicație din șablon:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app
+```
+
+Vi se va cere un nume și o descriere — apăsați **Enter** pentru valorile implicite. Aceasta generează un proiect TypeScript în `my-twenty-app/` cu un fișier inițial `application-config.ts`, un rol implicit, un flux de lucru CI și un test de integrare.
+
+**După această fază:** aveți codul sursă al aplicației pe mașina dvs. Încă nu rulează — aceasta este Faza 2.
+
+---
+
+## Faza 2 — Rulați un server Twenty local
+
+Aplicația are nevoie de un server Twenty cu care să se sincronizeze. Serverul este o instanță Twenty completă — UI, API GraphQL, PostgreSQL — care rulează local în Docker. Codul local încarcă definițiile pe acel server, făcându-le să apară în UI.
+
+Generatorul de schelet vă propune să pornească unul pentru dvs.:
+
+> **Doriți să configurați o instanță Twenty locală?**
+
+* **Yes (recomandat)** — descarcă imaginea Docker `twentycrm/twenty-app-dev` și o pornește pe portul `2020`. Asigurați-vă mai întâi că Docker rulează.
+* **No** — alegeți această opțiune dacă aveți deja un server Twenty la care doriți să vă conectați. Îl puteți conecta ulterior cu `yarn twenty remote add`.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Porniți instanța locală?" />
+</div>
+
+După ce serverul pornește, se deschide un browser pentru autentificare. Folosiți contul demo preconfigurat:
+
+* **E-mail:** `tim@apple.dev`
+* **Parolă:** `tim@apple.dev`
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/login.png" alt="Ecranul de autentificare Twenty" />
+</div>
+
+Faceți clic pe **Authorize** pe ecranul următor — aceasta oferă CLI-ului acces la spațiul dvs. de lucru.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Ecranul de autorizare Twenty CLI" />
+</div>
+
+Terminalul va confirma că totul este configurat.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Aplicația a fost creată cu succes" />
+</div>
+
+**După această fază:** aveți un server Twenty care rulează la [http://localhost:2020](http://localhost:2020), iar CLI-ul dvs. este autorizat să sincronizeze cu acesta.
+
+<Note>
+Dacă Docker nu este instalat sau nu rulează, generatorul de schelet vă va indica comanda corectă de pornire pentru sistemul dvs. de operare. După ce Docker rulează, puteți continua cu `yarn twenty server start` — nu este nevoie să recreați scheletul.
+</Note>
+
+---
+
+## Faza 3 — Sincronizați modificările
+
+Aceasta este bucla internă în care veți petrece cea mai mare parte a timpului.
+
+```bash filename="Terminal"
+cd my-twenty-app
+yarn twenty dev
+```
+
+Aceasta monitorizează `src/`, reconstruiește la fiecare modificare și sincronizează rezultatul pe server. Editați un fișier, salvați, iar în decurs de o secundă serverul reflectă modificarea. Veți vedea în terminal un panou de stare în timp real.
+
+Pentru o ieșire mai detaliată (jurnale de build, cereri de sincronizare, urme ale erorilor), adăugați `--verbose`.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/dev.png" alt="Ieșirea terminalului în modul de dezvoltare" />
+</div>
+
+Deschideți [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Ar trebui să vedeți aplicația dvs. listată la **Your Apps**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Lista Your Apps care afișează My twenty app" />
+</div>
+
+Faceți clic pe **My twenty app** pentru a vedea **înregistrarea aplicației** — o înregistrare la nivel de server care descrie aplicația dvs. (nume, identificator, credențiale OAuth, sursă). O singură înregistrare poate fi instalată în mai multe spații de lucru pe același server.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Detalii despre înregistrarea aplicației" />
+</div>
+
+Faceți clic pe **View installed app** pentru a vedea instalarea în spațiul de lucru. Fila **About** afișează versiunea și opțiunile de administrare.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Aplicație instalată" />
+</div>
+
+**După această fază:** aveți o buclă de dezvoltare în timp real. Editați orice fișier în `src/` și acesta apare în UI.
+
+### Sincronizare unică pentru CI și scripturi
+
+Adăugați `--once` pentru a rula un singur build + sync și a ieși — același flux, fără watcher:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Comandă                  | Comportament                                                                         | When to use                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| `yarn twenty dev`        | Monitorizează și resincronizează la fiecare modificare. Rulează până când îl opriți. | Dezvoltare locală interactivă.                                  |
+| `yarn twenty dev --once` | Un singur build + sync, iese cu `0` la succes, `1` la eșec.                          | CI, hook-uri pre-commit, agenți AI, fluxuri de lucru scriptate. |
+
+Ambele moduri necesită un server în modul de dezvoltare și un remote autentificat.
+
+<Warning>
+Modul de dezvoltare este disponibil doar pe instanțele Twenty care rulează în modul development (`NODE_ENV=development`). Instanțele de producție resping cererile de sincronizare din modul de dezvoltare — folosiți `yarn twenty deploy` pentru a implementa pe serverele de producție. See [Publishing](/l/ro/developers/extend/apps/operations/publishing).
+</Warning>
+
+---
+
+## Pornind de la un exemplu
+
+Folosiți `--example` pentru a începe cu un proiect mai complet (obiecte personalizate, câmpuri, funcții logice, componente front-end):
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app --example postcard
+```
+
+Exemplele se află în [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). You can also scaffold individual entities into an existing project with `yarn twenty add` — see [Scaffolding](/l/ro/developers/extend/apps/getting-started/scaffolding).
+
+---
+
+## Ce puteți construi
+
+Aplicațiile sunt compuse din **entități** — fiecare definită într-un fișier TypeScript cu un singur `export default`:
+
+| Entitate                    | Ce face                                                                                         |
+| --------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Obiecte și câmpuri**      | Modele de date personalizate (carte poștală, factură etc.) cu câmpuri tipizate                  |
+| **Funcții logice**          | TypeScript pe server declanșat de rute HTTP, programări cron sau evenimente din baza de date    |
+| **Componente front-end**    | Componente React care se afișează în UI-ul Twenty (panou lateral, widgeturi, meniul de comenzi) |
+| **Abilități și agenți**     | Capabilități AI — instrucțiuni reutilizabile și asistenți autonomi                              |
+| **Vizualizări și navigare** | Vizualizări de listă preconfigurate și elemente de meniu în bara laterală                       |
+| **Layouturi de pagină**     | Pagini personalizate de detalii ale înregistrărilor cu file și widgeturi                        |
+
+Full reference: [Concepts](/l/ro/developers/extend/apps/getting-started/concepts).
+
+## Pașii următori
+
+<CardGroup cols={2}>
+  <Card title="Configurare" icon="screwdriver-wrench" href="/l/ro/developers/extend/apps/config/overview">
+    Application identity, default role, install hooks, public assets.
+  </Card>
+  <Card title="Date" icon="database" href="/l/ro/developers/extend/apps/data/overview">
+    Objects, fields, and bidirectional relations.
+  </Card>
+  <Card title="Logică" icon="bolt" href="/l/ro/developers/extend/apps/logic/overview">
+    Logic functions, skills, agents, and OAuth connections.
+  </Card>
+  <Card title="Aspect" icon="table-columns" href="/l/ro/developers/extend/apps/layout/overview">
+    Views, navigation, page layouts, front components.
+  </Card>
+  <Card title="Operațiuni" icon="rocket" href="/l/ro/developers/extend/apps/operations/overview">
+    CLI, testing, remotes, CI, and publishing your app.
+  </Card>
+</CardGroup>
