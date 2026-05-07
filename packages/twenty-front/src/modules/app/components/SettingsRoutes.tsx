@@ -180,6 +180,14 @@ const SettingsApplicationDetails = lazy(() =>
   ),
 );
 
+const SettingsApplicationConnectionDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsApplicationConnectionDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationConnectionDetail,
+  })),
+);
+
 const SettingsApplicationFrontComponentDetail = lazy(() =>
   import(
     '~/pages/settings/applications/SettingsApplicationFrontComponentDetail'
@@ -793,6 +801,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApplicationDetail}
           element={<SettingsApplicationDetails />}
+        />
+        <Route
+          path={SettingsPath.ApplicationConnectionDetail}
+          element={<SettingsApplicationConnectionDetail />}
         />
         <Route
           path={SettingsPath.AvailableApplicationDetail}
