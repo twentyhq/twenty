@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -23,15 +23,22 @@ type TabGroupProps = {
 
 export function TabGroup({ tabs }: TabGroupProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const idPrefix = useId();
 
   return (
     <StyledTabGroup>
       <TabButtons
         activeIndex={activeIndex}
+        idPrefix={idPrefix}
         onSelect={setActiveIndex}
         tabs={tabs}
       />
-      <TabVisuals activeIndex={activeIndex} tabs={tabs} />
+      <TabVisuals
+        activeIndex={activeIndex}
+        panelId={`${idPrefix}-panel`}
+        tabId={`${idPrefix}-tab-${activeIndex}`}
+        tabs={tabs}
+      />
     </StyledTabGroup>
   );
 }

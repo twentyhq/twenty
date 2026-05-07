@@ -21,10 +21,17 @@ const VisualImage = styled(Image)`
 
 type TabVisualsProps = {
   activeIndex: number;
+  panelId: string;
+  tabId: string;
   tabs: TabType[];
 };
 
-export function TabVisuals({ activeIndex, tabs }: TabVisualsProps) {
+export function TabVisuals({
+  activeIndex,
+  panelId,
+  tabId,
+  tabs,
+}: TabVisualsProps) {
   const tab = tabs[activeIndex];
 
   if (!tab) {
@@ -32,7 +39,7 @@ export function TabVisuals({ activeIndex, tabs }: TabVisualsProps) {
   }
 
   return (
-    <VisualRoot role="tabpanel">
+    <VisualRoot aria-labelledby={tabId} id={panelId} role="tabpanel">
       <VisualImage alt={tab.image.alt} src={tab.image.src} />
     </VisualRoot>
   );

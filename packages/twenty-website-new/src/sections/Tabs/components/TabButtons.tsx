@@ -24,15 +24,23 @@ const TabButtonsGrid = styled.div`
 
 type TabButtonsProps = {
   activeIndex: number;
+  idPrefix: string;
   onSelect: (index: number) => void;
   tabs: TabType[];
 };
 
-export function TabButtons({ activeIndex, onSelect, tabs }: TabButtonsProps) {
+export function TabButtons({
+  activeIndex,
+  idPrefix,
+  onSelect,
+  tabs,
+}: TabButtonsProps) {
   return (
     <TabButtonsGrid role="tablist">
       {tabs.map((tab, index) => (
         <TabButton
+          controls={`${idPrefix}-panel`}
+          id={`${idPrefix}-tab-${index}`}
           isActive={index === activeIndex}
           key={index}
           onSelect={() => onSelect(index)}

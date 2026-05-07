@@ -33,7 +33,7 @@ export function Screenshot({ image }: ScreenshotProps) {
         alt={image.alt}
         className={screenshotImageClassName}
         fill
-        sizes="(min-width: 1440px) 1360px, 100vw"
+        sizes="(min-width: 921px) 800px, 100vw"
         src={image.src}
       />
     </ScreenshotRoot>

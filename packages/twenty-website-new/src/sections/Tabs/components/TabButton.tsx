@@ -82,12 +82,20 @@ const TabIconBox = styled.span`
 `;
 
 type TabButtonProps = {
+  controls: string;
+  id: string;
   isActive: boolean;
   onSelect: () => void;
   tab: TabType;
 };
 
-export function TabButton({ isActive, onSelect, tab }: TabButtonProps) {
+export function TabButton({
+  controls,
+  id,
+  isActive,
+  onSelect,
+  tab,
+}: TabButtonProps) {
   const renderText = useRenderMessage();
 
   const iconColor = isActive
@@ -98,8 +106,10 @@ export function TabButton({ isActive, onSelect, tab }: TabButtonProps) {
 
   return (
     <StyledButton
+      aria-controls={controls}
       aria-selected={isActive}
       data-active={String(isActive)}
+      id={id}
       onClick={onSelect}
       role="tab"
       type="button"
