@@ -85,14 +85,28 @@ export class WorkspaceDomainsService {
   }
 
   async getWorkspaceByOriginOrDefaultWorkspace(origin: string) {
+    const { workspace } = await this.resolveWorkspaceAndPublicDomain(origin);
+
+    return workspace;
+  }
+
+  async resolveWorkspaceAndPublicDomain(origin: string): Promise<{
+    workspace: WorkspaceEntity | undefined;
+    publicDomain: PublicDomainEntity | null;
+  }> {
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      return this.getDefaultWorkspace();
+      return {
+        workspace: await this.getDefaultWorkspace(),
+        publicDomain: null,
+      };
     }
 
     const { subdomain, domain } =
       this.domainServerConfigService.getSubdomainAndDomainFromUrl(origin);
 
-    if (!domain && !subdomain) return;
+    if (!domain && !subdomain) {
+      return { workspace: undefined, publicDomain: null };
+    }
 
     const where = isDefined(domain) ? { customDomain: domain } : { subdomain };
 
@@ -103,18 +117,21 @@ export class WorkspaceDomainsService {
       })) ?? undefined;
 
     if (isDefined(workspaceFromCustomDomainOrSubdomain) || !isDefined(domain)) {
-      return workspaceFromCustomDomainOrSubdomain;
+      return {
+        workspace: workspaceFromCustomDomainOrSubdomain,
+        publicDomain: null,
+      };
     }
 
-    const publicDomainFromCustomDomain =
-      await this.publicDomainRepository.findOne({
-        where: {
-          domain,
-        },
-        relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
-      });
+    const publicDomain = await this.publicDomainRepository.findOne({
+      where: { domain },
+      relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
+    });
 
-    return publicDomainFromCustomDomain?.workspace;
+    return {
+      workspace: publicDomain?.workspace ?? undefined,
+      publicDomain: publicDomain ?? null,
+    };
   }
 
   private getCustomWorkspaceUrl(customDomain: string) {

@@ -28,6 +28,7 @@ import { ConnectionProviderSyncableEntityFastInstanceCommand } from 'src/databas
 import { RemoveUserDefaultAvatarUrlFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777915958318-remove-user-default-avatar-url';
 import { TransformApplicationVariableToSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777966965587-transform-application-variable-to-syncable-entity';
 import { BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1777966965588-backfill-application-variable-universal-identifier';
+import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1798000003000-add-application-id-to-public-domain';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -58,4 +59,5 @@ export const INSTANCE_COMMANDS = [
   RemoveUserDefaultAvatarUrlFastInstanceCommand,
   TransformApplicationVariableToSyncableEntityFastInstanceCommand,
   BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand,
+  AddApplicationIdToPublicDomainFastInstanceCommand,
 ];

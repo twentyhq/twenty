@@ -50,10 +50,8 @@ export class RouteTriggerService {
   }> {
     const host = `${request.protocol}://${request.get('host')}`;
 
-    const workspace =
-      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
-        host,
-      );
+    const { workspace, publicDomain } =
+      await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(host);
 
     assertIsDefinedOrThrow(
       workspace,
@@ -63,11 +61,15 @@ export class RouteTriggerService {
       ),
     );
 
+    // App-scoped public domain → restrict matches to that app's logic functions.
+    const applicationId = publicDomain?.applicationId ?? null;
+
     const logicFunctionsWithHttpRouteTrigger =
       await this.logicFunctionRepository.find({
         where: {
           workspaceId: workspace.id,
           httpRouteTriggerSettings: Not(IsNull()),
+          ...(isDefined(applicationId) ? { applicationId } : {}),
         },
       });
 

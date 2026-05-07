@@ -5,6 +5,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { Button, ButtonGroup } from 'twenty-ui/input';
@@ -15,16 +16,19 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import {
   CreatePublicDomainDocument,
   DeletePublicDomainDocument,
+  FindManyApplicationsDocument,
   FindManyPublicDomainsDocument,
+  UpdatePublicDomainDocument,
 } from '~/generated-metadata/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CheckPublicDomainValidRecordsEffect } from '@/settings/domains/components/CheckPublicDomainValidRecordsEffect';
 import { selectedPublicDomainState } from '@/settings/domains/states/selectedPublicDomainState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type SelectOption } from 'twenty-ui/input';
 
 const StyledButtonGroupContainer = styled.div`
   > * > :not(:first-of-type) > button {
@@ -61,9 +65,21 @@ export const SettingPublicDomain = () => {
     CreatePublicDomainDocument,
   );
 
+  const [updatePublicDomain] = useMutation(UpdatePublicDomainDocument);
+
   const [newPublicDomain, setNewPublicDomain] = useState<string | undefined>(
     selectedPublicDomain?.domain ?? '',
   );
+
+  // Holds the chosen application before the public domain is created.
+  // Once selectedPublicDomain exists, the dropdown reads from it directly.
+  const [draftApplicationId, setDraftApplicationId] = useState<string | null>(
+    null,
+  );
+
+  const selectedApplicationId = isDefined(selectedPublicDomain)
+    ? (selectedPublicDomain.applicationId ?? null)
+    : draftApplicationId;
 
   const [newPublicDomainError, setNewPublicDomainError] = useState<
     string | undefined
@@ -71,6 +87,22 @@ export const SettingPublicDomain = () => {
 
   const { refetch: refetchPublicDomains } = useQuery(
     FindManyPublicDomainsDocument,
+  );
+
+  const { data: applicationsData } = useQuery(FindManyApplicationsDocument);
+
+  const applicationEmptyOption: SelectOption<string | null> = useMemo(
+    () => ({ value: null, label: t`Workspace (all apps)` }),
+    [t],
+  );
+
+  const applicationOptions = useMemo<SelectOption<string | null>[]>(
+    () =>
+      (applicationsData?.findManyApplications ?? []).map((application) => ({
+        value: application.id,
+        label: application.name,
+      })),
+    [applicationsData],
   );
 
   const [deletePublicDomain] = useMutation(DeletePublicDomainDocument);
@@ -89,7 +121,7 @@ export const SettingPublicDomain = () => {
         enqueueSuccessSnackBar({
           message: t`Public domain successfully deleted`,
         });
-        navigate(SettingsPath.Domains);
+        navigate(SettingsPath.Applications);
         refetchPublicDomains();
       },
       onError: (error) =>
@@ -116,7 +148,10 @@ export const SettingPublicDomain = () => {
     setNewPublicDomainError(undefined);
 
     await createPublicDomain({
-      variables: { domain: newPublicDomain },
+      variables: {
+        domain: newPublicDomain,
+        applicationId: draftApplicationId,
+      },
       onCompleted: (data) => {
         setSelectedPublicDomain(data.createPublicDomain);
         enqueueSuccessSnackBar({
@@ -132,6 +167,35 @@ export const SettingPublicDomain = () => {
     });
   };
 
+  const onApplicationChange = async (nextApplicationId: string | null) => {
+    if (!isDefined(selectedPublicDomain)) {
+      setDraftApplicationId(nextApplicationId);
+      return;
+    }
+
+    if (nextApplicationId === (selectedPublicDomain.applicationId ?? null)) {
+      return;
+    }
+
+    await updatePublicDomain({
+      variables: {
+        domain: selectedPublicDomain.domain,
+        applicationId: nextApplicationId,
+      },
+      onCompleted: (data) => {
+        setSelectedPublicDomain(data.updatePublicDomain);
+        enqueueSuccessSnackBar({
+          message: t`Public domain updated successfully`,
+        });
+        refetchPublicDomains();
+      },
+      onError: (error) =>
+        enqueueErrorSnackBar({
+          apolloError: error,
+        }),
+    });
+  };
+
   return (
     <SubMenuTopBarContainer
       title={t`Public domain`}
@@ -141,14 +205,14 @@ export const SettingPublicDomain = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: <Trans>Domains</Trans>,
-          href: getSettingsPath(SettingsPath.Domains),
+          children: <Trans>Apps</Trans>,
+          href: getSettingsPath(SettingsPath.Applications),
         },
         { children: <Trans>Public Domain</Trans> },
       ]}
       actionButton={
         <SaveAndCancelButtons
-          onCancel={() => navigate(SettingsPath.Domains)}
+          onCancel={() => navigate(SettingsPath.Applications)}
           isSaveDisabled={loading || isDefined(selectedPublicDomain)}
           onSave={onCreate}
         />
@@ -208,6 +272,21 @@ export const SettingPublicDomain = () => {
               )}
             </StyledRecordsWrapper>
           )}
+        </Section>
+        <Section>
+          <H2Title
+            title={t`Bound App`}
+            description={t`Restrict this domain to the HTTP routes of a specific app. Leave empty to expose all workspace HTTP routes.`}
+          />
+          <Select
+            dropdownId="public-domain-application"
+            label={t`Application`}
+            fullWidth
+            value={selectedApplicationId}
+            emptyOption={applicationEmptyOption}
+            options={applicationOptions}
+            onChange={onApplicationChange}
+          />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
