@@ -53,7 +53,7 @@ import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-mod
 )
 @UseFilters(FieldMetadataRestApiExceptionFilter)
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
-export class FieldMetadataRestApiController {
+export class FieldMetadataController {
   constructor(
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,

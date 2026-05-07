@@ -56,7 +56,7 @@ import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata
 )
 @UseFilters(ObjectMetadataRestApiExceptionFilter)
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
-export class ObjectMetadataRestApiController {
+export class ObjectMetadataController {
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,

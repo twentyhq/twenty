@@ -13,7 +13,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { FieldMetadataRestApiController } from 'src/engine/metadata-modules/field-metadata/controllers/field-metadata-rest-api.controller';
+import { FieldMetadataController } from 'src/engine/metadata-modules/field-metadata/controllers/field-metadata.controller';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
 import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
@@ -92,7 +92,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
       ],
     }),
   ],
-  controllers: [FieldMetadataRestApiController],
+  controllers: [FieldMetadataController],
   providers: [
     FieldMetadataService,
     FieldMetadataResolver,
