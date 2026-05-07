@@ -5,6 +5,7 @@ import { OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orc
 import { renderDevUI } from '@/cli/utilities/dev/ui/components/dev-ui';
 import { DevUiStateManager } from '@/cli/utilities/dev/ui/dev-ui-state-manager';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
+import { checkServerVersionCompatibility } from '@/cli/utilities/version/check-server-version-compatibility';
 
 export type AppDevOptions = {
   appPath?: string;
@@ -29,6 +30,7 @@ export class AppDevCommand {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
     await checkSdkVersionCompatibility(appPath);
+    await checkServerVersionCompatibility();
 
     const config = await new ConfigService().getConfig();
 
