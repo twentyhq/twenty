@@ -25,17 +25,23 @@ export class CalendarEventCleanerService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarChannelEventAssociationRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          'calendarChannelEventAssociation',
-        );
-
       const workspaceDataSource =
         await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-      await workspaceDataSource.transaction(async (manager) => {
-        const transactionManager = manager as WorkspaceEntityManager;
+      const queryRunner = workspaceDataSource.createQueryRunner();
+
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      try {
+        const transactionManager = queryRunner.manager as WorkspaceEntityManager;
+
+        // Create repository inside the transaction to ensure it uses the same connection
+        const calendarChannelEventAssociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            'calendarChannelEventAssociation',
+          );
 
         await deleteUsingPagination(
           workspaceId,
@@ -73,7 +79,14 @@ export class CalendarEventCleanerService {
           },
           transactionManager,
         );
-      });
+
+        await queryRunner.commitTransaction();
+      } catch (error) {
+        await queryRunner.rollbackTransaction();
+        throw error;
+      } finally {
+        await queryRunner.release();
+      }
     }, authContext);
   }
 

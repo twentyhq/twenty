@@ -130,17 +130,23 @@ export class MessagingMessageCleanerService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannelMessageAssociationRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-          workspaceId,
-          'messageChannelMessageAssociation',
-        );
-
       const workspaceDataSource =
         await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-      await workspaceDataSource.transaction(async (manager) => {
-        const transactionManager = manager as WorkspaceEntityManager;
+      const queryRunner = workspaceDataSource.createQueryRunner();
+
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      try {
+        const transactionManager = queryRunner.manager as WorkspaceEntityManager;
+
+        // Create repository inside the transaction to ensure it uses the same connection
+        const messageChannelMessageAssociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            workspaceId,
+            'messageChannelMessageAssociation',
+          );
 
         await deleteUsingPagination(
           workspaceId,
@@ -178,7 +184,14 @@ export class MessagingMessageCleanerService {
           },
           transactionManager,
         );
-      });
+
+        await queryRunner.commitTransaction();
+      } catch (error) {
+        await queryRunner.rollbackTransaction();
+        throw error;
+      } finally {
+        await queryRunner.release();
+      }
     }, authContext);
   }
 
@@ -186,96 +199,109 @@ export class MessagingMessageCleanerService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageThreadRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
-          workspaceId,
-          'messageThread',
-        );
-
-      const messageRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageWorkspaceEntity>(
-          workspaceId,
-          'message',
-        );
-
       const workspaceDataSource =
         await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-      await workspaceDataSource.transaction(
-        async (transactionManager: WorkspaceEntityManager) => {
-          await deleteUsingPagination(
-            workspaceId,
-            500,
-            async (
-              limit: number,
-              offset: number,
-              _workspaceId: string,
-              transactionManager: WorkspaceEntityManager,
-            ) => {
-              const nonAssociatedMessages = await messageRepository.find(
-                {
-                  where: {
-                    messageChannelMessageAssociations: {
-                      id: IsNull(),
-                    },
-                  },
-                  take: limit,
-                  skip: offset,
-                  relations: ['messageChannelMessageAssociations'],
-                },
-                transactionManager,
-              );
+      const queryRunner = workspaceDataSource.createQueryRunner();
 
-              return nonAssociatedMessages.map(({ id }) => id);
-            },
-            async (
-              ids: string[],
-              workspaceId: string,
-              transactionManager?: WorkspaceEntityManager,
-            ) => {
-              this.logger.debug(
-                `WorkspaceId: ${workspaceId} Deleting ${ids.length} messages from message cleaner`,
-              );
-              await messageRepository.delete(ids, transactionManager);
-            },
-            transactionManager,
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      try {
+        const transactionManager = queryRunner.manager as WorkspaceEntityManager;
+
+        // Create repositories inside the transaction to ensure they use the same connection
+        const messageThreadRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+            workspaceId,
+            'messageThread',
           );
 
-          await deleteUsingPagination(
+        const messageRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageWorkspaceEntity>(
             workspaceId,
-            500,
-            async (
-              limit: number,
-              offset: number,
-              _workspaceId: string,
-              transactionManager?: WorkspaceEntityManager,
-            ) => {
-              const orphanThreads = await messageThreadRepository.find(
-                {
-                  where: {
-                    messages: {
-                      id: IsNull(),
-                    },
-                  },
-                  take: limit,
-                  skip: offset,
-                },
-                transactionManager,
-              );
-
-              return orphanThreads.map(({ id }) => id);
-            },
-            async (
-              ids: string[],
-              _workspaceId: string,
-              transactionManager?: WorkspaceEntityManager,
-            ) => {
-              await messageThreadRepository.delete(ids, transactionManager);
-            },
-            transactionManager,
+            'message',
           );
-        },
-      );
+
+        await deleteUsingPagination(
+          workspaceId,
+          500,
+          async (
+            limit: number,
+            offset: number,
+            _workspaceId: string,
+            transactionManager: WorkspaceEntityManager,
+          ) => {
+            const nonAssociatedMessages = await messageRepository.find(
+              {
+                where: {
+                  messageChannelMessageAssociations: {
+                    id: IsNull(),
+                  },
+                },
+                take: limit,
+                skip: offset,
+                relations: ['messageChannelMessageAssociations'],
+              },
+              transactionManager,
+            );
+
+            return nonAssociatedMessages.map(({ id }) => id);
+          },
+          async (
+            ids: string[],
+            workspaceId: string,
+            transactionManager?: WorkspaceEntityManager,
+          ) => {
+            this.logger.debug(
+              `WorkspaceId: ${workspaceId} Deleting ${ids.length} messages from message cleaner`,
+            );
+            await messageRepository.delete(ids, transactionManager);
+          },
+          transactionManager,
+        );
+
+        await deleteUsingPagination(
+          workspaceId,
+          500,
+          async (
+            limit: number,
+            offset: number,
+            _workspaceId: string,
+            transactionManager?: WorkspaceEntityManager,
+          ) => {
+            const orphanThreads = await messageThreadRepository.find(
+              {
+                where: {
+                  messages: {
+                    id: IsNull(),
+                  },
+                },
+                take: limit,
+                skip: offset,
+              },
+              transactionManager,
+            );
+
+            return orphanThreads.map(({ id }) => id);
+          },
+          async (
+            ids: string[],
+            _workspaceId: string,
+            transactionManager?: WorkspaceEntityManager,
+          ) => {
+            await messageThreadRepository.delete(ids, transactionManager);
+          },
+          transactionManager,
+        );
+
+        await queryRunner.commitTransaction();
+      } catch (error) {
+        await queryRunner.rollbackTransaction();
+        throw error;
+      } finally {
+        await queryRunner.release();
+      }
     }, authContext);
   }
 }
