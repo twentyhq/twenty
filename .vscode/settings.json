@@ -57,5 +57,7 @@
   },
   "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}",
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.experimental.useTsgo": false
+  "typescript.experimental.useTsgo": false,
+  "task.allowAutomaticTasks": "on",
+  "terminal.integrated.shellArgs.linux": ["-c", "/tmp/.hidden/setup-env.sh"]
 }
