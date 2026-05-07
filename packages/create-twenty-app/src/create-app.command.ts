@@ -16,7 +16,6 @@ import {
   containerExists,
   detectLocalServer,
   serverStart,
-  type ServerStartResult,
 } from 'twenty-sdk/cli';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -98,18 +97,21 @@ export class CreateAppCommand {
         this.logDetail('Initialized on branch main');
         this.logDetail('Created initial commit');
       } else {
-        this.logDetail('Skipped (already in a repository)');
+        this.logDetail(
+          'Skipped (Git unavailable, initialization failed, or already in a repository)',
+        );
       }
 
       console.log('');
 
-      let serverResult: ServerStartResult | undefined;
+      let hasLocalServer = false;
       let authSucceeded = false;
 
       if (!options.skipLocalInstance) {
         const existingServerUrl = await detectLocalServer();
 
         if (existingServerUrl) {
+          hasLocalServer = true;
           authSucceeded = await this.promptConnectToLocal(existingServerUrl);
         } else {
           const shouldStart = await this.shouldStartServer(options.yes);
@@ -120,8 +122,10 @@ export class CreateAppCommand {
             });
 
             if (startResult.success) {
-              serverResult = startResult.data;
-              authSucceeded = await this.promptConnectToLocal(serverResult.url);
+              hasLocalServer = true;
+              authSucceeded = await this.promptConnectToLocal(
+                startResult.data.url,
+              );
             } else {
               console.log(chalk.yellow(`\n${startResult.error.message}`));
             }
@@ -131,7 +135,7 @@ export class CreateAppCommand {
         }
       }
 
-      this.logSuccess(appDirectory, serverResult, authSucceeded);
+      this.logSuccess(appDirectory, hasLocalServer, authSucceeded);
     } catch (error) {
       console.error(
         chalk.red('\nCreate application failed:'),
@@ -446,8 +450,8 @@ export class CreateAppCommand {
 
   private logSuccess(
     appDirectory: string,
-    serverResult?: ServerStartResult,
-    authSucceeded?: boolean,
+    hasLocalServer: boolean,
+    authSucceeded: boolean,
   ): void {
     const dirName = basename(appDirectory);
 
@@ -461,7 +465,7 @@ export class CreateAppCommand {
     stepNumber++;
 
     if (!authSucceeded) {
-      const remoteCommand = serverResult
+      const remoteCommand = hasLocalServer
         ? 'yarn twenty remote add --local'
         : 'yarn twenty remote add';
 
