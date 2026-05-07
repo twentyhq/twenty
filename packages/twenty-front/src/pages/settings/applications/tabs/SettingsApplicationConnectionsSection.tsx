@@ -1,6 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -27,7 +29,6 @@ import { useFindApplicationConnectionProviders } from '~/pages/settings/applicat
 import { useMyAppConnectedAccounts } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
-import { getApplicationConnectionDetailSettingsPath } from '~/pages/settings/applications/utils/getApplicationConnectionDetailSettingsPath';
 
 const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   'minmax(0, 1fr) 160px 180px 36px';
@@ -150,10 +151,13 @@ export const SettingsApplicationConnectionsSection = ({
                       gridTemplateColumns={
                         CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS
                       }
-                      to={getApplicationConnectionDetailSettingsPath({
-                        applicationId,
-                        connectedAccountId: connection.id,
-                      })}
+                      to={getSettingsPath(
+                        SettingsPath.ApplicationConnectionDetail,
+                        {
+                          applicationId,
+                          connectedAccountId: connection.id,
+                        },
+                      )}
                     >
                       <TableCell
                         clickable

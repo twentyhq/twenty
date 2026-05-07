@@ -41,7 +41,6 @@ import {
 } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
-import { getApplicationConnectionDetailSettingsPath } from '~/pages/settings/applications/utils/getApplicationConnectionDetailSettingsPath';
 
 const DETAIL_GRID_TEMPLATE = '220px 1fr';
 
@@ -142,7 +141,7 @@ export const SettingsApplicationConnectionDetail = () => {
     undefined,
     'settings',
   );
-  const detailPath = getApplicationConnectionDetailSettingsPath({
+  const detailPath = getSettingsPath(SettingsPath.ApplicationConnectionDetail, {
     applicationId,
     connectedAccountId,
   });

@@ -7,7 +7,6 @@ import { SettingPublicDomain } from '@/settings/domains/components/SettingPublic
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { SETTINGS_APPLICATION_CONNECTION_DETAIL_PATH } from '~/pages/settings/applications/utils/getApplicationConnectionDetailSettingsPath';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import(
@@ -804,7 +803,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsApplicationDetails />}
         />
         <Route
-          path={SETTINGS_APPLICATION_CONNECTION_DETAIL_PATH}
+          path={SettingsPath.ApplicationConnectionDetail}
           element={<SettingsApplicationConnectionDetail />}
         />
         <Route
