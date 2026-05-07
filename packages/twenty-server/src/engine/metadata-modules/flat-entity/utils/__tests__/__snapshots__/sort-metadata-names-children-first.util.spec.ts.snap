@@ -23,6 +23,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "frontComponent",
   "logicFunction",
   "pageLayoutTab",
+  "permissionFlagDefinition",
   "skill",
   "viewFieldGroup",
   "viewFilterGroup",

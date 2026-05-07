@@ -36,6 +36,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   ],
   "pageLayoutWidget": [],
   "permissionFlag": [],
+  "permissionFlagDefinition": [],
   "role": [
     "roleTargetUniversalIdentifiers",
     "objectPermissionUniversalIdentifiers",
