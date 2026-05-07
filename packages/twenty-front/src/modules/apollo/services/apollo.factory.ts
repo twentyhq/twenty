@@ -209,6 +209,18 @@ export class ApolloFactory implements ApolloManager {
         );
       };
 
+      const isGraphQLValidationError = (
+        graphQLError: GraphQLFormattedError,
+      ): boolean => {
+        const message = graphQLError.message.toLowerCase();
+        return (
+          message.includes('required, but it was not provided') ||
+          message.includes('unknown type') ||
+          message.includes('cannot query field') ||
+          message.includes('must have a selection of subfields')
+        );
+      };
+
       const sendToSentry = ({
         graphQLError,
         operation,
@@ -225,6 +237,16 @@ export class ApolloFactory implements ApolloManager {
             }, Path: ${graphQLError.path}`,
           );
         }
+
+        if (isGraphQLValidationError(graphQLError)) {
+          if (isDebugMode === true) {
+            logDebug(
+              `[GraphQL validation error ignored]: ${graphQLError.message}`,
+            );
+          }
+          return;
+        }
+
         import('@sentry/react')
           .then(({ captureException, withScope }) => {
             withScope((scope) => {
@@ -249,6 +271,17 @@ export class ApolloFactory implements ApolloManager {
                 if (isDefined(genericOperationName)) {
                   fingerPrint.push(genericOperationName);
                 }
+              }
+
+              if (isDefined(this.currentWorkspace?.metadataVersion)) {
+                scope.setExtra(
+                  'schemaVersion',
+                  this.currentWorkspace.metadataVersion,
+                );
+              }
+
+              if (isDefined(this.appVersion)) {
+                scope.setExtra('appVersion', this.appVersion);
               }
 
               if (!isEmpty(fingerPrint)) {
