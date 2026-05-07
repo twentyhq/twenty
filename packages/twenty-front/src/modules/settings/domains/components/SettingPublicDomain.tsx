@@ -90,7 +90,7 @@ export const SettingPublicDomain = () => {
 
   const { data: applicationsData } = useQuery(FindManyApplicationsDocument);
 
-  const applicationEmptyOption: SelectOption<string | null> = useMemo(
+  const applicationPinnedOption: SelectOption<string | null> = useMemo(
     () => ({ value: null, label: t`Workspace (all apps)` }),
     [t],
   );
@@ -282,7 +282,7 @@ export const SettingPublicDomain = () => {
             label={t`Application`}
             fullWidth
             value={selectedApplicationId}
-            emptyOption={applicationEmptyOption}
+            pinnedOption={applicationPinnedOption}
             options={applicationOptions}
             onChange={onApplicationChange}
           />
