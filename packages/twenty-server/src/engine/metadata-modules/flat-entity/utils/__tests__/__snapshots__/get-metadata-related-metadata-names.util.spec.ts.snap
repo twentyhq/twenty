@@ -97,6 +97,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for permissionFlagDefinition 1`] = `[]`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for role 1`] = `
 [
   "roleTarget",
