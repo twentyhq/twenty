@@ -17,8 +17,10 @@ export const getVersionInfo = async (
   containerName: string = CONTAINER_NAME,
 ): Promise<VersionInfo> => {
   const cliVersion = sdkPackageJson.version;
-  const localServerVersion = getLocalServerVersion(containerName);
-  const publishedVersions = await getPublishedServerVersions();
+  const [localServerVersion, publishedVersions] = await Promise.all([
+    getLocalServerVersion(containerName),
+    getPublishedServerVersions(),
+  ]);
   const latestServerVersion = publishedVersions[0]?.name ?? null;
 
   const localParsed = localServerVersion
