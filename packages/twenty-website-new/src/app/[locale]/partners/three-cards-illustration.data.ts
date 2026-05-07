@@ -30,7 +30,7 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
     {
       heading: { text: msg`Content & Community Partners`, fontFamily: 'sans' },
       body: {
-        text: msg`Share Twenty with your audience and help shape the future of the #1 open source CRM. We're looking for creators, educators, and community builders who want to showcase great software.`,
+        text: msg`Share Twenty with your audience and help shape the future of the #1 Open Source CRM. We're looking for creators, educators, and community builders who want to showcase great software.`,
       },
       benefits: [
         { text: msg`Revenue share for referred customers`, icon: 'tag' },

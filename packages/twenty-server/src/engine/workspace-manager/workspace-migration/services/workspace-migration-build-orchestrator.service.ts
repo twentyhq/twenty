@@ -41,6 +41,7 @@ import { WorkspaceMigrationViewFilterActionsBuilderService } from 'src/engine/wo
 import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/workspace-migration-view-group-actions-builder.service';
 import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/workspace-migration-view-sort-actions.builder.service';
 import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
+import { WorkspaceMigrationApplicationVariableActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/application-variable/workspace-migration-application-variable-actions-builder.service';
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
 
 @Injectable()
@@ -73,6 +74,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
     private readonly workspaceMigrationFrontComponentActionsBuilderService: WorkspaceMigrationFrontComponentActionsBuilderService,
     private readonly workspaceMigrationWebhookActionsBuilderService: WorkspaceMigrationWebhookActionsBuilderService,
+    private readonly workspaceMigrationApplicationVariableActionsBuilderService: WorkspaceMigrationApplicationVariableActionsBuilderService,
     private readonly workspaceMigrationConnectionProviderActionsBuilderService: WorkspaceMigrationConnectionProviderActionsBuilderService,
   ) {}
 
@@ -125,6 +127,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     const orchestratorActionsReport = structuredClone({
       ...createEmptyOrchestratorActionsReport(),
     });
+
     const orchestratorFailureReport = structuredClone(
       EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
     );
@@ -166,6 +169,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatPageLayoutTabMaps,
       flatFrontComponentMaps,
       flatWebhookMaps,
+      flatApplicationVariableMaps,
       flatConnectionProviderMaps,
     } = fromToAllFlatEntityMaps;
 
@@ -826,6 +830,34 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatApplicationVariableMaps)) {
+      const {
+        from: fromFlatApplicationVariableMaps,
+        to: toFlatApplicationVariableMaps,
+      } = flatApplicationVariableMaps;
+
+      const applicationVariableResult =
+        await this.workspaceMigrationApplicationVariableActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatApplicationVariableMaps,
+            to: toFlatApplicationVariableMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
+            workspaceId,
+          },
+        );
+
+      if (applicationVariableResult.status === 'fail') {
+        orchestratorFailureReport.applicationVariable.push(
+          ...applicationVariableResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.applicationVariable =
+          applicationVariableResult.actions;
+      }
+    }
+
     if (isDefined(flatConnectionProviderMaps)) {
       const {
         from: fromFlatConnectionProviderMaps,
@@ -1030,6 +1062,11 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.webhook.create,
           ...aggregatedOrchestratorActionsReport.webhook.update,
           ///
+
+          // Application Variables
+          ...aggregatedOrchestratorActionsReport.applicationVariable.delete,
+          ...aggregatedOrchestratorActionsReport.applicationVariable.create,
+          ...aggregatedOrchestratorActionsReport.applicationVariable.update,
 
           // Connection providers
           ...aggregatedOrchestratorActionsReport.connectionProvider.delete,

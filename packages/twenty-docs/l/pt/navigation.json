@@ -155,7 +155,27 @@
           "label": "Visão Geral"
         },
         "apps": {
-          "label": "Aplicativos"
+          "label": "Aplicativos",
+          "groups": {
+            "appsGettingStarted": {
+              "label": "Primeiros passos"
+            },
+            "appsConfig": {
+              "label": "Configuração"
+            },
+            "appsData": {
+              "label": "Data"
+            },
+            "appsLogic": {
+              "label": "Lógica"
+            },
+            "appsLayout": {
+              "label": "Layout"
+            },
+            "appsOperations": {
+              "label": "Operações"
+            }
+          }
         },
         "api": {
           "label": "API"

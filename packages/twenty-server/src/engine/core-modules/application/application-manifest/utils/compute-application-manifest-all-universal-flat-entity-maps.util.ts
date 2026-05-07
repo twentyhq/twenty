@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 
+import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
@@ -429,6 +430,28 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
           allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
       });
     }
+  }
+
+  for (const [key, applicationVariableManifest] of Object.entries(
+    manifest.application.applicationVariables ?? {},
+  )) {
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity:
+        fromApplicationVariableManifestToUniversalFlatApplicationVariable({
+          key,
+          universalIdentifier: applicationVariableManifest.universalIdentifier,
+          value:
+            'value' in applicationVariableManifest
+              ? applicationVariableManifest.value
+              : undefined,
+          description: applicationVariableManifest.description,
+          isSecret: applicationVariableManifest.isSecret,
+          applicationUniversalIdentifier,
+          now,
+        }),
+      universalFlatEntityMapsToMutate:
+        allUniversalFlatEntityMaps.flatApplicationVariableMaps,
+    });
   }
 
   for (const commandMenuItemManifest of manifest.commandMenuItems ?? []) {

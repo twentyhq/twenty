@@ -1,0 +1,90 @@
+---
+title: Roluri și permisiuni
+description: Declarați ce obiecte și câmpuri pot citi și scrie funcțiile de logică și componentele front ale aplicației dvs.
+icon: shield-halved
+---
+
+Un **rol** este un set de permisiuni: ce obiecte poate citi sau scrie o aplicație, ce câmpuri poate vedea și ce capabilități la nivel de platformă poate folosi. Toate funcțiile de logică și componentele front ale unei aplicații moștenesc permisiunile rolului declarat ca `defaultRoleUniversalIdentifier` în [`defineApplication`](/l/ro/developers/extend/apps/config/application).
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  PermissionFlag,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+## Rolul implicit pentru funcții
+
+Când generați o aplicație nouă, CLI creează un fișier de rol implicit:
+
+```ts src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlags: [],
+});
+```
+
+`universalIdentifier` al acestui rol este referențiat din `application-config.ts` ca `defaultRoleUniversalIdentifier`:
+
+* **`*.role.ts`** declară ce poate face rolul.
+* **`application-config.ts`** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
+
+## Cele mai bune practici
+
+* Porniți de la rolul generat de scaffolding, apoi restrângeți-l progresiv — rolul implicit acordă acces larg la citire, ceea ce rareori este de dorit în producție.
+* Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele și câmpurile de care au nevoie efectiv funcțiile dvs.
+* `permissionFlags` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum.
+* Vedeți un exemplu funcțional: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

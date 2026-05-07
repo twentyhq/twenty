@@ -23,6 +23,8 @@ export const copyBaseApplicationProject = async ({
 
   await renameDotfiles({ appDirectory });
 
+  await mirrorAgentsToClaude({ appDirectory });
+
   await addEmptyPublicDirectory({ appDirectory });
 
   await generateUniversalIdentifiers({
@@ -49,6 +51,19 @@ const renameDotfiles = async ({ appDirectory }: { appDirectory: string }) => {
       await fs.rename(sourcePath, join(appDirectory, to));
     }
   }
+};
+
+// AGENTS.md is the cross-tool standard; Claude Code prefers CLAUDE.md and only
+// falls back to AGENTS.md, so we mirror the file to keep a single source of truth.
+const mirrorAgentsToClaude = async ({
+  appDirectory,
+}: {
+  appDirectory: string;
+}) => {
+  await fs.copy(
+    join(appDirectory, 'AGENTS.md'),
+    join(appDirectory, 'CLAUDE.md'),
+  );
 };
 
 const addEmptyPublicDirectory = async ({

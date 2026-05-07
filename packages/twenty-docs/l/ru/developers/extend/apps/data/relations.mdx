@@ -1,0 +1,160 @@
+---
+title: Связи
+description: Связывайте объекты между собой двунаправленными связями MANY_TO_ONE / ONE_TO_MANY.
+icon: diagram-project
+---
+
+Отношения связывают два объекта между собой. В Twenty отношения всегда **двунаправленные** — у каждого отношения есть две стороны, и каждая сторона объявляется как поле, ссылающееся на другую.
+
+| Тип отношения | Описание                                                              | Есть внешний ключ?     |
+| ------------- | --------------------------------------------------------------------- | ---------------------- |
+| `MANY_TO_ONE` | Многие записи этого объекта указывают на одну запись целевого объекта | Да (`joinColumnName`)  |
+| `ONE_TO_MANY` | Одна запись этого объекта имеет много записей целевого объекта        | Нет (обратная сторона) |
+
+## Как работают отношения
+
+Каждое отношение требует **двух полей**, которые ссылаются друг на друга:
+
+1. Сторона **MANY_TO_ONE** — находится в объекте, который содержит внешний ключ.
+2. Сторона **ONE_TO_MANY** — находится в объекте, которому принадлежит коллекция.
+
+Оба поля используют `FieldType.RELATION` и ссылаются друг на друга через `relationTargetFieldMetadataUniversalIdentifier`.
+
+## Пример: Почтовая открытка имеет много получателей
+
+`PostCard` может быть отправлен множеству записей `PostCardRecipient`. Каждый получатель относится ровно к одной открытке.
+
+**Шаг 1: Определите сторону ONE_TO_MANY на PostCard** (сторона "one"):
+
+```ts src/fields/post-card-recipients-on-post-card.field.ts
+import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+// Import from the other side
+import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  icon: 'IconUsers',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+});
+```
+
+**Шаг 2: Определите сторону MANY_TO_ONE на PostCardRecipient** (сторона "many" — содержит внешний ключ):
+
+```ts src/fields/post-card-on-post-card-recipient.field.ts
+import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_FIELD_ID = 'b2222222-2222-2222-2222-222222222222';
+// Import from the other side
+import { POST_CARD_RECIPIENTS_FIELD_ID } from './post-card-recipients-on-post-card.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCard',
+  label: 'Post Card',
+  icon: 'IconMail',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.CASCADE,
+    joinColumnName: 'postCardId',
+  },
+});
+```
+
+<Note>
+**Циклические импорты:** оба поля отношений ссылаются на `universalIdentifier` друг друга. Чтобы избежать проблем с циклическими импортами, экспортируйте идентификаторы полей как именованные константы из каждого файла и импортируйте их в другом. Система сборки разрешает это на этапе компиляции.
+</Note>
+
+## Связывание со стандартными объектами
+
+Чтобы создать отношение со встроенным объектом Twenty (Person, Company и т. д.), используйте `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+
+```ts src/fields/person-on-self-hosting-user.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+
+export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+
+export default defineField({
+  universalIdentifier: PERSON_FIELD_ID,
+  objectUniversalIdentifier: SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  description: 'Person matching with the self hosting user',
+  isNullable: true,
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.SET_NULL,
+    joinColumnName: 'personId',
+  },
+});
+```
+
+## Свойства поля отношения
+
+| Свойство                                          | Обязательно            | Описание                                                                                        |
+| ------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `type`                                            | Да                     | Должно быть `FieldType.RELATION`                                                                |
+| `relationTargetObjectMetadataUniversalIdentifier` | Да                     | `universalIdentifier` целевого объекта                                                          |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Да                     | `universalIdentifier` соответствующего поля на целевом объекте                                  |
+| `universalSettings.relationType`                  | Да                     | `RelationType.MANY_TO_ONE` или `RelationType.ONE_TO_MANY`                                       |
+| `universalSettings.onDelete`                      | Только для MANY_TO_ONE | Что происходит при удалении связанной записи: `CASCADE`, `SET_NULL`, `RESTRICT` или `NO_ACTION` |
+| `universalSettings.joinColumnName`                | Только для MANY_TO_ONE | Имя столбца базы данных для внешнего ключа (например, `postCardId`)                             |
+
+## Встроенные поля связей
+
+Вы также можете объявить связь напрямую внутри [`defineObject`](/l/ru/developers/extend/apps/data/objects). При встроенном объявлении опустите `objectUniversalIdentifier` — он наследуется от родительского объекта:
+
+```ts
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCardRecipient',
+  // ...
+  fields: [
+    {
+      universalIdentifier: POST_CARD_FIELD_ID,
+      type: FieldType.RELATION,
+      name: 'postCard',
+      label: 'Post Card',
+      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.CASCADE,
+        joinColumnName: 'postCardId',
+      },
+    },
+    // … other fields
+  ],
+});
+```

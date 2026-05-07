@@ -1542,6 +1542,38 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  applicationVariable: {
+    key: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    value: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isSecret: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
   connectionProvider: {
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
     displayName: {

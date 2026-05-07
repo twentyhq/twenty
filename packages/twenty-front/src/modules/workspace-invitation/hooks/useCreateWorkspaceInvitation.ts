@@ -5,11 +5,13 @@ import {
 } from '~/generated-metadata/graphql';
 import { workspaceInvitationsState } from '@/workspace-invitation/states/workspaceInvitationsStates';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const useCreateWorkspaceInvitation = () => {
   const [sendInvitationsMutation] = useMutation(SendInvitationsDocument);
 
   const setWorkspaceInvitations = useSetAtomState(workspaceInvitationsState);
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const sendInvitation = async (
     variables: SendInvitationsMutationVariables,
@@ -21,6 +23,9 @@ export const useCreateWorkspaceInvitation = () => {
           ...workspaceInvitations,
           ...data.sendInvitations.result,
         ]);
+      },
+      onError: (error) => {
+        enqueueErrorSnackBar({ apolloError: error });
       },
     });
   };

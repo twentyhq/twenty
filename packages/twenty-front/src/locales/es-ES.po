@@ -271,6 +271,11 @@ msgstr "{count, plural, one {Ej. {0}{1} para {count} decimal} other {Ej. {2}{3} 
 msgid "{credits} Credits - ${price}"
 msgstr "{credits} créditos - ${price}"
 
+#. js-lingui-id: q8RNNe
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+msgid "{credits} Credits - ${priceDisplay}"
+msgstr ""
+
 #. js-lingui-id: jsKQu8
 #: src/modules/object-record/record-show/hooks/useRecordShowPagePagination.ts
 msgid "{currentRank} of {totalCount} in {objectLabelPlural}"
@@ -2167,6 +2172,11 @@ msgstr ""
 msgid "Application upgraded successfully."
 msgstr "Aplicación actualizada con éxito."
 
+#. js-lingui-id: Okob8q
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "application variable"
+msgstr ""
+
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
@@ -2999,6 +3009,16 @@ msgstr "¿No puedes escanear? Copia el"
 msgid "Cancel"
 msgstr "Cancelar"
 
+#. js-lingui-id: J8nuSF
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel credit pack switching"
+msgstr ""
+
+#. js-lingui-id: ztnpYZ
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel credit pack switching?"
+msgstr ""
+
 #. js-lingui-id: dV4HC5
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel interval switching"
@@ -3567,7 +3587,7 @@ msgid "Compact view"
 msgstr "Vista compacta"
 
 #. js-lingui-id: s2QZS6
-#: src/modules/sign-in-background-mock/components/SignInBackgroundMockPage.tsx
+#: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Companies"
 msgstr "Empresas"
 
@@ -3647,6 +3667,7 @@ msgid "Configuration of this command menu item"
 msgstr ""
 
 #. js-lingui-id: iAL9tI
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Configure"
 msgstr "Configurar"
@@ -3727,6 +3748,7 @@ msgid "Configure your emails and calendar settings."
 msgstr "Configura tus correos electrónicos y calendario."
 
 #. js-lingui-id: M1co/O
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Configured"
 msgstr "Configurado"
@@ -3753,12 +3775,18 @@ msgstr "Confirmar"
 msgid "Confirm changing your current credit plan."
 msgstr "Confirmar el cambio de tu plan de crédito actual."
 
+#. js-lingui-id: q2rgqr
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+msgid "Confirm changing your current resource credit allocation."
+msgstr ""
+
 #. js-lingui-id: FbJ7Si
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "Confirm deletion of {roleName} role? This cannot be undone. All members will be reassigned to the default role."
 msgstr "¿Confirmar eliminación del rol {roleName}? Esto no se puede deshacer. Todos los miembros serán reasignados al rol predeterminado."
 
 #. js-lingui-id: kZkFSm
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "Confirmar degradación"
@@ -3769,6 +3797,7 @@ msgid "Confirm role update"
 msgstr "Confirmar la actualización del rol"
 
 #. js-lingui-id: DDbn3x
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm upgrade"
 msgstr "Confirmar actualización"
@@ -4345,6 +4374,11 @@ msgstr ""
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credit consumption over time."
 msgstr "Consumo de créditos a lo largo del tiempo."
+
+#. js-lingui-id: CYpB9A
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Credit pack switching has been cancelled."
+msgstr ""
 
 #. js-lingui-id: Efny36
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
@@ -5473,6 +5507,8 @@ msgid "Dots and comma"
 msgstr ""
 
 #. js-lingui-id: LE8J+K
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Downgrade"
@@ -6452,6 +6488,11 @@ msgstr "Error al actualizar la variable"
 msgid "Error validating approved access domain"
 msgstr "Error al validar el dominio de acceso aprobado"
 
+#. js-lingui-id: du6d5C
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling credit pack switching."
+msgstr ""
+
 #. js-lingui-id: pt7mmi
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling interval switching."
@@ -7002,6 +7043,11 @@ msgstr "Error al actualizar el precio."
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Failed to update records. Please try again."
 msgstr "No se pudieron actualizar los registros. Inténtalo de nuevo."
+
+#. js-lingui-id: j5vd/9
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+msgid "Failed to update resource credits."
+msgstr ""
 
 #. js-lingui-id: QGaQRo
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -10087,6 +10133,11 @@ msgstr "Nuevo Dominio de Acceso Aprobado"
 msgid "New chat"
 msgstr "Nuevo chat"
 
+#. js-lingui-id: TsXckK
+#: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
+msgid "New Company"
+msgstr ""
+
 #. js-lingui-id: +HY5kX
 #: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
 msgid "New conversation"
@@ -10240,6 +10291,7 @@ msgstr "Noveno"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "No"
 msgstr "No"
@@ -10981,6 +11033,7 @@ msgid "Number of decimals"
 msgstr "Número de decimales"
 
 #. js-lingui-id: tYOaY8
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
 msgstr "Cantidad de nuevos créditos asignados cada {recurringInterval}"
@@ -11412,6 +11465,7 @@ msgstr "Organizar"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
@@ -11851,6 +11905,7 @@ msgid "Please select at least one destination object for this relation."
 msgstr "Por favor, seleccione al menos un objeto de destino para esta relación."
 
 #. js-lingui-id: 8YnlGz
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
 msgstr "Por favor, inicia tu suscripción primero"
@@ -12783,6 +12838,16 @@ msgstr "Restablecer a un valor estático"
 msgid "Reset variable"
 msgstr "Restablecer variable"
 
+#. js-lingui-id: ICm0YO
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+msgid "Resource credits"
+msgstr ""
+
+#. js-lingui-id: N0vrR6
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+msgid "Resource credits updated."
+msgstr ""
+
 #. js-lingui-id: esl+Tv
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Resource Type"
@@ -13110,7 +13175,7 @@ msgstr "SDK"
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerHeader.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownMenuSearchInput.tsx
-#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -13485,6 +13550,11 @@ msgstr ""
 msgid "See Records on All Objects"
 msgstr "Ver registros en todos los objetos"
 
+#. js-lingui-id: Hhnssf
+#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
+msgid "Seeded"
+msgstr ""
+
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
@@ -13835,7 +13905,7 @@ msgstr "Configurando su base de datos..."
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -15088,6 +15158,11 @@ msgstr "Esta acción eliminará esta carpeta y todos los {2} elementos del menú
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "Esta acción eliminará esta carpeta y el elemento del menú de navegación que contiene. ¿Deseas continuar?"
 
+#. js-lingui-id: E5I/qG
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "This app has required server variables that are not configured. Users won't be able to install it until all required variables are set."
+msgstr ""
+
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
 msgid "This component runs without a UI and renders nothing here."
@@ -15669,6 +15744,7 @@ msgstr "¡La configuración de la autenticación de dos factores se completó co
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
@@ -16035,6 +16111,8 @@ msgstr "Actualizaciones"
 
 #. js-lingui-id: kwkhPe
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
@@ -16983,7 +17061,7 @@ msgstr "Workflows"
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
-#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -17188,6 +17266,7 @@ msgstr "sí"
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Yes"
 msgstr "Sí"
 
@@ -17240,6 +17319,11 @@ msgstr "No tienes permiso para ver este widget"
 #. js-lingui-id: SDVtJI
 #: src/modules/object-record/record-index/components/RecordIndexEmptyStateNotShared.tsx
 msgid "You don't have access to this object."
+msgstr ""
+
+#. js-lingui-id: RDAH2t
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "You have scheduled a credit pack change. Do you want to cancel it?"
 msgstr ""
 
 #. js-lingui-id: M2lYgq

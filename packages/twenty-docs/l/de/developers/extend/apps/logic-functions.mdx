@@ -141,11 +141,14 @@ const handler = async (event: RoutePayload) => {
 Header-Namen werden in Kleinbuchstaben normalisiert. Greifen Sie mit Schlüsseln in Kleinbuchstaben darauf zu (z. B. `event.headers['content-type']`).
 </Note>
 
-#### Eine Funktion als Tool bereitstellen
+#### Eine Funktion als KI-Tool oder Workflow-Aktion verfügbar machen
 
-Logikfunktionen können als **Tools** für KI-Agenten und Workflows verfügbar gemacht werden. Wenn eine Funktion als Tool markiert ist, wird sie von den KI-Funktionen von Twenty auffindbar und kann in Workflow-Automatisierungen verwendet werden.
+Logikfunktionen können auf zwei Oberflächen verfügbar gemacht werden, jeweils mit eigenem Trigger:
 
-Um eine Logikfunktion als Tool zu markieren, setzen Sie `isTool: true`:
+* **`toolTriggerSettings`** — macht die Funktion über die KI-Funktionen von Twenty (Chat, MCP, Funktionsaufrufe) auffindbar. Verwendet das standardmäßige JSON Schema, das Format, das LLMs nativ verstehen.
+* **`workflowActionTriggerSettings`** — lässt die Funktion als Schritt im visuellen Workflow-Builder erscheinen. Verwendet das umfangreiche `InputSchema` von Twenty, sodass der Builder geeignete Feldeditoren, Variablenauswahlen und Beschriftungen rendern kann.
+
+Eine Funktion kann sich für eine, die andere oder beide entscheiden. Sie stehen neben `cronTriggerSettings`, `databaseEventTriggerSettings` und `httpRouteTriggerSettings` — gleiches Muster, gleiche Struktur.
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -175,31 +178,33 @@ export default defineLogicFunction({
   description: 'Enrich a company record with external data',
   timeoutSeconds: 10,
   handler,
-  isTool: true,
+  toolTriggerSettings: {},
 });
 ```
 
 Hauptpunkte:
 
-* Sie können `isTool` mit Triggern kombinieren — eine Funktion kann gleichzeitig sowohl ein Tool (von KI-Agenten aufrufbar) als auch durch Ereignisse ausgelöst werden.
-* **`toolInputSchema`** (optional): Ein JSON-Schema-Objekt, das die Parameter beschreibt, die Ihre Funktion akzeptiert. Das Schema wird automatisch durch statische Analyse des Quellcodes ermittelt, Sie können es jedoch auch explizit festlegen:
+* Eine Funktion kann Oberflächen mischen — deklarieren Sie sowohl `toolTriggerSettings` als auch `workflowActionTriggerSettings`, um sie im Chat UND im Workflow-Builder bereitzustellen.
+* `toolTriggerSettings.inputSchema` und `workflowActionTriggerSettings.inputSchema` sind beide optional. Wenn sie weggelassen werden, leitet der Manifest-Builder sie aus dem Handler-Quellcode ab (JSON Schema für das KI-Tool, das `InputSchema` von Twenty für die Workflow-Aktion). Geben Sie eines explizit an, wenn Sie eine reichere Typisierung wünschen — zum Beispiel mit `FieldMetadataType`-fähigen Feldern wie `CURRENCY` oder `RELATION` für den Workflow-Builder oder mit `description`-Feldern, die der KI-Agent lesen kann:
 
 ```ts
 export default defineLogicFunction({
   ...,
-  toolInputSchema: {
-    type: 'object',
-    properties: {
-      companyName: {
-        type: 'string',
-        description: 'The name of the company to enrich',
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
       },
-      domain: {
-        type: 'string',
-        description: 'The company website domain (optional)',
-      },
+      required: ['companyName'],
     },
-    required: ['companyName'],
   },
 });
 ```
@@ -238,7 +243,7 @@ yarn twenty exec --postInstall
 ```
 
 Hauptpunkte:
-* Post-Installationsfunktionen verwenden `definePostInstallLogicFunction()` — eine spezialisierte Variante, die Trigger-Einstellungen (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`) weglässt.
+* Post-Installationsfunktionen verwenden `definePostInstallLogicFunction()` — eine spezialisierte Variante, die Trigger-Einstellungen (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`) weglässt.
 * Der Handler erhält ein `InstallPayload` mit `{ previousVersion?: string; newVersion: string }` — `newVersion` ist die zu installierende Version, und `previousVersion` ist die zuvor installierte Version (oder `undefined` bei einer Neuinstallation). Verwenden Sie diese Werte, um Neuinstallationen von Upgrades zu unterscheiden und versionsspezifische Migrationslogik auszuführen.
 * **Wann der Hook ausgeführt wird**: standardmäßig nur bei Neuinstallationen. Übergeben Sie `shouldRunOnVersionUpgrade: true`, wenn er auch beim Upgrade der App von einer vorherigen Version ausgeführt werden soll. Wenn weggelassen, ist das Flag standardmäßig `false` und Upgrades überspringen den Hook.
 * **Ausführungsmodell — standardmäßig asynchron, synchron optional**: Das Flag `shouldRunSynchronously` steuert, *wie* Post-Install ausgeführt wird.

@@ -2,6 +2,8 @@
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `[]`;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for applicationVariable 1`] = `[]`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for commandMenuItem 1`] = `
 [
   "objectMetadata",
