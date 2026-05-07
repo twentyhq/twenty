@@ -1,12 +1,12 @@
 ---
-title: Install Hooks
-description: Run logic before or after the install — seed data, back up records, validate the upgrade.
+title: Hooks de instalação
+description: Execute lógica antes ou depois da instalação — para popular dados, fazer backup de registros, validar a atualização.
 icon: wrench
 ---
 
-Install hooks are special logic functions that run during the install or upgrade lifecycle. They share the same handler runtime as regular [logic functions](/l/pt/developers/extend/apps/logic/logic-functions) and receive an `InstallPayload`, but they're declared with their own define functions — `definePostInstallLogicFunction()` and `definePreInstallLogicFunction()` — and live outside the normal trigger model (HTTP, cron, database events).
+Hooks de instalação são funções de lógica especiais que são executadas durante o ciclo de vida de instalação ou atualização. Elas compartilham o mesmo runtime de handler que as [logic functions](/l/pt/developers/extend/apps/logic/logic-functions) normais e recebem um `InstallPayload`, mas são declaradas com suas próprias funções de definição — `definePostInstallLogicFunction()` e `definePreInstallLogicFunction()` — e ficam fora do modelo de gatilhos normal (HTTP, cron, eventos de banco de dados).
 
-Each app may define **at most one pre-install** and **at most one post-install** function. The manifest build will error if more than one of either is detected.
+Cada aplicativo pode definir **no máximo uma pré-instalação** e **no máximo uma pós-instalação**. A geração do manifesto apresentará erro se mais de uma de cada for detectada.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -20,9 +20,9 @@ Each app may define **at most one pre-install** and **at most one post-install**
 ```
 
 <AccordionGroup>
-<Accordion title="definePostInstallLogicFunction" description="Runs after the workspace metadata migration is applied">
+<Accordion title="definePostInstallLogicFunction" description="É executada depois que a migração de metadados do workspace é aplicada">
 
-A post-install function runs automatically once your app has finished installing on a workspace. The server executes it **after** the app's metadata has been synchronized and the SDK client has been generated, so the workspace is fully ready to use and the new schema is in place. Typical use cases include seeding default data, creating initial records, configuring workspace settings, or provisioning resources on third-party services.
+Uma função de pós-instalação é executada automaticamente assim que seu aplicativo termina de ser instalado em um workspace. O servidor a executa **depois** que os metadados do aplicativo forem sincronizados e o cliente do SDK for gerado, para que o espaço de trabalho esteja totalmente pronto para uso e o novo esquema esteja disponível. Casos de uso típicos incluem popular dados padrão, criar registros iniciais, configurar as definições do espaço de trabalho ou provisionar recursos em serviços de terceiros.
 
 ```ts src/logic-functions/post-install.ts
 import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
@@ -42,30 +42,30 @@ export default definePostInstallLogicFunction({
 });
 ```
 
-You can also manually execute the post-install function at any time using the CLI:
+Você também pode executar manualmente a função de pós-instalação a qualquer momento usando a CLI:
 
 ```bash filename="Terminal"
 yarn twenty exec --postInstall
 ```
 
-Key points:
-* Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`).
-* The handler receives an `InstallPayload` with `{ previousVersion?: string; newVersion: string }` — `newVersion` is the version being installed, and `previousVersion` is the version that was previously installed (or `undefined` on a fresh install). Use these values to distinguish fresh installs from upgrades and to run version-specific migration logic.
-* **When the hook runs**: on fresh installs only, by default. Pass `shouldRunOnVersionUpgrade: true` if you also want it to run when the app is upgraded from a previous version. When omitted, the flag defaults to `false` and upgrades skip the hook.
-* **Execution model — async by default, sync opt-in**: the `shouldRunSynchronously` flag controls *how* post-install is executed.
-  * `shouldRunSynchronously: false` *(default)* — the hook is **enqueued on the message queue** with `retryLimit: 3` and runs asynchronously in a worker. The install response returns as soon as the job is enqueued, so a slow or failing handler does not block the caller. The worker will retry up to three times. **Use this for long-running jobs** — seeding large datasets, calling slow third-party APIs, provisioning external resources, anything that might exceed a reasonable HTTP response window.
-  * `shouldRunSynchronously: true` — the hook is executed **inline during the install flow** (same executor as pre-install). The install request blocks until the handler finishes, and if it throws, the install caller receives a `POST_INSTALL_ERROR`. No automatic retries. **Use this for fast, must-complete-before-response work** — for example, emitting a validation error to the user, or quick setup that the client will rely on immediately after the install call returns. Keep in mind the metadata migration has already been applied by the time post-install runs, so a sync-mode failure does **not** roll back the schema changes — it only surfaces the error.
-* Make sure your handler is idempotent. In async mode the queue may retry up to three times; in either mode the hook may run again on upgrades when `shouldRunOnVersionUpgrade: true`.
-* The environment variables `APPLICATION_ID`, `APP_ACCESS_TOKEN`, and `API_URL` are available inside the handler (same as any other logic function), so you can call the Twenty API with an application access token scoped to your app.
-* Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier`, `shouldRunOnVersionUpgrade`, and `shouldRunSynchronously` are automatically attached to the application manifest under the `postInstallLogicFunction` field during the build — you do not need to reference them in [`defineApplication()`](/l/pt/developers/extend/apps/config/application).
-* The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
-* **Not executed in dev mode**: when an app is registered locally (via `yarn twenty dev`), the server skips the install flow entirely and syncs files directly through the CLI watcher — so post-install never runs in dev mode, regardless of `shouldRunSynchronously`. Use `yarn twenty exec --postInstall` to trigger it manually against a running workspace.
+Pontos-chave:
+* As funções de pós-instalação usam `definePostInstallLogicFunction()` — uma variante especializada que omite as configurações de gatilho (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`).
+* O manipulador recebe um `InstallPayload` com `{ previousVersion?: string; newVersion: string }` — `newVersion` é a versão que está sendo instalada, e `previousVersion` é a versão que foi instalada anteriormente (ou `undefined` em uma instalação nova). Use esses valores para distinguir instalações novas de atualizações e para executar lógica de migração específica da versão.
+* **Quando o hook é executado**: apenas em instalações novas, por padrão. Passe `shouldRunOnVersionUpgrade: true` se você também quiser que ele seja executado quando o app for atualizado a partir de uma versão anterior. Quando omitida, a flag tem valor padrão `false` e as atualizações ignoram o hook.
+* **Modelo de execução — assíncrono por padrão, síncrono opcional**: a flag `shouldRunSynchronously` controla *como* a pós-instalação é executada.
+  * `shouldRunSynchronously: false` *(padrão)* — o hook é **enfileirado na fila de mensagens** com `retryLimit: 3` e é executado de forma assíncrona em um worker. A resposta da instalação retorna assim que o job é enfileirado, então um manipulador lento ou com falha não bloqueia quem chamou. O worker tentará novamente até três vezes. **Use isto para jobs de longa duração** — popular grandes conjuntos de dados, chamar APIs de terceiros lentas, provisionar recursos externos, qualquer coisa que possa exceder uma janela razoável de resposta HTTP.
+  * `shouldRunSynchronously: true` — o hook é executado **inline durante o fluxo de instalação** (mesmo executor da pré-instalação). A requisição de instalação bloqueia até o manipulador terminar e, se ele lançar uma exceção, quem chamou a instalação recebe um `POST_INSTALL_ERROR`. Sem novas tentativas automáticas. **Use isto para trabalhos rápidos que precisam ser concluídos antes da resposta** — por exemplo, emitir um erro de validação para o usuário ou fazer uma configuração rápida da qual o cliente dependerá imediatamente após a chamada de instalação retornar. Tenha em mente que a migração de metadados já foi aplicada quando a pós-instalação é executada, então uma falha no modo síncrono **não** reverte as alterações de esquema — ela apenas expõe o erro.
+* Garanta que seu manipulador seja idempotente. No modo assíncrono, a fila pode tentar novamente até três vezes; em qualquer modo, o hook pode ser executado novamente em atualizações quando `shouldRunOnVersionUpgrade: true`.
+* As variáveis de ambiente `APPLICATION_ID`, `APP_ACCESS_TOKEN` e `API_URL` estão disponíveis dentro do manipulador (assim como em qualquer outra função de lógica), então você pode chamar a API da Twenty com um token de acesso de aplicativo com escopo para o seu app.
+* É permitida apenas uma função de pós-instalação por app. A geração do manifesto apresentará erro se mais de uma for detectada.
+* O `universalIdentifier`, `shouldRunOnVersionUpgrade` e `shouldRunSynchronously` da função são anexados automaticamente ao manifesto do aplicativo no campo `postInstallLogicFunction` durante o build — você não precisa referenciá-los em [`defineApplication()`](/l/pt/developers/extend/apps/config/application).
+* O tempo limite padrão é definido como 300 segundos (5 minutos) para permitir tarefas de configuração mais longas, como o pré-carregamento de dados.
+* **Não executado no modo de desenvolvimento**: quando um app é registrado localmente (via `yarn twenty dev`), o servidor pula completamente o fluxo de instalação e sincroniza arquivos diretamente pelo watcher da CLI — portanto, a pós-instalação nunca é executada no modo de desenvolvimento, independentemente de `shouldRunSynchronously`. Use `yarn twenty exec --postInstall` para acioná-lo manualmente em um workspace em execução.
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="Runs before the workspace metadata migration is applied">
+<Accordion title="definePreInstallLogicFunction" description="É executada antes que a migração de metadados do workspace seja aplicada">
 
-A pre-install function runs automatically during installation, **before the workspace metadata migration is applied**. It shares the same payload shape as post-install (`InstallPayload`), but it is positioned earlier in the install flow so it can prepare state that the upcoming migration depends on — typical uses include backing up data, validating compatibility with the new schema, or archiving records that are about to be restructured or dropped.
+Uma função de pré-instalação é executada automaticamente durante a instalação, **antes que a migração de metadados do workspace seja aplicada**. Ela compartilha o mesmo formato de payload que a pós-instalação (`InstallPayload`), mas está posicionada mais cedo no fluxo de instalação para poder preparar o estado do qual a próxima migração depende — usos típicos incluem fazer backup de dados, validar a compatibilidade com o novo esquema ou arquivar registros que estão prestes a ser reestruturados ou removidos.
 
 ```ts src/logic-functions/pre-install.ts
 import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
@@ -84,35 +84,35 @@ export default definePreInstallLogicFunction({
 });
 ```
 
-You can also manually execute the pre-install function at any time using the CLI:
+Você também pode executar manualmente a função de pré-instalação a qualquer momento usando a CLI:
 
 ```bash filename="Terminal"
 yarn twenty exec --preInstall
 ```
 
-Key points:
-* Pre-install functions use `definePreInstallLogicFunction()` — same specialized config as post-install, just attached to a different lifecycle slot.
-* Both pre- and post-install handlers receive the same `InstallPayload` type: `{ previousVersion?: string; newVersion: string }`. Import it once and reuse it for both hooks.
-* **When the hook runs**: positioned just before the workspace metadata migration (`synchronizeFromManifest`). Before executing, the server runs a purely additive "pared-down sync" that registers the **new** version's pre-install function in the workspace metadata — nothing else is touched — and then executes it. Because this sync is additive-only, the previous version's objects, fields, and data are still intact when your handler runs: you can safely read and back up pre-migration state.
-* **Execution model**: pre-install is executed **synchronously** and **blocks the install**. If the handler throws, the install is aborted before any schema changes are applied — the workspace stays on the previous version in a consistent state. This is intentional: pre-install is your last chance to refuse a risky upgrade.
-* As with post-install, only one pre-install function is allowed per application. It is attached to the application manifest under `preInstallLogicFunction` automatically during the build.
-* **Not executed in dev mode**: same as post-install — the install flow is skipped entirely for locally-registered apps, so pre-install never runs under `yarn twenty dev`. Use `yarn twenty exec --preInstall` to trigger it manually.
+Pontos-chave:
+* Funções de pré-instalação usam `definePreInstallLogicFunction()` — a mesma configuração especializada da pós-instalação, apenas anexada a um ponto diferente do ciclo de vida.
+* Os manipuladores de pré e pós-instalação recebem o mesmo tipo `InstallPayload`: `{ previousVersion?: string; newVersion: string }`. Importe-o uma vez e reutilize-o para ambos os hooks.
+* **Quando o hook é executado**: posicionado imediatamente antes da migração de metadados do workspace (`synchronizeFromManifest`). Antes de executar, o servidor realiza uma "sincronização simplificada" puramente aditiva que registra a função de pré-instalação da **nova** versão nos metadados do workspace — nada mais é alterado — e então a executa. Como essa sincronização é apenas aditiva, os objetos, campos e dados da versão anterior ainda estão intactos quando seu manipulador é executado: você pode ler e fazer backup com segurança do estado pré-migração.
+* **Modelo de execução**: a pré-instalação é executada **de forma síncrona** e **bloqueia a instalação**. Se o manipulador lançar uma exceção, a instalação é abortada antes que quaisquer alterações de esquema sejam aplicadas — o workspace permanece na versão anterior em um estado consistente. Isto é intencional: a pré-instalação é sua última chance de recusar uma atualização arriscada.
+* Assim como na pós-instalação, é permitida apenas uma função de pré-instalação por app. Ela é anexada ao manifesto do aplicativo sob `preInstallLogicFunction` automaticamente durante o build.
+* **Não é executada no modo de desenvolvimento**: igual à pós-instalação — o fluxo de instalação é totalmente ignorado para apps registrados localmente, portanto a pré-instalação nunca é executada com `yarn twenty dev`. Use `yarn twenty exec --preInstall` para acioná-lo manualmente.
 
 </Accordion>
-<Accordion title="Pre-install vs post-install: when to use which" description="Choosing the right install hook">
+<Accordion title="Pré-instalação vs pós-instalação: quando usar cada um" description="Escolhendo o hook de instalação correto">
 
-Both hooks are part of the same install flow and receive the same `InstallPayload`. The difference is **when** they run relative to the workspace metadata migration, and that changes what data they can safely touch.
+Ambos os hooks fazem parte do mesmo fluxo de instalação e recebem o mesmo `InstallPayload`. A diferença é **quando** eles são executados em relação à migração de metadados do workspace, e isso muda quais dados eles podem manipular com segurança.
 
-Pre-install is always **synchronous** (it blocks the install and can abort it). Post-install is **asynchronous by default** — enqueued on a worker with automatic retries — but can opt into synchronous execution with `shouldRunSynchronously: true`. See the `definePostInstallLogicFunction` accordion above for when to use each mode.
+A pré-instalação é sempre **síncrona** (ela bloqueia a instalação e pode abortá-la). A pós-instalação é **assíncrona por padrão** — enfileirada em um worker com novas tentativas automáticas — mas pode optar por execução síncrona com `shouldRunSynchronously: true`. Veja o acordeão `definePostInstallLogicFunction` acima para saber quando usar cada modo.
 
-**Use `post-install` for anything that needs the new schema to exist.** This is the common case:
+**Use `post-install` para qualquer coisa que precise que o novo esquema exista.** Este é o caso mais comum:
 
-* Seeding default data (creating initial records, default views, demo content) against newly-added objects and fields.
-* Registering webhooks with third-party services now that the app has its credentials.
-* Calling your own API to finish setup that depends on the synchronized metadata.
-* Idempotent "ensure this exists" logic that should reconcile state on every upgrade — combine with `shouldRunOnVersionUpgrade: true`.
+* Popular dados padrão (criando registros iniciais, visualizações padrão, conteúdo de demonstração) em objetos e campos recém-adicionados.
+* Registrar webhooks com serviços de terceiros agora que o app tem suas credenciais.
+* Chamar sua própria API para finalizar a configuração que depende dos metadados sincronizados.
+* Lógica idempotente de "garantir que isso exista" que deve reconciliar o estado em cada atualização — combine com `shouldRunOnVersionUpgrade: true`.
 
-Example — seed a default `PostCard` record after install:
+Exemplo — popular um registro `PostCard` padrão após a instalação:
 
 ```ts src/logic-functions/post-install.ts
 import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
@@ -137,14 +137,14 @@ export default definePostInstallLogicFunction({
 });
 ```
 
-**Use `pre-install` when a migration would otherwise destroy or corrupt existing data.** Because pre-install runs against the *previous* schema and its failure rolls back the upgrade, it is the right place for anything risky:
+**Use `pre-install` quando uma migração, de outra forma, destruiria ou corromperia dados existentes.** Como a pré-instalação roda contra o esquema *anterior* e sua falha reverte a atualização, é o lugar certo para qualquer coisa arriscada:
 
-* **Backing up data that is about to be dropped or restructured** — e.g. you are removing a field in v2 and need to copy its values into another field or export them to storage before the migration runs.
-* **Archiving records that a new constraint would invalidate** — e.g. a field is becoming `NOT NULL` and you need to delete or fix rows with null values first.
-* **Validating compatibility and refusing the upgrade if the current data cannot be migrated cleanly** — throw from the handler and the install aborts with no changes applied. This is safer than discovering the incompatibility mid-migration.
-* **Renaming or rekeying data** ahead of a schema change that would lose the association.
+* **Fazer backup de dados que estão prestes a ser removidos ou reestruturados** — por exemplo, você está removendo um campo na v2 e precisa copiar seus valores para outro campo ou exportá-los para um armazenamento antes que a migração seja executada.
+* **Arquivar registros que uma nova restrição invalidaria** — por exemplo, um campo está se tornando `NOT NULL` e você precisa excluir ou corrigir linhas com valores nulos primeiro.
+* **Validar a compatibilidade e recusar a atualização se os dados atuais não puderem ser migrados de forma limpa** — lance uma exceção no manipulador e a instalação é abortada sem alterações aplicadas. Isto é mais seguro do que descobrir a incompatibilidade no meio da migração.
+* **Renomear ou reatribuir chaves de dados** antes de uma alteração de esquema que perderia a associação.
 
-Example — archive records before a destructive migration:
+Exemplo — arquivar registros antes de uma migração destrutiva:
 
 ```ts src/logic-functions/pre-install.ts
 import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
@@ -186,20 +186,20 @@ export default definePreInstallLogicFunction({
 });
 ```
 
-**Rule of thumb:**
+**Regra geral:**
 
-| You want to...                                                                          | Use                                                                             |
-| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Seed default data, configure the workspace, register external resources                 | `post-install`                                                                  |
-| Run long-running seeding or third-party calls that shouldn't block the install response | `post-install` (default — `shouldRunSynchronously: false`, with worker retries) |
-| Run fast setup that the caller will rely on immediately after the install call returns  | `post-install` with `shouldRunSynchronously: true`                              |
-| Read or back up data that the upcoming migration would lose                             | `pre-install`                                                                   |
-| Reject an upgrade that would corrupt existing data                                      | `pre-install` (throw from the handler)                                          |
-| Run reconciliation on every upgrade                                                     | `post-install` with `shouldRunOnVersionUpgrade: true`                           |
-| Do one-off setup on the first install only                                              | `post-install` with `shouldRunOnVersionUpgrade: false` (default)                |
+| Você quer...                                                                                                        | Usar                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Popular dados padrão, configurar o workspace, registrar recursos externos                                           | `post-install`                                                                            |
+| Executar processos longos de popular dados ou chamadas a terceiros que não devem bloquear a resposta da instalação  | `post-install` (padrão — `shouldRunSynchronously: false`, com novas tentativas do worker) |
+| Executar uma configuração rápida da qual o chamador dependerá imediatamente após o retorno da chamada de instalação | `post-install` com `shouldRunSynchronously: true`                                         |
+| Ler ou fazer backup de dados que a próxima migração perderia                                                        | `pre-install`                                                                             |
+| Rejeitar uma atualização que corromperia dados existentes                                                           | `pre-install` (lançar uma exceção no manipulador)                                         |
+| Executar reconciliação em cada atualização                                                                          | `post-install` com `shouldRunOnVersionUpgrade: true`                                      |
+| Fazer uma configuração única apenas na primeira instalação                                                          | `post-install` com `shouldRunOnVersionUpgrade: false` (padrão)                            |
 
 <Note>
-If in doubt, default to **post-install**. Only reach for pre-install when the migration itself is destructive and you need to intercept the previous state before it is gone.
+Em caso de dúvida, use **post-install** como padrão. Recurra à pré-instalação somente quando a própria migração for destrutiva e você precisar interceptar o estado anterior antes que ele desapareça.
 </Note>
 
 </Accordion>

@@ -1,19 +1,19 @@
 ---
-title: Skills & Agents
-description: Define AI skills and agents for your app.
+title: Fähigkeiten & Agenten
+description: Definieren Sie KI-Skills und Agenten für Ihre App.
 icon: robot
 ---
 
 <Warning>
-  Skills and agents are currently in alpha. The feature works but is still evolving.
+  Fähigkeiten und Agenten befinden sich derzeit in der Alpha-Phase. Die Funktion ist funktionsfähig, entwickelt sich jedoch noch weiter.
 </Warning>
 
-Apps can define AI capabilities that live inside the workspace — reusable skill instructions and agents with custom system prompts.
+Apps können KI-Funktionen definieren, die im Arbeitsbereich verfügbar sind — wiederverwendbare Skill-Anweisungen und Agenten mit benutzerdefinierten System-Prompts.
 
 <AccordionGroup>
-<Accordion title="defineSkill" description="Define AI agent skills">
+<Accordion title="defineSkill" description="Skills für KI-Agenten definieren">
 
-Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+Skills definieren wiederverwendbare Anweisungen und Fähigkeiten, die KI-Agenten in Ihrem Arbeitsbereich verwenden können. Verwenden Sie `defineSkill()`, um Skills mit eingebauter Validierung zu definieren:
 
 ```ts src/skills/example-skill.ts
 import { defineSkill } from 'twenty-sdk/define';
@@ -32,17 +32,17 @@ export default defineSkill({
 });
 ```
 
-Key points:
-* `name` is a unique identifier string for the skill (kebab-case recommended).
-* `label` is the human-readable display name shown in the UI.
-* `content` contains the skill instructions — this is the text the AI agent uses.
-* `icon` (optional) sets the icon displayed in the UI.
-* `description` (optional) provides additional context about the skill's purpose.
+Hauptpunkte:
+* `name` ist eine eindeutige Kennung (als Zeichenfolge) für den Skill (kebab-case empfohlen).
+* `label` ist der menschenlesbare Anzeigename, der in der UI angezeigt wird.
+* `content` enthält die Skill-Anweisungen — dies ist der Text, den der KI-Agent verwendet.
+* `icon` (optional) legt das in der UI angezeigte Symbol fest.
+* `description` (optional) liefert zusätzlichen Kontext zum Zweck des Skills.
 
 </Accordion>
-<Accordion title="defineAgent" description="Define AI agents with custom prompts">
+<Accordion title="defineAgent" description="KI-Agenten mit benutzerdefinierten Prompts definieren">
 
-Agents are AI assistants that live inside your workspace. Use `defineAgent()` to create agents with a custom system prompt:
+Agenten sind KI-Assistenten, die innerhalb Ihres Arbeitsbereichs leben. Verwenden Sie `defineAgent()`, um Agenten mit einem benutzerdefinierten System-Prompt zu erstellen:
 
 ```ts src/agents/example-agent.ts
 import { defineAgent } from 'twenty-sdk/define';
@@ -57,13 +57,13 @@ export default defineAgent({
 });
 ```
 
-Key points:
-* `name` is the unique identifier string for the agent (kebab-case recommended).
-* `label` is the display name shown in the UI.
-* `prompt` is the system prompt that defines the agent's behavior.
-* `description` (optional) provides context about what the agent does.
-* `icon` (optional) sets the icon displayed in the UI.
-* `modelId` (optional) overrides the default AI model used by the agent.
+Hauptpunkte:
+* `name` ist eine eindeutige Kennung (als Zeichenfolge) für den Agenten (kebab-case empfohlen).
+* `label` ist der in der UI angezeigte Anzeigename.
+* `prompt` ist der System-Prompt, der das Verhalten des Agenten definiert.
+* `description` (optional) liefert Kontext dazu, was der Agent tut.
+* `icon` (optional) legt das in der UI angezeigte Symbol fest.
+* `modelId` (optional) überschreibt das vom Agenten verwendete Standard-KI-Modell.
 
 </Accordion>
 </AccordionGroup>

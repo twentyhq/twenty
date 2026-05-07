@@ -1,14 +1,14 @@
 ---
-title: Concepts
-description: How Twenty apps work — entity model, sandboxing, and the install lifecycle.
+title: 概念
+description: Twenty 应用的工作方式 — 实体模型、沙盒机制和安装生命周期。
 icon: sitemap
 ---
 
-Twenty apps are TypeScript packages that extend your workspace with custom objects, logic, UI components, and AI capabilities. They run on the Twenty platform with full sandboxing and permission controls.
+Twenty 应用是 TypeScript 包，可通过自定义对象、逻辑、UI 组件和 AI 能力扩展你的工作区。 它们在 Twenty 平台上运行，具备完备的沙盒与权限控制。
 
-## How apps work
+## 应用如何运作
 
-An app is a collection of **entities** declared using `defineEntity()` functions from the `twenty-sdk` package. The SDK detects these declarations via AST analysis at build time and produces a **manifest** — a complete description of what your app adds to a workspace. These functions validate your configuration at build time and provide IDE autocompletion and type safety.
+应用是由 `twenty-sdk` 包中的 `defineEntity()` 函数声明的**实体**集合。 SDK 在构建时通过 AST 分析检测到这些声明，并生成一份**清单**——完整描述你的应用为工作区新增的内容。 这些函数会在构建时校验你的配置，并提供 IDE 自动补全和类型安全。
 
 ```
 your-app/
@@ -29,35 +29,35 @@ your-app/
 ```
 
 <Note>
-  **File organization is up to you.** Entity detection is AST-based — the SDK finds `export default defineEntity(...)` calls regardless of where the file lives. The folder structure above is a convention, not a requirement.
+  **文件组织由你决定。** 实体检测基于 AST——无论文件位于何处，SDK 都能找到 `export default defineEntity(...)` 的调用。 上述文件夹结构是一种约定，而非强制要求。
 </Note>
 
-## Entity types
+## 实体类型
 
-| Entity                   | Purpose                                    | Docs                                                                          |
-| ------------------------ | ------------------------------------------ | ----------------------------------------------------------------------------- |
-| **Application**          | App identity, default role, variables      | [Application Config](/l/zh/developers/extend/apps/config/application)              |
-| **Role**                 | Permission sets on objects and fields      | [Roles & Permissions](/l/zh/developers/extend/apps/config/roles)                   |
-| **Object**               | Custom record types with fields            | [Objects](/l/zh/developers/extend/apps/data/objects)                               |
-| **Field**                | Add fields to objects from other apps      | [Extending Objects](/l/zh/developers/extend/apps/data/extending-objects)           |
-| **Relation**             | Bidirectional links between objects        | [Relations](/l/zh/developers/extend/apps/data/relations)                           |
-| **Logic Function**       | Server-side TypeScript with triggers       | [Logic Functions](/l/zh/developers/extend/apps/logic/logic-functions)              |
-| **Skill**                | Reusable AI agent instructions             | [Skills & Agents](/l/zh/developers/extend/apps/logic/skills-and-agents)            |
-| **Agent**                | AI assistants with custom prompts          | [Skills & Agents](/l/zh/developers/extend/apps/logic/skills-and-agents)            |
-| **Connection Provider**  | OAuth credentials for third-party APIs     | [Connections](/l/zh/developers/extend/apps/logic/connections)                      |
-| **View**                 | Pre-configured record list views           | [Views](/l/zh/developers/extend/apps/layout/views)                                 |
-| **Navigation Menu Item** | Custom sidebar entries                     | [Navigation Menu Items](/l/zh/developers/extend/apps/layout/navigation-menu-items) |
-| **Page Layout**          | Tabs and widgets on a record's detail page | [Page Layouts](/l/zh/developers/extend/apps/layout/page-layouts)                   |
-| **Front Component**      | Sandboxed React UI inside Twenty           | [Front Components](/l/zh/developers/extend/apps/layout/front-components)           |
-| **Command Menu Item**    | Quick actions and Cmd+K entries            | [Command Menu Items](/l/zh/developers/extend/apps/layout/command-menu-items)       |
+| 实体        | 目的                    | 文档                                                               |
+| --------- | --------------------- | ---------------------------------------------------------------- |
+| **应用程序**  | 应用标识、默认角色、变量          | [Application Config](/l/zh/developers/extend/apps/config/application) |
+| **角色**    | 对象和字段的权限集             | [角色和权限](/l/zh/developers/extend/apps/config/roles)                    |
+| **对象**    | 带字段的自定义记录类型           | [对象](/l/zh/developers/extend/apps/data/objects)                       |
+| **字段**    | 从其他应用向对象添加字段          | [扩展对象](/l/zh/developers/extend/apps/data/extending-objects)           |
+| **关系**    | 对象之间的双向链接             | [关系](/l/zh/developers/extend/apps/data/relations)                     |
+| **逻辑函数**  | 带触发器的服务端 TypeScript   | [逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)            |
+| **技能**    | 可复用的 AI 代理指令          | [技能与代理](/l/zh/developers/extend/apps/logic/skills-and-agents)         |
+| **代理**    | 具有自定义提示词的 AI 助手       | [技能与代理](/l/zh/developers/extend/apps/logic/skills-and-agents)         |
+| **连接提供方** | 用于第三方 API 的 OAuth 凭证  | [连接](/l/zh/developers/extend/apps/logic/connections)                  |
+| **视图**    | 预配置的记录列表视图            | [视图](/l/zh/developers/extend/apps/layout/views)                       |
+| **导航菜单项** | 自定义侧边栏条目              | [导航菜单项](/l/zh/developers/extend/apps/layout/navigation-menu-items)    |
+| **页面布局**  | 记录详情页上的选项卡和小部件        | [页面布局](/l/zh/developers/extend/apps/layout/page-layouts)              |
+| **前端组件**  | Twenty 内的沙盒化 React UI | [前端组件](/l/zh/developers/extend/apps/layout/front-components)          |
+| **命令菜单项** | 快速操作和 Cmd+K 项         | [命令菜单项](/l/zh/developers/extend/apps/layout/command-menu-items)       |
 
-## Sandboxing
+## 沙盒化
 
-* **Logic functions** run in isolated Node.js processes on the server. They only access data through the typed API client, scoped to the app's role permissions.
-* **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes). They communicate with Twenty via a message-passing host API.
-* **Permissions** are enforced at the API level. The runtime token (`TWENTY_APP_ACCESS_TOKEN`) is derived from the role defined in `defineApplication()`.
+* **逻辑函数** 在服务器上的独立 Node.js 进程中运行。 它们只能通过类型化的 API 客户端访问数据，且范围受应用角色权限限制。
+* **前端组件** 在使用 Remote DOM 的 Web Worker 中运行——与主页面沙盒隔离，但渲染原生 DOM 元素（非 iframe）。 它们通过消息传递的宿主 API 与 Twenty 通信。
+* **权限** 在 API 层面强制执行。 运行时令牌（`TWENTY_APP_ACCESS_TOKEN`）源自 `defineApplication()` 中定义的角色。
 
-## App lifecycle
+## 应用生命周期
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -76,26 +76,26 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`yarn twenty dev`** — watches your source files and live-syncs changes to a connected Twenty server. The typed API client is regenerated automatically when the schema changes.
-* **`yarn twenty build`** — compiles TypeScript, bundles logic functions and front components with esbuild, and produces a manifest.
-* **Pre/post-install hooks** — optional functions that run during installation. See [Install Hooks](/l/zh/developers/extend/apps/config/install-hooks) for details.
+* **`yarn twenty dev`** — 监视你的源文件，并将更改实时同步到已连接的 Twenty 服务器。 当模式发生变化时，会自动重新生成类型化的 API 客户端。
+* **`yarn twenty build`** — 编译 TypeScript，使用 esbuild 打包逻辑函数和前端组件，并生成清单。
+* **预/后安装钩子** — 在安装过程中运行的可选函数。 详见 [安装钩子](/l/zh/developers/extend/apps/config/install-hooks)。
 
-## Next steps
+## 后续步骤
 
 <CardGroup cols={2}>
-  <Card title="Config" icon="screwdriver-wrench" href="/l/zh/developers/extend/apps/config/overview">
-    Application identity, default role, and install hooks.
+  <Card title="配置" icon="screwdriver-wrench" href="/l/zh/developers/extend/apps/config/overview">
+    应用标识、默认角色和安装钩子。
   </Card>
-  <Card title="Data" icon="database" href="/l/zh/developers/extend/apps/data/overview">
-    Objects, fields, and bidirectional relations.
+  <Card title="数据" icon="database" href="/l/zh/developers/extend/apps/data/overview">
+    对象、字段和双向关系。
   </Card>
-  <Card title="Logic" icon="bolt" href="/l/zh/developers/extend/apps/logic/overview">
-    Logic functions, skills, agents, and OAuth connections.
+  <Card title="逻辑" icon="bolt" href="/l/zh/developers/extend/apps/logic/overview">
+    逻辑函数、技能、代理和 OAuth 连接。
   </Card>
-  <Card title="Layout" icon="table-columns" href="/l/zh/developers/extend/apps/layout/overview">
-    Views, navigation, page layouts, front components.
+  <Card title="布局" icon="table-columns" href="/l/zh/developers/extend/apps/layout/overview">
+    视图、导航、页面布局、前端组件。
   </Card>
-  <Card title="Operations" icon="rocket" href="/l/zh/developers/extend/apps/operations/overview">
-    CLI, testing, remotes, CI, and publishing your app.
+  <Card title="操作" icon="rocket" href="/l/zh/developers/extend/apps/operations/overview">
+    CLI、测试、远程、CI，以及发布你的应用。
   </Card>
 </CardGroup>

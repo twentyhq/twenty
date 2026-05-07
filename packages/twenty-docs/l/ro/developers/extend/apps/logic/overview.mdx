@@ -1,10 +1,10 @@
 ---
 title: Prezentare generală
-description: Server-side TypeScript that runs inside Twenty — triggered by HTTP routes, cron schedules, database events, AI tools, or workflow actions.
+description: TypeScript pe server care rulează în Twenty — declanșat de rute HTTP, programări cron, evenimente de bază de date, instrumente IA sau acțiuni de workflow.
 icon: bolt
 ---
 
-A Twenty app's **logic layer** is the code that *runs* — server-side TypeScript handlers reacting to HTTP requests, cron schedules, and record changes; AI skills and agents that live inside the workspace; and OAuth connections that let your functions act on a user's behalf in third-party services.
+**Stratul de logică** al unei aplicații Twenty este codul care *rulează* — handler-e TypeScript pe server care reacționează la cereri HTTP, programări cron și modificări ale înregistrărilor; abilități și agenți IA care trăiesc în workspace; și conexiuni OAuth care permit funcțiilor tale să acționeze în numele utilizatorului în servicii terțe.
 
 ```text
             ┌─ HTTP route      ──┐
@@ -22,34 +22,34 @@ A Twenty app's **logic layer** is the code that *runs* — server-side TypeScrip
                                   └────────────────────────────┘
 ```
 
-## In this section
+## În această secțiune
 
 <CardGroup cols={2}>
   <Card title="Funcții logice" icon="bolt" href="/l/ro/developers/extend/apps/logic/logic-functions">
-    The core building block — trigger types, payloads, and the typed API client.
+    Blocul de bază — tipuri de declanșatoare, payload-uri și clientul API cu tipuri.
   </Card>
   <Card title="Abilități și agenți" icon="robot" href="/l/ro/developers/extend/apps/logic/skills-and-agents">
-    Reusable AI agent instructions and assistants with custom system prompts.
+    Instrucțiuni reutilizabile pentru agenți IA și asistenți cu prompturi de sistem personalizate.
   </Card>
   <Card title="Conexiuni" icon="plug" href="/l/ro/developers/extend/apps/logic/connections">
-    OAuth credentials your app holds for third-party services — Linear, GitHub, Slack, and more.
+    Credențiale OAuth pe care aplicația ta le deține pentru servicii terțe — Linear, GitHub, Slack și altele.
   </Card>
 </CardGroup>
 
-## Trigger types at a glance
+## Tipuri de declanșatoare, dintr-o privire
 
-A logic function picks one or more triggers — every entry below is a separate field on `defineLogicFunction()`:
+O funcție de logică alege unul sau mai multe declanșatoare — fiecare intrare de mai jos este un câmp separat pe `defineLogicFunction()`:
 
-| Declanșator                | When it runs                                               | Setare                          |
-| -------------------------- | ---------------------------------------------------------- | ------------------------------- |
-| **HTTP route**             | A request hits your `/s/\<path>` endpoint | `httpRouteTriggerSettings`      |
-| **Cron**                   | A CRON expression matches                                  | `cronTriggerSettings`           |
-| **Eveniment baza de date** | A workspace record is created, updated, or deleted         | `databaseEventTriggerSettings`  |
-| **AI tool**                | A Twenty AI feature decides to call your function          | `toolTriggerSettings`           |
-| **Acțiune Workflow**       | A workflow step invokes your function                      | `workflowActionTriggerSettings` |
+| Declanșator                | Când rulează                                                      | Setare                          |
+| -------------------------- | ----------------------------------------------------------------- | ------------------------------- |
+| **Rută HTTP**              | O cerere ajunge la endpointul tău `/s/\<path>`   | `httpRouteTriggerSettings`      |
+| **Cron**                   | Se potrivește o expresie CRON                                     | `cronTriggerSettings`           |
+| **Eveniment baza de date** | O înregistrare din workspace este creată, actualizată sau ștearsă | `databaseEventTriggerSettings`  |
+| **Instrument IA**          | O funcționalitate Twenty IA decide să apeleze funcția ta          | `toolTriggerSettings`           |
+| **Acțiune Workflow**       | Un pas din workflow îți invocă funcția                            | `workflowActionTriggerSettings` |
 
-Functions run sandboxed in isolated Node.js processes and access the workspace through a typed API client scoped to the role declared on [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
+Funcțiile rulează în sandbox, în procese Node.js izolate și accesează workspace-ul printr-un client API cu tipuri, limitat la rolul declarat în [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
 
 <Note>
-**Install-time hooks** — code that runs before or after the install — share this runtime but use their own define functions and live under [Config → Install Hooks](/l/ro/developers/extend/apps/config/install-hooks).
+**Hook-uri de instalare** — cod care rulează înainte sau după instalare — folosesc același runtime, dar au propriile lor funcții define și se află sub [Config → Install Hooks](/l/ro/developers/extend/apps/config/install-hooks).
 </Note>

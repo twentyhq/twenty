@@ -1,45 +1,45 @@
 ---
-title: Publishing
-icon: upload
-description: Distribute your Twenty app to the marketplace or deploy it internally.
+title: Публикация
+icon: загрузить
+description: Распространяйте своё приложение Twenty в маркетплейсе или разверните его для внутреннего использования.
 ---
 
-## Overview
+## Обзор
 
-Once your app is [built and tested locally](/l/ru/developers/extend/apps/getting-started/concepts), you have two paths for distributing it:
+После того как ваше приложение [собрано и протестировано локально](/l/ru/developers/extend/apps/getting-started/concepts), у вас есть два пути для его распространения:
 
-* **Deploy a tarball** — upload your app directly to a specific Twenty server for internal or private use.
-* **Publish to npm** — list your app in the Twenty marketplace for any workspace to discover and install.
+* **Разверните tar-архив** — загрузите своё приложение напрямую на конкретный сервер Twenty для внутреннего или частного использования.
+* **Опубликовать в npm** — разместите ваше приложение в маркетплейсе Twenty, чтобы любое рабочее пространство могло его найти и установить.
 
-Both paths start from the same **build** step.
+Оба пути начинаются с одного и того же шага **build**.
 
-## Building your app
+## Сборка вашего приложения
 
-Run the build command to compile your app and generate a distribution-ready `manifest.json`:
+Выполните команду сборки, чтобы скомпилировать приложение и сгенерировать готовый к распространению `manifest.json`:
 
 ```bash filename="Terminal"
 yarn twenty build
 ```
 
-This compiles TypeScript sources, transpiles logic functions and front components, and writes everything to `.twenty/output/`. Add `--tarball` to also produce a `.tgz` package for manual distribution or the deploy command.
+Это компилирует исходные файлы TypeScript, транспилирует функции логики и фронтенд-компоненты и записывает всё в `.twenty/output/`. Добавьте `--tarball`, чтобы также создать пакет `.tgz` для ручного распространения или для команды deploy.
 
-## Deploying to a server (tarball)
+## Развертывание на сервер (tarball)
 
-For apps you don't want publicly available — proprietary tools, enterprise-only integrations, or experimental builds — you can deploy a tarball directly to a Twenty server.
+Для приложений, которые вы не хотите делать общедоступными — собственные инструменты, интеграции только для предприятий или экспериментальные сборки — вы можете развернуть tarball напрямую на сервер Twenty.
 
-### Prerequisites
+### Требования
 
-Before deploying, you need a configured remote pointing to the target server. Remotes store the server URL and authentication credentials locally in `~/.twenty/config.json`.
+Перед развертыванием вам нужен настроенный remote, указывающий на целевой сервер. Remotes локально хранят URL сервера и учётные данные аутентификации в `~/.twenty/config.json`.
 
-Add a remote:
+Добавьте remote:
 
 ```bash filename="Terminal"
 yarn twenty remote add --api-url https://your-twenty-server.com --as production
 ```
 
-### Deploying
+### Развертывание
 
-Build and upload your app to the server in one step:
+Соберите и загрузите ваше приложение на сервер в одном шаге:
 
 ```bash filename="Terminal"
 yarn twenty deploy
@@ -47,39 +47,39 @@ yarn twenty deploy
 # yarn twenty deploy --remote production
 ```
 
-### Sharing a deployed app
+### Общий доступ к развернутому приложению
 
 <Warning>
-Sharing private (tarball) apps across workspaces is an **Enterprise** feature. The **Distribution** tab will show an upgrade prompt instead of the share controls until your workspace has a valid Enterprise key. See [Settings > Admin Panel > Enterprise](/settings/admin-panel#enterprise) to activate it.
+Совместный доступ к частным приложениям (tarball) между рабочими пространствами — функция уровня **Enterprise**. Вкладка **Distribution** будет показывать предложение обновиться вместо элементов управления совместным доступом, пока в вашем рабочем пространстве не будет действительного ключа Enterprise. Перейдите в [Настройки > Панель администратора > Enterprise](/settings/admin-panel#enterprise), чтобы включить её.
 </Warning>
 
-Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. Once your workspace is on the Enterprise plan, you can share a deployed app like this:
+Приложения в формате tarball не отображаются в публичном маркетплейсе, поэтому другие рабочие пространства на том же сервере не найдут их при просмотре. Как только ваше рабочее пространство перейдёт на тарифный план Enterprise, вы сможете поделиться развёрнутым приложением следующим образом:
 
-1. Go to **Settings > Applications > Registrations** and open your app
-2. In the **Distribution** tab, click **Copy share link**
-3. Share this link with users on other workspaces — it takes them directly to the app's install page
+1. Перейдите в **Настройки > Приложения > Регистрации** и откройте ваше приложение
+2. На вкладке **Распространение** нажмите **Копировать ссылку для общего доступа**
+3. Поделитесь этой ссылкой с пользователями в других рабочих пространствах — она ведёт их прямо на страницу установки приложения
 
-The share link uses the server's base URL (without any workspace subdomain) so it works for any workspace on the server.
+Ссылка общего доступа использует базовый URL сервера (без какого-либо поддомена рабочего пространства), поэтому она работает для любого рабочего пространства на сервере.
 
-### Version management
+### Управление версиями
 
-When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
+При обновлении уже развернутого tarball-приложения сервер требует, чтобы значение `version` в `package.json` было **строго выше** (согласно упорядочиванию по [semver](https://semver.org)), чем текущая развернутая версия. Повторное развёртывание той же версии или публикация более низкой версии отклоняются до сохранения tarball — в CLI вы увидите ошибку `VERSION_ALREADY_EXISTS`.
 
-To release an update:
+Чтобы выпустить обновление:
 
-1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
-2. Run `yarn twenty deploy` (or `yarn twenty deploy --remote production`)
-3. Workspaces that have the app installed will see the upgrade available in their settings
+1. Увеличьте значение поля `version` в вашем `package.json` (например: `1.2.3` → `1.2.4`, `1.3.0` или `2.0.0`).
+2. Выполните `yarn twenty deploy` (или `yarn twenty deploy --remote production`)
+3. Рабочие пространства, в которых установлено приложение, увидят доступное обновление в своих настройках
 
 <Note>
-Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is allowed, and a final release like `1.0.0` is correctly recognized as higher than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver string.
+Пререлизные теги работают как ожидается: повышение версии `1.0.0-rc.1` → `1.0.0-rc.2` допускается, а финальный релиз вроде `1.0.0` корректно распознаётся как более высокий, чем `1.0.0-rc.5`. Версия в `package.json` должна сама по себе быть корректной строкой semver.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
 
-### Server version compatibility
+### Совместимость версий сервера
 
-If your app uses a feature introduced in a specific Twenty server version (for example, OAuth providers added in v2.3.0), you should declare the minimum server version your app requires using the `engines.twenty` field in `package.json`:
+Если ваше приложение использует функцию, появившуюся в конкретной версии сервера Twenty (например, провайдеры OAuth, добавленные в v2.3.0), следует объявить минимальную требуемую версию сервера с помощью поля `engines.twenty` в `package.json`:
 
 ```json filename="package.json"
 {
@@ -92,83 +92,83 @@ If your app uses a feature introduced in a specific Twenty server version (for e
 }
 ```
 
-The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
+Значение — это стандартный [диапазон semver](https://github.com/npm/node-semver#ranges). Типовые шаблоны:
 
-| Range                              | Meaning                                    |
-| ---------------------------------- | ------------------------------------------ |
-| `>=2.3.0`                          | Any server from 2.3.0 onward               |
-| `>=2.3.0 \<3.0.0` | 2.3.0 or later, but below the next major   |
-| `^2.3.0`                           | Same as `>=2.3.0 \<3.0.0` |
+| Диапазон                           | Значение                                           |
+| ---------------------------------- | -------------------------------------------------- |
+| `>=2.3.0`                          | Любой сервер версии 2.3.0 и новее                  |
+| `>=2.3.0 \<3.0.0` | 2.3.0 или новее, но ниже следующей мажорной версии |
+| `^2.3.0`                           | То же, что и `>=2.3.0 \<3.0.0`    |
 
-**What happens at deploy and install time:**
+**Что происходит при развёртывании и установке:**
 
-* If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
-* If `engines.twenty` is **not set**, the app is accepted on any server version (backward-compatible with existing apps).
-* If the server has no `APP_VERSION` configured, the check is skipped.
+* Если `engines.twenty` задано и версия целевого сервера не удовлетворяет диапазону, развёртывание (загрузка tarball-архива) или установка отклоняются с ошибкой `SERVER_VERSION_INCOMPATIBLE` и сообщением, указывающим как требуемый диапазон, так и фактическую версию сервера.
+* Если `engines.twenty` **не задано**, приложение принимается на сервере любой версии (обратная совместимость с существующими приложениями).
+* Если на сервере `APP_VERSION` не задано, проверка пропускается.
 
 <Note>
-The server is the authoritative check — it validates `engines.twenty` on both tarball upload and workspace install. If you deploy a tarball out-of-band or install from the marketplace, the server still enforces compatibility.
+Сервер выполняет окончательную проверку — он проверяет `engines.twenty` как при загрузке tarball-архива, так и при установке в рабочем пространстве. Если вы развёртываете tarball вне стандартного процесса или устанавливаете из маркетплейса, сервер всё равно принудительно проверяет совместимость.
 </Note>
 
-## Automated CI/CD (scaffolded workflows)
+## Автоматизированный CI/CD (рабочие процессы, сгенерированные шаблоном)
 
-Apps generated with `create-twenty-app` ship with two GitHub Actions workflows out of the box, under `.github/workflows/`. They are ready to run as soon as you push the repo to GitHub — no extra setup is needed for CI, and CD only requires a single secret.
+Приложения, созданные с помощью `create-twenty-app`, «из коробки» включают два рабочих процесса GitHub Actions в каталоге `.github/workflows/`. Они готовы к запуску, как только вы запушите репозиторий на GitHub — для CI не требуется дополнительной настройки, а для CD нужен лишь один секрет.
 
 ### CI — `ci.yml`
 
-Runs integration tests on every push to `main` and every pull request.
+Автоматически запускает интеграционные тесты при каждом пуше в `main` и для каждого pull request.
 
-**What it does:**
+**Что делает:**
 
-1. Checks out your app's source.
-2. Spawns an isolated Twenty test instance using the `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` composite action (the CI equivalent of `yarn twenty server start --test`).
-3. Enables Corepack, sets up Node.js from your `.nvmrc`, and installs dependencies with `yarn install --immutable`.
-4. Runs `yarn test`, passing `TWENTY_API_URL` and `TWENTY_API_KEY` from the spawned instance so your tests can talk to a real server.
+1. Извлекает исходный код вашего приложения.
+2. Запускает изолированный тестовый экземпляр Twenty с помощью составного действия `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (эквивалент для CI `yarn twenty server start --test`).
+3. Включает Corepack, настраивает Node.js на основе вашего `.nvmrc` и устанавливает зависимости с помощью `yarn install --immutable`.
+4. Запускает `yarn test`, передавая `TWENTY_API_URL` и `TWENTY_API_KEY` из запущенного экземпляра, чтобы ваши тесты могли взаимодействовать с реальным сервером.
 
-**Config knobs:**
+**Параметры конфигурации:**
 
-* `TWENTY_VERSION` (env, defaults to `latest`) — pin the Twenty server version used in CI by editing this in `ci.yml`.
-* Concurrency is grouped by `github.ref` and cancels in-progress runs on new pushes.
+* `TWENTY_VERSION` (переменная окружения, по умолчанию `latest`) — зафиксируйте версию сервера Twenty, используемую в CI, отредактировав это значение в `ci.yml`.
+* Параллельные запуски группируются по `github.ref` и отменяют выполняющиеся прогоны при новых пушах.
 
-No secrets are required — the test instance is ephemeral and lives only for the duration of the job.
+Секреты не требуются — тестовый экземпляр эфемерен и существует только на время выполнения задания.
 
 ### CD — `cd.yml`
 
-Deploys your app to a configured Twenty server on every push to `main`, and optionally from a pull request when the `deploy` label is applied.
+Разворачивает ваше приложение на настроенном сервере Twenty при каждом пуше в `main` и, при необходимости, из pull request при наличии метки `deploy`.
 
-**What it does:**
+**Что делает:**
 
-1. Checks out the PR head (for labeled PRs) or the pushed commit.
-2. Runs `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — the CI equivalent of `yarn twenty deploy`.
-3. Runs `twentyhq/twenty/.github/actions/install-twenty-app@main` so the newly deployed version is installed into the target workspace.
+1. Извлекает head-коммит PR (для PR с меткой) или запушенный коммит.
+2. Запускает `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — эквивалент для CI `yarn twenty deploy`.
+3. Запускает `twentyhq/twenty/.github/actions/install-twenty-app@main`, чтобы новая развернутая версия была установлена в целевое рабочее пространство.
 
-**Required configuration:**
+**Обязательная конфигурация:**
 
-| Setting                 | Where                                                      | Purpose                                                                               |
-| ----------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (defaults to `http://localhost:3000`)    | The Twenty server to deploy to. Change this to your real server URL before first use. |
-| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | API key with deploy permission on the target server.                                  |
+| Настройка               | Где                                                                   | Назначение                                                                                                              |
+| ----------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `env` в `cd.yml` (по умолчанию `http://localhost:3000`)               | Сервер Twenty, на который выполняется деплой. Перед первым использованием замените это на URL вашего реального сервера. |
+| `TWENTY_DEPLOY_API_KEY` | В репозитории GitHub — **Settings → Secrets and variables → Actions** | Ключ API с правом деплоя на целевом сервере.                                                                            |
 
 <Note>
-The default `TWENTY_DEPLOY_URL` of `http://localhost:3000` is a placeholder — it will not reach anything from a GitHub-hosted runner. Update it to your server's public URL (or use a self-hosted runner with network access) before enabling CD.
+Значение `TWENTY_DEPLOY_URL` по умолчанию — `http://localhost:3000` — это заглушка: с хостируемого GitHub раннера к ней не будет доступа. Перед включением CD замените его на публичный URL вашего сервера (или используйте self-hosted раннер с сетевым доступом).
 </Note>
 
-**Triggering a preview deploy from a PR:**
+**Запуск предварительного деплоя из PR:**
 
-Add the `deploy` label to a pull request. The `if:` guard in `cd.yml` will run the job for that PR using the PR's head commit, letting you validate a change on the target server before merging.
+Добавьте к pull request метку `deploy`. Условие `if:` в `cd.yml` запустит задачу для этого PR, используя его head-коммит, что позволит проверить изменение на целевом сервере до слияния.
 
-### Pinning the reusable actions
+### Закрепление версий повторно используемых действий
 
-Both workflows reference reusable actions at `@main`, so action updates in the `twentyhq/twenty` repo are picked up automatically. If you want deterministic builds, replace `@main` with a commit SHA or release tag on each `uses:` line.
+Оба рабочих процесса ссылаются на повторно используемые действия с указанием `@main`, поэтому обновления действий в репозитории `twentyhq/twenty` подхватываются автоматически. Если вам нужны детерминированные сборки, замените `@main` на SHA коммита или тег релиза в каждой строке `uses:`.
 
-## Publishing to npm
+## Публикация в npm
 
-Publishing to npm makes your app discoverable in the Twenty marketplace. Any Twenty workspace can browse, install, and upgrade marketplace apps directly from the UI.
+Публикация в npm делает ваше приложение видимым в маркетплейсе Twenty. Любое рабочее пространство Twenty может просматривать, устанавливать и обновлять приложения из маркетплейса непосредственно из интерфейса.
 
-### Requirements
+### Требования
 
-* An [npm](https://www.npmjs.com) account
-* The `twenty-app` keyword in your `package.json` `keywords` array (add it manually — it is not included by default in the `create-twenty-app` template)
+* Учётная запись [npm](https://www.npmjs.com)
+* Ключевое слово `twenty-app` в массиве `keywords` вашего `package.json` (добавьте его вручную — по умолчанию оно не включено в шаблон `create-twenty-app`)
 
 ```json filename="package.json"
 {
@@ -178,9 +178,9 @@ Publishing to npm makes your app discoverable in the Twenty marketplace. Any Twe
 }
 ```
 
-### Marketplace metadata
+### Метаданные маркетплейса
 
-The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logoUrl` and `screenshots` to reference images from the `public/` folder:
+Конфигурация `defineApplication()` поддерживает необязательные поля, которые определяют, как ваше приложение отображается в маркетплейсе. Используйте `logoUrl` и `screenshots`, чтобы ссылаться на изображения из папки `public/`:
 
 ```ts src/application-config.ts
 export default defineApplication({
@@ -196,33 +196,33 @@ export default defineApplication({
 });
 ```
 
-See the [defineApplication accordion](/l/ru/developers/extend/apps/config/application#marketplace-metadata) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
+См. [аккордеон defineApplication](/l/ru/developers/extend/apps/config/application#marketplace-metadata) на странице «Создание приложений» для полного списка полей маркетплейса (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` и т. д.).
 
-#### Recommended screenshot dimensions
+#### Рекомендуемые размеры скриншотов
 
-The marketplace renders `screenshots` in a fixed `8:5` container (for example, `1600×1000 px`).
+Маркетплейс отображает `screenshots` в контейнере с фиксированным соотношением сторон `8:5` (например, `1600×1000 px`).
 
 <Note>
-Screenshots of any aspect ratio are displayed in full and are never cropped, but anything significantly taller or narrower than `8:5` will show empty bands on the sides.
+Скриншоты с любым соотношением сторон отображаются полностью и никогда не обрезаются, но всё, что значительно выше или уже, чем `8:5`, будет иметь пустые поля по бокам.
 </Note>
 
-### Publish
+### Публикация
 
 ```bash filename="Terminal"
 yarn twenty publish
 ```
 
-To publish under a specific dist-tag (e.g., `beta` or `next`):
+Чтобы опубликовать с определённым dist-tag (например, `beta` или `next`):
 
 ```bash filename="Terminal"
 yarn twenty publish --tag beta
 ```
 
-### How marketplace discovery works
+### Как работает обнаружение приложений в маркетплейсе
 
-The Twenty server syncs its marketplace catalog from the npm registry **every hour**.
+Сервер Twenty синхронизирует каталог маркетплейса из реестра npm **каждый час**.
 
-You can trigger the sync immediately instead of waiting:
+Вы можете запустить синхронизацию немедленно, вместо ожидания:
 
 ```bash filename="Terminal"
 yarn twenty server catalog-sync
@@ -230,15 +230,15 @@ yarn twenty server catalog-sync
 # yarn twenty server catalog-sync --remote production
 ```
 
-The metadata shown in the marketplace comes from your `defineApplication()` config — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
+Метаданные, отображаемые в маркетплейсе, берутся из конфигурации `defineApplication()` — из таких полей, как `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` и `termsUrl`.
 
 <Note>
-If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
+Если ваше приложение не определяет `aboutDescription` в `defineApplication()`, маркетплейс автоматически использует `README.md` вашего пакета из npm в качестве содержимого страницы «О приложении». Это означает, что вы можете поддерживать единый README как для npm, так и для маркетплейса Twenty. Если вы хотите другое описание в маркетплейсе, явно задайте `aboutDescription`.
 </Note>
 
-### CI publishing
+### Публикация через CI
 
-Use this GitHub Actions workflow to publish automatically on every release (uses [OIDC](https://docs.npmjs.com/trusted-publishers)):
+Используйте этот workflow GitHub Actions, чтобы публиковать автоматически при каждом релизе (использует [OIDC](https://docs.npmjs.com/trusted-publishers)):
 
 ```yaml filename=".github/workflows/publish.yml"
 name: Publish
@@ -265,31 +265,31 @@ jobs:
         working-directory: .twenty/output
 ```
 
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `yarn twenty build`, then `npm publish` from `.twenty/output`.
+Для других CI-систем (GitLab CI, CircleCI и др.) применимы те же три команды: `yarn install`, `yarn twenty build`, затем `npm publish` из `.twenty/output`.
 
 <Note>
-**npm provenance** is optional but recommended. Publishing with `--provenance` adds a trust badge to your npm listing, letting users verify the package was built from a specific commit in a public CI pipeline. See the [npm provenance docs](https://docs.npmjs.com/generating-provenance-statements) for setup instructions.
+**npm provenance** — опционально, но рекомендуется. Публикация с флагом `--provenance` добавляет к вашему пакету в npm значок доверия, позволяя пользователям проверить, что пакет был собран из конкретного коммита в общедоступном конвейере CI. См. инструкции по настройке в [документации по npm provenance](https://docs.npmjs.com/generating-provenance-statements).
 </Note>
 
-## Installing apps
+## Установка приложений
 
-Once an app is published (npm) or deployed (tarball), workspaces can install it through the UI.
+После публикации приложения (npm) или его развертывания (tarball) рабочие пространства могут установить его через интерфейс.
 
-Go to the **Settings > Applications** page in Twenty, where both marketplace and tarball-deployed apps can be browsed and installed.
+Перейдите на страницу **Настройки > Приложения** в Twenty, где можно просматривать и устанавливать как приложения из маркетплейса, так и развернутые через tarball.
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-You can also install apps from the command line:
+Вы также можете устанавливать приложения из командной строки:
 
 ```bash filename="Terminal"
 yarn twenty install
 ```
 
 <Note>
-The server enforces semver versioning on install, mirroring the rules on deploy:
+Сервер при установке применяет версионирование semver, аналогичное правилам при развёртывании:
 
-* Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
-* Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
+* Установка той же версии, которая уже установлена в вашем рабочем пространстве, отклоняется с ошибкой `APP_ALREADY_INSTALLED`.
+* Установка версии ниже текущей отклоняется с ошибкой `CANNOT_DOWNGRADE_APPLICATION`.
 
-To install a newer version, deploy or publish it first, then re-run `yarn twenty install`.
+Чтобы установить более новую версию, сначала разверните или опубликуйте её, затем снова выполните `yarn twenty install`.
 </Note>

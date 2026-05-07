@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Place your app inside Twenty's UI — sidebar entries, saved views, record page tabs, and sandboxed React components.
+title: Übersicht
+description: Binden Sie Ihre App in das UI von Twenty ein – Seitleisten-Einträge, gespeicherte Ansichten, Registerkarten auf Datensatzseiten und isolierte React-Komponenten.
 icon: table-columns
 ---
 
-A Twenty app's **layout layer** is everything the user sees: where the app surfaces in the sidebar, which list views it ships, how its record detail pages are arranged, and which custom React components render inside those pages.
+Die **Layout-Ebene** einer Twenty-App umfasst alles, was der Benutzer sieht: wo die App in der Seitenleiste erscheint, welche Listenansichten sie bereitstellt, wie ihre Detailseiten für Datensätze angeordnet sind und welche benutzerdefinierten React-Komponenten innerhalb dieser Seiten gerendert werden.
 
 ```text
    Sidebar               Record list            Record detail page
@@ -23,34 +23,34 @@ A Twenty app's **layout layer** is everything the user sees: where the app surfa
                                 and filters    └─────────────────────┘
 ```
 
-## In this section
+## In diesem Abschnitt
 
 <CardGroup cols={2}>
-  <Card title="Views" icon="list" href="/l/de/developers/extend/apps/layout/views">
-    `defineView` — saved list configurations: visible columns, filters, groups.
+  <Card title="Ansichten" icon="Liste" href="/l/de/developers/extend/apps/layout/views">
+    `defineView` — gespeicherte Listen-Konfigurationen: sichtbare Spalten, Filter, Gruppen.
   </Card>
-  <Card title="Navigation Menu Items" icon="bars" href="/l/de/developers/extend/apps/layout/navigation-menu-items">
-    `defineNavigationMenuItem` — sidebar entries pointing at views or external URLs.
+  <Card title="Navigationselemente im Menü" icon="Balken" href="/l/de/developers/extend/apps/layout/navigation-menu-items">
+    `defineNavigationMenuItem` — Seitleisten-Einträge, die auf Ansichten oder externe URLs verweisen.
   </Card>
-  <Card title="Page Layouts" icon="table-columns" href="/l/de/developers/extend/apps/layout/page-layouts">
-    `definePageLayout` and `definePageLayoutTab` — tabs and widgets on a record's detail page.
+  <Card title="Seitenlayouts" icon="table-columns" href="/l/de/developers/extend/apps/layout/page-layouts">
+    `definePageLayout` und `definePageLayoutTab` — Registerkarten und Widgets auf der Detailseite eines Datensatzes.
   </Card>
-  <Card title="Front Components" icon="window-maximize" href="/l/de/developers/extend/apps/layout/front-components">
-    `defineFrontComponent` — sandboxed React components that render inside Twenty.
+  <Card title="Frontend-Komponenten" icon="window-maximize" href="/l/de/developers/extend/apps/layout/front-components">
+    `defineFrontComponent` — isolierte React-Komponenten, die innerhalb von Twenty gerendert werden.
   </Card>
-  <Card title="Command Menu Items" icon="terminal" href="/l/de/developers/extend/apps/layout/command-menu-items">
-    `defineCommandMenuItem` — register front components as Cmd+K entries and quick actions.
+  <Card title="Befehlsmenüeinträge" icon="Terminal" href="/l/de/developers/extend/apps/layout/command-menu-items">
+    `defineCommandMenuItem` — Front-Komponenten als Cmd+K-Einträge und Schnellaktionen registrieren.
   </Card>
 </CardGroup>
 
-## Where the app surfaces
+## Wo die App erscheint
 
-| Surface                     | What it controls                                                              | Entity                                    |
-| --------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------- |
-| **Sidebar**                 | A custom entry linking to a saved view or external URL                        | `defineNavigationMenuItem`                |
-| **Record list**             | A saved configuration for an object — visible columns, order, filters, groups | `defineView`                              |
-| **Record detail page**      | The tabs and widgets on a record page (your own object's, or a standard one)  | `definePageLayout`, `definePageLayoutTab` |
-| **Inside any of the above** | A custom React widget — buttons, forms, dashboards, integrations              | `defineFrontComponent`                    |
-| **Command menu (Cmd+K)**    | A pinned quick action or hidden command                                       | `defineCommandMenuItem`                   |
+| Oberfläche                                      | Was es steuert                                                                                           | Entität                                   |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Seitenleiste**                                | Ein benutzerdefinierter Eintrag, der auf eine gespeicherte Ansicht oder eine externe URL verweist        | `defineNavigationMenuItem`                |
+| **Datensatzliste**                              | Eine gespeicherte Konfiguration für ein Objekt – sichtbare Spalten, Reihenfolge, Filter, Gruppen         | `defineView`                              |
+| **Detailseite des Datensatzes**                 | Die Registerkarten und Widgets auf einer Datensatzseite (für Ihr eigenes Objekt oder ein Standardobjekt) | `definePageLayout`, `definePageLayoutTab` |
+| **Innerhalb eines der oben genannten Bereiche** | Ein benutzerdefiniertes React-Widget – Schaltflächen, Formulare, Dashboards, Integrationen               | `defineFrontComponent`                    |
+| **Befehlsmenü (Cmd+K)**                         | Eine angeheftete Schnellaktion oder ein versteckter Befehl                                               | `defineCommandMenuItem`                   |
 
-Front components run inside an isolated Web Worker using Remote DOM — they render *natively* in the page (not inside an iframe), but cannot reach the host page or DOM directly. Communication with Twenty happens through a message-passing host API.
+Front-Komponenten laufen in einem isolierten Web Worker unter Verwendung von Remote DOM – sie werden *nativ* auf der Seite gerendert (nicht in einem iframe), können aber die Hostseite oder das DOM nicht direkt erreichen. Die Kommunikation mit Twenty erfolgt über eine Message-Passing-Host-API.

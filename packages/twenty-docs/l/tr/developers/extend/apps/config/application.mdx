@@ -1,15 +1,15 @@
 ---
-title: Application Config
-description: Declare your app's identity, default role, variables, and marketplace metadata with defineApplication.
+title: Uygulama Yapılandırması
+description: Uygulamanızın kimliğini, varsayılan rolünü, değişkenlerini ve pazar yeri meta verilerini `defineApplication` ile bildirin.
 icon: rocket
 ---
 
-Every app must have exactly one `defineApplication` call. It declares:
+Her uygulamanın, tam olarak bir adet `defineApplication` çağrısı olması gerekir. Bu çağrı şunları bildirir:
 
-* **Identity** — universal identifier, display name, description.
-* **Permissions** — which role its logic functions and front components run under.
-* **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
-* **Pre-install / post-install hooks** *(optional)* — see [Logic Functions](/l/tr/developers/extend/apps/logic/logic-functions).
+* **Kimlik** — evrensel tanımlayıcı, görünen ad, açıklama.
+* **İzinler** — mantık fonksiyonlarının ve ön uç bileşenlerinin hangi rol altında çalıştığı.
+* **Değişkenler** *(isteğe bağlı)* — kodunuza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
+* **Kurulum öncesi / kurulum sonrası kancalar** *(isteğe bağlı)* — bkz. [Mantık Fonksiyonları](/l/tr/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -31,35 +31,35 @@ export default defineApplication({
 });
 ```
 
-Notes:
+Notlar:
 
-* `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions and front components (e.g., `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` must reference a role defined with [`defineRole()`](/l/tr/developers/extend/apps/config/roles).
-* Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+* `universalIdentifier` alanları, size ait deterministik kimliklerdir. Bunları bir kez oluşturun ve senkronizasyonlar boyunca kararlı tutun.
+* `applicationVariables`, fonksiyonlarınız ve ön uç bileşenleriniz için ortam değişkenlerine dönüşür (örn. `DEFAULT_RECIPIENT_NAME`, `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
+* `defaultRoleUniversalIdentifier`, [`defineRole()`](/l/tr/developers/extend/apps/config/roles) ile tanımlanmış bir role referans vermelidir.
+* Kurulum öncesi ve kurulum sonrası fonksiyonlar manifest derlemesi sırasında otomatik olarak algılanır — bunlara `defineApplication()` içinde referans vermeniz gerekmez.
 
-## Default function role
+## Varsayılan fonksiyon rolü
 
-The `defaultRoleUniversalIdentifier` controls what the app's logic functions and front components can access:
+`defaultRoleUniversalIdentifier`, uygulamanın mantık fonksiyonlarının ve ön uç bileşenlerinin nelere erişebileceğini kontrol eder:
 
-* The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
-* The typed API client is restricted to the permissions granted to that role.
-* Follow least-privilege: declare only the permissions your functions need.
+* `TWENTY_APP_ACCESS_TOKEN` olarak enjekte edilen çalışma zamanı belirteci bu rolden türetilir.
+* Türlendirilmiş API istemcisi, o role tanınan izinlerle sınırlandırılır.
+* En az ayrıcalık ilkesini izleyin: yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri bildirin.
 
-When you scaffold a new app, the CLI creates a starter role file at `src/roles/default-role.ts`. See [Roles & Permissions](/l/tr/developers/extend/apps/config/roles) for the full reference.
+Yeni bir uygulama iskeleti oluşturduğunuzda, CLI `src/roles/default-role.ts` konumunda başlangıç bir rol dosyası oluşturur. Tam başvuru için bkz. [Roller ve İzinler](/l/tr/developers/extend/apps/config/roles).
 
-## Marketplace metadata
+## Pazaryeri meta verileri
 
-If you plan to [publish your app](/l/tr/developers/extend/apps/operations/publishing), these optional fields control how it appears in the marketplace:
+Eğer [uygulamanızı yayımlamayı](/l/tr/developers/extend/apps/operations/publishing) planlıyorsanız, bu isteğe bağlı alanlar uygulamanızın pazaryerinde nasıl görüneceğini kontrol eder:
 
-| Field              | Description                                                                                                          |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `author`           | Author or company name                                                                                               |
-| `category`         | App category for marketplace filtering                                                                               |
-| `logoUrl`          | Path to your app logo (e.g., `public/logo.png`)                                                                      |
-| `screenshots`      | Array of screenshot paths (e.g., `public/screenshot-1.png`)                                                          |
-| `aboutDescription` | Longer markdown description for the "About" tab. If omitted, the marketplace uses the package's `README.md` from npm |
-| `websiteUrl`       | Link to your website                                                                                                 |
-| `termsUrl`         | Link to terms of service                                                                                             |
-| `emailSupport`     | Support email address                                                                                                |
-| `issueReportUrl`   | Link to issue tracker                                                                                                |
+| Alan               | Açıklama                                                                                                                            |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `author`           | Yazar veya şirket adı                                                                                                               |
+| `category`         | Pazaryerinde filtreleme için uygulama kategorisi                                                                                    |
+| `logoUrl`          | Uygulamanızın logosuna giden yol (örn. `public/logo.png`)                                                                           |
+| `screenshots`      | Ekran görüntüsü yollarının dizisi (örn. `public/screenshot-1.png`)                                                                  |
+| `aboutDescription` | "Hakkında" sekmesi için daha uzun bir markdown açıklaması. Belirtilmezse, pazaryeri npm'deki paketin `README.md` dosyasını kullanır |
+| `websiteUrl`       | Web sitenize bağlantı                                                                                                               |
+| `termsUrl`         | Hizmet Koşulları'na bağlantı                                                                                                        |
+| `emailSupport`     | Destek e-posta adresi                                                                                                               |
+| `issueReportUrl`   | Sorun izleyicisine bağlantı                                                                                                         |

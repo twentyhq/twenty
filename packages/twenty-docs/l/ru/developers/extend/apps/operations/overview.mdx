@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Build, test, and ship your app — CLI commands, integration tests, CI, and publishing to a server or to npm.
+title: Обзор
+description: Собирайте, тестируйте и поставляйте свое приложение — команды CLI, интеграционные тесты, CI и публикация на сервер или в npm.
 icon: rocket
 ---
 
-The **operations layer** is everything you do *to* your app rather than *with* it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
+**Операционный уровень** — это все, что вы делаете *с* вашим приложением, а не *внутри* него: выполнение команд CLI, запуск интеграционных тестов против реального сервера Twenty, настройка CI и поставка релизов — либо в виде tarball, разворачиваемого на одном сервере, либо как пакет npm, публикуемый в маркетплейсе.
 
 ```text
    develop ─▶ test ─▶ build ─▶ deploy / publish
@@ -14,16 +14,16 @@ The **operations layer** is everything you do *to* your app rather than *with* i
    dev                build    yarn twenty publish  (npm → marketplace)
 ```
 
-## In this section
+## В этом разделе
 
 <CardGroup cols={2}>
   <Card title="CLI" icon="terminal" href="/l/ru/developers/extend/apps/operations/cli">
     `yarn twenty` reference — exec, logs, uninstall, remotes.
   </Card>
-  <Card title="Testing" icon="flask" href="/l/ru/developers/extend/apps/operations/testing">
-    Vitest setup, integration tests, type checking, CI workflow.
+  <Card title="Тестирование" icon="flask" href="/l/ru/developers/extend/apps/operations/testing">
+    Настройка Vitest, интеграционные тесты, проверка типов, рабочий процесс CI.
   </Card>
-  <Card title="Publishing" icon="upload" href="/l/ru/developers/extend/apps/operations/publishing">
-    Build, deploy a tarball, publish to npm, install.
+  <Card title="Публикация" icon="загрузить" href="/l/ru/developers/extend/apps/operations/publishing">
+    Сборка, развертывание tarball, публикация в npm, установка.
   </Card>
 </CardGroup>

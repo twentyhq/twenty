@@ -1,15 +1,15 @@
 ---
-title: Application Config
-description: Declare your app's identity, default role, variables, and marketplace metadata with defineApplication.
+title: Configuração da aplicação
+description: Declare a identidade do seu app, o papel padrão, as variáveis e os metadados de marketplace com `defineApplication`.
 icon: rocket
 ---
 
-Every app must have exactly one `defineApplication` call. It declares:
+Todo app deve ter exatamente uma chamada a `defineApplication`. Ela declara:
 
-* **Identity** — universal identifier, display name, description.
-* **Permissions** — which role its logic functions and front components run under.
-* **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
-* **Pre-install / post-install hooks** *(optional)* — see [Logic Functions](/l/pt/developers/extend/apps/logic/logic-functions).
+* **Identidade** — identificador universal, nome de exibição, descrição.
+* **Permissões** — qual papel é usado pelas suas funções de lógica e pelos componentes de front-end.
+* **Variáveis** *(opcional)* — pares chave–valor expostos ao seu código como variáveis de ambiente.
+* **Hooks de pré-instalação/pós-instalação** *(opcional)* — consulte [Funções de lógica](/l/pt/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -31,35 +31,35 @@ export default defineApplication({
 });
 ```
 
-Notes:
+Notas:
 
-* `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions and front components (e.g., `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` must reference a role defined with [`defineRole()`](/l/pt/developers/extend/apps/config/roles).
-* Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+* Os campos `universalIdentifier` são IDs determinísticos que você controla. Gere-os uma vez e mantenha-os estáveis entre sincronizações.
+* `applicationVariables` tornam-se variáveis de ambiente para suas funções e componentes de front-end (por exemplo, `DEFAULT_RECIPIENT_NAME` fica disponível como `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` deve fazer referência a um papel definido com [`defineRole()`](/l/pt/developers/extend/apps/config/roles).
+* As funções de pré-instalação e pós-instalação são detectadas automaticamente durante a construção do manifesto — você não precisa referenciá-las em `defineApplication()`.
 
-## Default function role
+## Papel de função padrão
 
-The `defaultRoleUniversalIdentifier` controls what the app's logic functions and front components can access:
+O `defaultRoleUniversalIdentifier` controla ao que as funções de lógica e os componentes de front-end do app podem acessar:
 
-* The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
-* The typed API client is restricted to the permissions granted to that role.
-* Follow least-privilege: declare only the permissions your functions need.
+* O token em tempo de execução injetado como `TWENTY_APP_ACCESS_TOKEN` é derivado desse papel.
+* O cliente de API tipado é restrito às permissões concedidas a esse papel.
+* Siga o princípio do menor privilégio: declare apenas as permissões de que suas funções precisam.
 
-When you scaffold a new app, the CLI creates a starter role file at `src/roles/default-role.ts`. See [Roles & Permissions](/l/pt/developers/extend/apps/config/roles) for the full reference.
+Ao criar um novo app com o scaffold, a CLI cria um arquivo de papel inicial em `src/roles/default-role.ts`. Consulte [Papéis e permissões](/l/pt/developers/extend/apps/config/roles) para a referência completa.
 
-## Marketplace metadata
+## Metadados do Marketplace
 
-If you plan to [publish your app](/l/pt/developers/extend/apps/operations/publishing), these optional fields control how it appears in the marketplace:
+Se você planeja [publicar seu app](/l/pt/developers/extend/apps/operations/publishing), estes campos opcionais controlam como seu app aparece no marketplace:
 
-| Field              | Description                                                                                                          |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `author`           | Author or company name                                                                                               |
-| `category`         | App category for marketplace filtering                                                                               |
-| `logoUrl`          | Path to your app logo (e.g., `public/logo.png`)                                                                      |
-| `screenshots`      | Array of screenshot paths (e.g., `public/screenshot-1.png`)                                                          |
-| `aboutDescription` | Longer markdown description for the "About" tab. If omitted, the marketplace uses the package's `README.md` from npm |
-| `websiteUrl`       | Link to your website                                                                                                 |
-| `termsUrl`         | Link to terms of service                                                                                             |
-| `emailSupport`     | Support email address                                                                                                |
-| `issueReportUrl`   | Link to issue tracker                                                                                                |
+| Campo              | Descrição                                                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `author`           | Nome do autor ou da empresa                                                                                       |
+| `category`         | Categoria do app para filtragem no marketplace                                                                    |
+| `logoUrl`          | Caminho para o logo do seu app (por exemplo, `public/logo.png`)                                                   |
+| `screenshots`      | Array de caminhos de capturas de tela (por exemplo, `public/screenshot-1.png`)                                    |
+| `aboutDescription` | Descrição em markdown mais longa para a aba "Sobre". Se omitido, o marketplace usa o `README.md` do pacote no npm |
+| `websiteUrl`       | Link para seu site                                                                                                |
+| `termsUrl`         | Link para os Termos de Serviço                                                                                    |
+| `emailSupport`     | Endereço de e-mail de suporte                                                                                     |
+| `issueReportUrl`   | Link para o rastreador de problemas                                                                               |

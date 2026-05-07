@@ -1,15 +1,15 @@
 ---
 title: Relații
-description: Connect objects together with bidirectional MANY_TO_ONE / ONE_TO_MANY relations.
+description: Conectați obiectele între ele cu relații bidirecționale MANY_TO_ONE / ONE_TO_MANY.
 icon: diagram-project
 ---
 
-Relations connect two objects together. In Twenty, relations are always **bidirectional** — every relation has two sides, and each side is declared as a field that references the other.
+Relațiile conectează două obiecte între ele. În Twenty, relațiile sunt întotdeauna **bidirecționale** — fiecare relație are două părți, iar fiecare parte este declarată ca un câmp ce o referențiază pe cealaltă.
 
 | Tip relație   | Descriere                                                                          | Are cheie străină?    |
 | ------------- | ---------------------------------------------------------------------------------- | --------------------- |
 | `MANY_TO_ONE` | Multe înregistrări ale acestui obiect indică către o singură înregistrare a țintei | Da (`joinColumnName`) |
-| `ONE_TO_MANY` | O înregistrare a acestui obiect are multe înregistrări ale țintei                  | No (the inverse side) |
+| `ONE_TO_MANY` | O înregistrare a acestui obiect are multe înregistrări ale țintei                  | Nu (partea inversă)   |
 
 ## Cum funcționează relațiile
 
@@ -22,7 +22,7 @@ Ambele câmpuri folosesc `FieldType.RELATION` și se referențiază încrucișat
 
 ## Exemplu: Post Card are mulți destinatari
 
-A `PostCard` can be sent to many `PostCardRecipient` records. Fiecare destinatar aparține exact unui Post Card.
+Un `PostCard` poate fi trimis către multe înregistrări `PostCardRecipient`. Fiecare destinatar aparține exact unui Post Card.
 
 **Pasul 1: Definiți partea ONE_TO_MANY pe PostCard** (partea "one"):
 
@@ -81,7 +81,7 @@ export default defineField({
 ```
 
 <Note>
-**Circular imports:** both relation fields reference each other's `universalIdentifier`. To avoid circular import issues, export your field IDs as named constants from each file and import them in the other. Sistemul de build le rezolvă în timpul compilării.
+**Importuri circulare:** ambele câmpuri de relație se referă unul la celălalt prin `universalIdentifier`. Pentru a evita problemele de import circular, exportați ID-urile câmpurilor ca constante denumite din fiecare fișier și importați-le în celălalt. Sistemul de build le rezolvă în timpul compilării.
 </Note>
 
 ## Relaționarea cu obiectele standard
@@ -124,16 +124,16 @@ export default defineField({
 
 | Proprietate                                       | Obligatoriu      | Descriere                                                                                                             |
 | ------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `tip`                                             | Da               | Trebuie să fie `FieldType.RELATION`                                                                                   |
+| `type`                                            | Da               | Trebuie să fie `FieldType.RELATION`                                                                                   |
 | `relationTargetObjectMetadataUniversalIdentifier` | Da               | `universalIdentifier` al obiectului țintă                                                                             |
 | `relationTargetFieldMetadataUniversalIdentifier`  | Da               | `universalIdentifier` al câmpului corespunzător de pe obiectul țintă                                                  |
 | `universalSettings.relationType`                  | Da               | `RelationType.MANY_TO_ONE` sau `RelationType.ONE_TO_MANY`                                                             |
 | `universalSettings.onDelete`                      | Doar MANY_TO_ONE | Ce se întâmplă atunci când înregistrarea referențiată este ștearsă: `CASCADE`, `SET_NULL`, `RESTRICT` sau `NO_ACTION` |
 | `universalSettings.joinColumnName`                | Doar MANY_TO_ONE | Numele coloanei din baza de date pentru cheia străină (de ex., `postCardId`)                                          |
 
-## Inline relation fields
+## Câmpuri de relație inline
 
-You can also declare a relation directly inside [`defineObject`](/l/ro/developers/extend/apps/data/objects). When inline, omit `objectUniversalIdentifier` — it's inherited from the parent object:
+Puteți, de asemenea, să declarați o relație direct în [`defineObject`](/l/ro/developers/extend/apps/data/objects). Când este inline, omiteți `objectUniversalIdentifier` — este moștenit de la obiectul părinte:
 
 ```ts
 export default defineObject({

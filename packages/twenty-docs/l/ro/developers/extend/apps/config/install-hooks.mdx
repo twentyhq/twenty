@@ -1,12 +1,12 @@
 ---
-title: Install Hooks
-description: Run logic before or after the install — seed data, back up records, validate the upgrade.
+title: Instalare hooks
+description: Rulați logică înainte sau după instalare — pentru a popula cu date inițiale, a face copii de rezervă ale înregistrărilor, a valida actualizarea.
 icon: wrench
 ---
 
-Install hooks are special logic functions that run during the install or upgrade lifecycle. They share the same handler runtime as regular [logic functions](/l/ro/developers/extend/apps/logic/logic-functions) and receive an `InstallPayload`, but they're declared with their own define functions — `definePostInstallLogicFunction()` and `definePreInstallLogicFunction()` — and live outside the normal trigger model (HTTP, cron, database events).
+Install hooks sunt funcții logice speciale care rulează în timpul ciclului de viață al instalării sau actualizării. Acestea folosesc același runtime de handler ca și [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) obișnuite și primesc un `InstallPayload`, dar sunt declarate cu propriile lor funcții de definire — `definePostInstallLogicFunction()` și `definePreInstallLogicFunction()` — și există în afara modelului obișnuit de declanșatori (HTTP, cron, evenimente de bază de date).
 
-Each app may define **at most one pre-install** and **at most one post-install** function. The manifest build will error if more than one of either is detected.
+Fiecare aplicație poate defini **cel mult o funcție de pre-instalare** și **cel mult o funcție de post-instalare**. Construirea manifestului va genera o eroare dacă este detectată mai mult de una dintre oricare dintre ele.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -20,9 +20,9 @@ Each app may define **at most one pre-install** and **at most one post-install**
 ```
 
 <AccordionGroup>
-<Accordion title="definePostInstallLogicFunction" description="Runs after the workspace metadata migration is applied">
+<Accordion title="definePostInstallLogicFunction" description="Rulează după ce migrarea metadatelor workspace-ului este aplicată">
 
-A post-install function runs automatically once your app has finished installing on a workspace. Serverul o execută **după** ce metadatele aplicației au fost sincronizate și clientul SDK a fost generat, astfel încât spațiul de lucru este complet pregătit pentru utilizare, iar noua schemă este disponibilă. Cazuri tipice de utilizare includ popularea cu date implicite, crearea de înregistrări inițiale, configurarea setărilor spațiului de lucru sau provizionarea resurselor în cadrul serviciilor terților.
+O funcție de post-instalare rulează automat după ce aplicația a terminat de instalat într-un spațiu de lucru. Serverul o execută **după** ce metadatele aplicației au fost sincronizate și clientul SDK a fost generat, astfel încât spațiul de lucru este complet pregătit pentru utilizare, iar noua schemă este disponibilă. Cazuri tipice de utilizare includ popularea cu date implicite, crearea de înregistrări inițiale, configurarea setărilor spațiului de lucru sau provizionarea resurselor în cadrul serviciilor terților.
 
 ```ts src/logic-functions/post-install.ts
 import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
@@ -58,14 +58,14 @@ Puncte cheie:
 * Asigurați-vă că handlerul dvs. este idempotent. În modul asincron, coada poate reîncerca de până la trei ori; în oricare mod, hook-ul poate rula din nou la actualizări când `shouldRunOnVersionUpgrade: true`.
 * Variabilele de mediu `APPLICATION_ID`, `APP_ACCESS_TOKEN` și `API_URL` sunt disponibile în interiorul handlerului (la fel ca în orice altă funcție logică), astfel încât puteți apela API-ul Twenty cu un token de acces al aplicației limitat la aplicația dvs.
 * Este permisă o singură funcție de post-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
-* The function's `universalIdentifier`, `shouldRunOnVersionUpgrade`, and `shouldRunSynchronously` are automatically attached to the application manifest under the `postInstallLogicFunction` field during the build — you do not need to reference them in [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
+* `universalIdentifier`, `shouldRunOnVersionUpgrade` și `shouldRunSynchronously` ale funcției sunt atașate automat la manifestul aplicației în câmpul `postInstallLogicFunction` în timpul build-ului — nu este nevoie să le referi în [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
 * Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
 * **Nu se execută în modul dev**: când o aplicație este înregistrată local (prin `yarn twenty dev`), serverul sare complet peste fluxul de instalare și sincronizează fișierele direct prin watcher-ul CLI — astfel încât post-install nu rulează niciodată în modul dev, indiferent de `shouldRunSynchronously`. Folosiți `yarn twenty exec --postInstall` pentru a-l declanșa manual într-un workspace care rulează.
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="Runs before the workspace metadata migration is applied">
+<Accordion title="definePreInstallLogicFunction" description="Rulează înainte ca migrarea metadatelor workspace-ului să fie aplicată">
 
-A pre-install function runs automatically during installation, **before the workspace metadata migration is applied**. Are aceeași structură a payload-ului ca post-install (`InstallPayload`), dar este plasată mai devreme în fluxul de instalare, astfel încât poate pregăti starea de care depinde migrarea iminentă — utilizări tipice includ realizarea unui backup al datelor, validarea compatibilității cu noua schemă sau arhivarea înregistrărilor care urmează să fie restructurate sau eliminate.
+O funcție de pre-instalare rulează automat în timpul instalării, **înainte ca migrarea metadatelor workspace-ului să fie aplicată**. Are aceeași structură a payload-ului ca post-install (`InstallPayload`), dar este plasată mai devreme în fluxul de instalare, astfel încât poate pregăti starea de care depinde migrarea iminentă — utilizări tipice includ realizarea unui backup al datelor, validarea compatibilității cu noua schemă sau arhivarea înregistrărilor care urmează să fie restructurate sau eliminate.
 
 ```ts src/logic-functions/pre-install.ts
 import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';

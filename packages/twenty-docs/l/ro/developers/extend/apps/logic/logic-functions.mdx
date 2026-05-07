@@ -217,7 +217,7 @@ export default defineLogicFunction({
 </AccordionGroup>
 
 <Note>
-**Install hooks** — pre-install and post-install handlers — share this runtime but are declared with their own define functions and don't take trigger settings. See [Install Hooks](/l/ro/developers/extend/apps/config/install-hooks) for `definePreInstallLogicFunction` and `definePostInstallLogicFunction`.
+**Hook-uri de instalare** — handleri pre-instalare și post-instalare — partajează acest runtime, dar sunt declarați cu propriile lor funcții `define` și nu folosesc setări de declanșare. Consultați [Hook-uri de instalare](/l/ro/developers/extend/apps/config/install-hooks) pentru `definePreInstallLogicFunction` și `definePostInstallLogicFunction`.
 </Note>
 
 ## Clienți API tipizați (twenty-client-sdk)
@@ -269,7 +269,7 @@ const { createCompany } = await client.mutation({
 });
 ```
 
-Clientul folosește o sintaxă de tip selection-set: transmiteți `true` pentru a include un câmp, folosiți `__args` pentru argumente și imbricați obiecte pentru relații. Obțineți autocompletare și verificare a tipurilor complete, pe baza schemei spațiului dvs. de lucru.
+Clientul folosește o sintaxă de tip selection-set: transmiteți `true` pentru a include un câmp, folosiți `__args` pentru argumente și imbricați obiecte pentru relații. Obțineți autocompletare și verificare completă a tipurilor, pe baza schemei spațiului dvs. de lucru.
 
 <Note>
 **CoreApiClient este generat în timpul dev/build.** Dacă îl utilizați fără a rula mai întâi `yarn twenty dev` sau `yarn twenty build`, va arunca o eroare. Generarea are loc automat — CLI inspectează schema GraphQL a spațiului dvs. de lucru și generează un client tipizat folosind `@genql/cli`.

@@ -1,10 +1,10 @@
 ---
-title: Views
-description: Ship pre-configured saved views — column order, filters, groups — for objects in your app.
+title: Ansichten
+description: Stellen Sie vorkonfigurierte gespeicherte Ansichten bereit – Spaltenreihenfolge, Filter, Gruppen – für Objekte in Ihrer App.
 icon: list
 ---
 
-A **view** is a saved configuration for how records of an object are displayed: which fields appear, their order, whether they're visible, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app — typically a default index view for each custom object you create.
+Eine **Ansicht** ist eine gespeicherte Konfiguration dafür, wie Datensätze eines Objekts angezeigt werden: welche Felder erscheinen, in welcher Reihenfolge, ob sie sichtbar sind und welche Filter oder Gruppen angewendet werden. Verwenden Sie `defineView()`, um vorkonfigurierte Ansichten mit Ihrer App auszuliefern – typischerweise eine Standard-Indexansicht für jedes benutzerdefinierte Objekt, das Sie erstellen.
 
 ```ts src/views/example-view.ts
 import { defineView, ViewKey } from 'twenty-sdk/define';
@@ -30,14 +30,14 @@ export default defineView({
 });
 ```
 
-## Key points
+## Hauptpunkte
 
-* `objectUniversalIdentifier` specifies which object this view applies to. It can be a custom object you defined or a standard Twenty object.
-* `key` determines the view type — `ViewKey.INDEX` is the main list view for the object.
-* `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`.
-* You can also declare `filters`, `filterGroups`, `groups`, and `fieldGroups` for advanced configurations.
-* `position` controls ordering when multiple views exist for the same object.
+* `objectUniversalIdentifier` gibt an, auf welches Objekt diese Ansicht angewendet wird. Es kann sich um ein von Ihnen definiertes benutzerdefiniertes Objekt oder ein Standardobjekt von Twenty handeln.
+* `key` bestimmt den Ansichtstyp – `ViewKey.INDEX` ist die Hauptlistenansicht für das Objekt.
+* `fields` steuert, welche Spalten erscheinen und in welcher Reihenfolge. Jedes Feld referenziert einen `fieldMetadataUniversalIdentifier`.
+* Für erweiterte Konfigurationen können Sie außerdem `filters`, `filterGroups`, `groups` und `fieldGroups` deklarieren.
+* `position` steuert die Reihenfolge, wenn mehrere Ansichten für dasselbe Objekt existieren.
 
-## How views show up in the UI
+## Wie Ansichten in der UI angezeigt werden
 
-A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/l/de/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object typically ships a default view + a sidebar entry that opens it.
+Eine Ansicht für sich ist aus der Seitenleiste nicht erreichbar. Damit sie dort erscheint, verknüpfen Sie sie mit einem [Navigationsmenüeintrag](/l/de/developers/extend/apps/layout/navigation-menu-items) des Typs `VIEW`, der auf die `universalIdentifier` der Ansicht zeigt. Das ist das kanonische Muster: Jedes benutzerdefinierte Objekt liefert typischerweise eine Standardansicht plus einen Eintrag in der Seitenleiste, der sie öffnet.

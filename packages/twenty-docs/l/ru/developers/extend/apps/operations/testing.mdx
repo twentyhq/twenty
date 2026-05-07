@@ -1,22 +1,22 @@
 ---
-title: Testing
-description: Vitest setup, integration tests against a real Twenty server, type checking, and CI with GitHub Actions.
+title: Тестирование
+description: Настройка Vitest, интеграционные тесты с использованием реального сервера Twenty, проверка типов и CI с GitHub Actions.
 icon: flask
 ---
 
-The SDK provides programmatic APIs that let you build, deploy, install, and uninstall your app from test code. Combined with [Vitest](https://vitest.dev/) and the typed API clients, you can write integration tests that verify your app works end-to-end against a real Twenty server.
+SDK предоставляет программные API, которые позволяют собирать, разворачивать, устанавливать и удалять ваше приложение из тестового кода. В сочетании с [Vitest](https://vitest.dev/) и типизированными клиентами API вы можете писать интеграционные тесты, которые проверяют, что ваше приложение работает сквозным образом на реальном сервере Twenty.
 
-## Using npm packages
+## Использование пакетов npm
 
-You can install and use any npm package in your app. Both logic functions and front components are bundled with [esbuild](https://esbuild.github.io/), which inlines all dependencies into the output — no `node_modules` are needed at runtime.
+Вы можете устанавливать и использовать любые пакеты npm в своём приложении. И логические функции, и компоненты фронтенда собираются с помощью [esbuild](https://esbuild.github.io/), который встраивает все зависимости в выходной файл — каталоги `node_modules` во время выполнения не нужны.
 
-### Installing a package
+### Установка пакета
 
 ```bash filename="Terminal"
 yarn add axios
 ```
 
-Then import it in your code:
+Затем импортируйте его в своём коде:
 
 ```ts src/logic-functions/fetch-data.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -37,7 +37,7 @@ export default defineLogicFunction({
 });
 ```
 
-The same works for front components:
+То же самое работает для компонентов фронтенда:
 
 ```tsx src/front-components/chart.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -54,25 +54,25 @@ export default defineFrontComponent({
 });
 ```
 
-### How bundling works
+### Как работает бандлинг
 
-The build step uses esbuild to produce a single self-contained file per logic function and per front component. All imported packages are inlined into the bundle.
+Этап сборки использует esbuild для создания одного самодостаточного файла на каждую логическую функцию и на каждый компонент фронтенда. Все импортированные пакеты встроены в бандл.
 
-**Logic functions** run in a Node.js environment. Node built-in modules (`fs`, `path`, `crypto`, `http`, etc.) are available and do not need to be installed.
+**Логические функции** выполняются в среде Node.js. Встроенные модули Node (`fs`, `path`, `crypto`, `http` и т. д.) доступны и не требуют установки.
 
-**Front components** run in a Web Worker. Node built-in modules are **not** available — only browser APIs and npm packages that work in a browser environment.
+**Компоненты фронтенда** выполняются в Web Worker. Встроенные модули Node недоступны — доступны только браузерные API и пакеты npm, работающие в браузерной среде.
 
-Both environments have `twenty-client-sdk/core` and `twenty-client-sdk/metadata` available as pre-provided modules — these are not bundled but resolved at runtime by the server.
+В обеих средах доступны как предварительно предоставленные модули `twenty-client-sdk/core` и `twenty-client-sdk/metadata` — они не включаются в бандл, а подставляются сервером во время выполнения.
 
-## Setup
+## Настройка
 
-The scaffolded app already includes Vitest. If you set it up manually, install the dependencies:
+Приложение, созданное скэффолдером, уже включает Vitest. Если вы настраиваете его вручную, установите зависимости:
 
 ```bash filename="Terminal"
 yarn add -D vitest vite-tsconfig-paths
 ```
 
-Create a `vitest.config.ts` at the root of your app:
+Создайте `vitest.config.ts` в корне вашего приложения:
 
 ```ts vitest.config.ts
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -98,7 +98,7 @@ export default defineConfig({
 });
 ```
 
-Create a setup file that verifies the server is reachable before tests run:
+Создайте файл инициализации, который проверяет доступность сервера перед запуском тестов:
 
 ```ts src/__tests__/setup-test.ts
 import * as fs from 'fs';
@@ -138,22 +138,22 @@ beforeAll(async () => {
 });
 ```
 
-## Programmatic SDK APIs
+## Программные API SDK
 
-The `twenty-sdk/cli` subpath exports functions you can call directly from test code:
+Подпуть `twenty-sdk/cli` экспортирует функции, которые можно вызывать напрямую из тестового кода:
 
-| Function       | Description                                 |
-| -------------- | ------------------------------------------- |
-| `appBuild`     | Build the app and optionally pack a tarball |
-| `appDeploy`    | Upload a tarball to the server              |
-| `appInstall`   | Install the app on the active workspace     |
-| `appUninstall` | Uninstall the app from the active workspace |
+| Функция        | Описание                                                   |
+| -------------- | ---------------------------------------------------------- |
+| `appBuild`     | Собрать приложение и при необходимости упаковать tar-архив |
+| `appDeploy`    | Загрузить tar-архив на сервер                              |
+| `appInstall`   | Установить приложение в активное рабочее пространство      |
+| `appUninstall` | Удалить приложение из активного рабочего пространства      |
 
-Each function returns a result object with `success: boolean` and either `data` or `error`.
+Каждая функция возвращает объект результата с `success: boolean` и либо `data`, либо `error`.
 
-## Writing an integration test
+## Написание интеграционного теста
 
-Here is a full example that builds, deploys, and installs the app, then verifies it appears in the workspace:
+Полный пример, который собирает, разворачивает и устанавливает приложение, а затем проверяет, что оно появляется в рабочем пространстве:
 
 ```ts src/__tests__/app-install.integration-test.ts
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
@@ -216,40 +216,40 @@ describe('App installation', () => {
 });
 ```
 
-## Running tests
+## Запуск тестов
 
-Make sure your local Twenty server is running, then:
+Убедитесь, что ваш локальный сервер Twenty запущен, затем:
 
 ```bash filename="Terminal"
 yarn test
 ```
 
-Or in watch mode during development:
+Или в режиме наблюдения во время разработки:
 
 ```bash filename="Terminal"
 yarn test:watch
 ```
 
-## Type checking
+## Проверка типов
 
-You can also run type checking on your app without running tests:
+Вы также можете запустить проверку типов для своего приложения без запуска тестов:
 
 ```bash filename="Terminal"
 yarn twenty typecheck
 ```
 
-This runs `tsc --noEmit` and reports any type errors.
+Это запускает `tsc --noEmit` и сообщает о любых ошибках типов.
 
-## CI with GitHub Actions
+## CI с GitHub Actions
 
-The scaffolder generates a ready-to-use GitHub Actions workflow at `.github/workflows/ci.yml`. It runs your integration tests automatically on every push to `main` and on pull requests.
+Скэффолдер генерирует готовый к использованию рабочий процесс GitHub Actions в `.github/workflows/ci.yml`. Он автоматически запускает ваши интеграционные тесты при каждом пуше в `main` и в pull request'ах.
 
-The workflow:
+Рабочий процесс:
 
-1. Checks out your code
-2. Spins up a temporary Twenty server using the `twentyhq/twenty/.github/actions/spawn-twenty-docker-image` action
-3. Installs dependencies with `yarn install --immutable`
-4. Runs `yarn test` with `TWENTY_API_URL` and `TWENTY_API_KEY` injected from the action outputs
+1. Извлекает ваш код
+2. Поднимает временный сервер Twenty с помощью экшена `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
+3. Устанавливает зависимости с помощью `yarn install --immutable`
+4. Запускает `yarn test` с `TWENTY_API_URL` и `TWENTY_API_KEY`, переданными из выходных данных экшена
 
 ```yaml .github/workflows/ci.yml
 name: CI
@@ -296,6 +296,6 @@ jobs:
           TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
 ```
 
-You don't need to configure any secrets — the `spawn-twenty-docker-image` action starts an ephemeral Twenty server directly in the runner and outputs the connection details. The `GITHUB_TOKEN` secret is provided automatically by GitHub.
+Вам не нужно настраивать секреты — экшен `spawn-twenty-docker-image` запускает эфемерный сервер Twenty прямо в раннере и выводит данные для подключения. Секрет `GITHUB_TOKEN` предоставляется GitHub автоматически.
 
-To pin a specific Twenty version instead of `latest`, change the `TWENTY_VERSION` environment variable at the top of the workflow.
+Чтобы закрепить конкретную версию Twenty вместо `latest`, измените переменную окружения `TWENTY_VERSION` в начале рабочего процесса.

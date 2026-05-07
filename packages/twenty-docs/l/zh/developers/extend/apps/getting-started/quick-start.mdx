@@ -1,184 +1,184 @@
 ---
-title: Quick Start
+title: 快速开始
 icon: rocket
-description: Create your first Twenty app in minutes.
+description: 几分钟内创建你的第一个 Twenty 应用。
 ---
 
-## Prerequisites
+## 先决条件
 
-* **Node.js 24+** — [Download](https://nodejs.org/)
-* **Yarn 4** — bundled with Node via Corepack. Enable it: `corepack enable`
-* **Docker** — [Download](https://www.docker.com/products/docker-desktop/). Needed to run a local Twenty server. Skip if you already have Twenty running elsewhere.
+* **Node.js 24+** — [在此下载](https://nodejs.org/)
+* **Yarn 4** — 通过 Corepack 随 Node.js 提供。 启用它：`corepack enable`
+* **Docker** — [在此下载](https://www.docker.com/products/docker-desktop/)。 运行本地 Twenty 服务器所需。 如果你已经在其他地方运行了 Twenty，请跳过。
 
-Building a Twenty app has three phases. The scaffolder collapses them into one happy-path command, but each phase is a separate concept — when something fails, knowing which phase you're in tells you what to fix.
+构建一个 Twenty 应用包含三个阶段。 脚手架工具将它们合并为一个理想路径的命令，但每个阶段都是独立的概念——当出现问题时，知道自己处于哪个阶段可以指明需要修复什么。
 
-| Phase               | What you do                        | Tool                          | Result                        |
-| ------------------- | ---------------------------------- | ----------------------------- | ----------------------------- |
-| **1. Scaffold**     | Generate the app's source code     | `npx create-twenty-app`       | A TypeScript project on disk  |
-| **2. Run a server** | Start a Twenty server to sync into | Docker + `yarn twenty server` | A running Twenty instance     |
-| **3. Sync**         | Live-sync your code to the server  | `yarn twenty dev`             | Your changes appear in the UI |
+| 阶段           | 你要做什么                | 工具                            | 结果                   |
+| ------------ | -------------------- | ----------------------------- | -------------------- |
+| **1. 脚手架**   | 生成应用的源代码             | `npx create-twenty-app`       | 磁盘上的一个 TypeScript 项目 |
+| **2. 运行服务器** | 启动一个 Twenty 服务器以进行同步 | Docker + `yarn twenty server` | 一个正在运行的 Twenty 实例    |
+| **3. 同步**    | 将你的代码实时同步到服务器        | `yarn twenty dev`             | 你的更改会出现在 UI 中        |
 
 ---
 
-## Phase 1 — Scaffold your project
+## 阶段 1 — 搭建项目脚手架
 
-Create a new app from the template:
+从模板创建一个新应用：
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app
 ```
 
-You'll be prompted for a name and description — press **Enter** for the defaults. This generates a TypeScript project in `my-twenty-app/` with a starter `application-config.ts`, a default role, a CI workflow, and an integration test.
+系统会提示你输入名称和描述——按下 **Enter** 采用默认值。 这将在 `my-twenty-app/` 中生成一个 TypeScript 项目，包含一个入门版的 `application-config.ts`、一个默认角色、一个 CI 工作流，以及一个集成测试。
 
-**After this phase:** you have an app's source code on your machine. It isn't running yet — that's Phase 2.
+**完成此阶段后：** 你的机器上已有该应用的源代码。 它还未运行——那是第 2 阶段的内容。
 
 ---
 
-## Phase 2 — Run a local Twenty server
+## 阶段 2 — 运行本地 Twenty 服务器
 
-Your app needs a Twenty server to sync into. The server is a full Twenty instance — UI, GraphQL API, PostgreSQL — running locally in Docker. Your local code uploads its definitions to that server, which makes them appear in the UI.
+你的应用需要一个 Twenty 服务器来进行同步。 该服务器是一个完整的 Twenty 实例——包含 UI、GraphQL API、PostgreSQL——在本地的 Docker 中运行。 你的本地代码会将其定义上传到该服务器，从而使其显示在 UI 中。
 
-The scaffolder offers to start one for you:
+脚手架工具会为你提供启动它的选项：
 
-> **Would you like to set up a local Twenty instance?**
+> **是否要设置本地 Twenty 实例？**
 
-* **Yes (recommended)** — pulls the `twentycrm/twenty-app-dev` Docker image and starts it on port `2020`. Make sure Docker is running first.
-* **No** — choose this if you already have a Twenty server you want to connect to. You can wire it up later with `yarn twenty remote add`.
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Should start local instance?" />
-</div>
-
-Once the server is up, a browser opens for sign-in. Use the pre-seeded demo account:
-
-* **Email:** `tim@apple.dev`
-* **Password:** `tim@apple.dev`
+* **是（推荐）** — 将拉取 `twentycrm/twenty-app-dev` Docker 镜像，并在端口 `2020` 上启动它。 请先确保 Docker 正在运行。
+* **否** — 如果你已经有一个想要连接的 Twenty 服务器，请选择此项。 你可以稍后通过 `yarn twenty remote add` 将其连接起来。
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty login screen" />
+  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="是否启动本地实例？" />
 </div>
 
-Click **Authorize** on the next screen — this gives the CLI access to your workspace.
+服务器启动后，浏览器会打开登录页面。 使用预置的演示账户：
+
+* **邮箱：** `tim@apple.dev`
+* **密码：** `tim@apple.dev`
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI authorization screen" />
+  <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty 登录界面" />
 </div>
 
-Your terminal will confirm everything is set up.
+在下一屏点击 **Authorize** —— 这将授予 CLI 访问你工作区的权限。
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="App scaffolded successfully" />
+  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI 授权界面" />
 </div>
 
-**After this phase:** you have a running Twenty server at [http://localhost:2020](http://localhost:2020) with your CLI authorized to sync to it.
+你的终端会确认一切已就绪。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="应用脚手架创建成功" />
+</div>
+
+**完成此阶段后：** 你在 [http://localhost:2020](http://localhost:2020) 上拥有一个正在运行的 Twenty 服务器，且你的 CLI 已获授权可与其同步。
 
 <Note>
-If Docker isn't installed or running, the scaffolder will tell you the right start command for your OS. Once Docker is up, you can resume with `yarn twenty server start` — no need to re-scaffold.
+如果未安装或未运行 Docker，脚手架工具会告诉你在所用操作系统上正确的启动命令。 Docker 启动后，你可以通过 `yarn twenty server start` 继续——无需重新生成脚手架。
 </Note>
 
 ---
 
-## Phase 3 — Sync your changes
+## 阶段 3 — 同步你的更改
 
-This is the inner loop you'll spend most of your time in.
+这是你大部分时间所处的内循环。
 
 ```bash filename="Terminal"
 cd my-twenty-app
 yarn twenty dev
 ```
 
-This watches `src/`, rebuilds on every change, and syncs the result to the server. Edit a file, save, and within a second the server reflects the change. You'll see a live status panel in your terminal.
+它会监视 `src/`，在每次更改时重新构建，并将结果同步到服务器。 编辑文件、保存，服务器会在一秒内反映出更改。 你会在终端中看到一个实时状态面板。
 
-For more detailed output (build logs, sync requests, error traces), add `--verbose`.
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.png" alt="Dev mode terminal output" />
-</div>
-
-Open [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). You should see your app under **Your Apps**.
+如需更详细的输出（构建日志、同步请求、错误跟踪），请添加 `--verbose`。
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Your Apps list showing My twenty app" />
+  <img src="/images/docs/developers/extends/apps/dev.png" alt="开发模式终端输出" />
 </div>
 
-Click **My twenty app** to see its **application registration** — a server-level record describing your app (name, identifier, OAuth credentials, source). One registration can be installed across multiple workspaces on the same server.
+打开 [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer)。 你应当在 **你的应用** 下看到你的应用。
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Application registration details" />
+  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="“你的应用”列表显示 My twenty app" />
 </div>
 
-Click **View installed app** to see the workspace install. The **About** tab shows version and management options.
+点击 **My twenty app** 查看其**应用注册**——一条用于描述你的应用（名称、标识符、OAuth 凭据、来源）的服务器级记录。 同一服务器上的多个工作区可以安装同一个注册项。
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Installed app" />
+  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="应用注册详情" />
 </div>
 
-**After this phase:** you have a live development loop. Edit any file in `src/` and it appears in the UI.
+点击 **查看已安装的应用** 以查看工作区安装项。 **关于** 选项卡显示版本和管理选项。
 
-### One-shot sync for CI and scripts
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="已安装的应用" />
+</div>
 
-Pass `--once` to run a single build + sync and exit — same pipeline, no watcher:
+**完成此阶段后：** 你拥有一个实时的开发循环。 编辑 `src/` 中的任意文件，更改会显示在 UI 中。
+
+### 用于 CI 和脚本的一次性同步
+
+传入 `--once` 以执行一次构建与同步后退出——相同的流水线，无文件监视器：
 
 ```bash filename="Terminal"
 yarn twenty dev --once
 ```
 
-| Command                  | Behavior                                                      | When to use                                          |
-| ------------------------ | ------------------------------------------------------------- | ---------------------------------------------------- |
-| `yarn twenty dev`        | Watches and re-syncs on every change. Runs until you stop it. | Interactive local development.                       |
-| `yarn twenty dev --once` | Single build + sync, exits `0` on success, `1` on failure.    | CI, pre-commit hooks, AI agents, scripted workflows. |
+| 命令                       | 行为                               | 适用场景                           |
+| ------------------------ | -------------------------------- | ------------------------------ |
+| `yarn twenty dev`        | 监视并在每次更改时重新同步。 持续运行，直到你将其停止。     | 交互式本地开发。                       |
+| `yarn twenty dev --once` | 单次构建与同步，成功时以 `0` 退出，失败时以 `1` 退出。 | CI、pre-commit 钩子、AI 代理、脚本化工作流。 |
 
-Both modes need a server in development mode and an authenticated remote.
+两种模式都需要处于开发模式的服务器和已认证的远程。
 
 <Warning>
-Dev mode is only available on Twenty instances running in development (`NODE_ENV=development`). Production instances reject dev sync requests — use `yarn twenty deploy` to deploy to production servers. See [Publishing](/l/zh/developers/extend/apps/operations/publishing).
+开发模式仅适用于以开发模式运行的 Twenty 实例（`NODE_ENV=development`）。 生产实例会拒绝开发同步请求——请使用 `yarn twenty deploy` 部署到生产服务器。 参见[发布](/l/zh/developers/extend/apps/operations/publishing)。
 </Warning>
 
 ---
 
-## Starting from an example
+## 从示例开始
 
-Use `--example` to start with a more complete project (custom objects, fields, logic functions, front components):
+使用 `--example` 从一个更完整的项目开始（自定义对象、字段、逻辑函数、前端组件）：
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app --example postcard
 ```
 
-Examples live in [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). You can also scaffold individual entities into an existing project with `yarn twenty add` — see [Scaffolding](/l/zh/developers/extend/apps/getting-started/scaffolding).
+示例位于 [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples)。 你也可以使用 `yarn twenty add` 为现有项目生成单个实体的脚手架——参见[脚手架](/l/zh/developers/extend/apps/getting-started/scaffolding)。
 
 ---
 
-## What you can build
+## 你可以构建的内容
 
-Apps are composed of **entities** — each defined as a TypeScript file with a single `export default`:
+应用由**实体**组成——每个实体定义为一个包含单一 `export default` 的 TypeScript 文件：
 
-| Entity                 | What it does                                                                        |
-| ---------------------- | ----------------------------------------------------------------------------------- |
-| **Objects & Fields**   | Custom data models (Post Card, Invoice, etc.) with typed fields                     |
-| **Logic functions**    | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events |
-| **Front components**   | React components that render inside Twenty's UI (side panel, widgets, command menu) |
-| **Skills & Agents**    | AI capabilities — reusable instructions and autonomous assistants                   |
-| **Views & Navigation** | Pre-configured list views and sidebar menu items                                    |
-| **Page layouts**       | Custom record detail pages with tabs and widgets                                    |
+| 实体         | 作用                                         |
+| ---------- | ------------------------------------------ |
+| **对象与字段**  | 自定义数据模型（明信片、发票等） 带有类型化字段                   |
+| **逻辑函数**   | 由 HTTP 路由、cron 调度或数据库事件触发的服务端 TypeScript   |
+| **前端组件**   | 在 Twenty 的 UI 内渲染的 React 组件（侧边面板、小部件、命令菜单） |
+| **技能与智能体** | AI 能力——可复用的指令和自主助手                         |
+| **视图与导航**  | 预配置的列表视图和侧边栏菜单项                            |
+| **页面布局**   | 带有选项卡和小部件的自定义记录详情页                         |
 
-Full reference: [Concepts](/l/zh/developers/extend/apps/getting-started/concepts).
+完整参考：[概念](/l/zh/developers/extend/apps/getting-started/concepts)。
 
-## Next steps
+## 后续步骤
 
 <CardGroup cols={2}>
-  <Card title="Config" icon="screwdriver-wrench" href="/l/zh/developers/extend/apps/config/overview">
-    Application identity, default role, install hooks, public assets.
+  <Card title="配置" icon="screwdriver-wrench" href="/l/zh/developers/extend/apps/config/overview">
+    应用身份、默认角色、安装钩子、公共资源。
   </Card>
-  <Card title="Data" icon="database" href="/l/zh/developers/extend/apps/data/overview">
-    Objects, fields, and bidirectional relations.
+  <Card title="数据" icon="database" href="/l/zh/developers/extend/apps/data/overview">
+    对象、字段和双向关系。
   </Card>
-  <Card title="Logic" icon="bolt" href="/l/zh/developers/extend/apps/logic/overview">
-    Logic functions, skills, agents, and OAuth connections.
+  <Card title="逻辑" icon="bolt" href="/l/zh/developers/extend/apps/logic/overview">
+    逻辑函数、技能、代理和 OAuth 连接。
   </Card>
-  <Card title="Layout" icon="table-columns" href="/l/zh/developers/extend/apps/layout/overview">
-    Views, navigation, page layouts, front components.
+  <Card title="布局" icon="table-columns" href="/l/zh/developers/extend/apps/layout/overview">
+    视图、导航、页面布局、前端组件。
   </Card>
-  <Card title="Operations" icon="rocket" href="/l/zh/developers/extend/apps/operations/overview">
-    CLI, testing, remotes, CI, and publishing your app.
+  <Card title="操作" icon="rocket" href="/l/zh/developers/extend/apps/operations/overview">
+    CLI、测试、远程、CI，以及发布你的应用。
   </Card>
 </CardGroup>

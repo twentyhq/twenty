@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Shape the data your app adds to a workspace — objects, fields, and relations.
+title: Обзор
+description: Определяйте структуру данных, которые ваше приложение добавляет в рабочее пространство — объекты, поля и связи.
 icon: database
 ---
 
-A Twenty app's **data layer** is the data your app *adds* to a workspace — the new record types it declares, the columns it adds to existing objects, and how those records connect to each other.
+**Уровень данных** приложения Twenty — это данные, которые ваше приложение *добавляет* в рабочее пространство: новые типы записей, которые оно объявляет, столбцы, которые оно добавляет к существующим объектам, и то, как эти записи связываются друг с другом.
 
 ```text
 ┌──────────────────────────────────────────────────┐
@@ -23,30 +23,30 @@ A Twenty app's **data layer** is the data your app *adds* to a workspace — the
 └──────────────────────────────────────────────────┘
 ```
 
-## In this section
+## В этом разделе
 
 <CardGroup cols={2}>
-  <Card title="Objects" icon="table" href="/l/ru/developers/extend/apps/data/objects">
-    `defineObject` — declare new record types with their own fields.
+  <Card title="Объекты" icon="таблица" href="/l/ru/developers/extend/apps/data/objects">
+    `defineObject` — объявляйте новые типы записей с их собственными полями.
   </Card>
-  <Card title="Extending Objects" icon="wand-magic-sparkles" href="/l/ru/developers/extend/apps/data/extending-objects">
-    `defineField` — add fields to standard or other apps' objects.
+  <Card title="Расширение объектов" icon="wand-magic-sparkles" href="/l/ru/developers/extend/apps/data/extending-objects">
+    `defineField` — добавляйте поля к стандартным объектам или объектам других приложений.
   </Card>
-  <Card title="Relations" icon="diagram-project" href="/l/ru/developers/extend/apps/data/relations">
-    Bidirectional `MANY_TO_ONE` / `ONE_TO_MANY` connections between objects.
+  <Card title="Связи" icon="diagram-project" href="/l/ru/developers/extend/apps/data/relations">
+    Двусторонние связи `MANY_TO_ONE` / `ONE_TO_MANY` между объектами.
   </Card>
 </CardGroup>
 
-## Entities at a glance
+## Сущности одним взглядом
 
-| Entity       | Purpose                                                                                                           | Defined with                              |
-| ------------ | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Object**   | A new custom record type (e.g. PostCard, Invoice) with its own fields                                             | `defineObject()`                          |
-| **Field**    | A column on an object. Standalone fields can extend objects you didn't create (e.g. add `loyaltyTier` to Company) | `defineField()`                           |
-| **Relation** | A bidirectional link between two objects — both sides declared as fields                                          | `defineField()` with `FieldType.RELATION` |
+| Сущность   | Назначение                                                                                                                      | Определяется с помощью                 |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **Объект** | Новый пользовательский тип записей (например, PostCard, Invoice) с собственными полями                                          | `defineObject()`                       |
+| **Поле**   | Столбец в объекте. Отдельные поля могут расширять объекты, которые вы не создавали (например, добавить `loyaltyTier` к Company) | `defineField()`                        |
+| **Связь**  | Двусторонняя связь между двумя объектами — обе стороны объявлены как поля                                                       | `defineField()` с `FieldType.RELATION` |
 
-The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/` and `src/fields/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
+SDK обнаруживает их с помощью анализа AST во время сборки, поэтому организация файлов остается на ваше усмотрение — по соглашению используются `src/objects/` и `src/fields/`. Стабильные UUID `universalIdentifier` связывают все воедино между развертываниями.
 
 <Note>
-Looking for **Application Config** or **Roles & Permissions**? Those describe the app itself rather than the data it adds — they live under [Config](/l/ru/developers/extend/apps/config/overview). Looking for **Connections** (Linear, GitHub, Slack OAuth)? Those exist to be called *from* logic functions and live under [Logic](/l/ru/developers/extend/apps/logic/connections).
+Ищете **Application Config** или **Roles & Permissions**? Они описывают само приложение, а не данные, которые оно добавляет, — их можно найти в разделе [Config](/l/ru/developers/extend/apps/config/overview). Ищете **Connections** (Linear, GitHub, Slack OAuth)? Они существуют для вызова *из* логических функций и находятся в разделе [Logic](/l/ru/developers/extend/apps/logic/connections).
 </Note>

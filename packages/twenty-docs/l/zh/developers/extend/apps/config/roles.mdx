@@ -1,10 +1,10 @@
 ---
-title: Roles & Permissions
-description: Declare what objects and fields your app's logic functions and front components can read and write.
+title: 角色和权限
+description: 声明你的应用的逻辑函数和前端组件可以读取和写入哪些对象和字段。
 icon: shield-halved
 ---
 
-A **role** is a permission set: which objects an app can read or write, which fields it can see, and which platform-level capabilities it can use. Every app's logic functions and front components inherit the permissions of the role declared as `defaultRoleUniversalIdentifier` in [`defineApplication`](/l/zh/developers/extend/apps/config/application).
+**角色（role）** 是一组权限：应用可以读取或写入哪些对象，可以查看哪些字段，以及可以使用哪些平台级功能。 每个应用的逻辑函数和前端组件都会继承在 [`defineApplication`](/l/zh/developers/extend/apps/config/application) 中被声明为 `defaultRoleUniversalIdentifier` 的角色的权限。
 
 ```ts src/roles/restricted-company-role.ts
 import {
@@ -49,9 +49,9 @@ export default defineRole({
 });
 ```
 
-## The default function role
+## 默认函数角色
 
-When you scaffold a new app, the CLI creates a default role file:
+当你使用脚手架创建新应用时，CLI 会创建一个默认角色文件：
 
 ```ts src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk/define';
@@ -77,14 +77,14 @@ export default defineRole({
 });
 ```
 
-This role's `universalIdentifier` is referenced from `application-config.ts` as `defaultRoleUniversalIdentifier`:
+该角色的 `universalIdentifier` 会在 `application-config.ts` 中被引用为 `defaultRoleUniversalIdentifier`：
 
-* **`*.role.ts`** declares what the role can do.
-* **`application-config.ts`** points to that role so your functions inherit its permissions.
+* **`*.role.ts`** 声明该角色可以执行的操作。
+* **`application-config.ts`** 指向该角色，使你的函数继承其权限。
 
-## Best practices
+## 最佳实践
 
-* Start from the scaffolded role, then progressively restrict it — the default grants broad read access, which is rarely what you want in production.
-* Replace `objectPermissions` and `fieldPermissions` with the exact objects and fields your functions actually need.
-* `permissionFlags` control access to platform-level capabilities. Keep them minimal.
-* See a working example: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* 从脚手架生成的角色开始，然后逐步收紧它的权限——默认角色授予广泛的读取访问权限，而这在生产环境中很少是你想要的。
+* 将 `objectPermissions` 和 `fieldPermissions` 替换为你的函数实际需要的精确对象和字段。
+* `permissionFlags` 控制对平台级能力的访问。 尽量保持最小化。
+* 查看一个可运行示例：[`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。

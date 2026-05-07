@@ -1,15 +1,15 @@
 ---
-title: Application Config
-description: Declare your app's identity, default role, variables, and marketplace metadata with defineApplication.
+title: Configurația aplicației
+description: Declarați identitatea aplicației, rolul implicit, variabilele și metadatele din marketplace cu `defineApplication`.
 icon: rocket
 ---
 
-Every app must have exactly one `defineApplication` call. It declares:
+Fiecare aplicație trebuie să aibă exact un apel `defineApplication`. Acesta declară:
 
-* **Identity** — universal identifier, display name, description.
-* **Permissions** — which role its logic functions and front components run under.
-* **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
-* **Pre-install / post-install hooks** *(optional)* — see [Logic Functions](/l/ro/developers/extend/apps/logic/logic-functions).
+* **Identitate** — identificator universal, nume de afișare, descriere.
+* **Permisiuni** — sub ce rol rulează funcțiile logice și componentele front-end ale acesteia.
+* **Variabile** *(opțional)* — perechi cheie–valoare expuse codului dvs. ca variabile de mediu.
+* **Hook-uri de pre-instalare / post-instalare** *(opțional)* — vedeți [Funcții logice](/l/ro/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -31,35 +31,35 @@ export default defineApplication({
 });
 ```
 
-Notes:
+Notițe:
 
-* `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions and front components (e.g., `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` must reference a role defined with [`defineRole()`](/l/ro/developers/extend/apps/config/roles).
-* Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+* Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți. Generați-le o singură dată și mențineți-le stabile între sincronizări.
+* `applicationVariables` devin variabile de mediu pentru funcțiile și componentele front-end (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` trebuie să facă referire la un rol definit cu [`defineRole()`](/l/ro/developers/extend/apps/config/roles).
+* Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului — nu trebuie să le referiți în `defineApplication()`.
 
-## Default function role
+## Rol implicit pentru funcții
 
-The `defaultRoleUniversalIdentifier` controls what the app's logic functions and front components can access:
+`defaultRoleUniversalIdentifier` controlează la ce pot avea acces funcțiile logice și componentele front-end ale aplicației:
 
-* The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
-* The typed API client is restricted to the permissions granted to that role.
-* Follow least-privilege: declare only the permissions your functions need.
+* Tokenul de runtime injectat ca `TWENTY_APP_ACCESS_TOKEN` este derivat din acest rol.
+* Clientul API tipizat este restricționat la permisiunile acordate acelui rol.
+* Respectați principiul celui mai mic privilegiu: declarați doar permisiunile de care au nevoie funcțiile.
 
-When you scaffold a new app, the CLI creates a starter role file at `src/roles/default-role.ts`. See [Roles & Permissions](/l/ro/developers/extend/apps/config/roles) for the full reference.
+Când generați o aplicație nouă, CLI creează un fișier de rol de pornire la `src/roles/default-role.ts`. Consultați [Roluri și permisiuni](/l/ro/developers/extend/apps/config/roles) pentru referința completă.
 
-## Marketplace metadata
+## Metadate pentru marketplace
 
-If you plan to [publish your app](/l/ro/developers/extend/apps/operations/publishing), these optional fields control how it appears in the marketplace:
+Dacă intenționați să [publicați aplicația](/l/ro/developers/extend/apps/operations/publishing), aceste câmpuri opționale controlează modul în care apare în marketplace:
 
-| Field              | Description                                                                                                          |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `author`           | Author or company name                                                                                               |
-| `category`         | App category for marketplace filtering                                                                               |
-| `logoUrl`          | Path to your app logo (e.g., `public/logo.png`)                                                                      |
-| `screenshots`      | Array of screenshot paths (e.g., `public/screenshot-1.png`)                                                          |
-| `aboutDescription` | Longer markdown description for the "About" tab. If omitted, the marketplace uses the package's `README.md` from npm |
-| `websiteUrl`       | Link to your website                                                                                                 |
-| `termsUrl`         | Link to terms of service                                                                                             |
-| `emailSupport`     | Support email address                                                                                                |
-| `issueReportUrl`   | Link to issue tracker                                                                                                |
+| Câmp               | Descriere                                                                                                                      |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `author`           | Numele autorului sau al companiei                                                                                              |
+| `category`         | Categoria aplicației pentru filtrarea în marketplace                                                                           |
+| `logoUrl`          | Calea către logo-ul aplicației (de ex., `public/logo.png`)                                                                     |
+| `screenshots`      | Array de căi către capturi de ecran (de ex., `public/screenshot-1.png`)                                                        |
+| `aboutDescription` | Descriere markdown mai lungă pentru fila "About". Dacă este omis, marketplace-ul folosește `README.md` al pachetului de pe npm |
+| `websiteUrl`       | Link către site-ul dvs.                                                                                                        |
+| `termsUrl`         | Link către termenii de serviciu                                                                                                |
+| `emailSupport`     | Adresă de e-mail pentru suport                                                                                                 |
+| `issueReportUrl`   | Link către sistemul de urmărire a problemelor                                                                                  |

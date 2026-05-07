@@ -1,14 +1,14 @@
 ---
-title: Concepts
-description: How Twenty apps work — entity model, sandboxing, and the install lifecycle.
+title: Концепции
+description: Как работают приложения Twenty — модель сущностей, песочницы и жизненный цикл установки.
 icon: sitemap
 ---
 
-Twenty apps are TypeScript packages that extend your workspace with custom objects, logic, UI components, and AI capabilities. They run on the Twenty platform with full sandboxing and permission controls.
+Приложения Twenty — это пакеты TypeScript, которые расширяют ваше рабочее пространство пользовательскими объектами, логикой, компонентами интерфейса и возможностями ИИ. Они работают на платформе Twenty с полной изоляцией в песочнице и контролем прав доступа.
 
-## How apps work
+## Как работают приложения
 
-An app is a collection of **entities** declared using `defineEntity()` functions from the `twenty-sdk` package. The SDK detects these declarations via AST analysis at build time and produces a **manifest** — a complete description of what your app adds to a workspace. These functions validate your configuration at build time and provide IDE autocompletion and type safety.
+Приложение — это набор **сущностей**, объявленных с помощью функций `defineEntity()` из пакета `twenty-sdk`. SDK обнаруживает эти объявления посредством анализа AST на этапе сборки и формирует **манифест** — полное описание того, что ваше приложение добавляет в рабочее пространство. Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
 
 ```
 your-app/
@@ -29,35 +29,35 @@ your-app/
 ```
 
 <Note>
-  **File organization is up to you.** Entity detection is AST-based — the SDK finds `export default defineEntity(...)` calls regardless of where the file lives. The folder structure above is a convention, not a requirement.
+  **Организация файлов — на ваше усмотрение.** Обнаружение сущностей основано на AST — SDK находит вызовы `export default defineEntity(...)` независимо от расположения файла. Структура папок выше — это соглашение, а не требование.
 </Note>
 
-## Entity types
+## Типы сущностей
 
-| Entity                   | Purpose                                    | Docs                                                                          |
-| ------------------------ | ------------------------------------------ | ----------------------------------------------------------------------------- |
-| **Application**          | App identity, default role, variables      | [Application Config](/l/ru/developers/extend/apps/config/application)              |
-| **Role**                 | Permission sets on objects and fields      | [Roles & Permissions](/l/ru/developers/extend/apps/config/roles)                   |
-| **Object**               | Custom record types with fields            | [Objects](/l/ru/developers/extend/apps/data/objects)                               |
-| **Field**                | Add fields to objects from other apps      | [Extending Objects](/l/ru/developers/extend/apps/data/extending-objects)           |
-| **Relation**             | Bidirectional links between objects        | [Relations](/l/ru/developers/extend/apps/data/relations)                           |
-| **Logic Function**       | Server-side TypeScript with triggers       | [Logic Functions](/l/ru/developers/extend/apps/logic/logic-functions)              |
-| **Skill**                | Reusable AI agent instructions             | [Skills & Agents](/l/ru/developers/extend/apps/logic/skills-and-agents)            |
-| **Agent**                | AI assistants with custom prompts          | [Skills & Agents](/l/ru/developers/extend/apps/logic/skills-and-agents)            |
-| **Connection Provider**  | OAuth credentials for third-party APIs     | [Connections](/l/ru/developers/extend/apps/logic/connections)                      |
-| **View**                 | Pre-configured record list views           | [Views](/l/ru/developers/extend/apps/layout/views)                                 |
-| **Navigation Menu Item** | Custom sidebar entries                     | [Navigation Menu Items](/l/ru/developers/extend/apps/layout/navigation-menu-items) |
-| **Page Layout**          | Tabs and widgets on a record's detail page | [Page Layouts](/l/ru/developers/extend/apps/layout/page-layouts)                   |
-| **Front Component**      | Sandboxed React UI inside Twenty           | [Front Components](/l/ru/developers/extend/apps/layout/front-components)           |
-| **Command Menu Item**    | Quick actions and Cmd+K entries            | [Command Menu Items](/l/ru/developers/extend/apps/layout/command-menu-items)       |
+| Сущность                  | Назначение                                              | Документация                                                                    |
+| ------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| **Приложение**            | Идентификация приложения, роль по умолчанию, переменные | [Конфигурация приложения](/l/ru/developers/extend/apps/config/application)           |
+| **Роль**                  | Наборы прав для объектов и полей                        | [Роли и права доступа](/l/ru/developers/extend/apps/config/roles)                    |
+| **Объект**                | Пользовательские типы записей с полями                  | [Объекты](/l/ru/developers/extend/apps/data/objects)                                 |
+| **Поле**                  | Добавляйте поля к объектам из других приложений         | [Расширение объектов](/l/ru/developers/extend/apps/data/extending-objects)           |
+| **Связь**                 | Двунаправленные связи между объектами                   | [Связи](/l/ru/developers/extend/apps/data/relations)                                 |
+| **Логическая функция**    | Серверный TypeScript с триггерами                       | [Логические функции](/l/ru/developers/extend/apps/logic/logic-functions)             |
+| **Навык**                 | Повторно используемые инструкции для ИИ-агента          | [Навыки и агенты](/l/ru/developers/extend/apps/logic/skills-and-agents)              |
+| **Агент**                 | ИИ-агенты с пользовательскими промптами                 | [Навыки и агенты](/l/ru/developers/extend/apps/logic/skills-and-agents)              |
+| **Провайдер подключения** | OAuth-учетные данные для сторонних API                  | [Подключения](/l/ru/developers/extend/apps/logic/connections)                        |
+| **Представление**         | Преднастроенные представления списков записей           | [Представления](/l/ru/developers/extend/apps/layout/views)                           |
+| **Пункт меню навигации**  | Пользовательские элементы боковой панели                | [Элементы меню навигации](/l/ru/developers/extend/apps/layout/navigation-menu-items) |
+| **Макет страницы**        | Вкладки и виджеты на странице сведений о записи         | [Макеты страниц](/l/ru/developers/extend/apps/layout/page-layouts)                   |
+| **Компонент фронтенда**   | Изолированный в песочнице интерфейс React внутри Twenty | [Компоненты фронтенда](/l/ru/developers/extend/apps/layout/front-components)         |
+| **Элемент меню команд**   | Быстрые действия и элементы Cmd+K                       | [Элементы меню команд](/l/ru/developers/extend/apps/layout/command-menu-items)       |
 
-## Sandboxing
+## Изоляция в песочнице
 
-* **Logic functions** run in isolated Node.js processes on the server. They only access data through the typed API client, scoped to the app's role permissions.
-* **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes). They communicate with Twenty via a message-passing host API.
-* **Permissions** are enforced at the API level. The runtime token (`TWENTY_APP_ACCESS_TOKEN`) is derived from the role defined in `defineApplication()`.
+* **Логические функции** выполняются в изолированных процессах Node.js на сервере. Они получают доступ к данным только через типизированный клиент API, ограниченный правами роли приложения.
+* **Компоненты фронтенда** запускаются в Web Workers с использованием Remote DOM — изолированы от основной страницы, но при этом рендерят нативные элементы DOM (не iframes). Они взаимодействуют с Twenty через хостовый API обмена сообщениями.
+* **Права доступа** применяются на уровне API. Токен времени выполнения (`TWENTY_APP_ACCESS_TOKEN`) выводится из роли, определённой в `defineApplication()`.
 
-## App lifecycle
+## Жизненный цикл приложения
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -76,26 +76,26 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`yarn twenty dev`** — watches your source files and live-syncs changes to a connected Twenty server. The typed API client is regenerated automatically when the schema changes.
-* **`yarn twenty build`** — compiles TypeScript, bundles logic functions and front components with esbuild, and produces a manifest.
-* **Pre/post-install hooks** — optional functions that run during installation. See [Install Hooks](/l/ru/developers/extend/apps/config/install-hooks) for details.
+* **`yarn twenty dev`** — следит за исходными файлами и синхронизирует изменения в реальном времени с подключённым сервером Twenty. Типизированный клиент API автоматически пересоздаётся при изменении схемы.
+* **`yarn twenty build`** — компилирует TypeScript, упаковывает логические функции и фронтенд-компоненты с помощью esbuild и формирует манифест.
+* **Хуки до/после установки** — необязательные функции, которые выполняются во время установки. См. раздел [Install Hooks](/l/ru/developers/extend/apps/config/install-hooks) для подробностей.
 
-## Next steps
+## Следующие шаги
 
 <CardGroup cols={2}>
-  <Card title="Config" icon="screwdriver-wrench" href="/l/ru/developers/extend/apps/config/overview">
-    Application identity, default role, and install hooks.
+  <Card title="Конфигурация" icon="screwdriver-wrench" href="/l/ru/developers/extend/apps/config/overview">
+    Идентификация приложения, роль по умолчанию и хуки установки.
   </Card>
-  <Card title="Data" icon="database" href="/l/ru/developers/extend/apps/data/overview">
-    Objects, fields, and bidirectional relations.
+  <Card title="Данные" icon="database" href="/l/ru/developers/extend/apps/data/overview">
+    Объекты, поля и двунаправленные связи.
   </Card>
-  <Card title="Logic" icon="bolt" href="/l/ru/developers/extend/apps/logic/overview">
-    Logic functions, skills, agents, and OAuth connections.
+  <Card title="Логика" icon="bolt" href="/l/ru/developers/extend/apps/logic/overview">
+    Логические функции, навыки, агенты и OAuth-подключения.
   </Card>
-  <Card title="Layout" icon="table-columns" href="/l/ru/developers/extend/apps/layout/overview">
-    Views, navigation, page layouts, front components.
+  <Card title="Макет" icon="table-columns" href="/l/ru/developers/extend/apps/layout/overview">
+    Представления, навигация, макеты страниц, фронтенд-компоненты.
   </Card>
-  <Card title="Operations" icon="rocket" href="/l/ru/developers/extend/apps/operations/overview">
-    CLI, testing, remotes, CI, and publishing your app.
+  <Card title="Операции" icon="rocket" href="/l/ru/developers/extend/apps/operations/overview">
+    CLI, тестирование, удаленные окружения, CI и публикация вашего приложения.
   </Card>
 </CardGroup>

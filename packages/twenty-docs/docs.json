@@ -2107,7 +2107,7 @@
                 "group": "Apps",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "Erste Schritte",
                     "pages": [
                       "l/de/developers/extend/apps/getting-started/quick-start",
                       "l/de/developers/extend/apps/getting-started/concepts",
@@ -2118,7 +2118,7 @@
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "Konfiguration",
                     "pages": [
                       "l/de/developers/extend/apps/config/overview",
                       "l/de/developers/extend/apps/config/application",
@@ -2128,7 +2128,7 @@
                     ]
                   },
                   {
-                    "group": "Data",
+                    "group": "Daten",
                     "pages": [
                       "l/de/developers/extend/apps/data/overview",
                       "l/de/developers/extend/apps/data/objects",
@@ -2137,7 +2137,7 @@
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "Logik",
                     "pages": [
                       "l/de/developers/extend/apps/logic/overview",
                       "l/de/developers/extend/apps/logic/logic-functions",
@@ -2157,7 +2157,7 @@
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "Operationen",
                     "pages": [
                       "l/de/developers/extend/apps/operations/overview",
                       "l/de/developers/extend/apps/operations/cli",
@@ -4272,7 +4272,7 @@
                 "group": "Aplicativos",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "Primeiros passos",
                     "pages": [
                       "l/pt/developers/extend/apps/getting-started/quick-start",
                       "l/pt/developers/extend/apps/getting-started/concepts",
@@ -4283,7 +4283,7 @@
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "Configuração",
                     "pages": [
                       "l/pt/developers/extend/apps/config/overview",
                       "l/pt/developers/extend/apps/config/application",
@@ -4302,7 +4302,7 @@
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "Lógica",
                     "pages": [
                       "l/pt/developers/extend/apps/logic/overview",
                       "l/pt/developers/extend/apps/logic/logic-functions",
@@ -4322,7 +4322,7 @@
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "Operações",
                     "pages": [
                       "l/pt/developers/extend/apps/operations/overview",
                       "l/pt/developers/extend/apps/operations/cli",
@@ -4705,7 +4705,7 @@
                 "group": "Aplicații",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "Începeți",
                     "pages": [
                       "l/ro/developers/extend/apps/getting-started/quick-start",
                       "l/ro/developers/extend/apps/getting-started/concepts",
@@ -4716,7 +4716,7 @@
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "Configurare",
                     "pages": [
                       "l/ro/developers/extend/apps/config/overview",
                       "l/ro/developers/extend/apps/config/application",
@@ -4726,7 +4726,7 @@
                     ]
                   },
                   {
-                    "group": "Data",
+                    "group": "Date",
                     "pages": [
                       "l/ro/developers/extend/apps/data/overview",
                       "l/ro/developers/extend/apps/data/objects",
@@ -4735,7 +4735,7 @@
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "Logică",
                     "pages": [
                       "l/ro/developers/extend/apps/logic/overview",
                       "l/ro/developers/extend/apps/logic/logic-functions",
@@ -4744,7 +4744,7 @@
                     ]
                   },
                   {
-                    "group": "Layout",
+                    "group": "Aspect",
                     "pages": [
                       "l/ro/developers/extend/apps/layout/overview",
                       "l/ro/developers/extend/apps/layout/views",
@@ -4755,7 +4755,7 @@
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "Operațiuni",
                     "pages": [
                       "l/ro/developers/extend/apps/operations/overview",
                       "l/ro/developers/extend/apps/operations/cli",
@@ -5138,7 +5138,7 @@
                 "group": "Приложения",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "Начало работы",
                     "pages": [
                       "l/ru/developers/extend/apps/getting-started/quick-start",
                       "l/ru/developers/extend/apps/getting-started/concepts",
@@ -5149,7 +5149,7 @@
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "Конфигурация",
                     "pages": [
                       "l/ru/developers/extend/apps/config/overview",
                       "l/ru/developers/extend/apps/config/application",
@@ -5159,7 +5159,7 @@
                     ]
                   },
                   {
-                    "group": "Data",
+                    "group": "Данные",
                     "pages": [
                       "l/ru/developers/extend/apps/data/overview",
                       "l/ru/developers/extend/apps/data/objects",
@@ -5168,7 +5168,7 @@
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "Логика",
                     "pages": [
                       "l/ru/developers/extend/apps/logic/overview",
                       "l/ru/developers/extend/apps/logic/logic-functions",
@@ -5177,7 +5177,7 @@
                     ]
                   },
                   {
-                    "group": "Layout",
+                    "group": "Макет",
                     "pages": [
                       "l/ru/developers/extend/apps/layout/overview",
                       "l/ru/developers/extend/apps/layout/views",
@@ -5188,7 +5188,7 @@
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "Операции",
                     "pages": [
                       "l/ru/developers/extend/apps/operations/overview",
                       "l/ru/developers/extend/apps/operations/cli",
@@ -5571,7 +5571,7 @@
                 "group": "Uygulamalar",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "Başlarken",
                     "pages": [
                       "l/tr/developers/extend/apps/getting-started/quick-start",
                       "l/tr/developers/extend/apps/getting-started/concepts",
@@ -5582,7 +5582,7 @@
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "Yapılandırma",
                     "pages": [
                       "l/tr/developers/extend/apps/config/overview",
                       "l/tr/developers/extend/apps/config/application",
@@ -5592,7 +5592,7 @@
                     ]
                   },
                   {
-                    "group": "Data",
+                    "group": "Veri",
                     "pages": [
                       "l/tr/developers/extend/apps/data/overview",
                       "l/tr/developers/extend/apps/data/objects",
@@ -5601,7 +5601,7 @@
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "Mantık",
                     "pages": [
                       "l/tr/developers/extend/apps/logic/overview",
                       "l/tr/developers/extend/apps/logic/logic-functions",
@@ -5610,7 +5610,7 @@
                     ]
                   },
                   {
-                    "group": "Layout",
+                    "group": "Düzen",
                     "pages": [
                       "l/tr/developers/extend/apps/layout/overview",
                       "l/tr/developers/extend/apps/layout/views",
@@ -5621,7 +5621,7 @@
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "İşlemler",
                     "pages": [
                       "l/tr/developers/extend/apps/operations/overview",
                       "l/tr/developers/extend/apps/operations/cli",
@@ -6004,7 +6004,7 @@
                 "group": "应用",
                 "pages": [
                   {
-                    "group": "Getting Started",
+                    "group": "开始使用",
                     "pages": [
                       "l/zh/developers/extend/apps/getting-started/quick-start",
                       "l/zh/developers/extend/apps/getting-started/concepts",
@@ -6015,7 +6015,7 @@
                     ]
                   },
                   {
-                    "group": "Config",
+                    "group": "配置",
                     "pages": [
                       "l/zh/developers/extend/apps/config/overview",
                       "l/zh/developers/extend/apps/config/application",
@@ -6025,7 +6025,7 @@
                     ]
                   },
                   {
-                    "group": "Data",
+                    "group": "数据",
                     "pages": [
                       "l/zh/developers/extend/apps/data/overview",
                       "l/zh/developers/extend/apps/data/objects",
@@ -6034,7 +6034,7 @@
                     ]
                   },
                   {
-                    "group": "Logic",
+                    "group": "逻辑",
                     "pages": [
                       "l/zh/developers/extend/apps/logic/overview",
                       "l/zh/developers/extend/apps/logic/logic-functions",
@@ -6043,7 +6043,7 @@
                     ]
                   },
                   {
-                    "group": "Layout",
+                    "group": "布局",
                     "pages": [
                       "l/zh/developers/extend/apps/layout/overview",
                       "l/zh/developers/extend/apps/layout/views",
@@ -6054,7 +6054,7 @@
                     ]
                   },
                   {
-                    "group": "Operations",
+                    "group": "操作",
                     "pages": [
                       "l/zh/developers/extend/apps/operations/overview",
                       "l/zh/developers/extend/apps/operations/cli",

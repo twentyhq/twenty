@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Place your app inside Twenty's UI — sidebar entries, saved views, record page tabs, and sandboxed React components.
+title: Prezentare generală
+description: Integrează-ți aplicația în interfața Twenty — intrări în bara laterală, vizualizări salvate, file în pagina de detalii a înregistrărilor și componente React izolate.
 icon: table-columns
 ---
 
-A Twenty app's **layout layer** is everything the user sees: where the app surfaces in the sidebar, which list views it ships, how its record detail pages are arranged, and which custom React components render inside those pages.
+**Stratul de layout** al unei aplicații Twenty reprezintă tot ceea ce vede utilizatorul: unde apare aplicația în bara laterală, ce vizualizări de listă oferă, cum sunt aranjate paginile de detalii ale înregistrărilor și ce componente React personalizate sunt afișate în interiorul acelor pagini.
 
 ```text
    Sidebar               Record list            Record detail page
@@ -23,34 +23,34 @@ A Twenty app's **layout layer** is everything the user sees: where the app surfa
                                 and filters    └─────────────────────┘
 ```
 
-## In this section
+## În această secțiune
 
 <CardGroup cols={2}>
-  <Card title="Views" icon="list" href="/l/ro/developers/extend/apps/layout/views">
-    `defineView` — saved list configurations: visible columns, filters, groups.
+  <Card title="Vizualizări" icon="listă" href="/l/ro/developers/extend/apps/layout/views">
+    `defineView` — configurații salvate de liste: coloane vizibile, filtre, grupuri.
   </Card>
-  <Card title="Navigation Menu Items" icon="bars" href="/l/ro/developers/extend/apps/layout/navigation-menu-items">
-    `defineNavigationMenuItem` — sidebar entries pointing at views or external URLs.
+  <Card title="Elemente din meniul de navigare" icon="bars" href="/l/ro/developers/extend/apps/layout/navigation-menu-items">
+    `defineNavigationMenuItem` — intrări în bara laterală care trimit către vizualizări sau URL-uri externe.
   </Card>
-  <Card title="Page Layouts" icon="table-columns" href="/l/ro/developers/extend/apps/layout/page-layouts">
-    `definePageLayout` and `definePageLayoutTab` — tabs and widgets on a record's detail page.
+  <Card title="Layouturi de pagină" icon="table-columns" href="/l/ro/developers/extend/apps/layout/page-layouts">
+    `definePageLayout` și `definePageLayoutTab` — file și widgeturi pe pagina de detalii a unei înregistrări.
   </Card>
-  <Card title="Front Components" icon="window-maximize" href="/l/ro/developers/extend/apps/layout/front-components">
-    `defineFrontComponent` — sandboxed React components that render inside Twenty.
+  <Card title="Componente front-end" icon="window-maximize" href="/l/ro/developers/extend/apps/layout/front-components">
+    `defineFrontComponent` — componente React izolate care rulează în interiorul Twenty.
   </Card>
-  <Card title="Command Menu Items" icon="terminal" href="/l/ro/developers/extend/apps/layout/command-menu-items">
-    `defineCommandMenuItem` — register front components as Cmd+K entries and quick actions.
+  <Card title="Elemente din meniul de comenzi" icon="terminal" href="/l/ro/developers/extend/apps/layout/command-menu-items">
+    `defineCommandMenuItem` — înregistrează componente front ca intrări Cmd+K și acțiuni rapide.
   </Card>
 </CardGroup>
 
-## Where the app surfaces
+## Unde este afișată aplicația
 
-| Surface                     | What it controls                                                              | Entity                                    |
-| --------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------- |
-| **Sidebar**                 | A custom entry linking to a saved view or external URL                        | `defineNavigationMenuItem`                |
-| **Record list**             | A saved configuration for an object — visible columns, order, filters, groups | `defineView`                              |
-| **Record detail page**      | The tabs and widgets on a record page (your own object's, or a standard one)  | `definePageLayout`, `definePageLayoutTab` |
-| **Inside any of the above** | A custom React widget — buttons, forms, dashboards, integrations              | `defineFrontComponent`                    |
-| **Command menu (Cmd+K)**    | A pinned quick action or hidden command                                       | `defineCommandMenuItem`                   |
+| Suprafață                                          | Ce controlează                                                                                          | Entitate                                  |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Bară laterală**                                  | O intrare personalizată care face legătura către o vizualizare salvată sau un URL extern                | `defineNavigationMenuItem`                |
+| **Listă de înregistrări**                          | O configurație salvată pentru un obiect — coloane vizibile, ordine, filtre, grupuri                     | `defineView`                              |
+| **Pagină de detalii a înregistrării**              | Filele și widgeturile de pe o pagină de înregistrare (ale propriului tău obiect sau ale unuia standard) | `definePageLayout`, `definePageLayoutTab` |
+| **În interiorul oricăreia dintre cele de mai sus** | Un widget React personalizat — butoane, formulare, dashboarduri, integrări                              | `defineFrontComponent`                    |
+| **Meniul de comenzi (Cmd+K)**                      | O acțiune rapidă fixată sau o comandă ascunsă                                                           | `defineCommandMenuItem`                   |
 
-Front components run inside an isolated Web Worker using Remote DOM — they render *natively* in the page (not inside an iframe), but cannot reach the host page or DOM directly. Communication with Twenty happens through a message-passing host API.
+Componentele front rulează în interiorul unui Web Worker izolat folosind Remote DOM — acestea sunt redate *nativ* în pagină (nu într-un iframe), dar nu pot accesa direct pagina gazdă sau DOM-ul. Comunicarea cu Twenty se face printr-un API al gazdei bazat pe transmiterea de mesaje.

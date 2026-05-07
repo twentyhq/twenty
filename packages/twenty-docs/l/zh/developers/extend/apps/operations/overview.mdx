@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Build, test, and ship your app — CLI commands, integration tests, CI, and publishing to a server or to npm.
+title: 概览
+description: 构建、测试并发布你的应用——CLI 命令、集成测试、CI，以及发布到服务器或 npm。
 icon: rocket
 ---
 
-The **operations layer** is everything you do *to* your app rather than *with* it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
+**运维层**指的是你对应用*进行*而不是*使用*它所做的一切：调用 CLI 命令、针对真实的 Twenty 服务器运行集成测试、配置 CI，以及发布发行版——可以是部署到单个服务器的 tarball，也可以是发布到应用市场中列出的 npm 包。
 
 ```text
    develop ─▶ test ─▶ build ─▶ deploy / publish
@@ -14,16 +14,16 @@ The **operations layer** is everything you do *to* your app rather than *with* i
    dev                build    yarn twenty publish  (npm → marketplace)
 ```
 
-## In this section
+## 本节内容
 
 <CardGroup cols={2}>
   <Card title="CLI" icon="terminal" href="/l/zh/developers/extend/apps/operations/cli">
-    `yarn twenty` reference — exec, logs, uninstall, remotes.
+    `yarn twenty` 参考——exec、logs、uninstall、remotes。
   </Card>
-  <Card title="Testing" icon="flask" href="/l/zh/developers/extend/apps/operations/testing">
-    Vitest setup, integration tests, type checking, CI workflow.
+  <Card title="测试" icon="flask" href="/l/zh/developers/extend/apps/operations/testing">
+    Vitest 配置、集成测试、类型检查、CI 工作流。
   </Card>
-  <Card title="Publishing" icon="upload" href="/l/zh/developers/extend/apps/operations/publishing">
-    Build, deploy a tarball, publish to npm, install.
+  <Card title="发布" icon="上传" href="/l/zh/developers/extend/apps/operations/publishing">
+    构建、部署 tarball、发布到 npm、安装。
   </Card>
 </CardGroup>

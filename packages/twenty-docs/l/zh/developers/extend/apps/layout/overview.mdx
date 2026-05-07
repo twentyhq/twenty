@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Place your app inside Twenty's UI — sidebar entries, saved views, record page tabs, and sandboxed React components.
+title: 概览
+description: 将你的应用嵌入 Twenty 的 UI 中——侧边栏条目、已保存视图、记录页面选项卡以及沙箱化的 React 组件。
 icon: table-columns
 ---
 
-A Twenty app's **layout layer** is everything the user sees: where the app surfaces in the sidebar, which list views it ships, how its record detail pages are arranged, and which custom React components render inside those pages.
+Twenty 应用的**布局层**是用户看到的一切：应用在侧边栏中的呈现位置、它随附的列表视图、记录详情页的排布方式，以及在这些页面中渲染的自定义 React 组件。
 
 ```text
    Sidebar               Record list            Record detail page
@@ -23,34 +23,34 @@ A Twenty app's **layout layer** is everything the user sees: where the app surfa
                                 and filters    └─────────────────────┘
 ```
 
-## In this section
+## 本节内容
 
 <CardGroup cols={2}>
-  <Card title="Views" icon="list" href="/l/zh/developers/extend/apps/layout/views">
-    `defineView` — saved list configurations: visible columns, filters, groups.
+  <Card title="视图" icon="列表" href="/l/zh/developers/extend/apps/layout/views">
+    `defineView` — 已保存的列表配置：可见列、筛选器、分组。
   </Card>
-  <Card title="Navigation Menu Items" icon="bars" href="/l/zh/developers/extend/apps/layout/navigation-menu-items">
-    `defineNavigationMenuItem` — sidebar entries pointing at views or external URLs.
+  <Card title="导航菜单项" icon="bars" href="/l/zh/developers/extend/apps/layout/navigation-menu-items">
+    `defineNavigationMenuItem` — 指向视图或外部 URL 的侧边栏条目。
   </Card>
-  <Card title="Page Layouts" icon="table-columns" href="/l/zh/developers/extend/apps/layout/page-layouts">
-    `definePageLayout` and `definePageLayoutTab` — tabs and widgets on a record's detail page.
+  <Card title="页面布局" icon="table-columns" href="/l/zh/developers/extend/apps/layout/page-layouts">
+    `definePageLayout` 和 `definePageLayoutTab` — 记录详情页上的选项卡和小部件。
   </Card>
-  <Card title="Front Components" icon="window-maximize" href="/l/zh/developers/extend/apps/layout/front-components">
-    `defineFrontComponent` — sandboxed React components that render inside Twenty.
+  <Card title="前端组件" icon="window-maximize" href="/l/zh/developers/extend/apps/layout/front-components">
+    `defineFrontComponent` — 在 Twenty 内部渲染的沙箱化 React 组件。
   </Card>
-  <Card title="Command Menu Items" icon="terminal" href="/l/zh/developers/extend/apps/layout/command-menu-items">
-    `defineCommandMenuItem` — register front components as Cmd+K entries and quick actions.
+  <Card title="命令菜单项" icon="terminal" href="/l/zh/developers/extend/apps/layout/command-menu-items">
+    `defineCommandMenuItem` — 将前端组件注册为 Cmd+K 条目和快速操作。
   </Card>
 </CardGroup>
 
-## Where the app surfaces
+## 应用的呈现位置
 
-| Surface                     | What it controls                                                              | Entity                                    |
-| --------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------- |
-| **Sidebar**                 | A custom entry linking to a saved view or external URL                        | `defineNavigationMenuItem`                |
-| **Record list**             | A saved configuration for an object — visible columns, order, filters, groups | `defineView`                              |
-| **Record detail page**      | The tabs and widgets on a record page (your own object's, or a standard one)  | `definePageLayout`, `definePageLayoutTab` |
-| **Inside any of the above** | A custom React widget — buttons, forms, dashboards, integrations              | `defineFrontComponent`                    |
-| **Command menu (Cmd+K)**    | A pinned quick action or hidden command                                       | `defineCommandMenuItem`                   |
+| 呈现位置            | 控制内容                        | 实体                                        |
+| --------------- | --------------------------- | ----------------------------------------- |
+| **侧边栏**         | 链接到已保存视图或外部 URL 的自定义条目      | `defineNavigationMenuItem`                |
+| **记录列表**        | 对象的已保存配置——可见列、顺序、筛选器、分组     | `defineView`                              |
+| **记录详情页**       | 记录页面上的选项卡和小部件（你自己的对象或标准对象）  | `definePageLayout`, `definePageLayoutTab` |
+| **以上任意位置内部**    | 自定义 React 小部件——按钮、表单、仪表盘、集成 | `defineFrontComponent`                    |
+| **命令菜单（Cmd+K）** | 固定的快速操作或隐藏命令                | `defineCommandMenuItem`                   |
 
-Front components run inside an isolated Web Worker using Remote DOM — they render *natively* in the page (not inside an iframe), but cannot reach the host page or DOM directly. Communication with Twenty happens through a message-passing host API.
+前端组件在使用 Remote DOM 的隔离 Web Worker 内运行——它们在页面中*原生*渲染（而不是在 iframe 中），但无法直接访问宿主页面或 DOM。 与 Twenty 的通信通过消息传递的宿主 API 完成。

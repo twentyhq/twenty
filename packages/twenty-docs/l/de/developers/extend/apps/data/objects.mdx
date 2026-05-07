@@ -4,7 +4,7 @@ description: Deklariere neue Record-Typen – benutzerdefinierte Tabellen mit e
 icon: tabelle
 ---
 
-Custom **objects** are new record types your app adds to a workspace — Post Card, Invoice, Subscription, anything specific to your domain. Each object declares its schema (fields, relations, default values) and a stable universal identifier that survives across syncs and deploys.
+Benutzerdefinierte **Objekte** sind neue Datensatztypen, die Ihre App zu einem Arbeitsbereich hinzufügt – Postkarte, Rechnung, Abonnement, alles, was spezifisch für Ihre Domäne ist. Jedes Objekt deklariert sein Schema (Felder, Relationen, Standardwerte) und einen stabilen universellen Bezeichner, der über Synchronisierungen und Deployments hinweg bestehen bleibt.
 
 ```ts src/objects/post-card.object.ts
 import { defineObject, FieldType } from 'twenty-sdk/define';
@@ -79,15 +79,15 @@ export default defineObject({
 * Der `universalIdentifier` muss eindeutig und über Deployments hinweg stabil sein.
 * Jedes Feld benötigt `name`, `type`, `label` und einen eigenen stabilen `universalIdentifier`.
 * Das Array `fields` ist optional — Sie können Objekte ohne benutzerdefinierte Felder definieren.
-* Inline fields defined here do **not** need an `objectUniversalIdentifier` — it's inherited from the parent object. Use [`defineField()`](/l/de/developers/extend/apps/data/extending-objects) to add fields to objects you don't own.
-* You can scaffold new objects with `yarn twenty add object`, which guides you through naming, fields, and relationships. See [Architecture → Scaffolding entities](/l/de/developers/extend/apps/getting-started/scaffolding).
+* Inline definierte Felder benötigen **kein** `objectUniversalIdentifier` – er wird vom übergeordneten Objekt geerbt. Verwenden Sie [`defineField()`](/l/de/developers/extend/apps/data/extending-objects), um Objekten Felder hinzuzufügen, die Ihnen nicht gehören.
+* Sie können mit `yarn twenty add object` neue Objekte erzeugen; der Assistent führt Sie durch Benennung, Felder und Beziehungen. Siehe [Architektur → Gerüste für Entitäten](/l/de/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
-**Base fields are added automatically.** When you define a custom object, Twenty creates standard fields like `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy`, and `deletedAt` for you. You don't need to declare them in your `fields` array — only your custom fields. You can override a default field by declaring one with the same name, but this is rarely a good idea.
+**Basisfelder werden automatisch hinzugefügt.** Wenn Sie ein benutzerdefiniertes Objekt definieren, erstellt Twenty Standardfelder wie `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` und `deletedAt` für Sie. Sie müssen diese nicht in Ihrem `fields`-Array deklarieren – nur Ihre benutzerdefinierten Felder. Sie können ein Standardfeld überschreiben, indem Sie eines mit demselben Namen deklarieren, aber das ist nur selten eine gute Idee.
 </Note>
 
 ## Was kommt als Nächstes
 
-* **Connect this object to others** — see [Relations](/l/de/developers/extend/apps/data/relations) for the bidirectional relation pattern.
-* **Add fields to objects from other apps** — see [Extending Objects](/l/de/developers/extend/apps/data/extending-objects) for `defineField()`.
-* **Display this object in the UI** — see [Views](/l/de/developers/extend/apps/layout/views) and [Navigation Menu Items](/l/de/developers/extend/apps/layout/navigation-menu-items) to put it in the sidebar.
+* **Verbinden Sie dieses Objekt mit anderen** – siehe [Relationen](/l/de/developers/extend/apps/data/relations) für das bidirektionale Relationsmuster.
+* **Fügen Sie Objekten aus anderen Apps Felder hinzu** – siehe [Objekte erweitern](/l/de/developers/extend/apps/data/extending-objects) für `defineField()`.
+* **Zeigen Sie dieses Objekt in der UI an** – siehe [Ansichten](/l/de/developers/extend/apps/layout/views) und [Navigationsmenüeinträge](/l/de/developers/extend/apps/layout/navigation-menu-items), um es in der Seitenleiste zu platzieren.

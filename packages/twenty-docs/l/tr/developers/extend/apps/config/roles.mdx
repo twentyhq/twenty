@@ -1,10 +1,10 @@
 ---
-title: Roles & Permissions
-description: Declare what objects and fields your app's logic functions and front components can read and write.
+title: Roller ve İzinler
+description: Uygulamanızın mantık fonksiyonlarının ve ön bileşenlerinin hangi nesne ve alanları okuyup yazabileceğini belirtin.
 icon: shield-halved
 ---
 
-A **role** is a permission set: which objects an app can read or write, which fields it can see, and which platform-level capabilities it can use. Every app's logic functions and front components inherit the permissions of the role declared as `defaultRoleUniversalIdentifier` in [`defineApplication`](/l/tr/developers/extend/apps/config/application).
+Bir **rol**, bir izin kümesidir: bir uygulamanın hangi nesneleri okuyup yazabileceğini, hangi alanları görebileceğini ve hangi platform düzeyindeki yetenekleri kullanabileceğini tanımlar. Her uygulamanın mantık fonksiyonları ve ön bileşenleri, [`defineApplication`](/l/tr/developers/extend/apps/config/application) içinde `defaultRoleUniversalIdentifier` olarak beyan edilen rolün izinlerini devralır.
 
 ```ts src/roles/restricted-company-role.ts
 import {
@@ -49,9 +49,9 @@ export default defineRole({
 });
 ```
 
-## The default function role
+## Varsayılan fonksiyon rolü
 
-When you scaffold a new app, the CLI creates a default role file:
+Yeni bir uygulama iskeleti oluşturduğunuzda, CLI varsayılan bir rol dosyası oluşturur:
 
 ```ts src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk/define';
@@ -77,14 +77,14 @@ export default defineRole({
 });
 ```
 
-This role's `universalIdentifier` is referenced from `application-config.ts` as `defaultRoleUniversalIdentifier`:
+Bu rolün `universalIdentifier` değeri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` olarak referans verilir:
 
-* **`*.role.ts`** declares what the role can do.
-* **`application-config.ts`** points to that role so your functions inherit its permissions.
+* **`*.role.ts`** rolün neler yapabileceğini beyan eder.
+* **`application-config.ts`** bu role işaret eder, böylece fonksiyonlarınız onun izinlerini devralır.
 
-## Best practices
+## En İyi Uygulamalar
 
-* Start from the scaffolded role, then progressively restrict it — the default grants broad read access, which is rarely what you want in production.
-* Replace `objectPermissions` and `fieldPermissions` with the exact objects and fields your functions actually need.
-* `permissionFlags` control access to platform-level capabilities. Keep them minimal.
-* See a working example: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* Oluşturulmuş (scaffolded) rolden başlayın ve ardından giderek kısıtlayın — varsayılan rol geniş okuma erişimi verir; bu ise üretim ortamında nadiren isteyeceğiniz bir şeydir.
+* `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın gerçekten ihtiyaç duyduğu nesne ve alanlarla değiştirin.
+* `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Bunları asgari düzeyde tutun.
+* Çalışan bir örnek için bkz.: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

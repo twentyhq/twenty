@@ -1,6 +1,6 @@
 ---
-title: Local Server
-description: Manage the local Twenty Docker server — start, stop, upgrade, parallel test instance, and manual SDK setup.
+title: Server local
+description: Gestionează serverul Twenty Docker local — pornește, oprește, actualizează, rulează o instanță de testare în paralel și configurează manual SDK-ul.
 icon: server
 ---
 
@@ -39,11 +39,11 @@ Adăugați `--test` la orice comandă `server` pentru a gestiona o a doua instan
 | Comandă                             | Ce face                                             |
 | ----------------------------------- | --------------------------------------------------- |
 | `yarn twenty server start --test`   | Pornește instanța de test (implicit pe portul 2021) |
-| `yarn twenty server stop --test`    | Opriți-o                                            |
-| `yarn twenty server status --test`  | Afișați-i starea                                    |
-| `yarn twenty server logs --test`    | Transmiteți în flux jurnalele sale                  |
-| `yarn twenty server reset --test`   | Ștergeți-i datele                                   |
-| `yarn twenty server upgrade --test` | Actualizați-i imaginea                              |
+| `yarn twenty server stop --test`    | Oprește-o                                           |
+| `yarn twenty server status --test`  | Afișează-i starea                                   |
+| `yarn twenty server logs --test`    | Transmite în flux jurnalele sale                    |
+| `yarn twenty server reset --test`   | Șterge-i datele                                     |
+| `yarn twenty server upgrade --test` | Actualizează-i imaginea                             |
 
 Instanța de test are propriul container (`twenty-app-dev-test`), propriile volume (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) și propria configurație — rulează alături de instanța principală, fără conflicte. Combinați `--test` cu `--port` pentru a înlocui portul 2021.
 

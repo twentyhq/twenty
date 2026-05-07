@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Server-side TypeScript that runs inside Twenty — triggered by HTTP routes, cron schedules, database events, AI tools, or workflow actions.
+title: Genel Bakış
+description: Twenty içinde çalışan sunucu tarafı TypeScript — HTTP rotaları, cron zamanlamaları, veritabanı olayları, yapay zeka araçları veya iş akışı aksiyonları tarafından tetiklenir.
 icon: bolt
 ---
 
-A Twenty app's **logic layer** is the code that *runs* — server-side TypeScript handlers reacting to HTTP requests, cron schedules, and record changes; AI skills and agents that live inside the workspace; and OAuth connections that let your functions act on a user's behalf in third-party services.
+Bir Twenty uygulamasının **mantık katmanı**, *çalışan* koddur — HTTP isteklerine, cron zamanlamalarına ve kayıt değişikliklerine tepki veren sunucu tarafı TypeScript işleyicileri; çalışma alanının içinde yaşayan yapay zeka yetenekleri ve ajanları; ve işlevlerinizin üçüncü taraf servislerde bir kullanıcının adına hareket etmesini sağlayan OAuth bağlantıları.
 
 ```text
             ┌─ HTTP route      ──┐
@@ -22,34 +22,34 @@ A Twenty app's **logic layer** is the code that *runs* — server-side TypeScrip
                                   └────────────────────────────┘
 ```
 
-## In this section
+## Bu bölümde
 
 <CardGroup cols={2}>
-  <Card title="Logic Functions" icon="bolt" href="/l/tr/developers/extend/apps/logic/logic-functions">
-    The core building block — trigger types, payloads, and the typed API client.
+  <Card title="Mantıksal işlevler" icon="bolt" href="/l/tr/developers/extend/apps/logic/logic-functions">
+    Temel yapı taşı — tetikleyici türleri, payload'lar ve tür güvenli API istemcisi.
   </Card>
-  <Card title="Skills & Agents" icon="robot" href="/l/tr/developers/extend/apps/logic/skills-and-agents">
-    Reusable AI agent instructions and assistants with custom system prompts.
+  <Card title="Beceriler ve Ajanlar" icon="robot" href="/l/tr/developers/extend/apps/logic/skills-and-agents">
+    Yeniden kullanılabilir yapay zeka ajan talimatları ve özel sistem komutlarına sahip asistanlar.
   </Card>
-  <Card title="Connections" icon="plug" href="/l/tr/developers/extend/apps/logic/connections">
-    OAuth credentials your app holds for third-party services — Linear, GitHub, Slack, and more.
+  <Card title="Bağlantılar" icon="plug" href="/l/tr/developers/extend/apps/logic/connections">
+    Uygulamanızın üçüncü taraf servisler — Linear, GitHub, Slack ve daha fazlası — için tuttuğu OAuth kimlik bilgileri.
   </Card>
 </CardGroup>
 
-## Trigger types at a glance
+## Tetikleyici türlerine genel bakış
 
-A logic function picks one or more triggers — every entry below is a separate field on `defineLogicFunction()`:
+Bir mantık fonksiyonu bir veya daha fazla tetikleyici seçer — aşağıdaki her giriş, `defineLogicFunction()` üzerinde ayrı bir alandır:
 
-| Trigger             | When it runs                                               | Setting                         |
-| ------------------- | ---------------------------------------------------------- | ------------------------------- |
-| **HTTP route**      | A request hits your `/s/\<path>` endpoint | `httpRouteTriggerSettings`      |
-| **Cron**            | A CRON expression matches                                  | `cronTriggerSettings`           |
-| **Database event**  | A workspace record is created, updated, or deleted         | `databaseEventTriggerSettings`  |
-| **AI tool**         | A Twenty AI feature decides to call your function          | `toolTriggerSettings`           |
-| **Workflow action** | A workflow step invokes your function                      | `workflowActionTriggerSettings` |
+| Tetikleyici           | Ne zaman çalışır                                                             | Ayar                            |
+| --------------------- | ---------------------------------------------------------------------------- | ------------------------------- |
+| **HTTP rotası**       | Bir istek `/s/\<path>` endpoint'inize ulaşır                | `httpRouteTriggerSettings`      |
+| **Cron**              | Bir CRON ifadesi eşleştiğinde                                                | `cronTriggerSettings`           |
+| **Veritabanı olayı**  | Bir çalışma alanı kaydı oluşturulduğunda, güncellendiğinde veya silindiğinde | `databaseEventTriggerSettings`  |
+| **Yapay zeka aracı**  | Bir Twenty yapay zeka özelliği, fonksiyonunuzu çağırmaya karar verdiğinde    | `toolTriggerSettings`           |
+| **İş Akışı Aksiyonu** | Bir iş akışı adımı fonksiyonunuzu çağırdığında                               | `workflowActionTriggerSettings` |
 
-Functions run sandboxed in isolated Node.js processes and access the workspace through a typed API client scoped to the role declared on [`defineApplication()`](/l/tr/developers/extend/apps/config/application).
+Fonksiyonlar, izole Node.js süreçlerinde sandbox içinde çalışır ve çalışma alanına, [`defineApplication()`](/l/tr/developers/extend/apps/config/application) üzerinde beyan edilen role göre kapsamlandırılmış tür güvenli bir API istemcisi aracılığıyla erişir.
 
 <Note>
-**Install-time hooks** — code that runs before or after the install — share this runtime but use their own define functions and live under [Config → Install Hooks](/l/tr/developers/extend/apps/config/install-hooks).
+**Yükleme zamanı kancaları** — yüklemeden önce veya sonra çalışan kod — bu çalışma zamanını paylaşır ancak kendi define fonksiyonlarını kullanır ve [Config → Install Hooks](/l/tr/developers/extend/apps/config/install-hooks) altında bulunur.
 </Note>

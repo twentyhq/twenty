@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Configure the app itself — its identity, default permissions, and what runs at install time.
+title: 概览
+description: 配置应用本身——它的身份、默认权限，以及在安装时运行的内容。
 icon: screwdriver-wrench
 ---
 
-A Twenty app's **config layer** is what describes the app *to the platform* — its identity, the permissions it holds, and the code that runs during install or upgrade. These declarations don't add new data shapes or runtime behavior; they tell Twenty *who the app is* and *how to set it up*.
+Twenty 应用的 **配置层（config layer）** 用来向 *平台* 描述应用——它的身份、所持有的权限，以及在安装或升级期间运行的代码。 这些声明不会添加新的数据结构或运行时行为；它们告诉 Twenty *这个应用是谁*，以及 *如何完成设置*。
 
 ```text
 ┌────────────────────────────────────────────────────────┐
@@ -26,26 +26,26 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
        └──────────────────────────────────┘
 ```
 
-## In this section
+## 本节内容
 
 <CardGroup cols={2}>
-  <Card title="Application Config" icon="rocket" href="/l/zh/developers/extend/apps/config/application">
-    `defineApplication` — identity, default role, variables, marketplace metadata.
+  <Card title="应用程序配置" icon="rocket" href="/l/zh/developers/extend/apps/config/application">
+    `defineApplication` —— 身份、默认角色、变量、应用市场元数据。
   </Card>
-  <Card title="Roles & Permissions" icon="shield-halved" href="/l/zh/developers/extend/apps/config/roles">
-    `defineRole` — declare what your app's logic functions can read and write.
+  <Card title="角色和权限" icon="shield-halved" href="/l/zh/developers/extend/apps/config/roles">
+    `defineRole` —— 声明应用的逻辑函数可以读取和写入什么。
   </Card>
-  <Card title="Install Hooks" icon="wrench" href="/l/zh/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` and `definePostInstallLogicFunction` — back up data, seed defaults, validate upgrades.
+  <Card title="安装钩子" icon="wrench" href="/l/zh/developers/extend/apps/config/install-hooks">
+    `definePreInstallLogicFunction` 和 `definePostInstallLogicFunction` —— 备份数据、写入默认值、验证升级。
   </Card>
 </CardGroup>
 
-## How the pieces relate
+## 各部分之间的关系
 
-* **Application** is the entry point. Every app has exactly one `defineApplication()` call, and it points at one **Role** as its default.
-* The **Role** controls what the app's logic functions and front components can read and write. Follow least-privilege: only grant the permissions your code actually needs.
-* **Install Hooks** run during install or upgrade — pre-install before the metadata migration (so it can refuse a risky upgrade), post-install after the migration (so it can seed default data against the new schema).
+* **Application** 是入口点。 每个应用都有且仅有一次 `defineApplication()` 调用，并将一个 **Role** 作为其默认角色。
+* **Role** 控制应用的逻辑函数和前端组件可以读取和写入什么。 遵循最小权限原则：只授予代码实际需要的权限。
+* **Install Hooks（安装钩子）** 在安装或升级过程中运行——预安装钩子在元数据迁移之前运行（因此可以拒绝存在风险的升级），后安装钩子在迁移之后运行（因此可以根据新模式写入默认数据）。
 
 <Note>
-Install hooks share the [logic function](/l/zh/developers/extend/apps/logic/logic-functions) runtime — same handler signature, same environment variables, same typed API client — but they're declared with their own define functions and live outside the regular trigger model (HTTP, cron, database events).
+安装钩子与 [logic function](/l/zh/developers/extend/apps/logic/logic-functions) 共用运行时——相同的处理器签名、相同的环境变量、相同的类型化 API 客户端——但它们使用各自的 define 函数声明，并且位于常规触发模型（HTTP、cron、数据库事件）之外。
 </Note>

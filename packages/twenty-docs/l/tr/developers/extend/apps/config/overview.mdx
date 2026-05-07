@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Configure the app itself — its identity, default permissions, and what runs at install time.
+title: Genel Bakış
+description: Uygulamanın kendisini yapılandırın — kimliğini, varsayılan izinlerini ve kurulum sırasında nelerin çalıştığını.
 icon: screwdriver-wrench
 ---
 
-A Twenty app's **config layer** is what describes the app *to the platform* — its identity, the permissions it holds, and the code that runs during install or upgrade. These declarations don't add new data shapes or runtime behavior; they tell Twenty *who the app is* and *how to set it up*.
+Bir Twenty uygulamasının **config katmanı**, uygulamayı *platforma tanımlar* — kimliğini, sahip olduğu izinleri ve kurulum veya yükseltme sırasında çalışan kodu açıklar. Bu deklarasyonlar yeni veri biçimleri veya çalışma zamanı davranışı eklemez; Twenty’ye *uygulamanın kim olduğunu* ve *nasıl kurulacağını* söyler.
 
 ```text
 ┌────────────────────────────────────────────────────────┐
@@ -26,26 +26,26 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
        └──────────────────────────────────┘
 ```
 
-## In this section
+## Bu bölümde
 
 <CardGroup cols={2}>
-  <Card title="Application Config" icon="rocket" href="/l/tr/developers/extend/apps/config/application">
-    `defineApplication` — identity, default role, variables, marketplace metadata.
+  <Card title="Uygulama Yapılandırması" icon="rocket" href="/l/tr/developers/extend/apps/config/application">
+    `defineApplication` — kimlik, varsayılan rol, değişkenler, marketplace metaverisi.
   </Card>
-  <Card title="Roles & Permissions" icon="shield-halved" href="/l/tr/developers/extend/apps/config/roles">
-    `defineRole` — declare what your app's logic functions can read and write.
+  <Card title="Roller ve İzinler" icon="shield-halved" href="/l/tr/developers/extend/apps/config/roles">
+    `defineRole` — uygulamanızın mantık fonksiyonlarının neleri okuyup yazabildiğini tanımlayın.
   </Card>
-  <Card title="Install Hooks" icon="wrench" href="/l/tr/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` and `definePostInstallLogicFunction` — back up data, seed defaults, validate upgrades.
+  <Card title="Kurulum Kancaları" icon="anahtar" href="/l/tr/developers/extend/apps/config/install-hooks">
+    `definePreInstallLogicFunction` ve `definePostInstallLogicFunction` — verileri yedekleyin, varsayılanları tohumlayın, yükseltmeleri doğrulayın.
   </Card>
 </CardGroup>
 
-## How the pieces relate
+## Parçaların birbiriyle ilişkisi
 
-* **Application** is the entry point. Every app has exactly one `defineApplication()` call, and it points at one **Role** as its default.
-* The **Role** controls what the app's logic functions and front components can read and write. Follow least-privilege: only grant the permissions your code actually needs.
-* **Install Hooks** run during install or upgrade — pre-install before the metadata migration (so it can refuse a risky upgrade), post-install after the migration (so it can seed default data against the new schema).
+* **Application** giriş noktasıdır. Her uygulamada tam olarak bir `defineApplication()` çağrısı vardır ve bu çağrı bir **Role**’a varsayılan olarak işaret eder.
+* **Role**, uygulamanın mantık fonksiyonlarının ve ön bileşenlerinin neleri okuyup yazabildiğini kontrol eder. En az ayrıcalık ilkesini izleyin: kodunuzun gerçekten ihtiyaç duyduğu izinleri verin.
+* **Install Hooks**, kurulum veya yükseltme sırasında çalışır — ön kurulum, metadata migrasyonundan önce (böylece riskli bir yükseltmeyi reddedebilir), son kurulum migrasyondan sonra (böylece yeni şemaya karşı varsayılan verileri tohumlayabilir).
 
 <Note>
-Install hooks share the [logic function](/l/tr/developers/extend/apps/logic/logic-functions) runtime — same handler signature, same environment variables, same typed API client — but they're declared with their own define functions and live outside the regular trigger model (HTTP, cron, database events).
+Kurulum kancaları, [mantık fonksiyonu](/l/tr/developers/extend/apps/logic/logic-functions) çalışma zamanını paylaşır — aynı handler imzası, aynı ortam değişkenleri, aynı türlendirilmiş API istemcisi — ancak kendi define fonksiyonlarıyla deklare edilir ve normal tetikleyici modelinin (HTTP, cron, veritabanı olayları) dışında yaşarlar.
 </Note>

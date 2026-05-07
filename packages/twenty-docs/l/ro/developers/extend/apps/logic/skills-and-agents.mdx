@@ -1,19 +1,19 @@
 ---
-title: Skills & Agents
-description: Define AI skills and agents for your app.
+title: Abilități și agenți
+description: Definiți abilități și agenți AI pentru aplicația dvs.
 icon: robot
 ---
 
 <Warning>
-  Skills and agents are currently in alpha. The feature works but is still evolving.
+  Aptitudinile și agenții sunt în prezent în testare alfa. Caracteristica funcționează, dar este încă în dezvoltare.
 </Warning>
 
-Apps can define AI capabilities that live inside the workspace — reusable skill instructions and agents with custom system prompts.
+Aplicațiile pot defini capabilități AI care există în interiorul spațiului de lucru — instrucțiuni reutilizabile pentru abilități și agenți cu prompturi de sistem personalizate.
 
 <AccordionGroup>
-<Accordion title="defineSkill" description="Define AI agent skills">
+<Accordion title="defineSkill" description="Definiți abilități pentru agentul AI">
 
-Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+Abilitățile definesc instrucțiuni și capabilități reutilizabile pe care agenții AI le pot folosi în spațiul dvs. de lucru. Folosiți `defineSkill()` pentru a defini abilități cu validare încorporată:
 
 ```ts src/skills/example-skill.ts
 import { defineSkill } from 'twenty-sdk/define';
@@ -32,17 +32,17 @@ export default defineSkill({
 });
 ```
 
-Key points:
-* `name` is a unique identifier string for the skill (kebab-case recommended).
-* `label` is the human-readable display name shown in the UI.
-* `content` contains the skill instructions — this is the text the AI agent uses.
-* `icon` (optional) sets the icon displayed in the UI.
-* `description` (optional) provides additional context about the skill's purpose.
+Puncte cheie:
+* `name` este un șir identificator unic pentru abilitate (se recomandă kebab-case).
+* `label` este numele lizibil afișat în interfața cu utilizatorul (UI).
+* `content` conține instrucțiunile abilității — acesta este textul pe care agentul AI îl folosește.
+* `icon` (opțional) setează pictograma afișată în UI.
+* `description` (opțional) oferă context suplimentar despre scopul abilității.
 
 </Accordion>
-<Accordion title="defineAgent" description="Define AI agents with custom prompts">
+<Accordion title="defineAgent" description="Definiți agenți AI cu prompturi personalizate">
 
-Agents are AI assistants that live inside your workspace. Use `defineAgent()` to create agents with a custom system prompt:
+Agenții sunt asistenți AI care există în interiorul spațiului dvs. de lucru. Utilizați `defineAgent()` pentru a crea agenți cu un prompt de sistem personalizat:
 
 ```ts src/agents/example-agent.ts
 import { defineAgent } from 'twenty-sdk/define';
@@ -57,13 +57,13 @@ export default defineAgent({
 });
 ```
 
-Key points:
-* `name` is the unique identifier string for the agent (kebab-case recommended).
-* `label` is the display name shown in the UI.
-* `prompt` is the system prompt that defines the agent's behavior.
-* `description` (optional) provides context about what the agent does.
-* `icon` (optional) sets the icon displayed in the UI.
-* `modelId` (optional) overrides the default AI model used by the agent.
+Puncte cheie:
+* `name` este un șir identificator unic pentru agent (se recomandă kebab-case).
+* `label` este numele de afișare din interfața cu utilizatorul (UI).
+* `prompt` conține promptul de sistem — acesta este textul de instrucțiuni care definește comportamentul agentului.
+* `description` (opțional) oferă context suplimentar despre scopul agentului.
+* `icon` (opțional) setează pictograma afișată în UI.
+* `modelId` (opțional) suprascrie modelul AI implicit utilizat de agent.
 
 </Accordion>
 </AccordionGroup>

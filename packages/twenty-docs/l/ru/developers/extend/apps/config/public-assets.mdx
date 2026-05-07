@@ -1,25 +1,25 @@
 ---
-title: Public Assets
-description: Ship static files — images, icons, fonts — alongside your app via the public/ folder.
+title: Публичные ресурсы
+description: Отправляйте статические файлы — изображения, иконки, шрифты — вместе с вашим приложением через папку public/.
 icon: folder-open
 ---
 
-The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
+Папка `public/` в корне вашего приложения содержит статические файлы — изображения, значки, шрифты и любые другие ресурсы, необходимые вашему приложению во время выполнения. Эти файлы автоматически включаются в сборки, синхронизируются в режиме разработки и загружаются на сервер.
 
-Files placed in `public/` are:
+Файлы, размещённые в `public/`, являются:
 
-* **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
-* **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
-* **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
-* **Used for marketplace metadata** — the `logoUrl` and `screenshots` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published.
-* **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-* **Included in builds** — `yarn twenty build` bundles all public assets into the distribution output.
+* **Публично доступными** — после синхронизации с сервером ресурсы доступны по публичному URL. Для доступа к ним аутентификация не требуется.
+* **Доступными в компонентах фронтенда** — используйте URL ресурсов для отображения изображений, значков или любого медиа внутри ваших компонентов React.
+* **Доступными в логических функциях** — используйте URL ресурсов в письмах, ответах API или любой серверной логике.
+* **Используются для метаданных маркетплейса** — поля `logoUrl` и `screenshots` в `defineApplication()` ссылаются на файлы из этой папки (например, `public/logo.png`). Они отображаются в маркетплейсе при публикации вашего приложения.
+* **Автосинхронизация в режиме разработки** — когда вы добавляете, обновляете или удаляете файл в `public/`, он автоматически синхронизируется с сервером. Перезапуск не требуется.
+* **Включены в сборки** — `yarn twenty build` упаковывает все публичные ресурсы в выходной дистрибутив.
 
-## Accessing public assets with `getPublicAssetUrl`
+## Доступ к публичным ресурсам с помощью `getPublicAssetUrl`
 
-Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
+Используйте хелпер `getPublicAssetUrl` из `twenty-sdk`, чтобы получить полный URL файла в каталоге `public/` вашего приложения. Он работает как в **логических функциях**, так и в **компонентах фронтенда**.
 
-**In a logic function:**
+**В логической функции:**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
@@ -44,7 +44,7 @@ export default defineLogicFunction({
 });
 ```
 
-**In a front component:**
+**В компоненте фронтенда:**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
@@ -56,4 +56,4 @@ export default defineFrontComponent(() => {
 });
 ```
 
-The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+Аргумент `path` задаётся относительно папки `public/` вашего приложения. И `getPublicAssetUrl('logo.png')`, и `getPublicAssetUrl('public/logo.png')` приводят к одному и тому же URL — префикс `public/`, если он есть, удаляется автоматически.

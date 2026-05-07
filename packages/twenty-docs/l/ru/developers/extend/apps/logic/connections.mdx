@@ -1,20 +1,20 @@
 ---
-title: Connections
-description: Let your app act on a user's behalf in third-party services via OAuth.
+title: Подключения
+description: Разрешите вашему приложению действовать от имени пользователя в сторонних сервисах с помощью OAuth.
 icon: plug
 ---
 
-Connections are credentials a user holds for an external service (Linear, GitHub, Slack, ...). Your app declares **how** those credentials are obtained — a **connection provider** — and consumes them at runtime to make authenticated calls to the third-party API.
+Подключения — это учетные данные, которыми пользователь располагает для внешнего сервиса (Linear, GitHub, Slack, ...). Ваше приложение определяет, **как** получают эти учетные данные — через **провайдера подключения** — и использует их во время выполнения для выполнения аутентифицированных вызовов к стороннему API.
 
-Today only OAuth 2.0 is supported. Future credential types (personal access tokens, API keys, basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.
+На данный момент поддерживается только OAuth 2.0. Будущие типы учетных данных (персональные токены доступа, ключи API, базовая аутентификация) будут подключаться к тому же интерфейсу — приложения, уже использующие `defineConnectionProvider({ type: 'oauth', ... })` не потребуют миграции.
 
 <AccordionGroup>
 
-<Accordion title="defineConnectionProvider" description="Declare how your app's connections are obtained">
+<Accordion title="defineConnectionProvider" description="Определите, как в вашем приложении получаются подключения">
 
-A connection provider describes the OAuth handshake your app needs. The user clicks "Add connection" in your app's settings, completes the provider's consent screen, and a `ConnectedAccount` row is created in their workspace.
+Провайдер подключения описывает процедуру OAuth-обмена, которая требуется вашему приложению. Пользователь нажимает "Добавить подключение" в настройках вашего приложения, подтверждает разрешения на экране согласия провайдера, и в его рабочем пространстве создается запись `ConnectedAccount`.
 
-A working setup needs **two files** — the connection provider, and a matching `serverVariables` declaration on `defineApplication` that holds the OAuth client credentials.
+Рабочей конфигурации нужны **два файла** — провайдер подключения и соответствующее объявление `serverVariables` в `defineApplication`, которое содержит учетные данные клиента OAuth.
 
 ```ts src/connection-providers/linear-connection.ts
 import { defineConnectionProvider } from 'twenty-sdk/define';
@@ -71,16 +71,16 @@ export default defineApplication({
 });
 ```
 
-Key points:
+Основные моменты:
 
-* `name` is the unique identifier string used in `listConnections({ providerName })` (kebab-case, must match `^[a-z][a-z0-9-]*$`).
-* `displayName` shows in the per-app settings tab and in the AI tool list.
-* `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
-* Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
-* Until both `serverVariables` are filled in, the per-app settings tab shows a "needs server admin" hint and the "Add connection" button is disabled.
-* `type: 'oauth'` is the only supported value today. The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside `oauth`.
+* `name` — это уникальная строка-идентификатор, используемая в `listConnections({ providerName })` (kebab-case, должна соответствовать `^[a-z][a-z0-9-]*$`).
+* `displayName` отображается на вкладке настроек приложения и в списке инструментов ИИ.
+* `clientIdVariable` / `clientSecretVariable` — это **имена**, а не значения — они должны совпадать с ключами, объявленными в `defineApplication.serverVariables`. Фактические `client_id` и `client_secret` вводятся администратором сервера через интерфейс регистрации приложения и никогда не коммитятся в ваш репозиторий.
+* Используйте `serverVariables` (не `applicationVariables`) — учетные данные OAuth являются общими для сервера, и на каждом сервере Twenty используется одно приложение OAuth.
+* Пока оба `serverVariables` не заполнены, на вкладке настроек приложения показывается подсказка "нужен администратор сервера", а кнопка "Добавить подключение" отключена.
+* `type: 'oauth'` — единственное поддерживаемое сегодня значение. Дискриминатор совместим с будущими версиями: будущие типы (`'pat'`, `'api-key'`, ...) добавят новые блоки подконфигурации рядом с `oauth`.
 
-The OAuth callback URL your provider needs to whitelist is:
+URL обратного вызова OAuth, который вашему провайдеру нужно добавить в список разрешенных:
 
 ```
 https://<your-twenty-server>/apps/oauth/callback
@@ -88,9 +88,9 @@ https://<your-twenty-server>/apps/oauth/callback
 
 </Accordion>
 
-<Accordion title="listConnections / getConnection" description="Use connections from a logic function">
+<Accordion title="listConnections / getConnection" description="Используйте подключения из логической функции">
 
-Inside a logic function handler, `listConnections({ providerName })` returns this app's `ConnectedAccount` rows for the given provider, with refreshed access tokens.
+Внутри обработчика логической функции `listConnections({ providerName })` возвращает записи `ConnectedAccount` этого приложения для указанного провайдера с обновленными токенами доступа.
 
 ```ts src/logic-functions/handlers/create-linear-issue-handler.ts
 import { listConnections } from 'twenty-sdk/logic-function';
@@ -135,34 +135,34 @@ export const createLinearIssueHandler = async (input: {
 };
 ```
 
-Each connection has:
+Каждое подключение имеет:
 
-| Field             | Description                                                                                              |
-| ----------------- | -------------------------------------------------------------------------------------------------------- |
-| `id`              | Unique row id; pass to `getConnection(id)` to refetch a single one                                       |
-| `visibility`      | `'user'` (private to one workspace member) or `'workspace'` (shared with all members)                    |
-| `scopes`          | OAuth permissions granted by the upstream provider (distinct from `visibility` — those are unrelated)    |
-| `userWorkspaceId` | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers |
-| `accessToken`     | Fresh OAuth access token (refreshed automatically if expired)                                            |
-| `name` / `handle` | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
-| `authFailedAt`    | Set when the most recent refresh failed; the user must reconnect                                         |
+| Поле              | Описание                                                                                                                    |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | Уникальный идентификатор записи; передайте его в `getConnection(id)`, чтобы повторно получить одну запись                   |
+| `visibility`      | `'user'` (приватно для одного участника рабочего пространства) или `'workspace'` (доступно всем участникам)                 |
+| `scopes`          | Разрешения OAuth, предоставленные внешним провайдером (отличаются от `visibility` — это несвязанные вещи)                   |
+| `userWorkspaceId` | Идентификатор userWorkspace владельца — полезно для выбора "подключения пользователя запроса" в триггерах HTTP-маршрутов    |
+| `accessToken`     | Актуальный токен доступа OAuth (обновляется автоматически при истечении срока действия)                                     |
+| `name` / `handle` | Отображаемое имя подключения (автоматически определяется при обратном вызове OAuth, может быть переименовано пользователем) |
+| `authFailedAt`    | Устанавливается, если последняя попытка обновления не удалась; пользователю нужно переподключиться                          |
 
-Key points:
+Основные моменты:
 
-* Pass `{ providerName }` to filter by provider; omit it to get all connections this app owns across all providers.
-* The server transparently refreshes the access token before returning. Your handler always sees a usable token (or `authFailedAt` set).
-* `getConnection(id)` is the single-row equivalent.
+* Передайте `{ providerName }`, чтобы отфильтровать по провайдеру; опустите, чтобы получить все подключения этого приложения у всех провайдеров.
+* Сервер прозрачно обновляет токен доступа перед возвратом. Ваш обработчик всегда получает рабочий токен (или установлено `authFailedAt`).
+* `getConnection(id)` — эквивалент для одной записи.
 
 </Accordion>
 
-<Accordion title="Per-user vs workspace-shared visibility" description="How users choose between private and shared credentials">
+<Accordion title="Индивидуальная и общая для рабочего пространства видимость" description="Как пользователи выбирают между приватными и общими учетными данными">
 
-When a user clicks "Add connection," they're prompted to pick a visibility:
+Когда пользователь нажимает "Добавить подключение", ему предлагается выбрать видимость:
 
-* **Just for me** — the credential is private to the connecting user. Any logic function called on their behalf (HTTP-route trigger with `isAuthRequired: true`) sees it; cron triggers and database events do not.
-* **Workspace shared** — any workspace member can use the credential. Cron / database triggers also see it, since they have no request user.
+* **Только для меня** — учетные данные приватны для подключившегося пользователя. Любая логическая функция, вызываемая от его имени (триггер HTTP-маршрута с `isAuthRequired: true`), видит их; триггеры cron и события базы данных — нет.
+* **Общее для рабочего пространства** — любой участник рабочего пространства может использовать эти учетные данные. Триггеры cron/базы данных также видят их, поскольку у них нет пользователя запроса.
 
-Use the right one for each handler:
+Используйте подходящий вариант для каждого обработчика:
 
 ```ts
 // HTTP-route trigger — prefer the request user's own connection.
@@ -174,19 +174,19 @@ const conn =
 const conn = connections.find((c) => c.visibility === 'workspace');
 ```
 
-Multiple connections per (user, provider) are allowed, so the same user can hold "Personal Linear" and "Work Linear" side by side.
+Допускается несколько подключений на пару (пользователь, провайдер), поэтому один и тот же пользователь может иметь "Personal Linear" и "Work Linear" одновременно.
 
 </Accordion>
 
-<Accordion title="One-time provider setup" description="Register your OAuth app with the third-party service">
+<Accordion title="Единоразовая настройка провайдера" description="Зарегистрируйте свое приложение OAuth у стороннего сервиса">
 
-For each connection provider, the server admin needs to register an OAuth app at the third party first.
+Для каждого провайдера подключения администратору сервера сначала нужно зарегистрировать у стороннего сервиса приложение OAuth.
 
-1. Go to the provider's developer settings (e.g. https://linear.app/settings/api/applications/new).
-2. Set the **Redirect URI** to `\<SERVER_URL>/apps/oauth/callback`.
-3. Copy the generated **Client ID** and **Client Secret**.
-4. Open the installed app in Twenty as a server admin → set the values on the corresponding `serverVariables`.
-5. Workspace members can then add connections from the per-app **Connections** section.
+1. Перейдите в настройки разработчика провайдера (например, https://linear.app/settings/api/applications/new).
+2. Установите **Redirect URI** в значение `\<SERVER_URL>/apps/oauth/callback`.
+3. Скопируйте сгенерированные **Client ID** и **Client Secret**.
+4. Откройте установленное приложение в Twenty под учетной записью администратора сервера → задайте значения в соответствующих `serverVariables`.
+5. Затем участники рабочего пространства смогут добавлять подключения в разделе **Подключения** конкретного приложения.
 
 </Accordion>
 

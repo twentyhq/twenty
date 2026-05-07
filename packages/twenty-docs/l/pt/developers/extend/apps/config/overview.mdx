@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Configure the app itself — its identity, default permissions, and what runs at install time.
+title: Visão Geral
+description: Configure a própria aplicação — a sua identidade, permissões predefinidas e o que é executado no momento da instalação.
 icon: screwdriver-wrench
 ---
 
-A Twenty app's **config layer** is what describes the app *to the platform* — its identity, the permissions it holds, and the code that runs during install or upgrade. These declarations don't add new data shapes or runtime behavior; they tell Twenty *who the app is* and *how to set it up*.
+A **camada de configuração** de uma aplicação Twenty é o que descreve a aplicação *para a plataforma* — a sua identidade, as permissões que detém e o código que é executado durante a instalação ou atualização. Estas declarações não adicionam novos formatos de dados nem comportamento em tempo de execução; dizem à Twenty *quem é a aplicação* e *como configurá-la*.
 
 ```text
 ┌────────────────────────────────────────────────────────┐
@@ -26,26 +26,26 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
        └──────────────────────────────────┘
 ```
 
-## In this section
+## Nesta seção
 
 <CardGroup cols={2}>
-  <Card title="Application Config" icon="rocket" href="/l/pt/developers/extend/apps/config/application">
-    `defineApplication` — identity, default role, variables, marketplace metadata.
+  <Card title="Configuração da aplicação" icon="rocket" href="/l/pt/developers/extend/apps/config/application">
+    `defineApplication` — identidade, função predefinida, variáveis, metadados do marketplace.
   </Card>
-  <Card title="Roles & Permissions" icon="shield-halved" href="/l/pt/developers/extend/apps/config/roles">
-    `defineRole` — declare what your app's logic functions can read and write.
+  <Card title="Funções e Permissões" icon="shield-halved" href="/l/pt/developers/extend/apps/config/roles">
+    `defineRole` — declara o que as funções de lógica da sua aplicação podem ler e escrever.
   </Card>
-  <Card title="Install Hooks" icon="wrench" href="/l/pt/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` and `definePostInstallLogicFunction` — back up data, seed defaults, validate upgrades.
+  <Card title="Hooks de instalação" icon="wrench" href="/l/pt/developers/extend/apps/config/install-hooks">
+    `definePreInstallLogicFunction` e `definePostInstallLogicFunction` — fazem cópias de segurança dos dados, pré-preenchem valores padrão, validam atualizações.
   </Card>
 </CardGroup>
 
-## How the pieces relate
+## Como as peças se relacionam
 
-* **Application** is the entry point. Every app has exactly one `defineApplication()` call, and it points at one **Role** as its default.
-* The **Role** controls what the app's logic functions and front components can read and write. Follow least-privilege: only grant the permissions your code actually needs.
-* **Install Hooks** run during install or upgrade — pre-install before the metadata migration (so it can refuse a risky upgrade), post-install after the migration (so it can seed default data against the new schema).
+* A **Aplicação** é o ponto de entrada. Cada aplicação tem exatamente uma chamada `defineApplication()`, e esta aponta para uma **Função** como predefinida.
+* A **Função** controla o que as funções de lógica e os componentes de interface da aplicação podem ler e escrever. Siga o princípio do menor privilégio: conceda apenas as permissões de que o seu código realmente necessita.
+* Os **Hooks de instalação** são executados durante a instalação ou atualização — o pré-instalação antes da migração de metadados (para que possa recusar uma atualização arriscada) e o pós-instalação depois da migração (para que possa pré-preencher dados padrão com base no novo esquema).
 
 <Note>
-Install hooks share the [logic function](/l/pt/developers/extend/apps/logic/logic-functions) runtime — same handler signature, same environment variables, same typed API client — but they're declared with their own define functions and live outside the regular trigger model (HTTP, cron, database events).
+Os hooks de instalação partilham o ambiente de execução de [função de lógica](/l/pt/developers/extend/apps/logic/logic-functions) — a mesma assinatura de handler, as mesmas variáveis de ambiente, o mesmo cliente de API tipado — mas são declarados com as suas próprias funções "define" e vivem fora do modelo de disparo normal (HTTP, cron, eventos de base de dados).
 </Note>

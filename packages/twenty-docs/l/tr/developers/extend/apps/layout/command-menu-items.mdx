@@ -1,10 +1,10 @@
 ---
-title: Command Menu Items
-description: Surface front components as quick actions and command menu (Cmd+K) entries with defineCommandMenuItem.
+title: Komut menüsü öğeleri
+description: Ön bileşenleri hızlı işlemler ve komut menüsü (Cmd+K) girdileri olarak `defineCommandMenuItem` ile sunun.
 icon: terminal
 ---
 
-A **command menu item** is the bridge between the user and a [front component](/l/tr/developers/extend/apps/layout/front-components). It registers the component in Twenty's command menu (Cmd+K) and, optionally, as a pinned quick-action button in the top-right corner of the page.
+Bir **komut menüsü öğesi**, kullanıcı ile bir [ön bileşen](/l/tr/developers/extend/apps/layout/front-components) arasında köprü görevi görür. Bu, bileşeni Twenty'nin komut menüsüne (Cmd+K) ve isteğe bağlı olarak sayfanın sağ üst köşesindeki sabitlenmiş bir hızlı işlem düğmesi olarak kaydeder.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -20,25 +20,25 @@ export default defineCommandMenuItem({
 });
 ```
 
-## Configuration fields
+## Yapılandırma alanları
 
-| Field                                   | Required | Description                                                                                                                                                                    |
-| --------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | Yes      | Stable unique ID for the command                                                                                                                                               |
-| `label`                                 | Yes      | Full label shown in the command menu (Cmd+K)                                                                                                                                   |
-| `frontComponentUniversalIdentifier`     | Yes      | The `universalIdentifier` of the front component this command opens                                                                                                            |
-| `shortLabel`                            | No       | Shorter label displayed on the pinned quick-action button                                                                                                                      |
-| `icon`                                  | No       | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`)                                                                                                        |
-| `isPinned`                              | No       | When `true`, shows the command as a quick-action button in the top-right corner of the page                                                                                    |
-| `availabilityType`                      | No       | Controls where the command appears: `'GLOBAL'` (always available), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
-| `availabilityObjectUniversalIdentifier` | No       | Restrict the command to pages of a specific object type (e.g. only on Company records)                                                                                         |
-| `conditionalAvailabilityExpression`     | No       | A boolean expression that dynamically controls visibility (see below)                                                                                                          |
+| Alan                                    | Zorunlu | Açıklama                                                                                                                                                                                              |
+| --------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Evet    | Komut için kalıcı benzersiz kimlik                                                                                                                                                                    |
+| `label`                                 | Evet    | Komut menüsünde (Cmd+K) gösterilen tam etiket                                                                                                                                                         |
+| `frontComponentUniversalIdentifier`     | Evet    | Bu komutun açtığı ön bileşenin `universalIdentifier` değeri                                                                                                                                           |
+| `shortLabel`                            | Hayır   | Sabitlenmiş hızlı işlem düğmesinde görüntülenen daha kısa etiket                                                                                                                                      |
+| `icon`                                  | Hayır   | Etiketin yanında görüntülenen simge adı (örn. `'IconBolt'`, `'IconSend'`)                                                                                                                             |
+| `isPinned`                              | Hayır   | `true` olduğunda, komutu sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak gösterir                                                                                                           |
+| `availabilityType`                      | Hayır   | Komutun nerede görüneceğini kontrol eder: `'GLOBAL'` (her zaman kullanılabilir), `'RECORD_SELECTION'` (yalnızca kayıtlar seçiliyken) veya `'FALLBACK'` (başka hiçbir komut eşleşmediğinde gösterilir) |
+| `availabilityObjectUniversalIdentifier` | Hayır   | Komutu belirli bir nesne türünün sayfalarıyla sınırlandırın (örn. yalnızca Company kayıtlarında)                                                                                                      |
+| `conditionalAvailabilityExpression`     | Hayır   | Görünürlüğü dinamik olarak kontrol eden bir boolean ifade (aşağıya bakın)                                                                                                                             |
 
-## Headless commands
+## Arayüzsüz komutlar
 
-A command menu item paired with a [headless front component](/l/tr/developers/extend/apps/layout/front-components#headless-vs-non-headless) is the idiomatic way to ship a one-click action — run code, navigate, or confirm and execute. The Front Components page covers the [SDK Command components](/l/tr/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) that handle the action-and-unmount pattern.
+Bir [arayüzsüz ön bileşen](/l/tr/developers/extend/apps/layout/front-components#headless-vs-non-headless) ile eşleştirilmiş bir komut menüsü öğesi, tek tıklamayla bir eylem sunmanın — kod çalıştırma, gezinme veya onaylayıp yürütme — yaygın kullanılan biçimidir. Ön Bileşenler sayfası, eylem-ve-kaldırma modelini yöneten [SDK Command bileşenlerini](/l/tr/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) kapsar.
 
-A typical flow:
+Tipik bir akış:
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -79,9 +79,9 @@ export default defineCommandMenuItem({
 });
 ```
 
-## Conditional availability expressions
+## Koşullu kullanılabilirlik ifadeleri
 
-The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
+`conditionalAvailabilityExpression` alanı, geçerli sayfa bağlamına göre bir komutun ne zaman görünür olacağını kontrol etmenizi sağlar. İfadeler oluşturmak için `twenty-sdk`'den türlendirilmiş değişkenleri ve operatörleri içe aktarın:
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -103,42 +103,42 @@ export default defineCommandMenuItem({
 });
 ```
 
-### Context variables
+### Bağlam değişkenleri
 
-These represent the current state of the page:
+Bunlar sayfanın mevcut durumunu temsil eder:
 
-| Variable                       | Type      | Description                                                      |
-| ------------------------------ | --------- | ---------------------------------------------------------------- |
-| `pageType`                     | `string`  | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
-| `isInSidePanel`                | `boolean` | Whether the component is rendered in a side panel                |
-| `numberOfSelectedRecords`      | `number`  | Number of currently selected records                             |
-| `isSelectAll`                  | `boolean` | Whether "select all" is active                                   |
-| `selectedRecords`              | `array`   | The selected record objects                                      |
-| `favoriteRecordIds`            | `array`   | IDs of favorited records                                         |
-| `objectPermissions`            | `object`  | Permissions for the current object type                          |
-| `targetObjectReadPermissions`  | `object`  | Read permissions for the target object                           |
-| `targetObjectWritePermissions` | `object`  | Write permissions for the target object                          |
-| `featureFlags`                 | `object`  | Active feature flags                                             |
-| `objectMetadataItem`           | `object`  | Metadata of the current object type                              |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter                |
+| Değişken                       | Tür       | Açıklama                                                          |
+| ------------------------------ | --------- | ----------------------------------------------------------------- |
+| `pageType`                     | `string`  | Geçerli sayfa türü (örn. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Bileşenin bir yan panelde oluşturulup oluşturulmadığı             |
+| `numberOfSelectedRecords`      | `number`  | Şu anda seçili kayıt sayısı                                       |
+| `isSelectAll`                  | `boolean` | "tümünü seç" seçeneğinin etkin olup olmadığı                      |
+| `selectedRecords`              | `array`   | Seçili kayıt nesneleri                                            |
+| `favoriteRecordIds`            | `array`   | Favorilere eklenen kayıtların ID'leri                             |
+| `objectPermissions`            | `object`  | Geçerli nesne türü için izinler                                   |
+| `targetObjectReadPermissions`  | `object`  | Hedef nesne için okuma izinleri                                   |
+| `targetObjectWritePermissions` | `object`  | Hedef nesne için yazma izinleri                                   |
+| `featureFlags`                 | `object`  | Etkin özellik bayrakları                                          |
+| `objectMetadataItem`           | `object`  | Geçerli nesne türünün üst verileri                                |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Geçerli görünümde soft-delete filtresi olup olmadığı              |
 
-### Operators
+### Operatörler
 
-Combine variables into boolean expressions:
+Değişkenleri boolean ifadelere dönüştürmek için birleştirin:
 
-| Operator                            | Description                                                       |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| `isDefined(value)`                  | `true` if the value is not null/undefined                         |
-| `isNonEmptyString(value)`           | `true` if the value is a non-empty string                         |
-| `includes(array, value)`            | `true` if the array contains the value                            |
-| `includesEvery(array, prop, value)` | `true` if every item's property includes the value                |
-| `every(array, prop)`                | `true` if the property is truthy on every item                    |
-| `everyDefined(array, prop)`         | `true` if the property is defined on every item                   |
-| `everyEquals(array, prop, value)`   | `true` if the property equals the value on every item             |
-| `some(array, prop)`                 | `true` if the property is truthy on at least one item             |
-| `someDefined(array, prop)`          | `true` if the property is defined on at least one item            |
-| `someEquals(array, prop, value)`    | `true` if the property equals the value on at least one item      |
-| `someNonEmptyString(array, prop)`   | `true` if the property is a non-empty string on at least one item |
-| `none(array, prop)`                 | `true` if the property is falsy on every item                     |
-| `noneDefined(array, prop)`          | `true` if the property is undefined on every item                 |
-| `noneEquals(array, prop, value)`    | `true` if the property does not equal the value on any item       |
+| Operatör                            | Açıklama                                                  |
+| ----------------------------------- | --------------------------------------------------------- |
+| `isDefined(value)`                  | Değer null/undefined değilse `true`                       |
+| `isNonEmptyString(value)`           | Değer boş olmayan bir string ise `true`                   |
+| `includes(array, value)`            | Dizi değeri içeriyorsa `true`                             |
+| `includesEvery(array, prop, value)` | Her bir öğenin özelliği değeri içeriyorsa `true`          |
+| `every(array, prop)`                | Özellik her öğede truthy ise `true`                       |
+| `everyDefined(array, prop)`         | Özellik her öğede tanımlıysa `true`                       |
+| `everyEquals(array, prop, value)`   | Özellik her öğede değere eşitse `true`                    |
+| `some(array, prop)`                 | Özellik en az bir öğede truthy ise `true`                 |
+| `someDefined(array, prop)`          | Özellik en az bir öğede tanımlıysa `true`                 |
+| `someEquals(array, prop, value)`    | Özellik en az bir öğede değere eşitse `true`              |
+| `someNonEmptyString(array, prop)`   | Özellik en az bir öğede boş olmayan bir string ise `true` |
+| `none(array, prop)`                 | Özellik her öğede falsy ise `true`                        |
+| `noneDefined(array, prop)`          | Özellik her öğede tanımsızsa `true`                       |
+| `noneEquals(array, prop, value)`    | Özellik hiçbir öğede değere eşit değilse `true`           |

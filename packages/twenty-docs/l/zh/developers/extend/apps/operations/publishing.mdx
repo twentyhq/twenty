@@ -1,45 +1,45 @@
 ---
-title: Publishing
-icon: upload
-description: Distribute your Twenty app to the marketplace or deploy it internally.
+title: 发布
+icon: 上传
+description: 将你的 Twenty 应用分发到应用市场，或进行内部部署。
 ---
 
-## Overview
+## 概览
 
-Once your app is [built and tested locally](/l/zh/developers/extend/apps/getting-started/concepts), you have two paths for distributing it:
+一旦你的应用已[在本地构建并完成测试](/l/zh/developers/extend/apps/getting-started/concepts)，你可以通过两种方式进行分发：
 
-* **Deploy a tarball** — upload your app directly to a specific Twenty server for internal or private use.
-* **Publish to npm** — list your app in the Twenty marketplace for any workspace to discover and install.
+* **部署 tar 包** — 直接将你的应用上传到特定的 Twenty 服务器，以供内部或私有使用。
+* **发布到 npm** — 将你的应用在 Twenty 应用市场上架，供任何工作区发现并安装。
 
-Both paths start from the same **build** step.
+两种路径都从同一个**构建**步骤开始。
 
-## Building your app
+## 构建你的应用
 
-Run the build command to compile your app and generate a distribution-ready `manifest.json`:
+运行构建命令来编译你的应用，并生成适用于分发的 `manifest.json`：
 
 ```bash filename="Terminal"
 yarn twenty build
 ```
 
-This compiles TypeScript sources, transpiles logic functions and front components, and writes everything to `.twenty/output/`. Add `--tarball` to also produce a `.tgz` package for manual distribution or the deploy command.
+这会编译 TypeScript 源码，转译逻辑函数和前端组件，并将所有内容写入 `.twenty/output/`。 添加 `--tarball`，还可以生成用于手动分发或 deploy 命令的 `.tgz` 包。
 
-## Deploying to a server (tarball)
+## 部署到服务器（tar 包）
 
-For apps you don't want publicly available — proprietary tools, enterprise-only integrations, or experimental builds — you can deploy a tarball directly to a Twenty server.
+对于你不希望公开的应用（专有工具、仅供企业使用的集成或实验性构建），你可以将 tar 包直接部署到某台 Twenty 服务器。
 
-### Prerequisites
+### 先决条件
 
-Before deploying, you need a configured remote pointing to the target server. Remotes store the server URL and authentication credentials locally in `~/.twenty/config.json`.
+在部署之前，你需要配置一个指向目标服务器的远程。 远程会将服务器 URL 和身份验证凭据本地存储在 `~/.twenty/config.json` 中。
 
-Add a remote:
+添加远程：
 
 ```bash filename="Terminal"
 yarn twenty remote add --api-url https://your-twenty-server.com --as production
 ```
 
-### Deploying
+### 部署
 
-Build and upload your app to the server in one step:
+一步构建并将你的应用上传到服务器：
 
 ```bash filename="Terminal"
 yarn twenty deploy
@@ -47,39 +47,39 @@ yarn twenty deploy
 # yarn twenty deploy --remote production
 ```
 
-### Sharing a deployed app
+### 共享已部署的应用
 
 <Warning>
-Sharing private (tarball) apps across workspaces is an **Enterprise** feature. The **Distribution** tab will show an upgrade prompt instead of the share controls until your workspace has a valid Enterprise key. See [Settings > Admin Panel > Enterprise](/settings/admin-panel#enterprise) to activate it.
+在多个工作区之间共享私有（tarball）应用是一项 **Enterprise** 功能。 在您的工作区拥有有效的 Enterprise 密钥之前，**Distribution** 选项卡将显示升级提示，而不是共享控件。 请前往 [设置 > 管理面板 > Enterprise](/settings/admin-panel#enterprise) 以启用。
 </Warning>
 
-Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. Once your workspace is on the Enterprise plan, you can share a deployed app like this:
+通过 tar 包分发的应用不会出现在公共市场中，因此同一服务器上的其他工作区无法通过浏览发现它们。 一旦您的工作区升级到企业版计划，您就可以像这样分享已部署的应用：
 
-1. Go to **Settings > Applications > Registrations** and open your app
-2. In the **Distribution** tab, click **Copy share link**
-3. Share this link with users on other workspaces — it takes them directly to the app's install page
+1. 前往 **Settings > Applications > Registrations** 并打开你的应用
+2. 在 **Distribution** 选项卡中，点击 **Copy share link**
+3. 将此链接分享给其他工作区的用户 — 它会将他们直接带到该应用的安装页面
 
-The share link uses the server's base URL (without any workspace subdomain) so it works for any workspace on the server.
+该分享链接使用服务器的基础 URL（不包含任何工作区子域），因此适用于该服务器上的任意工作区。
 
-### Version management
+### 版本管理
 
-When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
+在更新已部署的 tarball 应用时，服务器要求 `package.json` 中的 `version` 必须**严格高于**（按[语义化版本](https://semver.org)排序）当前已部署的版本。 在 tar 包存储之前，重新部署相同版本或推送更低版本都会被拒绝 — 你会在 CLI 中看到 `VERSION_ALREADY_EXISTS` 错误。
 
-To release an update:
+要发布更新：
 
-1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
-2. Run `yarn twenty deploy` (or `yarn twenty deploy --remote production`)
-3. Workspaces that have the app installed will see the upgrade available in their settings
+1. 将 `package.json` 中的 `version` 字段递增（例如：`1.2.3` → `1.2.4`、`1.3.0` 或 `2.0.0`）
+2. 运行 `yarn twenty deploy`（或 `yarn twenty deploy --remote production`）
+3. 已安装该应用的工作区会在其设置中看到可用的升级
 
 <Note>
-Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is allowed, and a final release like `1.0.0` is correctly recognized as higher than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver string.
+预发布标签按预期工作：将 `1.0.0-rc.1` 递增为 `1.0.0-rc.2` 是允许的，并且像 `1.0.0` 这样的正式发布会被正确识别为高于 `1.0.0-rc.5`。 `package.json` 中的版本本身必须是有效的 SemVer 字符串。
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
 
-### Server version compatibility
+### 服务器版本兼容性
 
-If your app uses a feature introduced in a specific Twenty server version (for example, OAuth providers added in v2.3.0), you should declare the minimum server version your app requires using the `engines.twenty` field in `package.json`:
+如果你的应用使用了特定 Twenty 服务器版本中引入的功能（例如在 v2.3.0 中新增的 OAuth 提供方），应当在 `package.json` 的 `engines.twenty` 字段中声明应用所需的最低服务器版本：
 
 ```json filename="package.json"
 {
@@ -92,83 +92,83 @@ If your app uses a feature introduced in a specific Twenty server version (for e
 }
 ```
 
-The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
+该值是标准的 [semver 范围](https://github.com/npm/node-semver#ranges)。 常见模式:
 
-| Range                              | Meaning                                    |
-| ---------------------------------- | ------------------------------------------ |
-| `>=2.3.0`                          | Any server from 2.3.0 onward               |
-| `>=2.3.0 \<3.0.0` | 2.3.0 or later, but below the next major   |
-| `^2.3.0`                           | Same as `>=2.3.0 \<3.0.0` |
+| 范围                                 | 含义                                      |
+| ---------------------------------- | --------------------------------------- |
+| `>=2.3.0`                          | 任何 2.3.0 及以上的服务器                        |
+| `>=2.3.0 \<3.0.0` | 2.3.0 或更高，但低于下一个主版本                     |
+| `^2.3.0`                           | 与 `>=2.3.0 \<3.0.0` 相同 |
 
-**What happens at deploy and install time:**
+**在部署和安装时会发生什么：**
 
-* If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
-* If `engines.twenty` is **not set**, the app is accepted on any server version (backward-compatible with existing apps).
-* If the server has no `APP_VERSION` configured, the check is skipped.
+* 如果已设置 `engines.twenty`，且目标服务器的版本不满足该范围，则部署（tarball 上传）或安装将被拒绝，并返回 `SERVER_VERSION_INCOMPATIBLE` 错误以及一条同时指明所需范围和实际服务器版本的消息。
+* 如果 `engines.twenty` **未设置**，则该应用可在任何服务器版本上被接受（与现有应用向后兼容）。
+* 如果服务器未配置 `APP_VERSION`，则跳过该检查。
 
 <Note>
-The server is the authoritative check — it validates `engines.twenty` on both tarball upload and workspace install. If you deploy a tarball out-of-band or install from the marketplace, the server still enforces compatibility.
+服务器是权威校验方——它会在 tarball 上传和工作区安装时验证 `engines.twenty`。 即使你通过带外方式部署 tarball 或从应用市场安装，服务器仍会强制执行兼容性要求。
 </Note>
 
-## Automated CI/CD (scaffolded workflows)
+## 自动化 CI/CD（脚手架生成的工作流）
 
-Apps generated with `create-twenty-app` ship with two GitHub Actions workflows out of the box, under `.github/workflows/`. They are ready to run as soon as you push the repo to GitHub — no extra setup is needed for CI, and CD only requires a single secret.
+使用 `create-twenty-app` 生成的应用开箱即带有两个 GitHub Actions 工作流，位于 `.github/workflows/`。 当你将仓库推送到 GitHub 后即可运行——CI 无需额外设置，CD 只需要一个机密。
 
 ### CI — `ci.yml`
 
-Runs integration tests on every push to `main` and every pull request.
+它会在每次向 `main` 推送以及拉取请求上自动运行你的集成测试。
 
-**What it does:**
+**作用:**
 
-1. Checks out your app's source.
-2. Spawns an isolated Twenty test instance using the `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` composite action (the CI equivalent of `yarn twenty server start --test`).
-3. Enables Corepack, sets up Node.js from your `.nvmrc`, and installs dependencies with `yarn install --immutable`.
-4. Runs `yarn test`, passing `TWENTY_API_URL` and `TWENTY_API_KEY` from the spawned instance so your tests can talk to a real server.
+1. 检出你的应用源代码。
+2. 使用 `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` 组合 action 启动一个隔离的 Twenty 测试实例（相当于 CI 中的 `yarn twenty server start --test`）。
+3. 启用 Corepack，从你的 `.nvmrc` 设置 Node.js，并使用 `yarn install --immutable` 安装依赖。
+4. 运行 `yarn test`，并从启动的实例传入 `TWENTY_API_URL` 和 `TWENTY_API_KEY`，以便你的测试可以与真实服务器通信。
 
-**Config knobs:**
+**配置选项:**
 
-* `TWENTY_VERSION` (env, defaults to `latest`) — pin the Twenty server version used in CI by editing this in `ci.yml`.
-* Concurrency is grouped by `github.ref` and cancels in-progress runs on new pushes.
+* `TWENTY_VERSION`（环境变量，默认 `latest`）— 通过在 `ci.yml` 中编辑它来固定 CI 使用的 Twenty 服务器版本。
+* 并发按 `github.ref` 分组，并会在有新的推送时取消进行中的运行。
 
-No secrets are required — the test instance is ephemeral and lives only for the duration of the job.
+不需要任何机密——测试实例是临时的，只在作业持续期间存在。
 
 ### CD — `cd.yml`
 
-Deploys your app to a configured Twenty server on every push to `main`, and optionally from a pull request when the `deploy` label is applied.
+在每次向 `main` 推送时将你的应用部署到已配置的 Twenty 服务器；当为拉取请求添加 `deploy` 标签时，也可从该拉取请求进行部署。
 
-**What it does:**
+**作用:**
 
-1. Checks out the PR head (for labeled PRs) or the pushed commit.
-2. Runs `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — the CI equivalent of `yarn twenty deploy`.
-3. Runs `twentyhq/twenty/.github/actions/install-twenty-app@main` so the newly deployed version is installed into the target workspace.
+1. 检出 PR 的 head（针对已加标签的 PR），或被推送的提交。
+2. 运行 `twentyhq/twenty/.github/actions/deploy-twenty-app@main`——相当于 CI 中的 `yarn twenty deploy`。
+3. 运行 `twentyhq/twenty/.github/actions/install-twenty-app@main`，将新部署的版本安装到目标工作区。
 
-**Required configuration:**
+**必需的配置:**
 
-| Setting                 | Where                                                      | Purpose                                                                               |
-| ----------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (defaults to `http://localhost:3000`)    | The Twenty server to deploy to. Change this to your real server URL before first use. |
-| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | API key with deploy permission on the target server.                                  |
+| 设置                      | 位置                                                       | 目的                                       |
+| ----------------------- | -------------------------------------------------------- | ---------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `cd.yml` 中的 `env`（默认值为 `http://localhost:3000`）          | 要部署到的 Twenty 服务器。 首次使用前将其更改为你真实的服务器 URL。 |
+| `TWENTY_DEPLOY_API_KEY` | GitHub 仓库 **Settings → Secrets and variables → Actions** | 在目标服务器上具有部署权限的 API 密钥。                   |
 
 <Note>
-The default `TWENTY_DEPLOY_URL` of `http://localhost:3000` is a placeholder — it will not reach anything from a GitHub-hosted runner. Update it to your server's public URL (or use a self-hosted runner with network access) before enabling CD.
+默认的 `TWENTY_DEPLOY_URL` 值 `http://localhost:3000` 只是占位符——从 GitHub 托管的 runner 无法访问任何资源。 在启用 CD 之前，将其更新为你服务器的公网 URL（或使用具有网络访问权限的自托管 runner）。
 </Note>
 
-**Triggering a preview deploy from a PR:**
+**从 PR 触发预览部署:**
 
-Add the `deploy` label to a pull request. The `if:` guard in `cd.yml` will run the job for that PR using the PR's head commit, letting you validate a change on the target server before merging.
+为拉取请求添加 `deploy` 标签。 在 `cd.yml` 中的 `if:` 守卫会使用该 PR 的 head 提交为其运行作业，使你能在合并前在目标服务器上验证更改。
 
-### Pinning the reusable actions
+### 固定可复用的 actions
 
-Both workflows reference reusable actions at `@main`, so action updates in the `twentyhq/twenty` repo are picked up automatically. If you want deterministic builds, replace `@main` with a commit SHA or release tag on each `uses:` line.
+两个工作流都引用了位于 `@main` 的可复用 actions，因此会自动获取 `twentyhq/twenty` 仓库中的 action 更新。 如果你希望构建具有确定性，请在每个 `uses:` 行中将 `@main` 替换为某个提交的 SHA 或发行标签。
 
-## Publishing to npm
+## 发布到 npm
 
-Publishing to npm makes your app discoverable in the Twenty marketplace. Any Twenty workspace can browse, install, and upgrade marketplace apps directly from the UI.
+发布到 npm 可让你的应用在 Twenty 应用市场中被发现。 任何 Twenty 工作区都可以直接通过 UI 浏览、安装和升级应用市场中的应用。
 
-### Requirements
+### 要求
 
-* An [npm](https://www.npmjs.com) account
-* The `twenty-app` keyword in your `package.json` `keywords` array (add it manually — it is not included by default in the `create-twenty-app` template)
+* 一个 [npm](https://www.npmjs.com) 账户
+* 你在 `package.json` 的 `keywords` 数组中的 `twenty-app` 关键字（需要手动添加 — 在 `create-twenty-app` 模板中默认不包含）
 
 ```json filename="package.json"
 {
@@ -178,9 +178,9 @@ Publishing to npm makes your app discoverable in the Twenty marketplace. Any Twe
 }
 ```
 
-### Marketplace metadata
+### 应用市场元数据
 
-The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logoUrl` and `screenshots` to reference images from the `public/` folder:
+`defineApplication()` 配置支持可选字段，用于控制你的应用在市场中的展示方式。 使用 `logoUrl` 和 `screenshots` 来引用 `public/` 文件夹中的图片：
 
 ```ts src/application-config.ts
 export default defineApplication({
@@ -196,33 +196,33 @@ export default defineApplication({
 });
 ```
 
-See the [defineApplication accordion](/l/zh/developers/extend/apps/config/application#marketplace-metadata) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
+完整的市场字段列表（`author`、`category`、`aboutDescription`、`websiteUrl`、`termsUrl` 等）请参见“构建应用”页面中的 [defineApplication 折叠面板](/l/zh/developers/extend/apps/config/application#marketplace-metadata)。
 
-#### Recommended screenshot dimensions
+#### 建议的屏幕截图尺寸
 
-The marketplace renders `screenshots` in a fixed `8:5` container (for example, `1600×1000 px`).
+该市场会在固定的 `8:5` 容器中渲染 `screenshots`（例如，`1600×1000 px`）。
 
 <Note>
-Screenshots of any aspect ratio are displayed in full and are never cropped, but anything significantly taller or narrower than `8:5` will show empty bands on the sides.
+任意纵横比的屏幕截图都会完整显示，且绝不会被裁剪，但相对于 `8:5` 明显更高或更窄的图片，两侧会出现空白边。
 </Note>
 
-### Publish
+### 发布
 
 ```bash filename="Terminal"
 yarn twenty publish
 ```
 
-To publish under a specific dist-tag (e.g., `beta` or `next`):
+要在特定的 dist-tag（例如 `beta` 或 `next`）下发布：
 
 ```bash filename="Terminal"
 yarn twenty publish --tag beta
 ```
 
-### How marketplace discovery works
+### 应用市场的发现机制如何运作
 
-The Twenty server syncs its marketplace catalog from the npm registry **every hour**.
+Twenty 服务器会**每小时**从 npm 注册表同步其市场目录。
 
-You can trigger the sync immediately instead of waiting:
+你可以立即触发同步，而无需等待：
 
 ```bash filename="Terminal"
 yarn twenty server catalog-sync
@@ -230,15 +230,15 @@ yarn twenty server catalog-sync
 # yarn twenty server catalog-sync --remote production
 ```
 
-The metadata shown in the marketplace comes from your `defineApplication()` config — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
+市场中显示的元数据来自你的 `defineApplication()` 配置——例如 `displayName`、`description`、`author`、`category`、`logoUrl`、`screenshots`、`aboutDescription`、`websiteUrl` 和 `termsUrl` 等字段。
 
 <Note>
-If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
+如果您的应用未在 `defineApplication()` 中定义 `aboutDescription`，市场将自动使用 npm 上您的软件包的 `README.md` 作为关于页面内容。 这意味着您可以为 npm 和 Twenty 市场维护同一个 README。 如果您希望在市场中使用不同的描述，请显式设置 `aboutDescription`。
 </Note>
 
-### CI publishing
+### CI 发布
 
-Use this GitHub Actions workflow to publish automatically on every release (uses [OIDC](https://docs.npmjs.com/trusted-publishers)):
+使用此 GitHub Actions 工作流，在每次发布时自动进行发布（使用 [OIDC](https://docs.npmjs.com/trusted-publishers)）：
 
 ```yaml filename=".github/workflows/publish.yml"
 name: Publish
@@ -265,31 +265,31 @@ jobs:
         working-directory: .twenty/output
 ```
 
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `yarn twenty build`, then `npm publish` from `.twenty/output`.
+对于其他 CI 系统（GitLab CI、CircleCI 等），同样适用以下三条命令：`yarn install`、`yarn twenty build`，然后在 `.twenty/output` 目录下执行 `npm publish`。
 
 <Note>
-**npm provenance** is optional but recommended. Publishing with `--provenance` adds a trust badge to your npm listing, letting users verify the package was built from a specific commit in a public CI pipeline. See the [npm provenance docs](https://docs.npmjs.com/generating-provenance-statements) for setup instructions.
+**npm provenance** 可选，但建议启用。 使用 `--provenance` 发布会在你的 npm 列表中添加可信徽章，使用户可以验证该包是由公共 CI 流水线中的特定提交构建的。 有关设置说明，请参见 [npm provenance 文档](https://docs.npmjs.com/generating-provenance-statements)。
 </Note>
 
-## Installing apps
+## 安装应用
 
-Once an app is published (npm) or deployed (tarball), workspaces can install it through the UI.
+一旦应用已发布（npm）或已部署（tarball），各工作区就可以通过 UI 进行安装。
 
-Go to the **Settings > Applications** page in Twenty, where both marketplace and tarball-deployed apps can be browsed and installed.
+在 Twenty 的 **Settings > Applications** 页面中，既可以浏览也可以安装来自市场或通过 tarball 部署的应用。
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-You can also install apps from the command line:
+你也可以通过命令行安装应用：
 
 ```bash filename="Terminal"
 yarn twenty install
 ```
 
 <Note>
-The server enforces semver versioning on install, mirroring the rules on deploy:
+服务器在安装时强制执行 SemVer 版本控制，与部署时的规则一致：
 
-* Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
-* Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
+* 尝试安装与工作区中已安装版本相同的版本将被拒绝，并返回 `APP_ALREADY_INSTALLED` 错误。
+* 尝试安装低于当前已安装版本的版本将被拒绝，并返回 `CANNOT_DOWNGRADE_APPLICATION` 错误。
 
-To install a newer version, deploy or publish it first, then re-run `yarn twenty install`.
+若要安装较新的版本，请先部署或发布它，然后重新运行 `yarn twenty install`。
 </Note>

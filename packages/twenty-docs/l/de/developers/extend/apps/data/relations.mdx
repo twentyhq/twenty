@@ -1,30 +1,30 @@
 ---
 title: Beziehungen
-description: Connect objects together with bidirectional MANY_TO_ONE / ONE_TO_MANY relations.
+description: Objekte mit bidirektionalen MANY_TO_ONE- / ONE_TO_MANY-Relationen verbinden.
 icon: diagram-project
 ---
 
-Relations connect two objects together. In Twenty, relations are always **bidirectional** — every relation has two sides, and each side is declared as a field that references the other.
+Relationen verbinden zwei Objekte miteinander. In Twenty sind Relationen stets **bidirektional** — jede Relation hat zwei Seiten, und jede Seite wird als Feld deklariert, das auf die andere verweist.
 
 | Beziehungstyp | Beschreibung                                                            | Fremdschlüssel vorhanden? |
 | ------------- | ----------------------------------------------------------------------- | ------------------------- |
 | `MANY_TO_ONE` | Viele Datensätze dieses Objekts verweisen auf einen Datensatz des Ziels | Ja (`joinColumnName`)     |
-| `ONE_TO_MANY` | Ein Datensatz dieses Objekts hat viele Datensätze des Ziels             | No (the inverse side)     |
+| `ONE_TO_MANY` | Ein Datensatz dieses Objekts hat viele Datensätze des Ziels             | Nein (die inverse Seite)  |
 
-## How relations work
+## Wie Relationen funktionieren
 
-Every relation requires **two fields** that reference each other:
+Jede Relation erfordert **zwei Felder**, die sich gegenseitig referenzieren:
 
-1. The **MANY_TO_ONE** side — lives on the object that holds the foreign key.
-2. The **ONE_TO_MANY** side — lives on the object that owns the collection.
+1. Die **MANY_TO_ONE**-Seite — befindet sich auf dem Objekt, das den Fremdschlüssel hält.
+2. Die **ONE_TO_MANY**-Seite — befindet sich auf dem Objekt, dem die Sammlung gehört.
 
-Both fields use `FieldType.RELATION` and cross-reference each other via `relationTargetFieldMetadataUniversalIdentifier`.
+Beide Felder verwenden `FieldType.RELATION` und verweisen über `relationTargetFieldMetadataUniversalIdentifier` gegenseitig aufeinander.
 
-## Example: Post Card has many Recipients
+## Beispiel: Postkarte hat viele Empfänger
 
-A `PostCard` can be sent to many `PostCardRecipient` records. Each recipient belongs to exactly one post card.
+Eine `PostCard` kann an viele `PostCardRecipient`-Datensätze gesendet werden. Jeder Empfänger gehört genau zu einer Postkarte.
 
-**Step 1: Define the ONE_TO_MANY side on PostCard** (the "one" side):
+**Schritt 1: Definieren Sie die ONE_TO_MANY-Seite auf PostCard** (die "eine" Seite):
 
 ```ts src/fields/post-card-recipients-on-post-card.field.ts
 import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
@@ -51,7 +51,7 @@ export default defineField({
 });
 ```
 
-**Step 2: Define the MANY_TO_ONE side on PostCardRecipient** (the "many" side — holds the foreign key):
+**Schritt 2: Definieren Sie die MANY_TO_ONE-Seite auf PostCardRecipient** (die "viele" Seite — hält den Fremdschlüssel):
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
 import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
@@ -81,12 +81,12 @@ export default defineField({
 ```
 
 <Note>
-**Circular imports:** both relation fields reference each other's `universalIdentifier`. To avoid circular import issues, export your field IDs as named constants from each file and import them in the other. The build system resolves these at compile time.
+**Zyklische Importe:** Beide Relationsfelder referenzieren gegenseitig den `universalIdentifier` des jeweils anderen. Um Probleme mit zyklischen Importen zu vermeiden, exportieren Sie Ihre Feld-IDs als benannte Konstanten aus jeder Datei und importieren Sie sie in der jeweils anderen. Das Build-System löst dies zur Kompilierzeit auf.
 </Note>
 
-## Relating to standard objects
+## Relationen zu Standardobjekten
 
-To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+Um eine Relation mit einem integrierten Twenty-Objekt (Person, Company usw.) zu erstellen, verwenden Sie `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
 
 ```ts src/fields/person-on-self-hosting-user.field.ts
 import {
@@ -120,20 +120,20 @@ export default defineField({
 });
 ```
 
-## Relation field properties
+## Eigenschaften von Relationsfeldern
 
-| Property                                          | Required         | Description                                                                                           |
-| ------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
-| `type`                                            | Yes              | Must be `FieldType.RELATION`                                                                          |
-| `relationTargetObjectMetadataUniversalIdentifier` | Yes              | The `universalIdentifier` of the target object                                                        |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Yes              | The `universalIdentifier` of the matching field on the target object                                  |
-| `universalSettings.relationType`                  | Yes              | `RelationType.MANY_TO_ONE` or `RelationType.ONE_TO_MANY`                                              |
-| `universalSettings.onDelete`                      | MANY_TO_ONE only | What happens when the referenced record is deleted: `CASCADE`, `SET_NULL`, `RESTRICT`, or `NO_ACTION` |
-| `universalSettings.joinColumnName`                | MANY_TO_ONE only | Database column name for the foreign key (e.g., `postCardId`)                                         |
+| Eigenschaft                                       | Erforderlich        | Beschreibung                                                                                                     |
+| ------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `type`                                            | Ja                  | Muss `FieldType.RELATION` sein                                                                                   |
+| `relationTargetObjectMetadataUniversalIdentifier` | Ja                  | Der `universalIdentifier` des Zielobjekts                                                                        |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Ja                  | Der `universalIdentifier` des entsprechenden Felds auf dem Zielobjekt                                            |
+| `universalSettings.relationType`                  | Ja                  | `RelationType.MANY_TO_ONE` oder `RelationType.ONE_TO_MANY`                                                       |
+| `universalSettings.onDelete`                      | Nur für MANY_TO_ONE | Was passiert, wenn der referenzierte Datensatz gelöscht wird: `CASCADE`, `SET_NULL`, `RESTRICT` oder `NO_ACTION` |
+| `universalSettings.joinColumnName`                | Nur für MANY_TO_ONE | Datenbankspaltenname für den Fremdschlüssel (z. B. `postCardId`)                                                 |
 
-## Inline relation fields
+## Inline-Relationsfelder
 
-You can also declare a relation directly inside [`defineObject`](/l/de/developers/extend/apps/data/objects). When inline, omit `objectUniversalIdentifier` — it's inherited from the parent object:
+Sie können eine Relation auch direkt innerhalb von [`defineObject`](/l/de/developers/extend/apps/data/objects) deklarieren. Wenn inline, lassen Sie `objectUniversalIdentifier` weg — er wird vom übergeordneten Objekt geerbt:
 
 ```ts
 export default defineObject({

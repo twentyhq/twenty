@@ -1,14 +1,14 @@
 ---
 title: CLI
-description: yarn twenty commands for executing functions, streaming logs, managing app installations, and switching remotes.
+description: fonksiyonları çalıştırmak, günlükleri akış olarak izlemek, uygulama kurulumlarını yönetmek ve uzak depolar arasında geçiş yapmak için yarn twenty komutları.
 icon: terminal
 ---
 
-Beyond `dev`, `build`, `add`, and `typecheck`, the `yarn twenty` CLI provides commands for executing functions, viewing logs, and managing app installations.
+`dev`, `build`, `add` ve `typecheck` dışında, `yarn twenty` CLI, fonksiyonları çalıştırma, günlükleri görüntüleme ve uygulama kurulumlarını yönetme komutları sağlar.
 
-## Executing functions (`yarn twenty exec`)
+## Fonksiyonları çalıştırma (`yarn twenty exec`)
 
-Run a logic function manually without triggering it via HTTP, cron, or database event:
+Bir mantık fonksiyonunu HTTP, cron veya veritabanı olayıyla tetiklemeden manuel olarak çalıştırın:
 
 ```bash filename="Terminal"
 # Execute by function name
@@ -24,9 +24,9 @@ yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
 yarn twenty exec --postInstall
 ```
 
-## Viewing function logs (`yarn twenty logs`)
+## Fonksiyon günlüklerini görüntüleme (`yarn twenty logs`)
 
-Stream execution logs for your app's logic functions:
+Uygulamanızın mantık fonksiyonlarının yürütme günlüklerini akış olarak alın:
 
 ```bash filename="Terminal"
 # Stream all function logs
@@ -40,12 +40,12 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-This is different from `yarn twenty server logs`, which shows the Docker container logs. `yarn twenty logs` shows your app's function execution logs from the Twenty server.
+Bu, Docker konteyner günlüklerini gösteren `yarn twenty server logs` komutundan farklıdır. `yarn twenty logs`, uygulamanızın fonksiyon yürütme günlüklerini Twenty sunucusundan gösterir.
 </Note>
 
-## Uninstalling an app (`yarn twenty uninstall`)
+## Bir uygulamayı kaldırma (`yarn twenty uninstall`)
 
-Remove your app from the active workspace:
+Uygulamanızı etkin çalışma alanından kaldırın:
 
 ```bash filename="Terminal"
 yarn twenty uninstall
@@ -54,9 +54,9 @@ yarn twenty uninstall
 yarn twenty uninstall --yes
 ```
 
-## Managing remotes
+## Uzakları yönetme
 
-A **remote** is a Twenty server that your app connects to. During setup, the scaffolder creates one for you automatically. You can add more remotes or switch between them at any time.
+Bir **uzak**, uygulamanızın bağlandığı Twenty sunucusudur. Kurulum sırasında iskelet oluşturucu sizin için otomatik olarak bir tane oluşturur. Dilediğiniz zaman daha fazla uzak ekleyebilir veya aralarında geçiş yapabilirsiniz.
 
 ```bash filename="Terminal"
 # Add a new remote (opens a browser for OAuth login)
@@ -75,4 +75,4 @@ yarn twenty remote list
 yarn twenty remote switch <name>
 ```
 
-Your credentials are stored in `~/.twenty/config.json`.
+Kimlik bilgileriniz `~/.twenty/config.json` içinde saklanır.

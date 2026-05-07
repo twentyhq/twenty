@@ -1,10 +1,10 @@
 ---
-title: Views
-description: Ship pre-configured saved views — column order, filters, groups — for objects in your app.
+title: Görünümler
+description: Uygulamanızdaki nesneler için sütun sırası, filtreler, gruplar gibi önceden yapılandırılmış kaydedilmiş görünümleri yayınlayın.
 icon: list
 ---
 
-A **view** is a saved configuration for how records of an object are displayed: which fields appear, their order, whether they're visible, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app — typically a default index view for each custom object you create.
+Bir **görünüm**, bir nesnenin kayıtlarının nasıl görüntüleneceğine ilişkin kaydedilmiş bir yapılandırmadır: hangi alanların görüneceği, sıraları, görünür olup olmadıkları ve uygulanan tüm filtreler veya gruplar. Uygulamanızla birlikte önceden yapılandırılmış görünümler yayınlamak için `defineView()` kullanın — genellikle oluşturduğunuz her özel nesne için varsayılan bir indeks görünümü şeklinde olur.
 
 ```ts src/views/example-view.ts
 import { defineView, ViewKey } from 'twenty-sdk/define';
@@ -30,14 +30,14 @@ export default defineView({
 });
 ```
 
-## Key points
+## Önemli noktalar
 
-* `objectUniversalIdentifier` specifies which object this view applies to. It can be a custom object you defined or a standard Twenty object.
-* `key` determines the view type — `ViewKey.INDEX` is the main list view for the object.
-* `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`.
-* You can also declare `filters`, `filterGroups`, `groups`, and `fieldGroups` for advanced configurations.
-* `position` controls ordering when multiple views exist for the same object.
+* `objectUniversalIdentifier`, bu görünümün hangi nesneye uygulanacağını belirtir. Bu, tanımladığınız özel bir nesne veya standart bir Twenty nesnesi olabilir.
+* `key`, görünüm türünü belirler — `ViewKey.INDEX`, nesne için ana liste görünümüdür.
+* `fields`, hangi sütunların görüneceğini ve hangi sırayla görüneceğini kontrol eder. Her alan bir `fieldMetadataUniversalIdentifier` öğesine referans verir.
+* Daha gelişmiş yapılandırmalar için `filters`, `filterGroups`, `groups` ve `fieldGroups` da bildirebilirsiniz.
+* `position`, aynı nesne için birden fazla görünüm olduğunda sıralamayı kontrol eder.
 
-## How views show up in the UI
+## Görünümlerin kullanıcı arayüzünde görüntülenme şekli
 
-A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/l/tr/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object typically ships a default view + a sidebar entry that opens it.
+Tek başına bir görünüm, kenar çubuğundan erişilebilir değildir. Orada görünmesini sağlamak için, türü `VIEW` olan ve görünümün `universalIdentifier` değerini işaret eden bir [navigasyon menüsü öğesi](/l/tr/developers/extend/apps/layout/navigation-menu-items) ile eşleştirin. Bu, standart örüntüdür: her özel nesne genellikle varsayılan bir görünüm ve bunu açan bir kenar çubuğu girdisiyle birlikte sunulur.

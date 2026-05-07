@@ -1,14 +1,14 @@
 ---
 title: CLI
-description: yarn twenty commands for executing functions, streaming logs, managing app installations, and switching remotes.
+description: comenzi `yarn twenty` pentru executarea funcțiilor, transmiterea fluxurilor de jurnale, gestionarea instalărilor de aplicații și schimbarea remote-urilor.
 icon: terminal
 ---
 
-Beyond `dev`, `build`, `add`, and `typecheck`, the `yarn twenty` CLI provides commands for executing functions, viewing logs, and managing app installations.
+Dincolo de `dev`, `build`, `add` și `typecheck`, `yarn twenty` CLI oferă comenzi pentru executarea funcțiilor, vizualizarea jurnalelor și gestionarea instalărilor de aplicații.
 
-## Executing functions (`yarn twenty exec`)
+## Executarea funcțiilor (`yarn twenty exec`)
 
-Run a logic function manually without triggering it via HTTP, cron, or database event:
+Rulați manual o funcție logică fără a o declanșa prin HTTP, cron sau eveniment de bază de date:
 
 ```bash filename="Terminal"
 # Execute by function name
@@ -24,9 +24,9 @@ yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
 yarn twenty exec --postInstall
 ```
 
-## Viewing function logs (`yarn twenty logs`)
+## Vizualizarea jurnalelor funcțiilor (`yarn twenty logs`)
 
-Stream execution logs for your app's logic functions:
+Transmiteți în flux jurnalele de execuție pentru funcțiile logice ale aplicației:
 
 ```bash filename="Terminal"
 # Stream all function logs
@@ -40,12 +40,12 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-This is different from `yarn twenty server logs`, which shows the Docker container logs. `yarn twenty logs` shows your app's function execution logs from the Twenty server.
+Acest lucru este diferit de `yarn twenty server logs`, care afișează jurnalele containerului Docker. `yarn twenty logs` afișează jurnalele de execuție ale funcțiilor aplicației de pe serverul Twenty.
 </Note>
 
-## Uninstalling an app (`yarn twenty uninstall`)
+## Dezinstalarea unei aplicații (`yarn twenty uninstall`)
 
-Remove your app from the active workspace:
+Eliminați aplicația din spațiul de lucru activ:
 
 ```bash filename="Terminal"
 yarn twenty uninstall
@@ -54,9 +54,9 @@ yarn twenty uninstall
 yarn twenty uninstall --yes
 ```
 
-## Managing remotes
+## Gestionarea remote-urilor
 
-A **remote** is a Twenty server that your app connects to. During setup, the scaffolder creates one for you automatically. You can add more remotes or switch between them at any time.
+Un „remote” este un server Twenty la care se conectează aplicația. În timpul configurării, Scaffolderul creează automat unul pentru dvs. Puteți adăuga mai multe remote-uri sau comuta între ele oricând.
 
 ```bash filename="Terminal"
 # Add a new remote (opens a browser for OAuth login)
@@ -75,4 +75,4 @@ yarn twenty remote list
 yarn twenty remote switch <name>
 ```
 
-Your credentials are stored in `~/.twenty/config.json`.
+Acreditările dvs. sunt stocate în `~/.twenty/config.json`.

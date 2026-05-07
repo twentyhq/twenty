@@ -1,10 +1,10 @@
 ---
-title: Navigation Menu Items
-description: Add custom entries to the workspace sidebar — links to saved views or external URLs.
+title: Элементы навигационного меню
+description: Добавляйте на боковую панель рабочего пространства пользовательские элементы — ссылки на сохраненные представления или внешние URL-адреса.
 icon: меню
 ---
 
-A **navigation menu item** is an entry in the left sidebar. Use `defineNavigationMenuItem()` to ship custom sidebar links — typically one per [view](/l/ru/developers/extend/apps/layout/views) you ship — or to point at external URLs.
+**Элемент навигационного меню** — это запись в левой боковой панели. Используйте `defineNavigationMenuItem()` для добавления пользовательских ссылок на боковую панель — обычно по одной на каждое [представление](/l/ru/developers/extend/apps/layout/views), которое вы поставляете, — или для указания на внешние URL-адреса.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
 import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
@@ -23,22 +23,22 @@ export default defineNavigationMenuItem({
 
 ## Основные моменты
 
-* `type` determines what the menu item links to. Each type pairs with a specific identifier field:
+* `type` определяет, на что указывает элемент меню. Каждый тип сопоставляется с определенным полем идентификатора:
 
-  | Тип                                  | Что делает                           | Required field                                                                |
-  | ------------------------------------ | ------------------------------------ | ----------------------------------------------------------------------------- |
-  | `NavigationMenuItemType.VIEW`        | Opens a saved view                   | `viewUniversalIdentifier`                                                     |
-  | `NavigationMenuItemType.LINK`        | Opens an external URL                | `link`                                                                        |
-  | `NavigationMenuItemType.FOLDER`      | Groups nested items under a label    | `name` (and child items reference the folder via `folderUniversalIdentifier`) |
-  | `NavigationMenuItemType.OBJECT`      | Opens an object's default index page | `targetObjectUniversalIdentifier`                                             |
-  | `NavigationMenuItemType.PAGE_LAYOUT` | Opens a standalone page layout       | `pageLayoutUniversalIdentifier`                                               |
+  | Тип                                  | Что делает                                      | Обязательное поле                                                                 |
+  | ------------------------------------ | ----------------------------------------------- | --------------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | Открывает сохраненное представление             | `viewUniversalIdentifier`                                                         |
+  | `NavigationMenuItemType.LINK`        | Открывает внешний URL-адрес                     | `link`                                                                            |
+  | `NavigationMenuItemType.FOLDER`      | Группирует вложенные элементы под меткой        | `name` (а дочерние элементы ссылаются на папку через `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.OBJECT`      | Открывает страницу индекса по умолчанию объекта | `targetObjectUniversalIdentifier`                                                 |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | Открывает отдельный макет страницы              | `pageLayoutUniversalIdentifier`                                                   |
 
-* `position` controls ordering in the sidebar.
+* `position` управляет порядком в боковой панели.
 
-* `icon` and `color` are optional and customize how the entry looks.
+* `icon` и `color` являются необязательными и настраивают внешний вид элемента.
 
-* `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent.
+* `folderUniversalIdentifier` также доступен для любого элемента, чтобы поместить его внутрь родительского элемента типа `FOLDER`.
 
 <Note>
-**Common pitfall:** creating an object without an associated view + navigation menu item makes that object invisible to users. Unless it's a technical/internal object, every custom object should have a default view *and* a sidebar entry pointing at it.
+**Распространенная ошибка:** создание объекта без связанного представления и элемента навигационного меню делает этот объект невидимым для пользователей. Если только это не технический/внутренний объект, у каждого настраиваемого объекта должно быть представление по умолчанию *и* элемент боковой панели, указывающий на него.
 </Note>

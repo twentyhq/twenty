@@ -1,25 +1,25 @@
 ---
-title: Public Assets
-description: Ship static files — images, icons, fonts — alongside your app via the public/ folder.
+title: Öffentliche Assets
+description: Liefere statische Dateien – Bilder, Symbole, Schriftarten – zusammen mit deiner App über den Ordner public/.
 icon: folder-open
 ---
 
-The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
+Der Ordner `public/` im Stammverzeichnis Ihrer App enthält statische Dateien — Bilder, Icons, Schriftarten oder sonstige Assets, die Ihre App zur Laufzeit benötigt. Diese Dateien werden automatisch in Builds aufgenommen, während des Dev-Modus synchronisiert und auf den Server hochgeladen.
 
-Files placed in `public/` are:
+Für Dateien im Verzeichnis `public/` gilt:
 
-* **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
-* **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
-* **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
-* **Used for marketplace metadata** — the `logoUrl` and `screenshots` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published.
-* **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-* **Included in builds** — `yarn twenty build` bundles all public assets into the distribution output.
+* **Öffentlich zugänglich** — nach der Synchronisierung mit dem Server werden Assets unter einer öffentlichen URL bereitgestellt. Zum Zugriff ist keine Authentifizierung erforderlich.
+* **In Frontend-Komponenten verfügbar** — verwenden Sie Asset-URLs, um Bilder, Icons oder andere Medien in Ihren React-Komponenten anzuzeigen.
+* **In Logikfunktionen verfügbar** — referenzieren Sie Asset-URLs in E-Mails, API-Antworten oder in beliebiger serverseitiger Logik.
+* **Für Marketplace-Metadaten verwendet** — die Felder `logoUrl` und `screenshots` in `defineApplication()` referenzieren Dateien aus diesem Ordner (z. B. `public/logo.png`). Diese werden im Marketplace angezeigt, wenn Ihre App veröffentlicht wird.
+* **Im Dev-Modus automatisch synchronisiert** — wenn Sie in `public/` eine Datei hinzufügen, aktualisieren oder löschen, wird sie automatisch mit dem Server synchronisiert. Kein Neustart erforderlich.
+* **In Builds enthalten** — `yarn twenty build` bündelt alle öffentlichen Assets in der Distributionsausgabe.
 
-## Accessing public assets with `getPublicAssetUrl`
+## Zugriff auf öffentliche Assets mit `getPublicAssetUrl`
 
-Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
+Verwenden Sie den Helper `getPublicAssetUrl` aus `twenty-sdk`, um die vollständige URL einer Datei in Ihrem `public/`-Verzeichnis zu erhalten. Dies funktioniert sowohl in Logikfunktionen als auch in Frontend-Komponenten.
 
-**In a logic function:**
+**In einer Logikfunktion:**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
@@ -44,7 +44,7 @@ export default defineLogicFunction({
 });
 ```
 
-**In a front component:**
+**In einer Frontend-Komponente:**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
@@ -56,4 +56,4 @@ export default defineFrontComponent(() => {
 });
 ```
 
-The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+Das Argument `path` ist relativ zum `public/`-Ordner Ihrer App. Sowohl `getPublicAssetUrl('logo.png')` als auch `getPublicAssetUrl('public/logo.png')` ergeben dieselbe URL — das Präfix `public/` wird, falls vorhanden, automatisch entfernt.

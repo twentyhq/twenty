@@ -1,10 +1,10 @@
 ---
-title: Roles & Permissions
-description: Declare what objects and fields your app's logic functions and front components can read and write.
+title: Funções e Permissões
+description: Declare quais objetos e campos as funções de lógica e os componentes de front-end do seu app podem ler e gravar.
 icon: shield-halved
 ---
 
-A **role** is a permission set: which objects an app can read or write, which fields it can see, and which platform-level capabilities it can use. Every app's logic functions and front components inherit the permissions of the role declared as `defaultRoleUniversalIdentifier` in [`defineApplication`](/l/pt/developers/extend/apps/config/application).
+Um **papel** é um conjunto de permissões: quais objetos um app pode ler ou gravar, quais campos ele pode ver e quais recursos em nível de plataforma ele pode usar. Todas as funções de lógica e os componentes de front-end do app herdam as permissões do papel declarado como `defaultRoleUniversalIdentifier` em [`defineApplication`](/l/pt/developers/extend/apps/config/application).
 
 ```ts src/roles/restricted-company-role.ts
 import {
@@ -49,9 +49,9 @@ export default defineRole({
 });
 ```
 
-## The default function role
+## Papel de função padrão
 
-When you scaffold a new app, the CLI creates a default role file:
+Ao criar um novo app com o scaffold, a CLI cria um arquivo de papel padrão:
 
 ```ts src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk/define';
@@ -77,14 +77,14 @@ export default defineRole({
 });
 ```
 
-This role's `universalIdentifier` is referenced from `application-config.ts` as `defaultRoleUniversalIdentifier`:
+O `universalIdentifier` desse papel é referenciado em `application-config.ts` como `defaultRoleUniversalIdentifier`:
 
-* **`*.role.ts`** declares what the role can do.
-* **`application-config.ts`** points to that role so your functions inherit its permissions.
+* **`*.role.ts`** declara o que o papel pode fazer.
+* **`application-config.ts`** aponta para esse papel para que suas funções herdem suas permissões.
 
-## Best practices
+## Melhores Práticas
 
-* Start from the scaffolded role, then progressively restrict it — the default grants broad read access, which is rarely what you want in production.
-* Replace `objectPermissions` and `fieldPermissions` with the exact objects and fields your functions actually need.
-* `permissionFlags` control access to platform-level capabilities. Keep them minimal.
-* See a working example: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* Comece a partir do papel gerado pelo scaffold e, em seguida, restrinja-o progressivamente — o padrão concede amplo acesso de leitura, o que raramente é o que você quer em produção.
+* Substitua `objectPermissions` e `fieldPermissions` pelos objetos e campos de que suas funções realmente precisam.
+* `permissionFlags` controlam o acesso a recursos em nível de plataforma. Mantenha-os no mínimo necessário.
+* Veja um exemplo funcional: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

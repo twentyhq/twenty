@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Server-side TypeScript that runs inside Twenty — triggered by HTTP routes, cron schedules, database events, AI tools, or workflow actions.
+title: 概览
+description: 在 Twenty 内运行的服务端 TypeScript，可由 HTTP 路由、cron 调度、数据库事件、AI 工具或工作流操作触发。
 icon: bolt
 ---
 
-A Twenty app's **logic layer** is the code that *runs* — server-side TypeScript handlers reacting to HTTP requests, cron schedules, and record changes; AI skills and agents that live inside the workspace; and OAuth connections that let your functions act on a user's behalf in third-party services.
+Twenty 应用的 **逻辑层** 是实际*运行*的代码——用于响应 HTTP 请求、cron 调度和记录变更的服务端 TypeScript 处理程序；存在于工作区内的 AI 技能和智能体；以及让你的函数能够代表用户在第三方服务中执行操作的 OAuth 连接。
 
 ```text
             ┌─ HTTP route      ──┐
@@ -22,34 +22,34 @@ A Twenty app's **logic layer** is the code that *runs* — server-side TypeScrip
                                   └────────────────────────────┘
 ```
 
-## In this section
+## 本节内容
 
 <CardGroup cols={2}>
-  <Card title="Logic Functions" icon="bolt" href="/l/zh/developers/extend/apps/logic/logic-functions">
-    The core building block — trigger types, payloads, and the typed API client.
+  <Card title="逻辑函数" icon="bolt" href="/l/zh/developers/extend/apps/logic/logic-functions">
+    核心构建块——触发器类型、载荷以及类型化的 API 客户端。
   </Card>
-  <Card title="Skills & Agents" icon="robot" href="/l/zh/developers/extend/apps/logic/skills-and-agents">
-    Reusable AI agent instructions and assistants with custom system prompts.
+  <Card title="技能与智能体" icon="robot" href="/l/zh/developers/extend/apps/logic/skills-and-agents">
+    可复用的 AI 智能体指令和助手，并支持自定义 system 提示词。
   </Card>
-  <Card title="Connections" icon="plug" href="/l/zh/developers/extend/apps/logic/connections">
-    OAuth credentials your app holds for third-party services — Linear, GitHub, Slack, and more.
+  <Card title="连接" icon="plug" href="/l/zh/developers/extend/apps/logic/connections">
+    你的应用为第三方服务（如 Linear、GitHub、Slack 等）持有的 OAuth 凭证。
   </Card>
 </CardGroup>
 
-## Trigger types at a glance
+## 触发器类型一览
 
-A logic function picks one or more triggers — every entry below is a separate field on `defineLogicFunction()`:
+逻辑函数选择一个或多个触发器——下面的每一项都是 `defineLogicFunction()` 上的一个独立字段：
 
-| Trigger             | When it runs                                               | Setting                         |
-| ------------------- | ---------------------------------------------------------- | ------------------------------- |
-| **HTTP route**      | A request hits your `/s/\<path>` endpoint | `httpRouteTriggerSettings`      |
-| **Cron**            | A CRON expression matches                                  | `cronTriggerSettings`           |
-| **Database event**  | A workspace record is created, updated, or deleted         | `databaseEventTriggerSettings`  |
-| **AI tool**         | A Twenty AI feature decides to call your function          | `toolTriggerSettings`           |
-| **Workflow action** | A workflow step invokes your function                      | `workflowActionTriggerSettings` |
+| 触发器         | 触发时机                                    | 设置                              |
+| ----------- | --------------------------------------- | ------------------------------- |
+| **HTTP 路由** | 请求命中你的 `/s/\<path>` 端点 | `httpRouteTriggerSettings`      |
+| **Cron**    | 匹配到一个 CRON 表达式时                         | `cronTriggerSettings`           |
+| **数据库事件**   | 当工作区记录被创建、更新或删除时                        | `databaseEventTriggerSettings`  |
+| **AI 工具**   | 某个 Twenty AI 功能决定调用你的函数时                | `toolTriggerSettings`           |
+| **工作流动作**   | 当工作流步骤调用你的函数时                           | `workflowActionTriggerSettings` |
 
-Functions run sandboxed in isolated Node.js processes and access the workspace through a typed API client scoped to the role declared on [`defineApplication()`](/l/zh/developers/extend/apps/config/application).
+函数在隔离的 Node.js 进程沙箱中运行，并通过限定在 [`defineApplication()`](/l/zh/developers/extend/apps/config/application) 上声明角色范围内的类型化 API 客户端访问工作区。
 
 <Note>
-**Install-time hooks** — code that runs before or after the install — share this runtime but use their own define functions and live under [Config → Install Hooks](/l/zh/developers/extend/apps/config/install-hooks).
+**安装时钩子（Install-time hooks）**——在安装前或安装后运行的代码——与上述共享同一运行时，但使用它们自己的 define 函数，并位于 [Config → Install Hooks](/l/zh/developers/extend/apps/config/install-hooks) 下。
 </Note>

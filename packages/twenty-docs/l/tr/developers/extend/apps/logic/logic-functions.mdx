@@ -1,15 +1,15 @@
 ---
-title: Logic Functions
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+title: Mantıksal işlevler
+description: Sunucu tarafı TypeScript işlevlerini HTTP, cron ve veritabanı olay tetikleyicileriyle tanımlayın.
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+Mantık işlevleri, Twenty platformunda çalışan sunucu tarafı TypeScript işlevleridir. HTTP istekleri, cron zamanlamaları veya veritabanı olayları tarafından tetiklenebilirler — ve ayrıca yapay zekâ ajanları için araçlar olarak sunulabilirler.
 
 <AccordionGroup>
-<Accordion title="defineLogicFunction" description="Define logic functions and their triggers">
+<Accordion title="defineLogicFunction" description="Mantık fonksiyonlarını ve tetikleyicilerini tanımlayın">
 
-Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional triggers.
+Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir yapılandırmayı dışa aktarmak için `defineLogicFunction()` kullanır.
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -50,15 +50,15 @@ export default defineLogicFunction({
 });
 ```
 
-Available trigger types:
-* **httpRoute**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
-> e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
-* **cron**: Runs your function on a schedule using a CRON expression.
-* **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
-> e.g. `person.updated`, `*.created`, `company.*`
+Kullanılabilir tetikleyici türleri:
+* **httpRoute**: Fonksiyonunuzu bir HTTP yolu ve yöntemiyle **`/s/` uç noktasının altında** kullanıma sunar:
+> örn. `path: '/post-card/create'` `https://your-twenty-server.com/s/post-card/create` adresinden çağrılabilir
+* **cron**: Bir CRON ifadesi kullanarak fonksiyonunuzu bir zamanlamayla çalıştırır.
+* **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme fonksiyonu tetikler.
+> örn. `person.updated`, `*.created`, `company.*`
 
 <Note>
-You can also manually execute a function using the CLI:
+Bir fonksiyonu CLI kullanarak manuel olarak da çalıştırabilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
@@ -68,18 +68,18 @@ yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
 yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
-You can watch logs with:
+Günlükleri şu şekilde izleyebilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty logs
 ```
 </Note>
 
-#### Route trigger payload
+#### Rota tetikleyicisi yükü
 
-When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the
-[AWS HTTP API v2 format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
-Import the `RoutePayload` type from `twenty-sdk`:
+Bir rota tetikleyicisi mantık fonksiyonunuzu çağırdığında,
+[AWS HTTP API v2 formatını](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html) izleyen bir `RoutePayload` nesnesi alır.
+`RoutePayload` türünü `twenty-sdk` içinden içe aktarın:
 
 ```ts
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
@@ -92,24 +92,24 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-The `RoutePayload` type has the following structure:
+`RoutePayload` türünün yapısı şu şekildedir:
 
-  | Property                     | Type                                                    | Description                                                                                                                                                                                           | Example                                                                    |
-  | ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                                                                                                                                         | see section below                                                          |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                                                                                                                                          | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Path parameters extracted from the route pattern                                                                                                                                                      | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Parsed request body (JSON)                                                                                                                                                                            | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `rawBody`                    | `string \| undefined`                                   | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. |                                                                            |
-  | `isBase64Encoded`            | `boolean`                                               | Whether the body is base64 encoded                                                                                                                                                                    |                                                                            |
-  | `requestContext.http.method` | `string`                                                | HTTP method (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                           |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | Raw request path                                                                                                                                                                                      |                                                                            |
+  | Özellik                      | Tür                                                     | Açıklama                                                                                                                                                                                                             | Örnek                                                                      |
+  | ---------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı)                                                                                                                                           | aşağıdaki bölüme bakın                                                     |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)                                                                                                                                                 | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri                                                                                                                                                                          | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Ayrıştırılmış istek gövdesi (JSON)                                                                                                                                                                                   | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | JSON ayrıştırılmadan önceki özgün UTF-8 istek gövdesi. HMAC tarzı webhook imzalarını doğrulamak için kullanışlıdır (ör. GitHub'ın `X-Hub-Signature-256`, Stripe). Çalışma zamanı onu korumadığında `undefined` olur. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Gövdenin base64 ile kodlanıp kodlanmadığı                                                                                                                                                                            |                                                                            |
+  | `requestContext.http.method` | `string`                                                | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                         |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Ham istek yolu                                                                                                                                                                                                       |                                                                            |
 
 
 #### forwardedRequestHeaders
 
-By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons.
-To access specific headers, list them in the `forwardedRequestHeaders` array:
+Varsayılan olarak, güvenlik nedenleriyle gelen isteklerden HTTP başlıkları mantık fonksiyonunuza **aktarılmaz**.
+Belirli başlıklara erişmek için bunları `forwardedRequestHeaders` dizisinde listeleyin:
 
 ```ts
 export default defineLogicFunction({
@@ -125,7 +125,7 @@ export default defineLogicFunction({
 });
 ```
 
-In your handler, access the forwarded headers like this:
+İşleyicinizde, iletilen başlıklara şu şekilde erişin:
 
 ```ts
 const handler = async (event: RoutePayload) => {
@@ -138,17 +138,17 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Header names are normalized to lowercase. Access them using lowercase keys (e.g., `event.headers['content-type']`).
+Başlık adları küçük harfe normalize edilir. Onlara küçük harfli anahtarlarla erişin (örneğin, `event.headers['content-type']`).
 </Note>
 
-#### Exposing a function as an AI tool or workflow action
+#### Bir işlevi bir yapay zekâ aracı veya iş akışı eylemi olarak kullanıma sunma
 
-Logic functions can be exposed on two surfaces, each with its own trigger:
+Mantık işlevleri, her birinin kendi tetikleyicisi olacak şekilde iki yerde kullanılabilir hâle getirilebilir:
 
-* **`toolTriggerSettings`** — makes the function discoverable by Twenty's AI features (chat, MCP, function calling). Uses standard JSON Schema, the format LLMs natively understand.
-* **`workflowActionTriggerSettings`** — makes the function appear as a step in the visual workflow builder. Uses Twenty's rich `InputSchema` so the builder can render proper field editors, variable pickers, and labels.
+* **`toolTriggerSettings`** — işlevi Twenty'nin yapay zekâ özellikleri (sohbet, MCP, işlev çağırma) tarafından bulunabilir hâle getirir. Standart JSON Şeması'nı kullanır; LLM'lerin doğal olarak anladığı biçimdir.
+* **`workflowActionTriggerSettings`** — işlevin görsel iş akışı oluşturucusunda bir adım olarak görünmesini sağlar. Oluşturucunun uygun alan düzenleyicilerini, değişken seçicilerini ve etiketleri oluşturabilmesi için Twenty'nin zengin `InputSchema`'sını kullanır.
 
-A function can opt into one, the other, or both. They sit alongside `cronTriggerSettings`, `databaseEventTriggerSettings`, and `httpRouteTriggerSettings` — same pattern, same shape.
+Bir işlev bunlardan birini, diğerini veya her ikisini de tercih edebilir. Bunlar, `cronTriggerSettings`, `databaseEventTriggerSettings` ve `httpRouteTriggerSettings` ile birlikte yer alır — aynı desen, aynı biçim.
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -182,10 +182,10 @@ export default defineLogicFunction({
 });
 ```
 
-Key points:
+Önemli noktalar:
 
-* A function can mix surfaces — declare both `toolTriggerSettings` and `workflowActionTriggerSettings` to expose it in chat AND in the workflow builder.
-* `toolTriggerSettings.inputSchema` and `workflowActionTriggerSettings.inputSchema` are both optional. When omitted, the manifest builder infers them from the handler source code (JSON Schema for the AI tool, Twenty's `InputSchema` for the workflow action). Provide one explicitly when you want richer typing — for example, with `FieldMetadataType`-aware fields like `CURRENCY` or `RELATION` for the workflow builder, or with `description` fields the AI agent can read:
+* Bir işlev yüzeyleri karıştırabilir — onu sohbette VE iş akışı oluşturucusunda kullanıma sunmak için hem `toolTriggerSettings` hem de `workflowActionTriggerSettings` bildirin.
+* `toolTriggerSettings.inputSchema` ve `workflowActionTriggerSettings.inputSchema` ikisi de isteğe bağlıdır. Atlandığında, manifest oluşturucu bunları işleyici kaynak kodundan çıkarır (yapay zekâ aracı için JSON Şeması, iş akışı eylemi için Twenty'nin `InputSchema`'sı). Daha zengin tipleme istediğinizde birini açıkça belirtin — örneğin, iş akışı oluşturucu için `FieldMetadataType`'ı bilen `CURRENCY` veya `RELATION` gibi alanlarla ya da yapay zekâ aracısının okuyabileceği `description` alanlarıyla:
 
 ```ts
 export default defineLogicFunction({
@@ -210,29 +210,29 @@ export default defineLogicFunction({
 ```
 
 <Note>
-**Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
+**İyi bir `description` yazın.** AI ajanları, aracı ne zaman kullanacaklarına karar vermek için işlevin `description` alanına güvenir. Aracın ne yaptığını ve ne zaman çağrılması gerektiğini açıkça belirtin.
 </Note>
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-**Install hooks** — pre-install and post-install handlers — share this runtime but are declared with their own define functions and don't take trigger settings. See [Install Hooks](/l/tr/developers/extend/apps/config/install-hooks) for `definePreInstallLogicFunction` and `definePostInstallLogicFunction`.
+**Yükleme kancaları** — ön yükleme ve yükleme sonrası işleyiciler — bu çalışma zamanını paylaşır ancak kendi tanımlama işlevleriyle bildirilir ve tetikleyici ayarlarını almaz. `definePreInstallLogicFunction` ve `definePostInstallLogicFunction` için [Yükleme Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
 </Note>
 
-## Typed API clients (twenty-client-sdk)
+## Tipli API istemcileri (twenty-client-sdk)
 
-The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components.
+`twenty-client-sdk` paketi, mantık fonksiyonlarınızdan ve ön uç bileşenlerinizden Twenty API ile etkileşim kurmak için tip tanımlı iki GraphQL istemcisi sağlar.
 
-| Client              | Import                       | Endpoint                                       | Generated?             |
-| ------------------- | ---------------------------- | ---------------------------------------------- | ---------------------- |
-| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — workspace data (records, objects) | Yes, at dev/build time |
-| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — workspace config, file uploads   | No, ships pre-built    |
+| İstemci             | İçe Aktar                    | Uç nokta                                                      | Oluşturuldu mu?                         |
+| ------------------- | ---------------------------- | ------------------------------------------------------------- | --------------------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — çalışma alanı verileri (kayıtlar, nesneler)      | Evet, geliştirme/derleme zamanında      |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — çalışma alanı yapılandırması, dosya yüklemeleri | Hayır, önceden hazırlanmış olarak gelir |
 
 <AccordionGroup>
-<Accordion title="CoreApiClient" description="Query and mutate workspace data (records, objects)">
+<Accordion title="CoreApiClient" description="Çalışma alanı verilerini sorgulayın ve değiştirin (kayıtlar, nesneler)">
 
-`CoreApiClient` is the main client for querying and mutating workspace data. It is **generated from your workspace schema** during `yarn twenty dev` or `yarn twenty build`, so it is fully typed to match your objects and fields.
+`CoreApiClient`, çalışma alanı verilerini sorgulamak ve değiştirmek için ana istemcidir. `yarn twenty dev` veya `yarn twenty build` sırasında **çalışma alanı şemanızdan oluşturulur**, bu nedenle nesnelerinize ve alanlarınıza uyacak şekilde tamamen tiplenmiştir.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -269,15 +269,15 @@ const { createCompany } = await client.mutation({
 });
 ```
 
-The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
+İstemci bir seçim kümesi sözdizimi kullanır: Bir alanı dahil etmek için `true` geçin, bağımsız değişkenler için `__args` kullanın ve ilişkiler için nesneleri iç içe yerleştirin. Çalışma alanı şemanıza göre tam otomatik tamamlama ve tip denetimi elde edersiniz.
 
 <Note>
-**CoreApiClient is generated at dev/build time.** If you use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema and generates a typed client using `@genql/cli`.
+**CoreApiClient geliştirme/derleme zamanında oluşturulur.** Bunu önce `yarn twenty dev` veya `yarn twenty build` çalıştırmadan kullanırsanız, bir hata verir. Oluşturma otomatik olarak gerçekleşir — CLI, çalışma alanınızın GraphQL şemasını inceler ve `@genql/cli` kullanarak tiplenmiş bir istemci üretir.
 </Note>
 
-#### Using CoreSchema for type annotations
+#### Tür açıklamaları için CoreSchema'yı kullanma
 
-`CoreSchema` provides TypeScript types matching your workspace objects — useful for typing component state or function parameters:
+`CoreSchema`, çalışma alanı nesnelerinize uyan TypeScript türleri sağlar — bileşen durumunu veya işlev parametrelerini tiplemek için kullanışlıdır:
 
 ```ts
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
@@ -299,9 +299,9 @@ setCompany(result.company);
 ```
 
 </Accordion>
-<Accordion title="MetadataApiClient" description="Workspace config, applications, and file uploads">
+<Accordion title="MetadataApiClient" description="Çalışma alanı yapılandırması, uygulamalar ve dosya yüklemeleri">
 
-`MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads.
+`MetadataApiClient`, SDK ile birlikte önceden hazırlanmış olarak gelir (oluşturma gerektirmez). Çalışma alanı yapılandırması, uygulamalar ve dosya yüklemeleri için `/metadata` uç noktasını sorgular.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -328,9 +328,9 @@ const { objects } = await metadataClient.query({
 });
 ```
 
-#### Uploading files
+#### Dosya yükleme
 
-`MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields:
+`MetadataApiClient`, dosya türündeki alanlara dosya eklemek için bir `uploadFile` yöntemi içerir:
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -351,25 +351,25 @@ console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-| Parameter                          | Type     | Description                                                     |
-| ---------------------------------- | -------- | --------------------------------------------------------------- |
-| `fileBuffer`                       | `Buffer` | The raw file contents                                           |
-| `filename`                         | `string` | The name of the file (used for storage and display)             |
-| `contentType`                      | `string` | MIME type (defaults to `application/octet-stream` if omitted)   |
-| `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object |
+| Parametre                          | Tür      | Açıklama                                                                          |
+| ---------------------------------- | -------- | --------------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Dosyanın ham içeriği                                                              |
+| `filename`                         | `string` | Dosyanın adı (depolama ve görüntüleme için kullanılır)                            |
+| `contentType`                      | `string` | MIME türü (belirtilmezse varsayılan olarak `application/octet-stream` kullanılır) |
+| `fieldMetadataUniversalIdentifier` | `string` | Nesnenizdeki dosya türü alanının `universalIdentifier` değeri                     |
 
-Key points:
-* Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
-* The returned `url` is a signed URL you can use to access the uploaded file.
+Önemli noktalar:
+* Alan için `universalIdentifier` kullanır (çalışma alanına özgü kimliği değil), böylece yükleme kodunuz uygulamanızın yüklü olduğu herhangi bir çalışma alanında çalışır.
+* Döndürülen `url`, yüklenen dosyaya erişmek için kullanabileceğiniz imzalı bir URL'dir.
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-  When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
+  Kodunuz Twenty üzerinde çalıştığında (mantık işlevleri veya ön uç bileşenleri), platform kimlik bilgilerini ortam değişkenleri olarak enjekte eder:
 
-  * `TWENTY_API_URL` — Base URL of the Twenty API
-  * `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
+  * `TWENTY_API_URL` — Twenty API'nin temel URL'si
+  * `TWENTY_APP_ACCESS_TOKEN` — Uygulamanızın varsayılan işlev rolü kapsamında kısa ömürlü bir anahtar
 
-  You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role referenced in `defaultRoleUniversalIdentifier` in your `application-config.ts`.
+  Bunları istemcilere iletmeniz gerekmez — otomatik olarak `process.env`'den okurlar. API anahtarının izinleri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` ile referans verilen role göre belirlenir.
 </Note>

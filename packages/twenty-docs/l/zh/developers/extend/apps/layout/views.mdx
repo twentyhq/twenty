@@ -1,10 +1,10 @@
 ---
-title: Views
-description: Ship pre-configured saved views — column order, filters, groups — for objects in your app.
+title: 视图
+description: 为你应用中的对象提供预配置的已保存视图——列顺序、筛选器、分组等。
 icon: list
 ---
 
-A **view** is a saved configuration for how records of an object are displayed: which fields appear, their order, whether they're visible, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app — typically a default index view for each custom object you create.
+**视图（view）** 是关于对象记录如何显示的已保存配置：包括显示哪些字段、它们的顺序、是否可见，以及应用的任何筛选器或分组。 使用 `defineView()` 为你的应用提供预配置视图——通常是你创建的每个自定义对象的默认索引视图。
 
 ```ts src/views/example-view.ts
 import { defineView, ViewKey } from 'twenty-sdk/define';
@@ -30,14 +30,14 @@ export default defineView({
 });
 ```
 
-## Key points
+## 关键点
 
-* `objectUniversalIdentifier` specifies which object this view applies to. It can be a custom object you defined or a standard Twenty object.
-* `key` determines the view type — `ViewKey.INDEX` is the main list view for the object.
-* `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`.
-* You can also declare `filters`, `filterGroups`, `groups`, and `fieldGroups` for advanced configurations.
-* `position` controls ordering when multiple views exist for the same object.
+* `objectUniversalIdentifier` 指定此视图适用于哪个对象。 它可以是你定义的自定义对象，也可以是标准的 Twenty 对象。
+* `key` 决定视图类型——`ViewKey.INDEX` 是该对象的主列表视图。
+* `fields` 控制显示哪些列以及它们的顺序。 每个字段引用一个 `fieldMetadataUniversalIdentifier`。
+* 你还可以声明 `filters`、`filterGroups`、`groups` 和 `fieldGroups` 以进行更高级的配置。
+* 当同一对象存在多个视图时，`position` 控制其排序。
 
-## How views show up in the UI
+## 视图在 UI 中如何显示
 
-A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/l/zh/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object typically ships a default view + a sidebar entry that opens it.
+单独一个视图无法从侧边栏访问。 要让它显示在侧边栏中，请将其与类型为 `VIEW`、指向该视图 `universalIdentifier` 的[导航菜单项](/l/zh/developers/extend/apps/layout/navigation-menu-items)配对。 这是规范用法：每个自定义对象通常都会提供一个默认视图，以及一个在侧边栏中打开该视图的条目。

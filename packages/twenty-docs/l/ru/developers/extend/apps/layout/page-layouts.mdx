@@ -1,19 +1,19 @@
 ---
-title: Page Layouts
-description: Customize record detail pages — tabs, widgets, and where front components render — using definePageLayout and definePageLayoutTab.
+title: Макеты страниц
+description: Настраивайте страницы деталей записей — вкладки, виджеты и места, где отображаются front components, — с помощью `definePageLayout` и `definePageLayoutTab`.
 icon: table-columns
 ---
 
-A **page layout** controls how a record's detail page is arranged: which tabs appear and what widgets they contain. Use `definePageLayout()` to declare a layout for an object you own, or `definePageLayoutTab()` to add a single tab to a layout that already exists (yours or a standard Twenty one).
+**Макет страницы** управляет тем, как устроена страница деталей записи: какие вкладки отображаются и какие виджеты они содержат. Используйте `definePageLayout()` для объявления макета для объекта, которым вы владеете, или `definePageLayoutTab()` для добавления одной вкладки к макету, который уже существует (вашему или стандартному Twenty).
 
-| Use case                                                               | Entity                |
-| ---------------------------------------------------------------------- | --------------------- |
-| Define the entire layout for a record page on an object you own        | `definePageLayout`    |
-| Add one tab to an existing layout (your own object, or a standard one) | `definePageLayoutTab` |
+| Сценарий использования                                                                        | Сущность              |
+| --------------------------------------------------------------------------------------------- | --------------------- |
+| Определите весь макет для страницы записи на объекте, которым вы владеете                     | `definePageLayout`    |
+| Добавьте одну вкладку в существующий макет (для вашего собственного объекта или стандартного) | `definePageLayoutTab` |
 
 ## definePageLayout
 
-Use this when you own the entire detail page — typically for a custom object you defined yourself.
+Используйте это, когда вы управляете всей страницей деталей — обычно для пользовательского объекта, который вы определили сами.
 
 ```ts src/page-layouts/example-record-page-layout.ts
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -49,17 +49,17 @@ export default definePageLayout({
 });
 ```
 
-### Key points
+### Основные моменты
 
-* `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
-* `objectUniversalIdentifier` specifies which object this layout applies to.
-* Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`CANVAS` for free-form layout).
-* Each `widget` inside a tab can render a [front component](/l/ru/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
-* `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+* `type` обычно равен `'RECORD_PAGE'` для настройки детального представления конкретного объекта.
+* `objectUniversalIdentifier` указывает, к какому объекту применяется этот макет.
+* Каждая `tab` определяет раздел страницы с `title`, `position` и `layoutMode` (`CANVAS` для свободного макета).
+* Каждый `widget` внутри вкладки может отображать [front component](/l/ru/developers/extend/apps/layout/front-components), список связей или другие встроенные типы виджетов.
+* `position` у вкладок управляет их порядком. Используйте большие значения (например, 50), чтобы разместить пользовательские вкладки после встроенных.
 
 ## definePageLayoutTab
 
-Use this when you only want to **add** a tab to an existing layout — for example, an analytics tab on the standard Company page, or an AI summary tab attached to your own object's layout.
+Используйте это, когда вы хотите только **добавить** вкладку к существующему макету — например, вкладку аналитики на стандартной странице Company или вкладку с AI-сводкой, прикреплённую к макету вашего собственного объекта.
 
 ```ts src/page-layouts/example-extra-tab.ts
 import {
@@ -94,9 +94,9 @@ export default definePageLayoutTab({
 });
 ```
 
-### Key points
+### Основные моменты
 
-* `pageLayoutUniversalIdentifier` is **required** and must point to a page layout that already exists at install time — either a standard Twenty layout or one defined by your own app. Cross-app references to layouts owned by another installed app are not supported today. When the parent layout is missing, installation fails with a clear validation error.
-* `widgets` are scoped to this tab only — they reference [front components](/l/ru/developers/extend/apps/layout/front-components), views, etc. exactly like widgets defined inline in `definePageLayout`.
-* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
-* Use this instead of `definePageLayout` when you only want to add to an existing layout. Use `definePageLayout` when you own the entire layout.
+* `pageLayoutUniversalIdentifier` является **обязательным** и должен указывать на макет страницы, который уже существует на момент установки — либо стандартный макет Twenty, либо определённый вашим собственным приложением. Кросс-приложенческие ссылки на макеты, которыми владеет другое установленное приложение, на данный момент не поддерживаются. Если родительский макет отсутствует, установка завершается с понятной ошибкой проверки.
+* `widgets` ограничены только этой вкладкой — они ссылаются на [front components](/l/ru/developers/extend/apps/layout/front-components), представления и т. п. точно так же, как виджеты, определённые непосредственно в `definePageLayout`.
+* `position` управляет порядком относительно существующих вкладок в целевом макете. Выберите значение, которое поместит вашу вкладку в нужное место относительно встроенных вкладок.
+* Используйте это вместо `definePageLayout`, когда вы хотите только добавить к существующему макету. Используйте `definePageLayout`, когда вы управляете всем макетом.

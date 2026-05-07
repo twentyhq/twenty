@@ -1,10 +1,10 @@
 ---
 title: Vizualizări
-description: Ship pre-configured saved views — column order, filters, groups — for objects in your app.
-icon: list
+description: Livrați vizualizări salvate preconfigurate — ordinea coloanelor, filtre, grupări — pentru obiectele din aplicația dvs.
+icon: listă
 ---
 
-A **view** is a saved configuration for how records of an object are displayed: which fields appear, their order, whether they're visible, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app — typically a default index view for each custom object you create.
+O **vizualizare** este o configurație salvată pentru modul în care sunt afișate înregistrările unui obiect: ce câmpuri apar, ordinea lor, dacă sunt vizibile și ce filtre sau grupări sunt aplicate. Folosiți `defineView()` pentru a livra vizualizări preconfigurate împreună cu aplicația dvs. — de obicei o vizualizare index implicită pentru fiecare obiect personalizat pe care îl creați.
 
 ```ts src/views/example-view.ts
 import { defineView, ViewKey } from 'twenty-sdk/define';
@@ -32,12 +32,12 @@ export default defineView({
 
 ## Puncte cheie
 
-* `objectUniversalIdentifier` specifică la ce obiect se aplică această vizualizare. It can be a custom object you defined or a standard Twenty object.
-* `key` determines the view type — `ViewKey.INDEX` is the main list view for the object.
-* `fields` controls which columns appear and in what order. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`.
-* You can also declare `filters`, `filterGroups`, `groups`, and `fieldGroups` for advanced configurations.
-* `position` controls ordering when multiple views exist for the same object.
+* `objectUniversalIdentifier` specifică la ce obiect se aplică această vizualizare. Poate fi un obiect personalizat pe care l-ați definit sau un obiect standard Twenty.
+* `key` determină tipul vizualizării — `ViewKey.INDEX` este principala vizualizare de listă pentru obiect.
+* `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`.
+* Puteți declara, de asemenea, `filters`, `filterGroups`, `groups` și `fieldGroups` pentru configurații avansate.
+* `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
 
-## How views show up in the UI
+## Cum apar vizualizările în interfața utilizator
 
-A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/l/ro/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object typically ships a default view + a sidebar entry that opens it.
+O vizualizare, de una singură, nu este accesibilă din bara laterală. Pentru a o face să apară acolo, asociați-o cu un [element de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) de tip `VIEW` care indică către `universalIdentifier` al vizualizării. Acesta este modelul canonic: fiecare obiect personalizat livrează, de obicei, o vizualizare implicită + o intrare în bara laterală care o deschide.

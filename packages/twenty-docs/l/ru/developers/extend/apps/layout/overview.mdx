@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Place your app inside Twenty's UI — sidebar entries, saved views, record page tabs, and sandboxed React components.
+title: Обзор
+description: Разместите своё приложение внутри интерфейса Twenty — элементы боковой панели, сохранённые представления, вкладки страницы записи и изолированные React‑компоненты.
 icon: table-columns
 ---
 
-A Twenty app's **layout layer** is everything the user sees: where the app surfaces in the sidebar, which list views it ships, how its record detail pages are arranged, and which custom React components render inside those pages.
+**Слой компоновки** приложения Twenty — это всё, что видит пользователь: где приложение отображается в боковой панели, какие списки представлений оно поставляет, как устроены его страницы деталей записей и какие пользовательские React‑компоненты отображаются внутри этих страниц.
 
 ```text
    Sidebar               Record list            Record detail page
@@ -23,34 +23,34 @@ A Twenty app's **layout layer** is everything the user sees: where the app surfa
                                 and filters    └─────────────────────┘
 ```
 
-## In this section
+## В этом разделе
 
 <CardGroup cols={2}>
-  <Card title="Views" icon="list" href="/l/ru/developers/extend/apps/layout/views">
-    `defineView` — saved list configurations: visible columns, filters, groups.
+  <Card title="Представления" icon="список" href="/l/ru/developers/extend/apps/layout/views">
+    `defineView` — сохранённые конфигурации списков: видимые столбцы, фильтры, группы.
   </Card>
-  <Card title="Navigation Menu Items" icon="bars" href="/l/ru/developers/extend/apps/layout/navigation-menu-items">
-    `defineNavigationMenuItem` — sidebar entries pointing at views or external URLs.
+  <Card title="Элементы меню навигации" icon="меню" href="/l/ru/developers/extend/apps/layout/navigation-menu-items">
+    `defineNavigationMenuItem` — элементы боковой панели, ссылающиеся на представления или внешние URL.
   </Card>
-  <Card title="Page Layouts" icon="table-columns" href="/l/ru/developers/extend/apps/layout/page-layouts">
-    `definePageLayout` and `definePageLayoutTab` — tabs and widgets on a record's detail page.
+  <Card title="Макеты страниц" icon="table-columns" href="/l/ru/developers/extend/apps/layout/page-layouts">
+    `definePageLayout` и `definePageLayoutTab` — вкладки и виджеты на странице деталей записи.
   </Card>
-  <Card title="Front Components" icon="window-maximize" href="/l/ru/developers/extend/apps/layout/front-components">
-    `defineFrontComponent` — sandboxed React components that render inside Twenty.
+  <Card title="Компоненты фронтенда" icon="window-maximize" href="/l/ru/developers/extend/apps/layout/front-components">
+    `defineFrontComponent` — изолированные React‑компоненты, которые отображаются внутри Twenty.
   </Card>
-  <Card title="Command Menu Items" icon="terminal" href="/l/ru/developers/extend/apps/layout/command-menu-items">
-    `defineCommandMenuItem` — register front components as Cmd+K entries and quick actions.
+  <Card title="Элементы меню команд" icon="terminal" href="/l/ru/developers/extend/apps/layout/command-menu-items">
+    `defineCommandMenuItem` — регистрирует фронтенд‑компоненты как элементы Cmd+K и быстрые действия.
   </Card>
 </CardGroup>
 
-## Where the app surfaces
+## Где отображается приложение
 
-| Surface                     | What it controls                                                              | Entity                                    |
-| --------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------- |
-| **Sidebar**                 | A custom entry linking to a saved view or external URL                        | `defineNavigationMenuItem`                |
-| **Record list**             | A saved configuration for an object — visible columns, order, filters, groups | `defineView`                              |
-| **Record detail page**      | The tabs and widgets on a record page (your own object's, or a standard one)  | `definePageLayout`, `definePageLayoutTab` |
-| **Inside any of the above** | A custom React widget — buttons, forms, dashboards, integrations              | `defineFrontComponent`                    |
-| **Command menu (Cmd+K)**    | A pinned quick action or hidden command                                       | `defineCommandMenuItem`                   |
+| Область отображения                      | Что определяет                                                                           | Сущность                                  |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Боковая панель**                       | Пользовательский элемент, который ссылается на сохранённое представление или внешний URL | `defineNavigationMenuItem`                |
+| **Список записей**                       | Сохранённая конфигурация для объекта — видимые столбцы, порядок, фильтры, группы         | `defineView`                              |
+| **Страница деталей записи**              | Вкладки и виджеты на странице записи (вашего собственного объекта или стандартного)      | `definePageLayout`, `definePageLayoutTab` |
+| **Внутри любого из перечисленного выше** | Пользовательский React‑виджет — кнопки, формы, панели мониторинга, интеграции            | `defineFrontComponent`                    |
+| **Меню команд (Cmd+K)**                  | Закреплённое быстрое действие или скрытая команда                                        | `defineCommandMenuItem`                   |
 
-Front components run inside an isolated Web Worker using Remote DOM — they render *natively* in the page (not inside an iframe), but cannot reach the host page or DOM directly. Communication with Twenty happens through a message-passing host API.
+Фронтенд‑компоненты выполняются внутри изолированного Web Worker с использованием Remote DOM — они отображаются *нативно* на странице (не внутри iframe), но не могут напрямую обращаться к хостовой странице или DOM. Взаимодействие с Twenty происходит через хостовый API обмена сообщениями.

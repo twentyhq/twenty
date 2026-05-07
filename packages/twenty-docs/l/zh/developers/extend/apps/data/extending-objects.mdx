@@ -1,10 +1,10 @@
 ---
-title: Extending Objects
-description: Add fields to standard Twenty objects (Person, Company, …) or to objects from other apps using defineField.
+title: 扩展对象
+description: 向标准 Twenty 对象添加字段（Person、Company 等） 或使用 defineField 向其他应用的对象添加字段。
 icon: wand-magic-sparkles
 ---
 
-Use `defineField()` to add a field to an object you don't own — a standard Twenty object like Person or Company, or an object shipped by another installed app. Unlike inline fields declared inside [`defineObject`](/l/zh/developers/extend/apps/data/objects), standalone fields require an `objectUniversalIdentifier` to specify which object they extend.
+使用 `defineField()` 为你不拥有的对象添加字段——例如像 Person 或 Company 这样的标准 Twenty 对象，或由其他已安装应用提供的对象。 与在 [`defineObject`](/l/zh/developers/extend/apps/data/objects) 中声明的内联字段不同，独立字段需要一个 `objectUniversalIdentifier` 来指定它们要扩展的对象。
 
 ```ts src/fields/company-loyalty-tier.field.ts
 import { defineField, FieldType } from 'twenty-sdk/define';
@@ -24,9 +24,9 @@ export default defineField({
 });
 ```
 
-## Key points
+## 关键点
 
-* `objectUniversalIdentifier` identifies the target object. For standard Twenty objects, import the constant from `twenty-sdk`:
+* `objectUniversalIdentifier` 用于标识目标对象。 对于标准 Twenty 对象，从 `twenty-sdk` 导入常量：
 
   ```ts
   import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
@@ -37,12 +37,12 @@ export default defineField({
   // …
   ```
 
-* When defining fields **inline inside `defineObject()`**, you do **not** need `objectUniversalIdentifier` — it's inherited from the parent object.
+* 在 **`defineObject()` 内联定义字段** 时，**不需要** `objectUniversalIdentifier`——它会从父对象继承。
 
-* `defineField()` is the only way to add fields to objects you didn't create with `defineObject()`.
+* `defineField()` 是为非通过 `defineObject()` 创建的对象添加字段的唯一方式。
 
-* File location is up to you. The convention is `src/fields/\<name>.field.ts`, but the SDK detects fields anywhere in `src/`.
+* 文件位置由你决定。 约定是使用 `src/fields/\<name>.field.ts`，但 SDK 会在整个 `src/` 中检测字段。
 
-## Adding a relation to an existing object
+## 向现有对象添加关系
 
-To add a relation field (e.g. linking your custom object to a standard `Person`), use `defineField()` with `FieldType.RELATION`. The pattern is the same as for inline relations but with `objectUniversalIdentifier` set explicitly. See [Relations](/l/zh/developers/extend/apps/data/relations) for the bidirectional pattern.
+要添加关系字段（例如将你的自定义对象链接到标准 `Person`），请将 `defineField()` 与 `FieldType.RELATION` 一起使用。 模式与内联关系相同，但需要显式设置 `objectUniversalIdentifier`。 有关双向模式，请参见[关系](/l/zh/developers/extend/apps/data/relations)。

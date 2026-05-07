@@ -1,15 +1,15 @@
 ---
-title: Logic Functions
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+title: 逻辑函数
+description: 定义具有 HTTP、cron 和数据库事件触发器的服务端 TypeScript 函数。
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+逻辑函数是在 Twenty 平台上运行的服务端 TypeScript 函数。 它们可以由 HTTP 请求、cron 调度或数据库事件触发——也可以作为工具暴露给 AI 代理。
 
 <AccordionGroup>
-<Accordion title="defineLogicFunction" description="Define logic functions and their triggers">
+<Accordion title="defineLogicFunction" description="定义逻辑函数及其触发器">
 
-Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional triggers.
+每个函数文件都使用 `defineLogicFunction()` 导出包含处理程序和可选触发器的配置。
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -50,15 +50,15 @@ export default defineLogicFunction({
 });
 ```
 
-Available trigger types:
-* **httpRoute**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
-> e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
-* **cron**: Runs your function on a schedule using a CRON expression.
-* **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
-> e.g. `person.updated`, `*.created`, `company.*`
+可用的触发器类型：
+* **httpRoute**：在 **`/s/` 端点**下通过 HTTP 路径和方法公开你的函数：
+> 例如 `path: '/post-card/create'` 可在 `https://your-twenty-server.com/s/post-card/create` 调用
+* **cron**：使用 CRON 表达式按计划运行你的函数。
+* **databaseEvent**：在工作空间对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
+> 例如 `person.updated`、`*.created`、`company.*`
 
 <Note>
-You can also manually execute a function using the CLI:
+你也可以使用 CLI 手动执行函数：
 
 ```bash filename="Terminal"
 yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
@@ -68,18 +68,18 @@ yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
 yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
-You can watch logs with:
+你可以通过以下方式查看日志：
 
 ```bash filename="Terminal"
 yarn twenty logs
 ```
 </Note>
 
-#### Route trigger payload
+#### 路由触发器负载
 
-When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the
-[AWS HTTP API v2 format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
-Import the `RoutePayload` type from `twenty-sdk`:
+当路由触发器调用你的逻辑函数时，它会接收一个遵循
+[AWS HTTP API v2 格式](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html)的 `RoutePayload` 对象。
+从 `twenty-sdk` 导入 `RoutePayload` 类型：
 
 ```ts
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
@@ -92,24 +92,24 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-The `RoutePayload` type has the following structure:
+`RoutePayload` 类型具有以下结构：
 
-  | Property                     | Type                                                    | Description                                                                                                                                                                                           | Example                                                                    |
-  | ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                                                                                                                                         | see section below                                                          |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                                                                                                                                          | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Path parameters extracted from the route pattern                                                                                                                                                      | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Parsed request body (JSON)                                                                                                                                                                            | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `rawBody`                    | `string \| undefined`                                   | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. |                                                                            |
-  | `isBase64Encoded`            | `boolean`                                               | Whether the body is base64 encoded                                                                                                                                                                    |                                                                            |
-  | `requestContext.http.method` | `string`                                                | HTTP method (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                           |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | Raw request path                                                                                                                                                                                      |                                                                            |
+  | 属性                           | 类型                                                      | 描述                                                                                                                    | 示例                                                                         |
+  | ---------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | HTTP 请求头（仅限 `forwardedRequestHeaders` 中列出的那些）                                                                         | 见下文                                                                        |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | 查询字符串参数（多个值以逗号连接）                                                                                                     | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | 从路由模式中提取的路径参数                                                                                                         | `/users/:id`，`/users/123` -> `{ id: '123' }`                               |
+  | `body`                       | `object \| null`                                        | 已解析的请求体（JSON）                                                                                                         | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | 在 JSON 解析之前的原始 UTF-8 请求体。 用于验证 HMAC 风格的 Webhook 签名（例如 GitHub 的 `X-Hub-Signature-256`、Stripe）。 当运行时未保留它时为 `undefined`。 |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | 请求体是否为 base64 编码                                                                                                      |                                                                            |
+  | `requestContext.http.method` | `string`                                                | HTTP 方法（GET、POST、PUT、PATCH、DELETE）                                                                                    |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | 原始请求路径                                                                                                                |                                                                            |
 
 
 #### forwardedRequestHeaders
 
-By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons.
-To access specific headers, list them in the `forwardedRequestHeaders` array:
+出于安全原因，默认**不会**将传入请求的 HTTP 请求头传递给你的逻辑函数。
+如需访问特定请求头，请在 `forwardedRequestHeaders` 数组中显式列出：
 
 ```ts
 export default defineLogicFunction({
@@ -125,7 +125,7 @@ export default defineLogicFunction({
 });
 ```
 
-In your handler, access the forwarded headers like this:
+在你的处理程序中，可以这样访问被转发的请求头：
 
 ```ts
 const handler = async (event: RoutePayload) => {
@@ -138,17 +138,17 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Header names are normalized to lowercase. Access them using lowercase keys (e.g., `event.headers['content-type']`).
+请求头名称会被规范化为小写。 请使用小写键访问它们（例如，`event.headers['content-type']`）。
 </Note>
 
-#### Exposing a function as an AI tool or workflow action
+#### 将函数公开为 AI 工具或工作流操作
 
-Logic functions can be exposed on two surfaces, each with its own trigger:
+逻辑函数可以在两个入口对外公开，每个入口都有各自的触发器：
 
-* **`toolTriggerSettings`** — makes the function discoverable by Twenty's AI features (chat, MCP, function calling). Uses standard JSON Schema, the format LLMs natively understand.
-* **`workflowActionTriggerSettings`** — makes the function appear as a step in the visual workflow builder. Uses Twenty's rich `InputSchema` so the builder can render proper field editors, variable pickers, and labels.
+* **`toolTriggerSettings`** — 使该函数可被 Twenty 的 AI 功能（chat、MCP、function calling）发现。 使用标准 JSON Schema，LLM 能够原生理解的格式。
+* **`workflowActionTriggerSettings`** — 使该函数在可视化工作流构建器中显示为一个步骤。 使用 Twenty 丰富的 `InputSchema`，以便构建器可以呈现合适的字段编辑器、变量选择器和标签。
 
-A function can opt into one, the other, or both. They sit alongside `cronTriggerSettings`, `databaseEventTriggerSettings`, and `httpRouteTriggerSettings` — same pattern, same shape.
+函数可以选择加入其中一个、另一个，或两者都加入。 它们与 `cronTriggerSettings`、`databaseEventTriggerSettings` 和 `httpRouteTriggerSettings` 并列 — 相同的模式、相同的结构。
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -182,10 +182,10 @@ export default defineLogicFunction({
 });
 ```
 
-Key points:
+关键点：
 
-* A function can mix surfaces — declare both `toolTriggerSettings` and `workflowActionTriggerSettings` to expose it in chat AND in the workflow builder.
-* `toolTriggerSettings.inputSchema` and `workflowActionTriggerSettings.inputSchema` are both optional. When omitted, the manifest builder infers them from the handler source code (JSON Schema for the AI tool, Twenty's `InputSchema` for the workflow action). Provide one explicitly when you want richer typing — for example, with `FieldMetadataType`-aware fields like `CURRENCY` or `RELATION` for the workflow builder, or with `description` fields the AI agent can read:
+* 函数可以混用这些入口 — 同时声明 `toolTriggerSettings` 和 `workflowActionTriggerSettings`，即可在 chat 和工作流构建器中同时公开它。
+* `toolTriggerSettings.inputSchema` 和 `workflowActionTriggerSettings.inputSchema` 均为可选。 如果省略，清单构建器会根据处理器源代码进行推断（AI 工具使用 JSON Schema，工作流操作使用 Twenty 的 `InputSchema`）。 当你需要更丰富的类型时，可显式提供一个 — 例如，在工作流构建器中使用对 `FieldMetadataType` 友好的字段（如 `CURRENCY` 或 `RELATION`），或提供 AI 代理可读取的 `description` 字段：
 
 ```ts
 export default defineLogicFunction({
@@ -210,29 +210,29 @@ export default defineLogicFunction({
 ```
 
 <Note>
-**Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
+**写一个好的 `description`。** AI 智能体会依赖该函数的 `description` 字段来决定何时使用该工具。 明确说明该工具的作用以及应在何时调用。
 </Note>
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-**Install hooks** — pre-install and post-install handlers — share this runtime but are declared with their own define functions and don't take trigger settings. See [Install Hooks](/l/zh/developers/extend/apps/config/install-hooks) for `definePreInstallLogicFunction` and `definePostInstallLogicFunction`.
+**安装 hooks**——预安装和后安装处理程序——共享此运行时，但使用它们自己的 define 函数进行声明，并且不接受触发器设置。 有关 `definePreInstallLogicFunction` 和 `definePostInstallLogicFunction`，请参阅 [Install Hooks](/l/zh/developers/extend/apps/config/install-hooks)。
 </Note>
 
-## Typed API clients (twenty-client-sdk)
+## 类型化 API 客户端（`twenty-client-sdk`）
 
-The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components.
+`twenty-client-sdk` 包提供了两个类型化的 GraphQL 客户端，供你的逻辑函数和前端组件与 Twenty API 交互。
 
-| Client              | Import                       | Endpoint                                       | Generated?             |
-| ------------------- | ---------------------------- | ---------------------------------------------- | ---------------------- |
-| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — workspace data (records, objects) | Yes, at dev/build time |
-| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — workspace config, file uploads   | No, ships pre-built    |
+| 客户端                 | 导入                           | 端点                       | 是否生成？     |
+| ------------------- | ---------------------------- | ------------------------ | --------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql`——工作区数据（记录、对象） | 是，在开发/构建时 |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata`——工作区配置、文件上传  | 否，已预构建提供  |
 
 <AccordionGroup>
-<Accordion title="CoreApiClient" description="Query and mutate workspace data (records, objects)">
+<Accordion title="CoreApiClient" description="查询和变更工作区数据（记录、对象）">
 
-`CoreApiClient` is the main client for querying and mutating workspace data. It is **generated from your workspace schema** during `yarn twenty dev` or `yarn twenty build`, so it is fully typed to match your objects and fields.
+`CoreApiClient` 是用于查询和变更工作区数据的主要客户端。 它会在执行 `yarn twenty dev` 或 `yarn twenty build` 时**根据你的工作区架构生成**，因此完全类型化以匹配你的对象和字段。
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -269,15 +269,15 @@ const { createCompany } = await client.mutation({
 });
 ```
 
-The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
+该客户端使用选择集语法：传入 `true` 以包含某字段，使用 `__args` 传递参数，并通过嵌套对象表示关系。 你将基于工作区架构获得完整的自动补全和类型检查。
 
 <Note>
-**CoreApiClient is generated at dev/build time.** If you use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema and generates a typed client using `@genql/cli`.
+**CoreApiClient 在开发/构建时生成。** 如果在未先运行 `yarn twenty dev` 或 `yarn twenty build` 的情况下尝试使用它，将会抛出错误。 该生成过程是自动完成的——CLI 会自省你的工作区 GraphQL 架构，并使用 `@genql/cli` 生成类型化客户端。
 </Note>
 
-#### Using CoreSchema for type annotations
+#### 使用 CoreSchema 进行类型标注
 
-`CoreSchema` provides TypeScript types matching your workspace objects — useful for typing component state or function parameters:
+`CoreSchema` 提供与工作区对象相匹配的 TypeScript 类型，可用于为组件状态或函数参数进行类型标注：
 
 ```ts
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
@@ -299,9 +299,9 @@ setCompany(result.company);
 ```
 
 </Accordion>
-<Accordion title="MetadataApiClient" description="Workspace config, applications, and file uploads">
+<Accordion title="MetadataApiClient" description="工作区配置、应用和文件上传">
 
-`MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads.
+`MetadataApiClient` 随 SDK 一并提供，已预构建（无需生成）。 它会查询 `/metadata` 端点以获取工作区配置、应用和文件上传。
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -328,9 +328,9 @@ const { objects } = await metadataClient.query({
 });
 ```
 
-#### Uploading files
+#### 上传文件
 
-`MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields:
+`MetadataApiClient` 包含一个 `uploadFile` 方法，用于将文件附加到文件类型字段：
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -351,25 +351,25 @@ console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-| Parameter                          | Type     | Description                                                     |
-| ---------------------------------- | -------- | --------------------------------------------------------------- |
-| `fileBuffer`                       | `Buffer` | The raw file contents                                           |
-| `filename`                         | `string` | The name of the file (used for storage and display)             |
-| `contentType`                      | `string` | MIME type (defaults to `application/octet-stream` if omitted)   |
-| `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object |
+| 参数                                 | 类型       | 描述                                           |
+| ---------------------------------- | -------- | -------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | 原始文件内容                                       |
+| `filename`                         | `string` | 文件名称（用于存储和显示）                                |
+| `contentType`                      | `string` | MIME 类型（如果省略，默认为 `application/octet-stream`） |
+| `fieldMetadataUniversalIdentifier` | `string` | 你的对象上文件类型字段的 `universalIdentifier`           |
 
-Key points:
-* Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
-* The returned `url` is a signed URL you can use to access the uploaded file.
+关键点：
+* 使用字段的 `universalIdentifier`（而不是其工作区特定的 ID），因此你的上传代码可在安装了你的应用的任何工作区中运行。
+* 返回的 `url` 是一个签名 URL，你可以用它来访问已上传的文件。
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-  When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
+  当你的代码在 Twenty 上运行（逻辑函数或前端组件）时，平台会以环境变量的形式注入凭据：
 
-  * `TWENTY_API_URL` — Base URL of the Twenty API
-  * `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
+  * `TWENTY_API_URL`——Twenty API 的基础 URL
+  * `TWENTY_APP_ACCESS_TOKEN`——作用域限定为你的应用默认函数角色的短期密钥
 
-  You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role referenced in `defaultRoleUniversalIdentifier` in your `application-config.ts`.
+  你无需将这些值传递给客户端——它们会自动从 `process.env` 读取。 API 密钥的权限由你的 `application-config.ts` 中 `defaultRoleUniversalIdentifier` 引用的角色决定。
 </Note>

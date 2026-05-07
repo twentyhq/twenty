@@ -1,19 +1,19 @@
 ---
-title: Page Layouts
-description: Customize record detail pages — tabs, widgets, and where front components render — using definePageLayout and definePageLayoutTab.
+title: Sayfa Düzenleri
+description: definePageLayout ve definePageLayoutTab kullanarak kayıt detay sayfalarını; sekmeleri, widget’ları ve front bileşenlerin nerede render edileceğini özelleştirin.
 icon: table-columns
 ---
 
-A **page layout** controls how a record's detail page is arranged: which tabs appear and what widgets they contain. Use `definePageLayout()` to declare a layout for an object you own, or `definePageLayoutTab()` to add a single tab to a layout that already exists (yours or a standard Twenty one).
+Bir **sayfa düzeni**, bir kaydın detay sayfasının nasıl düzenlendiğini kontrol eder: hangi sekmelerin görüneceğini ve hangi widget’ları içerdiklerini. Sahibi olduğunuz bir nesne için bir düzen tanımlamak amacıyla `definePageLayout()` kullanın veya halihazırda var olan bir düzene (size ait veya standart bir Twenty düzenine) tek bir sekme eklemek için `definePageLayoutTab()` kullanın.
 
-| Use case                                                               | Entity                |
-| ---------------------------------------------------------------------- | --------------------- |
-| Define the entire layout for a record page on an object you own        | `definePageLayout`    |
-| Add one tab to an existing layout (your own object, or a standard one) | `definePageLayoutTab` |
+| Kullanım alanı                                                                 | Varlık                |
+| ------------------------------------------------------------------------------ | --------------------- |
+| Sahibi olduğunuz bir nesnedeki bir kayıt sayfası için tüm düzeni tanımlayın    | `definePageLayout`    |
+| Var olan bir düzene bir sekme ekleyin (kendi nesneniz veya standart bir nesne) | `definePageLayoutTab` |
 
 ## definePageLayout
 
-Use this when you own the entire detail page — typically for a custom object you defined yourself.
+Tüm detay sayfasına sahip olduğunuz durumlarda bunu kullanın — genellikle kendiniz tanımladığınız özel bir nesne için.
 
 ```ts src/page-layouts/example-record-page-layout.ts
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -49,17 +49,17 @@ export default definePageLayout({
 });
 ```
 
-### Key points
+### Önemli noktalar
 
-* `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
-* `objectUniversalIdentifier` specifies which object this layout applies to.
-* Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`CANVAS` for free-form layout).
-* Each `widget` inside a tab can render a [front component](/l/tr/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
-* `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+* `type` genellikle belirli bir nesnenin ayrıntı görünümünü özelleştirmek için `'RECORD_PAGE'` olur.
+* `objectUniversalIdentifier`, bu düzenin hangi nesneye uygulanacağını belirtir.
+* Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar (serbest biçimli düzen için `CANVAS`).
+* Bir sekmenin içindeki her `widget`, bir [front bileşeni](/l/tr/developers/extend/apps/layout/front-components), bir ilişki listesi veya diğer yerleşik widget türlerini render edebilir.
+* Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
 
 ## definePageLayoutTab
 
-Use this when you only want to **add** a tab to an existing layout — for example, an analytics tab on the standard Company page, or an AI summary tab attached to your own object's layout.
+Bunu yalnızca mevcut bir düzene **sekme eklemek** istediğinizde kullanın — örneğin, standart Company sayfasında bir analitik sekmesi veya kendi nesnenizin düzenine eklenmiş bir yapay zeka özeti sekmesi.
 
 ```ts src/page-layouts/example-extra-tab.ts
 import {
@@ -94,9 +94,9 @@ export default definePageLayoutTab({
 });
 ```
 
-### Key points
+### Önemli noktalar
 
-* `pageLayoutUniversalIdentifier` is **required** and must point to a page layout that already exists at install time — either a standard Twenty layout or one defined by your own app. Cross-app references to layouts owned by another installed app are not supported today. When the parent layout is missing, installation fails with a clear validation error.
-* `widgets` are scoped to this tab only — they reference [front components](/l/tr/developers/extend/apps/layout/front-components), views, etc. exactly like widgets defined inline in `definePageLayout`.
-* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
-* Use this instead of `definePageLayout` when you only want to add to an existing layout. Use `definePageLayout` when you own the entire layout.
+* `pageLayoutUniversalIdentifier` **zorunludur** ve kurulum anında zaten var olan bir sayfa düzenini işaret etmelidir — standart bir Twenty düzeni veya kendi uygulamanız tarafından tanımlanan bir düzen olabilir. Başka yüklü bir uygulamaya ait düzenlere uygulamalar arası referanslar bugün desteklenmemektedir. Üst düzen eksik olduğunda, kurulum net bir doğrulama hatasıyla başarısız olur.
+* `widgets` yalnızca bu sekmeyle sınırlıdır — satır içi olarak `definePageLayout` içinde tanımlanan widget’larda olduğu gibi, [front bileşenlerine](/l/tr/developers/extend/apps/layout/front-components), görünümlere vb. tam olarak aynı şekilde referans verirler.
+* `position`, hedeflenen düzende mevcut sekmelere göre sıralamayı kontrol eder. Yerleşik sekmelere göre sekmenizi istediğiniz konuma yerleştirecek bir değer seçin.
+* Yalnızca mevcut bir düzene ekleme yapmak istediğinizde `definePageLayout` yerine bunu kullanın. Tüm düzene sahip olduğunuzda `definePageLayout` kullanın.

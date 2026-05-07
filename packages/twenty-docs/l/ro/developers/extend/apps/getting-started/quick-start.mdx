@@ -123,7 +123,7 @@ Adăugați `--once` pentru a rula un singur build + sync și a ieși — acelaș
 yarn twenty dev --once
 ```
 
-| Comandă                  | Comportament                                                                         | When to use                                                     |
+| Comandă                  | Comportament                                                                         | Când se folosește                                               |
 | ------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
 | `yarn twenty dev`        | Monitorizează și resincronizează la fiecare modificare. Rulează până când îl opriți. | Dezvoltare locală interactivă.                                  |
 | `yarn twenty dev --once` | Un singur build + sync, iese cu `0` la succes, `1` la eșec.                          | CI, hook-uri pre-commit, agenți AI, fluxuri de lucru scriptate. |
@@ -131,7 +131,7 @@ yarn twenty dev --once
 Ambele moduri necesită un server în modul de dezvoltare și un remote autentificat.
 
 <Warning>
-Modul de dezvoltare este disponibil doar pe instanțele Twenty care rulează în modul development (`NODE_ENV=development`). Instanțele de producție resping cererile de sincronizare din modul de dezvoltare — folosiți `yarn twenty deploy` pentru a implementa pe serverele de producție. See [Publishing](/l/ro/developers/extend/apps/operations/publishing).
+Modul de dezvoltare este disponibil doar pe instanțele Twenty care rulează în modul development (`NODE_ENV=development`). Instanțele de producție resping cererile de sincronizare din modul de dezvoltare — folosiți `yarn twenty deploy` pentru a implementa pe serverele de producție. Consultați [Publicarea](/l/ro/developers/extend/apps/operations/publishing).
 </Warning>
 
 ---
@@ -144,7 +144,7 @@ Folosiți `--example` pentru a începe cu un proiect mai complet (obiecte person
 npx create-twenty-app@latest my-twenty-app --example postcard
 ```
 
-Exemplele se află în [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). You can also scaffold individual entities into an existing project with `yarn twenty add` — see [Scaffolding](/l/ro/developers/extend/apps/getting-started/scaffolding).
+Exemplele se află în [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). Puteți, de asemenea, să creați scheletul entităților individuale într-un proiect existent cu `yarn twenty add` — vedeți [Scaffolding](/l/ro/developers/extend/apps/getting-started/scaffolding).
 
 ---
 
@@ -161,24 +161,24 @@ Aplicațiile sunt compuse din **entități** — fiecare definită într-un fiș
 | **Vizualizări și navigare** | Vizualizări de listă preconfigurate și elemente de meniu în bara laterală                       |
 | **Layouturi de pagină**     | Pagini personalizate de detalii ale înregistrărilor cu file și widgeturi                        |
 
-Full reference: [Concepts](/l/ro/developers/extend/apps/getting-started/concepts).
+Referință completă: [Concepte](/l/ro/developers/extend/apps/getting-started/concepts).
 
 ## Pașii următori
 
 <CardGroup cols={2}>
   <Card title="Configurare" icon="screwdriver-wrench" href="/l/ro/developers/extend/apps/config/overview">
-    Application identity, default role, install hooks, public assets.
+    Identitatea aplicației, rolul implicit, hook-urile de instalare, resursele publice.
   </Card>
   <Card title="Date" icon="database" href="/l/ro/developers/extend/apps/data/overview">
-    Objects, fields, and bidirectional relations.
+    Obiecte, câmpuri și relații bidirecționale.
   </Card>
   <Card title="Logică" icon="bolt" href="/l/ro/developers/extend/apps/logic/overview">
-    Logic functions, skills, agents, and OAuth connections.
+    Funcții logice, abilități, agenți și conexiuni OAuth.
   </Card>
   <Card title="Aspect" icon="table-columns" href="/l/ro/developers/extend/apps/layout/overview">
-    Views, navigation, page layouts, front components.
+    Vizualizări, navigare, machete de pagină, componente front-end.
   </Card>
   <Card title="Operațiuni" icon="rocket" href="/l/ro/developers/extend/apps/operations/overview">
-    CLI, testing, remotes, CI, and publishing your app.
+    CLI, testare, remote-uri, CI și publicarea aplicației.
   </Card>
 </CardGroup>

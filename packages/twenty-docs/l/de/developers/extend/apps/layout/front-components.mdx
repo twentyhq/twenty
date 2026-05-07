@@ -1,26 +1,26 @@
 ---
-title: Front Components
-description: Build React components that render inside Twenty's UI with sandboxed isolation.
+title: Frontend-Komponenten
+description: Erstellen Sie React-Komponenten, die innerhalb der Twenty-UI gerendert werden und durch eine Sandbox isoliert sind.
 icon: window-maximize
 ---
 
-Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code is sandboxed but renders natively in the page, not in an iframe.
+Front-Komponenten sind React-Komponenten, die direkt innerhalb der Twenty-UI gerendert werden. Sie laufen in einem **isolierten Web Worker** unter Verwendung von Remote DOM — Ihr Code wird in einer Sandbox ausgeführt, rendert jedoch nativ auf der Seite, nicht in einem iframe.
 
-## Where front components can be used
+## Wo Front-Komponenten verwendet werden können
 
-Front components can render in two locations within Twenty:
+Front-Komponenten können an zwei Stellen innerhalb von Twenty gerendert werden:
 
-* **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
-* **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/l/de/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
+* **Seitenpanel** — Nicht-Headless-Front-Komponenten werden im rechten Seitenpanel geöffnet. Dies ist das Standardverhalten, wenn eine Front-Komponente über das Befehlsmenü ausgelöst wird.
+* **Widgets (Dashboards und Datensatzseiten)** — Front-Komponenten können als Widgets in [Seitenlayouts](/l/de/developers/extend/apps/layout/page-layouts) eingebettet werden. Beim Konfigurieren eines Dashboards oder eines Datensatzseiten-Layouts können Benutzer ein Front-Komponenten-Widget hinzufügen.
 
-A front component on its own isn't reachable from the UI — you need to *surface* it. The two ways to do that are:
+Eine Front-Komponente allein ist über die Benutzeroberfläche nicht erreichbar – Sie müssen sie *sichtbar machen*. Die beiden Möglichkeiten dafür sind:
 
-* **Pair it with a [command menu item](/l/de/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
-* **Embed it as a widget in a [page layout](/l/de/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
+* **Mit einem [Befehlsmenüeintrag](/l/de/developers/extend/apps/layout/command-menu-items) verknüpfen** — registriert sie im Befehlsmenü (Cmd+K) und optional als angeheftete Schnellaktion.
+* **Als Widget in ein [Seitenlayout](/l/de/developers/extend/apps/layout/page-layouts) einbetten** — platziert es auf der Detailseite eines Datensatzes oder in einem Dashboard.
 
-## Basic example
+## Einfaches Beispiel
 
-The quickest way to see a front component in action is to pair it with a [`defineCommandMenuItem`](/l/de/developers/extend/apps/layout/command-menu-items), so it appears as a quick-action button in the top-right corner of the page:
+Die schnellste Möglichkeit, eine Front-Komponente in Aktion zu sehen, besteht darin, sie mit einem [`defineCommandMenuItem`](/l/de/developers/extend/apps/layout/command-menu-items) zu verknüpfen, sodass sie als Schnellaktionsschaltfläche in der oberen rechten Ecke der Seite erscheint:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -56,35 +56,35 @@ export default defineCommandMenuItem({
 });
 ```
 
-After syncing with `yarn twenty dev` (or running a one-shot `yarn twenty dev --once`), the quick action appears in the top-right corner of the page:
+Nach dem Synchronisieren mit `yarn twenty dev` (oder durch einmaliges Ausführen von `yarn twenty dev --once`) erscheint die Schnellaktion oben rechts auf der Seite:
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Schnellaktionsschaltfläche oben rechts" />
 </div>
 
-Click it to render the component inline.
+Klicken Sie darauf, um die Komponente inline zu rendern.
 
-## Configuration fields
+## Konfigurationsfelder
 
-| Field                 | Required | Description                                                  |
-| --------------------- | -------- | ------------------------------------------------------------ |
-| `universalIdentifier` | Yes      | Stable unique ID for this component                          |
-| `component`           | Yes      | A React component function                                   |
-| `name`                | No       | Display name                                                 |
-| `description`         | No       | Description of what the component does                       |
-| `isHeadless`          | No       | Set to `true` if the component has no visible UI (see below) |
+| Feld                  | Erforderlich | Beschreibung                                                                |
+| --------------------- | ------------ | --------------------------------------------------------------------------- |
+| `universalIdentifier` | Ja           | Stabile eindeutige ID für diese Komponente                                  |
+| `component`           | Ja           | Eine React-Komponentenfunktion                                              |
+| `name`                | Nein         | Anzeigename                                                                 |
+| `description`         | Nein         | Beschreibung dessen, was die Komponente macht                               |
+| `isHeadless`          | Nein         | Auf `true` setzen, wenn die Komponente keine sichtbare UI hat (siehe unten) |
 
-## Placing a front component on a page
+## Eine Front-Komponente auf einer Seite platzieren
 
-Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See [Page Layouts](/l/de/developers/extend/apps/layout/page-layouts) for details.
+Über Befehle hinaus können Sie eine Front-Komponente direkt in eine Datensatzseite einbetten, indem Sie sie als Widget in einem **Seitenlayout** hinzufügen. Details finden Sie unter [Seitenlayouts](/l/de/developers/extend/apps/layout/page-layouts).
 
-## Headless vs non-headless
+## Headless vs. Nicht-Headless
 
-Front components come in two rendering modes controlled by the `isHeadless` option:
+Front-Komponenten gibt es in zwei Rendering-Modi, die durch die Option `isHeadless` gesteuert werden:
 
-**Non-headless (default)** — The component renders a visible UI. When triggered from the command menu it opens in the side panel. This is the default behavior when `isHeadless` is `false` or omitted.
+**Nicht-Headless (Standard)** — Die Komponente rendert eine sichtbare UI. Wird sie über das Befehlsmenü ausgelöst, öffnet sie sich im Seitenpanel. Dies ist das Standardverhalten, wenn `isHeadless` `false` ist oder weggelassen wird.
 
-**Headless (`isHeadless: true`)** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
+**Headless (`isHeadless: true`)** — Die Komponente wird unsichtbar im Hintergrund gemountet. Sie öffnet das Seitenpanel nicht. Headless-Komponenten sind für Aktionen konzipiert, die Logik ausführen und sich anschließend selbst unmounten — zum Beispiel das Ausführen einer asynchronen Aufgabe, das Navigieren zu einer Seite oder das Anzeigen eines Bestätigungsdialogs. Sie lassen sich gut mit den unten beschriebenen SDK-Command-Komponenten kombinieren.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -110,20 +110,20 @@ export default defineFrontComponent({
 });
 ```
 
-Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
+Da die Komponente `null` zurückgibt, überspringt Twenty das Rendern eines Containers dafür — im Layout entsteht kein Leerraum. Die Komponente hat dennoch Zugriff auf alle Hooks und die Host-Kommunikations-API.
 
-## SDK Command components
+## SDK-Command-Komponenten
 
-The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
+Das Paket `twenty-sdk` stellt vier Command-Hilfskomponenten bereit, die für Headless-Front-Komponenten ausgelegt sind. Jede Komponente führt beim Mounten eine Aktion aus, behandelt Fehler durch Anzeige einer Snackbar-Benachrichtigung und unmountet die Front-Komponente nach Abschluss automatisch.
 
-Import them from `twenty-sdk/command`:
+Importieren Sie sie aus `twenty-sdk/command`:
 
-* **`Command`** — Runs an async callback via the `execute` prop.
-* **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Opens a specific side panel page. Props: `page`, `pageTitle`, `pageIcon`.
+* **`Command`** — Führt einen asynchronen Callback über das Prop `execute` aus.
+* **`CommandLink`** — Navigiert zu einem App-Pfad. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Öffnet einen Bestätigungsdialog. Bestätigt der Benutzer, wird der Callback `execute` ausgeführt. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Öffnet eine bestimmte Seite im Seitenpanel. Props: `page`, `pageTitle`, `pageIcon`.
 
-Here is a full example of a headless front component using `Command` to run an action from the command menu:
+Hier ist ein vollständiges Beispiel einer Headless-Front-Komponente, die `Command` verwendet, um eine Aktion aus dem Befehlsmenü auszuführen:
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -165,7 +165,7 @@ export default defineCommandMenuItem({
 });
 ```
 
-And an example using `CommandModal` to ask for confirmation before executing:
+Und ein Beispiel, das `CommandModal` verwendet, um vor der Ausführung um Bestätigung zu bitten:
 
 ```tsx src/front-components/delete-draft.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -196,9 +196,9 @@ export default defineFrontComponent({
 });
 ```
 
-## Accessing runtime context
+## Zugriff auf den Laufzeitkontext
 
-Inside your component, use SDK hooks to access the current user, record, and component instance:
+Verwenden Sie innerhalb Ihrer Komponente SDK-Hooks, um auf den aktuellen Benutzer, den Datensatz und die Komponenteninstanz zuzugreifen:
 
 ```tsx src/front-components/record-info.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -229,31 +229,31 @@ export default defineFrontComponent({
 });
 ```
 
-Available hooks:
+Verfügbare Hooks:
 
-| Hook                                          | Returns            | Description                                                |
-| --------------------------------------------- | ------------------ | ---------------------------------------------------------- |
-| `useUserId()`                                 | `string` or `null` | The current user's ID                                      |
-| `useSelectedRecordIds()`                      | `string[]`         | All selected record IDs (empty array if none selected)     |
-| `useRecordId()`                               | `string` or `null` | **Deprecated.** Use `useSelectedRecordIds()` instead       |
-| `useFrontComponentId()`                       | `string`           | This component instance's ID                               |
-| `useFrontComponentExecutionContext(selector)` | varies             | Access the full execution context with a selector function |
+| Hook                                          | Gibt zurück          | Beschreibung                                                                |
+| --------------------------------------------- | -------------------- | --------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` oder `null` | Die ID des aktuellen Benutzers                                              |
+| `useSelectedRecordIds()`                      | `Zeichenkette[]`     | Alle ausgewählten Datensatz-IDs (leeres Array, wenn keine ausgewählt sind)  |
+| `useRecordId()`                               | `string` oder `null` | **Veraltet.** Verwenden Sie stattdessen `useSelectedRecordIds()`            |
+| `useFrontComponentId()`                       | `Zeichenkette`       | Die ID dieser Komponenteninstanz                                            |
+| `useFrontComponentExecutionContext(selector)` | variiert             | Zugriff auf den vollständigen Ausführungskontext mit einer Selektorfunktion |
 
-## Host communication API
+## Host-Kommunikations-API
 
-Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:
+Front-Komponenten können Navigation, Modals und Benachrichtigungen mittels Funktionen aus `twenty-sdk` auslösen:
 
-| Function                                        | Description                   |
-| ----------------------------------------------- | ----------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navigate to a page in the app |
-| `openSidePanelPage(params)`                     | Open a side panel             |
-| `closeSidePanel()`                              | Close the side panel          |
-| `openCommandConfirmationModal(params)`          | Show a confirmation dialog    |
-| `enqueueSnackbar(params)`                       | Show a toast notification     |
-| `unmountFrontComponent()`                       | Unmount the component         |
-| `updateProgress(progress)`                      | Update a progress indicator   |
+| Funktion                                        | Beschreibung                              |
+| ----------------------------------------------- | ----------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Zu einer Seite in der App navigieren      |
+| `openSidePanelPage(params)`                     | Ein Seitenpanel öffnen                    |
+| `closeSidePanel()`                              | Seitenpanel schließen                     |
+| `openCommandConfirmationModal(params)`          | Einen Bestätigungsdialog anzeigen         |
+| `enqueueSnackbar(params)`                       | Eine Toast-Benachrichtigung anzeigen      |
+| `unmountFrontComponent()`                       | Die Komponente entfernen                  |
+| `updateProgress(progress)`                      | Einen Fortschrittsindikator aktualisieren |
 
-Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
+Hier ist ein Beispiel, das die Host-API verwendet, um nach Abschluss einer Aktion eine Snackbar anzuzeigen und das Seitenpanel zu schließen:
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -298,9 +298,9 @@ export default defineFrontComponent({
 });
 ```
 
-### Working with multiple records
+### Mit mehreren Datensätzen arbeiten
 
-Use `useSelectedRecordIds()` to handle multiple selected records. This is useful for bulk operations:
+Verwenden Sie `useSelectedRecordIds()`, um mehrere ausgewählte Datensätze zu verwalten. Dies ist nützlich für Stapelvorgänge:
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -353,9 +353,9 @@ export default defineFrontComponent({
 });
 ```
 
-## Public assets
+## Öffentliche Assets
 
-Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
+Front-Komponenten können mit `getPublicAssetUrl` auf Dateien aus dem `public/`-Verzeichnis der App zugreifen:
 
 ```tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
@@ -369,18 +369,18 @@ export default defineFrontComponent({
 });
 ```
 
-See the [public assets section](/l/de/developers/extend/apps/config/public-assets) for details.
+Details finden Sie im Abschnitt [Öffentliche Assets](/l/de/developers/extend/apps/config/public-assets).
 
 ## Styling
 
-Front components support multiple styling approaches. You can use:
+Front-Komponenten unterstützen mehrere Styling-Ansätze. Sie können verwenden:
 
-* **Inline styles** — `style={{ color: 'red' }}`
-* **Twenty UI components** — import from `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar, and more)
-* **Emotion** — CSS-in-JS with `@emotion/react`
-* **Styled-components** — `styled.div` patterns
-* **Tailwind CSS** — utility classes
-* **Any CSS-in-JS library** compatible with React
+* **Inline-Styles** — `style={{ color: 'red' }}`
+* **Twenty-UI-Komponenten** — Import aus `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar und mehr)
+* **Emotion** — CSS-in-JS mit `@emotion/react`
+* **Styled-components** — `styled.div`-Muster
+* **Tailwind CSS** — Utility-Klassen
+* **Beliebige CSS-in-JS-Bibliothek**, die mit React kompatibel ist
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

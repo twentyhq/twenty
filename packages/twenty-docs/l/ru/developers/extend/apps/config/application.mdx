@@ -1,15 +1,15 @@
 ---
-title: Application Config
-description: Declare your app's identity, default role, variables, and marketplace metadata with defineApplication.
+title: Конфигурация приложения
+description: Объявите идентификацию вашего приложения, роль по умолчанию, переменные и метаданные маркетплейса с помощью defineApplication.
 icon: rocket
 ---
 
-Every app must have exactly one `defineApplication` call. It declares:
+В каждом приложении должен быть ровно один вызов `defineApplication`. Он объявляет:
 
-* **Identity** — universal identifier, display name, description.
-* **Permissions** — which role its logic functions and front components run under.
-* **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
-* **Pre-install / post-install hooks** *(optional)* — see [Logic Functions](/l/ru/developers/extend/apps/logic/logic-functions).
+* **Идентификация** — универсальный идентификатор, отображаемое имя, описание.
+* **Разрешения** — под какой ролью выполняются его логические функции и фронтенд-компоненты.
+* **Переменные** *(необязательно)* — пары ключ–значение, доступные вашему коду как переменные окружения.
+* **Хуки предустановки / постустановки** *(необязательно)* — см. [Логические функции](/l/ru/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -31,35 +31,35 @@ export default defineApplication({
 });
 ```
 
-Notes:
+Заметки:
 
-* `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions and front components (e.g., `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` must reference a role defined with [`defineRole()`](/l/ru/developers/extend/apps/config/roles).
-* Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+* Поля `universalIdentifier` — это детерминированные идентификаторы, которые принадлежат вам. Сгенерируйте их один раз и сохраняйте неизменными между синхронизациями.
+* `applicationVariables` становятся переменными окружения для ваших функций и фронтенд-компонентов (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` должен ссылаться на роль, определённую с помощью [`defineRole()`](/l/ru/developers/extend/apps/config/roles).
+* Предустановочные и постустановочные функции обнаруживаются автоматически во время сборки манифеста — вам не нужно указывать их в `defineApplication()`.
 
-## Default function role
+## Роль функции по умолчанию
 
-The `defaultRoleUniversalIdentifier` controls what the app's logic functions and front components can access:
+`defaultRoleUniversalIdentifier` определяет, к чему могут получать доступ логические функции и фронтенд-компоненты приложения:
 
-* The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
-* The typed API client is restricted to the permissions granted to that role.
-* Follow least-privilege: declare only the permissions your functions need.
+* Токен времени выполнения, подставляемый как `TWENTY_APP_ACCESS_TOKEN`, формируется из этой роли.
+* Типизированный клиент API ограничен правами, предоставленными этой роли.
+* Следуйте принципу наименьших привилегий: объявляйте только те разрешения, которые действительно нужны вашим функциям.
 
-When you scaffold a new app, the CLI creates a starter role file at `src/roles/default-role.ts`. See [Roles & Permissions](/l/ru/developers/extend/apps/config/roles) for the full reference.
+Когда вы создаёте новое приложение с помощью шаблона, CLI создаёт стартовый файл роли по адресу `src/roles/default-role.ts`. Полную справочную информацию см. в разделе [Роли и разрешения](/l/ru/developers/extend/apps/config/roles).
 
-## Marketplace metadata
+## Метаданные маркетплейса
 
-If you plan to [publish your app](/l/ru/developers/extend/apps/operations/publishing), these optional fields control how it appears in the marketplace:
+Если вы планируете [опубликовать приложение](/l/ru/developers/extend/apps/operations/publishing), эти необязательные поля определяют, как оно отображается в маркетплейсе:
 
-| Field              | Description                                                                                                          |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `author`           | Author or company name                                                                                               |
-| `category`         | App category for marketplace filtering                                                                               |
-| `logoUrl`          | Path to your app logo (e.g., `public/logo.png`)                                                                      |
-| `screenshots`      | Array of screenshot paths (e.g., `public/screenshot-1.png`)                                                          |
-| `aboutDescription` | Longer markdown description for the "About" tab. If omitted, the marketplace uses the package's `README.md` from npm |
-| `websiteUrl`       | Link to your website                                                                                                 |
-| `termsUrl`         | Link to terms of service                                                                                             |
-| `emailSupport`     | Support email address                                                                                                |
-| `issueReportUrl`   | Link to issue tracker                                                                                                |
+| Поле               | Описание                                                                                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `author`           | Имя автора или название компании                                                                                    |
+| `category`         | Категория приложения для фильтрации в маркетплейсе                                                                  |
+| `logoUrl`          | Путь к логотипу вашего приложения (например, `public/logo.png`)                                                     |
+| `screenshots`      | Массив путей к скриншотам (например, `public/screenshot-1.png`)                                                     |
+| `aboutDescription` | Расширенное описание в Markdown для вкладки "About". Если опущено, маркетплейс использует `README.md` пакета из npm |
+| `websiteUrl`       | Ссылка на ваш сайт                                                                                                  |
+| `termsUrl`         | Ссылка на условия предоставления услуг                                                                              |
+| `emailSupport`     | Адрес электронной почты поддержки                                                                                   |
+| `issueReportUrl`   | Ссылка на систему отслеживания проблем                                                                              |

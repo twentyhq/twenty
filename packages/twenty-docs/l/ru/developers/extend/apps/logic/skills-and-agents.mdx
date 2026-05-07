@@ -1,19 +1,19 @@
 ---
-title: Skills & Agents
-description: Define AI skills and agents for your app.
+title: Навыки и агенты
+description: Определите навыки и агентов ИИ для вашего приложения.
 icon: robot
 ---
 
 <Warning>
-  Skills and agents are currently in alpha. The feature works but is still evolving.
+  Навыки и агенты сейчас проходят альфа-тестирование. Функция работает, но продолжает развиваться.
 </Warning>
 
-Apps can define AI capabilities that live inside the workspace — reusable skill instructions and agents with custom system prompts.
+Приложения могут определять возможности ИИ, которые находятся внутри рабочего пространства — повторно используемые инструкции для навыков и агенты с настраиваемыми системными подсказками.
 
 <AccordionGroup>
-<Accordion title="defineSkill" description="Define AI agent skills">
+<Accordion title="defineSkill" description="Определяйте навыки ИИ-агентов">
 
-Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+Навыки определяют многократно используемые инструкции и возможности, которые агенты ИИ могут использовать в вашем рабочем пространстве. Используйте `defineSkill()` для определения навыков со встроенной валидацией:
 
 ```ts src/skills/example-skill.ts
 import { defineSkill } from 'twenty-sdk/define';
@@ -32,17 +32,17 @@ export default defineSkill({
 });
 ```
 
-Key points:
-* `name` is a unique identifier string for the skill (kebab-case recommended).
-* `label` is the human-readable display name shown in the UI.
-* `content` contains the skill instructions — this is the text the AI agent uses.
-* `icon` (optional) sets the icon displayed in the UI.
-* `description` (optional) provides additional context about the skill's purpose.
+Основные моменты:
+* `name` — уникальная строка-идентификатор навыка (рекомендуется kebab-case).
+* `label` — читаемое человеком отображаемое имя, показываемое в UI.
+* `content` содержит инструкции навыка — это текст, который использует агент ИИ.
+* `icon` (необязательно) задаёт значок, отображаемый в UI.
+* `description` (необязательно) предоставляет дополнительный контекст о назначении навыка.
 
 </Accordion>
-<Accordion title="defineAgent" description="Define AI agents with custom prompts">
+<Accordion title="defineAgent" description="Определяйте ИИ-агентов с пользовательскими промптами">
 
-Agents are AI assistants that live inside your workspace. Use `defineAgent()` to create agents with a custom system prompt:
+Агенты — это ИИ-помощники, работающие в вашем рабочем пространстве. Используйте `defineAgent()` для создания агентов с пользовательским системным промптом:
 
 ```ts src/agents/example-agent.ts
 import { defineAgent } from 'twenty-sdk/define';
@@ -57,13 +57,13 @@ export default defineAgent({
 });
 ```
 
-Key points:
-* `name` is the unique identifier string for the agent (kebab-case recommended).
-* `label` is the display name shown in the UI.
-* `prompt` is the system prompt that defines the agent's behavior.
-* `description` (optional) provides context about what the agent does.
-* `icon` (optional) sets the icon displayed in the UI.
-* `modelId` (optional) overrides the default AI model used by the agent.
+Основные моменты:
+* `name` — уникальная строка-идентификатор агента (рекомендуется kebab-case).
+* `label` — отображаемое имя, показываемое в UI.
+* `prompt` — это системный промпт, определяющий поведение агента.
+* `description` (необязательно) предоставляет контекст о том, что делает агент.
+* `icon` (необязательно) задаёт значок, отображаемый в UI.
+* `modelId` (необязательно) переопределяет модель ИИ по умолчанию, используемую агентом.
 
 </Accordion>
 </AccordionGroup>

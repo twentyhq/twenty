@@ -1,10 +1,10 @@
 ---
-title: Roles & Permissions
-description: Declare what objects and fields your app's logic functions and front components can read and write.
+title: Роли и разрешения
+description: Укажите, к каким объектам и полям логические функции и фронтенд‑компоненты вашего приложения могут выполнять чтение и запись.
 icon: shield-halved
 ---
 
-A **role** is a permission set: which objects an app can read or write, which fields it can see, and which platform-level capabilities it can use. Every app's logic functions and front components inherit the permissions of the role declared as `defaultRoleUniversalIdentifier` in [`defineApplication`](/l/ru/developers/extend/apps/config/application).
+**Роль** — это набор разрешений: какие объекты приложение может читать или изменять, какие поля оно может видеть и какие возможности платформенного уровня оно может использовать. Все логические функции и фронтенд‑компоненты каждого приложения наследуют разрешения роли, объявленной как `defaultRoleUniversalIdentifier` в [`defineApplication`](/l/ru/developers/extend/apps/config/application).
 
 ```ts src/roles/restricted-company-role.ts
 import {
@@ -49,9 +49,9 @@ export default defineRole({
 });
 ```
 
-## The default function role
+## Роль функции по умолчанию
 
-When you scaffold a new app, the CLI creates a default role file:
+Когда вы генерируете новое приложение, CLI создаёт файл роли по умолчанию:
 
 ```ts src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk/define';
@@ -77,14 +77,14 @@ export default defineRole({
 });
 ```
 
-This role's `universalIdentifier` is referenced from `application-config.ts` as `defaultRoleUniversalIdentifier`:
+Значение `universalIdentifier` этой роли указывается в `application-config.ts` как `defaultRoleUniversalIdentifier`:
 
-* **`*.role.ts`** declares what the role can do.
-* **`application-config.ts`** points to that role so your functions inherit its permissions.
+* **`*.role.ts`** определяет, что может делать роль.
+* **`application-config.ts`** указывает на эту роль, чтобы ваши функции наследовали её права.
 
-## Best practices
+## Лучшие практики
 
-* Start from the scaffolded role, then progressively restrict it — the default grants broad read access, which is rarely what you want in production.
-* Replace `objectPermissions` and `fieldPermissions` with the exact objects and fields your functions actually need.
-* `permissionFlags` control access to platform-level capabilities. Keep them minimal.
-* See a working example: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* Начните с сгенерированной роли и постепенно ограничивайте её — роль по умолчанию предоставляет широкий доступ на чтение, что редко подходит для продакшена.
+* Замените `objectPermissions` и `fieldPermissions` на точные объекты и поля, которые действительно нужны вашим функциям.
+* `permissionFlags` управляют доступом к возможностям на уровне платформы. Сведите их к минимуму.
+* См. рабочий пример: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

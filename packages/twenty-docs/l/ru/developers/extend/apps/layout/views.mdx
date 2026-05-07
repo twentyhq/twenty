@@ -1,10 +1,10 @@
 ---
-title: Views
-description: Ship pre-configured saved views — column order, filters, groups — for objects in your app.
-icon: list
+title: Представления
+description: Поставляйте предварительно настроенные сохранённые представления — порядок столбцов, фильтры, группы — для объектов в вашем приложении.
+icon: список
 ---
 
-A **view** is a saved configuration for how records of an object are displayed: which fields appear, their order, whether they're visible, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app — typically a default index view for each custom object you create.
+**Представление** — это сохранённая конфигурация того, как отображаются записи объекта: какие поля появляются, их порядок, видимость, а также применённые фильтры и группы. Используйте `defineView()` для поставки предварительно настроенных представлений вместе с вашим приложением — обычно это представление индекса по умолчанию для каждого создаваемого вами пользовательского объекта.
 
 ```ts src/views/example-view.ts
 import { defineView, ViewKey } from 'twenty-sdk/define';
@@ -30,14 +30,14 @@ export default defineView({
 });
 ```
 
-## Key points
+## Основные моменты
 
-* `objectUniversalIdentifier` specifies which object this view applies to. It can be a custom object you defined or a standard Twenty object.
-* `key` determines the view type — `ViewKey.INDEX` is the main list view for the object.
-* `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`.
-* You can also declare `filters`, `filterGroups`, `groups`, and `fieldGroups` for advanced configurations.
-* `position` controls ordering when multiple views exist for the same object.
+* `objectUniversalIdentifier` указывает, к какому объекту применяется это представление. Это может быть пользовательский объект, который вы определили, или стандартный объект Twenty.
+* `key` определяет тип представления — `ViewKey.INDEX` — это основное представление списка для объекта.
+* `fields` управляет тем, какие столбцы отображаются и в каком порядке. Каждое поле ссылается на `fieldMetadataUniversalIdentifier`.
+* Также вы можете объявить `filters`, `filterGroups`, `groups` и `fieldGroups` для продвинутых конфигураций.
+* `position` управляет порядком, когда для одного и того же объекта существует несколько представлений.
 
-## How views show up in the UI
+## Как представления отображаются в интерфейсе
 
-A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/l/ru/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object typically ships a default view + a sidebar entry that opens it.
+Само по себе представление недоступно из боковой панели. Чтобы оно появилось там, свяжите его с [пунктом навигационного меню](/l/ru/developers/extend/apps/layout/navigation-menu-items) типа `VIEW`, который указывает на `universalIdentifier` представления. Это канонический шаблон: каждый пользовательский объект обычно поставляется с представлением по умолчанию и пунктом боковой панели, который его открывает.
