@@ -1,11 +1,11 @@
 import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
-import { EDITORIAL_FOUR } from '@/app/[locale]/why-twenty/editorial-four.data';
-import { EDITORIAL_ONE } from '@/app/[locale]/why-twenty/editorial-one.data';
-import { EDITORIAL_THREE } from '@/app/[locale]/why-twenty/editorial-three.data';
-import { HERO_COPY } from '@/app/[locale]/why-twenty/hero.data';
-import { MARQUEE_DATA } from '@/app/[locale]/why-twenty/marquee.data';
-import { SIGNOFF_COPY } from '@/app/[locale]/why-twenty/signoff.data';
+import { EDITORIAL_FOUR } from '@/app/[locale]/resources/why-twenty/editorial-four.data';
+import { EDITORIAL_ONE } from '@/app/[locale]/resources/why-twenty/editorial-one.data';
+import { EDITORIAL_THREE } from '@/app/[locale]/resources/why-twenty/editorial-three.data';
+import { HERO_COPY } from '@/app/[locale]/resources/why-twenty/hero.data';
+import { MARQUEE_DATA } from '@/app/[locale]/resources/why-twenty/marquee.data';
+import { SIGNOFF_COPY } from '@/app/[locale]/resources/why-twenty/signoff.data';
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
