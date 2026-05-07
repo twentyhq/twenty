@@ -1,15 +1,15 @@
 ---
 title: 应用程序配置
-description: 使用 defineApplication 声明应用的身份、默认角色、变量和 Marketplace 元数据。
+description: 使用 defineApplication 声明应用的身份、默认角色、变量和应用市场元数据。
 icon: rocket
 ---
 
 每个应用必须且只能有一个 `defineApplication` 调用。 它声明：
 
-* **Identity** — 通用标识符、显示名称、描述。
-* **Permissions** — 其逻辑函数和前端组件在何种角色下运行。
-* **Variables** *(optional)* — 以环境变量形式暴露给代码的键值对。
-* **Pre-install / post-install hooks** *(optional)* — 参见 [逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)。
+* **应用的身份** — 通用标识符、显示名称、描述。
+* **权限** — 其逻辑函数和前端组件在何种角色下运行。
+* **变量**（可选）— 以环境变量形式暴露给代码的键值对。
+* **安装前/安装后函数**（可选）— 参见 [逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)。
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';

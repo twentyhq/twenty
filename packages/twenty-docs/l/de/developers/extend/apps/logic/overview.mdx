@@ -28,11 +28,11 @@ Die **Logikschicht** einer Twenty-App ist der Code, der *ausgeführt wird* – s
   <Card title="Logikfunktionen" icon="bolt" href="/l/de/developers/extend/apps/logic/logic-functions">
     Der zentrale Baustein – Auslösertypen, Payloads und der typisierte API-Client.
   </Card>
-  <Card title="Fähigkeiten & Agenten" icon="robot" href="/l/de/developers/extend/apps/logic/skills-and-agents">
-    Wiederverwendbare KI-Agenten-Anweisungen und Assistenten mit benutzerdefinierten System-Prompts.
+  <Card title="Skills & Agenten" icon="robot" href="/l/de/developers/extend/apps/logic/skills-and-agents">
+    Wiederverwendbare Anweisungen für KI-Agenten und Assistenten mit benutzerdefinierten System-Prompts.
   </Card>
   <Card title="Verbindungen" icon="plug" href="/l/de/developers/extend/apps/logic/connections">
-    OAuth-Anmeldedaten, die Ihre App für Dienste von Drittanbietern hält – Linear, GitHub, Slack und mehr.
+    OAuth-Anmeldedaten, die Ihre App für Dienste von Drittanbietern verwaltet – Linear, GitHub, Slack und mehr.
   </Card>
 </CardGroup>
 
@@ -40,16 +40,16 @@ Die **Logikschicht** einer Twenty-App ist der Code, der *ausgeführt wird* – s
 
 Eine Logikfunktion wählt einen oder mehrere Auslöser – jeder Eintrag unten ist ein eigenes Feld auf `defineLogicFunction()`:
 
-| Auslöser              | Wann sie ausgeführt wird                                             | Einstellung                     |
-| --------------------- | -------------------------------------------------------------------- | ------------------------------- |
-| **HTTP-Route**        | Eine Anfrage trifft auf Ihren `/s/\<path>`-Endpunkt | `httpRouteTriggerSettings`      |
-| **Cron**              | Ein CRON-Ausdruck stimmt überein                                     | `cronTriggerSettings`           |
-| **Datenbankereignis** | Ein Workspace-Datensatz wird erstellt, aktualisiert oder gelöscht    | `databaseEventTriggerSettings`  |
-| **KI-Tool**           | Eine Twenty-KI-Funktion entscheidet sich, Ihre Funktion aufzurufen   | `toolTriggerSettings`           |
-| **Workflow-Aktion**   | Ein Workflow-Schritt ruft Ihre Funktion auf                          | `workflowActionTriggerSettings` |
+| Auslöser              | Wann sie ausgeführt wird                                           | Einstellung                     |
+| --------------------- | ------------------------------------------------------------------ | ------------------------------- |
+| **HTTP-Route**        | Eine Anfrage erreicht Ihren `/s/\<path>`-Endpunkt | `httpRouteTriggerSettings`      |
+| **Cron**              | Ein CRON-Ausdruck trifft zu                                        | `cronTriggerSettings`           |
+| **Datenbankereignis** | Ein Workspace-Datensatz wird erstellt, aktualisiert oder gelöscht  | `databaseEventTriggerSettings`  |
+| **KI-Tool**           | Eine Twenty-KI-Funktion entscheidet sich, Ihre Funktion aufzurufen | `toolTriggerSettings`           |
+| **Workflow-Aktion**   | Ein Workflow-Schritt ruft Ihre Funktion auf                        | `workflowActionTriggerSettings` |
 
-Funktionen werden in isolierten Node.js-Prozessen sandboxed ausgeführt und greifen über einen typisierten API-Client, der auf die in [`defineApplication()`](/l/de/developers/extend/apps/config/application) deklarierte Rolle beschränkt ist, auf den Workspace zu.
+Funktionen werden in isolierten Node.js-Prozessen in einer Sandbox ausgeführt und greifen über einen typisierten API-Client, der auf die in [`defineApplication()`](/l/de/developers/extend/apps/config/application) deklarierte Rolle beschränkt ist, auf den Workspace zu.
 
 <Note>
-**Installations-Hooks zur Installationszeit** – Code, der vor oder nach der Installation ausgeführt wird – teilen sich diese Laufzeitumgebung, verwenden jedoch ihre eigenen define-Funktionen und befinden sich unter [Config → Install Hooks](/l/de/developers/extend/apps/config/install-hooks).
+**Installations-Hooks** – Code, der vor oder nach der Installation ausgeführt wird – teilen sich diese Laufzeitumgebung, verwenden jedoch eigene Define-Funktionen und befinden sich unter [Config → Install Hooks](/l/de/developers/extend/apps/config/install-hooks).
 </Note>

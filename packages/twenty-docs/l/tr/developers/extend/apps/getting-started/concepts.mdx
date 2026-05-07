@@ -8,7 +8,7 @@ Twenty uygulamaları, çalışma alanınızı özel nesneler, mantık, UI bileş
 
 ## Uygulamalar nasıl çalışır
 
-Bir uygulama, `twenty-sdk` paketindeki `defineEntity()` işlevleri kullanılarak bildirilen **varlıklar** koleksiyonudur. SDK, bu bildirimleri derleme sırasında AST analiziyle algılar ve bir **manifest** üretir — uygulamanızın bir çalışma alanına neler eklediğinin eksiksiz bir açıklaması. Bu fonksiyonlar, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
+Bir uygulama, `twenty-sdk` paketindeki `defineEntity()` işlevleri kullanılarak bildirilen **varlıklar** koleksiyonudur. SDK, bu bildirimleri derleme sırasında AST analiziyle algılar ve bir **manifest** üretir — uygulamanızın bir çalışma alanına neler eklediğinin eksiksiz bir açıklaması. Bu işlevler, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
 
 ```
 your-app/
@@ -36,20 +36,20 @@ your-app/
 
 | Varlık                   | Amaç                                                     | Belgeler                                                                       |
 | ------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| **Uygulama**             | Uygulama kimliği, varsayılan rol, değişkenler            | [Application Config](/l/tr/developers/extend/apps/config/application)               |
+| **Uygulama**             | Uygulama kimliği, varsayılan rol, değişkenler            | [Uygulama Yapılandırması](/l/tr/developers/extend/apps/config/application)          |
 | **Rol**                  | Nesneler ve alanlar üzerindeki izin kümeleri             | [Roller ve İzinler](/l/tr/developers/extend/apps/config/roles)                      |
-| **Object**               | Alanlara sahip özel kayıt türleri                        | [Nesneler](/l/tr/developers/extend/apps/data/objects)                               |
+| **Nesne**                | Alanlara sahip özel kayıt türleri                        | [Nesneler](/l/tr/developers/extend/apps/data/objects)                               |
 | **Alan**                 | Diğer uygulamalardaki nesnelere alan ekleyin             | [Nesneleri Genişletme](/l/tr/developers/extend/apps/data/extending-objects)         |
 | **İlişki**               | Nesneler arasındaki çift yönlü bağlantılar               | [İlişkiler](/l/tr/developers/extend/apps/data/relations)                            |
 | **Mantık İşlevi**        | Tetikleyicilerle sunucu tarafı TypeScript                | [Mantıksal İşlevler](/l/tr/developers/extend/apps/logic/logic-functions)            |
 | **Beceri**               | Yeniden kullanılabilir yapay zekâ temsilcisi yönergeleri | [Beceriler ve Temsilciler](/l/tr/developers/extend/apps/logic/skills-and-agents)    |
 | **Temsilci**             | Özel istemlere sahip yapay zekâ asistanları              | [Beceriler ve Temsilciler](/l/tr/developers/extend/apps/logic/skills-and-agents)    |
-| **Bağlantı sağlayıcısı** | Üçüncü taraf API'ler için OAuth kimlik bilgileri         | [Bağlantılar](/l/tr/developers/extend/apps/logic/connections)                       |
+| **Bağlantı Sağlayıcısı** | Üçüncü taraf API'ler için OAuth kimlik bilgileri         | [Bağlantılar](/l/tr/developers/extend/apps/logic/connections)                       |
 | **Görünüm**              | Önceden yapılandırılmış kayıt listesi görünümleri        | [Görünümler](/l/tr/developers/extend/apps/layout/views)                             |
 | **Gezinme Menüsü Öğesi** | Özel kenar çubuğu öğeleri                                | [Gezinme Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/navigation-menu-items) |
 | **Sayfa Düzeni**         | Bir kaydın ayrıntı sayfasındaki sekmeler ve widget'lar   | [Sayfa Düzenleri](/l/tr/developers/extend/apps/layout/page-layouts)                 |
 | **Ön Uç Bileşeni**       | Twenty içinde korumalı alandaki React kullanıcı arayüzü  | [Ön Uç Bileşenleri](/l/tr/developers/extend/apps/layout/front-components)           |
-| **Komut menüsü öğesi**   | Hızlı işlemler ve Cmd+K girişleri                        | [Komut Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/command-menu-items)      |
+| **Komut Menüsü Öğesi**   | Hızlı işlemler ve Cmd+K girdileri                        | [Komut Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/command-menu-items)      |
 
 ## Korumalı alan
 
@@ -90,7 +90,7 @@ your-app/
     Nesneler, alanlar ve çift yönlü ilişkiler.
   </Card>
   <Card title="Mantık" icon="bolt" href="/l/tr/developers/extend/apps/logic/overview">
-    Mantık işlevleri, beceriler, ajanlar ve OAuth bağlantıları.
+    Mantık işlevleri, beceriler, temsilciler ve OAuth bağlantıları.
   </Card>
   <Card title="Düzen" icon="table-columns" href="/l/tr/developers/extend/apps/layout/overview">
     Görünümler, gezinme, sayfa düzenleri, ön uç bileşenleri.

@@ -1,12 +1,12 @@
 ---
-title: Instalare hooks
+title: Hook-uri de instalare
 description: Rulați logică înainte sau după instalare — pentru a popula cu date inițiale, a face copii de rezervă ale înregistrărilor, a valida actualizarea.
 icon: wrench
 ---
 
-Install hooks sunt funcții logice speciale care rulează în timpul ciclului de viață al instalării sau actualizării. Acestea folosesc același runtime de handler ca și [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) obișnuite și primesc un `InstallPayload`, dar sunt declarate cu propriile lor funcții de definire — `definePostInstallLogicFunction()` și `definePreInstallLogicFunction()` — și există în afara modelului obișnuit de declanșatori (HTTP, cron, evenimente de bază de date).
+Hook-urile de instalare sunt funcții logice speciale care rulează în timpul ciclului de viață al instalării sau actualizării. Acestea folosesc același runtime de handler ca și [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) obișnuite și primesc un `InstallPayload`, dar sunt declarate cu propriile lor funcții de definire — `definePostInstallLogicFunction()` și `definePreInstallLogicFunction()` — și există în afara modelului obișnuit de declanșatori (HTTP, cron, evenimente de bază de date).
 
-Fiecare aplicație poate defini **cel mult o funcție de pre-instalare** și **cel mult o funcție de post-instalare**. Construirea manifestului va genera o eroare dacă este detectată mai mult de una dintre oricare dintre ele.
+Fiecare aplicație poate defini **cel mult o funcție de pre-instalare** și **cel mult o funcție de post-instalare**. Construirea manifestului va genera o eroare dacă se detectează mai mult de una din oricare dintre ele.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -58,7 +58,7 @@ Puncte cheie:
 * Asigurați-vă că handlerul dvs. este idempotent. În modul asincron, coada poate reîncerca de până la trei ori; în oricare mod, hook-ul poate rula din nou la actualizări când `shouldRunOnVersionUpgrade: true`.
 * Variabilele de mediu `APPLICATION_ID`, `APP_ACCESS_TOKEN` și `API_URL` sunt disponibile în interiorul handlerului (la fel ca în orice altă funcție logică), astfel încât puteți apela API-ul Twenty cu un token de acces al aplicației limitat la aplicația dvs.
 * Este permisă o singură funcție de post-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
-* `universalIdentifier`, `shouldRunOnVersionUpgrade` și `shouldRunSynchronously` ale funcției sunt atașate automat la manifestul aplicației în câmpul `postInstallLogicFunction` în timpul build-ului — nu este nevoie să le referi în [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
+* `universalIdentifier`, `shouldRunOnVersionUpgrade` și `shouldRunSynchronously` ale funcției sunt atașate automat la manifestul aplicației în câmpul `postInstallLogicFunction` în timpul build-ului — nu este nevoie să le referiți în [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
 * Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
 * **Nu se execută în modul dev**: când o aplicație este înregistrată local (prin `yarn twenty dev`), serverul sare complet peste fluxul de instalare și sincronizează fișierele direct prin watcher-ul CLI — astfel încât post-install nu rulează niciodată în modul dev, indiferent de `shouldRunSynchronously`. Folosiți `yarn twenty exec --postInstall` pentru a-l declanșa manual într-un workspace care rulează.
 
@@ -99,7 +99,7 @@ Puncte cheie:
 * **Nu se execută în modul dev**: la fel ca post-install — fluxul de instalare este sărit complet pentru aplicațiile înregistrate local, astfel încât pre-install nu rulează niciodată sub `yarn twenty dev`. Folosiți `yarn twenty exec --preInstall` pentru a-l declanșa manual.
 
 </Accordion>
-<Accordion title="Pre-install vs post-install: când să folosești fiecare" description="Alegerea hook-ului de instalare potrivit">
+<Accordion title="Pre-install vs post-install: când să folosiți fiecare" description="Alegerea hook-ului de instalare potrivit">
 
 Ambele hook-uri fac parte din același flux de instalare și primesc același `InstallPayload`. Diferența constă în **momentul** în care rulează în raport cu migrarea metadatelor workspace-ului, iar asta schimbă ce date pot atinge în siguranță.
 
@@ -109,7 +109,7 @@ Pre-install este întotdeauna **sincron** (blochează instalarea și o poate în
 
 * Popularea datelor implicite (crearea înregistrărilor inițiale, a vizualizărilor implicite, a conținutului demo) pentru obiectele și câmpurile adăugate recent.
 * Înregistrarea webhook-urilor la servicii terțe, acum că aplicația are acreditările sale.
-* Apelarea propriului tău API pentru a finaliza configurarea care depinde de metadatele sincronizate.
+* Apelarea propriului dvs. API pentru a finaliza configurarea care depinde de metadatele sincronizate.
 * Logică idempotentă de tipul "asigurați-vă că acest lucru există" care ar trebui să reconcilieze starea la fiecare actualizare — combină cu `shouldRunOnVersionUpgrade: true`.
 
 Exemplu — populează o înregistrare `PostCard` implicită după instalare:
@@ -139,9 +139,9 @@ export default definePostInstallLogicFunction({
 
 **Folosiți `pre-install` atunci când o migrare altfel ar distruge sau ar corupe datele existente.** Deoarece pre-install rulează pe schema *anterioară* și eșecul său anulează actualizarea, acesta este locul potrivit pentru orice este riscant:
 
-* **Crearea unui backup al datelor care urmează să fie eliminate sau restructurate** — de exemplu, elimini un câmp în v2 și trebuie să-i copiezi valorile într-un alt câmp sau să le exporți în stocare înainte de rularea migrării.
-* **Arhivarea înregistrărilor pe care o nouă constrângere le-ar invalida** — de exemplu, un câmp devine `NOT NULL` și trebuie mai întâi să ștergi sau să corectezi rândurile cu valori nule.
-* **Validarea compatibilității și refuzarea actualizării dacă datele curente nu pot fi migrate fără probleme** — aruncă din handler și instalarea se oprește fără ca modificări să fie aplicate. Aceasta este mai sigur decât să descoperi incompatibilitatea în mijlocul migrării.
+* **Crearea unui backup al datelor care urmează să fie eliminate sau restructurate** — de exemplu, eliminați un câmp în v2 și trebuie să-i copiați valorile într-un alt câmp sau să le exportați în stocare înainte de rularea migrării.
+* **Arhivarea înregistrărilor pe care o nouă constrângere le-ar invalida** — de exemplu, un câmp devine `NOT NULL` și trebuie mai întâi să ștergeți sau să corectați rândurile cu valori nule.
+* **Validarea compatibilității și refuzarea actualizării dacă datele curente nu pot fi migrate fără probleme** — aruncați din handler și instalarea se oprește fără ca modificări să fie aplicate. Aceasta este mai sigur decât să descoperi incompatibilitatea în mijlocul migrării.
 * **Redenumirea sau schimbarea cheilor datelor** înaintea unei modificări de schemă care ar pierde asocierile.
 
 Exemplu — arhivează înregistrări înainte de o migrare distructivă:
@@ -188,13 +188,13 @@ export default definePreInstallLogicFunction({
 
 **Regulă practică:**
 
-| Vrei să...                                                                                             | Folosiți                                                                                   |
+| Doriți să...                                                                                           | Folosiți                                                                                   |
 | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
 | Populați date implicite, configurați workspace-ul, înregistrați resurse externe                        | `post-install`                                                                             |
 | Rulați populări de durată sau apeluri către terți care nu ar trebui să blocheze răspunsul la instalare | `post-install` (implicit — `shouldRunSynchronously: false`, cu reîncercări ale workerului) |
 | Rulați o configurare rapidă de care apelantul va depinde imediat după ce apelul de instalare revine    | `post-install` cu `shouldRunSynchronously: true`                                           |
-| Citești sau faci backup datelor pe care migrarea iminentă le-ar pierde                                 | `pre-install`                                                                              |
-| Respingeți o actualizare care ar corupe datele existente                                               | `pre-install` (aruncă din handler)                                                         |
+| Citiți sau faceți backup datelor pe care migrarea iminentă le-ar pierde                                | `pre-install`                                                                              |
+| Respingeți o actualizare care ar corupe datele existente                                               | `pre-install` (aruncați din handler)                                                       |
 | Rulați o reconciliere la fiecare actualizare                                                           | `post-install` cu `shouldRunOnVersionUpgrade: true`                                        |
 | Faceți o configurare unică doar la prima instalare                                                     | `post-install` cu `shouldRunOnVersionUpgrade: false` (implicit)                            |
 

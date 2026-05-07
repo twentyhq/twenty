@@ -1,10 +1,10 @@
 ---
 title: Sayfa Düzenleri
-description: definePageLayout ve definePageLayoutTab kullanarak kayıt detay sayfalarını; sekmeleri, widget’ları ve front bileşenlerin nerede render edileceğini özelleştirin.
+description: definePageLayout ve definePageLayoutTab kullanarak kayıt ayrıntı sayfalarını — sekmeleri, widget'ları ve ön uç bileşenlerinin nerede oluşturulacağını — özelleştirin.
 icon: table-columns
 ---
 
-Bir **sayfa düzeni**, bir kaydın detay sayfasının nasıl düzenlendiğini kontrol eder: hangi sekmelerin görüneceğini ve hangi widget’ları içerdiklerini. Sahibi olduğunuz bir nesne için bir düzen tanımlamak amacıyla `definePageLayout()` kullanın veya halihazırda var olan bir düzene (size ait veya standart bir Twenty düzenine) tek bir sekme eklemek için `definePageLayoutTab()` kullanın.
+Bir sayfa düzeni, bir kaydın ayrıntı sayfasının nasıl düzenleneceğini kontrol eder: hangi sekmelerin görüneceği ve bunların hangi widget'ları içereceği. Sahibi olduğunuz bir nesne için bir düzen tanımlamak amacıyla `definePageLayout()` kullanın veya halihazırda var olan bir düzene (size ait veya standart bir Twenty düzenine) tek bir sekme eklemek için `definePageLayoutTab()` kullanın.
 
 | Kullanım alanı                                                                 | Varlık                |
 | ------------------------------------------------------------------------------ | --------------------- |
@@ -13,7 +13,7 @@ Bir **sayfa düzeni**, bir kaydın detay sayfasının nasıl düzenlendiğini ko
 
 ## definePageLayout
 
-Tüm detay sayfasına sahip olduğunuz durumlarda bunu kullanın — genellikle kendiniz tanımladığınız özel bir nesne için.
+Tüm ayrıntı sayfasına sahip olduğunuz durumlarda bunu kullanın — genellikle kendiniz tanımladığınız özel bir nesne için.
 
 ```ts src/page-layouts/example-record-page-layout.ts
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -54,7 +54,7 @@ export default definePageLayout({
 * `type` genellikle belirli bir nesnenin ayrıntı görünümünü özelleştirmek için `'RECORD_PAGE'` olur.
 * `objectUniversalIdentifier`, bu düzenin hangi nesneye uygulanacağını belirtir.
 * Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar (serbest biçimli düzen için `CANVAS`).
-* Bir sekmenin içindeki her `widget`, bir [front bileşeni](/l/tr/developers/extend/apps/layout/front-components), bir ilişki listesi veya diğer yerleşik widget türlerini render edebilir.
+* Bir sekmenin içindeki her `widget`, bir [ön uç bileşeni](/l/tr/developers/extend/apps/layout/front-components), bir ilişki listesi veya diğer yerleşik widget türlerini oluşturabilir.
 * Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
 
 ## definePageLayoutTab
@@ -97,6 +97,6 @@ export default definePageLayoutTab({
 ### Önemli noktalar
 
 * `pageLayoutUniversalIdentifier` **zorunludur** ve kurulum anında zaten var olan bir sayfa düzenini işaret etmelidir — standart bir Twenty düzeni veya kendi uygulamanız tarafından tanımlanan bir düzen olabilir. Başka yüklü bir uygulamaya ait düzenlere uygulamalar arası referanslar bugün desteklenmemektedir. Üst düzen eksik olduğunda, kurulum net bir doğrulama hatasıyla başarısız olur.
-* `widgets` yalnızca bu sekmeyle sınırlıdır — satır içi olarak `definePageLayout` içinde tanımlanan widget’larda olduğu gibi, [front bileşenlerine](/l/tr/developers/extend/apps/layout/front-components), görünümlere vb. tam olarak aynı şekilde referans verirler.
+* `widgets` yalnızca bu sekmeyle sınırlıdır — satır içi olarak `definePageLayout` içinde tanımlanan widget'larda olduğu gibi, [ön uç bileşenlerine](/l/tr/developers/extend/apps/layout/front-components), görünümlere vb. tam olarak aynı şekilde referans verirler.
 * `position`, hedeflenen düzende mevcut sekmelere göre sıralamayı kontrol eder. Yerleşik sekmelere göre sekmenizi istediğiniz konuma yerleştirecek bir değer seçin.
 * Yalnızca mevcut bir düzene ekleme yapmak istediğinizde `definePageLayout` yerine bunu kullanın. Tüm düzene sahip olduğunuzda `definePageLayout` kullanın.

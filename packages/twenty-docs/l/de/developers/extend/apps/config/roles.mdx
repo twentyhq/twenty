@@ -1,10 +1,10 @@
 ---
 title: Rollen & Berechtigungen
-description: Legen Sie fest, welche Objekte und Felder die Logikfunktionen und Front-Komponenten Ihrer App lesen und schreiben können.
+description: Legen Sie fest, welche Objekte und Felder die Logikfunktionen und Frontend-Komponenten Ihrer App lesen und schreiben können.
 icon: shield-halved
 ---
 
-Eine **Rolle** ist ein Berechtigungssatz: welche Objekte eine App lesen oder schreiben kann, welche Felder sie sehen kann und welche plattformbezogenen Funktionen sie nutzen kann. Alle Logikfunktionen und Front-Komponenten einer App erben die Berechtigungen der Rolle, die in `defineApplication` als `defaultRoleUniversalIdentifier` deklariert ist ([`defineApplication`](/l/de/developers/extend/apps/config/application)).
+Eine **Rolle** ist ein Berechtigungssatz: welche Objekte eine App lesen oder schreiben kann, welche Felder sie sehen kann und welche plattformbezogenen Funktionen sie nutzen kann. Alle Logikfunktionen und Frontend-Komponenten einer App erben die Berechtigungen der Rolle, die in [`defineApplication`](/l/de/developers/extend/apps/config/application) als `defaultRoleUniversalIdentifier` deklariert ist.
 
 ```ts src/roles/restricted-company-role.ts
 import {

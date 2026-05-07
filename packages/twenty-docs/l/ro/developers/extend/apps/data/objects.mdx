@@ -78,7 +78,7 @@ export default defineObject({
 
 * `universalIdentifier` trebuie să fie unic și stabil între implementări.
 * Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
-* Matricea `fields` este opțională — puteți defini obiecte fără câmpuri personalizate.
+* Tabloul `fields` este opțional — puteți defini obiecte fără câmpuri personalizate.
 * Câmpurile inline definite aici **nu** au nevoie de `objectUniversalIdentifier` — este moștenit de la obiectul părinte. Folosiți [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects) pentru a adăuga câmpuri la obiecte care nu vă aparțin.
 * Puteți genera obiecte noi cu `yarn twenty add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/l/ro/developers/extend/apps/getting-started/scaffolding).
 
@@ -90,4 +90,4 @@ export default defineObject({
 
 * **Conectați acest obiect la altele** — consultați [Relații](/l/ro/developers/extend/apps/data/relations) pentru modelul de relație bidirecțională.
 * **Adăugați câmpuri la obiecte din alte aplicații** — consultați [Extinderea obiectelor](/l/ro/developers/extend/apps/data/extending-objects) pentru `defineField()`.
-* **Afișați acest obiect în interfața utilizator** — consultați [Vizualizări](/l/ro/developers/extend/apps/layout/views) și [Elemente de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) pentru a-l plasa în bara laterală.
+* **Afișați acest obiect în interfața utilizatorului** — consultați [Vizualizări](/l/ro/developers/extend/apps/layout/views) și [Elemente de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) pentru a-l plasa în bara laterală.
