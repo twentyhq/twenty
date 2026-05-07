@@ -1,10 +1,10 @@
 ---
-title: Extending Objects
-description: Add fields to standard Twenty objects (Person, Company, …) or to objects from other apps using defineField.
+title: Objekte erweitern
+description: Fügen Sie Standard-Twenty-Objekten Felder hinzu (Person, Company, …) oder zu Objekten aus anderen Apps mit `defineField`.
 icon: wand-magic-sparkles
 ---
 
-Use `defineField()` to add a field to an object you don't own — a standard Twenty object like Person or Company, or an object shipped by another installed app. Unlike inline fields declared inside [`defineObject`](/l/de/developers/extend/apps/data/objects), standalone fields require an `objectUniversalIdentifier` to specify which object they extend.
+Verwenden Sie `defineField()`, um einem Objekt, das Ihnen nicht gehört, ein Feld hinzuzufügen – ein Standard-Twenty-Objekt wie Person oder Company oder ein Objekt, das von einer anderen installierten App bereitgestellt wird. Im Gegensatz zu Inline-Feldern, die innerhalb von [`defineObject`](/l/de/developers/extend/apps/data/objects) deklariert werden, benötigen eigenständige Felder einen `objectUniversalIdentifier`, um anzugeben, welches Objekt sie erweitern.
 
 ```ts src/fields/company-loyalty-tier.field.ts
 import { defineField, FieldType } from 'twenty-sdk/define';
@@ -24,9 +24,9 @@ export default defineField({
 });
 ```
 
-## Key points
+## Hauptpunkte
 
-* `objectUniversalIdentifier` identifies the target object. For standard Twenty objects, import the constant from `twenty-sdk`:
+* Der `objectUniversalIdentifier` identifiziert das Zielobjekt. Für Standard-Twenty-Objekte importieren Sie die Konstante aus `twenty-sdk`:
 
   ```ts
   import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
@@ -37,12 +37,12 @@ export default defineField({
   // …
   ```
 
-* When defining fields **inline inside `defineObject()`**, you do **not** need `objectUniversalIdentifier` — it's inherited from the parent object.
+* Wenn Sie Felder **inline innerhalb von `defineObject()`** definieren, benötigen Sie `objectUniversalIdentifier` **nicht** – es wird vom übergeordneten Objekt geerbt.
 
-* `defineField()` is the only way to add fields to objects you didn't create with `defineObject()`.
+* `defineField()` ist die einzige Möglichkeit, Felder zu Objekten hinzuzufügen, die Sie nicht mit `defineObject()` erstellt haben.
 
-* File location is up to you. The convention is `src/fields/\<name>.field.ts`, but the SDK detects fields anywhere in `src/`.
+* Der Speicherort der Datei liegt bei Ihnen. Die Konvention ist `src/fields/\<name>.field.ts`, aber das SDK erkennt Felder überall in `src/`.
 
-## Adding a relation to an existing object
+## Hinzufügen einer Relation zu einem bestehenden Objekt
 
-To add a relation field (e.g. linking your custom object to a standard `Person`), use `defineField()` with `FieldType.RELATION`. The pattern is the same as for inline relations but with `objectUniversalIdentifier` set explicitly. See [Relations](/l/de/developers/extend/apps/data/relations) for the bidirectional pattern.
+Um ein Relationsfeld hinzuzufügen (z. B. zur Verknüpfung Ihres benutzerdefinierten Objekts mit einer Standard-`Person`), verwenden Sie `defineField()` mit `FieldType.RELATION`. Das Muster ist dasselbe wie bei Inline-Relationen, jedoch mit explizit gesetztem `objectUniversalIdentifier`. Siehe [Relations](/l/de/developers/extend/apps/data/relations) für das bidirektionale Muster.

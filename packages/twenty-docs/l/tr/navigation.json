@@ -155,7 +155,27 @@
           "label": "Genel Bakış"
         },
         "apps": {
-          "label": "Uygulamalar"
+          "label": "Uygulamalar",
+          "groups": {
+            "appsGettingStarted": {
+              "label": "Başlarken"
+            },
+            "appsConfig": {
+              "label": "Yapılandırma"
+            },
+            "appsData": {
+              "label": "Veri"
+            },
+            "appsLogic": {
+              "label": "Mantık"
+            },
+            "appsLayout": {
+              "label": "Düzen"
+            },
+            "appsOperations": {
+              "label": "İşlemler"
+            }
+          }
         },
         "api": {
           "label": "API"

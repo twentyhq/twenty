@@ -1,10 +1,10 @@
 ---
-title: Command Menu Items
-description: Surface front components as quick actions and command menu (Cmd+K) entries with defineCommandMenuItem.
+title: Elemente din meniul de comenzi
+description: Expune componente front-end ca acțiuni rapide și intrări în meniul de comenzi (Cmd+K) folosind defineCommandMenuItem.
 icon: terminal
 ---
 
-A **command menu item** is the bridge between the user and a [front component](/l/ro/developers/extend/apps/layout/front-components). It registers the component in Twenty's command menu (Cmd+K) and, optionally, as a pinned quick-action button in the top-right corner of the page.
+Un element din meniul de comenzi este puntea dintre utilizator și un [front component](/l/ro/developers/extend/apps/layout/front-components). Acesta înregistrează componenta în meniul de comenzi Twenty (Cmd+K) și, opțional, ca buton fixat de acțiune rapidă în colțul din dreapta sus al paginii.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -20,25 +20,25 @@ export default defineCommandMenuItem({
 });
 ```
 
-## Configuration fields
+## Câmpuri de configurare
 
-| Field                                   | Required | Description                                                                                                                                                                    |
-| --------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | Yes      | Stable unique ID for the command                                                                                                                                               |
-| `label`                                 | Yes      | Full label shown in the command menu (Cmd+K)                                                                                                                                   |
-| `frontComponentUniversalIdentifier`     | Yes      | The `universalIdentifier` of the front component this command opens                                                                                                            |
-| `shortLabel`                            | No       | Shorter label displayed on the pinned quick-action button                                                                                                                      |
-| `icon`                                  | No       | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`)                                                                                                        |
-| `isPinned`                              | No       | When `true`, shows the command as a quick-action button in the top-right corner of the page                                                                                    |
-| `availabilityType`                      | No       | Controls where the command appears: `'GLOBAL'` (always available), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
-| `availabilityObjectUniversalIdentifier` | No       | Restrict the command to pages of a specific object type (e.g. only on Company records)                                                                                         |
-| `conditionalAvailabilityExpression`     | No       | A boolean expression that dynamically controls visibility (see below)                                                                                                          |
+| Câmp                                    | Obligatoriu | Descriere                                                                                                                                                                                        |
+| --------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | Da          | ID unic stabil pentru comandă                                                                                                                                                                    |
+| `label`                                 | Da          | Etichetă completă afișată în meniul de comenzi (Cmd+K)                                                                                                                                           |
+| `frontComponentUniversalIdentifier`     | Da          | `universalIdentifier` al componentei front-end pe care această comandă o deschide                                                                                                                |
+| `shortLabel`                            | Nu          | Etichetă mai scurtă afișată pe butonul de acțiune rapidă fixat                                                                                                                                   |
+| `icon`                                  | Nu          | Numele pictogramei afișat lângă etichetă (de ex. `'IconBolt'`, `'IconSend'`)                                                                                                                     |
+| `isPinned`                              | Nu          | Când este `true`, afișează comanda ca buton de acțiune rapidă în colțul din dreapta sus al paginii                                                                                               |
+| `availabilityType`                      | Nu          | Controlează unde apare comanda: `'GLOBAL'` (mereu disponibilă), `'RECORD_SELECTION'` (doar când sunt selectate înregistrări) sau `'FALLBACK'` (afișată când nicio altă comandă nu se potrivește) |
+| `availabilityObjectUniversalIdentifier` | Nu          | Restricționați comanda la paginile unui anumit tip de obiect (de ex., doar pe înregistrările Company)                                                                                            |
+| `conditionalAvailabilityExpression`     | Nu          | O expresie booleană care controlează dinamic vizibilitatea (vezi mai jos)                                                                                                                        |
 
-## Headless commands
+## Comenzi headless
 
-A command menu item paired with a [headless front component](/l/ro/developers/extend/apps/layout/front-components#headless-vs-non-headless) is the idiomatic way to ship a one-click action — run code, navigate, or confirm and execute. The Front Components page covers the [SDK Command components](/l/ro/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) that handle the action-and-unmount pattern.
+Un element din meniul de comenzi asociat cu un [headless front component](/l/ro/developers/extend/apps/layout/front-components#headless-vs-non-headless) este modalitatea standard de a oferi o acțiune cu un singur clic — de a rula cod, de a naviga sau de a confirma și executa. Pagina Front Components acoperă [SDK Command components](/l/ro/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) care gestionează modelul acțiune-și-demontare.
 
-A typical flow:
+Un flux tipic:
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -79,9 +79,9 @@ export default defineCommandMenuItem({
 });
 ```
 
-## Conditional availability expressions
+## Expresii de disponibilitate condițională
 
-The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
+Câmpul `conditionalAvailabilityExpression` vă permite să controlați când este vizibilă o comandă în funcție de contextul paginii curente. Importați variabile tipizate și operatori din `twenty-sdk` pentru a construi expresii:
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -103,42 +103,42 @@ export default defineCommandMenuItem({
 });
 ```
 
-### Context variables
+### Variabile de context
 
-These represent the current state of the page:
+Acestea reprezintă starea curentă a paginii:
 
-| Variable                       | Type      | Description                                                      |
-| ------------------------------ | --------- | ---------------------------------------------------------------- |
-| `pageType`                     | `string`  | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
-| `isInSidePanel`                | `boolean` | Whether the component is rendered in a side panel                |
-| `numberOfSelectedRecords`      | `number`  | Number of currently selected records                             |
-| `isSelectAll`                  | `boolean` | Whether "select all" is active                                   |
-| `selectedRecords`              | `array`   | The selected record objects                                      |
-| `favoriteRecordIds`            | `array`   | IDs of favorited records                                         |
-| `objectPermissions`            | `object`  | Permissions for the current object type                          |
-| `targetObjectReadPermissions`  | `object`  | Read permissions for the target object                           |
-| `targetObjectWritePermissions` | `object`  | Write permissions for the target object                          |
-| `featureFlags`                 | `object`  | Active feature flags                                             |
-| `objectMetadataItem`           | `object`  | Metadata of the current object type                              |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter                |
+| Variabilă                      | Tip       | Descriere                                                              |
+| ------------------------------ | --------- | ---------------------------------------------------------------------- |
+| `pageType`                     | `string`  | Tipul paginii curente (de ex. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Dacă componenta este redată într-un panou lateral                      |
+| `numberOfSelectedRecords`      | `number`  | Numărul de înregistrări selectate în prezent                           |
+| `isSelectAll`                  | `boolean` | Dacă "select all" este activ                                           |
+| `selectedRecords`              | `array`   | Obiectele înregistrărilor selectate                                    |
+| `favoriteRecordIds`            | `array`   | ID-urile înregistrărilor marcate ca favorite                           |
+| `objectPermissions`            | `object`  | Permisiuni pentru tipul de obiect curent                               |
+| `targetObjectReadPermissions`  | `object`  | Permisiuni de citire pentru obiectul țintă                             |
+| `targetObjectWritePermissions` | `object`  | Permisiuni de scriere pentru obiectul țintă                            |
+| `featureFlags`                 | `object`  | Steaguri de caracteristici active                                      |
+| `objectMetadataItem`           | `object`  | Metadatele tipului de obiect curent                                    |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Dacă vizualizarea curentă are un filtru soft-delete                    |
 
-### Operators
+### Operatori
 
-Combine variables into boolean expressions:
+Combinați variabilele în expresii booleene:
 
-| Operator                            | Description                                                       |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| `isDefined(value)`                  | `true` if the value is not null/undefined                         |
-| `isNonEmptyString(value)`           | `true` if the value is a non-empty string                         |
-| `includes(array, value)`            | `true` if the array contains the value                            |
-| `includesEvery(array, prop, value)` | `true` if every item's property includes the value                |
-| `every(array, prop)`                | `true` if the property is truthy on every item                    |
-| `everyDefined(array, prop)`         | `true` if the property is defined on every item                   |
-| `everyEquals(array, prop, value)`   | `true` if the property equals the value on every item             |
-| `some(array, prop)`                 | `true` if the property is truthy on at least one item             |
-| `someDefined(array, prop)`          | `true` if the property is defined on at least one item            |
-| `someEquals(array, prop, value)`    | `true` if the property equals the value on at least one item      |
-| `someNonEmptyString(array, prop)`   | `true` if the property is a non-empty string on at least one item |
-| `none(array, prop)`                 | `true` if the property is falsy on every item                     |
-| `noneDefined(array, prop)`          | `true` if the property is undefined on every item                 |
-| `noneEquals(array, prop, value)`    | `true` if the property does not equal the value on any item       |
+| Operator                            | Descriere                                                               |
+| ----------------------------------- | ----------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` dacă valoarea nu este null/undefined                             |
+| `isNonEmptyString(value)`           | `true` dacă valoarea este un șir nevid                                  |
+| `includes(array, value)`            | `true` dacă array-ul conține valoarea                                   |
+| `includesEvery(array, prop, value)` | `true` dacă proprietatea fiecărui element include valoarea              |
+| `every(array, prop)`                | `true` dacă proprietatea este truthy pentru fiecare element             |
+| `everyDefined(array, prop)`         | `true` dacă proprietatea este definită pentru fiecare element           |
+| `everyEquals(array, prop, value)`   | `true` dacă proprietatea este egală cu valoarea pentru fiecare element  |
+| `some(array, prop)`                 | `true` dacă proprietatea este truthy pe cel puțin un element            |
+| `someDefined(array, prop)`          | `true` dacă proprietatea este definită pe cel puțin un element          |
+| `someEquals(array, prop, value)`    | `true` dacă proprietatea este egală cu valoarea pe cel puțin un element |
+| `someNonEmptyString(array, prop)`   | `true` dacă proprietatea este un șir nevid pe cel puțin un element      |
+| `none(array, prop)`                 | `true` dacă proprietatea este falsy pentru fiecare element              |
+| `noneDefined(array, prop)`          | `true` dacă proprietatea este nedefinită pentru fiecare element         |
+| `noneEquals(array, prop, value)`    | `true` dacă proprietatea nu este egală cu valoarea pe niciun element    |

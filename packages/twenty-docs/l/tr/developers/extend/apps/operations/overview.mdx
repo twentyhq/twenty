@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Build, test, and ship your app — CLI commands, integration tests, CI, and publishing to a server or to npm.
+title: Genel Bakış
+description: Uygulamanızı oluşturun, test edin ve yayınlayın — CLI komutları, entegrasyon testleri, CI ve bir sunucuya veya npm'e yayınlama.
 icon: rocket
 ---
 
-The **operations layer** is everything you do *to* your app rather than *with* it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
+**Operasyon katmanı**, uygulamanızla *birlikte* yaptıklarınızdan ziyade, uygulamanıza *karşı* yaptığınız her şeydir: CLI komutlarını çalıştırmak, gerçek bir Twenty sunucusuna karşı entegrasyon testleri yürütmek, CI yapılandırmak ve sürümleri yayınlamak — tek bir sunucuya dağıtılan bir tarball olarak veya pazarda listelenen bir npm paketi olarak.
 
 ```text
    develop ─▶ test ─▶ build ─▶ deploy / publish
@@ -14,16 +14,16 @@ The **operations layer** is everything you do *to* your app rather than *with* i
    dev                build    yarn twenty publish  (npm → marketplace)
 ```
 
-## In this section
+## Bu bölümde
 
 <CardGroup cols={2}>
   <Card title="CLI" icon="terminal" href="/l/tr/developers/extend/apps/operations/cli">
-    `yarn twenty` reference — exec, logs, uninstall, remotes.
+    `yarn twenty` başvurusu — exec, logs, uninstall, remotes.
   </Card>
-  <Card title="Testing" icon="flask" href="/l/tr/developers/extend/apps/operations/testing">
-    Vitest setup, integration tests, type checking, CI workflow.
+  <Card title="Test" icon="flask" href="/l/tr/developers/extend/apps/operations/testing">
+    Vitest kurulumu, entegrasyon testleri, tür denetimi, CI iş akışı.
   </Card>
-  <Card title="Publishing" icon="upload" href="/l/tr/developers/extend/apps/operations/publishing">
-    Build, deploy a tarball, publish to npm, install.
+  <Card title="Yayımlama" icon="yükle" href="/l/tr/developers/extend/apps/operations/publishing">
+    Oluşturun, bir tarball dağıtın, npm'e yayınlayın, yükleyin.
   </Card>
 </CardGroup>

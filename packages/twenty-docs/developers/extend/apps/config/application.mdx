@@ -13,7 +13,6 @@ Every app must have exactly one `defineApplication` call. It declares:
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
@@ -27,19 +26,19 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
 Notes:
 - `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
 - `applicationVariables` become environment variables for your functions and front components (e.g., `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-- `defaultRoleUniversalIdentifier` must reference a role defined with [`defineRole()`](/developers/extend/apps/config/roles).
+- The default role is detected automatically from the role file marked with [`defineApplicationRole()`](/developers/extend/apps/config/roles) — you do not need to reference it from `defineApplication()`.
 - Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+- Passing `defaultRoleUniversalIdentifier` explicitly is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`.
 
 ## Default function role
 
-The `defaultRoleUniversalIdentifier` controls what the app's logic functions and front components can access:
+The role declared with [`defineApplicationRole()`](/developers/extend/apps/config/roles) controls what the app's logic functions and front components can access:
 
 - The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
 - The typed API client is restricted to the permissions granted to that role.

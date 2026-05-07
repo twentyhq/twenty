@@ -6,21 +6,21 @@ icon: window-maximize
 
 Componentele front-end sunt componente React care se afișează direct în interfața Twenty. Rulează într-un **Web Worker** izolat folosind Remote DOM — codul este izolat (sandboxed), dar se redă nativ în pagină, nu într-un iframe.
 
-## Unde pot fi utilizate componentele frontale
+## Unde pot fi utilizate componentele front-end
 
-Componentele frontale pot fi afișate în două locații în cadrul Twenty:
+Componentele front-end pot fi afișate în două locații în cadrul Twenty:
 
-* **Panou lateral** — Componentele frontale care nu sunt headless se deschid în panoul lateral din dreapta. Acesta este comportamentul implicit atunci când o componentă frontală este declanșată din meniul de comenzi.
-* **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/l/ro/developers/extend/apps/layout/page-layouts). La configurarea unui tablou de bord sau a machetei unei pagini de înregistrare, utilizatorii pot adăuga un widget de componentă frontală.
+* **Panou lateral** — Componentele front-end care nu sunt headless se deschid în panoul lateral din dreapta. Acesta este comportamentul implicit atunci când o componentă front-end este declanșată din meniul de comenzi.
+* **Widgeturi (tablouri de bord și pagini de înregistrare)** — Componentele frontale pot fi încorporate ca widgeturi în [machetele de pagină](/l/ro/developers/extend/apps/layout/page-layouts). La configurarea unui tablou de bord sau a machetei unei pagini de înregistrare, utilizatorii pot adăuga un widget de componentă front-end.
 
-A front component on its own isn't reachable from the UI — you need to *surface* it. The two ways to do that are:
+Un front component de unul singur nu este accesibil din interfața utilizator — trebuie să îl *expui*. Cele două moduri de a face asta sunt:
 
-* **Pair it with a [command menu item](/l/ro/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
-* **Embed it as a widget in a [page layout](/l/ro/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
+* **Asociază-l cu un [element de meniu de comenzi](/l/ro/developers/extend/apps/layout/command-menu-items)** — îl înregistrează în meniul de comenzi (Cmd+K) și, opțional, ca acțiune rapidă fixată.
+* **Încorporează-l ca widget într-o [machetă de pagină](/l/ro/developers/extend/apps/layout/page-layouts)** — îl plasează pe pagina de detalii a unei înregistrări sau pe un tablou de bord.
 
 ## Exemplu de bază
 
-The quickest way to see a front component in action is to pair it with a [`defineCommandMenuItem`](/l/ro/developers/extend/apps/layout/command-menu-items), so it appears as a quick-action button in the top-right corner of the page:
+Cel mai rapid mod de a vedea un front component în acțiune este să îl asociezi cu un [`defineCommandMenuItem`](/l/ro/developers/extend/apps/layout/command-menu-items), astfel încât să apară ca un buton de acțiune rapidă în colțul din dreapta sus al paginii:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -76,13 +76,13 @@ Faceți clic pe el pentru a afișa componenta inline.
 
 ## Plasarea unei componente front-end pe o pagină
 
-Dincolo de comenzi, puteți încorpora o componentă front-end direct într-o pagină de înregistrare adăugând-o ca widget într-un **layout de pagină**. See [Page Layouts](/l/ro/developers/extend/apps/layout/page-layouts) for details.
+Dincolo de comenzi, puteți încorpora o componentă front-end direct într-o pagină de înregistrare adăugând-o ca widget într-un **layout de pagină**. Vezi [Machete de pagină](/l/ro/developers/extend/apps/layout/page-layouts) pentru detalii.
 
 ## Headless vs non-headless
 
-Componentele frontale au două moduri de randare controlate de opțiunea `isHeadless`:
+Componentele front-end au două moduri de randare controlate de opțiunea `isHeadless`:
 
-**Non-headless (implicit)** — Componenta afișează o interfață vizibilă. Când este declanșat din meniul de comenzi, se deschide în panoul lateral. Acesta este comportamentul implicit când `isHeadless` este `false` sau omis.
+**Non-headless (implicit)** — Componenta afișează o interfață vizibilă. Când este declanșată din meniul de comenzi, se deschide în panoul lateral. Acesta este comportamentul implicit când `isHeadless` este `false` sau omis.
 
 **Headless (`isHeadless: true`)** — Componenta se montează invizibil în fundal. Nu deschide panoul lateral. Componentele headless sunt concepute pentru acțiuni care execută logică și apoi se demontează — de exemplu, rularea unei sarcini asincrone, navigarea la o pagină sau afișarea unui modal de confirmare. Se potrivesc în mod natural cu componentele Command din SDK descrise mai jos.
 
@@ -114,9 +114,9 @@ Deoarece componenta returnează `null`, Twenty omite redarea unui container pent
 
 ## Componentele Command din SDK
 
-Pachetul `twenty-sdk` oferă patru componente ajutătoare Command, concepute pentru componente front-end headless. Fiecare componentă execută o acțiune la montare, gestionează erorile afișând o notificare snackbar și demontează automat componenta de interfață la final.
+Pachetul `twenty-sdk` oferă patru componente ajutătoare Command, concepute pentru componente front-end headless. Fiecare componentă execută o acțiune la montare, gestionează erorile afișând o notificare snackbar și demontează automat componenta front-end la final.
 
-Importă-le din `twenty-sdk/command`:
+Importați-le din `twenty-sdk/command`:
 
 * **`Command`** — Rulează un callback asincron prin prop-ul `execute`.
 * **`CommandLink`** — Navighează către o rută a aplicației. Props: `to`, `params`, `queryParams`, `options`.
@@ -253,7 +253,7 @@ Componentele front-end pot declanșa navigare, ferestre modale și notificări f
 | `unmountFrontComponent()`                       | Demontați componenta                |
 | `updateProgress(progress)`                      | Actualizați un indicator de progres |
 
-Iată un exemplu care folosește API-ul gazdă pentru a afișa un snackbar și a închide panoul lateral după finalizarea unei acțiuni:
+Iată un exemplu care folosește API-ul gazdei pentru a afișa un snackbar și a închide panoul lateral după finalizarea unei acțiuni:
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

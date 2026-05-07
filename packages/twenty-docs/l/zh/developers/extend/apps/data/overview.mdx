@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Shape the data your app adds to a workspace — objects, fields, and relations.
+title: 概览
+description: 定义你的应用在工作区中添加的数据结构——对象、字段和关系。
 icon: database
 ---
 
-A Twenty app's **data layer** is the data your app *adds* to a workspace — the new record types it declares, the columns it adds to existing objects, and how those records connect to each other.
+Twenty 应用的 **数据层（data layer）** 是你的应用*添加*到工作区中的数据——它声明的新记录类型、它为现有对象添加的列，以及这些记录之间如何相互关联。
 
 ```text
 ┌──────────────────────────────────────────────────┐
@@ -23,30 +23,30 @@ A Twenty app's **data layer** is the data your app *adds* to a workspace — the
 └──────────────────────────────────────────────────┘
 ```
 
-## In this section
+## 本节内容
 
 <CardGroup cols={2}>
-  <Card title="Objects" icon="table" href="/l/zh/developers/extend/apps/data/objects">
-    `defineObject` — declare new record types with their own fields.
+  <Card title="对象" icon="表格" href="/l/zh/developers/extend/apps/data/objects">
+    `defineObject` —— 使用其自有字段声明新的记录类型。
   </Card>
-  <Card title="Extending Objects" icon="wand-magic-sparkles" href="/l/zh/developers/extend/apps/data/extending-objects">
-    `defineField` — add fields to standard or other apps' objects.
+  <Card title="扩展对象" icon="wand-magic-sparkles" href="/l/zh/developers/extend/apps/data/extending-objects">
+    `defineField` —— 向标准对象或其他应用的对象添加字段。
   </Card>
-  <Card title="Relations" icon="diagram-project" href="/l/zh/developers/extend/apps/data/relations">
-    Bidirectional `MANY_TO_ONE` / `ONE_TO_MANY` connections between objects.
+  <Card title="关系" icon="diagram-project" href="/l/zh/developers/extend/apps/data/relations">
+    对象之间的双向 `MANY_TO_ONE` / `ONE_TO_MANY` 连接。
   </Card>
 </CardGroup>
 
-## Entities at a glance
+## 实体一览
 
-| Entity       | Purpose                                                                                                           | Defined with                              |
-| ------------ | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Object**   | A new custom record type (e.g. PostCard, Invoice) with its own fields                                             | `defineObject()`                          |
-| **Field**    | A column on an object. Standalone fields can extend objects you didn't create (e.g. add `loyaltyTier` to Company) | `defineField()`                           |
-| **Relation** | A bidirectional link between two objects — both sides declared as fields                                          | `defineField()` with `FieldType.RELATION` |
+| 实体     | 目的                                                    | 定义方式                                        |
+| ------ | ----------------------------------------------------- | ------------------------------------------- |
+| **对象** | 具有自有字段的新自定义记录类型（例如 PostCard、Invoice）                  | `defineObject()`                            |
+| **字段** | 对象上的一列。 独立字段可以扩展你未创建的对象（例如向 Company 添加 `loyaltyTier`） | `defineField()`                             |
+| **关系** | 两个对象之间的双向链接——双方都声明为字段                                 | 使用 `defineField()` 并指定 `FieldType.RELATION` |
 
-The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/` and `src/fields/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
+SDK 会在构建时通过 AST 分析检测这些内容，因此文件组织方式由你决定——约定是使用 `src/objects/` 和 `src/fields/`。 稳定的 `universalIdentifier` UUID 在不同部署之间将一切关联在一起。
 
 <Note>
-Looking for **Application Config** or **Roles & Permissions**? Those describe the app itself rather than the data it adds — they live under [Config](/l/zh/developers/extend/apps/config/overview). Looking for **Connections** (Linear, GitHub, Slack OAuth)? Those exist to be called *from* logic functions and live under [Logic](/l/zh/developers/extend/apps/logic/connections).
+在找 **Application Config** 或 **Roles & Permissions** 吗？ 这些描述的是应用本身而不是它添加的数据——相关内容位于 [Config](/l/zh/developers/extend/apps/config/overview) 下。 在找 **Connections**（Linear、GitHub、Slack OAuth）吗？ 这些用于*从*逻辑函数中调用，并位于 [Logic](/l/zh/developers/extend/apps/logic/connections) 下。
 </Note>

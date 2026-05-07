@@ -11,6 +11,7 @@ import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-re
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
@@ -121,6 +122,16 @@ describe('WorkflowExecutorWorkspaceService', () => {
           useValue: mockBillingUsageService,
         },
         {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              billingSubscription: {
+                currentPeriodStart: new Date('2026-04-01T00:00:00Z'),
+              },
+            }),
+          },
+        },
+        {
           provide: ExceptionHandlerService,
           useValue: mockExceptionHandlerService,
         },
@@ -225,6 +236,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
             quantity: 1,
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',
+            periodStart: new Date('2026-04-01T00:00:00.000Z'),
           },
         ],
         'workspace-id',
@@ -707,6 +719,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
             quantity: 1,
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',
+            periodStart: new Date('2026-04-01T00:00:00.000Z'),
           },
         ],
         'workspace-id',

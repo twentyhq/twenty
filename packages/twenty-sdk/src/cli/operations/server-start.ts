@@ -210,7 +210,7 @@ const innerServerStart = async (
     onProgress?.('Starting existing container...');
     execSync(`docker start ${containerName}`, { stdio: 'ignore' });
   } else {
-    onProgress?.('Starting Twenty container...');
+    onProgress?.('Pulling Docker image and starting Twenty container...');
 
     const runResult = spawnSync(
       'docker',

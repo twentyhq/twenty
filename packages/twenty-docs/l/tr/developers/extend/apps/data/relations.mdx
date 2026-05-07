@@ -1,30 +1,30 @@
 ---
 title: İlişkiler
-description: Connect objects together with bidirectional MANY_TO_ONE / ONE_TO_MANY relations.
+description: Nesneleri çift yönlü MANY_TO_ONE / ONE_TO_MANY ilişkilerle birbirine bağlayın.
 icon: diagram-project
 ---
 
-Relations connect two objects together. In Twenty, relations are always **bidirectional** — every relation has two sides, and each side is declared as a field that references the other.
+İlişkiler iki nesneyi birbirine bağlar. Twenty'de ilişkiler her zaman **çift yönlüdür** — her ilişkinin iki tarafı vardır ve her taraf diğeriyle ilişkili alan olarak tanımlanır.
 
 | İlişki türü   | Açıklama                                                  | Yabancı anahtar var mı? |
 | ------------- | --------------------------------------------------------- | ----------------------- |
 | `MANY_TO_ONE` | Bu nesnenin birçok kaydı, hedefin bir kaydını işaret eder | Evet (`joinColumnName`) |
-| `ONE_TO_MANY` | Bu nesnenin bir kaydı, hedefin birçok kaydına sahiptir    | No (the inverse side)   |
+| `ONE_TO_MANY` | Bu nesnenin bir kaydı, hedefin birçok kaydına sahiptir    | Hayır (ters taraf)      |
 
-## How relations work
+## İlişkiler nasıl çalışır
 
-Every relation requires **two fields** that reference each other:
+Her ilişki, birbirine referans veren iki alan gerektirir:
 
-1. The **MANY_TO_ONE** side — lives on the object that holds the foreign key.
-2. The **ONE_TO_MANY** side — lives on the object that owns the collection.
+1. **MANY_TO_ONE** tarafı — yabancı anahtarı tutan nesne üzerinde bulunur.
+2. **ONE_TO_MANY** tarafı — koleksiyona sahip olan nesne üzerinde bulunur.
 
-Both fields use `FieldType.RELATION` and cross-reference each other via `relationTargetFieldMetadataUniversalIdentifier`.
+Her iki alan da `FieldType.RELATION` kullanır ve `relationTargetFieldMetadataUniversalIdentifier` aracılığıyla birbirine karşılıklı referans verir.
 
-## Example: Post Card has many Recipients
+## Örnek: Posta Kartı'nın birçok Alıcısı vardır
 
-A `PostCard` can be sent to many `PostCardRecipient` records. Each recipient belongs to exactly one post card.
+Bir `PostCard` birçok `PostCardRecipient` kaydına gönderilebilir. Her alıcı tam olarak bir posta kartına aittir.
 
-**Step 1: Define the ONE_TO_MANY side on PostCard** (the "one" side):
+**Adım 1: PostCard üzerinde ONE_TO_MANY tarafını tanımlayın** ("bir" taraf):
 
 ```ts src/fields/post-card-recipients-on-post-card.field.ts
 import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
@@ -51,7 +51,7 @@ export default defineField({
 });
 ```
 
-**Step 2: Define the MANY_TO_ONE side on PostCardRecipient** (the "many" side — holds the foreign key):
+**Adım 2: PostCardRecipient üzerinde MANY_TO_ONE tarafını tanımlayın** ("çok" taraf — yabancı anahtarı tutar):
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
 import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
@@ -81,12 +81,12 @@ export default defineField({
 ```
 
 <Note>
-**Circular imports:** both relation fields reference each other's `universalIdentifier`. To avoid circular import issues, export your field IDs as named constants from each file and import them in the other. The build system resolves these at compile time.
+**Döngüsel içe aktarmalar:** Her iki ilişki alanı da birbirlerinin `universalIdentifier` değerine referans verir. Döngüsel içe aktarma sorunlarından kaçınmak için, alan kimliklerinizi her dosyadan adlandırılmış sabitler olarak dışa aktarın ve diğerinde içe aktarın. Derleme sistemi bunları derleme zamanında çözer.
 </Note>
 
-## Relating to standard objects
+## Standart nesnelerle ilişkilendirme
 
-To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+Yerleşik bir Twenty nesnesiyle (Person, Company, vb.) ilişki oluşturmak için `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` kullanın:
 
 ```ts src/fields/person-on-self-hosting-user.field.ts
 import {
@@ -120,20 +120,20 @@ export default defineField({
 });
 ```
 
-## Relation field properties
+## İlişki alanı özellikleri
 
-| Property                                          | Required         | Description                                                                                           |
-| ------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
-| `type`                                            | Yes              | Must be `FieldType.RELATION`                                                                          |
-| `relationTargetObjectMetadataUniversalIdentifier` | Yes              | The `universalIdentifier` of the target object                                                        |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Yes              | The `universalIdentifier` of the matching field on the target object                                  |
-| `universalSettings.relationType`                  | Yes              | `RelationType.MANY_TO_ONE` or `RelationType.ONE_TO_MANY`                                              |
-| `universalSettings.onDelete`                      | MANY_TO_ONE only | What happens when the referenced record is deleted: `CASCADE`, `SET_NULL`, `RESTRICT`, or `NO_ACTION` |
-| `universalSettings.joinColumnName`                | MANY_TO_ONE only | Database column name for the foreign key (e.g., `postCardId`)                                         |
+| Özellik                                           | Zorunlu              | Açıklama                                                                                     |
+| ------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------- |
+| `type`                                            | Evet                 | `FieldType.RELATION` olmalıdır                                                               |
+| `relationTargetObjectMetadataUniversalIdentifier` | Evet                 | Hedef nesnenin `universalIdentifier` değeri                                                  |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Evet                 | Hedef nesnedeki eşleşen alanın `universalIdentifier` değeri                                  |
+| `universalSettings.relationType`                  | Evet                 | `RelationType.MANY_TO_ONE` veya `RelationType.ONE_TO_MANY`                                   |
+| `universalSettings.onDelete`                      | Yalnızca MANY_TO_ONE | Başvurulan kayıt silindiğinde ne olacağı: `CASCADE`, `SET_NULL`, `RESTRICT` veya `NO_ACTION` |
+| `universalSettings.joinColumnName`                | Yalnızca MANY_TO_ONE | Yabancı anahtar için veritabanı sütun adı (örn. `postCardId`)                                |
 
-## Inline relation fields
+## Satır içi ilişki alanları
 
-You can also declare a relation directly inside [`defineObject`](/l/tr/developers/extend/apps/data/objects). When inline, omit `objectUniversalIdentifier` — it's inherited from the parent object:
+Bir ilişkiyi doğrudan [`defineObject`](/l/tr/developers/extend/apps/data/objects) içinde de tanımlayabilirsiniz. Satır içi olduğunda, `objectUniversalIdentifier`'ı atlayın — üst nesneden devralınır:
 
 ```ts
 export default defineObject({

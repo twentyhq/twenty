@@ -1,19 +1,19 @@
 ---
-title: Page Layouts
-description: Customize record detail pages — tabs, widgets, and where front components render — using definePageLayout and definePageLayoutTab.
+title: Layouts de Página
+description: Personalize páginas de detalhes de registros — abas, widgets e onde os front components são renderizados — usando `definePageLayout` e `definePageLayoutTab`.
 icon: table-columns
 ---
 
-A **page layout** controls how a record's detail page is arranged: which tabs appear and what widgets they contain. Use `definePageLayout()` to declare a layout for an object you own, or `definePageLayoutTab()` to add a single tab to a layout that already exists (yours or a standard Twenty one).
+Um **page layout** controla como a página de detalhes de um registro é organizada: quais abas aparecem e quais widgets elas contêm. Use `definePageLayout()` para declarar um layout para um objeto que você possui ou `definePageLayoutTab()` para adicionar uma única aba a um layout que já existe (seu ou um padrão da Twenty).
 
-| Use case                                                               | Entity                |
-| ---------------------------------------------------------------------- | --------------------- |
-| Define the entire layout for a record page on an object you own        | `definePageLayout`    |
-| Add one tab to an existing layout (your own object, or a standard one) | `definePageLayoutTab` |
+| Caso de uso                                                                    | Entidade              |
+| ------------------------------------------------------------------------------ | --------------------- |
+| Definir todo o layout para uma página de registro em um objeto que você possui | `definePageLayout`    |
+| Adicionar uma aba a um layout existente (seu próprio objeto ou um padrão)      | `definePageLayoutTab` |
 
 ## definePageLayout
 
-Use this when you own the entire detail page — typically for a custom object you defined yourself.
+Use isto quando você possuir toda a página de detalhes — normalmente para um objeto personalizado que você próprio definiu.
 
 ```ts src/page-layouts/example-record-page-layout.ts
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -49,17 +49,17 @@ export default definePageLayout({
 });
 ```
 
-### Key points
+### Pontos-chave
 
-* `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
-* `objectUniversalIdentifier` specifies which object this layout applies to.
-* Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`CANVAS` for free-form layout).
-* Each `widget` inside a tab can render a [front component](/l/pt/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
-* `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+* `type` geralmente é `'RECORD_PAGE'` para personalizar a visualização de detalhes de um objeto específico.
+* `objectUniversalIdentifier` especifica a qual objeto este layout se aplica.
+* Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode` (`CANVAS` para layout livre).
+* Cada `widget` dentro de uma aba pode renderizar um [front component](/l/pt/developers/extend/apps/layout/front-components), uma lista de relações ou outros tipos de widget nativos.
+* `position` nas abas controla sua ordem. Use valores mais altos (por exemplo, 50) para colocar abas personalizadas após as nativas.
 
 ## definePageLayoutTab
 
-Use this when you only want to **add** a tab to an existing layout — for example, an analytics tab on the standard Company page, or an AI summary tab attached to your own object's layout.
+Use isto quando você quiser apenas **adicionar** uma aba a um layout existente — por exemplo, uma aba de analytics na página padrão de Company ou uma aba de resumo de IA anexada ao layout do seu próprio objeto.
 
 ```ts src/page-layouts/example-extra-tab.ts
 import {
@@ -94,9 +94,9 @@ export default definePageLayoutTab({
 });
 ```
 
-### Key points
+### Pontos-chave
 
-* `pageLayoutUniversalIdentifier` is **required** and must point to a page layout that already exists at install time — either a standard Twenty layout or one defined by your own app. Cross-app references to layouts owned by another installed app are not supported today. When the parent layout is missing, installation fails with a clear validation error.
-* `widgets` are scoped to this tab only — they reference [front components](/l/pt/developers/extend/apps/layout/front-components), views, etc. exactly like widgets defined inline in `definePageLayout`.
-* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
-* Use this instead of `definePageLayout` when you only want to add to an existing layout. Use `definePageLayout` when you own the entire layout.
+* `pageLayoutUniversalIdentifier` é **obrigatório** e deve apontar para um page layout que já exista no momento da instalação — seja um layout padrão da Twenty ou um definido pelo seu próprio aplicativo. Referências entre apps para layouts pertencentes a outro aplicativo instalado não são compatíveis atualmente. Quando o layout pai estiver ausente, a instalação falha com um erro de validação claro.
+* `widgets` têm escopo apenas para esta aba — eles referenciam [front components](/l/pt/developers/extend/apps/layout/front-components), views etc., exatamente como widgets definidos inline em `definePageLayout`.
+* `position` controla a ordenação em relação às abas existentes no layout de destino. Escolha um valor que posicione sua aba onde você deseja em relação às abas nativas.
+* Use isto em vez de `definePageLayout` quando você quiser apenas adicionar a um layout existente. Use `definePageLayout` quando você possuir todo o layout.

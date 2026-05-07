@@ -1,30 +1,30 @@
 ---
 title: Связи
-description: Connect objects together with bidirectional MANY_TO_ONE / ONE_TO_MANY relations.
+description: Связывайте объекты между собой двунаправленными связями MANY_TO_ONE / ONE_TO_MANY.
 icon: diagram-project
 ---
 
-Relations connect two objects together. In Twenty, relations are always **bidirectional** — every relation has two sides, and each side is declared as a field that references the other.
+Отношения связывают два объекта между собой. В Twenty отношения всегда **двунаправленные** — у каждого отношения есть две стороны, и каждая сторона объявляется как поле, ссылающееся на другую.
 
-| Тип отношения | Описание                                                              | Есть внешний ключ?    |
-| ------------- | --------------------------------------------------------------------- | --------------------- |
-| `MANY_TO_ONE` | Многие записи этого объекта указывают на одну запись целевого объекта | Да (`joinColumnName`) |
-| `ONE_TO_MANY` | Одна запись этого объекта имеет много записей целевого объекта        | No (the inverse side) |
+| Тип отношения | Описание                                                              | Есть внешний ключ?     |
+| ------------- | --------------------------------------------------------------------- | ---------------------- |
+| `MANY_TO_ONE` | Многие записи этого объекта указывают на одну запись целевого объекта | Да (`joinColumnName`)  |
+| `ONE_TO_MANY` | Одна запись этого объекта имеет много записей целевого объекта        | Нет (обратная сторона) |
 
-## How relations work
+## Как работают отношения
 
-Every relation requires **two fields** that reference each other:
+Каждое отношение требует **двух полей**, которые ссылаются друг на друга:
 
-1. The **MANY_TO_ONE** side — lives on the object that holds the foreign key.
-2. The **ONE_TO_MANY** side — lives on the object that owns the collection.
+1. Сторона **MANY_TO_ONE** — находится в объекте, который содержит внешний ключ.
+2. Сторона **ONE_TO_MANY** — находится в объекте, которому принадлежит коллекция.
 
-Both fields use `FieldType.RELATION` and cross-reference each other via `relationTargetFieldMetadataUniversalIdentifier`.
+Оба поля используют `FieldType.RELATION` и ссылаются друг на друга через `relationTargetFieldMetadataUniversalIdentifier`.
 
-## Example: Post Card has many Recipients
+## Пример: Почтовая открытка имеет много получателей
 
-A `PostCard` can be sent to many `PostCardRecipient` records. Each recipient belongs to exactly one post card.
+`PostCard` может быть отправлен множеству записей `PostCardRecipient`. Каждый получатель относится ровно к одной открытке.
 
-**Step 1: Define the ONE_TO_MANY side on PostCard** (the "one" side):
+**Шаг 1: Определите сторону ONE_TO_MANY на PostCard** (сторона "one"):
 
 ```ts src/fields/post-card-recipients-on-post-card.field.ts
 import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
@@ -51,7 +51,7 @@ export default defineField({
 });
 ```
 
-**Step 2: Define the MANY_TO_ONE side on PostCardRecipient** (the "many" side — holds the foreign key):
+**Шаг 2: Определите сторону MANY_TO_ONE на PostCardRecipient** (сторона "many" — содержит внешний ключ):
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
 import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
@@ -81,12 +81,12 @@ export default defineField({
 ```
 
 <Note>
-**Circular imports:** both relation fields reference each other's `universalIdentifier`. To avoid circular import issues, export your field IDs as named constants from each file and import them in the other. The build system resolves these at compile time.
+**Циклические импорты:** оба поля отношений ссылаются на `universalIdentifier` друг друга. Чтобы избежать проблем с циклическими импортами, экспортируйте идентификаторы полей как именованные константы из каждого файла и импортируйте их в другом. Система сборки разрешает это на этапе компиляции.
 </Note>
 
-## Relating to standard objects
+## Связывание со стандартными объектами
 
-To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+Чтобы создать отношение со встроенным объектом Twenty (Person, Company и т. д.), используйте `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
 
 ```ts src/fields/person-on-self-hosting-user.field.ts
 import {
@@ -120,20 +120,20 @@ export default defineField({
 });
 ```
 
-## Relation field properties
+## Свойства поля отношения
 
-| Property                                          | Required         | Description                                                                                           |
-| ------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
-| `type`                                            | Yes              | Must be `FieldType.RELATION`                                                                          |
-| `relationTargetObjectMetadataUniversalIdentifier` | Yes              | The `universalIdentifier` of the target object                                                        |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Yes              | The `universalIdentifier` of the matching field on the target object                                  |
-| `universalSettings.relationType`                  | Yes              | `RelationType.MANY_TO_ONE` or `RelationType.ONE_TO_MANY`                                              |
-| `universalSettings.onDelete`                      | MANY_TO_ONE only | What happens when the referenced record is deleted: `CASCADE`, `SET_NULL`, `RESTRICT`, or `NO_ACTION` |
-| `universalSettings.joinColumnName`                | MANY_TO_ONE only | Database column name for the foreign key (e.g., `postCardId`)                                         |
+| Свойство                                          | Обязательно            | Описание                                                                                        |
+| ------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `type`                                            | Да                     | Должно быть `FieldType.RELATION`                                                                |
+| `relationTargetObjectMetadataUniversalIdentifier` | Да                     | `universalIdentifier` целевого объекта                                                          |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Да                     | `universalIdentifier` соответствующего поля на целевом объекте                                  |
+| `universalSettings.relationType`                  | Да                     | `RelationType.MANY_TO_ONE` или `RelationType.ONE_TO_MANY`                                       |
+| `universalSettings.onDelete`                      | Только для MANY_TO_ONE | Что происходит при удалении связанной записи: `CASCADE`, `SET_NULL`, `RESTRICT` или `NO_ACTION` |
+| `universalSettings.joinColumnName`                | Только для MANY_TO_ONE | Имя столбца базы данных для внешнего ключа (например, `postCardId`)                             |
 
-## Inline relation fields
+## Встроенные поля связей
 
-You can also declare a relation directly inside [`defineObject`](/l/ru/developers/extend/apps/data/objects). When inline, omit `objectUniversalIdentifier` — it's inherited from the parent object:
+Вы также можете объявить связь напрямую внутри [`defineObject`](/l/ru/developers/extend/apps/data/objects). При встроенном объявлении опустите `objectUniversalIdentifier` — он наследуется от родительского объекта:
 
 ```ts
 export default defineObject({

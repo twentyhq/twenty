@@ -1,10 +1,10 @@
 ---
-title: Navigation Menu Items
-description: Add custom entries to the workspace sidebar — links to saved views or external URLs.
+title: Itens do menu de navegação
+description: Adicione entradas personalizadas à barra lateral do espaço de trabalho — links para visualizações salvas ou URLs externas.
 icon: bars
 ---
 
-A **navigation menu item** is an entry in the left sidebar. Use `defineNavigationMenuItem()` to ship custom sidebar links — typically one per [view](/l/pt/developers/extend/apps/layout/views) you ship — or to point at external URLs.
+Um **item do menu de navegação** é uma entrada na barra lateral esquerda. Use `defineNavigationMenuItem()` para disponibilizar links personalizados na barra lateral — normalmente um por [visualização](/l/pt/developers/extend/apps/layout/views) que você disponibiliza — ou para apontar para URLs externas.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
 import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
@@ -23,22 +23,22 @@ export default defineNavigationMenuItem({
 
 ## Pontos-chave
 
-* `type` determines what the menu item links to. Each type pairs with a specific identifier field:
+* `type` determina para onde o item de menu aponta. Cada tipo é associado a um campo identificador específico:
 
-  | Tipo                                 | O que faz                            | Required field                                                                |
-  | ------------------------------------ | ------------------------------------ | ----------------------------------------------------------------------------- |
-  | `NavigationMenuItemType.VIEW`        | Opens a saved view                   | `viewUniversalIdentifier`                                                     |
-  | `NavigationMenuItemType.LINK`        | Opens an external URL                | `link`                                                                        |
-  | `NavigationMenuItemType.FOLDER`      | Groups nested items under a label    | `name` (and child items reference the folder via `folderUniversalIdentifier`) |
-  | `NavigationMenuItemType.OBJECT`      | Opens an object's default index page | `targetObjectUniversalIdentifier`                                             |
-  | `NavigationMenuItemType.PAGE_LAYOUT` | Opens a standalone page layout       | `pageLayoutUniversalIdentifier`                                               |
+  | Tipo                                 | O que faz                                   | Campo obrigatório                                                                        |
+  | ------------------------------------ | ------------------------------------------- | ---------------------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | Abre uma visualização salva                 | `viewUniversalIdentifier`                                                                |
+  | `NavigationMenuItemType.LINK`        | Abre uma URL externa                        | `link`                                                                                   |
+  | `NavigationMenuItemType.FOLDER`      | Agrupa itens aninhados sob um rótulo        | `name` (e itens filhos fazem referência à pasta por meio de `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.OBJECT`      | Abre a página de índice padrão de um objeto | `targetObjectUniversalIdentifier`                                                        |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | Abre um layout de página independente       | `pageLayoutUniversalIdentifier`                                                          |
 
-* `position` controls ordering in the sidebar.
+* `position` controla a ordenação na barra lateral.
 
-* `icon` and `color` are optional and customize how the entry looks.
+* `icon` e `color` são opcionais e personalizam a aparência da entrada.
 
-* `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent.
+* `folderUniversalIdentifier` também está disponível em qualquer item para aninhá-lo dentro de um pai do tipo `FOLDER`.
 
 <Note>
-**Common pitfall:** creating an object without an associated view + navigation menu item makes that object invisible to users. Unless it's a technical/internal object, every custom object should have a default view *and* a sidebar entry pointing at it.
+**Armadilha comum:** criar um objeto sem uma visualização associada + item do menu de navegação torna esse objeto invisível para os usuários. A menos que seja um objeto técnico/interno, todo objeto personalizado deve ter uma visualização padrão *e* uma entrada na barra lateral apontando para ela.
 </Note>

@@ -351,6 +351,23 @@ export class LogicFunctionExecutorService {
         functionName: flatLogicFunction.name,
       });
 
+    let periodStart: Date | undefined;
+
+    if (this.billingService.isBillingEnabled()) {
+      const {
+        billingSubscription: { currentPeriodStart },
+      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'billingSubscription',
+      ]);
+
+      periodStart = currentPeriodStart;
+
+      await this.billingUsageService.decrementAvailableCredits({
+        workspaceId,
+        usedCredits: 100,
+      });
+    }
+
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
       [
@@ -361,16 +378,10 @@ export class LogicFunctionExecutorService {
           quantity: 1,
           unit: UsageUnit.INVOCATION,
           resourceId: flatLogicFunction.id,
+          periodStart,
         },
       ],
       workspaceId,
     );
-
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: 100,
-      });
-    }
   }
 }

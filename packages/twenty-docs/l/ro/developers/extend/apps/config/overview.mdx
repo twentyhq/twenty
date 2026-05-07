@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Configure the app itself — its identity, default permissions, and what runs at install time.
+title: Prezentare generală
+description: Configurează însăși aplicația — identitatea ei, permisiunile implicite și ceea ce rulează în momentul instalării.
 icon: screwdriver-wrench
 ---
 
-A Twenty app's **config layer** is what describes the app *to the platform* — its identity, the permissions it holds, and the code that runs during install or upgrade. These declarations don't add new data shapes or runtime behavior; they tell Twenty *who the app is* and *how to set it up*.
+**Stratul de configurare** al unei aplicații Twenty este cel care descrie aplicația *platformei* — identitatea ei, permisiunile pe care le deține și codul care rulează în timpul instalării sau actualizării. Aceste declarații nu adaugă noi structuri de date sau comportamente la rulare; ele îi spun lui Twenty *cine este aplicația* și *cum să fie configurată*.
 
 ```text
 ┌────────────────────────────────────────────────────────┐
@@ -26,26 +26,26 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
        └──────────────────────────────────┘
 ```
 
-## In this section
+## În această secțiune
 
 <CardGroup cols={2}>
-  <Card title="Application Config" icon="rocket" href="/l/ro/developers/extend/apps/config/application">
-    `defineApplication` — identity, default role, variables, marketplace metadata.
+  <Card title="Configurare aplicație" icon="rocket" href="/l/ro/developers/extend/apps/config/application">
+    `defineApplication` — identitate, rol implicit, variabile, metadate pentru marketplace.
   </Card>
-  <Card title="Roles & Permissions" icon="shield-halved" href="/l/ro/developers/extend/apps/config/roles">
-    `defineRole` — declare what your app's logic functions can read and write.
+  <Card title="Roluri și permisiuni" icon="shield-halved" href="/l/ro/developers/extend/apps/config/roles">
+    `defineRole` — declară ce pot citi și scrie funcțiile logice ale aplicației tale.
   </Card>
-  <Card title="Install Hooks" icon="wrench" href="/l/ro/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` and `definePostInstallLogicFunction` — back up data, seed defaults, validate upgrades.
+  <Card title="Hook-uri de instalare" icon="wrench" href="/l/ro/developers/extend/apps/config/install-hooks">
+    `definePreInstallLogicFunction` și `definePostInstallLogicFunction` — fac backup la date, introduc valori implicite, validează actualizările.
   </Card>
 </CardGroup>
 
-## How the pieces relate
+## Cum se leagă componentele între ele
 
-* **Application** is the entry point. Every app has exactly one `defineApplication()` call, and it points at one **Role** as its default.
-* The **Role** controls what the app's logic functions and front components can read and write. Follow least-privilege: only grant the permissions your code actually needs.
-* **Install Hooks** run during install or upgrade — pre-install before the metadata migration (so it can refuse a risky upgrade), post-install after the migration (so it can seed default data against the new schema).
+* **Aplicația** este punctul de intrare. Fiecare aplicație are exact un apel `defineApplication()`, iar acesta indică un singur **Rol** ca implicit.
+* **Rolul** controlează ce pot citi și scrie funcțiile logice și componentele de interfață ale aplicației. Urmează principiul celui mai mic privilegiu: acordă doar permisiunile de care codul tău are cu adevărat nevoie.
+* **Hook-urile de instalare** rulează în timpul instalării sau actualizării — pre-install înainte de migrarea metadatelor (astfel încât să poată refuza o actualizare riscantă), post-install după migrare (astfel încât să poată introduce date implicite în noua schemă).
 
 <Note>
-Install hooks share the [logic function](/l/ro/developers/extend/apps/logic/logic-functions) runtime — same handler signature, same environment variables, same typed API client — but they're declared with their own define functions and live outside the regular trigger model (HTTP, cron, database events).
+Hook-urile de instalare împart același runtime cu [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) — aceeași semnătură a handler-ului, aceleași variabile de mediu, același client API tipizat — dar sunt declarate cu propriile lor funcții `define` și există în afara modelului obișnuit de declanșare (HTTP, cron, evenimente de bază de date).
 </Note>

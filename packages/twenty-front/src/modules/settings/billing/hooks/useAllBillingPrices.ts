@@ -8,10 +8,12 @@ export const useAllBillingPrices = () => {
   const { listPlans } = usePlans();
 
   const allBillingPrices = listPlans()
-    .map(({ licensedProducts, meteredProducts }) => {
-      return [...licensedProducts, ...meteredProducts].map(
-        ({ prices }) => prices,
-      );
+    .map(({ baseProducts, resourceCreditProducts, meteredProducts }) => {
+      return [
+        ...baseProducts,
+        ...resourceCreditProducts,
+        ...meteredProducts,
+      ].map(({ prices }) => prices);
     })
     .flat(2) as Array<BillingPriceLicensed | BillingPriceMetered>;
 

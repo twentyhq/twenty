@@ -4,11 +4,10 @@ on:
   pull_request_target:
     types: [opened]
 
-permissions:
-  pull-requests: write
+permissions: {}
 
 jobs:
-  convert-to-draft:
+  dispatch:
     if: |
       github.event.pull_request.draft == false &&
       github.event.pull_request.author_association != 'MEMBER' &&
@@ -17,26 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Convert to draft
+      - name: Dispatch to ci-privileged
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_NODE_ID: ${{ github.event.pull_request.node_id }}
         run: |
-          gh api graphql -f query="
-            mutation {
-              convertPullRequestToDraft(input: {pullRequestId: \"$PR_NODE_ID\"}) {
-                pullRequest { isDraft }
-              }
-            }
-          "
-
-      - name: Welcome comment
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          gh pr comment "$PR_NUMBER" --repo ${{ github.repository }} --body "👋 Thanks for contributing to Twenty!
-
-          Your PR has been set to draft while you work on it. Once you're done, mark it as **Ready for review** and our automated checks will run.
-
-          Looking forward to your contribution!"
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            -f event_type=convert-pr-to-draft \
+            -f "client_payload[pr_number]=$PR_NUMBER" \
+            -f "client_payload[pr_node_id]=$PR_NODE_ID"

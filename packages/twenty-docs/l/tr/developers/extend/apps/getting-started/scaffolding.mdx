@@ -1,18 +1,18 @@
 ---
-title: Scaffolding
-description: Generate entity files interactively with yarn twenty add — objects, fields, views, logic functions, and more.
+title: İskelet Oluşturma
+description: Yarn ile etkileşimli olarak Twenty nesneleri, alanları, görünümleri, mantık fonksiyonlarını ve daha fazlasını ekleyerek varlık dosyaları oluşturun.
 icon: wand-magic-sparkles
 ---
 
-Instead of creating entity files by hand, use the interactive scaffolder:
+Varlık dosyalarını elle oluşturmak yerine etkileşimli iskelet oluşturucuyu kullanın:
 
 ```bash filename="Terminal"
 yarn twenty add
 ```
 
-It prompts you to pick an entity type and walks you through the required fields, then writes a ready-to-use file with a stable `universalIdentifier` and the correct `defineEntity()` call.
+Bir varlık türü seçmeniz için sizi yönlendirir ve gerekli alanlarda adım adım ilerlemenizi sağlar, ardından sabit bir `universalIdentifier` ve doğru `defineEntity()` çağrısıyla kullanıma hazır bir dosya yazar.
 
-You can also pass the entity type directly to skip the first prompt:
+İlk istemi atlamak için varlık türünü doğrudan da geçebilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty add object
@@ -20,38 +20,38 @@ yarn twenty add logicFunction
 yarn twenty add frontComponent
 ```
 
-## Available entity types
+## Kullanılabilir varlık türleri
 
-| Entity type          | Command                              | Generated file                                          |
+| Varlık türü          | Komut                                | Oluşturulan dosya                                       |
 | -------------------- | ------------------------------------ | ------------------------------------------------------- |
-| Object               | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
-| Field                | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
-| Logic function       | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
-| Front component      | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
-| Role                 | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
-| Skill                | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
-| Agent                | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
-| View                 | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
-| Navigation menu item | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
-| Page layout          | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+| Nesne                | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| Alan                 | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| Mantık işlevi        | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| Ön uç bileşeni       | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| Rol                  | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| Beceri               | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| Temsilci             | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| Görünüm              | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| Gezinme menüsü öğesi | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| Sayfa düzeni         | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
 
-## What the scaffolder generates
+## İskelet oluşturucunun ürettikleri
 
-Each entity type has its own template. For example, `yarn twenty add object` asks for:
+Her varlık türünün kendi şablonu vardır. Örneğin, `yarn twenty add object` şunları sorar:
 
-1. **Name (singular)** — e.g., `invoice`
-2. **Name (plural)** — e.g., `invoices`
-3. **Label (singular)** — auto-populated from the name (e.g., `Invoice`)
-4. **Label (plural)** — auto-populated (e.g., `Invoices`)
-5. **Create a view and navigation item?** — if you answer yes, the scaffolder also generates a matching view and sidebar link for the new object.
+1. **Ad (tekil)** — ör. `invoice`
+2. **Ad (çoğul)** — ör. `invoices`
+3. **Etiket (tekil)** — adından otomatik doldurulur (ör. `Invoice`)
+4. **Etiket (çoğul)** — otomatik doldurulur (ör. `Invoices`)
+5. **Bir görünüm ve gezinme öğesi oluşturulsun mu?** — evet derseniz, iskelet oluşturucu yeni nesne için eşleşen bir görünüm ve kenar çubuğu bağlantısı da üretir.
 
-Other entity types have simpler prompts — most only ask for a name.
+Diğer varlık türlerinin istemleri daha basittir — çoğu yalnızca bir ad sorar.
 
-The `field` entity type is more detailed: it asks for the field name, label, type (from a list of all available field types like `TEXT`, `NUMBER`, `SELECT`, `RELATION`, etc.), and the target object's `universalIdentifier`.
+`field` varlık türü daha ayrıntılıdır: alan adını, etiketi, türü (`TEXT`, `NUMBER`, `SELECT`, `RELATION` vb. gibi mevcut tüm alan türlerinin listesinden) ve hedef nesnenin `universalIdentifier` değerini sorar.
 
-## Custom output path
+## Özel çıktı yolu
 
-Use the `--path` flag to place the generated file in a custom location:
+`--path` bayrağını kullanarak oluşturulan dosyayı özel bir konuma yerleştirin:
 
 ```bash filename="Terminal"
 yarn twenty add logicFunction --path src/custom-folder

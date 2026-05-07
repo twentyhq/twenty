@@ -1,61 +1,61 @@
 ---
-title: Local Server
-description: Manage the local Twenty Docker server — start, stop, upgrade, parallel test instance, and manual SDK setup.
+title: Lokaler Server
+description: Den lokalen Twenty Docker-Server verwalten – starten, stoppen, aktualisieren, parallele Testinstanz und manuelle SDK-Einrichtung.
 icon: server
 ---
 
-## Managing the local server
+## Lokalen Server verwalten
 
-Use `yarn twenty server` to control the local Twenty container:
+Verwenden Sie `yarn twenty server`, um den lokalen Twenty-Container zu steuern:
 
-| Command                                | What it does                                 |
-| -------------------------------------- | -------------------------------------------- |
-| `yarn twenty server start`             | Start the server (pulls the image if needed) |
-| `yarn twenty server start --port 3030` | Start on a custom port                       |
-| `yarn twenty server stop`              | Stop the server (preserves data)             |
-| `yarn twenty server status`            | Show URL, version, and login credentials     |
-| `yarn twenty server logs`              | Stream server logs                           |
-| `yarn twenty server reset`             | Wipe data and start fresh                    |
-| `yarn twenty server upgrade`           | Pull the latest `twenty-app-dev` image       |
-| `yarn twenty server upgrade 2.2.0`     | Upgrade to a specific version                |
+| Befehl                                 | Was es tut                                          |
+| -------------------------------------- | --------------------------------------------------- |
+| `yarn twenty server start`             | Server starten (lädt das Image bei Bedarf herunter) |
+| `yarn twenty server start --port 3030` | Auf einem benutzerdefinierten Port starten          |
+| `yarn twenty server stop`              | Server stoppen (Daten bleiben erhalten)             |
+| `yarn twenty server status`            | URL, Version und Anmeldedaten anzeigen              |
+| `yarn twenty server logs`              | Serverprotokolle streamen                           |
+| `yarn twenty server reset`             | Alle Daten löschen und neu starten                  |
+| `yarn twenty server upgrade`           | Das neueste `twenty-app-dev`-Image herunterladen    |
+| `yarn twenty server upgrade 2.2.0`     | Auf eine bestimmte Version aktualisieren            |
 
-Data persists across restarts in two Docker volumes (`twenty-app-dev-data` for PostgreSQL, `twenty-app-dev-storage` for files). Use `reset` to wipe everything.
+Daten bleiben über Neustarts hinweg in zwei Docker-Volumes bestehen (`twenty-app-dev-data` für PostgreSQL, `twenty-app-dev-storage` für Dateien). Verwenden Sie `reset`, um alles zu löschen.
 
-## Upgrading the server image
+## Aktualisieren des Server-Images
 
-`yarn twenty server upgrade` pulls the latest image, compares digests, and only recreates the container if anything actually changed. Volumes are preserved — only the container is replaced. If a new image was pulled and the container was running, the upgrade automatically starts a new container; run `yarn twenty server start` afterward to wait for it to become healthy.
+`yarn twenty server upgrade` lädt das neueste Image herunter, vergleicht die Digests und erstellt den Container nur neu, wenn sich tatsächlich etwas geändert hat. Die Volumes bleiben erhalten — nur der Container wird ersetzt. Wenn ein neues Image heruntergeladen wurde und der Container lief, startet das Upgrade automatisch einen neuen Container; führen Sie anschließend `yarn twenty server start` aus, um zu warten, bis er betriebsbereit ist.
 
 ```bash filename="Terminal"
 yarn twenty server upgrade            # Latest
 yarn twenty server upgrade 2.2.0      # Specific version
 ```
 
-Verify the running version with `yarn twenty server status` (it shows the `APP_VERSION` baked into the container).
+Überprüfen Sie die laufende Version mit `yarn twenty server status` (dies zeigt die im Container enthaltene `APP_VERSION` an).
 
-## Running a parallel test instance
+## Eine parallele Testinstanz ausführen
 
-Pass `--test` to any `server` command to manage a second, fully isolated instance — useful for integration tests or experiments without touching your main dev data:
+Übergeben Sie `--test` an jeden `server`-Befehl, um eine zweite, vollständig isolierte Instanz zu verwalten — nützlich für Integrationstests oder Experimente, ohne Ihre Hauptentwicklungsdaten anzutasten:
 
-| Command                             | What it does                                    |
-| ----------------------------------- | ----------------------------------------------- |
-| `yarn twenty server start --test`   | Start the test instance (defaults to port 2021) |
-| `yarn twenty server stop --test`    | Stop it                                         |
-| `yarn twenty server status --test`  | Show its status                                 |
-| `yarn twenty server logs --test`    | Stream its logs                                 |
-| `yarn twenty server reset --test`   | Wipe its data                                   |
-| `yarn twenty server upgrade --test` | Upgrade its image                               |
+| Befehl                              | Was es tut                                        |
+| ----------------------------------- | ------------------------------------------------- |
+| `yarn twenty server start --test`   | Die Testinstanz starten (standardmäßig Port 2021) |
+| `yarn twenty server stop --test`    | Anhalten                                          |
+| `yarn twenty server status --test`  | Status anzeigen                                   |
+| `yarn twenty server logs --test`    | Protokolle streamen                               |
+| `yarn twenty server reset --test`   | Daten löschen                                     |
+| `yarn twenty server upgrade --test` | Image aktualisieren                               |
 
-The test instance has its own container (`twenty-app-dev-test`), volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`), and config — it runs alongside your main instance without conflicts. Combine `--test` with `--port` to override 2021.
+Die Testinstanz hat ihren eigenen Container (`twenty-app-dev-test`), eigene Volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) und eine eigene Konfiguration — sie läuft parallel zu Ihrer Hauptinstanz ohne Konflikte. Kombinieren Sie `--test` mit `--port`, um den Port 2021 zu überschreiben.
 
-## Manual setup (without the scaffolder)
+## Manuelle Einrichtung (ohne Scaffolding-Tool)
 
-Skip the scaffolder if you're adding the SDK to an existing project:
+Überspringen Sie das Scaffolding-Tool, wenn Sie das SDK zu einem bestehenden Projekt hinzufügen:
 
 ```bash filename="Terminal"
 yarn add twenty-sdk twenty-client-sdk
 ```
 
-Add the script to `package.json`:
+Fügen Sie der `package.json` das Skript hinzu:
 
 ```json filename="package.json"
 {
@@ -65,8 +65,8 @@ Add the script to `package.json`:
 }
 ```
 
-You can now run `yarn twenty dev`, `yarn twenty server start`, and the rest.
+Sie können jetzt `yarn twenty dev`, `yarn twenty server start` und den Rest ausführen.
 
 <Note>
-Don't install `twenty-sdk` globally — pin it per project so each app uses its own version.
+Installieren Sie `twenty-sdk` nicht global — fixieren Sie es pro Projekt, damit jede App ihre eigene Version verwendet.
 </Note>

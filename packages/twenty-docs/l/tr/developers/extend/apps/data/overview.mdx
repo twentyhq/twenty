@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Shape the data your app adds to a workspace — objects, fields, and relations.
+title: Genel Bakış
+description: Uygulamanızın bir çalışma alanına eklediği verileri şekillendirin — nesneler, alanlar ve ilişkiler.
 icon: database
 ---
 
-A Twenty app's **data layer** is the data your app *adds* to a workspace — the new record types it declares, the columns it adds to existing objects, and how those records connect to each other.
+Bir Twenty uygulamasının **veri katmanı**, uygulamanızın bir çalışma alanına *eklediği* veridir — bildirdiği yeni kayıt türleri, mevcut nesnelere eklediği sütunlar ve bu kayıtların birbirine nasıl bağlandığı.
 
 ```text
 ┌──────────────────────────────────────────────────┐
@@ -23,30 +23,30 @@ A Twenty app's **data layer** is the data your app *adds* to a workspace — the
 └──────────────────────────────────────────────────┘
 ```
 
-## In this section
+## Bu bölümde
 
 <CardGroup cols={2}>
-  <Card title="Objects" icon="table" href="/l/tr/developers/extend/apps/data/objects">
-    `defineObject` — declare new record types with their own fields.
+  <Card title="Nesneler" icon="tablo" href="/l/tr/developers/extend/apps/data/objects">
+    `defineObject` — kendi alanlarına sahip yeni kayıt türleri bildirin.
   </Card>
-  <Card title="Extending Objects" icon="wand-magic-sparkles" href="/l/tr/developers/extend/apps/data/extending-objects">
-    `defineField` — add fields to standard or other apps' objects.
+  <Card title="Nesneleri Genişletme" icon="wand-magic-sparkles" href="/l/tr/developers/extend/apps/data/extending-objects">
+    `defineField` — standart nesnelere veya diğer uygulamaların nesnelerine alanlar ekleyin.
   </Card>
-  <Card title="Relations" icon="diagram-project" href="/l/tr/developers/extend/apps/data/relations">
-    Bidirectional `MANY_TO_ONE` / `ONE_TO_MANY` connections between objects.
+  <Card title="İlişkiler" icon="diagram-project" href="/l/tr/developers/extend/apps/data/relations">
+    Nesneler arasında çift yönlü `MANY_TO_ONE` / `ONE_TO_MANY` bağlantıları.
   </Card>
 </CardGroup>
 
-## Entities at a glance
+## Varlıklara genel bakış
 
-| Entity       | Purpose                                                                                                           | Defined with                              |
-| ------------ | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Object**   | A new custom record type (e.g. PostCard, Invoice) with its own fields                                             | `defineObject()`                          |
-| **Field**    | A column on an object. Standalone fields can extend objects you didn't create (e.g. add `loyaltyTier` to Company) | `defineField()`                           |
-| **Relation** | A bidirectional link between two objects — both sides declared as fields                                          | `defineField()` with `FieldType.RELATION` |
+| Varlık       | Amaç                                                                                                                                  | Şununla tanımlanır                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **Nesne**    | Kendi alanlarına sahip yeni bir özel kayıt türü (ör. PostCard, Invoice)                                                               | `defineObject()`                         |
+| **Alan**     | Bir nesne üzerindeki sütun. Bağımsız alanlar, oluşturmadığınız nesneleri genişletebilir (ör. Company nesnesine `loyaltyTier` ekleyin) | `defineField()`                          |
+| **Relation** | İki nesne arasında, her iki tarafı da alan olarak bildirilmiş çift yönlü bir bağlantı                                                 | `defineField()` ile `FieldType.RELATION` |
 
-The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/` and `src/fields/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
+SDK bunları derleme zamanında AST analiziyle algılar, bu yüzden dosya organizasyonu size kalmıştır — kullanılan gelenek `src/objects/` ve `src/fields/` dizinleridir. Kararlı `universalIdentifier` UUID’leri, dağıtımlar arasında her şeyi birbirine bağlar.
 
 <Note>
-Looking for **Application Config** or **Roles & Permissions**? Those describe the app itself rather than the data it adds — they live under [Config](/l/tr/developers/extend/apps/config/overview). Looking for **Connections** (Linear, GitHub, Slack OAuth)? Those exist to be called *from* logic functions and live under [Logic](/l/tr/developers/extend/apps/logic/connections).
+**Application Config** veya **Roles & Permissions** mı arıyorsunuz? Bunlar, ekledikleri verilerden çok uygulamanın kendisini tanımlar — [Config](/l/tr/developers/extend/apps/config/overview) altında bulunurlar. **Connections** (Linear, GitHub, Slack OAuth) mı arıyorsunuz? Bunlar, mantık fonksiyonları *içinden* çağrılmak için vardır ve [Logic](/l/tr/developers/extend/apps/logic/connections) altında bulunurlar.
 </Note>

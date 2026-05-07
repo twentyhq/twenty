@@ -1,19 +1,19 @@
 ---
-title: Page Layouts
-description: Customize record detail pages — tabs, widgets, and where front components render — using definePageLayout and definePageLayoutTab.
+title: 页面布局
+description: 使用 `definePageLayout` 和 `definePageLayoutTab` 自定义记录详情页——包括选项卡、小部件以及前端组件的渲染位置。
 icon: table-columns
 ---
 
-A **page layout** controls how a record's detail page is arranged: which tabs appear and what widgets they contain. Use `definePageLayout()` to declare a layout for an object you own, or `definePageLayoutTab()` to add a single tab to a layout that already exists (yours or a standard Twenty one).
+**页面布局（page layout）** 控制记录详情页的排布方式：显示哪些选项卡，以及这些选项卡中包含哪些小部件。 使用 `definePageLayout()` 为你拥有的对象声明一个布局，或者使用 `definePageLayoutTab()` 为已存在的布局（你的自定义布局或标准的 Twenty 布局）添加单个选项卡。
 
-| Use case                                                               | Entity                |
-| ---------------------------------------------------------------------- | --------------------- |
-| Define the entire layout for a record page on an object you own        | `definePageLayout`    |
-| Add one tab to an existing layout (your own object, or a standard one) | `definePageLayoutTab` |
+| 用例                           | 实体                    |
+| ---------------------------- | --------------------- |
+| 为你拥有的对象上的记录页面定义完整布局          | `definePageLayout`    |
+| 向现有布局中添加一个选项卡（你自己的对象或一个标准对象） | `definePageLayoutTab` |
 
 ## definePageLayout
 
-Use this when you own the entire detail page — typically for a custom object you defined yourself.
+当你拥有整个详情页时使用此方式——通常适用于你自己定义的自定义对象。
 
 ```ts src/page-layouts/example-record-page-layout.ts
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -49,17 +49,17 @@ export default definePageLayout({
 });
 ```
 
-### Key points
+### 关键点
 
-* `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
-* `objectUniversalIdentifier` specifies which object this layout applies to.
-* Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`CANVAS` for free-form layout).
-* Each `widget` inside a tab can render a [front component](/l/zh/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
-* `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+* `type` 通常为 'RECORD_PAGE'，用于自定义特定对象的详情视图。
+* `objectUniversalIdentifier` 指定此布局适用于哪个对象。
+* 每个 `tab` 使用 `title`、`position` 和 `layoutMode` 定义页面的一个部分（`CANVAS` 表示自由布局）。
+* 选项卡内的每个 `widget` 可以渲染一个[前端组件](/l/zh/developers/extend/apps/layout/front-components)、关系列表或其他内置小部件类型。
+* 选项卡上的 `position` 控制其顺序。 使用更高的值（例如 50）可将自定义选项卡放在内置选项卡之后。
 
 ## definePageLayoutTab
 
-Use this when you only want to **add** a tab to an existing layout — for example, an analytics tab on the standard Company page, or an AI summary tab attached to your own object's layout.
+当你只想在现有布局中**添加**一个选项卡时使用此方式——例如，在标准 Company 页面上添加一个分析选项卡，或者在你自己的对象布局上附加一个 AI 摘要选项卡。
 
 ```ts src/page-layouts/example-extra-tab.ts
 import {
@@ -94,9 +94,9 @@ export default definePageLayoutTab({
 });
 ```
 
-### Key points
+### 关键点
 
-* `pageLayoutUniversalIdentifier` is **required** and must point to a page layout that already exists at install time — either a standard Twenty layout or one defined by your own app. Cross-app references to layouts owned by another installed app are not supported today. When the parent layout is missing, installation fails with a clear validation error.
-* `widgets` are scoped to this tab only — they reference [front components](/l/zh/developers/extend/apps/layout/front-components), views, etc. exactly like widgets defined inline in `definePageLayout`.
-* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
-* Use this instead of `definePageLayout` when you only want to add to an existing layout. Use `definePageLayout` when you own the entire layout.
+* `pageLayoutUniversalIdentifier` 是**必需的**，并且必须在安装时指向一个已存在的页面布局——可以是标准的 Twenty 布局，也可以是由你自己的应用定义的布局。 当前不支持跨应用引用由其他已安装应用拥有的布局。 当父布局缺失时，安装会失败，并给出清晰的验证错误。
+* `widgets` 仅作用于此选项卡——它们引用[前端组件](/l/zh/developers/extend/apps/layout/front-components)、视图等，其方式与在 `definePageLayout` 中内联定义的小部件完全相同。
+* `position` 控制目标布局中相对于现有选项卡的排序。 选择一个取值，使你的选项卡相对于内置选项卡位于你想要的位置。
+* 当你只想向现有布局进行添加时，请使用此功能，而不是 `definePageLayout`。 当你拥有整个布局时，请使用 `definePageLayout`。

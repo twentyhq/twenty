@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Server-side TypeScript that runs inside Twenty — triggered by HTTP routes, cron schedules, database events, AI tools, or workflow actions.
+title: Visão Geral
+description: TypeScript do lado do servidor que é executado dentro do Twenty — acionado por rotas HTTP, agendamentos cron, eventos de banco de dados, ferramentas de IA ou ações de fluxos de trabalho.
 icon: bolt
 ---
 
-A Twenty app's **logic layer** is the code that *runs* — server-side TypeScript handlers reacting to HTTP requests, cron schedules, and record changes; AI skills and agents that live inside the workspace; and OAuth connections that let your functions act on a user's behalf in third-party services.
+A **camada de lógica** de um app Twenty é o código que *é executado* — manipuladores TypeScript do lado do servidor reagindo a solicitações HTTP, agendamentos cron e alterações de registros; habilidades e agentes de IA que vivem dentro do workspace; e conexões OAuth que permitem que suas funções ajam em nome de um usuário em serviços de terceiros.
 
 ```text
             ┌─ HTTP route      ──┐
@@ -22,34 +22,34 @@ A Twenty app's **logic layer** is the code that *runs* — server-side TypeScrip
                                   └────────────────────────────┘
 ```
 
-## In this section
+## Nesta seção
 
 <CardGroup cols={2}>
-  <Card title="Logic Functions" icon="bolt" href="/l/pt/developers/extend/apps/logic/logic-functions">
-    The core building block — trigger types, payloads, and the typed API client.
+  <Card title="Funções lógicas" icon="bolt" href="/l/pt/developers/extend/apps/logic/logic-functions">
+    O bloco de construção principal — tipos de gatilho, payloads e o cliente de API tipado.
   </Card>
-  <Card title="Skills & Agents" icon="robot" href="/l/pt/developers/extend/apps/logic/skills-and-agents">
-    Reusable AI agent instructions and assistants with custom system prompts.
+  <Card title="Habilidades e agentes" icon="robot" href="/l/pt/developers/extend/apps/logic/skills-and-agents">
+    Instruções reutilizáveis para agentes de IA e assistentes com prompts de sistema personalizados.
   </Card>
-  <Card title="Connections" icon="plug" href="/l/pt/developers/extend/apps/logic/connections">
-    OAuth credentials your app holds for third-party services — Linear, GitHub, Slack, and more.
+  <Card title="Conexões" icon="plug" href="/l/pt/developers/extend/apps/logic/connections">
+    Credenciais OAuth que seu app mantém para serviços de terceiros — Linear, GitHub, Slack e outros.
   </Card>
 </CardGroup>
 
-## Trigger types at a glance
+## Tipos de gatilho em resumo
 
-A logic function picks one or more triggers — every entry below is a separate field on `defineLogicFunction()`:
+Uma função de lógica escolhe um ou mais gatilhos — cada entrada abaixo é um campo separado em `defineLogicFunction()`:
 
-| Trigger             | When it runs                                               | Setting                         |
-| ------------------- | ---------------------------------------------------------- | ------------------------------- |
-| **HTTP route**      | A request hits your `/s/\<path>` endpoint | `httpRouteTriggerSettings`      |
-| **Cron**            | A CRON expression matches                                  | `cronTriggerSettings`           |
-| **Database event**  | A workspace record is created, updated, or deleted         | `databaseEventTriggerSettings`  |
-| **AI tool**         | A Twenty AI feature decides to call your function          | `toolTriggerSettings`           |
-| **Workflow action** | A workflow step invokes your function                      | `workflowActionTriggerSettings` |
+| Disparador                    | Quando é executado                                                | Configuração                    |
+| ----------------------------- | ----------------------------------------------------------------- | ------------------------------- |
+| **Rota HTTP**                 | Uma solicitação atinge seu endpoint `/s/\<path>` | `httpRouteTriggerSettings`      |
+| **Cron**                      | Uma expressão CRON corresponde                                    | `cronTriggerSettings`           |
+| **Evento de banco de dados**  | Um registro do workspace é criado, atualizado ou excluído         | `databaseEventTriggerSettings`  |
+| **Ferramenta de IA**          | Um recurso de IA do Twenty decide chamar sua função               | `toolTriggerSettings`           |
+| **Ação de fluxo de trabalho** | Uma etapa de fluxo de trabalho invoca sua função                  | `workflowActionTriggerSettings` |
 
-Functions run sandboxed in isolated Node.js processes and access the workspace through a typed API client scoped to the role declared on [`defineApplication()`](/l/pt/developers/extend/apps/config/application).
+As funções são executadas em sandbox em processos Node.js isolados e acessam o workspace por meio de um cliente de API tipado com escopo para a função declarada em [`defineApplication()`](/l/pt/developers/extend/apps/config/application).
 
 <Note>
-**Install-time hooks** — code that runs before or after the install — share this runtime but use their own define functions and live under [Config → Install Hooks](/l/pt/developers/extend/apps/config/install-hooks).
+**Ganchos de instalação** — código que é executado antes ou depois da instalação — compartilham esse runtime, mas usam suas próprias funções define e ficam em [Config → Install Hooks](/l/pt/developers/extend/apps/config/install-hooks).
 </Note>

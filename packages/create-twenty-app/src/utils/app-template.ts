@@ -3,7 +3,6 @@ import { join } from 'path';
 import { v4 } from 'uuid';
 
 import createTwentyAppPackageJson from 'package.json';
-import chalk from 'chalk';
 
 const SRC_FOLDER = 'src';
 
@@ -12,27 +11,33 @@ export const copyBaseApplicationProject = async ({
   appDisplayName,
   appDescription,
   appDirectory,
+  onProgress,
 }: {
   appName: string;
   appDisplayName: string;
   appDescription: string;
   appDirectory: string;
+  onProgress?: (message: string) => void;
 }) => {
-  console.log(chalk.gray('Generating application project...'));
+  onProgress?.('Copying base template');
   await fs.copy(join(__dirname, './constants/template'), appDirectory);
 
+  onProgress?.('Configuring dotfiles (.gitignore, .github)');
   await renameDotfiles({ appDirectory });
 
+  onProgress?.('Mirroring AGENTS.md to CLAUDE.md');
   await mirrorAgentsToClaude({ appDirectory });
 
   await addEmptyPublicDirectory({ appDirectory });
 
+  onProgress?.('Generating unique application identifiers');
   await generateUniversalIdentifiers({
     appDisplayName,
     appDescription,
     appDirectory,
   });
 
+  onProgress?.('Updating package.json');
   await updatePackageJson({ appName, appDirectory });
 };
 

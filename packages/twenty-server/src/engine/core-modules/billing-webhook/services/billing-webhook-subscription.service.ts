@@ -182,21 +182,6 @@ export class BillingWebhookSubscriptionService {
       workspaceId,
     );
 
-    if (event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED) {
-      await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
-        updatedBillingSubscription.id,
-      );
-      const gte =
-        this.billingSubscriptionService.getTrialPeriodFreeWorkflowCredits(
-          updatedBillingSubscription,
-        );
-
-      await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
-        updatedBillingSubscription.stripeCustomerId,
-        gte,
-      );
-    }
-
     return {
       stripeSubscriptionId: data.object.id,
       stripeCustomerId: data.object.customer,

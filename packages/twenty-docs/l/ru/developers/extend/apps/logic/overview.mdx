@@ -1,10 +1,10 @@
 ---
-title: Overview
-description: Server-side TypeScript that runs inside Twenty — triggered by HTTP routes, cron schedules, database events, AI tools, or workflow actions.
+title: Обзор
+description: Серверный TypeScript, который выполняется внутри Twenty — запускается HTTP-маршрутами, расписаниями cron, событиями базы данных, инструментами ИИ или действиями рабочих процессов.
 icon: bolt
 ---
 
-A Twenty app's **logic layer** is the code that *runs* — server-side TypeScript handlers reacting to HTTP requests, cron schedules, and record changes; AI skills and agents that live inside the workspace; and OAuth connections that let your functions act on a user's behalf in third-party services.
+**Логический слой** приложения Twenty — это код, который *выполняется*: серверные обработчики TypeScript, реагирующие на HTTP-запросы, расписания cron и изменения записей; AI-навыки и агенты, работающие внутри рабочего пространства; а также OAuth-подключения, позволяющие вашим функциям действовать от имени пользователя в сторонних сервисах.
 
 ```text
             ┌─ HTTP route      ──┐
@@ -22,34 +22,34 @@ A Twenty app's **logic layer** is the code that *runs* — server-side TypeScrip
                                   └────────────────────────────┘
 ```
 
-## In this section
+## В этом разделе
 
 <CardGroup cols={2}>
-  <Card title="Logic Functions" icon="bolt" href="/l/ru/developers/extend/apps/logic/logic-functions">
-    The core building block — trigger types, payloads, and the typed API client.
+  <Card title="Логические функции" icon="bolt" href="/l/ru/developers/extend/apps/logic/logic-functions">
+    Основной строительный блок — типы триггеров, полезные данные (payloads) и типизированный клиент API.
   </Card>
-  <Card title="Skills & Agents" icon="robot" href="/l/ru/developers/extend/apps/logic/skills-and-agents">
-    Reusable AI agent instructions and assistants with custom system prompts.
+  <Card title="Навыки и агенты" icon="robot" href="/l/ru/developers/extend/apps/logic/skills-and-agents">
+    Повторно используемые инструкции AI-агента и ассистенты с пользовательскими системными подсказками.
   </Card>
-  <Card title="Connections" icon="plug" href="/l/ru/developers/extend/apps/logic/connections">
-    OAuth credentials your app holds for third-party services — Linear, GitHub, Slack, and more.
+  <Card title="Подключения" icon="plug" href="/l/ru/developers/extend/apps/logic/connections">
+    OAuth-учетные данные, которые ваше приложение хранит для сторонних сервисов — Linear, GitHub, Slack и других.
   </Card>
 </CardGroup>
 
-## Trigger types at a glance
+## Типы триггеров одним взглядом
 
-A logic function picks one or more triggers — every entry below is a separate field on `defineLogicFunction()`:
+Логическая функция выбирает один или несколько триггеров — каждая запись ниже — это отдельное поле в `defineLogicFunction()`:
 
-| Trigger             | When it runs                                               | Setting                         |
-| ------------------- | ---------------------------------------------------------- | ------------------------------- |
-| **HTTP route**      | A request hits your `/s/\<path>` endpoint | `httpRouteTriggerSettings`      |
-| **Cron**            | A CRON expression matches                                  | `cronTriggerSettings`           |
-| **Database event**  | A workspace record is created, updated, or deleted         | `databaseEventTriggerSettings`  |
-| **AI tool**         | A Twenty AI feature decides to call your function          | `toolTriggerSettings`           |
-| **Workflow action** | A workflow step invokes your function                      | `workflowActionTriggerSettings` |
+| Триггер                        | Когда запускается                                                   | Настройка                       |
+| ------------------------------ | ------------------------------------------------------------------- | ------------------------------- |
+| **HTTP-маршрут**               | Запрос попадает на ваш конечный пункт `/s/\<path>` | `httpRouteTriggerSettings`      |
+| **Cron**                       | Срабатывает выражение CRON                                          | `cronTriggerSettings`           |
+| **Событие базы данных**        | Запись рабочего пространства создается, обновляется или удаляется   | `databaseEventTriggerSettings`  |
+| **Инструмент ИИ**              | Функция Twenty AI решает вызвать вашу функцию                       | `toolTriggerSettings`           |
+| **Действие рабочего процесса** | Шаг рабочего процесса вызывает вашу функцию                         | `workflowActionTriggerSettings` |
 
-Functions run sandboxed in isolated Node.js processes and access the workspace through a typed API client scoped to the role declared on [`defineApplication()`](/l/ru/developers/extend/apps/config/application).
+Функции выполняются в изолированных процессах Node.js в песочнице и получают доступ к рабочему пространству через типизированный клиент API с областью действия, ограниченной ролью, объявленной в [`defineApplication()`](/l/ru/developers/extend/apps/config/application).
 
 <Note>
-**Install-time hooks** — code that runs before or after the install — share this runtime but use their own define functions and live under [Config → Install Hooks](/l/ru/developers/extend/apps/config/install-hooks).
+**Хуки времени установки** — код, который выполняется до или после установки, — используют то же окружение выполнения, но свои собственные функции `define*` и находятся в разделе [Config → Install Hooks](/l/ru/developers/extend/apps/config/install-hooks).
 </Note>

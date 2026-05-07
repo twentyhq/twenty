@@ -2,6 +2,7 @@ import * as ts from 'typescript';
 
 export enum TargetFunction {
   DefineApplication = 'defineApplication',
+  DefineApplicationRole = 'defineApplicationRole',
   DefineField = 'defineField',
   DefineLogicFunction = 'defineLogicFunction',
   DefinePostInstallLogicFunction = 'definePostInstallLogicFunction',
@@ -44,6 +45,7 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   ManifestEntityKey
 > = {
   [TargetFunction.DefineApplication]: ManifestEntityKey.Application,
+  [TargetFunction.DefineApplicationRole]: ManifestEntityKey.Roles,
   [TargetFunction.DefineField]: ManifestEntityKey.Fields,
   [TargetFunction.DefineLogicFunction]: ManifestEntityKey.LogicFunctions,
   [TargetFunction.DefinePostInstallLogicFunction]:
