@@ -1,4 +1,5 @@
 import { isObject } from 'class-validator';
+import { type FieldMetadataComplexOption } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -10,6 +11,8 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {
   buildOrderByColumnExpression,
+  getSelectOptionValuesSortedByPosition,
+  isSelectFieldType,
   shouldCastToText,
   shouldUseCaseInsensitiveOrder,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/build-order-by-column-expression.util';
@@ -143,6 +146,12 @@ export class GraphqlQueryOrderFieldParser {
             fieldName,
           );
 
+          const selectOptionValues = isSelectFieldType(fieldMetadata.type)
+            ? getSelectOptionValuesSortedByPosition(
+                fieldMetadata.options as FieldMetadataComplexOption[],
+              )
+            : undefined;
+
           orderByConditions[columnExpression] = {
             ...convertOrderByToFindOptionsOrder(
               orderByDirection,
@@ -150,6 +159,7 @@ export class GraphqlQueryOrderFieldParser {
             ),
             useLower: shouldUseCaseInsensitiveOrder(fieldMetadata.type),
             castToText: shouldCastToText(fieldMetadata.type),
+            selectOptionValues,
           };
         }
       }
@@ -256,6 +266,12 @@ export class GraphqlQueryOrderFieldParser {
         nestedFieldMetadata.name,
       );
 
+      const selectOptionValues = isSelectFieldType(nestedFieldMetadata.type)
+        ? getSelectOptionValuesSortedByPosition(
+            nestedFieldMetadata.options as FieldMetadataComplexOption[],
+          )
+        : undefined;
+
       return {
         orderBy: {
           [columnExpression]: {
@@ -265,6 +281,7 @@ export class GraphqlQueryOrderFieldParser {
             ),
             useLower: shouldUseCaseInsensitiveOrder(nestedFieldMetadata.type),
             castToText: shouldCastToText(nestedFieldMetadata.type),
+            selectOptionValues,
           },
         },
         joinInfo,
