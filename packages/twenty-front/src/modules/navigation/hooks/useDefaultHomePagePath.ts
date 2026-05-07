@@ -18,11 +18,11 @@ export const useDefaultHomePagePath = () => {
   const store = useStore();
   const currentUser = useAtomStateValue(currentUserState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const objectMetadataStore = useAtomFamilyStateValue(
+  const metadataStore = useAtomFamilyStateValue(
     metadataStoreState,
     'objectMetadataItems',
   );
-  const areObjectMetadataItemsLoaded = objectMetadataStore.status === 'up-to-date';
+  const areObjectMetadataItemsLoaded = metadataStore.status === 'up-to-date';
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
