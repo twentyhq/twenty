@@ -1,11 +1,11 @@
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import {
   preloadMockedMetadata,
   type PreloadedMockedMetadata,
-} from '@/metadata-store/utils/preloadMockedMetadata';
-import { useStore } from 'jotai';
-import { useCallback } from 'react';
+} from '~/testing/utils/preloadMockedMetadata';
 
 const MOCKED_COLLECTION_HASH = 'mocked';
 

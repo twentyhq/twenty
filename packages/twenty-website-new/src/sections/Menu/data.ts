@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { getPublishedArticles } from '@/lib/articles';
 import { getLatestReleasePreview } from '@/lib/releases/get-latest-release-preview';
 import type {
   MenuDataType,
@@ -14,6 +15,8 @@ const FALLBACK_RELEASES_PREVIEW: MenuNavChildPreview = {
   title: msg`See the latest release`,
   description: msg`Track every release with changelogs, highlights and demos of the newest features.`,
 };
+
+const HAS_PUBLISHED_ARTICLES = getPublishedArticles().length > 0;
 
 function buildNavItems(): MenuNavItemType[] {
   const releasesPreview =
@@ -72,6 +75,16 @@ function buildNavItems(): MenuNavItemType[] {
           icon: 'tag',
           preview: releasesPreview,
         },
+        ...(HAS_PUBLISHED_ARTICLES
+          ? [
+              {
+                label: msg`Articles`,
+                description: msg`Read Twenty insights`,
+                href: '/articles',
+                icon: 'book' as const,
+              },
+            ]
+          : []),
       ],
     },
     { label: msg`Customers`, href: '/customers' },
