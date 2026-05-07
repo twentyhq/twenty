@@ -17,13 +17,15 @@ export enum Conjunctions {
   not = 'not',
 }
 
+export const ROOT_FILTER_CONJUNCTION_REGEX = new RegExp(
+  `^(${Object.values(Conjunctions).join('|')})\\((.+)\\)$`,
+);
+
 export const parseFilter = (
   filterQuery: string,
 ): Record<string, FieldValue> => {
   const result = {};
-  const match = filterQuery.match(
-    `^(${Object.values(Conjunctions).join('|')})\\((.+)\\)$`,
-  );
+  const match = filterQuery.match(ROOT_FILTER_CONJUNCTION_REGEX);
 
   if (match) {
     const conjunction = match?.[1];

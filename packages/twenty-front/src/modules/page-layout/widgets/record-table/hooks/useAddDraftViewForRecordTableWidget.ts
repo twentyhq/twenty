@@ -70,7 +70,13 @@ export const useAddDraftViewForRecordTableWidget = (pageLayoutId: string) => {
 
       store.set(recordTableWidgetViewDraftState, (prev) => ({
         ...prev,
-        [widgetId]: { view: flatView, viewFields: flatViewFields },
+        [widgetId]: {
+          view: flatView,
+          viewFields: flatViewFields,
+          viewFilters: [],
+          viewFilterGroups: [],
+          viewSorts: [],
+        },
       }));
 
       requestAnimationFrame(() => {

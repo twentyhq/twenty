@@ -1,6 +1,7 @@
 'use client';
 
 import { useLatestRef } from '@/lib/react';
+import { loadVisualImage } from '@/lib/visual-runtime';
 import {
   type MutableRefObject,
   type RefObject,
@@ -74,22 +75,22 @@ function useImageElement({
 
   useEffect(() => {
     let cancelled = false;
-    const image = new Image();
-
     setImageElement(null);
 
-    if (typeof crossOrigin !== 'undefined') {
-      image.crossOrigin = crossOrigin;
-    }
+    void loadVisualImage(imageUrl, {
+      crossOrigin,
+      label: 'halftone image',
+    })
+      .then((image) => {
+        if (!cancelled) {
+          setImageElement(image);
+        }
+      })
+      .catch(() => {
+        if (cancelled) {
+          return;
+        }
 
-    image.decoding = 'async';
-    image.onload = () => {
-      if (!cancelled) {
-        setImageElement(image);
-      }
-    };
-    image.onerror = () => {
-      if (!cancelled) {
         const handler = onImageLoadErrorReference.current;
         const error = createImageLoadError(imageUrl);
 
@@ -101,15 +102,10 @@ function useImageElement({
         if (process.env.NODE_ENV !== 'production') {
           console.error(error);
         }
-      }
-    };
-    image.src = imageUrl;
+      });
 
     return () => {
       cancelled = true;
-      image.onload = null;
-      image.onerror = null;
-      image.src = '';
     };
   }, [crossOrigin, imageUrl, onImageLoadErrorReference]);
 

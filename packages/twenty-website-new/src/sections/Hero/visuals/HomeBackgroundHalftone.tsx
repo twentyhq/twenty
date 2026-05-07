@@ -3,6 +3,7 @@
 import { createAnimationFrameLoop } from '@/lib/animation';
 import {
   createVisualRenderLoop,
+  loadVisualImage,
   tryCreateSiteWebGlRenderer,
   type VisualRenderLoopFrame,
   type VisualRenderLoop,
@@ -404,17 +405,6 @@ function createRenderTarget(width: number, height: number) {
   });
 }
 
-function loadImage(imageUrl: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.decoding = 'async';
-    image.onload = () => resolve(image);
-    image.onerror = () =>
-      reject(new Error(`Failed to load home background image: ${imageUrl}`));
-    image.src = imageUrl;
-  });
-}
-
 type PointerState = {
   hoverStrength: number;
   mouseX: number;
@@ -431,7 +421,9 @@ async function mountHomeBackgroundCanvas({
   container: HTMLDivElement;
   imageUrl: string;
 }): Promise<() => void> {
-  const image = await loadImage(imageUrl);
+  const image = await loadVisualImage(imageUrl, {
+    label: 'home background image',
+  });
 
   const getWidth = () => Math.max(container.clientWidth, 1);
   const getHeight = () => Math.max(container.clientHeight, 1);

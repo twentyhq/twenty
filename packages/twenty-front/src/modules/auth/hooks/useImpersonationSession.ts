@@ -1,13 +1,8 @@
-import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useStore } from 'jotai';
 
-import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { useClearSseClient } from '@/sse-db-event/hooks/useClearSseClient';
-import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { type AuthTokenPair } from '~/generated-metadata/graphql';
 
 const IMPERSONATION_SESSION_KEY = 'impersonation_original_session';
@@ -17,22 +12,27 @@ type StoredImpersonationSession = {
   returnPath: string;
 };
 
+// Token swaps without a full reload would require enumerating every
+// user-scoped atom, localStorage entry, and Apollo cache key — brittle and
+// silently broken every time a new piece of user state is added. Instead,
+// set the cookie-backed token pair and let the browser re-bootstrap the app.
+const reloadWithSession = (returnPath: string) => {
+  window.location.assign(returnPath);
+};
+
 export const useImpersonationSession = () => {
   const store = useStore();
-  const client = useApolloClient();
-  const navigate = useNavigate();
   const { getAuthTokensFromLoginToken, signOut } = useAuth();
-  const { clearSseClient } = useClearSseClient();
-  const { loadCurrentUser } = useLoadCurrentUser();
 
   const startImpersonating = useCallback(
     async (loginToken: string, returnPath?: string) => {
       const currentTokenPair = store.get(tokenPairState.atom);
+      const targetPath = returnPath ?? window.location.pathname;
 
       if (currentTokenPair) {
         const session: StoredImpersonationSession = {
           tokenPair: currentTokenPair,
-          returnPath: returnPath ?? window.location.pathname,
+          returnPath: targetPath,
         };
         sessionStorage.setItem(
           IMPERSONATION_SESSION_KEY,
@@ -40,30 +40,25 @@ export const useImpersonationSession = () => {
         );
       }
 
-      clearSseClient();
-      await client.clearStore();
-
-      store.set(isAppEffectRedirectEnabledState.atom, false);
       await getAuthTokensFromLoginToken(loginToken);
-      store.set(isAppEffectRedirectEnabledState.atom, true);
+      reloadWithSession(targetPath);
     },
-    [store, client, clearSseClient, getAuthTokensFromLoginToken],
+    [store, getAuthTokensFromLoginToken],
   );
 
   const stopImpersonating = useCallback(async () => {
     const raw = sessionStorage.getItem(IMPERSONATION_SESSION_KEY);
 
     if (!raw) {
-      // No stored session — likely a cross-workspace tab opened via redirect.
-      // Try closing the tab (works when opened via window.open or target=_blank).
+      // Cross-workspace tab opened via redirect — no stored admin session
+      // to restore. Close the tab; fall back to sign out if the browser
+      // blocks window.close().
       window.close();
-      // If window.close() was blocked by the browser, fall back to sign out.
       await signOut();
       return;
     }
 
     let session: StoredImpersonationSession;
-
     try {
       session = JSON.parse(raw);
     } catch {
@@ -73,19 +68,9 @@ export const useImpersonationSession = () => {
     }
 
     sessionStorage.removeItem(IMPERSONATION_SESSION_KEY);
-
-    clearSseClient();
-    await client.clearStore();
-
-    store.set(isAppEffectRedirectEnabledState.atom, false);
     store.set(tokenPairState.atom, session.tokenPair);
-
-    await loadCurrentUser();
-
-    store.set(isAppEffectRedirectEnabledState.atom, true);
-
-    navigate(session.returnPath);
-  }, [store, client, clearSseClient, loadCurrentUser, signOut, navigate]);
+    reloadWithSession(session.returnPath);
+  }, [store, signOut]);
 
   const hasStoredSession = useCallback(() => {
     return sessionStorage.getItem(IMPERSONATION_SESSION_KEY) !== null;

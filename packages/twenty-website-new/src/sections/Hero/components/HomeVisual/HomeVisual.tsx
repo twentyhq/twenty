@@ -1,7 +1,9 @@
 'use client';
 
+import { scheduleVisualMount } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import { useEffect } from 'react';
 import type { HeroVisualType } from '@/sections/Hero/types';
 import { DraggableAppWindow } from './DraggableAppWindow/DraggableAppWindow';
 import { DraggableTerminal } from './DraggableTerminal/DraggableTerminal';
@@ -9,7 +11,10 @@ import { COLORS } from './Shared/home-visual-theme';
 import { HomeVisualNavbar } from './Shell/HomeVisualNavbar';
 import { HomeVisualSidebar } from './Shell/HomeVisualSidebar';
 import { HomeVisualViewbar } from './Shell/HomeVisualViewbar';
-import { renderPageDefinition } from './Shell/home-visual-page-renderers';
+import {
+  preloadDeferredHomeVisualPages,
+  renderPageDefinition,
+} from './Shell/home-visual-page-renderers';
 import { useHomeVisualState } from './Shell/use-home-visual-state';
 import { WindowOrderProvider } from './WindowOrder/WindowOrderProvider';
 
@@ -96,6 +101,17 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     activePage !== undefined &&
     activePage.type !== 'dashboard' &&
     activePage.type !== 'workflow';
+
+  useEffect(
+    () =>
+      scheduleVisualMount(
+        () => {
+          void preloadDeferredHomeVisualPages();
+        },
+        { timeoutMs: 900 },
+      ),
+    [],
+  );
 
   return (
     <StyledHomeVisual>

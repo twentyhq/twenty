@@ -18,9 +18,19 @@ export {
 export { useWebGlPolicy } from './use-webgl-policy';
 export { WebGlErrorBoundary } from './webgl-error-boundary';
 export { WebGlMount } from './webgl-mount';
+export { loadVisualImage } from './load-visual-image';
+export {
+  createVisualMountScheduler,
+  scheduleVisualMount,
+  visualMountScheduler,
+  type ScheduleVisualMountOptions,
+  type VisualMountPriority,
+  type VisualMountScheduler,
+} from './visual-mount-scheduler';
 export {
   createSiteWebGlRenderer,
   reportSiteWebGlRendererCreationFailure,
+  SITE_WEBGL_CONTEXT_LOST_EVENT,
   tryCreateSiteWebGlRenderer,
   type SiteWebGlRendererCreationFailureHandler,
   type SiteWebGlRendererParameters,

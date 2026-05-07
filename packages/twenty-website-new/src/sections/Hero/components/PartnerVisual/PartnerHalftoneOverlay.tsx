@@ -8,6 +8,7 @@ import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
 import { observeElementSize } from '@/lib/dom/observe-element-size';
 import {
   createVisualRenderLoop,
+  loadVisualImage,
   tryCreateSiteWebGlRenderer,
   type VisualRenderLoop,
 } from '@/lib/visual-runtime';
@@ -421,17 +422,6 @@ function createRenderTarget(width: number, height: number) {
   });
 }
 
-function loadImage(imageUrl: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.decoding = 'async';
-    image.onload = () => resolve(image);
-    image.onerror = () =>
-      reject(new Error(`Failed to load hero image: ${imageUrl}`));
-    image.src = imageUrl;
-  });
-}
-
 async function mountHalftoneOverlay({
   container,
   imageUrl,
@@ -439,7 +429,9 @@ async function mountHalftoneOverlay({
   container: HTMLDivElement;
   imageUrl: string;
 }): Promise<() => void> {
-  const image = await loadImage(imageUrl);
+  const image = await loadVisualImage(imageUrl, {
+    label: 'partner hero image',
+  });
 
   const getWidth = () => Math.max(container.clientWidth, 1);
   const getHeight = () => Math.max(container.clientHeight, 1);

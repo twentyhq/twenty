@@ -5,6 +5,10 @@ import {
   PUBLIC_APP_LOCALE_LIST,
   isPublicAppLocale,
 } from '@/lib/i18n/app-locale-set';
+import { createI18nInstance } from '@/lib/i18n/create-i18n-instance';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import { localeToUrlSegment } from '@/lib/i18n/website-locale-segments';
+import type { MessageDescriptor } from '@lingui/core';
 
 import { getSiteUrl } from './site-url';
 
@@ -14,8 +18,9 @@ const TWITTER_HANDLE = '@twentycrm';
 export type BuildPageMetadataInput = {
   locale: AppLocale;
   path: string;
-  title: string;
-  description: string;
+  title: MessageDescriptor;
+  description: MessageDescriptor;
+  locales?: readonly AppLocale[];
   ogImage?: string;
   type?: 'website' | 'article';
   extend?: Metadata;
@@ -28,14 +33,18 @@ const localizePath = (locale: AppLocale, normalizedPath: string): string => {
   if (locale === SOURCE_LOCALE || !isPublicAppLocale(locale)) {
     return normalizedPath;
   }
-  return normalizedPath === '/' ? `/${locale}` : `/${locale}${normalizedPath}`;
+  const segment = localeToUrlSegment(locale);
+  return normalizedPath === '/'
+    ? `/${segment}`
+    : `/${segment}${normalizedPath}`;
 };
 
 const buildLanguageAlternates = (
   normalizedPath: string,
+  locales: readonly AppLocale[],
 ): Record<string, string> => {
   const languages: Record<string, string> = {};
-  for (const locale of PUBLIC_APP_LOCALE_LIST) {
+  for (const locale of locales) {
     languages[locale] = localizePath(locale, normalizedPath);
   }
   languages['x-default'] = localizePath(SOURCE_LOCALE, normalizedPath);
@@ -47,6 +56,7 @@ export function buildPageMetadata({
   path,
   title,
   description,
+  locales = PUBLIC_APP_LOCALE_LIST,
   ogImage,
   type = 'website',
   extend,
@@ -55,6 +65,10 @@ export function buildPageMetadata({
   const normalizedPath = normalizePath(path);
   const metadataLocale = isPublicAppLocale(locale) ? locale : SOURCE_LOCALE;
   const canonical = localizePath(metadataLocale, normalizedPath);
+  const i18n = createI18nInstance(metadataLocale);
+  const renderText = createMessageDescriptorRenderer(i18n);
+  const resolvedTitle = renderText(title);
+  const resolvedDescription = renderText(description);
 
   const ogImages =
     ogImage === undefined
@@ -68,15 +82,15 @@ export function buildPageMetadata({
         ];
 
   const baseMetadata: Metadata = {
-    title: { absolute: title },
-    description,
+    title: { absolute: resolvedTitle },
+    description: resolvedDescription,
     alternates: {
       canonical,
-      languages: buildLanguageAlternates(normalizedPath),
+      languages: buildLanguageAlternates(normalizedPath, locales),
     },
     openGraph: {
-      title,
-      description,
+      title: resolvedTitle,
+      description: resolvedDescription,
       url: canonical,
       siteName: SITE_NAME,
       locale: metadataLocale,
@@ -85,8 +99,8 @@ export function buildPageMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: resolvedTitle,
+      description: resolvedDescription,
       site: TWITTER_HANDLE,
       creator: TWITTER_HANDLE,
       ...(ogImages && { images: ogImages.map((image) => image.url) }),

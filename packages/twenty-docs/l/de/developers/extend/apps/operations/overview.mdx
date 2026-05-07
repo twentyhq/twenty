@@ -1,0 +1,29 @@
+---
+title: Übersicht
+description: Erstellen, testen und ausliefern Sie Ihre App – CLI-Befehle, Integrationstests, CI und das Veröffentlichen auf einem Server oder auf npm.
+icon: rocket
+---
+
+Die **Operationsschicht** umfasst alles, was Sie *mit* Ihrer App tun, anstatt *in* ihr: das Ausführen von CLI-Befehlen, das Starten von Integrationstests gegen einen realen Twenty-Server, das Konfigurieren von CI und das Ausliefern von Releases – entweder als Tarball, der auf einem einzelnen Server bereitgestellt wird, oder als npm-Paket, das im Marketplace gelistet ist.
+
+```text
+   develop ─▶ test ─▶ build ─▶ deploy / publish
+   ───────    ────    ─────    ─────────────────
+   yarn       yarn    yarn     yarn twenty deploy   (tarball → one server)
+   twenty     test    twenty
+   dev                build    yarn twenty publish  (npm → marketplace)
+```
+
+## In diesem Abschnitt
+
+<CardGroup cols={2}>
+  <Card title="CLI" icon="Terminal" href="/l/de/developers/extend/apps/operations/cli">
+    `yarn twenty`-Referenz – exec, logs, uninstall, remotes.
+  </Card>
+  <Card title="Tests" icon="flask" href="/l/de/developers/extend/apps/operations/testing">
+    Vitest-Setup, Integrationstests, Typprüfung, CI-Workflow.
+  </Card>
+  <Card title="Veröffentlichen" icon="hochladen" href="/l/de/developers/extend/apps/operations/publishing">
+    Build, Tarball bereitstellen, auf npm veröffentlichen, installieren.
+  </Card>
+</CardGroup>

@@ -1,10 +1,13 @@
-import { Body, Heading, LinkButton } from '@/design-system/components';
+import { Body, Heading } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
+import { LocalizedLinkButton } from '@/lib/i18n/LocalizedLinkButton';
 import { WebGlMount } from '@/lib/visual-runtime';
 import { HelpedCardShape } from '@/sections/Helped/components/HelpedCardShape';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
 import { HELPED_VISUALS } from '@/sections/Helped/visuals';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 const CardRoot = styled.article`
@@ -21,11 +24,6 @@ const CardRoot = styled.article`
   position: relative;
   row-gap: ${theme.spacing(2.5)};
   width: 100%;
-  transition:
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.6s ease;
-  transform-style: preserve-3d;
-  perspective: 1200px;
 `;
 
 const LogoRow = styled.div`
@@ -47,14 +45,6 @@ const VisualShell = styled.div`
   height: 240px;
   overflow: hidden;
   position: relative;
-  width: 100%;
-`;
-
-const VisualFallback = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  justify-content: center;
   width: 100%;
 `;
 
@@ -81,26 +71,16 @@ const CtaRow = styled.div`
 `;
 
 const LOGO_FILL = theme.colors.secondary.text[100];
-const FALLBACK_LOGO_FILL = theme.colors.secondary.text[80];
-const FALLBACK_LOGO_WIDTH = 160;
 
 type CardProps = {
   card: HeadingCardType;
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Card({ card }: CardProps) {
+export function Card({ card, renderText }: CardProps) {
   const IconComponent = CLIENT_ICONS[card.icon];
   const Visual = HELPED_VISUALS[card.illustration];
   const logoWidth = 104;
-
-  const visualFallback = IconComponent ? (
-    <VisualFallback aria-hidden="true">
-      <IconComponent
-        fillColor={FALLBACK_LOGO_FILL}
-        size={FALLBACK_LOGO_WIDTH}
-      />
-    </VisualFallback>
-  ) : null;
 
   return (
     <CardRoot>
@@ -115,25 +95,30 @@ export function Card({ card }: CardProps) {
       </LogoRow>
       <Rule aria-hidden="true" />
       <VisualShell>
-        <WebGlMount fallback={visualFallback}>
+        <WebGlMount loading="eager">
           <Visual />
         </WebGlMount>
       </VisualShell>
       <Rule aria-hidden="true" />
       <CopyBlock>
         <CardTitleWrap>
-          <Heading as="h3" segments={card.heading} size="xs" weight="medium" />
+          <Heading
+            as="h3"
+            renderText={renderText}
+            segments={card.heading}
+            size="xs"
+            weight="medium"
+          />
         </CardTitleWrap>
         <CardBodyWrap>
-          <Body as="p" body={card.body} size="sm" />
+          <Body as="p" body={card.body} renderText={renderText} size="sm" />
         </CardBodyWrap>
       </CopyBlock>
       <CtaRow>
-        <LinkButton
+        <LocalizedLinkButton
           color="primary"
           href={card.href}
-          label="Read the case"
-          type="link"
+          label={renderText(msg`Read the case`)}
           variant="outlined"
         />
       </CtaRow>

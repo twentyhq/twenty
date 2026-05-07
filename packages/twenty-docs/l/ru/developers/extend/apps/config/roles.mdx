@@ -1,0 +1,90 @@
+---
+title: Роли и разрешения
+description: Укажите, к каким объектам и полям логические функции и фронтенд‑компоненты вашего приложения могут выполнять чтение и запись.
+icon: shield-halved
+---
+
+**Роль** — это набор разрешений: какие объекты приложение может читать или изменять, какие поля оно может видеть и какие возможности платформенного уровня оно может использовать. Все логические функции и фронтенд‑компоненты каждого приложения наследуют разрешения роли, объявленной как `defaultRoleUniversalIdentifier` в [`defineApplication`](/l/ru/developers/extend/apps/config/application).
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  PermissionFlag,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+## Роль функции по умолчанию
+
+Когда вы генерируете новое приложение, CLI создаёт файл роли по умолчанию:
+
+```ts src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlags: [],
+});
+```
+
+Значение `universalIdentifier` этой роли указывается в `application-config.ts` как `defaultRoleUniversalIdentifier`:
+
+* **`*.role.ts`** определяет, что может делать роль.
+* **`application-config.ts`** указывает на эту роль, чтобы ваши функции наследовали её права.
+
+## Лучшие практики
+
+* Начните с сгенерированной роли и постепенно ограничивайте её — роль по умолчанию предоставляет широкий доступ на чтение, что редко подходит для продакшена.
+* Замените `objectPermissions` и `fieldPermissions` на точные объекты и поля, которые действительно нужны вашим функциям.
+* `permissionFlags` управляют доступом к возможностям на уровне платформы. Сведите их к минимуму.
+* См. рабочий пример: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

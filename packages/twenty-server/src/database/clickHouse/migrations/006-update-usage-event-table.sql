@@ -1,5 +1,5 @@
-CREATE TABLE
-    IF NOT EXISTS usageEvent_v2 (
+CREATE TABLE IF NOT EXISTS
+    usageEvent_v2 (
         `timestamp` DateTime64 (3) NOT NULL,
         `workspaceId` String NOT NULL,
         `periodStart` DateTime64 (3),
@@ -37,8 +37,9 @@ SELECT
 FROM
     usageEvent;
 
-RENAME TABLE usageEvent TO usageEvent_old,
-usageEvent_v2 TO usageEvent;
+RENAME TABLE usageEvent TO usageEvent_old;
+
+RENAME TABLE usageEvent_v2 TO usageEvent;
 
 DROP TABLE IF EXISTS usageEvent_old;
 
@@ -50,4 +51,3 @@ ALTER TABLE usageEvent ADD PROJECTION IF NOT EXISTS billing_by_workspace_period 
     GROUP BY
         workspaceId, periodStart
 );
-

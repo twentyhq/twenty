@@ -21,10 +21,28 @@ type GeometryCacheEntry = THREE.BufferGeometry | Promise<THREE.BufferGeometry>;
 
 export type ImportedGeometryNormalizationOptions = {
   postRotateZ?: number;
+  scaleTarget?: number;
   useLegacyNormalization?: boolean;
 };
 
 const LEGACY_IMPORTED_GEOMETRY_SCALE_TARGET = 2.75;
+const importedGeometryCache = new Map<string, GeometryCacheEntry>();
+
+function getImportedGeometryCacheKey({
+  geometryOptions,
+  loader,
+  modelUrl,
+}: {
+  geometryOptions?: ImportedGeometryNormalizationOptions;
+  loader: HalftoneModelLoader;
+  modelUrl: string;
+}) {
+  return JSON.stringify({
+    geometryOptions: geometryOptions ?? null,
+    loader,
+    modelUrl,
+  });
+}
 
 function mergeGeometries(geometries: THREE.BufferGeometry[]) {
   if (geometries.length === 1) {
@@ -128,7 +146,11 @@ function normalizeImportedGeometry(
   geometry: THREE.BufferGeometry,
   options: ImportedGeometryNormalizationOptions = {},
 ) {
-  const { postRotateZ = 0, useLegacyNormalization = false } = options;
+  const {
+    postRotateZ = 0,
+    scaleTarget,
+    useLegacyNormalization = false,
+  } = options;
 
   geometry.computeBoundingBox();
 
@@ -156,9 +178,9 @@ function normalizeImportedGeometry(
 
   const radius = geometry.boundingSphere?.radius || 1;
   const scale = useLegacyNormalization
-    ? LEGACY_IMPORTED_GEOMETRY_SCALE_TARGET /
+    ? (scaleTarget ?? LEGACY_IMPORTED_GEOMETRY_SCALE_TARGET) /
       Math.max(size.x, size.y, size.z, 0.001)
-    : 1.6 / radius;
+    : (scaleTarget ?? 1.6) / radius;
   geometry.scale(scale, scale, scale);
 
   geometry.computeBoundingBox();
@@ -309,19 +331,44 @@ export async function loadImportedGeometryFromUrl(
   label: string,
   geometryOptions?: ImportedGeometryNormalizationOptions,
 ) {
-  const response = await fetch(modelUrl);
+  const cacheKey = getImportedGeometryCacheKey({
+    geometryOptions,
+    loader,
+    modelUrl,
+  });
+  const cachedGeometry = importedGeometryCache.get(cacheKey);
 
-  if (!response.ok) {
-    throw new Error(`Unable to load ${label} from ${modelUrl}.`);
+  if (cachedGeometry) {
+    return (await cachedGeometry).clone();
   }
 
-  const buffer = await response.arrayBuffer();
+  const geometryPromise = (async () => {
+    const response = await fetch(modelUrl);
 
-  if (loader === 'fbx') {
-    return parseFbxGeometry(buffer, '', label, geometryOptions);
+    if (!response.ok) {
+      throw new Error(`Unable to load ${label} from ${modelUrl}.`);
+    }
+
+    const buffer = await response.arrayBuffer();
+
+    if (loader === 'fbx') {
+      return parseFbxGeometry(buffer, '', label, geometryOptions);
+    }
+
+    return parseGlbGeometry(buffer, '', label, geometryOptions);
+  })();
+  importedGeometryCache.set(cacheKey, geometryPromise);
+
+  try {
+    const geometry = await geometryPromise;
+
+    importedGeometryCache.set(cacheKey, geometry);
+
+    return geometry.clone();
+  } catch (error) {
+    importedGeometryCache.delete(cacheKey);
+    throw error;
   }
-
-  return parseGlbGeometry(buffer, '', label, geometryOptions);
 }
 
 function makePolarShape(

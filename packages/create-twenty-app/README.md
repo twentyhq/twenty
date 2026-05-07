@@ -1,7 +1,7 @@
 <div align="center">
   <a href="https://twenty.com">
     <picture>
-      <img alt="Twenty logo" src="https://raw.githubusercontent.com/twentyhq/twenty/2f25922f4cd5bd61e1427c57c4f8ea224e1d552c/packages/twenty-website/public/images/core/logo.svg" height="128">
+      <img alt="Twenty logo" src="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-website-new/public/images/core/logo.svg" height="128">
     </picture>
   </a>
   <h1>Create Twenty App</h1>
@@ -48,11 +48,11 @@ Examples are sourced from [twentyhq/twenty/packages/twenty-apps/examples](https:
 
 ## Documentation
 
-Full documentation is available at **[docs.twenty.com/developers/extend/apps](https://docs.twenty.com/developers/extend/apps/getting-started)**:
+Full documentation is available at **[docs.twenty.com/developers/extend/apps](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start)**:
 
-- [Getting Started](https://docs.twenty.com/developers/extend/apps/getting-started) — step-by-step setup, project structure, server management, CI
-- [Building Apps](https://docs.twenty.com/developers/extend/apps/building) — entity definitions, API clients, testing
-- [Publishing](https://docs.twenty.com/developers/extend/apps/publishing) — deploy, npm publish, marketplace
+- [Quick Start](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start) — scaffold, run a local server, sync your code
+- [Concepts](https://docs.twenty.com/developers/extend/apps/getting-started/concepts) — how apps work: entity model, sandboxing, lifecycle
+- [Operations](https://docs.twenty.com/developers/extend/apps/operations/overview) — CLI, testing, CI, deploy and publish
 
 ## Troubleshooting
 

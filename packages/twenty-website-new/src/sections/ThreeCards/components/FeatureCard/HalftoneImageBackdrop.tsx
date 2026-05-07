@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { observeElementSize } from '@/lib/dom/observe-element-size';
 import {
   createVisualRenderLoop,
+  loadVisualImage,
   tryCreateSiteWebGlRenderer,
   type VisualRenderLoop,
 } from '@/lib/visual-runtime';
@@ -188,14 +189,6 @@ function createInteractionState(): InteractionState {
   };
 }
 
-async function loadDecodedImage(imageUrl: string) {
-  const image = new Image();
-  image.crossOrigin = 'anonymous';
-  image.src = imageUrl;
-  await image.decode();
-  return image;
-}
-
 function getImagePreviewZoom(previewDistance: number) {
   return REFERENCE_PREVIEW_DISTANCE / Math.max(previewDistance, 0.001);
 }
@@ -218,7 +211,10 @@ async function mountHalftoneImageBackdrop({
   isExternallyActive: () => boolean;
   pointerTarget?: HTMLElement | null;
 }) {
-  const image = await loadDecodedImage(config.imageUrl);
+  const image = await loadVisualImage(config.imageUrl, {
+    crossOrigin: 'anonymous',
+    label: 'halftone image backdrop',
+  });
 
   let renderLoop: VisualRenderLoop | null = null;
   const renderer = tryCreateSiteWebGlRenderer({

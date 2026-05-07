@@ -4,6 +4,8 @@ import { CLIENT_ICONS } from '@/icons';
 import { LocalizedLink } from '@/lib/i18n';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { IconArrowLeft, IconClock } from '@tabler/icons-react';
 import Image from 'next/image';
@@ -228,9 +230,15 @@ type HeroProps = {
   hero: CaseStudyData['hero'];
   dashColor?: string;
   hoverDashColor?: string;
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Hero({ hero, dashColor, hoverDashColor }: HeroProps) {
+export function Hero({
+  hero,
+  dashColor,
+  hoverDashColor,
+  renderText,
+}: HeroProps) {
   const ClientIcon = CLIENT_ICONS[hero.clientIcon];
   const authorInitials = hero.author
     .split(' ')
@@ -255,7 +263,13 @@ export function Hero({ hero, dashColor, hoverDashColor }: HeroProps) {
           </MetaRow>
 
           <TitleWrap>
-            <Heading as="h1" segments={hero.title} size="lg" weight="light" />
+            <Heading
+              as="h1"
+              renderText={renderText}
+              segments={hero.title}
+              size="lg"
+              weight="light"
+            />
           </TitleWrap>
 
           <AuthorAvatar>
@@ -275,13 +289,13 @@ export function Hero({ hero, dashColor, hoverDashColor }: HeroProps) {
           <AuthorRow>
             <BackLink href="/customers">
               <IconArrowLeft size={16} stroke={1.5} />
-              Back
+              {renderText(msg`Back`)}
             </BackLink>
             <AuthorDivider aria-hidden />
             <AuthorInfo>
               <AuthorName>{hero.author}</AuthorName>
               {hero.authorRole ? (
-                <AuthorRole>{hero.authorRole}</AuthorRole>
+                <AuthorRole>{renderText(hero.authorRole)}</AuthorRole>
               ) : null}
             </AuthorInfo>
           </AuthorRow>

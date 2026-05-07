@@ -1,6 +1,7 @@
 export {
   HalftoneCanvas,
   type HalftoneImageInteractionSettings,
+  type HalftoneRenderStrategy,
   type HalftoneSnapshotFn,
 } from './halftone-canvas';
 export { HalftoneImageCanvas } from './halftone-image-canvas';

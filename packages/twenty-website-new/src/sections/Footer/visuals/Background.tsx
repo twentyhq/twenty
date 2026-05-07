@@ -1,11 +1,10 @@
 'use client';
 
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { loadImportedGeometryFromUrl } from '@/lib/halftone';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { observeElementSize } from '@/lib/dom/observe-element-size';
 import {
   createVisualRenderLoop,
@@ -13,7 +12,6 @@ import {
   type VisualRenderLoop,
   type VisualRenderLoopFrame,
 } from '@/lib/visual-runtime';
-import { DRACO_DECODER_PATH } from '@/lib/visual-runtime/draco-decoder-path';
 
 const VIRTUAL_RENDER_HEIGHT = 768;
 
@@ -287,9 +285,6 @@ const INITIAL_TARGET_ROTATION_Y = 0.4573343542024313;
 const INITIAL_TIME_ELAPSED = 287.372499999977;
 const BASE_CAMERA_DISTANCE = 4;
 
-const EMPTY_TEXTURE_DATA_URL =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO8B7Q8AAAAASUVORK5CYII=';
-
 function createEnvironmentTexture(renderer: THREE.WebGLRenderer) {
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
   const environmentTexture = pmremGenerator.fromScene(
@@ -341,121 +336,6 @@ function createRenderTarget(width: number, height: number) {
   });
 }
 
-function disposeMaterial(material: THREE.Material | THREE.Material[]) {
-  if (Array.isArray(material)) {
-    material.forEach((item) => item.dispose());
-    return;
-  }
-
-  material.dispose();
-}
-
-function disposeObjectSubtree(root: THREE.Object3D) {
-  root.traverse((sceneObject) => {
-    if (!(sceneObject instanceof THREE.Mesh)) {
-      return;
-    }
-
-    sceneObject.geometry?.dispose();
-    disposeMaterial(sceneObject.material);
-  });
-}
-
-function mergeGeometries(geometries: THREE.BufferGeometry[]) {
-  if (geometries.length === 1) {
-    return geometries[0];
-  }
-
-  let totalVertices = 0;
-  let totalIndices = 0;
-  let hasUv = false;
-
-  const geometryInfos = geometries.map((geometry) => {
-    const position = geometry.attributes.position;
-    const normal = geometry.attributes.normal;
-    const uv = geometry.attributes.uv ?? null;
-    const index = geometry.index;
-    const indexCount = index ? index.count : position.count;
-
-    totalVertices += position.count;
-    totalIndices += indexCount;
-    hasUv = hasUv || uv !== null;
-
-    return {
-      index,
-      indexCount,
-      normal,
-      position,
-      uv,
-      vertexCount: position.count,
-    };
-  });
-
-  const positions = new Float32Array(totalVertices * 3);
-  const normals = new Float32Array(totalVertices * 3);
-  const uvs = hasUv ? new Float32Array(totalVertices * 2) : null;
-  const indices = new Uint32Array(totalIndices);
-
-  let vertexOffset = 0;
-  let indexOffset = 0;
-
-  for (const geometryInfo of geometryInfos) {
-    for (
-      let vertexIndex = 0;
-      vertexIndex < geometryInfo.vertexCount;
-      vertexIndex += 1
-    ) {
-      const positionOffset = (vertexOffset + vertexIndex) * 3;
-      positions[positionOffset] = geometryInfo.position.getX(vertexIndex);
-      positions[positionOffset + 1] = geometryInfo.position.getY(vertexIndex);
-      positions[positionOffset + 2] = geometryInfo.position.getZ(vertexIndex);
-      normals[positionOffset] = geometryInfo.normal.getX(vertexIndex);
-      normals[positionOffset + 1] = geometryInfo.normal.getY(vertexIndex);
-      normals[positionOffset + 2] = geometryInfo.normal.getZ(vertexIndex);
-
-      if (uvs !== null) {
-        const uvOffset = (vertexOffset + vertexIndex) * 2;
-        uvs[uvOffset] = geometryInfo.uv?.getX(vertexIndex) ?? 0;
-        uvs[uvOffset + 1] = geometryInfo.uv?.getY(vertexIndex) ?? 0;
-      }
-    }
-
-    if (geometryInfo.index) {
-      for (
-        let localIndex = 0;
-        localIndex < geometryInfo.indexCount;
-        localIndex += 1
-      ) {
-        indices[indexOffset + localIndex] =
-          geometryInfo.index.getX(localIndex) + vertexOffset;
-      }
-    } else {
-      for (
-        let localIndex = 0;
-        localIndex < geometryInfo.indexCount;
-        localIndex += 1
-      ) {
-        indices[indexOffset + localIndex] = localIndex + vertexOffset;
-      }
-    }
-
-    vertexOffset += geometryInfo.vertexCount;
-    indexOffset += geometryInfo.indexCount;
-  }
-
-  const merged = new THREE.BufferGeometry();
-  merged.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  merged.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
-
-  if (uvs !== null) {
-    merged.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
-  }
-
-  merged.setIndex(new THREE.BufferAttribute(indices, 1));
-
-  return merged;
-}
-
 function setPrimaryLightPosition(
   light: THREE.DirectionalLight,
   angleDegrees: number,
@@ -467,120 +347,6 @@ function setPrimaryLightPosition(
     height,
     Math.sin(lightAngle) * 5,
   );
-}
-
-function createLoadingManager() {
-  const loadingManager = new THREE.LoadingManager();
-  loadingManager.setURLModifier((url) =>
-    /\.(png|jpe?g|webp|gif|bmp)$/i.test(url) ? EMPTY_TEXTURE_DATA_URL : url,
-  );
-
-  return loadingManager;
-}
-
-function normalizeImportedGeometry(geometry: THREE.BufferGeometry) {
-  geometry.computeBoundingBox();
-
-  let boundingBox = geometry.boundingBox;
-  let center = new THREE.Vector3();
-  let size = new THREE.Vector3();
-
-  boundingBox?.getCenter(center);
-  boundingBox?.getSize(size);
-  geometry.translate(-center.x, -center.y, -center.z);
-
-  const dimensions = [size.x, size.y, size.z];
-  const thinnestAxis = dimensions.indexOf(Math.min(...dimensions));
-
-  if (thinnestAxis === 0) {
-    geometry.applyMatrix4(new THREE.Matrix4().makeRotationY(Math.PI / 2));
-  } else if (thinnestAxis === 1) {
-    geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(Math.PI / 2));
-  }
-
-  geometry.computeBoundingBox();
-  geometry.computeBoundingSphere();
-
-  const radius = geometry.boundingSphere?.radius || 1;
-  const scale = 2 / radius;
-  geometry.scale(scale, scale, scale);
-
-  geometry.computeBoundingBox();
-  boundingBox = geometry.boundingBox;
-  center = new THREE.Vector3();
-  boundingBox?.getCenter(center);
-  geometry.translate(-center.x, -center.y, -center.z);
-
-  geometry.computeVertexNormals();
-  geometry.computeBoundingBox();
-  geometry.computeBoundingSphere();
-
-  return geometry;
-}
-
-function extractMergedGeometry(root: THREE.Object3D, emptyMessage: string) {
-  root.updateMatrixWorld(true);
-
-  const geometries: THREE.BufferGeometry[] = [];
-
-  root.traverse((object) => {
-    if (!(object instanceof THREE.Mesh) || !object.geometry) {
-      return;
-    }
-
-    const geometry = object.geometry.clone();
-
-    if (!geometry.attributes.normal) {
-      geometry.computeVertexNormals();
-    }
-
-    geometry.applyMatrix4(object.matrixWorld);
-    geometries.push(geometry);
-  });
-
-  if (geometries.length === 0) {
-    throw new Error(emptyMessage);
-  }
-
-  return normalizeImportedGeometry(mergeGeometries(geometries));
-}
-
-async function loadFooterGeometry(modelUrl: string) {
-  const response = await fetch(modelUrl);
-
-  if (!response.ok) {
-    throw new Error(`Unable to load footer model from ${modelUrl}.`);
-  }
-
-  const buffer = await response.arrayBuffer();
-
-  const dracoLoader = new DRACOLoader();
-  dracoLoader.setDecoderPath(DRACO_DECODER_PATH);
-
-  const gltfLoader = new GLTFLoader(createLoadingManager());
-  gltfLoader.setDRACOLoader(dracoLoader);
-
-  return await new Promise<THREE.BufferGeometry>((resolve, reject) => {
-    gltfLoader.parse(
-      buffer,
-      '',
-      (gltf) => {
-        try {
-          resolve(
-            extractMergedGeometry(
-              gltf.scene,
-              'Footer model did not contain any mesh geometry.',
-            ),
-          );
-        } catch (error) {
-          reject(error);
-        } finally {
-          disposeObjectSubtree(gltf.scene);
-        }
-      },
-      reject,
-    );
-  });
 }
 
 function createFooterMaterial(environmentTexture: THREE.Texture) {
@@ -892,7 +658,9 @@ export function FooterBackground() {
     window.addEventListener('pointermove', handleWindowPointerMove);
     window.addEventListener('blur', handleWindowBlur);
 
-    loadFooterGeometry(GLB_URL)
+    loadImportedGeometryFromUrl('glb', GLB_URL, 'Footer model', {
+      scaleTarget: 2,
+    })
       .then((geometry) => {
         if (cancelled) {
           geometry.dispose();
