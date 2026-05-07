@@ -131,7 +131,10 @@ export class GlobalWorkspaceDataSource extends DataSource {
         queryRunner,
       );
 
-      Object.assign(queryRunner, { manager: manager });
+      Object.assign(queryRunner, {
+        manager: manager,
+        connection: this.dataSourceWithOverridenCreateQueryBuilder,
+      });
 
       return queryRunner;
     }
@@ -167,7 +170,10 @@ export class GlobalWorkspaceDataSource extends DataSource {
       queryRunner,
     );
 
-    Object.assign(queryRunner, { manager: manager });
+    Object.assign(queryRunner, {
+      manager: manager,
+      connection: dataSourceWithOverridenCreateQueryBuilder,
+    });
 
     return queryRunner;
   }
