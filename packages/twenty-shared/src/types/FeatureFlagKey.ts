@@ -13,4 +13,5 @@ export enum FeatureFlagKey {
   // @deprecated - Migration is complete. Kept for backward compatibility
   // until all workspaces have the flag and the flag can be removed entirely.
   IS_DATASOURCE_MIGRATED = 'IS_DATASOURCE_MIGRATED',
+  IS_BILLING_V2_ENABLED = 'IS_BILLING_V2_ENABLED',
 }

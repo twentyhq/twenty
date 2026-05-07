@@ -1484,6 +1484,7 @@ enum BillingUsageType {
 """The different billing products available"""
 enum BillingProductKey {
   BASE_PRODUCT
+  RESOURCE_CREDIT
   WORKFLOW_NODE_EXECUTION
 }
 
@@ -1492,6 +1493,7 @@ type BillingPriceLicensed {
   unitAmount: Float!
   stripePriceId: String!
   priceUsageType: BillingUsageType!
+  creditAmount: Float
 }
 
 enum SubscriptionInterval {
@@ -1590,7 +1592,8 @@ type BillingMeteredProductUsage {
 
 type BillingPlan {
   planKey: BillingPlanKey!
-  licensedProducts: [BillingLicensedProduct!]!
+  baseProducts: [BillingLicensedProduct!]!
+  resourceCreditProducts: [BillingLicensedProduct!]!
   meteredProducts: [BillingMeteredProduct!]!
 }
 
@@ -1754,6 +1757,7 @@ enum FeatureFlagKey {
   IS_RICH_TEXT_V1_MIGRATED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
   IS_DATASOURCE_MIGRATED
+  IS_BILLING_V2_ENABLED
 }
 
 type WorkspaceUrls {

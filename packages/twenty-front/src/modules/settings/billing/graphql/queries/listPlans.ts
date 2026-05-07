@@ -6,7 +6,22 @@ export const LIST_PLANS = gql`
   query listPlans {
     listPlans {
       planKey
-      licensedProducts {
+      baseProducts {
+        name
+        description
+        images
+        metadata {
+          productKey
+          planKey
+          priceUsageBased
+        }
+        ... on BillingLicensedProduct {
+          prices {
+            ...BillingPriceLicensedFragment
+          }
+        }
+      }
+      resourceCreditProducts {
         name
         description
         images

@@ -1,12 +1,8 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
-import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
-import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
-import {
-  type BillingPriceTiers,
-  type MeteredBillingPrice,
-} from '@/settings/billing/types/billing-price-tiers.type';
+import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
+import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -16,13 +12,14 @@ import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   SetMeteredSubscriptionPriceDocument,
   SubscriptionInterval,
+  type BillingPriceLicensed,
 } from '~/generated-metadata/graphql';
 
 const StyledRow = styled.div`
@@ -40,76 +37,75 @@ const StyledButtonContainer = styled.div`
   flex: 0 0 auto;
 `;
 
-export const MeteredPriceSelector = ({
-  meteredBillingPrices,
+export const ResourceCreditPriceSelector = ({
+  resourceCreditPrices,
   isTrialing = false,
 }: {
-  meteredBillingPrices: Array<MeteredBillingPrice>;
+  resourceCreditPrices: BillingPriceLicensed[];
   isTrialing?: boolean;
 }) => {
-  const { currentMeteredBillingPrice } = useCurrentMetered();
+  const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
   const { formatNumber } = useNumberFormat();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
 
-  const { refetchMeteredProductsUsage } = useGetWorkflowNodeExecutionUsage();
+  const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
 
   const { getIntervalLabel } = useBillingWording();
 
-  const [currentMeteredPrice, setCurrentMeteredPrice] = useState(
-    currentMeteredBillingPrice,
+  const [currentResourceCreditPrice, setCurrentResourceCreditPrice] = useState(
+    currentResourceCreditBillingPrice,
   );
+
+  const toOption = (price: BillingPriceLicensed) => {
+    const priceDisplay = formatNumber((price.unitAmount ?? 0) / 100);
+    const credits = formatNumber(price.creditAmount ?? 0, {
+      abbreviate: true,
+      decimals: 2,
+    });
+
+    return {
+      label: t`${credits} Credits - $${priceDisplay}`,
+      value: price.stripePriceId,
+    };
+  };
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const [setMeteredSubscriptionPrice, { loading: isUpdating }] = useMutation(
+  const [setResourceCreditPrice, { loading: isUpdating }] = useMutation(
     SetMeteredSubscriptionPriceDocument,
   );
+
+  const options = [...resourceCreditPrices]
+    .sort((a, b) => (a.creditAmount ?? 0) - (b.creditAmount ?? 0))
+    .map(toOption);
 
   const { openModal } = useModal();
   const [selectedPriceId, setSelectedPriceId] = useState<string | undefined>(
     undefined,
   );
 
-  if (!currentMeteredPrice) return null;
-
-  const toOption = (meteredBillingPrice: MeteredBillingPrice) => {
-    const price = formatNumber(meteredBillingPrice.tiers[0].flatAmount / 100);
-    const credits = formatNumber(meteredBillingPrice.tiers[0].upTo, {
-      abbreviate: true,
-      decimals: 2,
-    });
-
-    return {
-      label: t`${credits} Credits - $${price}`,
-      value: meteredBillingPrice.stripePriceId,
-    };
-  };
-
-  const options = [...meteredBillingPrices]
-    .sort((a, b) => a.tiers[0].flatAmount - b.tiers[0].flatAmount)
-    .map(toOption);
-
-  const selectedPrice = meteredBillingPrices.find(
+  const selectedPrice = resourceCreditPrices.find(
     ({ stripePriceId }) => stripePriceId === selectedPriceId,
   );
 
   const isChanged =
     isDefined(selectedPriceId) &&
-    selectedPriceId !== currentMeteredPrice?.stripePriceId;
+    selectedPriceId !== currentResourceCreditPrice?.stripePriceId;
 
   const isUpgrade = () => {
     if (
       !isChanged ||
       !isDefined(selectedPrice) ||
-      !isDefined(currentMeteredPrice)
+      !isDefined(currentResourceCreditPrice)
     )
       return false;
+
     return (
-      (selectedPrice.tiers as BillingPriceTiers)[0].flatAmount >
-      (currentMeteredPrice.tiers as BillingPriceTiers)[0].flatAmount
+      (selectedPrice.creditAmount ?? 0) >
+      (currentResourceCreditPrice.creditAmount ?? 0)
     );
   };
 
@@ -117,7 +113,7 @@ export const MeteredPriceSelector = ({
     setSelectedPriceId(priceId);
   };
 
-  const confirmModalId = 'METERED_PRICE_CHANGE_CONFIRMATION_MODAL';
+  const confirmModalId = 'RESOURCE_CREDIT_PRICE_CHANGE_CONFIRMATION_MODAL';
 
   const handleOpenConfirm = () => {
     if (!isChanged || !selectedPrice) return;
@@ -125,13 +121,14 @@ export const MeteredPriceSelector = ({
   };
 
   const recurringInterval = getIntervalLabel(
-    currentMeteredPrice?.recurringInterval === SubscriptionInterval.Month,
+    currentResourceCreditPrice?.recurringInterval ===
+      SubscriptionInterval.Month,
   );
 
   const handleConfirmClick = async () => {
     if (!selectedPrice) return;
     try {
-      const { data } = await setMeteredSubscriptionPrice({
+      const { data } = await setResourceCreditPrice({
         variables: { priceId: selectedPrice.stripePriceId },
       });
       if (
@@ -148,33 +145,35 @@ export const MeteredPriceSelector = ({
             data?.setMeteredSubscriptionPrice.billingSubscriptions,
         };
         setCurrentWorkspace(newCurrentWorkspace);
-        refetchMeteredProductsUsage();
+        refetchResourceCreditUsage();
       }
-      enqueueSuccessSnackBar({ message: t`Price updated.` });
-      setCurrentMeteredPrice(
-        findOrThrow(
-          meteredBillingPrices,
-          ({ stripePriceId }) => stripePriceId === selectedPrice.stripePriceId,
-        ),
+      enqueueSuccessSnackBar({ message: t`Resource credits updated.` });
+      const newPrice = resourceCreditPrices.find(
+        ({ stripePriceId }) => stripePriceId === selectedPrice.stripePriceId,
       );
+      if (isDefined(newPrice)) {
+        setCurrentResourceCreditPrice(newPrice);
+      }
       setSelectedPriceId(undefined);
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to update price.` });
+      enqueueErrorSnackBar({ message: t`Failed to update resource credits.` });
     }
   };
 
   return (
     <>
       <H2Title
-        title={t`Credit Plan`}
+        title={t`Resource credits`}
         description={t`Number of new credits allocated every ${recurringInterval}`}
       />
       <StyledRow>
         <StyledSelectContainer>
           <Select
-            dropdownId="settings_billing-metered-price"
+            dropdownId="settings_billing-resource-credit-price"
             options={options}
-            value={selectedPriceId ?? currentMeteredPrice.stripePriceId}
+            value={
+              selectedPriceId ?? currentResourceCreditPrice?.stripePriceId ?? ''
+            }
             onChange={handleChange}
             disabled={isUpdating || isTrialing}
             description={
@@ -199,7 +198,7 @@ export const MeteredPriceSelector = ({
       <ConfirmationModal
         modalInstanceId={confirmModalId}
         title={isUpgrade() ? t`Confirm upgrade` : t`Confirm downgrade`}
-        subtitle={t`Confirm changing your current credit plan.`}
+        subtitle={t`Confirm changing your current resource credit allocation.`}
         confirmButtonText={isUpgrade() ? t`Upgrade` : t`Downgrade`}
         confirmButtonAccent={isUpgrade() ? 'blue' : 'danger'}
         loading={isUpdating}
