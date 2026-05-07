@@ -13,6 +13,8 @@ import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-h
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { FieldMetadataException } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { fieldMetadataExceptionCodeToHttpStatus } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-exception-code-to-http-status.util';
+import { FlatEntityMapsException } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { flatEntityMapsExceptionCodeToHttpStatus } from 'src/engine/metadata-modules/flat-entity/utils/flat-entity-maps-exception-code-to-http-status.util';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { workspaceMigrationBuilderRestApiExceptionHandler } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/workspace-migration-builder-rest-api-exception-handler.util';
@@ -22,7 +24,8 @@ type CaughtException =
   | FieldMetadataException
   | InvalidMetadataException
   | WorkspaceMigrationBuilderException
-  | RestInputRequestParserException;
+  | RestInputRequestParserException
+  | FlatEntityMapsException;
 
 @Injectable()
 @Catch(
@@ -30,6 +33,7 @@ type CaughtException =
   InvalidMetadataException,
   WorkspaceMigrationBuilderException,
   RestInputRequestParserException,
+  FlatEntityMapsException,
 )
 export class FieldMetadataRestApiExceptionFilter implements ExceptionFilter {
   constructor(
@@ -59,10 +63,26 @@ export class FieldMetadataRestApiExceptionFilter implements ExceptionFilter {
       );
     }
 
+    if (exception instanceof FlatEntityMapsException) {
+      return this.httpExceptionHandlerService.handleError(
+        exception as CustomException,
+        response,
+        flatEntityMapsExceptionCodeToHttpStatus(exception.code),
+      );
+    }
+
+    if (exception instanceof FieldMetadataException) {
+      return this.httpExceptionHandlerService.handleError(
+        exception as CustomException,
+        response,
+        fieldMetadataExceptionCodeToHttpStatus(exception.code),
+      );
+    }
+
     return this.httpExceptionHandlerService.handleError(
-      exception as CustomException,
+      exception,
       response,
-      fieldMetadataExceptionCodeToHttpStatus(exception.code),
+      500,
     );
   }
 }

@@ -11,6 +11,8 @@ import {
   Req,
   UseFilters,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -53,6 +55,7 @@ import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata
   SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
 )
 @UseFilters(ObjectMetadataRestApiExceptionFilter)
+@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 export class ObjectMetadataRestApiController {
   constructor(
     @InjectRepository(ObjectMetadataEntity)
@@ -73,7 +76,7 @@ export class ObjectMetadataRestApiController {
   }> {
     const { items, pageInfo, totalCount } = await paginateByIdCursor({
       repository: this.objectMetadataRepository,
-      where: { workspaceId },
+      workspaceId,
       limit: parseLimitRestRequest(request),
       startingAfter: parseStartingAfterRestRequest(request),
       endingBefore: parseEndingBeforeRestRequest(request),
@@ -102,7 +105,7 @@ export class ObjectMetadataRestApiController {
 
     if (!object) {
       throw new ObjectMetadataException(
-        `Object metadata with id ${id} not found`,
+        'Object metadata not found',
         ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }

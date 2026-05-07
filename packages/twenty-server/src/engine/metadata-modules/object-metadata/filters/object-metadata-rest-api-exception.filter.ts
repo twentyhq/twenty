@@ -11,6 +11,8 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { RestInputRequestParserException } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { FlatEntityMapsException } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { flatEntityMapsExceptionCodeToHttpStatus } from 'src/engine/metadata-modules/flat-entity/utils/flat-entity-maps-exception-code-to-http-status.util';
 import { ObjectMetadataException } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { objectMetadataExceptionCodeToHttpStatus } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-exception-code-to-http-status.util';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
@@ -22,7 +24,8 @@ type CaughtException =
   | ObjectMetadataException
   | InvalidMetadataException
   | WorkspaceMigrationBuilderException
-  | RestInputRequestParserException;
+  | RestInputRequestParserException
+  | FlatEntityMapsException;
 
 @Injectable()
 @Catch(
@@ -30,6 +33,7 @@ type CaughtException =
   InvalidMetadataException,
   WorkspaceMigrationBuilderException,
   RestInputRequestParserException,
+  FlatEntityMapsException,
 )
 export class ObjectMetadataRestApiExceptionFilter implements ExceptionFilter {
   constructor(
@@ -59,10 +63,26 @@ export class ObjectMetadataRestApiExceptionFilter implements ExceptionFilter {
       );
     }
 
+    if (exception instanceof FlatEntityMapsException) {
+      return this.httpExceptionHandlerService.handleError(
+        exception as CustomException,
+        response,
+        flatEntityMapsExceptionCodeToHttpStatus(exception.code),
+      );
+    }
+
+    if (exception instanceof ObjectMetadataException) {
+      return this.httpExceptionHandlerService.handleError(
+        exception as CustomException,
+        response,
+        objectMetadataExceptionCodeToHttpStatus(exception.code),
+      );
+    }
+
     return this.httpExceptionHandlerService.handleError(
-      exception as CustomException,
+      exception,
       response,
-      objectMetadataExceptionCodeToHttpStatus(exception.code),
+      500,
     );
   }
 }

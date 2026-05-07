@@ -11,6 +11,8 @@ import {
   Req,
   UseFilters,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -50,6 +52,7 @@ import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-mod
   SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
 )
 @UseFilters(FieldMetadataRestApiExceptionFilter)
+@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 export class FieldMetadataRestApiController {
   constructor(
     @InjectRepository(FieldMetadataEntity)
@@ -68,7 +71,7 @@ export class FieldMetadataRestApiController {
   }> {
     const { items, pageInfo, totalCount } = await paginateByIdCursor({
       repository: this.fieldMetadataRepository,
-      where: { workspaceId },
+      workspaceId,
       limit: parseLimitRestRequest(request),
       startingAfter: parseStartingAfterRestRequest(request),
       endingBefore: parseEndingBeforeRestRequest(request),
@@ -92,7 +95,7 @@ export class FieldMetadataRestApiController {
 
     if (!field) {
       throw new FieldMetadataException(
-        `Field metadata with id ${id} not found`,
+        'Field metadata not found',
         FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
       );
     }

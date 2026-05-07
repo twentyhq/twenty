@@ -15,14 +15,18 @@ export type RestCursorPageInfo = {
   endCursor: string | null;
 };
 
-export const paginateByIdCursor = async <T extends { id: string }>({
+export const paginateByIdCursor = async <
+  T extends { id: string; workspaceId: string },
+>({
   repository,
+  workspaceId,
   where,
   limit,
   startingAfter,
   endingBefore,
 }: {
   repository: Repository<T>;
+  workspaceId: string;
   where?: FindOptionsWhere<T>;
   limit: number;
   startingAfter?: string;
@@ -46,15 +50,15 @@ export const paginateByIdCursor = async <T extends { id: string }>({
       ? { id: LessThan(startingAfter) }
       : {};
 
-  const findOptions = {
-    where: { ...where, ...idCondition },
-    order: { id: isBackward ? 'ASC' : 'DESC' },
-    take: limit + 1,
-  } as FindManyOptions<T>;
+  const baseWhere = { ...where, workspaceId } as FindOptionsWhere<T>;
 
   const [rows, totalCount] = await Promise.all([
-    repository.find(findOptions),
-    repository.count({ where }),
+    repository.find({
+      where: { ...baseWhere, ...idCondition },
+      order: { id: isBackward ? 'ASC' : 'DESC' },
+      take: limit + 1,
+    } as FindManyOptions<T>),
+    repository.count({ where: baseWhere }),
   ]);
 
   const hasMore = rows.length > limit;
