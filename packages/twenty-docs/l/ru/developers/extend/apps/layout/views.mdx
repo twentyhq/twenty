@@ -1,0 +1,43 @@
+---
+title: Views
+description: Ship pre-configured saved views — column order, filters, groups — for objects in your app.
+icon: list
+---
+
+A **view** is a saved configuration for how records of an object are displayed: which fields appear, their order, whether they're visible, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app — typically a default index view for each custom object you create.
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## Key points
+
+* `objectUniversalIdentifier` specifies which object this view applies to. It can be a custom object you defined or a standard Twenty object.
+* `key` determines the view type — `ViewKey.INDEX` is the main list view for the object.
+* `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`.
+* You can also declare `filters`, `filterGroups`, `groups`, and `fieldGroups` for advanced configurations.
+* `position` controls ordering when multiple views exist for the same object.
+
+## How views show up in the UI
+
+A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/l/ru/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object typically ships a default view + a sidebar entry that opens it.

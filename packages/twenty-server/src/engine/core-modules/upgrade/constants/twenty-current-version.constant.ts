@@ -7,4 +7,4 @@
  *                              |___/
  */
 
-export const TWENTY_CURRENT_VERSION = '2.3.0' as const;
+export const TWENTY_CURRENT_VERSION = '2.4.0' as const;

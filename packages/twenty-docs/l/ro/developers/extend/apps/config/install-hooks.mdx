@@ -1,0 +1,206 @@
+---
+title: Install Hooks
+description: Run logic before or after the install — seed data, back up records, validate the upgrade.
+icon: wrench
+---
+
+Install hooks are special logic functions that run during the install or upgrade lifecycle. They share the same handler runtime as regular [logic functions](/l/ro/developers/extend/apps/logic/logic-functions) and receive an `InstallPayload`, but they're declared with their own define functions — `definePostInstallLogicFunction()` and `definePreInstallLogicFunction()` — and live outside the normal trigger model (HTTP, cron, database events).
+
+Each app may define **at most one pre-install** and **at most one post-install** function. The manifest build will error if more than one of either is detected.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+<AccordionGroup>
+<Accordion title="definePostInstallLogicFunction" description="Runs after the workspace metadata migration is applied">
+
+A post-install function runs automatically once your app has finished installing on a workspace. Serverul o execută **după** ce metadatele aplicației au fost sincronizate și clientul SDK a fost generat, astfel încât spațiul de lucru este complet pregătit pentru utilizare, iar noua schemă este disponibilă. Cazuri tipice de utilizare includ popularea cu date implicite, crearea de înregistrări inițiale, configurarea setărilor spațiului de lucru sau provizionarea resurselor în cadrul serviciilor terților.
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
+  handler,
+});
+```
+
+Puteți, de asemenea, să executați manual funcția post-instalare oricând folosind CLI:
+
+```bash filename="Terminal"
+yarn twenty exec --postInstall
+```
+
+Puncte cheie:
+* Funcțiile de post-instalare folosesc `definePostInstallLogicFunction()` — o variantă specializată care omite setările de declanșare (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`).
+* Handlerul primește un `InstallPayload` cu `{ previousVersion?: string; newVersion: string }` — `newVersion` este versiunea care este instalată, iar `previousVersion` este versiunea instalată anterior (sau `undefined` la o instalare nouă). Folosiți aceste valori pentru a distinge instalările noi de actualizări și pentru a rula logică de migrare specifică versiunii.
+* **Când rulează hook-ul**: doar la instalări noi, în mod implicit. Transmiteți `shouldRunOnVersionUpgrade: true` dacă doriți să ruleze și atunci când aplicația este actualizată de la o versiune anterioară. Când este omis, indicatorul are implicit valoarea `false`, iar actualizările sar peste hook.
+* **Model de execuție — implicit asincron, sincron opțional**: indicatorul `shouldRunSynchronously` controlează *modul în care* este executat post-install.
+  * `shouldRunSynchronously: false` *(implicit)* — hook-ul este **pus în coadă în message queue** cu `retryLimit: 3` și rulează asincron într-un worker. Răspunsul la instalare revine imediat ce jobul este pus în coadă, astfel încât un handler lent sau care eșuează nu blochează apelantul. Workerul va reîncerca de până la trei ori. **Folosiți acest mod pentru joburi de lungă durată** — popularea unor seturi mari de date, apelarea API-urilor lente ale terților, provizionarea resurselor externe, orice ar putea depăși o fereastră rezonabilă de răspuns HTTP.
+  * `shouldRunSynchronously: true` — hook-ul este executat **inline în timpul fluxului de instalare** (același executor ca pre-install). Cererea de instalare blochează până când handlerul se termină, iar dacă acesta aruncă o eroare, apelantul instalării primește un `POST_INSTALL_ERROR`. Fără reîncercări automate. **Folosiți acest mod pentru sarcini rapide, care trebuie să se finalizeze înainte de răspuns** — de exemplu, emiterea unei erori de validare către utilizator sau o configurare rapidă de care clientul va depinde imediat după ce apelul de instalare revine. Reține că migrarea metadatelor a fost deja aplicată până când rulează post-install, astfel încât un eșec în modul sincron **nu** anulează modificările de schemă — doar expune eroarea.
+* Asigurați-vă că handlerul dvs. este idempotent. În modul asincron, coada poate reîncerca de până la trei ori; în oricare mod, hook-ul poate rula din nou la actualizări când `shouldRunOnVersionUpgrade: true`.
+* Variabilele de mediu `APPLICATION_ID`, `APP_ACCESS_TOKEN` și `API_URL` sunt disponibile în interiorul handlerului (la fel ca în orice altă funcție logică), astfel încât puteți apela API-ul Twenty cu un token de acces al aplicației limitat la aplicația dvs.
+* Este permisă o singură funcție de post-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
+* The function's `universalIdentifier`, `shouldRunOnVersionUpgrade`, and `shouldRunSynchronously` are automatically attached to the application manifest under the `postInstallLogicFunction` field during the build — you do not need to reference them in [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
+* Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
+* **Nu se execută în modul dev**: când o aplicație este înregistrată local (prin `yarn twenty dev`), serverul sare complet peste fluxul de instalare și sincronizează fișierele direct prin watcher-ul CLI — astfel încât post-install nu rulează niciodată în modul dev, indiferent de `shouldRunSynchronously`. Folosiți `yarn twenty exec --postInstall` pentru a-l declanșa manual într-un workspace care rulează.
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="Runs before the workspace metadata migration is applied">
+
+A pre-install function runs automatically during installation, **before the workspace metadata migration is applied**. Are aceeași structură a payload-ului ca post-install (`InstallPayload`), dar este plasată mai devreme în fluxul de instalare, astfel încât poate pregăti starea de care depinde migrarea iminentă — utilizări tipice includ realizarea unui backup al datelor, validarea compatibilității cu noua schemă sau arhivarea înregistrărilor care urmează să fie restructurate sau eliminate.
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+Puteți, de asemenea, să executați manual funcția de pre-instalare oricând folosind CLI:
+
+```bash filename="Terminal"
+yarn twenty exec --preInstall
+```
+
+Puncte cheie:
+* Funcțiile de pre-instalare folosesc `definePreInstallLogicFunction()` — aceeași configurare specializată ca pentru post-install, doar că atașată la un alt punct din ciclul de viață.
+* Atât handlerele de pre-install, cât și cele de post-install primesc același tip `InstallPayload`: `{ previousVersion?: string; newVersion: string }`. Importați-l o singură dată și reutilizați-l pentru ambele hook-uri.
+* **Când rulează hook-ul**: poziționat chiar înainte de migrarea metadatelor workspace-ului (`synchronizeFromManifest`). Înainte de execuție, serverul rulează un "sync redus", pur aditiv, care înregistrează funcția de pre-instalare a versiunii **noi** în metadatele workspace-ului — nimic altceva nu este atins — și apoi o execută. Deoarece acest sync este doar aditiv, obiectele, câmpurile și datele versiunii precedente sunt încă intacte când rulează handlerul dvs.: puteți citi și face backup în siguranță stării pre-migrare.
+* **Model de execuție**: pre-install este executat **sincron** și **blochează instalarea**. Dacă handlerul aruncă o eroare, instalarea este întreruptă înainte ca orice modificări de schemă să fie aplicate — workspace-ul rămâne la versiunea anterioară într-o stare consistentă. Acest lucru este intenționat: pre-install este ultima dvs. șansă de a refuza o actualizare riscantă.
+* La fel ca la post-install, este permisă o singură funcție de pre-instalare per aplicație. Este atașată automat la manifestul aplicației sub `preInstallLogicFunction` în timpul build-ului.
+* **Nu se execută în modul dev**: la fel ca post-install — fluxul de instalare este sărit complet pentru aplicațiile înregistrate local, astfel încât pre-install nu rulează niciodată sub `yarn twenty dev`. Folosiți `yarn twenty exec --preInstall` pentru a-l declanșa manual.
+
+</Accordion>
+<Accordion title="Pre-install vs post-install: când să folosești fiecare" description="Alegerea hook-ului de instalare potrivit">
+
+Ambele hook-uri fac parte din același flux de instalare și primesc același `InstallPayload`. Diferența constă în **momentul** în care rulează în raport cu migrarea metadatelor workspace-ului, iar asta schimbă ce date pot atinge în siguranță.
+
+Pre-install este întotdeauna **sincron** (blochează instalarea și o poate întrerupe). Post-install este **implicit asincron** — pus în coadă pe un worker cu reîncercări automate — dar poate opta pentru execuție sincronă cu `shouldRunSynchronously: true`. Consultați acordeonul `definePostInstallLogicFunction` de mai sus pentru când să folosiți fiecare mod.
+
+**Folosiți `post-install` pentru orice are nevoie ca noua schemă să existe.** Acesta este cazul obișnuit:
+
+* Popularea datelor implicite (crearea înregistrărilor inițiale, a vizualizărilor implicite, a conținutului demo) pentru obiectele și câmpurile adăugate recent.
+* Înregistrarea webhook-urilor la servicii terțe, acum că aplicația are acreditările sale.
+* Apelarea propriului tău API pentru a finaliza configurarea care depinde de metadatele sincronizate.
+* Logică idempotentă de tipul "asigurați-vă că acest lucru există" care ar trebui să reconcilieze starea la fiecare actualizare — combină cu `shouldRunOnVersionUpgrade: true`.
+
+Exemplu — populează o înregistrare `PostCard` implicită după instalare:
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = createClient();
+  await client.postCard.create({
+    data: { title: 'Welcome to Postcard', content: 'Your first card!' },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  handler,
+});
+```
+
+**Folosiți `pre-install` atunci când o migrare altfel ar distruge sau ar corupe datele existente.** Deoarece pre-install rulează pe schema *anterioară* și eșecul său anulează actualizarea, acesta este locul potrivit pentru orice este riscant:
+
+* **Crearea unui backup al datelor care urmează să fie eliminate sau restructurate** — de exemplu, elimini un câmp în v2 și trebuie să-i copiezi valorile într-un alt câmp sau să le exporți în stocare înainte de rularea migrării.
+* **Arhivarea înregistrărilor pe care o nouă constrângere le-ar invalida** — de exemplu, un câmp devine `NOT NULL` și trebuie mai întâi să ștergi sau să corectezi rândurile cu valori nule.
+* **Validarea compatibilității și refuzarea actualizării dacă datele curente nu pot fi migrate fără probleme** — aruncă din handler și instalarea se oprește fără ca modificări să fie aplicate. Aceasta este mai sigur decât să descoperi incompatibilitatea în mijlocul migrării.
+* **Redenumirea sau schimbarea cheilor datelor** înaintea unei modificări de schemă care ar pierde asocierile.
+
+Exemplu — arhivează înregistrări înainte de o migrare distructivă:
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = createClient();
+  const legacyRecords = await client.postCard.findMany({
+    where: { notes: { isNotNull: true } },
+  });
+
+  if (legacyRecords.length === 0) return;
+
+  // Copy legacy `notes` into the new `description` field before the migration
+  // drops the `notes` column. If this fails, the upgrade is aborted and the
+  // workspace stays on v1 with all data intact.
+  await Promise.all(
+    legacyRecords.map((record) =>
+      client.postCard.update({
+        where: { id: record.id },
+        data: { description: record.notes },
+      }),
+    ),
+  );
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+**Regulă practică:**
+
+| Vrei să...                                                                                             | Folosiți                                                                                   |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| Populați date implicite, configurați workspace-ul, înregistrați resurse externe                        | `post-install`                                                                             |
+| Rulați populări de durată sau apeluri către terți care nu ar trebui să blocheze răspunsul la instalare | `post-install` (implicit — `shouldRunSynchronously: false`, cu reîncercări ale workerului) |
+| Rulați o configurare rapidă de care apelantul va depinde imediat după ce apelul de instalare revine    | `post-install` cu `shouldRunSynchronously: true`                                           |
+| Citești sau faci backup datelor pe care migrarea iminentă le-ar pierde                                 | `pre-install`                                                                              |
+| Respingeți o actualizare care ar corupe datele existente                                               | `pre-install` (aruncă din handler)                                                         |
+| Rulați o reconciliere la fiecare actualizare                                                           | `post-install` cu `shouldRunOnVersionUpgrade: true`                                        |
+| Faceți o configurare unică doar la prima instalare                                                     | `post-install` cu `shouldRunOnVersionUpgrade: false` (implicit)                            |
+
+<Note>
+Dacă aveți dubii, alegeți implicit **post-install**. Apelați la pre-install doar când migrarea în sine este distructivă și trebuie să interceptați starea anterioară înainte să dispară.
+</Note>
+
+</Accordion>
+</AccordionGroup>

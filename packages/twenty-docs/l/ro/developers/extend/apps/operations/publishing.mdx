@@ -1,0 +1,295 @@
+---
+title: Publicare
+icon: încarcă
+description: Distribuie aplicația ta Twenty în marketplace sau implementeaz-o intern.
+---
+
+## Prezentare generală
+
+După ce aplicația ta este [construită și testată local](/l/ro/developers/extend/apps/getting-started/concepts), ai două căi pentru distribuire:
+
+* **Implementează un tarball** — încarcă aplicația direct pe un server Twenty anume pentru uz intern sau privat.
+* **Publică pe npm** — listează aplicația ta în marketplace-ul Twenty pentru ca orice spațiu de lucru să o poată descoperi și instala.
+
+Ambele căi pornesc din aceeași etapă de **build**.
+
+## Construirea aplicației
+
+Rulează comanda `build` pentru a compila aplicația și a genera un `manifest.json` pregătit pentru distribuire:
+
+```bash filename="Terminal"
+yarn twenty build
+```
+
+Aceasta compilează sursele TypeScript, transpilează funcțiile de logică și componentele de front-end și scrie totul în `.twenty/output/`. Adaugă `--tarball` pentru a produce și un pachet `.tgz` pentru distribuire manuală sau pentru comanda de deploy.
+
+## Implementare pe un server (tarball)
+
+Pentru aplicațiile pe care nu le dorești disponibile public — instrumente proprietare, integrări doar pentru enterprise sau build-uri experimentale — poți implementa un tarball direct pe un server Twenty.
+
+### Cerințe
+
+Înainte de implementare, ai nevoie de un remote configurat care să indice serverul țintă. Remote-urile stochează local URL-ul serverului și credențialele de autentificare în `~/.twenty/config.json`.
+
+Adaugă un remote:
+
+```bash filename="Terminal"
+yarn twenty remote add --api-url https://your-twenty-server.com --as production
+```
+
+### Implementare
+
+Construiește și încarcă aplicația ta pe server într-un singur pas:
+
+```bash filename="Terminal"
+yarn twenty deploy
+# To deploy to a specific remote:
+# yarn twenty deploy --remote production
+```
+
+### Partajarea unei aplicații implementate
+
+<Warning>
+Partajarea aplicațiilor private (tarball) între spații de lucru este o funcționalitate **Enterprise**. Fila **Distribuție** va afișa un mesaj de actualizare în locul controalelor de partajare până când spațiul tău de lucru are o cheie Enterprise validă. Mergi la [Setări > Panou de administrare > Enterprise](/settings/admin-panel#enterprise) pentru a o activa.
+</Warning>
+
+Aplicațiile tarball nu sunt listate în marketplace-ul public, astfel încât alte spații de lucru de pe același server nu le vor descoperi prin navigare. După ce spațiul tău de lucru este pe planul Enterprise, poți partaja o aplicație implementată astfel:
+
+1. Mergi la **Setări > Aplicații > Înregistrări** și deschide aplicația ta
+2. În fila **Distribuție**, fă clic pe **Copiază linkul de partajare**
+3. Partajează acest link cu utilizatori din alte spații de lucru — îi duce direct la pagina de instalare a aplicației
+
+Linkul de partajare folosește URL-ul de bază al serverului (fără niciun subdomeniu de spațiu de lucru), astfel încât funcționează pentru orice spațiu de lucru de pe server.
+
+### Gestionarea versiunilor
+
+Când actualizezi o aplicație tarball deja implementată, serverul solicită ca `version` din `package.json` să fie **strict mai mare** (conform ordonării [semver](https://semver.org)) decât versiunea implementată în prezent. Redeployarea aceleiași versiuni sau trimiterea uneia inferioare este respinsă înainte ca tarball-ul să fie stocat — vei vedea o eroare `VERSION_ALREADY_EXISTS` de la CLI.
+
+Pentru a lansa o actualizare:
+
+1. Incrementează câmpul `version` din `package.json` (de ex. `1.2.3` → `1.2.4`, `1.3.0` sau `2.0.0`)
+2. Rulează `yarn twenty deploy` (sau `yarn twenty deploy --remote production`)
+3. Spațiile de lucru care au aplicația instalată vor vedea actualizarea disponibilă în setările lor
+
+<Note>
+Etichetele de pre-lansare funcționează conform așteptărilor: incrementarea de la `1.0.0-rc.1` la `1.0.0-rc.2` este permisă, iar o lansare finală precum `1.0.0` este recunoscută corect ca fiind mai mare decât `1.0.0-rc.5`. Versiunea din `package.json` trebuie să fie ea însăși un șir semver valid.
+</Note>
+
+{/* TODO: add screenshot of the Upgrade button */}
+
+### Compatibilitatea versiunii serverului
+
+Dacă aplicația ta folosește o funcționalitate introdusă într-o anumită versiune de server Twenty (de exemplu, furnizori OAuth adăugați în v2.3.0), ar trebui să declari versiunea minimă de server necesară aplicației folosind câmpul `engines.twenty` din `package.json`:
+
+```json filename="package.json"
+{
+  "name": "twenty-my-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": "^24.5.0",
+    "twenty": ">=2.3.0"
+  }
+}
+```
+
+Valoarea este un [interval semver](https://github.com/npm/node-semver#ranges) standard. Tipare comune:
+
+| Interval                           | Semnificație                                           |
+| ---------------------------------- | ------------------------------------------------------ |
+| `>=2.3.0`                          | Orice server de la 2.3.0 încolo                        |
+| `>=2.3.0 \<3.0.0` | 2.3.0 sau ulterior, dar sub următoarea versiune majoră |
+| `^2.3.0`                           | La fel ca `>=2.3.0 \<3.0.0`           |
+
+**Ce se întâmplă în timpul implementării și instalării:**
+
+* Dacă `engines.twenty` este setat și versiunea serverului țintă nu respectă intervalul, implementarea (încărcarea arhivei tarball) sau instalarea este respinsă cu eroarea `SERVER_VERSION_INCOMPATIBLE` și cu un mesaj care indică atât intervalul necesar, cât și versiunea efectivă a serverului.
+* Dacă `engines.twenty` nu este setat, aplicația este acceptată pe orice versiune de server (retrocompatibilă cu aplicațiile existente).
+* Dacă serverul nu are nicio `APP_VERSION` configurată, verificarea este omisă.
+
+<Note>
+Serverul este verificarea autoritativă — validează `engines.twenty` atât la încărcarea arhivei tarball, cât și la instalarea în spațiul de lucru. Dacă implementezi un tarball în afara fluxului standard sau instalezi din marketplace, serverul impune în continuare compatibilitatea.
+</Note>
+
+## CI/CD automatizat (fluxuri de lucru preconfigurate)
+
+Aplicațiile generate cu `create-twenty-app` vin, gata de utilizare, cu două fluxuri de lucru GitHub Actions, în `.github/workflows/`. Acestea sunt gata să ruleze imediat ce faci push al repozitoriului pe GitHub — nu este necesară nicio configurare suplimentară pentru CI, iar CD necesită doar un singur secret.
+
+### CI — `ci.yml`
+
+Rulează testele de integrare la fiecare push pe `main` și la fiecare pull request.
+
+**Ce face:**
+
+1. Preia codul sursă al aplicației.
+2. Pornește o instanță de test Twenty izolată folosind acțiunea compozită `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (echivalentul din CI al `yarn twenty server start --test`).
+3. Activează Corepack, configurează Node.js pe baza fișierului `.nvmrc` și instalează dependențele cu `yarn install --immutable`.
+4. Rulează `yarn test`, transmitând `TWENTY_API_URL` și `TWENTY_API_KEY` din instanța pornită, astfel încât testele să poată comunica cu un server real.
+
+**Opțiuni de configurare:**
+
+* `TWENTY_VERSION` (variabilă de mediu, implicit `latest`) — fixează versiunea serverului Twenty folosită în CI editând acest parametru în `ci.yml`.
+* Concurența este grupată după `github.ref` și anulează execuțiile în desfășurare la noile push-uri.
+
+Nu sunt necesare secrete — instanța de test este efemeră și există doar pe durata jobului.
+
+### CD — `cd.yml`
+
+Implementează aplicația pe un server Twenty configurat la fiecare push pe `main` și, opțional, dintr-un pull request când se aplică eticheta `deploy`.
+
+**Ce face:**
+
+1. Preia head-ul PR-ului (pentru PR-urile etichetate) sau commitul împins.
+2. Rulează `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — echivalentul din CI al `yarn twenty deploy`.
+3. Rulează `twentyhq/twenty/.github/actions/install-twenty-app@main` astfel încât versiunea nou implementată să fie instalată în spațiul de lucru țintă.
+
+**Configurare necesară:**
+
+| Setare                  | Unde                                                       | Scop                                                                                                               |
+| ----------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TWENTY_DEPLOY_URL`     | `env` în `cd.yml` (implicit `http://localhost:3000`)       | Serverul Twenty la care se face implementarea. Modifică-l la URL-ul real al serverului înainte de prima utilizare. |
+| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | Cheie API cu permisiune de implementare pe serverul țintă.                                                         |
+
+<Note>
+Valoarea implicită a `TWENTY_DEPLOY_URL`, `http://localhost:3000`, este un placeholder — nu va putea accesa nimic dintr-un runner găzduit de GitHub. Actualizează-l la URL-ul public al serverului tău (sau folosește un runner self-hosted cu acces la rețea) înainte de a activa CD.
+</Note>
+
+**Declanșarea unei implementări de previzualizare dintr-un PR:**
+
+Adaugă eticheta `deploy` la un pull request. Condiția `if:` din `cd.yml` va rula jobul pentru acel PR folosind commitul head al PR-ului, permițându-ți să validezi o modificare pe serverul țintă înainte de a face merge.
+
+### Fixarea acțiunilor reutilizabile
+
+Ambele fluxuri de lucru fac referire la acțiuni reutilizabile la `@main`, astfel încât actualizările acțiunilor din repo-ul `twentyhq/twenty` sunt preluate automat. Dacă dorești builduri deterministe, înlocuiește `@main` cu un SHA de commit sau cu un tag de release pe fiecare linie `uses:`.
+
+## Publicarea pe npm
+
+Publicarea pe npm face ca aplicația ta să poată fi descoperită în marketplace-ul Twenty. Orice spațiu de lucru Twenty poate răsfoi, instala și actualiza aplicațiile din marketplace direct din interfață.
+
+### Cerințe
+
+* Un cont [npm](https://www.npmjs.com)
+* Cuvântul cheie `twenty-app` din array-ul `keywords` al fișierului `package.json` (adaugă-l manual — nu este inclus în mod implicit în șablonul `create-twenty-app`)
+
+```json filename="package.json"
+{
+  "name": "twenty-app-postcard-sender",
+  "version": "1.0.0",
+  "keywords": ["twenty-app"]
+}
+```
+
+### Metadate pentru marketplace
+
+Configurația `defineApplication()` acceptă câmpuri opționale care controlează modul în care aplicația ta apare în marketplace. Folosește `logoUrl` și `screenshots` pentru a face referire la imaginile din folderul `public/`:
+
+```ts src/application-config.ts
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'My App',
+  description: 'A great app',
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  logoUrl: 'public/logo.png',
+  screenshots: [
+    'public/screenshot-1.png',
+    'public/screenshot-2.png',
+  ],
+});
+```
+
+Vezi [acordeonul defineApplication](/l/ro/developers/extend/apps/config/application#marketplace-metadata) din pagina Building Apps pentru lista completă de câmpuri ale marketplace-ului (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
+
+#### Dimensiuni recomandate pentru capturi de ecran
+
+Marketplace-ul redă `screenshots` într-un container fix cu raport `8:5` (de exemplu, `1600×1000 px`).
+
+<Note>
+Capturile de ecran cu orice raport de aspect sunt afișate integral și nu sunt niciodată decupate, însă orice este semnificativ mai înalt sau mai îngust decât `8:5` va afișa benzi goale pe laterale.
+</Note>
+
+### Publicare
+
+```bash filename="Terminal"
+yarn twenty publish
+```
+
+Pentru a publica sub un dist-tag specific (de ex., `beta` sau `next`):
+
+```bash filename="Terminal"
+yarn twenty publish --tag beta
+```
+
+### Cum funcționează descoperirea în marketplace
+
+Serverul Twenty sincronizează catalogul marketplace-ului din registrul npm **la fiecare oră**.
+
+Poți declanșa sincronizarea imediat, în loc să aștepți:
+
+```bash filename="Terminal"
+yarn twenty server catalog-sync
+# To target a specific remote:
+# yarn twenty server catalog-sync --remote production
+```
+
+Metadatele afișate în marketplace provin din configurația `defineApplication()` — câmpuri precum `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` și `termsUrl`.
+
+<Note>
+Dacă aplicația ta nu definește un `aboutDescription` în `defineApplication()`, piața va folosi automat fișierul `README.md` al pachetului tău de pe npm drept conținut pentru pagina Despre. Acest lucru înseamnă că poți menține un singur README atât pentru npm, cât și pentru piața Twenty. Dacă vrei o descriere diferită în piață, setează explicit `aboutDescription`.
+</Note>
+
+### Publicare CI
+
+Folosește acest workflow GitHub Actions pentru a publica automat la fiecare release (folosește [OIDC](https://docs.npmjs.com/trusted-publishers)):
+
+```yaml filename=".github/workflows/publish.yml"
+name: Publish
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - run: yarn install --immutable
+      - run: npx twenty build
+      - run: npm publish --provenance --access public
+        working-directory: .twenty/output
+```
+
+Pentru alte sisteme CI (GitLab CI, CircleCI etc.), se aplică aceleași trei comenzi: `yarn install`, `yarn twenty build`, apoi `npm publish` din `.twenty/output`.
+
+<Note>
+**npm provenance** este opțională, dar recomandată. Publicarea cu `--provenance` adaugă un badge de încredere la listarea ta în npm, permițând utilizatorilor să verifice că pachetul a fost construit dintr-un commit specific într-un pipeline CI public. Vezi [documentația npm provenance](https://docs.npmjs.com/generating-provenance-statements) pentru instrucțiuni de configurare.
+</Note>
+
+## Instalarea aplicațiilor
+
+După ce o aplicație este publicată (npm) sau implementată (tarball), spațiile de lucru o pot instala prin interfața utilizatorului (UI).
+
+Mergi la pagina **Setări > Aplicații** din Twenty, unde pot fi parcurse și instalate atât aplicațiile din marketplace, cât și cele implementate prin tarball.
+
+{/* TODO: add screenshot of the UI when the app is registered */}
+
+Poți instala aplicații și din linia de comandă:
+
+```bash filename="Terminal"
+yarn twenty install
+```
+
+<Note>
+Serverul impune versionarea semver la instalare, reflectând regulile de la deploy:
+
+* Instalarea aceleiași versiuni care este deja instalată în spațiul tău de lucru este respinsă cu o eroare `APP_ALREADY_INSTALLED`.
+* Instalarea unei versiuni mai mici decât cea instalată în prezent este respinsă cu o eroare `CANNOT_DOWNGRADE_APPLICATION`.
+
+Pentru a instala o versiune mai nouă, fă mai întâi deploy sau public-o, apoi rulează din nou `yarn twenty install`.
+</Note>

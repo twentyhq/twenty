@@ -1,0 +1,101 @@
+---
+title: Concepts
+description: How Twenty apps work — entity model, sandboxing, and the install lifecycle.
+icon: sitemap
+---
+
+Aplicațiile Twenty sunt pachete TypeScript care vă extind spațiul de lucru cu obiecte personalizate, logică, componente UI și capabilități AI. Acestea rulează pe platforma Twenty, cu izolare completă (sandboxing) și controale de permisiuni.
+
+## Cum funcționează aplicațiile
+
+O aplicație este o colecție de **entități** declarate folosind funcțiile `defineEntity()` din pachetul `twenty-sdk`. SDK-ul detectează aceste declarații prin analiză AST în timpul construirii și produce un **manifest** — o descriere completă a ceea ce aplicația dvs. adaugă unui spațiu de lucru. Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **Organizarea fișierelor ține de dvs.** Detectarea entităților este bazată pe AST — SDK-ul găsește apelurile `export default defineEntity(...)` indiferent unde se află fișierul. Structura de foldere de mai sus este o convenție, nu o cerință.
+</Note>
+
+## Tipuri de entități
+
+| Entitate                         | Scop                                                    | Documentație                                                                  |
+| -------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **Aplicație**                    | App identity, default role, variables                   | [Application Config](/l/ro/developers/extend/apps/config/application)              |
+| **Rol**                          | Permission sets on objects and fields                   | [Roles & Permissions](/l/ro/developers/extend/apps/config/roles)                   |
+| **Obiect**                       | Custom record types with fields                         | [Objects](/l/ro/developers/extend/apps/data/objects)                               |
+| **Câmp**                         | Add fields to objects from other apps                   | [Extending Objects](/l/ro/developers/extend/apps/data/extending-objects)           |
+| **Relation**                     | Bidirectional links between objects                     | [Relations](/l/ro/developers/extend/apps/data/relations)                           |
+| **Funcție logică**               | TypeScript pe partea de server cu declanșatoare         | [Funcții logice](/l/ro/developers/extend/apps/logic/logic-functions)               |
+| **Abilitate**                    | Instrucțiuni reutilizabile pentru agenți AI             | [Abilități și agenți](/l/ro/developers/extend/apps/logic/skills-and-agents)        |
+| **Agent**                        | Agenți AI cu prompturi personalizate                    | [Abilități și agenți](/l/ro/developers/extend/apps/logic/skills-and-agents)        |
+| **Connection Provider**          | OAuth credentials for third-party APIs                  | [Connections](/l/ro/developers/extend/apps/logic/connections)                      |
+| **Vizualizare**                  | Vizualizări preconfigurate ale listelor de înregistrări | [Views](/l/ro/developers/extend/apps/layout/views)                                 |
+| **Element de meniu de navigare** | Intrări personalizate în bara laterală                  | [Navigation Menu Items](/l/ro/developers/extend/apps/layout/navigation-menu-items) |
+| **Layout pagină**                | Tabs and widgets on a record's detail page              | [Page Layouts](/l/ro/developers/extend/apps/layout/page-layouts)                   |
+| **Componentă front-end**         | Sandboxed React UI inside Twenty                        | [Componente front-end](/l/ro/developers/extend/apps/layout/front-components)       |
+| **Command Menu Item**            | Quick actions and Cmd+K entries                         | [Command Menu Items](/l/ro/developers/extend/apps/layout/command-menu-items)       |
+
+## Izolare (sandboxing)
+
+* **Funcțiile logice** rulează în procese Node.js izolate pe server. Acestea accesează datele doar prin clientul API tipizat, limitat de permisiunile rolului aplicației.
+* **Componentele front-end** rulează în Web Workers folosind Remote DOM — izolate de pagina principală, dar randând elemente DOM native (nu iframes). Acestea comunică cu Twenty printr-un API al gazdei bazat pe transmiterea de mesaje.
+* **Permisiunile** sunt aplicate la nivelul API-ului. Tokenul de rulare (`TWENTY_APP_ACCESS_TOKEN`) este derivat din rolul definit în `defineApplication()`.
+
+## Ciclul de viață al aplicației
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty build → yarn twenty deploy                │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — monitorizează fișierele sursă și sincronizează în timp real modificările către un server Twenty conectat. Clientul API tipizat este regenerat automat atunci când schema se schimbă.
+* **`yarn twenty build`** — compilează TypeScript, împachetează funcțiile logice și componentele front-end cu esbuild și produce un manifest.
+* **Pre/post-install hooks** — optional functions that run during installation. See [Install Hooks](/l/ro/developers/extend/apps/config/install-hooks) for details.
+
+## Pașii următori
+
+<CardGroup cols={2}>
+  <Card title="Configurare" icon="screwdriver-wrench" href="/l/ro/developers/extend/apps/config/overview">
+    Application identity, default role, and install hooks.
+  </Card>
+  <Card title="Date" icon="database" href="/l/ro/developers/extend/apps/data/overview">
+    Objects, fields, and bidirectional relations.
+  </Card>
+  <Card title="Logică" icon="bolt" href="/l/ro/developers/extend/apps/logic/overview">
+    Logic functions, skills, agents, and OAuth connections.
+  </Card>
+  <Card title="Aspect" icon="table-columns" href="/l/ro/developers/extend/apps/layout/overview">
+    Views, navigation, page layouts, front components.
+  </Card>
+  <Card title="Operațiuni" icon="rocket" href="/l/ro/developers/extend/apps/operations/overview">
+    CLI, testing, remotes, CI, and publishing your app.
+  </Card>
+</CardGroup>
