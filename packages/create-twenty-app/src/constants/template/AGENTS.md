@@ -1,8 +1,12 @@
 ## Base documentation
 
 - Getting started:
-    - https://docs.twenty.com/developers/extend/apps/getting-started.md
-    - https://docs.twenty.com/developers/extend/apps/building.md
+    - https://docs.twenty.com/developers/extend/apps/getting-started/quick-start.md
+    - https://docs.twenty.com/developers/extend/apps/getting-started/concepts.md
+    - https://docs.twenty.com/developers/extend/apps/getting-started/project-structure.md
+    - https://docs.twenty.com/developers/extend/apps/getting-started/local-server.md
+    - https://docs.twenty.com/developers/extend/apps/getting-started/scaffolding.md
+    - https://docs.twenty.com/developers/extend/apps/getting-started/troubleshooting.md
 - Config:
     - https://docs.twenty.com/developers/extend/apps/config/overview.md
     - https://docs.twenty.com/developers/extend/apps/config/application.md

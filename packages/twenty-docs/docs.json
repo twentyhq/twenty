@@ -374,8 +374,17 @@
               {
                 "group": "Apps",
                 "pages": [
-                  "developers/extend/apps/getting-started",
-                  "developers/extend/apps/building",
+                  {
+                    "group": "Getting Started",
+                    "pages": [
+                      "developers/extend/apps/getting-started/quick-start",
+                      "developers/extend/apps/getting-started/concepts",
+                      "developers/extend/apps/getting-started/project-structure",
+                      "developers/extend/apps/getting-started/local-server",
+                      "developers/extend/apps/getting-started/scaffolding",
+                      "developers/extend/apps/getting-started/troubleshooting"
+                    ]
+                  },
                   {
                     "group": "Config",
                     "pages": [
@@ -5445,6 +5454,14 @@
     }
   },
   "redirects": [
+    {
+      "source": "/developers/extend/apps/getting-started",
+      "destination": "/developers/extend/apps/getting-started/quick-start"
+    },
+    {
+      "source": "/developers/extend/apps/building",
+      "destination": "/developers/extend/apps/getting-started/concepts"
+    },
     {
       "source": "/developers/extend/apps/data-model",
       "destination": "/developers/extend/apps/data/overview"
