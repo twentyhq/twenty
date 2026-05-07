@@ -13,7 +13,7 @@ export const checkServerVersionCompatibility = async (
   if (
     info.localServerVersion === null ||
     info.latestServerVersion === null ||
-    !info.isMajorBehind ||
+    !info.isMinorOrMajorBehind ||
     info.daysBehind === null ||
     info.daysBehind <= STALE_THRESHOLD_DAYS
   ) {

@@ -1,5 +1,4 @@
 import { CONTAINER_NAME } from '@/cli/utilities/server/docker-container';
-import { compareSemver } from '@/cli/utilities/version/compare-semver';
 import { getLocalServerVersion } from '@/cli/utilities/version/get-local-server-version';
 import { getPublishedServerVersions } from '@/cli/utilities/version/get-published-server-versions';
 import { parseSemver } from '@/cli/utilities/version/parse-semver';
@@ -23,11 +22,11 @@ export const getVersionInfo = async (
     ? parseSemver(latestServerVersion)
     : null;
 
-  const isMajorBehind =
+  const isMinorOrMajorBehind =
     localParsed !== null &&
     latestParsed !== null &&
-    localParsed[0] < latestParsed[0] &&
-    compareSemver(localParsed, latestParsed) < 0;
+    (localParsed[0] < latestParsed[0] ||
+      (localParsed[0] === latestParsed[0] && localParsed[1] < latestParsed[1]));
 
   const localPublishedAt = publishedVersions.find(
     ({ name }) => name === localServerVersion,
@@ -46,7 +45,7 @@ export const getVersionInfo = async (
     cliVersion,
     localServerVersion,
     latestServerVersion,
-    isMajorBehind,
+    isMinorOrMajorBehind,
     daysBehind,
   };
 };

@@ -19,12 +19,14 @@ export const DevUiVersionRow = ({
     cliVersion,
     localServerVersion,
     latestServerVersion,
-    isMajorBehind,
+    isMinorOrMajorBehind,
     daysBehind,
   } = versionInfo;
 
   const isStale =
-    isMajorBehind && daysBehind !== null && daysBehind > STALE_THRESHOLD_DAYS;
+    isMinorOrMajorBehind &&
+    daysBehind !== null &&
+    daysBehind > STALE_THRESHOLD_DAYS;
 
   return (
     <Box>
