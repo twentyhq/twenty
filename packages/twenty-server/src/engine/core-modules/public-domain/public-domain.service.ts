@@ -59,23 +59,20 @@ export class PublicDomainService {
   }): Promise<PublicDomainDTO> {
     const formattedDomain = domain.trim().toLowerCase();
 
-    const [
-      workspaceWithCustomDomain,
-      existingPublicDomain,
-      application,
-    ] = await Promise.all([
-      this.workspaceRepository.findOneBy({ customDomain: formattedDomain }),
-      this.publicDomainRepository.findOneBy({
-        domain: formattedDomain,
-        workspaceId: workspace.id,
-      }),
-      isDefined(applicationId)
-        ? this.applicationRepository.findOneBy({
-            id: applicationId,
-            workspaceId: workspace.id,
-          })
-        : Promise.resolve(null),
-    ]);
+    const [workspaceWithCustomDomain, existingPublicDomain, application] =
+      await Promise.all([
+        this.workspaceRepository.findOneBy({ customDomain: formattedDomain }),
+        this.publicDomainRepository.findOneBy({
+          domain: formattedDomain,
+          workspaceId: workspace.id,
+        }),
+        isDefined(applicationId)
+          ? this.applicationRepository.findOneBy({
+              id: applicationId,
+              workspaceId: workspace.id,
+            })
+          : Promise.resolve(null),
+      ]);
 
     if (isDefined(workspaceWithCustomDomain)) {
       throw new PublicDomainException(
