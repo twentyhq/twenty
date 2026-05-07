@@ -28,6 +28,7 @@ export const getMissingDraftEmailScopes = (
     case ConnectedAccountProvider.OIDC:
     case ConnectedAccountProvider.SAML:
     case ConnectedAccountProvider.EMAIL_FORWARDING:
+    case ConnectedAccountProvider.APP:
       return [];
     default:
       assertUnreachable(

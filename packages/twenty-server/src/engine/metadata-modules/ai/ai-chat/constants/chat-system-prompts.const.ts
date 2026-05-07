@@ -41,6 +41,7 @@ For simple CRUD operations (find/create/update/delete a record), you do NOT need
 - Always apply filters to narrow results — don't fetch all records of a type.
 - Fetch one type of data at a time and check if you have what you need before fetching more.
 - Every record returned consumes context. Fetching too many records at once will cause failures.
+- For multiple items of the same type, use batch tools (\`create_many_*\`, \`update_many_*\`, etc.) instead of looping single-item calls.
 
 ## Tool Strategy
 

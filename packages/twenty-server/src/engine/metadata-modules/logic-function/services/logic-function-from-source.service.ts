@@ -4,7 +4,6 @@ import crypto from 'crypto';
 
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
-import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -76,7 +75,6 @@ export class LogicFunctionFromSourceService {
             builtHandlerPath,
             handlerName: input.source.handlerName,
             checksum: null,
-            toolInputSchema: input.source.toolInputSchema,
             isBuildUpToDate: false,
             applicationUniversalIdentifier:
               ownerFlatApplication.universalIdentifier,
@@ -111,7 +109,6 @@ export class LogicFunctionFromSourceService {
           builtHandlerPath,
           handlerName,
           checksum,
-          toolInputSchema: SEED_LOGIC_FUNCTION_INPUT_SCHEMA,
           isBuildUpToDate: true,
           applicationUniversalIdentifier:
             ownerFlatApplication.universalIdentifier,
@@ -170,8 +167,6 @@ export class LogicFunctionFromSourceService {
         name: existingLogicFunction.name,
         description: existingLogicFunction.description,
         timeoutSeconds: existingLogicFunction.timeoutSeconds,
-        toolInputSchema: existingLogicFunction.toolInputSchema,
-        isTool: existingLogicFunction.isTool,
         isBuildUpToDate: existingLogicFunction.isBuildUpToDate,
         checksum: existingLogicFunction.checksum,
         handlerName: existingLogicFunction.handlerName,
@@ -182,6 +177,9 @@ export class LogicFunctionFromSourceService {
           existingLogicFunction.databaseEventTriggerSettings,
         httpRouteTriggerSettings:
           existingLogicFunction.httpRouteTriggerSettings,
+        toolTriggerSettings: existingLogicFunction.toolTriggerSettings,
+        workflowActionTriggerSettings:
+          existingLogicFunction.workflowActionTriggerSettings,
         applicationUniversalIdentifier:
           ownerFlatApplication.universalIdentifier,
       });

@@ -7,7 +7,6 @@ import {
 
 import { createHash } from 'crypto';
 
-import { type Request as ExpressRequest } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { ExtractJwt, type JwtFromRequestFunction } from 'passport-jwt';
 import { isDefined } from 'twenty-shared/utils';
@@ -131,18 +130,6 @@ export class JwtWrapperService {
   }
 
   extractJwtFromRequest(): JwtFromRequestFunction {
-    return (request: ExpressRequest) => {
-      // First try to extract token from Authorization header
-      const tokenFromHeader = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
-
-      if (tokenFromHeader) {
-        return tokenFromHeader;
-      }
-
-      // If not found in header, try to extract from URL query parameter
-      // This is for edge cases where we don't control the origin request
-      // (e.g. the REST API playground)
-      return ExtractJwt.fromUrlQueryParameter('token')(request);
-    };
+    return ExtractJwt.fromAuthHeaderAsBearerToken();
   }
 }

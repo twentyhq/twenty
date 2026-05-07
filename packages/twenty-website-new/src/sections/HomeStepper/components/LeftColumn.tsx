@@ -1,6 +1,7 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { StepperSwipeDeck } from '@/lib/stepper';
 import { HOME_STEPPER_HOLD_FRACTIONS } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
 import { theme } from '@/theme';
@@ -142,6 +143,8 @@ export function LeftColumn({
   onMobileStepIndexChange,
   steps,
 }: HomeStepperLeftColumnProps) {
+  const renderText = useRenderMessage();
+
   return (
     <LeftColumnRoot>
       <StickyPanel>
@@ -161,8 +164,13 @@ export function LeftColumn({
                 const step = steps[stepIndex];
                 return (
                   <SwipeStepBlock>
-                    <Heading segments={step.heading} size="lg" weight="light" />
-                    <Body body={step.body} size="sm" />
+                    <Heading
+                      renderText={renderText}
+                      segments={step.heading}
+                      size="lg"
+                      weight="light"
+                    />
+                    <Body body={step.body} renderText={renderText} size="sm" />
                   </SwipeStepBlock>
                 );
               }}
@@ -183,8 +191,13 @@ export function LeftColumn({
                   data-active={String(index === activeStepIndex)}
                   key={index}
                 >
-                  <Heading segments={step.heading} size="lg" weight="light" />
-                  <Body body={step.body} size="sm" />
+                  <Heading
+                    renderText={renderText}
+                    segments={step.heading}
+                    size="lg"
+                    weight="light"
+                  />
+                  <Body body={step.body} renderText={renderText} size="sm" />
                 </StepBlock>
               );
             })

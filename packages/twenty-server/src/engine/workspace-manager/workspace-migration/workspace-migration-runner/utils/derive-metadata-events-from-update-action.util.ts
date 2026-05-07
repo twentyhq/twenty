@@ -110,6 +110,9 @@ const deriveAllMetadataEventsFromUpdateAction = ({
 
       return [deleteIndexMetadataEvent, createIndexMetadataEvent];
     }
+    case 'applicationVariable': {
+      return [];
+    }
     case 'fieldMetadata':
     case 'objectMetadata':
     case 'view':
@@ -135,7 +138,8 @@ const deriveAllMetadataEventsFromUpdateAction = ({
     case 'objectPermission':
     case 'fieldPermission':
     case 'viewSort':
-    case 'webhook': {
+    case 'webhook':
+    case 'connectionProvider': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,
       );

@@ -21,6 +21,19 @@ const jestConfig = {
       {
         jsc: {
           parser: { syntax: 'typescript', tsx: true },
+          experimental: {
+            plugins: [
+              [
+                '@lingui/swc-plugin',
+                {
+                  runtimeModules: {
+                    i18n: ['@lingui/core', 'i18n'],
+                    trans: ['@lingui/react', 'Trans'],
+                  },
+                },
+              ],
+            ],
+          },
           transform: { react: { runtime: 'automatic' } },
         },
       },

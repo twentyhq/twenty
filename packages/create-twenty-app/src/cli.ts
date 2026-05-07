@@ -26,6 +26,7 @@ const program = new Command(packageJson.name)
     '--skip-local-instance',
     'Skip the local Twenty instance setup prompt',
   )
+  .option('-y, --yes', 'Auto-confirm prompts (e.g. start existing container)')
   .helpOption('-h, --help', 'Display this help message.')
   .action(
     async (
@@ -36,6 +37,7 @@ const program = new Command(packageJson.name)
         displayName?: string;
         description?: string;
         skipLocalInstance?: boolean;
+        yes?: boolean;
       },
     ) => {
       if (directory && !/^[a-z0-9-]+$/.test(directory)) {
@@ -59,6 +61,7 @@ const program = new Command(packageJson.name)
         displayName: options?.displayName,
         description: options?.description,
         skipLocalInstance: options?.skipLocalInstance,
+        yes: options?.yes,
       });
     },
   );

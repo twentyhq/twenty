@@ -12,7 +12,10 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationGqlFieldName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const useOpenMorphRelationManyToOneFieldInput = () => {
   const store = useStore();
@@ -31,7 +34,7 @@ export const useOpenMorphRelationManyToOneFieldInput = () => {
     }) => {
       const potentielFieldNames = fieldDefinition.metadata.morphRelations.map(
         (morphRelation) => {
-          return computeMorphRelationFieldName({
+          return computeMorphRelationGqlFieldName({
             fieldName: fieldDefinition.metadata.fieldName,
             relationType: fieldDefinition.metadata.relationType,
             targetObjectMetadataNameSingular:

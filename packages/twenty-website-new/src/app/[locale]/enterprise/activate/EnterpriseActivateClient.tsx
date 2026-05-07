@@ -1,10 +1,12 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
 import {
   BaseButton,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { Body, Heading } from '@/design-system/components';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { useTimeoutRegistry } from '@/lib/react';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
@@ -44,6 +46,12 @@ const LicenseeRow = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${theme.spacing(1)};
+`;
+
+const LicenseeValue = styled.span`
+  font-family: ${theme.font.family.sans};
+  font-size: ${theme.font.size(4)};
+  line-height: 1.55;
 `;
 
 const KeySection = styled.div`
@@ -132,6 +140,7 @@ const nextStepItemClassName = css`
 `;
 
 export function EnterpriseActivateClient() {
+  const renderText = useRenderMessage();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const timeoutRegistry = useTimeoutRegistry();
@@ -214,7 +223,8 @@ export function EnterpriseActivateClient() {
     <ContentStack>
       {loading && (
         <Body
-          body={{ text: 'Activating your enterprise license…' }}
+          body={{ text: msg`Activating your enterprise license…` }}
+          renderText={renderText}
           size="sm"
           variant="body-paragraph"
         />
@@ -226,9 +236,10 @@ export function EnterpriseActivateClient() {
         <>
           <Body
             body={{
-              text: 'Your enterprise license has been activated successfully.',
+              text: msg`Your enterprise license has been activated successfully.`,
             }}
             className={successLeadClassName}
+            renderText={renderText}
             size="md"
             weight="medium"
           />
@@ -236,24 +247,27 @@ export function EnterpriseActivateClient() {
           <LicenseeRow>
             <Body
               as="span"
-              body={{ text: 'Licensee: ' }}
+              body={{ text: msg`Licensee:` }}
+              renderText={renderText}
               size="sm"
               weight="medium"
-            />
-            <Body as="span" body={{ text: result.licensee }} size="sm" />
+            />{' '}
+            <LicenseeValue>{result.licensee}</LicenseeValue>
           </LicenseeRow>
 
           <KeySection>
             <Heading
               as="h2"
-              segments={{ fontFamily: 'sans', text: 'Your enterprise key' }}
+              renderText={renderText}
+              segments={{ fontFamily: 'sans', text: msg`Your enterprise key` }}
               size="xs"
               weight="medium"
             />
             <Body
               body={{
-                text: 'Copy this key and paste it into your Twenty self-hosted instance settings.',
+                text: msg`Copy this key and paste it into your Twenty self-hosted instance settings.`,
               }}
+              renderText={renderText}
               size="sm"
               variant="body-paragraph"
             />
@@ -270,7 +284,7 @@ export function EnterpriseActivateClient() {
               >
                 <BaseButton
                   color="primary"
-                  label={copied ? 'Copied!' : 'Copy'}
+                  label={renderText(copied ? msg`Copied!` : msg`Copy`)}
                   size="small"
                   variant="contained"
                 />
@@ -281,28 +295,32 @@ export function EnterpriseActivateClient() {
           <NextStepsBox>
             <Heading
               as="h3"
-              segments={{ fontFamily: 'sans', text: 'Next steps' }}
+              renderText={renderText}
+              segments={{ fontFamily: 'sans', text: msg`Next steps` }}
               size="xs"
               weight="medium"
             />
             <NextStepsList>
               <li className={nextStepItemClassName}>
                 <Body
-                  body={{ text: 'Copy the enterprise key above.' }}
+                  body={{ text: msg`Copy the enterprise key above.` }}
+                  renderText={renderText}
                   size="sm"
                 />
               </li>
               <li className={nextStepItemClassName}>
                 <Body
                   body={{
-                    text: 'Open your Twenty self-hosted instance Settings → Enterprise.',
+                    text: msg`Open your Twenty self-hosted instance Settings → Enterprise.`,
                   }}
+                  renderText={renderText}
                   size="sm"
                 />
               </li>
               <li className={nextStepItemClassName}>
                 <Body
-                  body={{ text: 'Paste the key and click Activate.' }}
+                  body={{ text: msg`Paste the key and click Activate.` }}
+                  renderText={renderText}
                   size="sm"
                 />
               </li>

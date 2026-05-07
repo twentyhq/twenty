@@ -5,4 +5,5 @@ export enum ConnectedAccountProvider {
   OIDC = 'oidc',
   SAML = 'saml',
   EMAIL_FORWARDING = 'email_forwarding',
+  APP = 'app',
 }

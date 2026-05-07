@@ -2,6 +2,7 @@
 
 import { Body, Heading } from '@/design-system/components';
 import { FastPathIcon, LiveDataIcon } from '@/icons';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import type { ThreeCardsFeatureCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -132,6 +133,7 @@ function renderFeatureCardIcon(icon: ThreeCardsFeatureCardType['icon']) {
 }
 
 export function FeatureCard({ featureCard }: FeatureCardProps) {
+  const renderText = useRenderMessage();
   const [isHovered, setIsHovered] = useState(false);
   const imageFrameRef = useRef<HTMLDivElement>(null);
   let visual: ReactNode;
@@ -198,13 +200,19 @@ export function FeatureCard({ featureCard }: FeatureCardProps) {
           <CardTitleWrap>
             <Heading
               as="h3"
+              renderText={renderText}
               segments={featureCard.heading}
               size="xs"
               weight="medium"
             />
           </CardTitleWrap>
         </CardTitleRow>
-        <Body body={featureCard.body} size="sm" weight="regular" />
+        <Body
+          body={featureCard.body}
+          renderText={renderText}
+          size="sm"
+          weight="regular"
+        />
       </CardContent>
     </FeatureCardContainer>
   );

@@ -51,6 +51,7 @@ type ApplicationRegistration {
   logoUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
+  isConfigured: Boolean!
 }
 
 enum ApplicationRegistrationSourceType {
@@ -324,6 +325,115 @@ type FrontComponent {
   applicationTokenPair: ApplicationTokenPair
 }
 
+type CommandMenuItem {
+  id: UUID!
+  workflowVersionId: UUID
+  frontComponentId: UUID
+  frontComponent: FrontComponent
+  engineComponentKey: EngineComponentKey!
+  label: String!
+  icon: String
+  shortLabel: String
+  position: Float!
+  isPinned: Boolean!
+  availabilityType: CommandMenuItemAvailabilityType!
+  payload: CommandMenuItemPayload
+  hotKeys: [String!]
+  conditionalAvailabilityExpression: String
+  availabilityObjectMetadataId: UUID
+  pageLayoutId: UUID
+  universalIdentifier: UUID
+  applicationId: UUID
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum EngineComponentKey {
+  NAVIGATE_TO_NEXT_RECORD
+  NAVIGATE_TO_PREVIOUS_RECORD
+  CREATE_NEW_RECORD
+  DELETE_RECORDS
+  RESTORE_RECORDS
+  DESTROY_RECORDS
+  ADD_TO_FAVORITES
+  REMOVE_FROM_FAVORITES
+  EXPORT_NOTE_TO_PDF
+  EXPORT_RECORDS
+  UPDATE_MULTIPLE_RECORDS
+  MERGE_MULTIPLE_RECORDS
+  IMPORT_RECORDS
+  EXPORT_VIEW
+  SEE_DELETED_RECORDS
+  CREATE_NEW_VIEW
+  HIDE_DELETED_RECORDS
+  EDIT_RECORD_PAGE_LAYOUT
+  EDIT_DASHBOARD_LAYOUT
+  SAVE_DASHBOARD_LAYOUT
+  CANCEL_DASHBOARD_LAYOUT
+  DUPLICATE_DASHBOARD
+  ACTIVATE_WORKFLOW
+  DEACTIVATE_WORKFLOW
+  DISCARD_DRAFT_WORKFLOW
+  TEST_WORKFLOW
+  SEE_ACTIVE_VERSION_WORKFLOW
+  SEE_RUNS_WORKFLOW
+  SEE_VERSIONS_WORKFLOW
+  ADD_NODE_WORKFLOW
+  TIDY_UP_WORKFLOW
+  DUPLICATE_WORKFLOW
+  SEE_VERSION_WORKFLOW_RUN
+  SEE_WORKFLOW_WORKFLOW_RUN
+  STOP_WORKFLOW_RUN
+  SEE_RUNS_WORKFLOW_VERSION
+  SEE_WORKFLOW_WORKFLOW_VERSION
+  USE_AS_DRAFT_WORKFLOW_VERSION
+  SEE_VERSIONS_WORKFLOW_VERSION
+  SEARCH_RECORDS
+  SEARCH_RECORDS_FALLBACK
+  ASK_AI
+  VIEW_PREVIOUS_AI_CHATS
+  NAVIGATION
+  TRIGGER_WORKFLOW_VERSION
+  FRONT_COMPONENT_RENDERER
+  REPLY_TO_EMAIL_THREAD
+  COMPOSE_EMAIL
+  GO_TO_PEOPLE
+  GO_TO_COMPANIES
+  GO_TO_DASHBOARDS
+  GO_TO_OPPORTUNITIES
+  GO_TO_SETTINGS
+  GO_TO_TASKS
+  GO_TO_NOTES
+  GO_TO_WORKFLOWS
+  GO_TO_RUNS
+  DELETE_SINGLE_RECORD
+  DELETE_MULTIPLE_RECORDS
+  RESTORE_SINGLE_RECORD
+  RESTORE_MULTIPLE_RECORDS
+  DESTROY_SINGLE_RECORD
+  DESTROY_MULTIPLE_RECORDS
+  EXPORT_FROM_RECORD_INDEX
+  EXPORT_FROM_RECORD_SHOW
+  EXPORT_MULTIPLE_RECORDS
+}
+
+enum CommandMenuItemAvailabilityType {
+  GLOBAL
+  GLOBAL_OBJECT_CONTEXT
+  RECORD_SELECTION
+  FALLBACK
+}
+
+union CommandMenuItemPayload = PathCommandMenuItemPayload | ObjectMetadataCommandMenuItemPayload
+
+type PathCommandMenuItemPayload {
+  path: String!
+}
+
+type ObjectMetadataCommandMenuItemPayload {
+  objectMetadataItemId: UUID!
+}
+
 type LogicFunction {
   id: UUID!
   name: String!
@@ -332,11 +442,11 @@ type LogicFunction {
   timeoutSeconds: Float!
   sourceHandlerPath: String!
   handlerName: String!
-  toolInputSchema: JSON
-  isTool: Boolean!
   cronTriggerSettings: JSON
   databaseEventTriggerSettings: JSON
   httpRouteTriggerSettings: JSON
+  toolTriggerSettings: JSON
+  workflowActionTriggerSettings: JSON
   applicationId: UUID
   universalIdentifier: UUID
   createdAt: DateTime!
@@ -580,6 +690,7 @@ type Application {
   id: UUID!
   name: String!
   description: String
+  logo: String
   version: String
   universalIdentifier: String!
   packageJsonChecksum: String
@@ -594,6 +705,7 @@ type Application {
   defaultLogicFunctionRole: Role
   agents: [Agent!]!
   frontComponents: [FrontComponent!]!
+  commandMenuItems: [CommandMenuItem!]!
   logicFunctions: [LogicFunction!]!
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
@@ -862,7 +974,6 @@ type User {
   firstName: String!
   lastName: String!
   email: String!
-  defaultAvatarUrl: String
   isEmailVerified: Boolean!
   disabled: Boolean
   canImpersonate: Boolean!
@@ -1290,6 +1401,20 @@ enum PageLayoutType {
   RECORD_PAGE
   DASHBOARD
   STANDALONE_PAGE
+}
+
+type ApplicationConnectionProviderOAuthConfig {
+  scopes: [String!]!
+  isClientCredentialsConfigured: Boolean!
+}
+
+type ApplicationConnectionProvider {
+  id: UUID!
+  applicationId: String!
+  type: String!
+  name: String!
+  displayName: String!
+  oauth: ApplicationConnectionProviderOAuthConfig
 }
 
 type Analytics {
@@ -2202,7 +2327,6 @@ type MarketplaceApp {
   id: String!
   name: String!
   description: String!
-  icon: String!
   author: String!
   category: String!
   logo: String
@@ -2309,114 +2433,6 @@ type PostgresCredentials {
   user: String!
   password: String!
   workspaceId: UUID!
-}
-
-type CommandMenuItem {
-  id: UUID!
-  workflowVersionId: UUID
-  frontComponentId: UUID
-  frontComponent: FrontComponent
-  engineComponentKey: EngineComponentKey!
-  label: String!
-  icon: String
-  shortLabel: String
-  position: Float!
-  isPinned: Boolean!
-  availabilityType: CommandMenuItemAvailabilityType!
-  payload: CommandMenuItemPayload
-  hotKeys: [String!]
-  conditionalAvailabilityExpression: String
-  availabilityObjectMetadataId: UUID
-  pageLayoutId: UUID
-  applicationId: UUID
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-enum EngineComponentKey {
-  NAVIGATE_TO_NEXT_RECORD
-  NAVIGATE_TO_PREVIOUS_RECORD
-  CREATE_NEW_RECORD
-  DELETE_RECORDS
-  RESTORE_RECORDS
-  DESTROY_RECORDS
-  ADD_TO_FAVORITES
-  REMOVE_FROM_FAVORITES
-  EXPORT_NOTE_TO_PDF
-  EXPORT_RECORDS
-  UPDATE_MULTIPLE_RECORDS
-  MERGE_MULTIPLE_RECORDS
-  IMPORT_RECORDS
-  EXPORT_VIEW
-  SEE_DELETED_RECORDS
-  CREATE_NEW_VIEW
-  HIDE_DELETED_RECORDS
-  EDIT_RECORD_PAGE_LAYOUT
-  EDIT_DASHBOARD_LAYOUT
-  SAVE_DASHBOARD_LAYOUT
-  CANCEL_DASHBOARD_LAYOUT
-  DUPLICATE_DASHBOARD
-  ACTIVATE_WORKFLOW
-  DEACTIVATE_WORKFLOW
-  DISCARD_DRAFT_WORKFLOW
-  TEST_WORKFLOW
-  SEE_ACTIVE_VERSION_WORKFLOW
-  SEE_RUNS_WORKFLOW
-  SEE_VERSIONS_WORKFLOW
-  ADD_NODE_WORKFLOW
-  TIDY_UP_WORKFLOW
-  DUPLICATE_WORKFLOW
-  SEE_VERSION_WORKFLOW_RUN
-  SEE_WORKFLOW_WORKFLOW_RUN
-  STOP_WORKFLOW_RUN
-  SEE_RUNS_WORKFLOW_VERSION
-  SEE_WORKFLOW_WORKFLOW_VERSION
-  USE_AS_DRAFT_WORKFLOW_VERSION
-  SEE_VERSIONS_WORKFLOW_VERSION
-  SEARCH_RECORDS
-  SEARCH_RECORDS_FALLBACK
-  ASK_AI
-  VIEW_PREVIOUS_AI_CHATS
-  NAVIGATION
-  TRIGGER_WORKFLOW_VERSION
-  FRONT_COMPONENT_RENDERER
-  REPLY_TO_EMAIL_THREAD
-  COMPOSE_EMAIL
-  GO_TO_PEOPLE
-  GO_TO_COMPANIES
-  GO_TO_DASHBOARDS
-  GO_TO_OPPORTUNITIES
-  GO_TO_SETTINGS
-  GO_TO_TASKS
-  GO_TO_NOTES
-  GO_TO_WORKFLOWS
-  GO_TO_RUNS
-  DELETE_SINGLE_RECORD
-  DELETE_MULTIPLE_RECORDS
-  RESTORE_SINGLE_RECORD
-  RESTORE_MULTIPLE_RECORDS
-  DESTROY_SINGLE_RECORD
-  DESTROY_MULTIPLE_RECORDS
-  EXPORT_FROM_RECORD_INDEX
-  EXPORT_FROM_RECORD_SHOW
-  EXPORT_MULTIPLE_RECORDS
-}
-
-enum CommandMenuItemAvailabilityType {
-  GLOBAL
-  GLOBAL_OBJECT_CONTEXT
-  RECORD_SELECTION
-  FALLBACK
-}
-
-union CommandMenuItemPayload = PathCommandMenuItemPayload | ObjectMetadataCommandMenuItemPayload
-
-type PathCommandMenuItemPayload {
-  path: String!
-}
-
-type ObjectMetadataCommandMenuItemPayload {
-  objectMetadataItemId: UUID!
 }
 
 type ToolIndexEntry {
@@ -2537,6 +2553,10 @@ type ConnectedAccountDTO {
   connectionParameters: ImapSmtpCaldavConnectionParameters
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
+  connectionProviderId: UUID
+  applicationId: UUID
+  name: String
+  visibility: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2564,6 +2584,10 @@ type ConnectedAccountPublicDTO {
   scopes: [String!]
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
+  connectionProviderId: UUID
+  applicationId: UUID
+  name: String
+  visibility: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
@@ -2609,19 +2633,6 @@ type Skill {
   updatedAt: DateTime!
 }
 
-type AgentChatThread {
-  id: UUID!
-  title: String
-  totalInputTokens: Int!
-  totalOutputTokens: Int!
-  contextWindowTokens: Int
-  conversationSize: Int!
-  totalInputCredits: Float!
-  totalOutputCredits: Float!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type AgentMessage {
   id: UUID!
   threadId: UUID!
@@ -2632,6 +2643,21 @@ type AgentMessage {
   parts: [AgentMessagePart!]!
   processedAt: DateTime
   createdAt: DateTime!
+}
+
+type AgentChatThread {
+  id: ID!
+  title: String
+  totalInputTokens: Int!
+  totalOutputTokens: Int!
+  contextWindowTokens: Int
+  conversationSize: Int!
+  totalInputCredits: Float!
+  totalOutputCredits: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+  lastMessageAt: DateTime
 }
 
 type AiSystemPromptSection {
@@ -2659,22 +2685,6 @@ type SendChatMessageResult {
 type AgentChatEvent {
   threadId: String!
   event: JSON!
-}
-
-type AgentChatThreadEdge {
-  """The node containing the AgentChatThread"""
-  node: AgentChatThread!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type AgentChatThreadConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [AgentChatThreadEdge!]!
 }
 
 type AgentTurnEvaluation {
@@ -2863,6 +2873,8 @@ enum AllMetadataName {
   fieldPermission
   frontComponent
   webhook
+  applicationVariable
+  connectionProvider
 }
 
 type MinimalObjectMetadata {
@@ -2933,6 +2945,7 @@ type Query {
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
+  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
@@ -2993,22 +3006,13 @@ type Query {
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
   minimalMetadata: MinimalMetadata!
+  chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
   skills: [Skill!]!
   skill(id: UUID!): Skill
-  chatThreads(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: AgentChatThreadFilter! = {}
-
-    """Specify to sort results."""
-    sorting: [AgentChatThreadSort!]! = [{field: updatedAt, direction: DESC}]
-  ): AgentChatThreadConnection!
   agentTurns(agentId: UUID!): [AgentTurn!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
@@ -3055,56 +3059,6 @@ input LogicFunctionIdInput {
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
-}
-
-input AgentChatThreadFilter {
-  and: [AgentChatThreadFilter!]
-  or: [AgentChatThreadFilter!]
-  id: UUIDFilterComparison
-  updatedAt: DateFieldComparison
-}
-
-input DateFieldComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: DateTime
-  neq: DateTime
-  gt: DateTime
-  gte: DateTime
-  lt: DateTime
-  lte: DateTime
-  in: [DateTime!]
-  notIn: [DateTime!]
-  between: DateFieldComparisonBetween
-  notBetween: DateFieldComparisonBetween
-}
-
-input DateFieldComparisonBetween {
-  lower: DateTime!
-  upper: DateTime!
-}
-
-input AgentChatThreadSort {
-  field: AgentChatThreadSortFields!
-  direction: SortDirection!
-  nulls: SortNulls
-}
-
-enum AgentChatThreadSortFields {
-  id
-  updatedAt
-}
-
-"""Sort Directions"""
-enum SortDirection {
-  ASC
-  DESC
-}
-
-"""Sort Nulls Options"""
-enum SortNulls {
-  NULLS_FIRST
-  NULLS_LAST
 }
 
 input EventLogQueryInput {
@@ -3243,6 +3197,7 @@ type Mutation {
   resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   destroyPageLayoutWidget(id: String!): Boolean!
@@ -3292,6 +3247,10 @@ type Mutation {
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileIds: [UUID!]): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
+  renameChatThread(id: UUID!, title: String!): AgentChatThread!
+  archiveChatThread(id: UUID!): AgentChatThread!
+  unarchiveChatThread(id: UUID!): AgentChatThread!
+  deleteChatThread(id: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
@@ -3341,7 +3300,6 @@ type Mutation {
   installApplication(appRegistrationId: String!, version: String): Boolean!
   runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
   uninstallApplication(universalIdentifier: String!): Boolean!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   createOIDCIdentityProvider(input: SetupOIDCSsoInput!): SetupSso!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
@@ -3825,12 +3783,12 @@ input CreateLogicFunctionFromSourceInput {
   name: String!
   description: String
   timeoutSeconds: Float
-  toolInputSchema: JSON
-  isTool: Boolean
   source: JSON
   cronTriggerSettings: JSON
   databaseEventTriggerSettings: JSON
   httpRouteTriggerSettings: JSON
+  toolTriggerSettings: JSON
+  workflowActionTriggerSettings: JSON
 }
 
 input ExecuteOneLogicFunctionInput {
@@ -3854,13 +3812,13 @@ input UpdateLogicFunctionFromSourceInputUpdates {
   description: String
   timeoutSeconds: Float
   sourceHandlerCode: String
-  toolInputSchema: JSON
   handlerName: String
   sourceHandlerPath: String
-  isTool: Boolean
   cronTriggerSettings: JSON
   databaseEventTriggerSettings: JSON
   httpRouteTriggerSettings: JSON
+  toolTriggerSettings: JSON
+  workflowActionTriggerSettings: JSON
 }
 
 input CreateCommandMenuItemInput {

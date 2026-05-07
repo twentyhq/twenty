@@ -12,6 +12,7 @@ import {
 } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
+  commandMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [
     {
@@ -69,7 +70,6 @@ export const EXPECTED_MANIFEST: Manifest = {
     description: 'A simple rich app',
     displayName: 'Rich App',
     defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
-    icon: 'IconWorld',
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
     yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
     packageJsonChecksum: '2851d0e2c3621a57e1fd103a245b6fde',
@@ -1513,31 +1513,31 @@ export const EXPECTED_MANIFEST: Manifest = {
           fieldValue: 'DRAFT',
           isVisible: true,
           position: 0,
-          universalIdentifier: 'bg1a2b3c-0001-4a7b-8c9d-0e1f2a3b4c5d',
+          universalIdentifier: 'e9ed34f1-3c3d-41b1-869b-00aae0033d9c',
         },
         {
           fieldValue: 'SENT',
           isVisible: true,
           position: 1,
-          universalIdentifier: 'bg1a2b3c-0002-4a7b-8c9d-0e1f2a3b4c5d',
+          universalIdentifier: '19b1a3c1-53f0-4d32-b072-d645dac98e38',
         },
         {
           fieldValue: 'DELIVERED',
           isVisible: true,
           position: 2,
-          universalIdentifier: 'bg1a2b3c-0003-4a7b-8c9d-0e1f2a3b4c5d',
+          universalIdentifier: 'f545cb5a-370d-423f-9b4e-278a9a465bdf',
         },
         {
           fieldValue: 'RETURNED',
           isVisible: true,
           position: 3,
-          universalIdentifier: 'bg1a2b3c-0004-4a7b-8c9d-0e1f2a3b4c5d',
+          universalIdentifier: '5d4c6d5f-af53-4cd0-a843-df38915561b2',
         },
         {
           fieldValue: 'LOST',
           isVisible: true,
           position: 4,
-          universalIdentifier: 'bg1a2b3c-0005-4a7b-8c9d-0e1f2a3b4c5d',
+          universalIdentifier: '5ebbd7dc-9939-4594-b2a0-519269b4531f',
         },
       ],
       icon: 'IconLayoutKanban',
@@ -1598,7 +1598,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'root-function',
       sourceHandlerPath: 'src/root.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
         httpMethod: 'GET',
@@ -1613,7 +1612,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'greeting-function',
       sourceHandlerPath: 'src/logic-functions/greeting.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
         httpMethod: 'GET',
@@ -1627,16 +1625,18 @@ export const EXPECTED_MANIFEST: Manifest = {
       builtHandlerPath: 'src/logic-functions/lookup-recipient.function.mjs',
       description: 'Look up a recipient by name to find their details',
       handlerName: 'default.config.handler',
-      isTool: true,
       name: 'lookup-recipient',
       sourceHandlerPath: 'src/logic-functions/lookup-recipient.function.ts',
       timeoutSeconds: 5,
-      toolInputSchema: {
-        type: 'object',
-        properties: {
-          recipientName: {
-            type: 'string',
+      toolTriggerSettings: {
+        inputSchema: {
+          type: 'object',
+          properties: {
+            recipientName: {
+              type: 'string',
+            },
           },
+          required: ['recipientName'],
         },
       },
       universalIdentifier: 'a1b2c3d4-1001-4a7b-8c9d-0e1f2a3b4c5d',
@@ -1652,7 +1652,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'on-post-card-created',
       sourceHandlerPath: 'src/logic-functions/on-post-card-created.function.ts',
       timeoutSeconds: 5,
-      toolInputSchema: { type: 'object', properties: {} },
       universalIdentifier: 'a1b2c3d4-db01-4a7b-8c9d-0e1f2a3b4c5d',
     },
     {
@@ -1661,7 +1660,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'test-function-2',
       sourceHandlerPath: 'src/logic-functions/test-function-2.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 2,
       cronTriggerSettings: {
         pattern: '0 0 1 1 *',
@@ -1674,7 +1672,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'test-function',
       sourceHandlerPath: 'src/logic-functions/test-function.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 2,
       httpRouteTriggerSettings: {
         forwardedRequestHeaders: ['signature'],

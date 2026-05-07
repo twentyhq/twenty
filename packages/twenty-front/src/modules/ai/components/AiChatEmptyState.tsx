@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/AiChatSuggestedPrompts';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
+import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';

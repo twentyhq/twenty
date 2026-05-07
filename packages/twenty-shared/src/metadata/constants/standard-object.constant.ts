@@ -1651,9 +1651,6 @@ export const STANDARD_OBJECTS = {
       messageThread: {
         universalIdentifier: '20202020-30f2-4ccd-9f5c-e41bb9d26214',
       },
-      direction: {
-        universalIdentifier: '20202020-0203-4118-8e2a-05b9bdae6dab',
-      },
       subject: { universalIdentifier: '20202020-52d1-4036-b9ae-84bd722bb37a' },
       text: { universalIdentifier: '20202020-d2ee-4e7e-89de-9a0a9044a143' },
       receivedAt: {

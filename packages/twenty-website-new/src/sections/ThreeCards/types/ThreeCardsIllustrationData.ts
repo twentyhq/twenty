@@ -1,8 +1,8 @@
-import { BodyType } from '@/design-system/components/Body';
-import { ThreeCardsBaseDataType } from './ThreeCardsBase';
-import { ThreeCardsIllustrationCardType } from './ThreeCardsIllustrationCard';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import type { ThreeCardsBaseDataType } from './ThreeCardsBase';
+import type { ThreeCardsIllustrationCardType } from './ThreeCardsIllustrationCard';
 
 export type ThreeCardsIllustrationDataType = ThreeCardsBaseDataType & {
-  body: BodyType;
+  body?: MessageBody;
   illustrationCards: ThreeCardsIllustrationCardType[];
 };

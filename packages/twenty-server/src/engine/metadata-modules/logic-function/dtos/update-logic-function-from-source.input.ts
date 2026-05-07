@@ -2,7 +2,6 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
-  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -19,6 +18,8 @@ import {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
+  ToolTriggerSettings,
+  WorkflowActionTriggerSettings,
 } from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -49,11 +50,6 @@ class UpdateLogicFunctionFromSourceInputUpdates {
   @IsOptional()
   sourceHandlerCode?: string;
 
-  @Field(() => graphqlTypeJson, { nullable: true })
-  @IsObject()
-  @IsOptional()
-  toolInputSchema?: object;
-
   @IsString()
   @Matches(HANDLER_NAME_REGEX, {
     message: 'handlerName must be a valid JavaScript identifier or dotted path',
@@ -66,11 +62,6 @@ class UpdateLogicFunctionFromSourceInputUpdates {
   @Field({ nullable: true })
   @IsOptional()
   sourceHandlerPath?: string;
-
-  @IsBoolean()
-  @Field({ nullable: true })
-  @IsOptional()
-  isTool?: boolean;
 
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })
@@ -86,6 +77,16 @@ class UpdateLogicFunctionFromSourceInputUpdates {
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()
   httpRouteTriggerSettings?: JsonbProperty<HttpRouteTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  toolTriggerSettings?: JsonbProperty<ToolTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  workflowActionTriggerSettings?: JsonbProperty<WorkflowActionTriggerSettings>;
 }
 
 @InputType()

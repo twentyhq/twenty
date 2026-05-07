@@ -1141,6 +1141,7 @@ export class AuthService {
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         return [];
       case ConnectedAccountProvider.EMAIL_FORWARDING:
+      case ConnectedAccountProvider.APP:
         return [];
       default:
         throw new Error(

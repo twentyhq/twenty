@@ -31,6 +31,9 @@ const PROVIDERS_ICON_MAPPING = {
     [ConnectedAccountProvider.OIDC]: IconMail,
     [ConnectedAccountProvider.SAML]: IconMail,
     [ConnectedAccountProvider.EMAIL_FORWARDING]: IconMail,
+    // App-managed connections aren't email accounts; this case is unreachable
+    // for the EMAIL source but the lookup type still requires every provider.
+    [ConnectedAccountProvider.APP]: IconMail,
     default: IconMail,
   },
   CALENDAR: {

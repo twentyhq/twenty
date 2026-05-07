@@ -1,4 +1,4 @@
-import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
+import { AppChip } from '@/applications/components/AppChip';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -19,6 +19,7 @@ import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Tag } from 'twenty-ui/components';
 import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
@@ -30,8 +31,8 @@ const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const TABLE_GRID = '1fr 100px 100px 40px';
-const TABLE_GRID_MOBILE = '3fr 3fr 1fr 40px';
+const TABLE_GRID = '1fr 100px 100px 100px 40px';
+const TABLE_GRID_MOBILE = '3fr 3fr 1fr 1fr 40px';
 
 export const SettingsAdminApps = () => {
   const apolloAdminClient = useApolloAdminClient();
@@ -42,26 +43,27 @@ export const SettingsAdminApps = () => {
     client: apolloAdminClient,
   });
 
-  const registrations: ApplicationRegistrationFragmentFragment[] =
-    data?.findAllApplicationRegistrations ?? [];
+  const registrations = data?.findAllApplicationRegistrations ?? [];
 
   const query = searchQuery.trim().toLowerCase();
 
-  const filtered = registrations.filter((registration) => {
-    if (showPreInstalledOnly && !registration.isPreInstalled) {
-      return false;
-    }
+  const filtered = registrations
+    .filter((registration) => {
+      if (showPreInstalledOnly && !registration.isPreInstalled) {
+        return false;
+      }
 
-    if (query.length === 0) {
-      return true;
-    }
+      if (query.length === 0) {
+        return true;
+      }
 
-    return (
-      registration.name.toLowerCase().includes(query) ||
-      (registration.sourcePackage ?? '').toLowerCase().includes(query) ||
-      registration.universalIdentifier.toLowerCase().includes(query)
-    );
-  });
+      return (
+        registration.name.toLowerCase().includes(query) ||
+        (registration.sourcePackage ?? '').toLowerCase().includes(query) ||
+        registration.universalIdentifier.toLowerCase().includes(query)
+      );
+    })
+    .toSorted((a, b) => Number(a.isConfigured) - Number(b.isConfigured));
 
   const getFormattedSource = (
     registration: ApplicationRegistrationFragmentFragment,
@@ -127,6 +129,7 @@ export const SettingsAdminApps = () => {
             <TableHeader>{t`Name`}</TableHeader>
             <TableHeader align="right">{t`Source`}</TableHeader>
             <TableHeader align="right">{t`Listed`}</TableHeader>
+            <TableHeader align="right">{t`Configured`}</TableHeader>
             <TableHeader></TableHeader>
           </TableRow>
           <TableBody>
@@ -173,13 +176,25 @@ const SettingsAdminAppsTableRow = ({
         minWidth="0"
         overflow="hidden"
       >
-        <ApplicationDisplay application={registration} />
+        <AppChip
+          size="md"
+          fallbackApplicationData={{
+            logo: registration.logoUrl,
+            name: registration.name,
+          }}
+        />
       </TableCell>
       <TableCell overflow="hidden" align="right">
         {getFormattedSource(registration)}
       </TableCell>
       <TableCell align="right">
         {registration.isListed ? t`Yes` : t`No`}
+      </TableCell>
+      <TableCell align="right">
+        <Tag
+          color={registration.isConfigured ? 'green' : 'red'}
+          text={registration.isConfigured ? t`Yes` : t`No`}
+        />
       </TableCell>
       <TableCell align="right">
         <IconChevronRight

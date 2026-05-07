@@ -142,11 +142,14 @@ const handler = async (event: RoutePayload) => {
 Header names are normalized to lowercase. Access them using lowercase keys (e.g., `event.headers['content-type']`).
 </Note>
 
-#### Exposing a function as a tool
+#### Exposing a function as an AI tool or workflow action
 
-Logic functions can be exposed as **tools** for AI agents and workflows. When marked as a tool, a function becomes discoverable by Twenty's AI features and can be used in workflow automations.
+Logic functions can be exposed on two surfaces, each with its own trigger:
 
-To mark a logic function as a tool, set `isTool: true`:
+- **`toolTriggerSettings`** — makes the function discoverable by Twenty's AI features (chat, MCP, function calling). Uses standard JSON Schema, the format LLMs natively understand.
+- **`workflowActionTriggerSettings`** — makes the function appear as a step in the visual workflow builder. Uses Twenty's rich `InputSchema` so the builder can render proper field editors, variable pickers, and labels.
+
+A function can opt into one, the other, or both. They sit alongside `cronTriggerSettings`, `databaseEventTriggerSettings`, and `httpRouteTriggerSettings` — same pattern, same shape.
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -176,31 +179,33 @@ export default defineLogicFunction({
   description: 'Enrich a company record with external data',
   timeoutSeconds: 10,
   handler,
-  isTool: true,
+  toolTriggerSettings: {},
 });
 ```
 
 Key points:
 
-- You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events at the same time.
-- **`toolInputSchema`** (optional): A JSON Schema object describing the parameters your function accepts. The schema is computed automatically from source code static analysis, but you can set it explicitly:
+- A function can mix surfaces — declare both `toolTriggerSettings` and `workflowActionTriggerSettings` to expose it in chat AND in the workflow builder.
+- `toolTriggerSettings.inputSchema` and `workflowActionTriggerSettings.inputSchema` are both optional. When omitted, the manifest builder infers them from the handler source code (JSON Schema for the AI tool, Twenty's `InputSchema` for the workflow action). Provide one explicitly when you want richer typing — for example, with `FieldMetadataType`-aware fields like `CURRENCY` or `RELATION` for the workflow builder, or with `description` fields the AI agent can read:
 
 ```ts
 export default defineLogicFunction({
   ...,
-  toolInputSchema: {
-    type: 'object',
-    properties: {
-      companyName: {
-        type: 'string',
-        description: 'The name of the company to enrich',
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
       },
-      domain: {
-        type: 'string',
-        description: 'The company website domain (optional)',
-      },
+      required: ['companyName'],
     },
-    required: ['companyName'],
   },
 });
 ```
@@ -239,7 +244,7 @@ yarn twenty exec --postInstall
 ```
 
 Key points:
-- Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+- Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`).
 - The handler receives an `InstallPayload` with `{ previousVersion?: string; newVersion: string }` — `newVersion` is the version being installed, and `previousVersion` is the version that was previously installed (or `undefined` on a fresh install). Use these values to distinguish fresh installs from upgrades and to run version-specific migration logic.
 - **When the hook runs**: on fresh installs only, by default. Pass `shouldRunOnVersionUpgrade: true` if you also want it to run when the app is upgraded from a previous version. When omitted, the flag defaults to `false` and upgrades skip the hook.
 - **Execution model — async by default, sync opt-in**: the `shouldRunSynchronously` flag controls *how* post-install is executed.

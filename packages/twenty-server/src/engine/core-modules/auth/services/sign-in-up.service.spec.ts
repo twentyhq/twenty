@@ -101,6 +101,11 @@ const createSignInUpServiceForTests = () => {
       isValid: jest.fn().mockReturnValue(false),
     } as any,
     {
+      createContext: jest.fn().mockReturnValue({
+        insertWorkspaceEvent: jest.fn(),
+      }),
+    } as any,
+    {
       createQueryRunner: jest.fn(() => queryRunnerMock),
     } as any,
   );

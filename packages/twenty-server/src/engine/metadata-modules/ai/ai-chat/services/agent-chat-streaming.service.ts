@@ -100,6 +100,11 @@ export class AgentChatStreamingService {
       workspaceId: workspace.id,
     });
 
+    await this.agentChatService.notifyThreadActivityUpdated(
+      threadId,
+      userWorkspaceId,
+    );
+
     const previousMessages = await this.loadMessagesFromDB(
       threadId,
       userWorkspaceId,
@@ -139,6 +144,15 @@ export class AgentChatStreamingService {
     workspaceId: string,
     hasTitle: boolean,
   ): Promise<void> {
+    const threadStatus = await this.threadRepository.findOne({
+      where: { id: threadId },
+      select: ['id', 'deletedAt'],
+    });
+
+    if (!threadStatus || threadStatus.deletedAt) {
+      return;
+    }
+
     const queuedMessages =
       await this.agentChatService.getQueuedMessages(threadId);
 

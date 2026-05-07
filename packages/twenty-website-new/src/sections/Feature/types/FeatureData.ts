@@ -1,11 +1,9 @@
-import type { EyebrowType } from '@/design-system/components/Eyebrow';
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageEyebrow } from '@/lib/i18n/message-eyebrow';
 import type { ImageType } from '@/design-system/components/Image';
 import type { FeatureTileType } from '@/sections/Feature/types/FeatureTile';
 
 export type FeatureDataType = {
-  eyebrow: EyebrowType;
-  heading: HeadingType[];
+  eyebrow: MessageEyebrow;
   mask: ImageType;
   tiles: FeatureTileType[];
 };

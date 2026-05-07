@@ -6,7 +6,7 @@ import { In, IsNull, type QueryRunner, Repository } from 'typeorm';
 
 import {
   UpgradeMigrationEntity,
-  type UpgradeMigrationStatus,
+  UpgradeMigrationStatus,
 } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 

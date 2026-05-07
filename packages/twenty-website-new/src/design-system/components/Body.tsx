@@ -1,8 +1,9 @@
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
+import type { ReactNode } from 'react';
 
-export type BodyType = {
-  text: string;
+export type BodyType<TText = ReactNode> = {
+  text: TText;
 };
 
 const bodyClassName = css`
@@ -80,26 +81,33 @@ export type BodyWeight = 'light' | 'regular' | 'medium';
 export type BodySize = 'md' | 'sm' | 'xs';
 export type BodyVariant = 'default' | 'body-paragraph';
 
-export type BodyProps = {
+type BodyTextRenderer<TText> = [TText] extends [ReactNode]
+  ? { renderText?: (text: TText) => ReactNode }
+  : { renderText: (text: TText) => ReactNode };
+
+export type BodyProps<TText = ReactNode> = {
   as?: BodyAs;
-  body: BodyType;
+  body: BodyType<TText>;
   family?: BodyFamily;
   weight?: BodyWeight;
   size?: BodySize;
   variant?: BodyVariant;
   className?: string;
-};
+} & BodyTextRenderer<TText>;
 
-export function Body({
+export function Body<TText = ReactNode>({
   as: Tag = 'p',
   body,
   family = 'sans',
+  renderText,
   weight = 'regular',
   size = 'md',
   variant = 'default',
   className,
-}: BodyProps) {
+}: BodyProps<TText>) {
   const rootClassName = [bodyClassName, className].filter(Boolean).join(' ');
+  const content =
+    renderText === undefined ? (body.text as ReactNode) : renderText(body.text);
 
   return (
     <Tag
@@ -109,7 +117,7 @@ export function Body({
       data-size={size}
       data-variant={variant}
     >
-      {body.text}
+      {content}
     </Tag>
   );
 }
