@@ -102,9 +102,7 @@ export const SettingsApplicationsTable = ({
                 key={application.id}
                 application={application}
                 hasUpdate={hasUpdate}
-                sourceType={
-                  application.applicationRegistration?.sourceType
-                }
+                sourceType={application.applicationRegistration?.sourceType}
                 action={
                   <IconChevronRight
                     size={theme.icon.size.md}
