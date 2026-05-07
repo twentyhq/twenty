@@ -62,13 +62,9 @@ export class FieldMetadataRestApiController {
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<{ data: FieldMetadataDTO[]; pageInfo: RestCursorPageInfo }> {
-    const queryBuilder = this.fieldMetadataRepository
-      .createQueryBuilder('field')
-      .where('field.workspaceId = :workspaceId', { workspaceId });
-
     const { items, pageInfo } = await paginateByIdCursor({
-      queryBuilder,
-      alias: 'field',
+      repository: this.fieldMetadataRepository,
+      where: { workspaceId },
       limit: parseLimitRestRequest(request),
       startingAfter: parseStartingAfterRestRequest(request),
       endingBefore: parseEndingBeforeRestRequest(request),

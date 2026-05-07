@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
@@ -70,13 +70,9 @@ export class ObjectMetadataRestApiController {
     data: ObjectMetadataWithFieldsDTO[];
     pageInfo: RestCursorPageInfo;
   }> {
-    const queryBuilder = this.objectMetadataRepository
-      .createQueryBuilder('object')
-      .where('object.workspaceId = :workspaceId', { workspaceId });
-
     const { items, pageInfo } = await paginateByIdCursor({
-      queryBuilder,
-      alias: 'object',
+      repository: this.objectMetadataRepository,
+      where: { workspaceId },
       limit: parseLimitRestRequest(request),
       startingAfter: parseStartingAfterRestRequest(request),
       endingBefore: parseEndingBeforeRestRequest(request),
@@ -202,11 +198,9 @@ export class ObjectMetadataRestApiController {
       return grouped;
     }
 
-    const fields = await this.fieldMetadataRepository
-      .createQueryBuilder('field')
-      .where('field.workspaceId = :workspaceId', { workspaceId })
-      .andWhere('field.objectMetadataId IN (:...objectIds)', { objectIds })
-      .getMany();
+    const fields = await this.fieldMetadataRepository.find({
+      where: { workspaceId, objectMetadataId: In(objectIds) },
+    });
 
     for (const field of fields) {
       const list = grouped.get(field.objectMetadataId);

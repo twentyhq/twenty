@@ -1,7 +1,13 @@
 import { BadRequestException } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectQueryBuilder } from 'typeorm';
+import {
+  type FindOptionsOrder,
+  type FindOptionsWhere,
+  LessThan,
+  MoreThan,
+  type Repository,
+} from 'typeorm';
 
 export type RestCursorPageInfo = {
   hasNextPage: boolean;
@@ -10,14 +16,14 @@ export type RestCursorPageInfo = {
 };
 
 export const paginateByIdCursor = async <T extends { id: string }>({
-  queryBuilder,
-  alias,
+  repository,
+  where,
   limit,
   startingAfter,
   endingBefore,
 }: {
-  queryBuilder: SelectQueryBuilder<T>;
-  alias: string;
+  repository: Repository<T>;
+  where?: FindOptionsWhere<T>;
   limit: number;
   startingAfter?: string;
   endingBefore?: string;
@@ -28,42 +34,31 @@ export const paginateByIdCursor = async <T extends { id: string }>({
     );
   }
 
-  if (isDefined(endingBefore)) {
-    const rows = await queryBuilder
-      .andWhere(`${alias}.id > :endingBefore`, { endingBefore })
-      .orderBy(`${alias}.id`, 'ASC')
-      .limit(limit + 1)
-      .getMany();
+  const isBackward = isDefined(endingBefore);
 
-    const hasMore = rows.length > limit;
-    const items = (hasMore ? rows.slice(0, limit) : rows).reverse();
+  const idCondition = isBackward
+    ? { id: MoreThan(endingBefore) }
+    : isDefined(startingAfter)
+      ? { id: LessThan(startingAfter) }
+      : {};
 
-    return {
-      items,
-      pageInfo: {
-        hasNextPage: hasMore,
-        startCursor: items[0]?.id ?? null,
-        endCursor: items[items.length - 1]?.id ?? null,
-      },
-    };
+  const rows = await repository.find({
+    where: { ...where, ...idCondition } as FindOptionsWhere<T>,
+    order: { id: isBackward ? 'ASC' : 'DESC' } as FindOptionsOrder<T>,
+    take: limit + 1,
+  });
+
+  const hasMore = rows.length > limit;
+  const items = hasMore ? rows.slice(0, limit) : rows;
+
+  if (isBackward) {
+    items.reverse();
   }
-
-  if (isDefined(startingAfter)) {
-    queryBuilder.andWhere(`${alias}.id < :startingAfter`, { startingAfter });
-  }
-
-  const rows = await queryBuilder
-    .orderBy(`${alias}.id`, 'DESC')
-    .limit(limit + 1)
-    .getMany();
-
-  const hasNextPage = rows.length > limit;
-  const items = hasNextPage ? rows.slice(0, limit) : rows;
 
   return {
     items,
     pageInfo: {
-      hasNextPage,
+      hasNextPage: hasMore,
       startCursor: items[0]?.id ?? null,
       endCursor: items[items.length - 1]?.id ?? null,
     },
