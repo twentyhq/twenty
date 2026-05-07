@@ -240,6 +240,7 @@ export class WorkspaceEntity {
 
   @Field()
   @Column({ unique: true })
+  @Index('IDX_WORKSPACE_SUBDOMAIN')
   subdomain: string;
 
   @Field(() => String, { nullable: true })
