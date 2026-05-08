@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { ToolCategory } from 'twenty-shared/ai';
 import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
@@ -23,7 +25,6 @@ import {
   generateGroupByToolInputSchema,
   hasGroupByToolInputSchema,
 } from 'src/engine/core-modules/record-crud/zod-schemas/group-by-tool.zod-schema';
-import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -182,7 +183,13 @@ export class DatabaseToolProvider implements ToolProvider {
         }
       }
 
-      if (permission.canUpdateObjectRecords) {
+      if (
+        permission.canUpdateObjectRecords &&
+        canObjectBeManagedByWorkflow({
+          nameSingular: objectMetadata.nameSingular,
+          isSystem: objectMetadata.isSystem,
+        })
+      ) {
         descriptors.push({
           name: `create_${snakeSingular}`,
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
@@ -266,7 +273,13 @@ export class DatabaseToolProvider implements ToolProvider {
         });
       }
 
-      if (permission.canSoftDeleteObjectRecords) {
+      if (
+        permission.canSoftDeleteObjectRecords &&
+        canObjectBeManagedByWorkflow({
+          nameSingular: objectMetadata.nameSingular,
+          isSystem: objectMetadata.isSystem,
+        })
+      ) {
         descriptors.push({
           name: `delete_${snakeSingular}`,
           description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
