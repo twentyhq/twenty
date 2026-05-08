@@ -25,9 +25,11 @@ const buildCommand = (overrides?: {
     ),
   };
   const roleRepository = {
-    findOne: jest.fn().mockResolvedValue(
-      overrides?.adminRole ?? { id: 'admin-role-id', label: 'Admin' },
-    ),
+    findOne: jest
+      .fn()
+      .mockResolvedValue(
+        overrides?.adminRole ?? { id: 'admin-role-id', label: 'Admin' },
+      ),
   };
   const userWorkspaceService = {
     addUserToWorkspaceOrEnsureRole: jest
@@ -78,9 +80,9 @@ describe('BootstrapSsoAdminCommand', () => {
   it('throws when SMB_NAME is not configured', async () => {
     const { command } = buildCommand({ configuredSubdomain: '' });
 
-    await expect(
-      command.run([], { email: 'admin@askii.ai' }),
-    ).rejects.toThrow('SMB_NAME is not configured');
+    await expect(command.run([], { email: 'admin@askii.ai' })).rejects.toThrow(
+      'SMB_NAME is not configured',
+    );
   });
 
   it('throws on email without @-sign', async () => {
@@ -96,9 +98,9 @@ describe('BootstrapSsoAdminCommand', () => {
 
     workspaceRepository.findOne.mockResolvedValueOnce(null);
 
-    await expect(
-      command.run([], { email: 'admin@askii.ai' }),
-    ).rejects.toThrow('Workspace with subdomain="askii" not found');
+    await expect(command.run([], { email: 'admin@askii.ai' })).rejects.toThrow(
+      'Workspace with subdomain="askii" not found',
+    );
   });
 
   it('throws when Admin role is missing in the workspace', async () => {
@@ -106,9 +108,9 @@ describe('BootstrapSsoAdminCommand', () => {
 
     roleRepository.findOne.mockResolvedValueOnce(null);
 
-    await expect(
-      command.run([], { email: 'admin@askii.ai' }),
-    ).rejects.toThrow('Admin role missing in workspace');
+    await expect(command.run([], { email: 'admin@askii.ai' })).rejects.toThrow(
+      'Admin role missing in workspace',
+    );
   });
 
   it('newly provisions Admin user when no userWorkspace exists (cold start)', async () => {
