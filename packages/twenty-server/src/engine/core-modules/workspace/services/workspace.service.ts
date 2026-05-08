@@ -386,7 +386,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     displayName: string;
   }): Promise<void> {
     const lastAttemptedInstanceCommand =
-      await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
+      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
 
     const initialCursor =
       this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(

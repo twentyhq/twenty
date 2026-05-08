@@ -295,5 +295,22 @@ describe('UpgradeSequenceReaderService', () => {
 
       expect(result).toEqual({ name: 'Ic1', status: 'failed' });
     });
+
+    it('should return the last workspace command when no instance command exists (fresh install)', async () => {
+      const sequence = [
+        makeFastInstance('Ic0'),
+        makeWorkspace('Wc0'),
+        makeWorkspace('Wc1'),
+        makeFastInstance('Ic1'),
+        makeWorkspace('Wc2'),
+        makeWorkspace('Wc3'),
+      ];
+
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      const result = service.getInitialCursorForNewWorkspace(null);
+
+      expect(result).toEqual({ name: 'Wc3', status: 'completed' });
+    });
   });
 });

@@ -162,15 +162,35 @@ export class UpgradeSequenceReaderService {
       : workspaceCommands.slice(cursorIndex);
   }
 
-  getInitialCursorForNewWorkspace(lastAttemptedInstanceCommand: {
-    name: string;
-    status: UpgradeMigrationStatus;
-  }): {
+  getInitialCursorForNewWorkspace(
+    lastAttemptedInstanceCommand: {
+      name: string;
+      status: UpgradeMigrationStatus;
+    } | null,
+  ): {
     name: string;
     status: UpgradeMigrationStatus;
   } {
-    const { name, status } = lastAttemptedInstanceCommand;
     const sequence = this.getUpgradeSequence();
+
+    // Fresh install — no instance commands have ever run. Treat the new
+    // workspace as fully caught up on all workspace commands (same as the
+    // pre-cross-version-upgrade behaviour of getLastWorkspaceCommand).
+    if (!isDefined(lastAttemptedInstanceCommand)) {
+      for (let index = sequence.length - 1; index >= 0; index--) {
+        const step = sequence[index];
+
+        if (step.kind === 'workspace') {
+          return { name: step.name, status: 'completed' };
+        }
+      }
+
+      throw new Error(
+        'No workspace commands found in upgrade sequence — this should have been caught at startup',
+      );
+    }
+
+    const { name, status } = lastAttemptedInstanceCommand;
 
     const instanceCursor = this.locateStepInSequenceOrThrow({
       sequence,
