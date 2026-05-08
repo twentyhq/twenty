@@ -1,4 +1,6 @@
-import { useContext } from 'react';
+import { styled } from '@linaria/react';
+import { Fragment, useContext } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
@@ -19,6 +21,16 @@ import { RecordDetailRelationRecordsList } from '@/object-record/record-field-li
 import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
 import { useMorphPersistManyToOne } from '@/object-record/record-field/ui/meta-types/input/hooks/useMorphPersistManyToOne';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+
+const StyledGroupHeading = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xxs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  letter-spacing: 0.05em;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]}
+    ${themeCssVariables.spacing[1]};
+  text-transform: uppercase;
+`;
 
 type RecordDetailMorphRelationSectionProps = {
   loading: boolean;
@@ -125,11 +137,31 @@ export const RecordDetailMorphRelationSection = ({
           <RecordDetailMorphRelationSectionDropdown loading={loading} />
         }
       >
-        {relationRecordsCount > 0 && (
-          <RecordDetailRelationRecordsList
-            recordsWithObjectNameSingular={recordsWithObjectNameSingular}
-          />
-        )}
+        {relationRecordsCount > 0 &&
+          metadata.morphRelations
+            .map((morphRelation) => {
+              const targetNameSingular =
+                morphRelation.targetObjectMetadata.nameSingular;
+              return {
+                nameSingular: targetNameSingular,
+                labelPlural:
+                  objectMetadataItems.find(
+                    (item) => item.nameSingular === targetNameSingular,
+                  )?.labelPlural ?? targetNameSingular,
+                records: recordsWithObjectNameSingular.filter(
+                  (record) => record.objectNameSingular === targetNameSingular,
+                ),
+              };
+            })
+            .filter((group) => group.records.length > 0)
+            .map((group) => (
+              <Fragment key={group.nameSingular}>
+                <StyledGroupHeading>{group.labelPlural}</StyledGroupHeading>
+                <RecordDetailRelationRecordsList
+                  recordsWithObjectNameSingular={group.records}
+                />
+              </Fragment>
+            ))}
       </RecordDetailSectionContainer>
     </FieldInputEventContext.Provider>
   );
