@@ -4,7 +4,7 @@ description: Personalize páginas de detalhes de registros — abas, widgets e o
 icon: table-columns
 ---
 
-Um **page layout** controla como a página de detalhes de um registro é organizada: quais abas aparecem e quais widgets elas contêm. Use `definePageLayout()` para declarar um layout para um objeto que você possui ou `definePageLayoutTab()` para adicionar uma única aba a um layout que já existe (seu ou um padrão da Twenty).
+Um **layout de página** controla como a página de detalhes de um registro é organizada: quais abas aparecem e quais widgets elas contêm. Use `definePageLayout()` para declarar um layout para um objeto que você possui ou `definePageLayoutTab()` para adicionar uma única aba a um layout que já existe (seu ou um padrão da Twenty).
 
 | Caso de uso                                                                    | Entidade              |
 | ------------------------------------------------------------------------------ | --------------------- |
@@ -96,7 +96,7 @@ export default definePageLayoutTab({
 
 ### Pontos-chave
 
-* `pageLayoutUniversalIdentifier` é **obrigatório** e deve apontar para um page layout que já exista no momento da instalação — seja um layout padrão da Twenty ou um definido pelo seu próprio aplicativo. Referências entre apps para layouts pertencentes a outro aplicativo instalado não são compatíveis atualmente. Quando o layout pai estiver ausente, a instalação falha com um erro de validação claro.
-* `widgets` têm escopo apenas para esta aba — eles referenciam [front components](/l/pt/developers/extend/apps/layout/front-components), views etc., exatamente como widgets definidos inline em `definePageLayout`.
+* `pageLayoutUniversalIdentifier` é **obrigatório** e deve apontar para um layout de página que já exista no momento da instalação — seja um layout padrão da Twenty ou um definido pelo seu próprio aplicativo. Referências entre aplicativos para layouts pertencentes a outro aplicativo instalado não são compatíveis atualmente. Quando o layout pai estiver ausente, a instalação falha com um erro de validação claro.
+* `widgets` têm escopo apenas para esta aba — eles referenciam [front components](/l/pt/developers/extend/apps/layout/front-components), visualizações etc., exatamente como widgets definidos inline em `definePageLayout`.
 * `position` controla a ordenação em relação às abas existentes no layout de destino. Escolha um valor que posicione sua aba onde você deseja em relação às abas nativas.
 * Use isto em vez de `definePageLayout` quando você quiser apenas adicionar a um layout existente. Use `definePageLayout` quando você possuir todo o layout.

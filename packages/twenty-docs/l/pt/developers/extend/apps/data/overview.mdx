@@ -39,11 +39,11 @@ A **camada de dados** de um app Twenty é o conjunto de dados que seu app *adici
 
 ## Entidades em resumo
 
-| Entidade    | Finalidade                                                                                                                               | Definido com                             |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| **Objeto**  | Um novo tipo de registro personalizado (por exemplo, PostCard, Invoice) com seus próprios campos                                         | `defineObject()`                         |
-| **Campo**   | Uma coluna em um objeto. Campos independentes podem estender objetos que você não criou (por exemplo, adicionar `loyaltyTier` a Company) | `defineField()`                          |
-| **Relação** | Um vínculo bidirecional entre dois objetos — ambos os lados declarados como campos                                                       | `defineField()` com `FieldType.RELATION` |
+| Entidade    | Finalidade                                                                                                                                       | Definido com                             |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- |
+| **Objeto**  | Um novo tipo de registro personalizado (por exemplo, PostCard, Invoice) com seus próprios campos                                                 | `defineObject()`                         |
+| **Campo**   | Uma coluna em um objeto. Campos independentes podem estender objetos que você não criou (por exemplo, adicionar `loyaltyTier` ao objeto Company) | `defineField()`                          |
+| **Relação** | Um vínculo bidirecional entre dois objetos — ambos os lados declarados como campos                                                               | `defineField()` com `FieldType.RELATION` |
 
 O SDK detecta esses elementos por meio de análise de AST em tempo de build, então a organização dos arquivos fica a seu critério — a convenção é `src/objects/` e `src/fields/`. UUIDs `universalIdentifier` estáveis conectam tudo em implantações diferentes.
 

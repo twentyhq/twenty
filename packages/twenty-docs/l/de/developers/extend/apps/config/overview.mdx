@@ -29,7 +29,7 @@ Die **Konfigurationsebene** einer Twenty-App beschreibt die App *für die Plattf
 ## In diesem Abschnitt
 
 <CardGroup cols={2}>
-  <Card title="Anwendungskonfiguration" icon="rocket" href="/l/de/developers/extend/apps/config/application">
+  <Card title="App-Konfiguration" icon="rocket" href="/l/de/developers/extend/apps/config/application">
     `defineApplication` – Identität, Standardrolle, Variablen, Marketplace-Metadaten.
   </Card>
   <Card title="Rollen & Berechtigungen" icon="shield-halved" href="/l/de/developers/extend/apps/config/roles">
@@ -42,8 +42,8 @@ Die **Konfigurationsebene** einer Twenty-App beschreibt die App *für die Plattf
 
 ## Wie die Bausteine zusammenhängen
 
-* **Application** ist der Einstiegspunkt. Jede App hat genau einen `defineApplication()`-Aufruf, und dieser verweist auf eine **Role** als Standard.
-* Die **Role** steuert, was die Logikfunktionen und Front-Komponenten der App lesen und schreiben können. Folgen Sie dem Prinzip der geringsten Privilegien: Gewähren Sie nur die Berechtigungen, die Ihr Code tatsächlich benötigt.
+* **Application** ist der Einstiegspunkt. Jede App hat genau einen `defineApplication()`-Aufruf, und dieser verweist auf eine **Rolle** als Standard.
+* Die **Rolle** steuert, was die Logikfunktionen und Frontend-Komponenten der App lesen und schreiben können. Folgen Sie dem Prinzip der geringsten Privilegien: Gewähren Sie nur die Berechtigungen, die Ihr Code tatsächlich benötigt.
 * **Install Hooks** laufen während der Installation oder Aktualisierung – Pre-Install vor der Metadatenmigration (so kann ein riskantes Upgrade abgelehnt werden), Post-Install nach der Migration (so können Standarddaten gegen das neue Schema befüllt werden).
 
 <Note>

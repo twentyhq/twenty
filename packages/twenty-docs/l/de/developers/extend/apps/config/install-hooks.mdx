@@ -20,9 +20,9 @@ Jede App darf **höchstens eine Pre-Install-Funktion** und **höchstens eine Pos
 ```
 
 <AccordionGroup>
-<Accordion title="definePostInstallLogicFunction" description="Wird ausgeführt, nachdem die Workspace-Metadatenmigration angewendet wurde">
+<Accordion title="definePostInstallLogicFunction" description="Wird ausgeführt, nachdem die Metadatenmigration des Arbeitsbereichs angewendet wurde">
 
-Eine Post-Install-Funktion wird automatisch ausgeführt, sobald Ihre App die Installation in einem Workspace abgeschlossen hat. Der Server führt sie **nach** der Synchronisierung der Metadaten der App und der Generierung des SDK-Clients aus, sodass der Arbeitsbereich vollständig einsatzbereit ist und das neue Schema bereitsteht. Typische Anwendungsfälle umfassen das Befüllen von Standarddaten, das Erstellen anfänglicher Datensätze, das Konfigurieren von Arbeitsbereichseinstellungen oder das Bereitstellen von Ressourcen bei Diensten von Drittanbietern.
+Eine Post-Install-Funktion wird automatisch ausgeführt, sobald Ihre App die Installation in einem Arbeitsbereich abgeschlossen hat. Der Server führt sie **nach** der Synchronisierung der Metadaten der App und der Generierung des SDK-Clients aus, sodass der Arbeitsbereich vollständig einsatzbereit ist und das neue Schema bereitsteht. Typische Anwendungsfälle umfassen das Befüllen von Standarddaten, das Erstellen anfänglicher Datensätze, das Konfigurieren von Arbeitsbereichseinstellungen oder das Bereitstellen von Ressourcen bei Diensten von Drittanbietern.
 
 ```ts src/logic-functions/post-install.ts
 import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
@@ -60,12 +60,12 @@ Hauptpunkte:
 * Pro Anwendung ist nur eine Post-Installationsfunktion zulässig. Der Manifest-Build schlägt fehl, wenn mehr als eine erkannt wird.
 * Die `universalIdentifier`, `shouldRunOnVersionUpgrade` und `shouldRunSynchronously` der Funktion werden während des Builds automatisch dem Anwendungsmanifest unter dem Feld `postInstallLogicFunction` hinzugefügt – Sie müssen sie in [`defineApplication()`](/l/de/developers/extend/apps/config/application) nicht referenzieren.
 * Das standardmäßige Timeout ist auf 300 Sekunden (5 Minuten) festgelegt, um längere Einrichtungsvorgänge wie Daten-Seeding zu ermöglichen.
-* **Nicht im Dev-Modus ausgeführt**: Wenn eine App lokal registriert ist (über `yarn twenty dev`), überspringt der Server den Installationsablauf vollständig und synchronisiert Dateien direkt über den CLI-Watcher — daher läuft Post-Install im Dev-Modus nie, unabhängig von `shouldRunSynchronously`. Verwenden Sie `yarn twenty exec --postInstall`, um es manuell gegen einen laufenden Workspace auszulösen.
+* **Nicht im Dev-Modus ausgeführt**: Wenn eine App lokal registriert ist (über `yarn twenty dev`), überspringt der Server den Installationsablauf vollständig und synchronisiert Dateien direkt über den CLI-Watcher — daher läuft Post-Install im Dev-Modus nie, unabhängig von `shouldRunSynchronously`. Verwenden Sie `yarn twenty exec --postInstall`, um es manuell gegen einen laufenden Arbeitsbereich auszulösen.
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="Wird ausgeführt, bevor die Workspace-Metadatenmigration angewendet wird">
+<Accordion title="definePreInstallLogicFunction" description="Wird ausgeführt, bevor die Metadatenmigration des Arbeitsbereichs angewendet wird">
 
-Eine Pre-Install-Funktion wird automatisch während der Installation ausgeführt, **bevor die Workspace-Metadatenmigration angewendet wird**. Sie hat die gleiche Payload-Struktur wie Post-Install (`InstallPayload`), ist aber früher im Installationsablauf positioniert, sodass sie Zustände vorbereiten kann, von denen die bevorstehende Migration abhängt — typische Anwendungsfälle sind das Sichern von Daten, die Validierung der Kompatibilität mit dem neuen Schema oder das Archivieren von Datensätzen, die umstrukturiert oder entfernt werden sollen.
+Eine Pre-Install-Funktion wird automatisch während der Installation ausgeführt, **bevor die Metadatenmigration des Arbeitsbereichs angewendet wird**. Sie hat die gleiche Payload-Struktur wie Post-Install (`InstallPayload`), ist aber früher im Installationsablauf positioniert, sodass sie Zustände vorbereiten kann, von denen die bevorstehende Migration abhängt — typische Anwendungsfälle sind das Sichern von Daten, die Validierung der Kompatibilität mit dem neuen Schema oder das Archivieren von Datensätzen, die umstrukturiert oder entfernt werden sollen.
 
 ```ts src/logic-functions/pre-install.ts
 import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
@@ -93,8 +93,8 @@ yarn twenty exec --preInstall
 Hauptpunkte:
 * Pre-Install-Funktionen verwenden `definePreInstallLogicFunction()` — dieselbe spezialisierte Konfiguration wie bei Post-Install, nur an einen anderen Lifecycle-Slot gebunden.
 * Sowohl Pre- als auch Post-Install-Handler erhalten denselben `InstallPayload`-Typ: `{ previousVersion?: string; newVersion: string }`. Importieren Sie ihn einmal und verwenden Sie ihn für beide Hooks wieder.
-* **Wann der Hook ausgeführt wird**: positioniert direkt vor der Metadatenmigration des Workspaces (`synchronizeFromManifest`). Vor der Ausführung führt der Server einen rein additiven "pared-down sync" durch, der die Pre-Install-Funktion der **neuen** Version in den Workspace-Metadaten registriert — sonst wird nichts angefasst — und führt sie dann aus. Da dieser Sync nur additiv ist, sind die Objekte, Felder und Daten der vorherigen Version noch intakt, wenn Ihr Handler läuft: Sie können den Zustand vor der Migration gefahrlos lesen und sichern.
-* **Ausführungsmodell**: Pre-Install wird **synchron** ausgeführt und **blockiert die Installation**. Wenn der Handler einen Fehler wirft, wird die Installation abgebrochen, bevor Schemaänderungen angewendet werden — der Workspace verbleibt in der vorherigen Version in einem konsistenten Zustand. Das ist beabsichtigt: Pre-Install ist Ihre letzte Chance, ein riskantes Upgrade abzulehnen.
+* **Wann der Hook ausgeführt wird**: positioniert direkt vor der Metadatenmigration des Arbeitsbereichs (`synchronizeFromManifest`). Vor der Ausführung führt der Server einen rein additiven "pared-down sync" durch, der die Pre-Install-Funktion der **neuen** Version in den Metadaten des Arbeitsbereichs registriert — sonst wird nichts angefasst — und führt sie dann aus. Da dieser Sync nur additiv ist, sind die Objekte, Felder und Daten der vorherigen Version noch intakt, wenn Ihr Handler läuft: Sie können den Zustand vor der Migration gefahrlos lesen und sichern.
+* **Ausführungsmodell**: Pre-Install wird **synchron** ausgeführt und **blockiert die Installation**. Wenn der Handler einen Fehler wirft, wird die Installation abgebrochen, bevor Schemaänderungen angewendet werden — der Arbeitsbereich verbleibt in der vorherigen Version in einem konsistenten Zustand. Das ist beabsichtigt: Pre-Install ist Ihre letzte Chance, ein riskantes Upgrade abzulehnen.
 * Wie bei Post-Install ist pro Anwendung nur eine Pre-Installationsfunktion zulässig. Sie wird während des Builds automatisch dem Anwendungsmanifest unter `preInstallLogicFunction` hinzugefügt.
 * **Nicht im Dev-Modus ausgeführt**: wie bei Post-Install — der Installationsablauf wird für lokal registrierte Apps vollständig übersprungen, daher läuft Pre-Install unter `yarn twenty dev` nie. Verwenden Sie `yarn twenty exec --preInstall`, um es manuell auszulösen.
 
@@ -190,7 +190,7 @@ export default definePreInstallLogicFunction({
 
 | Sie möchten ...                                                                                                                 | Verwenden                                                                              |
 | ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Standarddaten befüllen, den Workspace konfigurieren, externe Ressourcen registrieren                                            | `post-install`                                                                         |
+| Standarddaten befüllen, den Arbeitsbereich konfigurieren, externe Ressourcen registrieren                                       | `post-install`                                                                         |
 | Lang laufendes Seeding oder Drittanbieteraufrufe ausführen, die die Installationsantwort nicht blockieren sollten               | `post-install` (Standard — `shouldRunSynchronously: false`, mit Worker-Wiederholungen) |
 | Schnelle Einrichtung ausführen, auf die sich der Aufrufer unmittelbar nach der Rückkehr des Installationsaufrufs verlassen wird | `post-install` mit `shouldRunSynchronously: true`                                      |
 | Daten lesen oder sichern, die bei der bevorstehenden Migration verloren gingen                                                  | `pre-install`                                                                          |
