@@ -59,6 +59,7 @@ export class MessageImportExceptionHandlerService {
           );
           break;
         case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
+        case TwentyORMExceptionCode.CONNECTION_TERMINATED:
         case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
         case MessageNetworkExceptionCode.ECONNABORTED:
         case MessageNetworkExceptionCode.ENOTFOUND:

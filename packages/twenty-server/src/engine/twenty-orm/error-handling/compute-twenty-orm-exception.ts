@@ -35,6 +35,16 @@ export const computeTwentyORMException = async (
       );
     }
 
+    if (error.message.includes('Connection terminated unexpectedly')) {
+      return new TwentyORMException(
+        'Connection terminated unexpectedly',
+        TwentyORMExceptionCode.CONNECTION_TERMINATED,
+        {
+          userFriendlyMessage: msg`Database connection was interrupted. Please try again.`,
+        },
+      );
+    }
+
     const errorCode = (error as QueryFailedErrorWithCode).code;
 
     if (
