@@ -14,13 +14,13 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 // Targeted UPDATE on the workspace's Company.domainName fieldMetadata row to
 // drop settings.maxNumberOfValues so the LinksFieldInput renders multiple
-// slots. The earlier 1798000001000 command tried to do this via
-// synchronizeTwentyStandardApplicationOrThrow which was too heavy and tripped
-// on pre-existing per-workspace metadata inconsistencies; this one bypasses
-// that path entirely.
-@RegisteredWorkspaceCommand('2.2.0', 1798000002000)
+// slots. Belongs in 2-4 (not 2-2 alongside the originating feature) because
+// the upgrade entrypoint advances a global cursor through the version
+// sequence — by the time we needed this fix, the cursor had already passed
+// the 2-2 segment, so a 2-2 command added retroactively would be skipped.
+@RegisteredWorkspaceCommand('2.4.0', 1797900000000)
 @Command({
-  name: 'upgrade:2-2:drop-company-domain-name-max-values-cap',
+  name: 'upgrade:2-4:drop-company-domain-name-max-values-cap',
   description:
     'Drop maxNumberOfValues:1 from Company.domainName field settings on existing workspaces.',
 })
