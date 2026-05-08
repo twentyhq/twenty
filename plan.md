@@ -28,6 +28,7 @@ The additions folder at `/Users/brians/Downloads/crm_xopure_additions` can be de
 - [x] Implement prospecting objects for retail prospects and influencer prospects.
 - [x] Implement email sequence and automation trigger objects.
 - [x] Implement enrichment task object.
+- [x] Implement relation fields connecting customers to orders, orders to commissions, ambassadors to commissions, and email sequences to automation triggers.
 - [x] Implement research/sequence skills and agents.
 - [x] Implement initial sync/enrichment route stubs.
 - [x] Validate XO Pure app lint.
@@ -194,13 +195,14 @@ Objects and fields:
 - [x] Use stable `universalIdentifier` values for app-defined objects and fields.
 - [x] Start with fewer objects and add depth only when CRM users need it.
 - [x] Keep raw external payloads out of primary CRM fields unless needed for debugging; store hashes or small references instead.
-- [ ] Add relation fields after the live workspace metadata/API client confirms generated relation names.
+- [x] Add relation fields for the first stable operating links: customer-orders, order-commissions, ambassador-commissions, and email sequence-triggers.
 - [x] Add `lastSyncedAt`, sync/source, or external IDs to synced objects where current source context is known.
 
 ### Acceptance Checks
 
 - [x] CRM app defines customers, ambassadors, and order objects/views.
 - [x] Ambassador records have clear status/tier/code fields.
+- [x] Email sequences can be related to automation triggers.
 - [ ] Sync code can upsert by external ID without duplicate CRM records.
 - [x] Role exists for automation/app functions; production user roles still need live workspace configuration.
 
@@ -444,6 +446,7 @@ Validated:
 - `yarn lint` passed for `packages/twenty-apps/internal/xopure-crm`.
 - `yarn twenty typecheck .` passed for `packages/twenty-apps/internal/xopure-crm`.
 - `npm_config_cache=/private/tmp/npm-cache-xopure yarn twenty build . --tarball` passed and produced `.twenty/output/xopure-crm-0.1.0.tgz`.
+- Latest generated manifest contains 9 objects, 48 fields, 6 views, 9 navigation items, 2 agents, 2 skills, 2 logic functions, and 1 role.
 - `scripts/xopure/check-supabase-env.sh .env` ran and found a project-ref mismatch that blocks safe production Supabase migration/application.
 
 Remaining implementation work:

@@ -9,14 +9,22 @@ type SupabaseWebhookBody = {
 };
 
 const TARGET_OBJECT_BY_SOURCE_TABLE: Record<string, string> = {
+  affiliates: 'xopureAmbassador',
+  affiliate_payouts: 'xopureCommission',
   customers: 'xopureCustomer',
   customer: 'xopureCustomer',
+  customer_expertise: 'xopureCustomer',
   ambassadors: 'xopureAmbassador',
   ambassador: 'xopureAmbassador',
+  products: 'xopureProduct',
+  product: 'xopureProduct',
   orders: 'xopureOrder',
   order: 'xopureOrder',
+  order_items: 'xopureOrderLine',
+  order_item: 'xopureOrderLine',
   commissions: 'xopureCommission',
   commission: 'xopureCommission',
+  commission_ledger: 'xopureCommission',
   retail_prospects: 'retailProspect',
   retailProspects: 'retailProspect',
   influencer_prospects: 'influencerProspect',
@@ -30,7 +38,17 @@ const getRecordId = (
     return null;
   }
 
-  for (const key of ['id', 'uuid', 'customer_id', 'ambassador_id', 'order_id']) {
+  for (const key of [
+    'id',
+    'uuid',
+    'customer_id',
+    'affiliate_id',
+    'ambassador_id',
+    'order_id',
+    'order_item_id',
+    'product_id',
+    'email',
+  ]) {
     const value = record[key];
 
     if (typeof value === 'string' && value.length > 0) {
@@ -39,6 +57,133 @@ const getRecordId = (
   }
 
   return null;
+};
+
+const centsToDollars = (value: unknown): number => {
+  if (typeof value !== 'number') {
+    return 0;
+  }
+
+  return Math.round(value) / 100;
+};
+
+const boolToStatus = (value: unknown): 'ACTIVE' | 'INACTIVE' =>
+  value === false ? 'INACTIVE' : 'ACTIVE';
+
+const normalizeStatus = (status: unknown): string | undefined => {
+  if (typeof status !== 'string') {
+    return undefined;
+  }
+
+  return status.trim().toUpperCase();
+};
+
+const normalizeRecordForTwenty = (
+  sourceTable: string,
+  record: Record<string, unknown>,
+): Record<string, unknown> => {
+  switch (sourceTable) {
+    case 'affiliates':
+    case 'ambassadors':
+    case 'ambassador':
+      return {
+        name: record.name,
+        supabaseAmbassadorId: record.id,
+        level: normalizeStatus(record.paid_as_rank ?? record.career_rank ?? record.rank),
+        status: normalizeStatus(record.status),
+        referralCode: record.tracking_code,
+        attributedRevenue: centsToDollars(record.team_volume_cents),
+        totalCommissionEarned: 0,
+        researchSummary: record.reason,
+      };
+
+    case 'products':
+    case 'product':
+      return {
+        name: record.name,
+        supabaseProductId: record.id,
+        sku: record.sku,
+        slug: record.slug,
+        priceCents: record.price_cents,
+        currency: record.currency,
+        category: record.category,
+        status: record.pre_order === true ? 'PRE_ORDER' : boolToStatus(record.active),
+        stockQuantity: record.stock_quantity,
+        cvAmount: record.cv_amount,
+        productUrl: record.product_url,
+        lastSyncedAt: record.synced_at ?? record.updated_at,
+      };
+
+    case 'orders':
+    case 'order':
+      return {
+        orderNumber: record.id,
+        supabaseOrderId: record.id,
+        status: normalizeStatus(record.payment_status),
+        orderTotal: centsToDollars(record.total_cents ?? record.subtotal_cents),
+        orderedAt: record.created_at,
+        customerExternalId: record.customer_id ?? record.user_email,
+        ambassadorCode: Array.isArray(record.affiliate_chain)
+          ? record.affiliate_chain[0]
+          : undefined,
+        commissionable: typeof record.cv_amount === 'number' && record.cv_amount > 0,
+      };
+
+    case 'order_items':
+    case 'order_item':
+      return {
+        name: record.name,
+        supabaseOrderItemId: record.id,
+        supabaseOrderId: record.order_id,
+        supabaseProductId: record.product_id,
+        sku: record.sku,
+        quantity: record.quantity,
+        unitPriceCents: record.unit_price_cents,
+        lineTotalCents: record.line_total_cents,
+        cvAmount: record.cv_amount,
+        category: record.category,
+      };
+
+    case 'commission_ledger':
+    case 'commissions':
+    case 'commission':
+    case 'affiliate_payouts':
+      return {
+        name: `${record.status ?? 'Commission'} ${record.id ?? ''}`.trim(),
+        supabaseCommissionId: record.id,
+        ambassadorExternalId: record.affiliate_id,
+        orderExternalId: record.order_id,
+        amount: centsToDollars(record.amount_cents),
+        rate:
+          typeof record.rate_used === 'number'
+            ? record.rate_used * 100
+            : typeof record.percentage_bps === 'number'
+              ? record.percentage_bps / 100
+              : 0,
+        status: normalizeStatus(record.status),
+        paidAt: record.paid_at,
+      };
+
+    case 'customer_expertise':
+    case 'customers':
+    case 'customer':
+      return {
+        name: record.name ?? record.customer_id ?? record.email,
+        supabaseCustomerId: record.customer_id ?? record.id,
+        status: 'ACTIVE',
+        coreTags: ['CUSTOMER'],
+        lastSyncedAt: record.updated_at ?? record.last_interaction_at,
+      };
+
+    case 'retail_prospects':
+    case 'retailProspects':
+    case 'influencer_prospects':
+    case 'influencerProspects':
+      return record;
+
+    default:
+      return record;
+  }
 };
 
 const handler = async (event: RoutePayload) => {
@@ -64,6 +209,10 @@ const handler = async (event: RoutePayload) => {
   }
 
   const targetObject = TARGET_OBJECT_BY_SOURCE_TABLE[sourceTable] ?? null;
+  const normalizedFieldValues =
+    targetObject && body.record
+      ? normalizeRecordForTwenty(sourceTable, body.record)
+      : null;
 
   return {
     ok: true,
@@ -75,11 +224,13 @@ const handler = async (event: RoutePayload) => {
       sourceRecordId,
       targetObject,
       hasTargetMapping: targetObject !== null,
+      upsertKey: `${body.schema ?? 'public'}.${sourceTable}.${sourceRecordId}`,
+      fieldValues: normalizedFieldValues,
     },
     nextStep:
       targetObject === null
         ? 'Add this source table to TARGET_OBJECT_BY_SOURCE_TABLE before enabling writes.'
-        : 'Wire normalized payload into Twenty upsert and crm_sync_map persistence after source columns are confirmed.',
+        : 'Send fieldValues to Twenty Core API upsert and persist the resulting record ID in public.crm_sync_map.',
   };
 };
 
