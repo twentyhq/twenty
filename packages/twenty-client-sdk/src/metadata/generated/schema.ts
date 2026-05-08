@@ -785,7 +785,7 @@ export interface PageLayoutWidgetCanvasPosition {
     __typename: 'PageLayoutWidgetCanvasPosition'
 }
 
-export type WidgetConfiguration = (AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | GaugeChartConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration) & { __isUnion?: true }
+export type WidgetConfiguration = (AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration) & { __isUnion?: true }
 
 export interface AggregateChartConfiguration {
     configurationType: WidgetConfigurationType
@@ -804,7 +804,7 @@ export interface AggregateChartConfiguration {
     __typename: 'AggregateChartConfiguration'
 }
 
-export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'GAUGE_CHART' | 'PIE_CHART' | 'BAR_CHART' | 'LINE_CHART' | 'IFRAME' | 'STANDALONE_RICH_TEXT' | 'VIEW' | 'FIELD' | 'FIELDS' | 'TIMELINE' | 'TASKS' | 'NOTES' | 'FILES' | 'EMAILS' | 'CALENDAR' | 'FIELD_RICH_TEXT' | 'WORKFLOW' | 'WORKFLOW_VERSION' | 'WORKFLOW_RUN' | 'FRONT_COMPONENT' | 'RECORD_TABLE' | 'EMAIL_THREAD'
+export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'PIE_CHART' | 'BAR_CHART' | 'LINE_CHART' | 'IFRAME' | 'STANDALONE_RICH_TEXT' | 'VIEW' | 'FIELD' | 'FIELDS' | 'TIMELINE' | 'TASKS' | 'NOTES' | 'FILES' | 'EMAILS' | 'CALENDAR' | 'FIELD_RICH_TEXT' | 'WORKFLOW' | 'WORKFLOW_VERSION' | 'WORKFLOW_RUN' | 'FRONT_COMPONENT' | 'RECORD_TABLE' | 'EMAIL_THREAD'
 
 export interface StandaloneRichTextConfiguration {
     configurationType: WidgetConfigurationType
@@ -881,19 +881,6 @@ export interface IframeConfiguration {
     configurationType: WidgetConfigurationType
     url?: Scalars['String']
     __typename: 'IframeConfiguration'
-}
-
-export interface GaugeChartConfiguration {
-    configurationType: WidgetConfigurationType
-    aggregateFieldMetadataId: Scalars['UUID']
-    aggregateOperation: AggregateOperations
-    displayDataLabel?: Scalars['Boolean']
-    color?: Scalars['String']
-    description?: Scalars['String']
-    filter?: Scalars['JSON']
-    timezone?: Scalars['String']
-    firstDayOfTheWeek?: Scalars['Int']
-    __typename: 'GaugeChartConfiguration'
 }
 
 export interface BarChartConfiguration {
@@ -3698,7 +3685,6 @@ export interface WidgetConfigurationGenqlSelection{
     on_PieChartConfiguration?:PieChartConfigurationGenqlSelection,
     on_LineChartConfiguration?:LineChartConfigurationGenqlSelection,
     on_IframeConfiguration?:IframeConfigurationGenqlSelection,
-    on_GaugeChartConfiguration?:GaugeChartConfigurationGenqlSelection,
     on_BarChartConfiguration?:BarChartConfigurationGenqlSelection,
     on_CalendarConfiguration?:CalendarConfigurationGenqlSelection,
     on_FrontComponentConfiguration?:FrontComponentConfigurationGenqlSelection,
@@ -3802,20 +3788,6 @@ export interface LineChartConfigurationGenqlSelection{
 export interface IframeConfigurationGenqlSelection{
     configurationType?: boolean | number
     url?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface GaugeChartConfigurationGenqlSelection{
-    configurationType?: boolean | number
-    aggregateFieldMetadataId?: boolean | number
-    aggregateOperation?: boolean | number
-    displayDataLabel?: boolean | number
-    color?: boolean | number
-    description?: boolean | number
-    filter?: boolean | number
-    timezone?: boolean | number
-    firstDayOfTheWeek?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6691,7 +6663,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const WidgetConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration','StandaloneRichTextConfiguration','PieChartConfiguration','LineChartConfiguration','IframeConfiguration','GaugeChartConfiguration','BarChartConfiguration','CalendarConfiguration','FrontComponentConfiguration','EmailsConfiguration','EmailThreadConfiguration','FieldConfiguration','FieldRichTextConfiguration','FieldsConfiguration','FilesConfiguration','NotesConfiguration','TasksConfiguration','TimelineConfiguration','ViewConfiguration','RecordTableConfiguration','WorkflowConfiguration','WorkflowRunConfiguration','WorkflowVersionConfiguration']
+    const WidgetConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration','StandaloneRichTextConfiguration','PieChartConfiguration','LineChartConfiguration','IframeConfiguration','BarChartConfiguration','CalendarConfiguration','FrontComponentConfiguration','EmailsConfiguration','EmailThreadConfiguration','FieldConfiguration','FieldRichTextConfiguration','FieldsConfiguration','FilesConfiguration','NotesConfiguration','TasksConfiguration','TimelineConfiguration','ViewConfiguration','RecordTableConfiguration','WorkflowConfiguration','WorkflowRunConfiguration','WorkflowVersionConfiguration']
     export const isWidgetConfiguration = (obj?: { __typename?: any } | null): obj is WidgetConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWidgetConfiguration"')
       return WidgetConfiguration_possibleTypes.includes(obj.__typename)
@@ -6735,14 +6707,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isIframeConfiguration = (obj?: { __typename?: any } | null): obj is IframeConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isIframeConfiguration"')
       return IframeConfiguration_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const GaugeChartConfiguration_possibleTypes: string[] = ['GaugeChartConfiguration']
-    export const isGaugeChartConfiguration = (obj?: { __typename?: any } | null): obj is GaugeChartConfiguration => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isGaugeChartConfiguration"')
-      return GaugeChartConfiguration_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8544,7 +8508,6 @@ export const enumPageLayoutTabLayoutMode = {
 
 export const enumWidgetConfigurationType = {
    AGGREGATE_CHART: 'AGGREGATE_CHART' as const,
-   GAUGE_CHART: 'GAUGE_CHART' as const,
    PIE_CHART: 'PIE_CHART' as const,
    BAR_CHART: 'BAR_CHART' as const,
    LINE_CHART: 'LINE_CHART' as const,

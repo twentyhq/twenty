@@ -208,7 +208,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
       });
     });
 
-    expect(result.current.allWidgets).toHaveLength(4);
+    expect(result.current.allWidgets).toHaveLength(3);
 
     widgetConfigurationTypes.forEach((widgetConfigurationType, index) => {
       const widget = result.current.allWidgets[index];
