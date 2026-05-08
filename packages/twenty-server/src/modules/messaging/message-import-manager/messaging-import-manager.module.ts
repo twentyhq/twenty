@@ -20,12 +20,10 @@ import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cle
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
 import { MessagingSingleMessageImportCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-single-message-import.command';
 import { MessagingTriggerMessageListFetchCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-trigger-message-list-fetch.command';
-import { MessagingInboundEmailPollCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-inbound-email-poll.cron.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
 import { MessagingRelaunchFailedMessageChannelsCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-relaunch-failed-message-channels.cron.command';
-import { MessagingInboundEmailPollCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-inbound-email-poll.cron.job';
 import { MessagingMessageListFetchCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job';
 import { MessagingMessagesImportCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-messages-import.cron.job';
 import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-ongoing-stale.cron.job';
@@ -57,6 +55,7 @@ import { MessagingMessagesImportService } from 'src/modules/messaging/message-im
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
+import { MessagingWebhooksModule } from 'src/engine/core-modules/messaging-webhooks/messaging-webhooks.module';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/messaging-monitoring.module';
 @Module({
@@ -87,27 +86,26 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessageCleanerModule,
     WorkspaceEventEmitterModule,
     ConnectedAccountModule,
+    MessagingWebhooksModule,
   ],
   providers: [
     MessagingMessageListFetchCronCommand,
     MessagingMessagesImportCronCommand,
     MessagingOngoingStaleCronCommand,
     MessagingRelaunchFailedMessageChannelsCronCommand,
-    MessagingInboundEmailPollCronCommand,
     MessagingSingleMessageImportCommand,
     MessagingTriggerMessageListFetchCommand,
     MessagingMessageListFetchJob,
     MessagingMessagesImportJob,
     MessagingOngoingStaleJob,
     MessagingRelaunchFailedMessageChannelJob,
-    MessagingInboundEmailImportJob,
     MessagingMessageListFetchCronJob,
     MessagingMessagesImportCronJob,
     MessagingOngoingStaleCronJob,
     MessagingRelaunchFailedMessageChannelsCronJob,
-    MessagingInboundEmailPollCronJob,
     MessagingAddSingleMessageToCacheForImportJob,
     MessagingCleanCacheJob,
+    MessagingInboundEmailImportJob,
     MessagingMessageService,
     MessagingMessageFolderAssociationService,
     MessagingMessageListFetchService,
@@ -130,7 +128,6 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessagesImportCronCommand,
     MessagingOngoingStaleCronCommand,
     MessagingRelaunchFailedMessageChannelsCronCommand,
-    MessagingInboundEmailPollCronCommand,
     MessagingProcessGroupEmailActionsService,
     InboundEmailImportService,
     MessagingSaveMessagesAndEnqueueContactCreationService,

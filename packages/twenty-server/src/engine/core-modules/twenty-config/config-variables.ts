@@ -1656,12 +1656,11 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description:
-      'Maximum number of S3 keys listed per poll of the inbound-email folder.',
-    type: ConfigVariableType.NUMBER,
+      'Comma-separated list of SNS topic ARNs accepted by the inbound-email webhook (e.g. arn:aws:sns:us-east-1:123:my-inbound).',
+    type: ConfigVariableType.STRING,
   })
-  @CastToPositiveNumber()
   @IsOptional()
-  INBOUND_EMAIL_POLL_BATCH_SIZE: number = 500;
+  SES_SNS_TOPIC_ARN_ALLOWLIST: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,

@@ -1,4 +1,5 @@
 import {
+  type MessageChannelType,
   type MessageChannelContactAutoCreationPolicy,
   type MessageChannelSyncStage,
   type MessageChannelSyncStatus,
@@ -10,7 +11,7 @@ export type MessageChannel = {
   id: string;
   handle: string;
   visibility: MessageChannelVisibility;
-  type: string;
+  type: MessageChannelType;
   isContactAutoCreationEnabled: boolean;
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
   messageFolderImportPolicy: MessageFolderImportPolicy;

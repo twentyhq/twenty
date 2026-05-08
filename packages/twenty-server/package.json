@@ -176,6 +176,7 @@
     "rxjs": "7.8.1",
     "semver": "7.6.3",
     "sharp": "0.32.6",
+    "sns-payload-validator": "^2.1.0",
     "stripe": "19.3.1",
     "tar": "^7.5.9",
     "temporal-polyfill": "^0.3.0",

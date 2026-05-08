@@ -13,6 +13,7 @@ import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type MessageChannelVisibility } from '~/generated/graphql';
 import {
+    MessageChannelType,
   type MessageChannelContactAutoCreationPolicy,
   type MessageFolderImportPolicy,
 } from 'twenty-shared/types';
@@ -27,6 +28,7 @@ type SettingsAccountsMessageChannelDetailsProps = {
     | 'excludeGroupEmails'
     | 'isSyncEnabled'
     | 'messageFolderImportPolicy'
+    | 'type'
   >;
 };
 
@@ -73,16 +75,18 @@ export const SettingsAccountsMessageChannelDetails = ({
 
   return (
     <StyledDetailsContainer>
-      <Section>
-        <H2Title
-          title={t`Import`}
-          description={t`Emails from the blocklist will be ignored. Manage blocklist on the "Accounts" setting page.`}
-        />
-        <SettingsAccountsMessageFolderCard
-          onChange={handleMessageFolderImportPolicyChange}
-          value={messageChannel.messageFolderImportPolicy}
-        />
-      </Section>
+      {messageChannel.type === MessageChannelType.EMAIL && (
+        <Section>
+          <H2Title
+            title={t`Import`}
+            description={t`Emails from the blocklist will be ignored. Manage blocklist on the "Accounts" setting page.`}
+          />
+          <SettingsAccountsMessageFolderCard
+            onChange={handleMessageFolderImportPolicyChange}
+            value={messageChannel.messageFolderImportPolicy}
+          />
+        </Section>
+      ) }
       <Section>
         <Card rounded>
           <SettingsOptionCardContentToggle
