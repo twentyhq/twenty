@@ -1,6 +1,11 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconSearch } from 'twenty-ui/display';
+import {
+  AppTooltip,
+  IconSearch,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -70,12 +75,22 @@ export const NavigationDrawerHeader = ({
       </StyledWorkspaceDropdownContainer>
       {!isMobile && (
         <StyledRightActions isExpanded={isNavigationDrawerExpanded}>
-          <LightIconButton
-            Icon={IconSearch}
-            accent="secondary"
-            size="small"
-            onClick={openRecordsSearchPage}
-            aria-label={t`Search`}
+          <div id="navigation-drawer-search-button">
+            <LightIconButton
+              Icon={IconSearch}
+              accent="secondary"
+              size="small"
+              onClick={openRecordsSearchPage}
+              aria-label={t`Search`}
+            />
+          </div>
+          <AppTooltip
+            anchorSelect="#navigation-drawer-search-button"
+            content={t`Search (press /)`}
+            delay={TooltipDelay.longDelay}
+            place={TooltipPosition.Bottom}
+            offset={5}
+            noArrow
           />
           {isNavigationDrawerExpanded && showCollapseButton && (
             <StyledNavigationDrawerCollapseButtonContainer>
