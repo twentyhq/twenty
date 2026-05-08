@@ -37,15 +37,31 @@ export class DeleteGaugeWidgetsCommand extends ActiveOrSuspendedWorkspaceCommand
         'flatPageLayoutWidgetMaps',
       ]);
 
-    const gaugeWidgets = Object.values(
+    // Some legacy widgets have configurations with no recognized configurationType
+    // (e.g., not backfilled by the 1.15 widget configuration migration), which
+    // makes universalConfiguration undefined after cache recomputation. Skip them
+    // since they cannot be gauge widgets, but log them for visibility.
+    const widgets = Object.values(
       flatPageLayoutWidgetMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (widget) =>
-          widget.universalConfiguration.configurationType ===
-          WidgetConfigurationType.GAUGE_CHART,
+    ).filter(isDefined);
+
+    const widgetsWithMissingUniversalConfiguration = widgets.filter(
+      (widget) => !isDefined(widget.universalConfiguration),
+    );
+
+    if (widgetsWithMissingUniversalConfiguration.length > 0) {
+      this.logger.warn(
+        `Found ${widgetsWithMissingUniversalConfiguration.length} widget(s) with missing universalConfiguration in workspace ${workspaceId}, skipping them: ${widgetsWithMissingUniversalConfiguration
+          .map((widget) => widget.id)
+          .join(', ')}`,
       );
+    }
+
+    const gaugeWidgets = widgets.filter(
+      (widget) =>
+        widget.universalConfiguration?.configurationType ===
+        WidgetConfigurationType.GAUGE_CHART,
+    );
 
     if (gaugeWidgets.length === 0) {
       this.logger.log(`No gauge widgets in workspace ${workspaceId}`);
