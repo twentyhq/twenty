@@ -205,9 +205,6 @@ export class WorkflowVersionWorkspaceService {
           );
         }
 
-        assertWorkflowVersionTriggerIsDefined(sourceVersion);
-        assertWorkflowVersionHasSteps(sourceVersion);
-
         const workflowPosition =
           await this.recordPositionService.buildRecordPosition({
             value: 'first',
