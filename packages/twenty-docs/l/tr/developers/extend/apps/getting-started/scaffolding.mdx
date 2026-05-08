@@ -1,0 +1,58 @@
+---
+title: İskelet Oluşturma
+description: yarn twenty add komutuyla etkileşimli olarak nesne, alan, görünüm, mantık işlevi ve daha fazlasına ait varlık dosyaları oluşturun.
+icon: wand-magic-sparkles
+---
+
+Varlık dosyalarını elle oluşturmak yerine etkileşimli iskelet oluşturucuyu kullanın:
+
+```bash filename="Terminal"
+yarn twenty add
+```
+
+Bir varlık türü seçmeniz için sizi yönlendirir ve gerekli alanlarda adım adım ilerlemenizi sağlar, ardından sabit bir `universalIdentifier` ve doğru `defineEntity()` çağrısıyla kullanıma hazır bir dosya yazar.
+
+İlk istemi atlamak için varlık türünü doğrudan da geçebilirsiniz:
+
+```bash filename="Terminal"
+yarn twenty add object
+yarn twenty add logicFunction
+yarn twenty add frontComponent
+```
+
+## Kullanılabilir varlık türleri
+
+| Varlık türü          | Komut                                | Oluşturulan dosya                                       |
+| -------------------- | ------------------------------------ | ------------------------------------------------------- |
+| Nesne                | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| Alan                 | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| Mantık işlevi        | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| Ön uç bileşeni       | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| Rol                  | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| Beceri               | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| Temsilci             | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| Görünüm              | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| Gezinme menüsü öğesi | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| Sayfa düzeni         | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+
+## İskelet oluşturucunun ürettikleri
+
+Her varlık türünün kendi şablonu vardır. Örneğin, `yarn twenty add object` şunları sorar:
+
+1. **Ad (tekil)** — ör. `invoice`
+2. **Ad (çoğul)** — ör. `invoices`
+3. **Etiket (tekil)** — adından otomatik doldurulur (ör. `Invoice`)
+4. **Etiket (çoğul)** — otomatik doldurulur (ör. `Invoices`)
+5. **Bir görünüm ve gezinme öğesi oluşturulsun mu?** — evet derseniz, iskelet oluşturucu yeni nesne için eşleşen bir görünüm ve kenar çubuğu bağlantısı da üretir.
+
+Diğer varlık türlerinin istemleri daha basittir — çoğu yalnızca bir ad sorar.
+
+`field` varlık türü daha ayrıntılıdır: alan adını, etiketi, türü (`TEXT`, `NUMBER`, `SELECT`, `RELATION` vb. gibi mevcut tüm alan türlerinin listesinden) ve hedef nesnenin `universalIdentifier` değerini sorar.
+
+## Özel çıktı yolu
+
+`--path` bayrağını kullanarak oluşturulan dosyayı özel bir konuma yerleştirin:
+
+```bash filename="Terminal"
+yarn twenty add logicFunction --path src/custom-folder
+```

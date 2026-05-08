@@ -23,7 +23,7 @@ function buildNavItems(): MenuNavItemType[] {
     getLatestReleasePreview() ?? FALLBACK_RELEASES_PREVIEW;
 
   return [
-    { label: msg`Why`, href: '/why-twenty' },
+    { label: msg`Product`, href: '/product' },
     {
       label: msg`Resources`,
       children: [
@@ -53,6 +53,17 @@ function buildNavItems(): MenuNavItemType[] {
             imageScale: 1.6,
             title: msg`Build on an open platform`,
             description: msg`APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data.`,
+          },
+        },
+        {
+          label: msg`Why Twenty`,
+          description: msg`The open source CRM built to be customised`,
+          href: '/resources/why-twenty',
+          preview: {
+            image: '/images/why-twenty/hero/background.webp',
+            imageAlt: 'Why Twenty',
+            title: msg`Why Twenty`,
+            description: msg`Our story: building a CRM teams can truly own.`,
           },
         },
         {

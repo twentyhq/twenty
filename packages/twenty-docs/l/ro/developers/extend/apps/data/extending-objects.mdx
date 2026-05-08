@@ -1,0 +1,48 @@
+---
+title: Extinderea obiectelor
+description: Adăugați câmpuri la obiectele standard Twenty (Person, Company, …) sau la obiecte din alte aplicații folosind defineField.
+icon: wand-magic-sparkles
+---
+
+Folosiți `defineField()` pentru a adăuga un câmp la un obiect pe care nu îl dețineți — un obiect standard Twenty precum Person sau Company, sau un obiect livrat de o altă aplicație instalată. Spre deosebire de câmpurile inline declarate în interiorul [`defineObject`](/l/ro/developers/extend/apps/data/objects), câmpurile independente necesită un `objectUniversalIdentifier` pentru a specifica obiectul pe care îl extind.
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+## Puncte cheie
+
+* `objectUniversalIdentifier` identifică obiectul țintă. Pentru obiectele standard Twenty, importați constanta din `twenty-sdk`:
+
+  ```ts
+  import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier
+  // …
+  ```
+
+* Atunci când definiți câmpuri **inline în `defineObject()`**, **nu** aveți nevoie de `objectUniversalIdentifier` — acesta este moștenit de la obiectul părinte.
+
+* `defineField()` este singura modalitate de a adăuga câmpuri la obiecte pe care nu le-ați creat cu `defineObject()`.
+
+* Locația fișierului depinde de dumneavoastră. Convenția este `src/fields/\<name>.field.ts`, dar SDK-ul detectează câmpuri oriunde în `src/`.
+
+## Adăugarea unei relații la un obiect existent
+
+Pentru a adăuga un câmp de tip relație (de ex. pentru a lega obiectul personalizat de un `Person` standard), folosiți `defineField()` cu `FieldType.RELATION`. Modelul este același ca pentru relațiile inline, dar cu `objectUniversalIdentifier` setat explicit. Consultați [Relații](/l/ro/developers/extend/apps/data/relations) pentru modelul bidirecțional.

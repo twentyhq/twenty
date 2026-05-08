@@ -1,0 +1,192 @@
+---
+title: Conexiuni
+description: Permite aplicației tale să acționeze în numele unui utilizator în servicii ale terților prin OAuth.
+icon: plug
+---
+
+Conexiunile sunt acreditări pe care un utilizator le deține pentru un serviciu extern (Linear, GitHub, Slack, ...). Aplicația ta declară **cum** sunt obținute acele acreditări — un **furnizor de conexiune** — și le folosește în timpul execuției pentru a efectua apeluri autentificate către API-ul terț.
+
+În prezent este acceptat doar OAuth 2.0. Tipurile viitoare de acreditări (jetoane de acces personale, chei API, autentificare de bază) se vor integra în aceeași interfață — aplicațiile care deja folosesc `defineConnectionProvider({ type: 'oauth', ... })` nu vor trebui să migreze.
+
+<AccordionGroup>
+
+<Accordion title="defineConnectionProvider" description="Declară cum sunt obținute conexiunile aplicației tale">
+
+Un furnizor de conexiune descrie handshake-ul OAuth de care are nevoie aplicația ta. Utilizatorul face clic pe "Adaugă conexiune" în setările aplicației tale, completează ecranul de consimțământ al furnizorului și este creată o înregistrare `ConnectedAccount` în spațiul său de lucru.
+
+O configurație funcțională are nevoie de **două fișiere** — furnizorul de conexiune și o declarație `serverVariables` corespunzătoare în `defineApplication` care conține acreditările clientului OAuth.
+
+```ts src/connection-providers/linear-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+export default defineConnectionProvider({
+  universalIdentifier: '9c7d1f5e-6a0b-4d44-be0c-3f8b5a9d4e6f',
+  name: 'linear',
+  displayName: 'Linear',
+  icon: 'IconBrandLinear',
+  type: 'oauth',
+  oauth: {
+    authorizationEndpoint: 'https://linear.app/oauth/authorize',
+    tokenEndpoint: 'https://api.linear.app/oauth/token',
+    scopes: ['read', 'write'],
+    // These must match keys in `defineApplication.serverVariables` below.
+    clientIdVariable: 'LINEAR_CLIENT_ID',
+    clientSecretVariable: 'LINEAR_CLIENT_SECRET',
+    // Optional: defaults to 'json'. Some providers (Linear, Slack) want
+    // 'form-urlencoded' for the token request.
+    tokenRequestContentType: 'form-urlencoded',
+    // Optional: defaults to true. Disable only if the provider rejects PKCE.
+    usePkce: false,
+    // Optional: extra query params on the authorize URL.
+    // authorizationParams: { prompt: 'consent' },
+    // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
+    // revokeEndpoint: 'https://example.com/oauth/revoke',
+  },
+});
+```
+
+```ts src/application.config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'Linear',
+  description: 'Connect Linear to Twenty.',
+  // OAuth client credentials live on the app registration (one OAuth app per
+  // Twenty server, configured by the admin) — not per-workspace. Declare them
+  // as serverVariables so the admin can fill them in once for all installs.
+  serverVariables: {
+    LINEAR_CLIENT_ID: {
+      description: 'OAuth client ID from your Linear OAuth application.',
+      isSecret: false,
+      isRequired: true,
+    },
+    LINEAR_CLIENT_SECRET: {
+      description: 'OAuth client secret from your Linear OAuth application.',
+      isSecret: true,
+      isRequired: true,
+    },
+  },
+});
+```
+
+Puncte cheie:
+
+* `name` este șirul identificator unic folosit în `listConnections({ providerName })` (kebab-case, trebuie să corespundă `^[a-z][a-z0-9-]*$`).
+* `displayName` apare în fila de setări a aplicației și în lista de instrumente AI.
+* `clientIdVariable` / `clientSecretVariable` sunt **nume**, nu valori — trebuie să se potrivească cheilor declarate în `defineApplication.serverVariables`. Valorile reale `client_id` și `client_secret` sunt introduse de administratorul serverului prin interfața de înregistrare a aplicației și nu sunt niciodată comise în repo-ul tău.
+* Folosește `serverVariables` (nu `applicationVariables`) — acreditările OAuth sunt la nivel de server și există o singură aplicație OAuth pentru fiecare server Twenty.
+* Până când ambele `serverVariables` sunt completate, fila de setări a aplicației afișează un indiciu "necesită administrator de server" și butonul "Adaugă conexiune" este dezactivat.
+* `type: 'oauth'` este singura valoare acceptată în prezent. Discriminatorul este compatibil cu versiuni viitoare: tipurile viitoare (`'pat'`, `'api-key'`, ...) vor adăuga blocuri noi de sub-configurație alături de `oauth`.
+
+URL-ul de callback OAuth pe care furnizorul tău trebuie să îl includă pe lista albă este:
+
+```
+https://<your-twenty-server>/apps/oauth/callback
+```
+
+</Accordion>
+
+<Accordion title="listConnections / getConnection" description="Folosește conexiunile dintr-o funcție logică">
+
+În interiorul unui handler de funcție logică, `listConnections({ providerName })` returnează înregistrările `ConnectedAccount` ale acestei aplicații pentru furnizorul dat, cu tokenuri de acces reîmprospătate.
+
+```ts src/logic-functions/handlers/create-linear-issue-handler.ts
+import { listConnections } from 'twenty-sdk/logic-function';
+
+export const createLinearIssueHandler = async (input: {
+  teamId?: string;
+  title?: string;
+}) => {
+  if (!input.teamId || !input.title) {
+    return { success: false, error: 'teamId and title are required' };
+  }
+
+  const connections = await listConnections({ providerName: 'linear' });
+
+  // Workspace-shared credentials win when present; fall back to the first
+  // user-visibility one. For HTTP-route triggers you typically pick the
+  // request user's connection via event.userWorkspaceId instead.
+  const connection =
+    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
+
+  if (!connection) {
+    return {
+      success: false,
+      error:
+        'Linear is not connected. Open the app settings and click "Add connection".',
+    };
+  }
+
+  // Use connection.accessToken to call the third-party API.
+  const response = await fetch('https://api.linear.app/graphql', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${connection.accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `mutation { issueCreate(input: { teamId: "${input.teamId}", title: "${input.title}" }) { success } }`,
+    }),
+  });
+
+  return { success: response.ok };
+};
+```
+
+Fiecare conexiune are:
+
+| Câmp              | Descriere                                                                                                                                |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | ID unic al înregistrării; pasează-l la `getConnection(id)` pentru a reobține acea înregistrare                                           |
+| `visibility`      | `'user'` (privată pentru un membru al spațiului de lucru) sau `'workspace'` (partajată cu toți membrii)                                  |
+| `scopes`          | Permisiunile OAuth acordate de furnizorul upstream (distincte de `visibility` — nu au legătură)                                          |
+| `userWorkspaceId` | ID-ul userWorkspace al deținătorului — util pentru a alege "conexiunea utilizatorului care face cererea" în declanșatoarele de rută HTTP |
+| `accessToken`     | Token de acces OAuth proaspăt (reîmprospătat automat dacă a expirat)                                                                     |
+| `name` / `handle` | Numele afișat al conexiunii (derivat automat la callback-ul OAuth, poate fi redenumit de utilizator)                                     |
+| `authFailedAt`    | Setat când cea mai recentă reîmprospătare a eșuat; utilizatorul trebuie să se reconecteze                                                |
+
+Puncte cheie:
+
+* Pasează `{ providerName }` pentru a filtra după furnizor; omite-l pentru a obține toate conexiunile pe care această aplicație le deține la toți furnizorii.
+* Serverul reîmprospătează transparent tokenul de acces înainte de a returna. Handlerul tău vede întotdeauna un token utilizabil (sau `authFailedAt` setat).
+* `getConnection(id)` este echivalentul pentru o singură înregistrare.
+
+</Accordion>
+
+<Accordion title="Vizibilitate per utilizator vs partajată la nivel de spațiu de lucru" description="Cum aleg utilizatorii între acreditări private și partajate">
+
+Când un utilizator face clic pe "Adaugă conexiune", i se solicită să aleagă o vizibilitate:
+
+* **Doar pentru mine** — acreditarea este privată pentru utilizatorul care se conectează. Orice funcție logică apelată în numele lor (declanșator de rută HTTP cu `isAuthRequired: true`) o vede; declanșatoarele cron și evenimentele din bază de date nu.
+* **Partajată la nivel de spațiu de lucru** — orice membru al spațiului de lucru poate folosi acreditarea. Declanșatoarele cron / din bază de date o văd, de asemenea, deoarece nu au un utilizator al cererii.
+
+Folosește-o pe cea potrivită pentru fiecare handler:
+
+```ts
+// HTTP-route trigger — prefer the request user's own connection.
+const conn =
+  connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
+  connections.find((c) => c.visibility === 'workspace');
+
+// Cron trigger — no request user; only shared credentials are sensible.
+const conn = connections.find((c) => c.visibility === 'workspace');
+```
+
+Sunt permise mai multe conexiuni per (utilizator, furnizor), astfel încât același utilizator poate avea "Personal Linear" și "Work Linear" una lângă alta.
+
+</Accordion>
+
+<Accordion title="Configurare unică a furnizorului" description="Înregistrează-ți aplicația OAuth la serviciul terț">
+
+Pentru fiecare furnizor de conexiune, administratorul serverului trebuie mai întâi să înregistreze o aplicație OAuth la serviciul terț.
+
+1. Mergi la setările pentru dezvoltatori ale furnizorului (de ex. https://linear.app/settings/api/applications/new).
+2. Setează **Redirect URI** la `\<SERVER_URL>/apps/oauth/callback`.
+3. Copiază **Client ID** și **Client Secret** generate.
+4. Deschide aplicația instalată în Twenty ca administrator de server → setează valorile pe `serverVariables` corespunzătoare.
+5. Membrii spațiului de lucru pot apoi să adauge conexiuni din secțiunea **Conexiuni** a fiecărei aplicații.
+
+</Accordion>
+
+</AccordionGroup>

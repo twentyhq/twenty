@@ -6,13 +6,18 @@ import {
   TargetFunction,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
+import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
+import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
+import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, relative } from 'path';
@@ -43,11 +48,6 @@ import {
   jsonSchemaToInputSchema,
 } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
-import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
-import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
-import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
-import { type RoleConfig } from '@/sdk/define/roles/role-config';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -72,11 +72,13 @@ export const buildManifest = async (
   manifest: Manifest | null;
   filePaths: EntityFilePaths;
   errors: string[];
+  warnings: string[];
 }> => {
   const filePaths = await loadSources(appPath);
   const errors: string[] = [];
+  const warnings: string[] = [];
 
-  let application: ApplicationManifest | undefined;
+  let applicationConfig: ApplicationConfig | undefined;
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const roles: RoleManifest[] = [];
@@ -95,6 +97,7 @@ export const buildManifest = async (
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
     [];
+  const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
   const fieldsFilePaths: string[] = [];
@@ -130,12 +133,9 @@ export const buildManifest = async (
           filePath,
         });
 
-        application = {
-          ...extract.config,
-          yarnLockChecksum: null,
-          packageJsonChecksum: null,
-        };
+        applicationConfig = extract.config;
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         applicationFilePaths.push(relativePath);
         break;
       }
@@ -172,6 +172,7 @@ export const buildManifest = async (
         fields.push(...reverseRelationFields);
 
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         objectsFilePaths.push(relativePath);
         break;
       }
@@ -183,6 +184,7 @@ export const buildManifest = async (
         const fieldConfig = addMissingFieldOptionIds(extract.config);
         fields.push(fieldConfig);
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         fieldsFilePaths.push(relativePath);
         break;
       }
@@ -194,7 +196,15 @@ export const buildManifest = async (
         const roleConfig = fromRoleConfigToRoleManifest(extract.config);
         roles.push(roleConfig);
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         rolesFilePaths.push(relativePath);
+
+        if (targetFunctionName === TargetFunction.DefineApplicationRole) {
+          applicationRoleUniversalIdentifiers.push(
+            extract.config.universalIdentifier,
+          );
+        }
+
         break;
       }
       case ManifestEntityKey.Skills: {
@@ -204,6 +214,7 @@ export const buildManifest = async (
         });
         skills.push(extract.config);
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         skillsFilePaths.push(relativePath);
         break;
       }
@@ -214,6 +225,7 @@ export const buildManifest = async (
         });
         agents.push(extract.config);
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         agentsFilePaths.push(relativePath);
         break;
       }
@@ -225,6 +237,7 @@ export const buildManifest = async (
           });
         connectionProviders.push(extract.config);
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         connectionProvidersFilePaths.push(relativePath);
         break;
       }
@@ -235,6 +248,7 @@ export const buildManifest = async (
         });
 
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
 
         const { handler: _, ...rest } = extract.config;
 
@@ -323,6 +337,7 @@ export const buildManifest = async (
         });
 
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
 
         const { component, ...rest } = extract.config;
 
@@ -354,6 +369,7 @@ export const buildManifest = async (
 
         views.push(viewManifest);
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         viewsFilePaths.push(relativePath);
         break;
       }
@@ -365,6 +381,7 @@ export const buildManifest = async (
           });
         navigationMenuItems.push(extract.config);
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         navigationMenuItemsFilePaths.push(relativePath);
         break;
       }
@@ -380,6 +397,7 @@ export const buildManifest = async (
 
         pageLayouts.push(pageLayoutManifest);
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         pageLayoutsFilePaths.push(relativePath);
         break;
       }
@@ -395,6 +413,7 @@ export const buildManifest = async (
 
         pageLayoutTabs.push(pageLayoutTabManifest);
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         pageLayoutTabsFilePaths.push(relativePath);
         break;
       }
@@ -408,6 +427,7 @@ export const buildManifest = async (
           extract.config as unknown as CommandMenuItemManifest,
         );
         errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
         commandMenuItemsFilePaths.push(relativePath);
         break;
       }
@@ -434,7 +454,7 @@ export const buildManifest = async (
     publicAssetsFilePaths.push(relativePath);
   }
 
-  if (!application) {
+  if (!applicationConfig) {
     errors.push(
       'Cannot build application, please export default defineApplication() to define an application',
     );
@@ -452,19 +472,38 @@ export const buildManifest = async (
     );
   }
 
-  if (application && postInstallLogicFunctions.length >= 1) {
-    application = {
-      ...application,
-      postInstallLogicFunction: postInstallLogicFunctions[0],
-    };
+  if (applicationRoleUniversalIdentifiers.length > 1) {
+    errors.push('Only one defineApplicationRole is allowed per application');
   }
 
-  if (application && preInstallLogicFunctions.length >= 1) {
-    application = {
-      ...application,
-      preInstallLogicFunction: preInstallLogicFunctions[0],
-    };
+  const resolvedDefaultRoleUniversalIdentifier =
+    applicationConfig?.defaultRoleUniversalIdentifier ??
+    (applicationRoleUniversalIdentifiers.length === 1
+      ? applicationRoleUniversalIdentifiers[0]
+      : undefined);
+
+  if (applicationConfig && !resolvedDefaultRoleUniversalIdentifier) {
+    errors.push(
+      'Application must declare a default role: either pass `defaultRoleUniversalIdentifier` to defineApplication() or mark a role file with defineApplicationRole()',
+    );
   }
+
+  const application: ApplicationManifest | undefined =
+    applicationConfig && resolvedDefaultRoleUniversalIdentifier
+      ? {
+          ...applicationConfig,
+          defaultRoleUniversalIdentifier:
+            resolvedDefaultRoleUniversalIdentifier,
+          yarnLockChecksum: null,
+          packageJsonChecksum: null,
+          ...(postInstallLogicFunctions.length >= 1
+            ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
+            : {}),
+          ...(preInstallLogicFunctions.length >= 1
+            ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
+            : {}),
+        }
+      : undefined;
 
   const byId = <T extends { universalIdentifier: string }>(a: T, b: T) =>
     a.universalIdentifier.localeCompare(b.universalIdentifier);
@@ -472,7 +511,7 @@ export const buildManifest = async (
   const byPath = <T extends { filePath: string }>(a: T, b: T) =>
     a.filePath.localeCompare(b.filePath);
 
-  const manifest = !application
+  const manifest: Manifest | null = !application
     ? null
     : {
         application,
@@ -510,5 +549,5 @@ export const buildManifest = async (
     commandMenuItems: commandMenuItemsFilePaths,
   };
 
-  return { manifest, filePaths: entityFilePaths, errors };
+  return { manifest, filePaths: entityFilePaths, errors, warnings };
 };

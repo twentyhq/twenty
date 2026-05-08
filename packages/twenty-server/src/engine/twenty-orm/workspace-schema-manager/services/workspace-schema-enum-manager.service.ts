@@ -129,17 +129,17 @@ export class WorkspaceSchemaEnumManagerService {
     enumValues: string[];
     oldToNewEnumOptionMap: Record<string, string>;
   }): Promise<void> {
-    const isTransactionAlreadyActive = queryRunner.isTransactionActive;
-
-    if (!isTransactionAlreadyActive) {
-      await queryRunner.startTransaction();
-    }
-
     if (!enumValues || enumValues.length === 0) {
       throw new WorkspaceSchemaManagerException(
         `Cannot alter enum values for column ${columnDefinition.name} because it has no enum values`,
         WorkspaceSchemaManagerExceptionCode.ENUM_OPERATION_FAILED,
       );
+    }
+
+    const isTransactionAlreadyActive = queryRunner.isTransactionActive;
+
+    if (!isTransactionAlreadyActive) {
+      await queryRunner.startTransaction();
     }
 
     try {

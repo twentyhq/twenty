@@ -67,7 +67,7 @@ export class AppBillingController {
       APP_BILLING_CHARGE_THROTTLE_TTL_MS,
     );
 
-    this.appBillingService.emitChargeEvent({
+    await this.appBillingService.emitChargeEvent({
       workspaceId: request.workspace.id,
       applicationId: request.application.id,
       userWorkspaceId: request.userWorkspaceId,
