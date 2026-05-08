@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 
 import { EVENT_TO_REACT } from '@/constants/EventToReact';
 import { type SerializedEventData } from '@/constants/SerializedEventData';
@@ -176,7 +176,59 @@ const FORCED_PROPS_BY_TAG: Record<string, Record<string, unknown>> = {
   iframe: { sandbox: '' },
 };
 
+// Elements where React's controlled-value enforcement would reset the cursor
+// position during the async postMessage round-trip to the remote worker.
+const CURSOR_SENSITIVE_ELEMENTS = new Set(['input', 'textarea']);
+
+type InputElement = HTMLInputElement | HTMLTextAreaElement;
+
+const createCursorPreservingWrapper = (htmlTag: string) => {
+  const forcedProps = FORCED_PROPS_BY_TAG[htmlTag];
+
+  return ({ children, ...props }: WrapperProps) => {
+    const ref = useRef<InputElement>(null);
+    const selectionRef = useRef<{
+      start: number | null;
+      end: number | null;
+    } | null>(null);
+
+    const filteredProps = filterProps(props);
+
+    // Capture cursor before React commits the stale value prop to the DOM
+    if (ref.current) {
+      selectionRef.current = {
+        start: ref.current.selectionStart,
+        end: ref.current.selectionEnd,
+      };
+    }
+
+    useLayoutEffect(() => {
+      if (
+        selectionRef.current !== null &&
+        ref.current &&
+        document.activeElement === ref.current
+      ) {
+        const { start, end } = selectionRef.current;
+
+        if (start !== null && end !== null) {
+          ref.current.setSelectionRange(start, end);
+        }
+      }
+    });
+
+    return React.createElement(htmlTag, {
+      ...filteredProps,
+      ...forcedProps,
+      ref,
+    });
+  };
+};
+
 export const createHtmlHostWrapper = (htmlTag: string) => {
+  if (CURSOR_SENSITIVE_ELEMENTS.has(htmlTag)) {
+    return createCursorPreservingWrapper(htmlTag);
+  }
+
   const isVoid = VOID_ELEMENTS.has(htmlTag);
   const forcedProps = FORCED_PROPS_BY_TAG[htmlTag];
 
