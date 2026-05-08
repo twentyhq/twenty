@@ -627,10 +627,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.EditImapSmtpCaldavConnection}
           element={<SettingsEditImapSmtpCaldavConnection />}
         />
-        <Route
-          path={SettingsPath.NewEmailGroupChannel}
-          element={<SettingsNewEmailGroupChannel />}
-        />
       </Route>
       <Route
         element={
@@ -640,6 +636,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         }
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+        <Route
+          path={SettingsPath.NewEmailGroupChannel}
+          element={<SettingsNewEmailGroupChannel />}
+        />
         <Route
           path={SettingsPath.EmailGroupChannelDetail}
           element={<SettingsWorkspaceEmailGroupChannelDetail />}

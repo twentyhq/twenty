@@ -17,7 +17,7 @@ import { Section } from 'twenty-ui/layout';
 export const SettingsWorkspace = () => {
   const { t } = useLingui();
 
-  const isEmailGroupEnabled = useAtomStateValue(isEmailGroupEnabledState);
+  const isEmailGroupConfigEnabled = useAtomStateValue(isEmailGroupEnabledState);
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   );
