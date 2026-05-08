@@ -1,5 +1,7 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
+import { SLACK_DELETE_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
 import { slackDeleteMessageInputSchema } from './schemas/slack-delete-message-input.schema';
 import { type SlackDeleteMessageInput } from './types/slack-delete-message-input.type';
 import { type SlackToolResult } from './types/slack-tool-result.type';
@@ -9,18 +11,17 @@ import { getSlackErrorMessage } from '../utils/get-slack-error-message';
 const handler = async (
   parameters: SlackDeleteMessageInput,
 ): Promise<SlackToolResult> => {
-  const botToken = process.env.SLACK_BOT_TOKEN;
+  const connectionResult = await getSlackConnection();
 
-  if (!botToken) {
+  if (!connectionResult.success) {
     return {
       success: false,
-      message: 'Slack is not configured',
-      error:
-        'SLACK_BOT_TOKEN is not set. The server admin must configure the Slack bot token for this app registration.',
+      message: 'Slack is not connected',
+      error: connectionResult.error,
     };
   }
 
-  const client = createSlackWebClient(botToken);
+  const client = createSlackWebClient(connectionResult.accessToken);
 
   try {
     await client.chat.delete({
@@ -44,12 +45,38 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: 'f3c92a76-8b4a-4a09-ba19-47b9280651c9',
+  universalIdentifier: SLACK_DELETE_MESSAGE_UNIVERSAL_IDENTIFIER,
   name: 'slack_delete_message',
   description:
     'Remove a message this bot sent (for example after a mistake or when a workflow is cancelled).',
   timeoutSeconds: 30,
-  isTool: true,
-  toolInputSchema: slackDeleteMessageInputSchema,
+  toolTriggerSettings: {
+    inputSchema: slackDeleteMessageInputSchema,
+  },
+  workflowActionTriggerSettings: {
+    label: 'Delete Slack Message',
+    icon: 'IconBrandSlack',
+    inputSchema: [
+      {
+        type: 'object',
+        properties: {
+          slack_channel_id: { type: 'string' },
+          message_timestamp: { type: 'string' },
+        },
+      },
+    ],
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean' },
+          message: { type: 'string' },
+          error: { type: 'string' },
+          slackTs: { type: 'string' },
+          channel: { type: 'string' },
+        },
+      },
+    ],
+  },
   handler,
 });

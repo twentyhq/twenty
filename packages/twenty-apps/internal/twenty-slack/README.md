@@ -27,17 +27,22 @@ Fields use plain names in the step UI, for example **`slack_channel_id`** (Slack
    - `chat:write`
    - `chat:write.public` (optional, if posting to channels the bot is not in)
    - `reactions:write`
-3. Install the app to the workspace and copy the **Bot User OAuth Token**
-   (`xoxb-...`).
-4. Invite the bot to channels where it should post, if required by your
-   workspace rules.
+3. Set the **Redirect URL** to `<SERVER_URL>/apps/oauth/callback` (local dev:
+   `http://localhost:3000/apps/oauth/callback`).
+4. Copy the Slack **Client ID** and **Client Secret**.
 
 ## Twenty setup
 
 1. Register / install this app on your Twenty server (`twenty-slack`).
-2. Set the **`SLACK_BOT_TOKEN`** server variable on the app registration to
-   the bot token from Slack. The value is injected into every logic function
-   execution.
+2. In **Settings → Applications → Twenty Slack**, open the **Application registration**
+   tab (admin-only) and set:
+   - `SLACK_CLIENT_ID`
+   - `SLACK_CLIENT_SECRET`
+3. In the same app, open the **Connections** tab and click **Add connection**.
+   Choose **Just for me** or **Workspace shared**, then complete the Slack sign-in.
+
+Once connected, workflow steps use the connection access token (workspace-shared
+credentials win when present; otherwise the first user connection is used).
 
 ## Development
 

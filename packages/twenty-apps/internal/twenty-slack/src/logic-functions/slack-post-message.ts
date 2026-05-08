@@ -1,5 +1,7 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
+import { SLACK_POST_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
 import { createSlackWebClient } from '../utils/create-slack-web-client';
 import { getSlackErrorMessage } from '../utils/get-slack-error-message';
 import { validateSlackMessageText } from '../utils/slack-text';
@@ -10,14 +12,13 @@ import { type SlackToolResult } from './types/slack-tool-result.type';
 const handler = async (
   parameters: SlackPostMessageInput,
 ): Promise<SlackToolResult> => {
-  const botToken = process.env.SLACK_BOT_TOKEN;
+  const connectionResult = await getSlackConnection();
 
-  if (!botToken) {
+  if (!connectionResult.success) {
     return {
       success: false,
-      message: 'Slack is not configured',
-      error:
-        'SLACK_BOT_TOKEN is not set. The server admin must configure the Slack bot token for this app registration.',
+      message: 'Slack is not connected',
+      error: connectionResult.error,
     };
   }
 
@@ -31,7 +32,7 @@ const handler = async (
     };
   }
 
-  const client = createSlackWebClient(botToken);
+  const client = createSlackWebClient(connectionResult.accessToken);
 
   const parentTimestamp = parameters.parent_message_timestamp;
 
@@ -70,12 +71,40 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: 'c6f25d09-1b7c-4e3f-ad42-7aec5b29830f',
+  universalIdentifier: SLACK_POST_MESSAGE_UNIVERSAL_IDENTIFIER,
   name: 'slack_post_message',
   description:
     'Send a message to a Slack channel or DM. Optionally reply inside an existing thread using the parent message’s timestamp from a previous step.',
   timeoutSeconds: 30,
-  isTool: true,
-  toolInputSchema: slackPostMessageInputSchema,
+  toolTriggerSettings: {
+    inputSchema: slackPostMessageInputSchema,
+  },
+  workflowActionTriggerSettings: {
+    label: 'Send Slack Message',
+    icon: 'IconBrandSlack',
+    inputSchema: [
+      {
+        type: 'object',
+        properties: {
+          slack_channel_id: { type: 'string' },
+          message_text: { type: 'string' },
+          parent_message_timestamp: { type: 'string' },
+          use_slack_markdown: { type: 'boolean' },
+        },
+      },
+    ],
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean' },
+          message: { type: 'string' },
+          error: { type: 'string' },
+          slackTs: { type: 'string' },
+          channel: { type: 'string' },
+        },
+      },
+    ],
+  },
   handler,
 });

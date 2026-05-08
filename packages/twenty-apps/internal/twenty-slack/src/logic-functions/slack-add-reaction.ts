@@ -1,5 +1,7 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
+import { SLACK_ADD_REACTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
 import { slackAddReactionInputSchema } from './schemas/slack-add-reaction-input.schema';
 import { type SlackAddReactionInput } from './types/slack-add-reaction-input.type';
 import { type SlackToolResult } from './types/slack-tool-result.type';
@@ -10,14 +12,13 @@ import { validateReactionName } from '../utils/reaction-name';
 const handler = async (
   parameters: SlackAddReactionInput,
 ): Promise<SlackToolResult> => {
-  const botToken = process.env.SLACK_BOT_TOKEN;
+  const connectionResult = await getSlackConnection();
 
-  if (!botToken) {
+  if (!connectionResult.success) {
     return {
       success: false,
-      message: 'Slack is not configured',
-      error:
-        'SLACK_BOT_TOKEN is not set. The server admin must configure the Slack bot token for this app registration.',
+      message: 'Slack is not connected',
+      error: connectionResult.error,
     };
   }
 
@@ -31,7 +32,7 @@ const handler = async (
     };
   }
 
-  const client = createSlackWebClient(botToken);
+  const client = createSlackWebClient(connectionResult.accessToken);
 
   try {
     await client.reactions.add({
@@ -56,12 +57,39 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: '2a8c7f91-4d3e-5b6f-a7c8-9d0e1f2a3b4c',
+  universalIdentifier: SLACK_ADD_REACTION_UNIVERSAL_IDENTIFIER,
   name: 'slack_add_reaction',
   description:
     'Add an emoji reaction to a message (for example a checkmark as `white_check_mark`) so the channel can see status at a glance.',
   timeoutSeconds: 30,
-  isTool: true,
-  toolInputSchema: slackAddReactionInputSchema,
+  toolTriggerSettings: {
+    inputSchema: slackAddReactionInputSchema,
+  },
+  workflowActionTriggerSettings: {
+    label: 'Add Slack Reaction',
+    icon: 'IconBrandSlack',
+    inputSchema: [
+      {
+        type: 'object',
+        properties: {
+          slack_channel_id: { type: 'string' },
+          message_timestamp: { type: 'string' },
+          emoji_name: { type: 'string' },
+        },
+      },
+    ],
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean' },
+          message: { type: 'string' },
+          error: { type: 'string' },
+          slackTs: { type: 'string' },
+          channel: { type: 'string' },
+        },
+      },
+    ],
+  },
   handler,
 });
