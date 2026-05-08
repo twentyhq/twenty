@@ -249,6 +249,8 @@ export class InternalServerError extends BaseGraphQLError {
 /**
  * Converts a GraphQLError to a BaseGraphQLError with the appropriate ErrorCode
  * based on HTTP status code if present in extensions.
+ * GraphQL validation errors (no originalError, no httpStatus) are classified as
+ * BAD_USER_INPUT since they represent invalid queries from the client.
  */
 export const convertGraphQLErrorToBaseGraphQLError = (
   error: GraphQLError,
@@ -289,6 +291,11 @@ export const convertGraphQLErrorToBaseGraphQLError = (
           errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         }
     }
+  } else if (!error.originalError) {
+    // GraphQL schema validation errors (e.g. non-null argument passed null,
+    // unknown field, wrong type) have no originalError and no httpStatus.
+    // They are always client mistakes, not server errors.
+    errorCode = ErrorCode.BAD_USER_INPUT;
   }
 
   return new BaseGraphQLError(error.message, errorCode, error.extensions);
