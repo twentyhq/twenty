@@ -53,11 +53,9 @@ describe('ImapSmtpCalDavAPIService', () => {
   let service: ImapSmtpCalDavAPIService;
 
   const mockTransactionManagerSave = jest.fn();
-  const mockTransactionManagerUpdate = jest.fn();
   const mockTransactionManager = {
     getRepository: jest.fn().mockReturnValue({
       save: mockTransactionManagerSave,
-      update: mockTransactionManagerUpdate,
     }),
   };
 
@@ -238,6 +236,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         connectionParameters: baseInput.connectionParameters,
         userWorkspaceId: 'user-workspace-id',
         workspaceId: 'workspace-id',
+        authFailedAt: null,
       });
 
       expect(
@@ -313,6 +312,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         connectionParameters: inputWithConnectedAccountId.connectionParameters,
         userWorkspaceId: 'user-workspace-id',
         workspaceId: 'workspace-id',
+        authFailedAt: null,
       });
 
       expect(
@@ -321,11 +321,6 @@ describe('ImapSmtpCalDavAPIService', () => {
       expect(
         mockCreateCalendarChannelService.createCalendarChannel,
       ).not.toHaveBeenCalled();
-
-      expect(mockTransactionManagerUpdate).toHaveBeenCalledWith(
-        { id: 'existing-account-id', workspaceId: 'workspace-id' },
-        { authFailedAt: null },
-      );
 
       expect(
         mockAccountsToReconnectService.removeAccountToReconnect,
@@ -354,7 +349,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       );
     });
 
-    it('should not queue fetch jobs for channels still in PENDING_CONFIGURATION', async () => {
+    it('should leave channels in PENDING_CONFIGURATION untouched', async () => {
       const existingAccount = {
         id: 'existing-account-id',
         handle: 'test@example.com',
@@ -388,7 +383,7 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       expect(
         mockMessagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending,
-      ).toHaveBeenCalled();
+      ).not.toHaveBeenCalled();
       expect(mockMessageQueueService.add).not.toHaveBeenCalled();
     });
 
@@ -406,7 +401,6 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       await service.processAccount(baseInput);
 
-      expect(mockTransactionManagerUpdate).not.toHaveBeenCalled();
       expect(
         mockAccountsToReconnectService.removeAccountToReconnect,
       ).not.toHaveBeenCalled();
@@ -617,6 +611,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         connectionParameters: baseInput.connectionParameters,
         userWorkspaceId: 'user-workspace-id',
         workspaceId: 'workspace-id',
+        authFailedAt: null,
       });
     });
 

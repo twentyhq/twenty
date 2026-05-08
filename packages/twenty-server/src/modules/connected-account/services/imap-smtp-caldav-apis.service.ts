@@ -179,16 +179,8 @@ export class ImapSmtpCalDavAPIService {
                 connectionParameters: input.connectionParameters,
                 userWorkspaceId,
                 workspaceId,
+                authFailedAt: null,
               });
-
-            if (isDefined(existingAccount)) {
-              await transactionManager
-                .getRepository(ConnectedAccountEntity)
-                .update(
-                  { id: newOrExistingAccountId, workspaceId },
-                  { authFailedAt: null },
-                );
-            }
 
             if (shouldCreateMessageChannel) {
               await this.createMessageChannelService.createMessageChannel({
@@ -239,42 +231,36 @@ export class ImapSmtpCalDavAPIService {
 
         if (
           isDefined(existingMessageChannel) &&
-          Boolean(input.connectionParameters.IMAP)
+          isDefined(input.connectionParameters.IMAP) &&
+          existingMessageChannel.syncStage !==
+            MessageChannelSyncStage.PENDING_CONFIGURATION
         ) {
           await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
             [existingMessageChannel.id],
             workspaceId,
           );
 
-          if (
-            existingMessageChannel.syncStage !==
-            MessageChannelSyncStage.PENDING_CONFIGURATION
-          ) {
-            await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-              MessagingMessageListFetchJob.name,
-              { workspaceId, messageChannelId: existingMessageChannel.id },
-            );
-          }
+          await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+            MessagingMessageListFetchJob.name,
+            { workspaceId, messageChannelId: existingMessageChannel.id },
+          );
         }
 
         if (
           isDefined(existingCalendarChannel) &&
-          Boolean(input.connectionParameters.CALDAV)
+          isDefined(input.connectionParameters.CALDAV) &&
+          existingCalendarChannel.syncStage !==
+            CalendarChannelSyncStage.PENDING_CONFIGURATION
         ) {
           await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
             [existingCalendarChannel.id],
             workspaceId,
           );
 
-          if (
-            existingCalendarChannel.syncStage !==
-            CalendarChannelSyncStage.PENDING_CONFIGURATION
-          ) {
-            await this.calendarQueueService.add<CalendarEventListFetchJobData>(
-              CalendarEventListFetchJob.name,
-              { workspaceId, calendarChannelId: existingCalendarChannel.id },
-            );
-          }
+          await this.calendarQueueService.add<CalendarEventListFetchJobData>(
+            CalendarEventListFetchJob.name,
+            { workspaceId, calendarChannelId: existingCalendarChannel.id },
+          );
         }
 
         return newOrExistingAccountId;
