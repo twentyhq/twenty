@@ -50,6 +50,10 @@ export class GlobalWorkspaceDataSourceService
           allowExitOnIdle: this.twentyConfigService.get(
             'PG_POOL_ALLOW_EXIT_ON_IDLE',
           ),
+          // TCP keepalive prevents connections from being terminated by load
+          // balancers/proxies during long-running external operations
+          keepAlive: true,
+          keepAliveInitialDelayMillis: 10000,
         },
       },
       this.workspaceEventEmitter,
@@ -85,6 +89,10 @@ export class GlobalWorkspaceDataSourceService
             allowExitOnIdle: this.twentyConfigService.get(
               'PG_POOL_ALLOW_EXIT_ON_IDLE',
             ),
+            // TCP keepalive prevents connections from being terminated by load
+            // balancers/proxies during long-running external operations
+            keepAlive: true,
+            keepAliveInitialDelayMillis: 10000,
           },
         },
         this.workspaceEventEmitter,
