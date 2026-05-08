@@ -144,6 +144,9 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       icon: 'IconLink',
       isNullable: true,
       isUnique: true,
+      settings: {
+        maxNumberOfValues: 1,
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

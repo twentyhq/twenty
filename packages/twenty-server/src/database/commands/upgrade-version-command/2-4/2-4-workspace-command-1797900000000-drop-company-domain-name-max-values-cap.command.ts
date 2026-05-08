@@ -9,20 +9,20 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Targeted UPDATE on the workspace's Company.domainName fieldMetadata row to
-// drop settings.maxNumberOfValues so the LinksFieldInput renders multiple
-// slots. Belongs in 2-4 (not 2-2 alongside the originating feature) because
-// the upgrade entrypoint advances a global cursor through the version
-// sequence — by the time we needed this fix, the cursor had already passed
-// the 2-2 segment, so a 2-2 command added retroactively would be skipped.
+// Use the public field-metadata API to override Company.domainName settings
+// per workspace and drop the maxNumberOfValues cap. The standard definition
+// in compute-company-standard-flat-field-metadata.util.ts keeps the cap (=
+// upstream behaviour); this command applies the Stratum-specific override
+// per-workspace via the same code path the GraphQL updateOneField mutation
+// uses, so all migrations and cache invalidations happen correctly.
 @RegisteredWorkspaceCommand('2.4.0', 1797900000000)
 @Command({
   name: 'upgrade:2-4:drop-company-domain-name-max-values-cap',
   description:
-    'Drop maxNumberOfValues:1 from Company.domainName field settings on existing workspaces.',
+    'Override Company.domainName settings on every workspace to drop the maxNumberOfValues cap so multiple domains can be added.',
 })
 export class DropCompanyDomainNameMaxValuesCapCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
@@ -31,7 +31,7 @@ export class DropCompanyDomainNameMaxValuesCapCommand extends ActiveOrSuspendedW
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly fieldMetadataService: FieldMetadataService,
   ) {
     super(workspaceIteratorService);
   }
@@ -49,7 +49,7 @@ export class DropCompanyDomainNameMaxValuesCapCommand extends ActiveOrSuspendedW
 
     if (!isDefined(companyObjectMetadata)) {
       this.logger.warn(
-        `${prefix}No Company object metadata found in workspace ${workspaceId} — skipping`,
+        `${prefix}No Company object metadata in workspace ${workspaceId} — skipping`,
       );
 
       return;
@@ -65,7 +65,7 @@ export class DropCompanyDomainNameMaxValuesCapCommand extends ActiveOrSuspendedW
 
     if (!isDefined(fieldMetadata)) {
       this.logger.warn(
-        `${prefix}No Company.domainName field metadata in workspace ${workspaceId} — skipping`,
+        `${prefix}No Company.domainName field in workspace ${workspaceId} — skipping`,
       );
 
       return;
@@ -93,13 +93,14 @@ export class DropCompanyDomainNameMaxValuesCapCommand extends ActiveOrSuspendedW
     const newSettings =
       Object.keys(remainingSettings).length > 0 ? remainingSettings : null;
 
-    await this.fieldMetadataRepository.update(fieldMetadata.id, {
-      settings: newSettings as FieldMetadataEntity['settings'],
+    await this.fieldMetadataService.updateOneField({
+      workspaceId,
+      isSystemBuild: true,
+      updateFieldInput: {
+        id: fieldMetadata.id,
+        settings: newSettings,
+      },
     });
-
-    await this.workspaceCacheService.flush(workspaceId, [
-      'flatFieldMetadataMaps',
-    ]);
 
     this.logger.log(
       `Dropped maxNumberOfValues cap on Company.domainName for workspace ${workspaceId}`,

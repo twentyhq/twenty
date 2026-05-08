@@ -9,20 +9,20 @@ import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/bil
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
     BillingModule,
     FeatureFlagModule,
+    FieldMetadataModule,
     StripeModule,
     TypeOrmModule.forFeature([
       BillingPriceEntity,
       FieldMetadataEntity,
       ObjectMetadataEntity,
     ]),
-    WorkspaceCacheModule,
     WorkspaceIteratorModule,
   ],
   providers: [MigrateToBillingV2Command, DropCompanyDomainNameMaxValuesCapCommand],
