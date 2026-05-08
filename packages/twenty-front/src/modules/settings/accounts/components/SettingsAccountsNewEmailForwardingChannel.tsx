@@ -1,20 +1,23 @@
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useCreateEmailForwardingChannel } from '@/settings/accounts/hooks/useCreateEmailForwardingChannel';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
+import { z } from 'zod';
+
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconCopy } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { useCreateEmailForwardingChannel } from '@/settings/accounts/hooks/useCreateEmailForwardingChannel';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledAddressContainer = styled.div`
   align-items: center;
@@ -57,8 +60,8 @@ export const SettingsAccountsNewEmailForwardingChannel = () => {
     null,
   );
 
-  const isValidEmail = handle.includes('@') && handle.includes('.');
-  const canSave = isValidEmail && !loading && !forwardingAddress;
+  const isHandleValidEmail = z.email().safeParse(handle).success;
+  const canSave = isHandleValidEmail && !loading && !forwardingAddress;
 
   const handleSave = useCallback(async () => {
     try {

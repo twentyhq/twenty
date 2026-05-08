@@ -4,7 +4,6 @@ import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/compo
 import { SettingsAccountsSelectedMessageChannelEffect } from '@/settings/accounts/components/SettingsAccountsSelectedMessageChannelEffect';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountMessageChannelsTabListComponentId';
-import { useConnectedAccountHandleMap } from '@/settings/accounts/hooks/useConnectedAccountHandleMap';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -33,7 +32,6 @@ export const SettingsAccountsMessageChannelsContainer = () => {
   );
 
   const { channels: allMessageChannels } = useMyMessageChannels();
-  const connectedAccountHandleMap = useConnectedAccountHandleMap();
 
   const messageChannels = allMessageChannels.filter(
     (channel) =>
@@ -41,23 +39,12 @@ export const SettingsAccountsMessageChannelsContainer = () => {
       channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION,
   );
 
-  const getTabTitle = useCallback(
-    (channel: (typeof messageChannels)[0]) => {
-      if (channel.type === MessageChannelType.EMAIL_FORWARDING) {
-        return (
-          connectedAccountHandleMap.get(channel.connectedAccountId) ??
-          channel.handle
-        );
-      }
-
-      return channel.handle;
-    },
-    [connectedAccountHandleMap],
-  );
-
-  const tabs = messageChannels.map((messageChannel) => ({
-    id: messageChannel.id,
-    title: getTabTitle(messageChannel),
+  const tabs = messageChannels.map((channel) => ({
+    id: channel.id,
+    title:
+      channel.type === MessageChannelType.EMAIL_FORWARDING
+        ? (channel.connectedAccount?.handle ?? channel.handle)
+        : channel.handle,
   }));
 
   const handleTabChange = useCallback(

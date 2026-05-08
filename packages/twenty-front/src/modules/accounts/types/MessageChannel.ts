@@ -22,6 +22,10 @@ export type MessageChannel = {
   syncStage: MessageChannelSyncStage;
   syncStageStartedAt: string | null;
   connectedAccountId: string;
+  connectedAccount: {
+    id: string;
+    handle: string;
+  };
   createdAt: string;
   updatedAt: string;
   __typename: 'MessageChannel';

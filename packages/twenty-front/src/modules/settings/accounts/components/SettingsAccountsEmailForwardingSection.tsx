@@ -1,14 +1,13 @@
-import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { useConnectedAccountHandleMap } from '@/settings/accounts/hooks/useConnectedAccountHandleMap';
-import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
+
 import { MessageChannelType } from 'twenty-shared/types';
 import { H2Title, IconCopy, IconMail } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, CardContent, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledRow = styled.div`
@@ -46,35 +45,16 @@ const StyledArrow = styled.span`
   flex-shrink: 0;
 `;
 
-type ForwardingChannelRow = {
-  channelId: string;
-  handle: string;
-  forwardingAddress: string;
-};
-
 export const SettingsAccountsEmailForwardingSection = () => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const { channels } = useMyMessageChannels();
-  const connectedAccountHandleMap = useConnectedAccountHandleMap();
 
-  const forwardingRows = useMemo<ForwardingChannelRow[]>(
-    () =>
-      channels
-        .filter(
-          (ch): ch is MessageChannel =>
-            ch.type === MessageChannelType.EMAIL_FORWARDING,
-        )
-        .map((ch) => ({
-          channelId: ch.id,
-          handle:
-            connectedAccountHandleMap.get(ch.connectedAccountId) ?? ch.handle,
-          forwardingAddress: ch.handle,
-        })),
-    [channels, connectedAccountHandleMap],
+  const forwardingChannels = channels.filter(
+    (channel) => channel.type === MessageChannelType.EMAIL_FORWARDING,
   );
 
-  if (forwardingRows.length === 0) {
+  if (forwardingChannels.length === 0) {
     return null;
   }
 
@@ -85,30 +65,36 @@ export const SettingsAccountsEmailForwardingSection = () => {
         description={t`Forward emails from these addresses to their corresponding Twenty forwarding address.`}
       />
       <Card rounded>
-        {forwardingRows.map((row) => (
-          <CardContent key={row.channelId}>
-            <StyledRow>
-              <StyledLeft>
-                <IconMail size={16} />
-                <StyledHandle>{row.handle}</StyledHandle>
-                <StyledArrow>{'\u2192'}</StyledArrow>
-                <StyledAddress>{row.forwardingAddress}</StyledAddress>
-              </StyledLeft>
-              <Button
-                Icon={IconCopy}
-                title={t`Copy`}
-                variant="secondary"
-                size="small"
-                onClick={() =>
-                  copyToClipboard(
-                    row.forwardingAddress,
-                    t`Forwarding address copied to clipboard`,
-                  )
-                }
-              />
-            </StyledRow>
-          </CardContent>
-        ))}
+        {forwardingChannels.map((channel) => {
+          const sourceHandle =
+            channel.connectedAccount?.handle ?? channel.handle;
+          const forwardingAddress = channel.handle;
+
+          return (
+            <CardContent key={channel.id}>
+              <StyledRow>
+                <StyledLeft>
+                  <IconMail size={16} />
+                  <StyledHandle>{sourceHandle}</StyledHandle>
+                  <StyledArrow>→</StyledArrow>
+                  <StyledAddress>{forwardingAddress}</StyledAddress>
+                </StyledLeft>
+                <Button
+                  Icon={IconCopy}
+                  title={t`Copy`}
+                  variant="secondary"
+                  size="small"
+                  onClick={() =>
+                    copyToClipboard(
+                      forwardingAddress,
+                      t`Forwarding address copied to clipboard`,
+                    )
+                  }
+                />
+              </StyledRow>
+            </CardContent>
+          );
+        })}
       </Card>
     </Section>
   );

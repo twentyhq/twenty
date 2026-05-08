@@ -1,5 +1,11 @@
 import { useMutation } from '@apollo/client/react';
 
+import {
+  type MessageChannelContactAutoCreationPolicy,
+  type MessageChannelType,
+  type MessageChannelVisibility,
+} from 'twenty-shared/types';
+
 import { CREATE_EMAIL_FORWARDING_CHANNEL } from '@/settings/accounts/graphql/mutations/createEmailForwardingChannel';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
@@ -9,11 +15,11 @@ type CreateEmailForwardingChannelResult = {
     messageChannel: {
       id: string;
       handle: string;
-      visibility: string;
-      type: string;
+      visibility: MessageChannelVisibility;
+      type: MessageChannelType;
       isSyncEnabled: boolean;
       excludeGroupEmails: boolean;
-      contactAutoCreationPolicy: string;
+      contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
     };
     forwardingAddress: string;
   };
