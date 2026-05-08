@@ -84,10 +84,14 @@ export class LogicFunctionExecutorService {
     logicFunctionId,
     workspaceId,
     payload,
+    userId,
+    userWorkspaceId,
   }: {
     logicFunctionId: string;
     workspaceId: string;
     payload: object;
+    userId?: string;
+    userWorkspaceId?: string;
   }): Promise<LogicFunctionExecuteResult> {
     await this.throttleExecution(workspaceId);
 
@@ -101,6 +105,8 @@ export class LogicFunctionExecutorService {
       workspaceId,
       flatApplication,
       flatApplicationVariables,
+      userId,
+      userWorkspaceId,
     });
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
@@ -224,15 +230,21 @@ export class LogicFunctionExecutorService {
     workspaceId,
     flatApplication,
     flatApplicationVariables,
+    userId,
+    userWorkspaceId,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
     flatApplicationVariables: FlatApplicationVariable[];
+    userId?: string;
+    userWorkspaceId?: string;
   }) {
     const applicationAccessToken =
       await this.applicationTokenService.generateApplicationAccessToken({
         workspaceId,
         applicationId: flatApplication.id,
+        userId,
+        userWorkspaceId,
       });
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
