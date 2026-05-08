@@ -14,4 +14,5 @@ export enum FeatureFlagKey {
   // until all workspaces have the flag and the flag can be removed entirely.
   IS_DATASOURCE_MIGRATED = 'IS_DATASOURCE_MIGRATED',
   IS_BILLING_V2_ENABLED = 'IS_BILLING_V2_ENABLED',
+  IS_CUSTOM_PERMISSION_FLAGS_ENABLED = 'IS_CUSTOM_PERMISSION_FLAGS_ENABLED',
 }

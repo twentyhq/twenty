@@ -244,6 +244,7 @@ describe('WorkspaceEntityManager', () => {
         IS_DATASOURCE_MIGRATED: false,
         IS_COMMAND_MENU_ITEM_ENABLED: false,
         [FeatureFlagKey.IS_BILLING_V2_ENABLED]: false,
+        [FeatureFlagKey.IS_CUSTOM_PERMISSION_FLAGS_ENABLED]: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
