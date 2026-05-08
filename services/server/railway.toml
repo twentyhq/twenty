@@ -1,0 +1,24 @@
+# services/server/railway.toml
+#
+# Twenty CRM — server (web) service configuration
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Restart on crash, but stop after 3 consecutive failures so we don't
+# crash-loop into a wall (e.g. a broken migration).
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# Twenty exposes /healthz once the server is fully booted, including
+# after migrations finish. Railway will mark the deploy unhealthy and
+# auto-rollback if this never returns 200.
+healthcheckPath = "/healthz"
+healthcheckTimeout = 300
+
+# Don't auto-deploy on every commit — we want intentional upgrades.
+# Push to a branch like `deploy` and trigger from CLI/dashboard.
+[deploy.startCommand]
+# Use Twenty's default entrypoint. Do not override.

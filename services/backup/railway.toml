@@ -1,0 +1,16 @@
+# services/backup/railway.toml
+#
+# Twenty CRM — backup cron service
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Cron service: runs once per schedule and exits.
+# Hourly at :07 (offset to avoid the top-of-the-hour rush on Railway's runners).
+cronSchedule = "7 * * * *"
+
+# If a backup invocation fails, retry up to 2 times before logging the failure.
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 2
