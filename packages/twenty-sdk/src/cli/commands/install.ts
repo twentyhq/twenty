@@ -1,6 +1,7 @@
 import { appInstall } from '@/cli/operations/install';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
+import { checkServerVersionCompatibility } from '@/cli/utilities/version/check-server-version-compatibility';
 import chalk from 'chalk';
 
 export type AppInstallCommandOptions = {
@@ -13,6 +14,7 @@ export class AppInstallCommand {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
     await checkSdkVersionCompatibility(appPath);
+    await checkServerVersionCompatibility();
 
     console.log(chalk.blue('Installing application...'));
     console.log(chalk.gray(`App path: ${appPath}\n`));

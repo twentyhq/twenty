@@ -18,6 +18,7 @@ import {
   checkServerHealth,
   detectLocalServer,
 } from '@/cli/utilities/server/detect-local-server';
+import { checkServerVersionCompatibility } from '@/cli/utilities/version/check-server-version-compatibility';
 import { execSync, spawn, spawnSync } from 'node:child_process';
 import chalk from 'chalk';
 
@@ -274,10 +275,19 @@ const innerServerStart = async (
   return { success: true, data: { port, url } };
 };
 
-export const serverStart = (
+export const serverStart = async (
   options?: ServerStartOptions,
-): Promise<CommandResult<ServerStartResult>> =>
-  runSafe(
+): Promise<CommandResult<ServerStartResult>> => {
+  const result = await runSafe(
     () => innerServerStart(options),
     SERVER_ERROR_CODES.CONTAINER_START_FAILED,
   );
+
+  if (result.success) {
+    const containerName = options?.test ? TEST_CONTAINER_NAME : CONTAINER_NAME;
+
+    await checkServerVersionCompatibility(containerName);
+  }
+
+  return result;
+};
