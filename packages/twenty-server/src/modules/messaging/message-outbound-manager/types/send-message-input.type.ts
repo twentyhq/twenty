@@ -14,7 +14,4 @@ export type SendMessageInput = {
   }[];
   inReplyTo?: string;
   threadExternalId?: string;
-  // When set, an X-Twenty-Origin header is stamped on the outbound message.
-  // Used by the inbound-email forwarding pipeline to drop group echoes.
-  originWorkspaceId?: string;
 };

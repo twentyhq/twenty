@@ -1655,7 +1655,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description:
-      'Domain used for inbound email forwarding (the right-hand side of ch_xxx@<domain>). Required to enable email forwarding channels.',
+      'Domain used for email group inbound mail (the right-hand side of ch_xxx@<domain>). Required to enable email group channels.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()

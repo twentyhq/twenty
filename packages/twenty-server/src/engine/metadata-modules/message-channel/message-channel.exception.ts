@@ -22,7 +22,7 @@ const getMessageChannelExceptionUserFriendlyMessage = (
     case MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION:
       return msg`You do not have access to this message channel.`;
     case MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED:
-      return msg`Email forwarding is not configured on this server.`;
+      return msg`Email group is not configured on this server.`;
     default:
       assertUnreachable(code);
   }

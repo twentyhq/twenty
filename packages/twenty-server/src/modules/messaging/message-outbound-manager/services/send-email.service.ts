@@ -26,7 +26,6 @@ export class SendEmailService {
         attachments: data.attachments,
         inReplyTo: data.inReplyTo,
         threadExternalId: data.threadExternalId,
-        originWorkspaceId: data.connectedAccount.workspaceId,
       },
       data.connectedAccount,
     );

@@ -39,7 +39,7 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
       }
     } catch {
       enqueueErrorSnackBar({
-        message: t`Failed to create email group channel. Email forwarding may not be configured on this server.`,
+        message: t`Failed to create email group channel. Email group may not be configured on this server.`,
       });
     }
   }, [createEmailGroupChannel, handle, navigate, enqueueErrorSnackBar, t]);

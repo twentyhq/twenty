@@ -289,7 +289,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
         {
           id: '20202020-7f22-4e58-aa33-9c3e2c72ab10',
           value: MessageChannelType.EMAIL_GROUP,
-          label: i18nLabel(msg`Email Forwarding`),
+          label: i18nLabel(msg`Email group`),
           position: 2,
           color: 'turquoise',
         },

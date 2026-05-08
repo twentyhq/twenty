@@ -43,7 +43,7 @@ export class InboundEmailImportService {
 
     if (!this.inboundEmailS3ClientProvider.isConfigured()) {
       this.logger.warn(
-        `Skipping inbound email import for ${s3Key}: forwarding is not configured.`,
+        `Skipping inbound email import for ${s3Key}: email group is not configured.`,
       );
 
       return { kind: 'unconfigured' };
@@ -69,7 +69,7 @@ export class InboundEmailImportService {
 
     if (!isDefined(messageChannel)) {
       this.logger.warn(
-        `No forwarding channel matches recipient ${recipient} (key ${s3Key})`,
+        `No email group channel matches recipient ${recipient} (key ${s3Key})`,
       );
 
       return { kind: 'unmatched', recipient };
@@ -84,22 +84,13 @@ export class InboundEmailImportService {
 
     const { workspaceId } = messageChannel;
 
-    if (parsedInboundMessage.originWorkspaceId === workspaceId) {
-      this.logger.log(
-        `Dropping loopback email ${s3Key} for workspace ${workspaceId}`,
-      );
-      await this.inboundEmailStorageService.deleteRawMessage(s3Key);
-
-      return { kind: 'loop_dropped', workspaceId };
-    }
-
     const connectedAccount = await this.connectedAccountRepository.findOne({
       where: { id: messageChannel.connectedAccountId, workspaceId },
     });
 
     if (!isDefined(connectedAccount)) {
       throw new Error(
-        `Forwarding channel ${messageChannel.id} has no connected account`,
+        `Email group channel ${messageChannel.id} has no connected account`,
       );
     }
 

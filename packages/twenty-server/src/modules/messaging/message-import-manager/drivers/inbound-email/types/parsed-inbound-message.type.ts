@@ -4,6 +4,5 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 
 export type ParsedInboundMessage = {
   parsed: ParsedEmail;
-  originWorkspaceId: string | null;
   message: MessageWithParticipants;
 };

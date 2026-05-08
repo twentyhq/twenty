@@ -22,10 +22,25 @@ export class MessagingWebhookDispatcherService {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
+  private static readonly SNS_SUBSCRIBE_URL_PATTERN =
+    /^https:\/\/sns\.[a-z0-9-]+\.amazonaws\.com\//;
+
   async confirmSnsSubscription(
     subscribeUrl: string | undefined,
   ): Promise<void> {
     if (!subscribeUrl) {
+      return;
+    }
+
+    if (
+      !MessagingWebhookDispatcherService.SNS_SUBSCRIBE_URL_PATTERN.test(
+        subscribeUrl,
+      )
+    ) {
+      this.logger.error(
+        `Refusing to fetch non-AWS SubscribeURL: ${subscribeUrl}`,
+      );
+
       return;
     }
 

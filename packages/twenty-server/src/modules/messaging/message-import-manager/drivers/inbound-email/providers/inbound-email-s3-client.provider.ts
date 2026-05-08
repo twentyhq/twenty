@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { S3Client, type S3ClientConfig } from '@aws-sdk/client-s3';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -8,9 +8,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class InboundEmailS3ClientProvider {
-  private readonly logger = new Logger(InboundEmailS3ClientProvider.name);
-  private s3Client: S3Client | null = null;
-
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   isConfigured(): boolean {
@@ -25,7 +22,7 @@ export class InboundEmailS3ClientProvider {
 
     if (!isNonEmptyString(bucket)) {
       throw new Error(
-        'STORAGE_S3_NAME is not configured; email forwarding requires S3 storage.',
+        'STORAGE_S3_NAME is not configured; email group requires S3 storage.',
       );
     }
 
@@ -37,7 +34,7 @@ export class InboundEmailS3ClientProvider {
 
     if (!isNonEmptyString(domain)) {
       throw new Error(
-        'INBOUND_EMAIL_DOMAIN is not configured; email forwarding is disabled.',
+        'INBOUND_EMAIL_DOMAIN is not configured; email group is disabled.',
       );
     }
 
@@ -45,14 +42,10 @@ export class InboundEmailS3ClientProvider {
   }
 
   getClient(): S3Client {
-    if (this.s3Client) {
-      return this.s3Client;
-    }
-
     const region = this.twentyConfigService.get('STORAGE_S3_REGION');
 
     if (!isNonEmptyString(region)) {
-      throw new Error('STORAGE_S3_REGION must be set to use email forwarding.');
+      throw new Error('STORAGE_S3_REGION must be set to use email group.');
     }
 
     const config: S3ClientConfig = { region };
@@ -74,9 +67,6 @@ export class InboundEmailS3ClientProvider {
       config.credentials = { accessKeyId, secretAccessKey };
     }
 
-    this.s3Client = new S3Client(config);
-    this.logger.log(`Inbound-email S3 client initialized in region ${region}`);
-
-    return this.s3Client;
+    return new S3Client(config);
   }
 }
