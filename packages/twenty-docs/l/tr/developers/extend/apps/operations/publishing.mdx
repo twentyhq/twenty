@@ -53,7 +53,7 @@ yarn twenty deploy
 Özel (tarball) uygulamaları çalışma alanları arasında paylaşma bir **Kurumsal** özelliktir. **Dağıtım** sekmesi, çalışma alanınız geçerli bir Kurumsal anahtara sahip olana kadar paylaşım kontrolleri yerine bir yükseltme istemi gösterecektir. Etkinleştirmek için [Ayarlar > Yönetim Paneli > Kurumsal](/settings/admin-panel#enterprise) bölümüne gidin.
 </Warning>
 
-Tarball uygulamaları genel pazar yerinde listelenmez; bu nedenle aynı sunucudaki diğer çalışma alanları gezinerek onları keşfedemez. Çalışma alanınız Kurumsal planda olduğunda, yayınlanmış bir uygulamayı şu şekilde paylaşabilirsiniz:
+Tarball uygulamaları genel pazar yerinde listelenmez; bu nedenle aynı sunucudaki diğer çalışma alanları gezinerek onları keşfedemez. Çalışma alanınız Kurumsal planda olduğunda, dağıtılmış bir uygulamayı şu şekilde paylaşabilirsiniz:
 
 1. **Ayarlar > Uygulamalar > Kayıtlar** bölümüne gidin ve uygulamanızı açın
 2. **Dağıtım** sekmesinde, **Paylaşım bağlantısını kopyala**’ya tıklayın
@@ -144,7 +144,7 @@ Gizli anahtar gerekmez — test örneği geçicidir ve yalnızca iş süresi boy
 
 **Gerekli yapılandırma:**
 
-| Ayar                    | Koşul                                                        | Amaç                                                                                                |
+| Ayar                    | Nerede                                                       | Amaç                                                                                                |
 | ----------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
 | `TWENTY_DEPLOY_URL`     | `cd.yml` içinde `env` (varsayılan: `http://localhost:3000`)  | Dağıtımın yapılacağı Twenty sunucusu. İlk kullanımdan önce bunu gerçek sunucu URL'nizle değiştirin. |
 | `TWENTY_DEPLOY_API_KEY` | GitHub deposu **Settings → Secrets and variables → Actions** | Hedef sunucuda dağıtım iznine sahip API anahtarı.                                                   |

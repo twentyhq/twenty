@@ -50,7 +50,7 @@ yarn twenty deploy
 ### Compartilhando um aplicativo implantado
 
 <Warning>
-Compartilhar aplicativos privados (tarball) entre espaços de trabalho é um recurso do plano **Enterprise**. A guia **Distribution** exibirá um aviso de atualização em vez dos controles de compartilhamento até que seu espaço de trabalho tenha uma chave Enterprise válida. Vá para [Configurações > Painel de Administração > Enterprise](/settings/admin-panel#enterprise) para ativá-lo.
+Compartilhar aplicativos privados (tarball) entre espaços de trabalho é um recurso do plano **Enterprise**. A guia **Distribuição** exibirá um aviso de atualização em vez dos controles de compartilhamento até que seu espaço de trabalho tenha uma chave Enterprise válida. Vá para [Configurações > Painel de Administração > Enterprise](/settings/admin-panel#enterprise) para ativá-lo.
 </Warning>
 
 Aplicativos em tarball não são listados no marketplace público, então outros espaços de trabalho no mesmo servidor não os descobrirão ao navegar. Assim que o seu espaço de trabalho estiver no plano Enterprise, você pode compartilhar um app implantado desta forma:
@@ -107,7 +107,7 @@ O valor é um [intervalo semver](https://github.com/npm/node-semver#ranges) padr
 * Se o servidor não tiver `APP_VERSION` configurado, a verificação será ignorada.
 
 <Note>
-O servidor realiza a verificação definitiva — ele valida `engines.twenty` tanto no upload do tarball quanto na instalação no workspace. Se você implantar um tarball fora de banda ou instalar a partir do marketplace, o servidor ainda impõe a compatibilidade.
+O servidor realiza a verificação definitiva — ele valida `engines.twenty` tanto no upload do tarball quanto na instalação no espaço de trabalho. Se você implantar um tarball fora de banda ou instalar a partir do marketplace, o servidor ainda impõe a compatibilidade.
 </Note>
 
 ## CI/CD automatizado (fluxos de trabalho pré-configurados)
@@ -140,7 +140,7 @@ Faz o deploy do seu app para um servidor Twenty configurado a cada push para `ma
 
 1. Faz checkout do head do PR (para PRs rotulados) ou do commit enviado.
 2. Executa `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — o equivalente em CI de `yarn twenty deploy`.
-3. Executa `twentyhq/twenty/.github/actions/install-twenty-app@main` para que a versão recém-implantada seja instalada no workspace de destino.
+3. Executa `twentyhq/twenty/.github/actions/install-twenty-app@main` para que a versão recém-implantada seja instalada no espaço de trabalho de destino.
 
 **Configuração obrigatória:**
 

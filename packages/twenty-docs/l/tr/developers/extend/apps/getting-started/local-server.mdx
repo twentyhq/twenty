@@ -1,6 +1,6 @@
 ---
 title: Yerel Sunucu
-description: Yerel Twenty Docker sunucusunu yönetin — başlatın, durdurun, yükseltin, paralel test örneği çalıştırın ve el ile SDK kurulumu yapın.
+description: Yerel Twenty Docker sunucusunu yönetin — başlatın, durdurun, yükseltin, paralel test örneği çalıştırın ve manuel SDK kurulumu yapın.
 icon: server
 ---
 
@@ -14,10 +14,10 @@ Yerel Twenty konteynerini kontrol etmek için `yarn twenty server` kullanın:
 | `yarn twenty server start --port 3030` | Özel bir portta başlatır                                  |
 | `yarn twenty server stop`              | Sunucuyu durdurur (verileri korur)                        |
 | `yarn twenty server status`            | URL'yi, sürümü ve oturum açma kimlik bilgilerini gösterir |
-| `yarn twenty server logs`              | Sunucu günlüklerini akış olarak iletir                    |
+| `yarn twenty server logs`              | Sunucu günlüklerini akış olarak gösterir                  |
 | `yarn twenty server reset`             | Verileri siler ve sıfırdan başlatır                       |
 | `yarn twenty server upgrade`           | En güncel `twenty-app-dev` imajını çeker                  |
-| `yarn twenty server upgrade 2.2.0`     | Belirli bir sürüme yükseltin                              |
+| `yarn twenty server upgrade 2.2.0`     | Belirli bir sürüme yükseltir                              |
 
 Veriler, yeniden başlatmalar arasında iki Docker biriminde kalıcıdır (PostgreSQL için `twenty-app-dev-data`, dosyalar için `twenty-app-dev-storage`). Her şeyi silmek için `reset` kullanın.
 
@@ -39,11 +39,11 @@ yarn twenty server upgrade 2.2.0      # Specific version
 | Komut                               | Ne yapar                                                      |
 | ----------------------------------- | ------------------------------------------------------------- |
 | `yarn twenty server start --test`   | Test örneğini başlatır (varsayılan bağlantı noktası 2021'dir) |
-| `yarn twenty server stop --test`    | Durdurun                                                      |
-| `yarn twenty server status --test`  | Durumunu gösterin                                             |
-| `yarn twenty server logs --test`    | Günlüklerini akış olarak izleyin                              |
-| `yarn twenty server reset --test`   | Verilerini silin                                              |
-| `yarn twenty server upgrade --test` | İmajını yükseltin                                             |
+| `yarn twenty server stop --test`    | Durdurur                                                      |
+| `yarn twenty server status --test`  | Durumunu gösterir                                             |
+| `yarn twenty server logs --test`    | Günlüklerini akış olarak gösterir                             |
+| `yarn twenty server reset --test`   | Verilerini siler                                              |
+| `yarn twenty server upgrade --test` | İmajını yükseltir                                             |
 
 Test örneği, kendine ait bir Docker konteynerinde (`twenty-app-dev-test`), ayrılmış birimlerle (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) ve yapılandırmayla çalışır; böylece ana örneğinizle çakışma olmadan paralel olarak çalışabilir. Varsayılan 2021'i geçersiz kılmak için `--test` ile `--port`'u birlikte kullanın.
 

@@ -13,14 +13,14 @@ Componentele front-end pot fi afișate în două locații în cadrul Twenty:
 * **Panou lateral** — Componentele front-end care nu sunt headless se deschid în panoul lateral din dreapta. Acesta este comportamentul implicit atunci când o componentă front-end este declanșată din meniul de comenzi.
 * **Widgeturi (tablouri de bord și pagini de înregistrare)** — Componentele frontale pot fi încorporate ca widgeturi în [machetele de pagină](/l/ro/developers/extend/apps/layout/page-layouts). La configurarea unui tablou de bord sau a machetei unei pagini de înregistrare, utilizatorii pot adăuga un widget de componentă front-end.
 
-Un front component de unul singur nu este accesibil din interfața utilizator — trebuie să îl *expui*. Cele două moduri de a face asta sunt:
+O componentă frontală, de una singură, nu este accesibilă din interfața utilizatorului — trebuie să o *expui*. Cele două moduri de a face asta sunt:
 
 * **Asociază-l cu un [element de meniu de comenzi](/l/ro/developers/extend/apps/layout/command-menu-items)** — îl înregistrează în meniul de comenzi (Cmd+K) și, opțional, ca acțiune rapidă fixată.
 * **Încorporează-l ca widget într-o [machetă de pagină](/l/ro/developers/extend/apps/layout/page-layouts)** — îl plasează pe pagina de detalii a unei înregistrări sau pe un tablou de bord.
 
 ## Exemplu de bază
 
-Cel mai rapid mod de a vedea un front component în acțiune este să îl asociezi cu un [`defineCommandMenuItem`](/l/ro/developers/extend/apps/layout/command-menu-items), astfel încât să apară ca un buton de acțiune rapidă în colțul din dreapta sus al paginii:
+Cel mai rapid mod de a vedea o componentă frontală în acțiune este să o asociezi cu un [`defineCommandMenuItem`](/l/ro/developers/extend/apps/layout/command-menu-items), astfel încât să apară ca un buton de acțiune rapidă în colțul din dreapta sus al paginii:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

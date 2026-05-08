@@ -26,7 +26,7 @@ Bir Twenty uygulamasının **veri katmanı**, uygulamanızın bir çalışma ala
 ## Bu bölümde
 
 <CardGroup cols={2}>
-  <Card title="Nesneler" icon="tablo" href="/l/tr/developers/extend/apps/data/objects">
+  <Card title="Nesneler" icon="table" href="/l/tr/developers/extend/apps/data/objects">
     `defineObject` — kendi alanlarına sahip yeni kayıt türleri bildirin.
   </Card>
   <Card title="Nesneleri Genişletme" icon="wand-magic-sparkles" href="/l/tr/developers/extend/apps/data/extending-objects">
@@ -39,11 +39,11 @@ Bir Twenty uygulamasının **veri katmanı**, uygulamanızın bir çalışma ala
 
 ## Varlıklara genel bakış
 
-| Varlık       | Amaç                                                                                                                                  | Şununla tanımlanır                       |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| **Nesne**    | Kendi alanlarına sahip yeni bir özel kayıt türü (ör. PostCard, Invoice)                                                               | `defineObject()`                         |
-| **Alan**     | Bir nesne üzerindeki sütun. Bağımsız alanlar, oluşturmadığınız nesneleri genişletebilir (ör. Company nesnesine `loyaltyTier` ekleyin) | `defineField()`                          |
-| **Relation** | İki nesne arasında, her iki tarafı da alan olarak bildirilmiş çift yönlü bir bağlantı                                                 | `defineField()` ile `FieldType.RELATION` |
+| Varlık     | Amaç                                                                                                                                  | Şununla tanımlanır                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **Nesne**  | Kendi alanlarına sahip yeni bir özel kayıt türü (ör. PostCard, Invoice)                                                               | `defineObject()`                         |
+| **Alan**   | Bir nesne üzerindeki sütun. Bağımsız alanlar, oluşturmadığınız nesneleri genişletebilir (ör. Company nesnesine `loyaltyTier` ekleyin) | `defineField()`                          |
+| **İlişki** | İki nesne arasında, her iki tarafı da alan olarak bildirilmiş çift yönlü bir bağlantı                                                 | `defineField()` ile `FieldType.RELATION` |
 
 SDK bunları derleme zamanında AST analiziyle algılar, bu yüzden dosya organizasyonu size kalmıştır — kullanılan gelenek `src/objects/` ve `src/fields/` dizinleridir. Kararlı `universalIdentifier` UUID’leri, dağıtımlar arasında her şeyi birbirine bağlar.
 

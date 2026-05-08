@@ -1,10 +1,10 @@
 ---
 title: Visualizações
-description: Envie visualizações salvas pré-configuradas — ordem das colunas, filtros, grupos — para objetos no seu app.
+description: Distribua visualizações salvas e pré-configuradas — ordem das colunas, filtros, grupos — para objetos no seu app.
 icon: list
 ---
 
-Uma **visualização** é uma configuração salva de como os registros de um objeto são exibidos: quais campos aparecem, sua ordem, se estão visíveis e quaisquer filtros ou grupos aplicados. Use `defineView()` para enviar visualizações pré-configuradas com o seu app — normalmente uma visualização de índice padrão para cada objeto personalizado que você cria.
+Uma **visualização** é uma configuração salva de como os registros de um objeto são exibidos: quais campos aparecem, sua ordem, se estão visíveis e quaisquer filtros ou grupos aplicados. Use `defineView()` para distribuir visualizações pré-configuradas com seu app — normalmente uma visualização de índice padrão para cada objeto personalizado que você cria.
 
 ```ts src/views/example-view.ts
 import { defineView, ViewKey } from 'twenty-sdk/define';
@@ -40,4 +40,4 @@ export default defineView({
 
 ## Como as visualizações aparecem na UI
 
-Uma visualização por si só não é acessível a partir da barra lateral. Para fazê-la aparecer lá, associe-a a um [item de menu de navegação](/l/pt/developers/extend/apps/layout/navigation-menu-items) do tipo `VIEW` que aponte para o `universalIdentifier` da visualização. Esse é o padrão canônico: cada objeto personalizado normalmente envia uma visualização padrão + uma entrada na barra lateral que a abre.
+Uma visualização por si só não é acessível a partir da barra lateral. Para fazê-la aparecer lá, associe-a a um [item de menu de navegação](/l/pt/developers/extend/apps/layout/navigation-menu-items) do tipo `VIEW` que aponte para o `universalIdentifier` da visualização. Esse é o padrão canônico: cada objeto personalizado normalmente inclui uma visualização padrão + uma entrada na barra lateral que a abre.

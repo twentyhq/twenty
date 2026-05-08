@@ -4,7 +4,7 @@ description: Configurează însăși aplicația — identitatea ei, permisiunile
 icon: screwdriver-wrench
 ---
 
-**Stratul de configurare** al unei aplicații Twenty este cel care descrie aplicația *platformei* — identitatea ei, permisiunile pe care le deține și codul care rulează în timpul instalării sau actualizării. Aceste declarații nu adaugă noi structuri de date sau comportamente la rulare; ele îi spun lui Twenty *cine este aplicația* și *cum să fie configurată*.
+**Stratul de configurare** al unei aplicații Twenty este cel care descrie aplicația *pentru platformă* — identitatea ei, permisiunile pe care le deține și codul care rulează în timpul instalării sau actualizării. Aceste declarații nu adaugă noi structuri de date sau comportamente la rulare; ele îi spun lui Twenty *cine este aplicația* și *cum să fie configurată*.
 
 ```text
 ┌────────────────────────────────────────────────────────┐
@@ -29,11 +29,11 @@ icon: screwdriver-wrench
 ## În această secțiune
 
 <CardGroup cols={2}>
-  <Card title="Configurare aplicație" icon="rocket" href="/l/ro/developers/extend/apps/config/application">
+  <Card title="Configurația aplicației" icon="rocket" href="/l/ro/developers/extend/apps/config/application">
     `defineApplication` — identitate, rol implicit, variabile, metadate pentru marketplace.
   </Card>
   <Card title="Roluri și permisiuni" icon="shield-halved" href="/l/ro/developers/extend/apps/config/roles">
-    `defineRole` — declară ce pot citi și scrie funcțiile logice ale aplicației tale.
+    `defineRole` — declară ce pot citi și scrie funcțiile de logică ale aplicației dvs.
   </Card>
   <Card title="Hook-uri de instalare" icon="wrench" href="/l/ro/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction` și `definePostInstallLogicFunction` — fac backup la date, introduc valori implicite, validează actualizările.
@@ -43,9 +43,9 @@ icon: screwdriver-wrench
 ## Cum se leagă componentele între ele
 
 * **Aplicația** este punctul de intrare. Fiecare aplicație are exact un apel `defineApplication()`, iar acesta indică un singur **Rol** ca implicit.
-* **Rolul** controlează ce pot citi și scrie funcțiile logice și componentele de interfață ale aplicației. Urmează principiul celui mai mic privilegiu: acordă doar permisiunile de care codul tău are cu adevărat nevoie.
+* **Rolul** controlează ce pot citi și scrie funcțiile de logică și componentele front-end ale aplicației. Respectați principiul celui mai mic privilegiu: acordați doar permisiunile de care codul dvs. are cu adevărat nevoie.
 * **Hook-urile de instalare** rulează în timpul instalării sau actualizării — pre-install înainte de migrarea metadatelor (astfel încât să poată refuza o actualizare riscantă), post-install după migrare (astfel încât să poată introduce date implicite în noua schemă).
 
 <Note>
-Hook-urile de instalare împart același runtime cu [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions) — aceeași semnătură a handler-ului, aceleași variabile de mediu, același client API tipizat — dar sunt declarate cu propriile lor funcții `define` și există în afara modelului obișnuit de declanșare (HTTP, cron, evenimente de bază de date).
+Hook-urile de instalare împart același runtime cu [funcțiile de logică](/l/ro/developers/extend/apps/logic/logic-functions) — aceeași semnătură a handlerului, aceleași variabile de mediu, același client API tipizat — dar sunt declarate cu propriile lor funcții `define` și există în afara modelului obișnuit de declanșare (HTTP, cron, evenimente de bază de date).
 </Note>

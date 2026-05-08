@@ -14,7 +14,7 @@ export const STATIC_WEBSITE_ROUTES = [
   },
   {
     id: 'whyTwenty',
-    path: '/why-twenty',
+    path: '/resources/why-twenty',
     title: msg`Why Twenty — The Open Source CRM Built to Be Customised`,
     description: msg`Packaged CRMs make every company look the same. Twenty is the open source CRM teams shape around their workflow, with a modern UI and a developer-first platform.`,
     changeFrequency: 'monthly',
