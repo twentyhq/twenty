@@ -32,6 +32,7 @@ describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
   let userWorkspaceRepository: Repository<UserWorkspaceEntity>;
   let userRepository: Repository<UserEntity>;
+  let roleTargetRepository: Repository<RoleTargetEntity>;
   let workspaceInvitationService: WorkspaceInvitationService;
   let approvedAccessDomainService: ApprovedAccessDomainService;
   let globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
@@ -70,6 +71,7 @@ describe('UserWorkspaceService', () => {
           provide: getRepositoryToken(RoleTargetEntity),
           useValue: {
             findOneOrFail: jest.fn(),
+            exists: jest.fn(),
           },
         },
         {
@@ -159,6 +161,7 @@ describe('UserWorkspaceService', () => {
       getRepositoryToken(UserWorkspaceEntity),
     );
     userRepository = module.get(getRepositoryToken(UserEntity));
+    roleTargetRepository = module.get(getRepositoryToken(RoleTargetEntity));
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
     );
@@ -368,7 +371,7 @@ describe('UserWorkspaceService', () => {
       });
     });
 
-    it('should not add user to workspace if already in workspace', async () => {
+    it('should not add user to workspace if already in workspace and role target already exists', async () => {
       const user = {
         id: 'user-id',
         email: 'test@example.com',
@@ -389,6 +392,7 @@ describe('UserWorkspaceService', () => {
       jest
         .spyOn(service, 'checkUserWorkspaceExists')
         .mockResolvedValue(userWorkspace);
+      jest.spyOn(roleTargetRepository, 'exists').mockResolvedValue(true);
       jest.spyOn(service, 'create').mockResolvedValue(userWorkspace);
       jest.spyOn(service, 'createWorkspaceMember').mockResolvedValue(undefined);
 
@@ -398,8 +402,106 @@ describe('UserWorkspaceService', () => {
         user.id,
         workspace.id,
       );
+      expect(roleTargetRepository.exists).toHaveBeenCalledWith({
+        where: {
+          userWorkspaceId: userWorkspace.id,
+          workspaceId: workspace.id,
+        },
+      });
       expect(service.create).not.toHaveBeenCalled();
       expect(service.createWorkspaceMember).not.toHaveBeenCalled();
+      expect(
+        userRoleService.assignRoleToManyUserWorkspace,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should self-heal orphan membership by assigning the workspace default role when role target is missing', async () => {
+      const user = {
+        id: 'user-id',
+        email: 'test@example.com',
+        createdAt: new Date('2024-01-01'),
+        updatedAt: new Date('2024-01-01'),
+        deletedAt: null,
+      } as unknown as UserEntity;
+      const workspace = {
+        id: 'workspace-id',
+        defaultRoleId: 'default-role-id',
+      } as WorkspaceEntity;
+      const userWorkspace = {
+        id: 'user-workspace-id',
+        userId: user.id,
+        workspaceId: workspace.id,
+      } as UserWorkspaceEntity;
+
+      jest
+        .spyOn(service, 'checkUserWorkspaceExists')
+        .mockResolvedValue(userWorkspace);
+      jest.spyOn(roleTargetRepository, 'exists').mockResolvedValue(false);
+      jest
+        .spyOn(userRoleService, 'assignRoleToManyUserWorkspace')
+        .mockResolvedValue(undefined);
+      const createSpy = jest.spyOn(service, 'create');
+      const createWorkspaceMemberSpy = jest.spyOn(
+        service,
+        'createWorkspaceMember',
+      );
+
+      await service.addUserToWorkspaceIfUserNotInWorkspace(user, workspace);
+
+      expect(roleTargetRepository.exists).toHaveBeenCalledWith({
+        where: {
+          userWorkspaceId: userWorkspace.id,
+          workspaceId: workspace.id,
+        },
+      });
+      expect(
+        userRoleService.assignRoleToManyUserWorkspace,
+      ).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userWorkspaceIds: [userWorkspace.id],
+        roleId: workspace.defaultRoleId,
+      });
+      expect(createSpy).not.toHaveBeenCalled();
+      expect(createWorkspaceMemberSpy).not.toHaveBeenCalled();
+    });
+
+    it('should self-heal orphan membership using the explicit roleId when one is provided', async () => {
+      const user = {
+        id: 'user-id',
+        email: 'test@example.com',
+      } as UserEntity;
+      const workspace = {
+        id: 'workspace-id',
+        defaultRoleId: 'default-role-id',
+      } as WorkspaceEntity;
+      const userWorkspace = {
+        id: 'user-workspace-id',
+        userId: user.id,
+        workspaceId: workspace.id,
+      } as UserWorkspaceEntity;
+      const explicitRoleId = 'admin-role-id';
+
+      jest
+        .spyOn(service, 'checkUserWorkspaceExists')
+        .mockResolvedValue(userWorkspace);
+      jest.spyOn(roleTargetRepository, 'exists').mockResolvedValue(false);
+      jest
+        .spyOn(userRoleService, 'assignRoleToManyUserWorkspace')
+        .mockResolvedValue(undefined);
+
+      await service.addUserToWorkspaceIfUserNotInWorkspace(
+        user,
+        workspace,
+        explicitRoleId,
+      );
+
+      expect(
+        userRoleService.assignRoleToManyUserWorkspace,
+      ).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userWorkspaceIds: [userWorkspace.id],
+        roleId: explicitRoleId,
+      });
     });
 
     it('should throw an exception if workspace has no default role', async () => {
