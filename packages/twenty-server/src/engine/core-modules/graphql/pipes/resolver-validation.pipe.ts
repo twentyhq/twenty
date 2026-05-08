@@ -1,6 +1,7 @@
 import {
   type ArgumentMetadata,
   Injectable,
+  Logger,
   type PipeTransform,
   type Type,
 } from '@nestjs/common';
@@ -22,6 +23,8 @@ const safeClassValidatorValidateWrapper = async (
 
 @Injectable()
 export class ResolverValidationPipe implements PipeTransform {
+  private readonly logger = new Logger(ResolverValidationPipe.name);
+
   async transform(value: unknown, metadata: ArgumentMetadata) {
     const { metatype } = metadata;
 
@@ -29,7 +32,22 @@ export class ResolverValidationPipe implements PipeTransform {
       return value;
     }
 
-    const object = plainToInstance(metatype, value);
+    // class-transformer throws when the plain object contains prototype-
+    // pollution keys (e.g. "constructor") because it tries to call
+    // `new targetType()` on a non-constructor value. Skip validation and
+    // return the raw value so the resolver can handle it normally.
+    let object: object;
+
+    try {
+      object = plainToInstance(metatype, value);
+    } catch (error) {
+      this.logger.warn(
+        `plainToInstance failed for ${metatype.name}, skipping validation: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return value;
+    }
+
     const errors = await safeClassValidatorValidateWrapper(object);
 
     if (errors.length === 0) {
