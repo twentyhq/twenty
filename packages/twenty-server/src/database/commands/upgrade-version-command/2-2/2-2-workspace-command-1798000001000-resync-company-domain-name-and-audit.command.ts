@@ -37,12 +37,33 @@ export class ResyncCompanyDomainNameAndAuditCommand extends ActiveOrSuspendedWor
     );
 
     if (!isDryRun) {
-      await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
-        { workspaceId },
-      );
+      try {
+        await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
+          { workspaceId },
+        );
+      } catch (error) {
+        // Tolerate sync failures so the upgrade chain isn't blocked. The
+        // primary effect of this command (dropping the Company.domainName
+        // max-values cap) is delivered by the multi-domain commit
+        // f508691d39 directly. The audit step below is the only remaining
+        // useful work and can run independently.
+        this.logger.warn(
+          `${prefix}Standard application sync failed for workspace ${workspaceId} — continuing with audit. ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
     }
 
-    await this.auditDomainCollisions({ workspaceId, prefix });
+    try {
+      await this.auditDomainCollisions({ workspaceId, prefix });
+    } catch (error) {
+      this.logger.warn(
+        `${prefix}Domain collision audit failed for workspace ${workspaceId}. ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   private async auditDomainCollisions({
