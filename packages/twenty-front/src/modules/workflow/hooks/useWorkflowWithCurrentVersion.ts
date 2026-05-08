@@ -60,15 +60,17 @@ export const useWorkflowWithCurrentVersion = (
     refetchWorkflow,
   ]);
 
-  const draftVersion = workflow?.versions.find(
+  const workflowVersions = workflow?.versions ?? [];
+
+  const draftVersion = workflowVersions.find(
     (workflowVersion) => workflowVersion.status === 'DRAFT',
   );
 
-  const workflowVersions = [...(workflow?.versions ?? [])];
+  const sortedWorkflowVersions = [...workflowVersions];
 
-  workflowVersions.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+  sortedWorkflowVersions.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
 
-  const latestVersion = workflowVersions[0];
+  const latestVersion = sortedWorkflowVersions[0];
 
   const currentVersionWithoutSteps = draftVersion ?? latestVersion;
 
