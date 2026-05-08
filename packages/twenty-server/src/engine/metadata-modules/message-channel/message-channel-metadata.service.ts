@@ -19,7 +19,7 @@ import {
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { CreateEmailForwardingChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-forwarding-channel.output';
+import { CreateEmailGroupChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.output';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
@@ -185,7 +185,7 @@ export class MessageChannelMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
-  async createEmailForwardingChannel({
+  async createEmailGroupChannel({
     handle,
     userWorkspaceId,
     workspaceId,
@@ -193,7 +193,7 @@ export class MessageChannelMetadataService {
     handle: string;
     userWorkspaceId: string;
     workspaceId: string;
-  }): Promise<CreateEmailForwardingChannelOutput> {
+  }): Promise<CreateEmailGroupChannelOutput> {
     const inboundEmailDomain = this.twentyConfigService.get(
       'INBOUND_EMAIL_DOMAIN',
     );
@@ -204,8 +204,8 @@ export class MessageChannelMetadataService {
       storageType !== StorageDriverType.S_3
     ) {
       throw new MessageChannelException(
-        'Email forwarding is not configured: INBOUND_EMAIL_DOMAIN must be set and STORAGE_TYPE must be S3',
-        MessageChannelExceptionCode.EMAIL_FORWARDING_NOT_CONFIGURED,
+        'Email group is not configured: INBOUND_EMAIL_DOMAIN must be set and STORAGE_TYPE must be S3',
+        MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED,
       );
     }
 
@@ -218,7 +218,7 @@ export class MessageChannelMetadataService {
     const connectedAccount = await this.connectedAccountMetadataService.create({
       workspaceId,
       handle,
-      provider: ConnectedAccountProvider.EMAIL_FORWARDING,
+      provider: ConnectedAccountProvider.EMAIL_GROUP,
       userWorkspaceId,
       accessToken: null,
       refreshToken: null,
@@ -228,7 +228,7 @@ export class MessageChannelMetadataService {
       workspaceId,
       handle: forwardingAddress,
       connectedAccountId: connectedAccount.id,
-      type: MessageChannelType.EMAIL_FORWARDING,
+      type: MessageChannelType.EMAIL_GROUP,
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
       syncStatus: MessageChannelSyncStatus.ACTIVE,

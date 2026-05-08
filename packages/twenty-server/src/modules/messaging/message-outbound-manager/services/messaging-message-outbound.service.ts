@@ -38,7 +38,7 @@ export class MessagingMessageOutboundService {
           sendMessageInput,
           connectedAccount,
         );
-      case ConnectedAccountProvider.EMAIL_FORWARDING:
+      case ConnectedAccountProvider.EMAIL_GROUP:
         // Forwarding channels are inbound-only: replies should go through the
         // user's own Gmail/Outlook/IMAP account to avoid masking the sender.
         throw new Error(
@@ -78,7 +78,7 @@ export class MessagingMessageOutboundService {
           sendMessageInput,
           connectedAccount,
         );
-      case ConnectedAccountProvider.EMAIL_FORWARDING:
+      case ConnectedAccountProvider.EMAIL_GROUP:
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.APP:

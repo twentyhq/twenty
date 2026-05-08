@@ -8,7 +8,7 @@ export enum MessageChannelExceptionCode {
   MESSAGE_CHANNEL_NOT_FOUND = 'MESSAGE_CHANNEL_NOT_FOUND',
   INVALID_MESSAGE_CHANNEL_INPUT = 'INVALID_MESSAGE_CHANNEL_INPUT',
   MESSAGE_CHANNEL_OWNERSHIP_VIOLATION = 'MESSAGE_CHANNEL_OWNERSHIP_VIOLATION',
-  EMAIL_FORWARDING_NOT_CONFIGURED = 'EMAIL_FORWARDING_NOT_CONFIGURED',
+  EMAIL_GROUP_NOT_CONFIGURED = 'EMAIL_GROUP_NOT_CONFIGURED',
 }
 
 const getMessageChannelExceptionUserFriendlyMessage = (
@@ -21,7 +21,7 @@ const getMessageChannelExceptionUserFriendlyMessage = (
       return msg`Invalid message channel input.`;
     case MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION:
       return msg`You do not have access to this message channel.`;
-    case MessageChannelExceptionCode.EMAIL_FORWARDING_NOT_CONFIGURED:
+    case MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED:
       return msg`Email forwarding is not configured on this server.`;
     default:
       assertUnreachable(code);

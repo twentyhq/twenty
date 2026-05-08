@@ -64,7 +64,7 @@ export class ChannelSyncService {
         where: {
           connectedAccountId,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          type: Not(MessageChannelType.EMAIL_FORWARDING),
+          type: Not(MessageChannelType.EMAIL_GROUP),
           workspaceId,
         },
       });

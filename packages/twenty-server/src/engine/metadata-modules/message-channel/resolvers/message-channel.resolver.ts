@@ -9,6 +9,7 @@ import { Not, Repository } from 'typeorm';
 import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
+  MessageChannelType,
   MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -19,8 +20,8 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateEmailForwardingChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-forwarding-channel.input';
-import { CreateEmailForwardingChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-forwarding-channel.output';
+import { CreateEmailGroupChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.input';
+import { CreateEmailGroupChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.output';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
@@ -162,17 +163,50 @@ export class MessageChannelResolver {
     });
   }
 
-  @Mutation(() => CreateEmailForwardingChannelOutput)
+  @Mutation(() => CreateEmailGroupChannelOutput)
   @UseGuards(NoPermissionGuard)
-  async createEmailForwardingChannel(
-    @Args('input') input: CreateEmailForwardingChannelInput,
+  async createEmailGroupChannel(
+    @Args('input') input: CreateEmailGroupChannelInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<CreateEmailForwardingChannelOutput> {
-    return this.messageChannelMetadataService.createEmailForwardingChannel({
+  ): Promise<CreateEmailGroupChannelOutput> {
+    return this.messageChannelMetadataService.createEmailGroupChannel({
       handle: input.handle,
       userWorkspaceId,
       workspaceId: workspace.id,
     });
+  }
+
+  @Mutation(() => MessageChannelDTO)
+  @UseGuards(NoPermissionGuard)
+  async deleteEmailGroupChannel(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<MessageChannelDTO> {
+    const messageChannel = await this.messageChannelMetadataService.findById({
+      id,
+      workspaceId: workspace.id,
+    });
+
+    if (!isDefined(messageChannel)) {
+      throw new MessageChannelException(
+        `Message channel ${id} not found`,
+        MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
+      );
+    }
+
+    if (messageChannel.type !== MessageChannelType.EMAIL_GROUP) {
+      throw new MessageChannelException(
+        `Message channel ${id} is not an email group`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    await this.connectedAccountMetadataService.delete({
+      id: messageChannel.connectedAccountId,
+      workspaceId: workspace.id,
+    });
+
+    return messageChannel;
   }
 }

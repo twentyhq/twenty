@@ -310,7 +310,7 @@ export class ClientConfig {
   isImapSmtpCaldavEnabled: boolean;
 
   @Field(() => Boolean)
-  isEmailForwardingEnabled: boolean;
+  isEmailGroupEnabled: boolean;
 
   @Field(() => Boolean)
   allowRequestsToTwentyIcons: boolean;

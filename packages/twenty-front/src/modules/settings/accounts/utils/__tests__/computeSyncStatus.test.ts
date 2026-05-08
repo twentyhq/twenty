@@ -205,26 +205,26 @@ describe('computeSyncStatus', () => {
     ).toEqual(SyncStatus.SYNCED);
   });
 
-  test('should return SYNCED for EMAIL_FORWARDING channel regardless of sync stage or status', () => {
+  test('should return SYNCED for EMAIL_GROUP channel regardless of sync stage or status', () => {
     expect(
       computeSyncStatus(
         {
           syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          type: MessageChannelType.EMAIL_FORWARDING,
+          type: MessageChannelType.EMAIL_GROUP,
         },
         undefined,
       ),
     ).toEqual(SyncStatus.SYNCED);
   });
 
-  test('should return SYNCED for EMAIL_FORWARDING channel even with PENDING_CONFIGURATION stage', () => {
+  test('should return SYNCED for EMAIL_GROUP channel even with PENDING_CONFIGURATION stage', () => {
     expect(
       computeSyncStatus(
         {
           syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          type: MessageChannelType.EMAIL_FORWARDING,
+          type: MessageChannelType.EMAIL_GROUP,
         },
         undefined,
       ),

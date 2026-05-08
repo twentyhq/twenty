@@ -1,4 +1,3 @@
-import { isEmailForwardingEnabledState } from '@/client-config/states/isEmailForwardingEnabledState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
@@ -12,7 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconAt, IconGoogle, IconMail, IconMicrosoft } from 'twenty-ui/display';
+import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -47,10 +46,6 @@ export const SettingsAccountsListEmptyStateCard = () => {
     isImapSmtpCaldavEnabledState,
   );
 
-  const isEmailForwardingEnabled = useAtomStateValue(
-    isEmailForwardingEnabledState,
-  );
-
   return (
     <StyledCardsContainer>
       {(isGoogleMessagingEnabled || isGoogleCalendarEnabled) && (
@@ -76,17 +71,6 @@ export const SettingsAccountsListEmptyStateCard = () => {
           <SettingsCard
             Icon={<IconAt size={theme.icon.size.md} />}
             title={t`Connect via IMAP/SMTP`}
-          />
-        </UndecoratedLink>
-      )}
-
-      {isEmailForwardingEnabled && (
-        <UndecoratedLink
-          to={getSettingsPath(SettingsPath.NewEmailForwardingChannel)}
-        >
-          <SettingsCard
-            Icon={<IconMail size={theme.icon.size.md} />}
-            title={t`Add Email Forwarding`}
           />
         </UndecoratedLink>
       )}

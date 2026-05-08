@@ -1,8 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-@InputType('CreateEmailForwardingChannelInput')
-export class CreateEmailForwardingChannelInput {
+@InputType('CreateEmailGroupChannelInput')
+export class CreateEmailGroupChannelInput {
   @Field()
   @IsString()
   @IsNotEmpty()

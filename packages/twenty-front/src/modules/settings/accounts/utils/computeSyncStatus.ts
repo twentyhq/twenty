@@ -14,7 +14,7 @@ export const computeSyncStatus = (
     Partial<Pick<MessageChannel, 'type'>>,
   calendarChannel?: Pick<CalendarChannel, 'syncStatus' | 'syncStage'>,
 ): SyncStatus => {
-  if (messageChannel?.type === MessageChannelType.EMAIL_FORWARDING) {
+  if (messageChannel?.type === MessageChannelType.EMAIL_GROUP) {
     return SyncStatus.SYNCED;
   }
 

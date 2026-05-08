@@ -171,7 +171,7 @@ describe('ClientConfigService', () => {
         isGoogleCalendarEnabled: true,
         isConfigVariablesInDbEnabled: false,
         isImapSmtpCaldavEnabled: false,
-        isEmailForwardingEnabled: false,
+        isEmailGroupEnabled: false,
         allowRequestsToTwentyIcons: false,
         calendarBookingPageId: 'team/twenty/talk-to-us',
         isCloudflareIntegrationEnabled: false,

@@ -10,7 +10,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { useCreateEmailForwardingChannel } from '@/settings/accounts/hooks/useCreateEmailForwardingChannel';
+import { useCreateEmailGroupChannel } from '@/settings/accounts/hooks/useCreateEmailGroupChannel';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -47,13 +47,12 @@ const StyledInstructions = styled.ol`
   padding-left: ${themeCssVariables.spacing[6]};
 `;
 
-export const SettingsAccountsNewEmailForwardingChannel = () => {
+export const SettingsAccountsNewEmailGroupChannel = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { copyToClipboard } = useCopyToClipboard();
-  const { createEmailForwardingChannel, loading } =
-    useCreateEmailForwardingChannel();
+  const { createEmailGroupChannel, loading } = useCreateEmailGroupChannel();
 
   const [handle, setHandle] = useState('');
   const [forwardingAddress, setForwardingAddress] = useState<string | null>(
@@ -65,24 +64,23 @@ export const SettingsAccountsNewEmailForwardingChannel = () => {
 
   const handleSave = useCallback(async () => {
     try {
-      const result = await createEmailForwardingChannel(handle);
+      const result = await createEmailGroupChannel(handle);
 
-      const address =
-        result.data?.createEmailForwardingChannel.forwardingAddress;
+      const address = result.data?.createEmailGroupChannel.forwardingAddress;
 
       if (address) {
         setForwardingAddress(address);
       }
     } catch {
       enqueueErrorSnackBar({
-        message: t`Failed to create email forwarding channel. Email forwarding may not be configured on this server.`,
+        message: t`Failed to create email group channel. Email forwarding may not be configured on this server.`,
       });
     }
-  }, [createEmailForwardingChannel, handle, enqueueErrorSnackBar, t]);
+  }, [createEmailGroupChannel, handle, enqueueErrorSnackBar, t]);
 
   return (
     <SubMenuTopBarContainer
-      title={t`New Email Forwarding`}
+      title={t`New Email Group`}
       links={[
         {
           children: t`User`,
@@ -92,7 +90,7 @@ export const SettingsAccountsNewEmailForwardingChannel = () => {
           children: t`Accounts`,
           href: getSettingsPath(SettingsPath.Accounts),
         },
-        { children: t`New Email Forwarding` },
+        { children: t`New Email Group` },
       ]}
       actionButton={
         !forwardingAddress ? (
@@ -114,7 +112,7 @@ export const SettingsAccountsNewEmailForwardingChannel = () => {
               description={t`Enter the email address you want to forward emails from (e.g. support@mycompany.com).`}
             />
             <SettingsTextInput
-              instanceId="email-forwarding-handle"
+              instanceId="email-group-handle"
               label={t`Source Email Address`}
               placeholder="support@mycompany.com"
               value={handle}

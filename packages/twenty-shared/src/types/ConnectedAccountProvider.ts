@@ -4,6 +4,6 @@ export enum ConnectedAccountProvider {
   IMAP_SMTP_CALDAV = 'imap_smtp_caldav',
   OIDC = 'oidc',
   SAML = 'saml',
-  EMAIL_FORWARDING = 'email_forwarding',
+  EMAIL_GROUP = 'EMAIL_GROUP',
   APP = 'app',
 }

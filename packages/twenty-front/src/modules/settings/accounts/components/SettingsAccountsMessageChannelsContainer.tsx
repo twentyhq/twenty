@@ -36,15 +36,13 @@ export const SettingsAccountsMessageChannelsContainer = () => {
   const messageChannels = allMessageChannels.filter(
     (channel) =>
       channel.isSyncEnabled &&
-      channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION,
+      channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION &&
+      channel.type !== MessageChannelType.EMAIL_GROUP,
   );
 
   const tabs = messageChannels.map((channel) => ({
     id: channel.id,
-    title:
-      channel.type === MessageChannelType.EMAIL_FORWARDING
-        ? (channel.connectedAccount?.handle ?? channel.handle)
-        : channel.handle,
+    title: channel.handle,
   }));
 
   const handleTabChange = useCallback(

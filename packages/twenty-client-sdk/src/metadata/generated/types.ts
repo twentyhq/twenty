@@ -3748,7 +3748,7 @@ export default {
             "isImapSmtpCaldavEnabled": [
                 6
             ],
-            "isEmailForwardingEnabled": [
+            "isEmailGroupEnabled": [
                 6
             ],
             "allowRequestsToTwentyIcons": [
@@ -5610,7 +5610,7 @@ export default {
         "MessageChannelPendingGroupEmailsAction": {},
         "MessageChannelSyncStatus": {},
         "MessageChannelSyncStage": {},
-        "CreateEmailForwardingChannelOutput": {
+        "CreateEmailGroupChannelOutput": {
             "messageChannel": [
                 306
             ],
@@ -7756,12 +7756,12 @@ export default {
                     ]
                 }
             ],
-            "createEmailForwardingChannel": [
+            "createEmailGroupChannel": [
                 314,
                 {
                     "input": [
                         434,
-                        "CreateEmailForwardingChannelInput!"
+                        "CreateEmailGroupChannelInput!"
                     ]
                 }
             ],
@@ -10596,7 +10596,7 @@ export default {
                 1
             ]
         },
-        "CreateEmailForwardingChannelInput": {
+        "CreateEmailGroupChannelInput": {
             "handle": [
                 1
             ],

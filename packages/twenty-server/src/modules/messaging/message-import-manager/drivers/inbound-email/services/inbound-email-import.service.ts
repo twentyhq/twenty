@@ -64,7 +64,7 @@ export class InboundEmailImportService {
     }
 
     const messageChannel = await this.messageChannelRepository.findOne({
-      where: { handle: recipient, type: MessageChannelType.EMAIL_FORWARDING },
+      where: { handle: recipient, type: MessageChannelType.EMAIL_GROUP },
     });
 
     if (!isDefined(messageChannel)) {

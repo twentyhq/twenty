@@ -61,7 +61,7 @@ export class MessagingMessagesImportCronJob {
               workspaceId: activeWorkspace.id,
               isSyncEnabled: true,
               syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
-              type: Not(MessageChannelType.EMAIL_FORWARDING),
+              type: Not(MessageChannelType.EMAIL_GROUP),
             },
           },
         );

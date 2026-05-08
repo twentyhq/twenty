@@ -249,7 +249,7 @@ export class ClientConfigService {
       isImapSmtpCaldavEnabled: this.twentyConfigService.get(
         'IS_IMAP_SMTP_CALDAV_ENABLED',
       ),
-      isEmailForwardingEnabled:
+      isEmailGroupEnabled:
         this.twentyConfigService.get('STORAGE_TYPE') ===
           StorageDriverType.S_3 &&
         isNonEmptyString(this.twentyConfigService.get('INBOUND_EMAIL_DOMAIN')),

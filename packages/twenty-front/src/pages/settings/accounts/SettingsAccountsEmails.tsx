@@ -1,4 +1,3 @@
-import { SettingsAccountsEmailForwardingSection } from '@/settings/accounts/components/SettingsAccountsEmailForwardingSection';
 import { SettingsAccountsMessageChannelsContainer } from '@/settings/accounts/components/SettingsAccountsMessageChannelsContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -26,7 +25,6 @@ export const SettingsAccountsEmails = () => {
       ]}
     >
       <SettingsPageContainer>
-        <SettingsAccountsEmailForwardingSection />
         <Section>
           <SettingsAccountsMessageChannelsContainer />
         </Section>

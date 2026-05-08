@@ -52,11 +52,11 @@ export const SettingsAccountsRowDropdownMenu = ({
   );
   const { triggerProviderReconnect } = useTriggerProviderReconnect();
 
-  const isEmailForwarding =
-    account.provider === ConnectedAccountProvider.EMAIL_FORWARDING;
+  const isEmailGroup =
+    account.provider === ConnectedAccountProvider.EMAIL_GROUP;
 
   const hasPendingConfiguration =
-    !isEmailForwarding &&
+    !isEmailGroup &&
     (account.messageChannels.some(
       (channel) =>
         channel.syncStage === MessageChannelSyncStage.PENDING_CONFIGURATION,
@@ -117,7 +117,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                   closeDropdown(dropdownId);
                 }}
               />
-              {!isEmailForwarding && (
+              {!isEmailGroup && (
                 <MenuItem
                   LeftIcon={IconCalendarEvent}
                   text={t`Calendar settings`}
@@ -127,7 +127,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                   }}
                 />
               )}
-              {!isEmailForwarding && account.authFailedAt && (
+              {!isEmailGroup && account.authFailedAt && (
                 <MenuItem
                   LeftIcon={IconRefresh}
                   text={t`Reconnect`}

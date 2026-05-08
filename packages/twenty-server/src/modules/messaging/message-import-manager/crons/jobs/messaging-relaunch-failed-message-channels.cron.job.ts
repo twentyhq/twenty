@@ -62,7 +62,7 @@ export class MessagingRelaunchFailedMessageChannelsCronJob {
         where: {
           syncStage: MessageChannelSyncStage.FAILED,
           syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
-          type: Not(MessageChannelType.EMAIL_FORWARDING),
+          type: Not(MessageChannelType.EMAIL_GROUP),
           workspaceId: In(activeWorkspaceIds),
         },
       })

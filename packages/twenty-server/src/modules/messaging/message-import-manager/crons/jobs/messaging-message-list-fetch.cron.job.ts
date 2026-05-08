@@ -60,7 +60,7 @@ export class MessagingMessageListFetchCronJob {
               workspaceId: activeWorkspace.id,
               isSyncEnabled: true,
               syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-              type: Not(MessageChannelType.EMAIL_FORWARDING),
+              type: Not(MessageChannelType.EMAIL_GROUP),
             },
           },
         );
