@@ -117,26 +117,22 @@ export const SettingsAccountsRowDropdownMenu = ({
                   closeDropdown(dropdownId);
                 }}
               />
-              {!isEmailGroup && (
-                <MenuItem
-                  LeftIcon={IconCalendarEvent}
-                  text={t`Calendar settings`}
-                  onClick={() => {
-                    navigate(SettingsPath.AccountsCalendars);
-                    closeDropdown(dropdownId);
-                  }}
-                />
-              )}
-              {!isEmailGroup && account.authFailedAt && (
-                <MenuItem
-                  LeftIcon={IconRefresh}
-                  text={t`Reconnect`}
-                  onClick={() => {
-                    triggerProviderReconnect(account.provider, account.id);
-                    closeDropdown(dropdownId);
-                  }}
-                />
-              )}
+              <MenuItem
+                LeftIcon={IconCalendarEvent}
+                text={t`Calendar settings`}
+                onClick={() => {
+                  navigate(SettingsPath.AccountsCalendars);
+                  closeDropdown(dropdownId);
+                }}
+              />
+              <MenuItem
+                LeftIcon={IconRefresh}
+                text={t`Reconnect`}
+                onClick={() => {
+                  triggerProviderReconnect(account.provider, account.id);
+                  closeDropdown(dropdownId);
+                }}
+              />
               <MenuItem
                 accent="danger"
                 LeftIcon={IconTrash}

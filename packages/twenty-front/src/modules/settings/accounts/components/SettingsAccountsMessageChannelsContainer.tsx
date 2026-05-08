@@ -10,11 +10,8 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useCallback } from 'react';
-import {
-  MessageChannelSyncStage,
-  MessageChannelType,
-} from 'twenty-shared/types';
+import React, { useCallback } from 'react';
+import { MessageChannelSyncStage, MessageChannelType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -40,9 +37,9 @@ export const SettingsAccountsMessageChannelsContainer = () => {
       channel.type !== MessageChannelType.EMAIL_GROUP,
   );
 
-  const tabs = messageChannels.map((channel) => ({
-    id: channel.id,
-    title: channel.handle,
+  const tabs = messageChannels.map((messageChannel) => ({
+    id: messageChannel.id,
+    title: messageChannel.handle,
   }));
 
   const handleTabChange = useCallback(
@@ -77,16 +74,16 @@ export const SettingsAccountsMessageChannelsContainer = () => {
           />
         </StyledMessageContainer>
       )}
-      {messageChannels.map(
-        (messageChannel) =>
-          (messageChannels.length === 1 ||
+      {messageChannels.map((messageChannel) => (
+        <React.Fragment key={messageChannel.id}>
+          {(messageChannels.length === 1 ||
             messageChannel.id === activeTabId) && (
             <SettingsAccountsMessageChannelDetails
-              key={messageChannel.id}
               messageChannel={messageChannel}
             />
-          ),
-      )}
+          )}
+        </React.Fragment>
+      ))}
     </>
   );
 };
