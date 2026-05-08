@@ -27,10 +27,6 @@ export const SettingsBillingContent = () => {
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const subscriptions = currentWorkspace?.billingSubscriptions;
-
-  const hasSubscriptions = (subscriptions?.length ?? 0) > 0;
-
   const subscriptionStatus = useSubscriptionStatus();
 
   const isV2 = useIsFeatureEnabled(FeatureFlagKey.IS_BILLING_V2_ENABLED);
@@ -51,7 +47,7 @@ export const SettingsBillingContent = () => {
     variables: {
       returnUrlPath: '/settings/billing',
     },
-    skip: !hasSubscriptions,
+    skip: !hasNotCanceledCurrentSubscription,
   });
 
   const billingPortalButtonDisabled =

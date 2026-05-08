@@ -197,13 +197,19 @@ export class BillingPortalWorkspaceService {
     });
 
     if (!lastSubscription) {
-      throw new Error('Error: missing subscription');
+      throw new BillingException(
+        'No active subscription found',
+        BillingExceptionCode.BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND,
+      );
     }
 
     const stripeCustomerId = lastSubscription.stripeCustomerId;
 
     if (!stripeCustomerId) {
-      throw new Error('Error: missing stripeCustomerId');
+      throw new BillingException(
+        'Billing customer not found',
+        BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
+      );
     }
 
     const frontBaseUrl = this.workspaceDomainsService.buildWorkspaceURL({
