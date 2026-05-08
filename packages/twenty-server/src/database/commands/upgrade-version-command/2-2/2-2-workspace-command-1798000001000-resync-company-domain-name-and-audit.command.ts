@@ -152,9 +152,10 @@ export class ResyncCompanyDomainNameAndAuditCommand extends ActiveOrSuspendedWor
           { shouldBypassPermissionChecks: true },
         );
 
+      // Don't .select() specific columns: domainName is a composite LINKS
+      // field that the query builder can't translate. Let TypeORM hydrate.
       const companies = await companyRepository
         .createQueryBuilder('company')
-        .select(['company.id', 'company.name', 'company.domainName'])
         .getMany();
 
       const ownersByDomain = new Map<string, string[]>();

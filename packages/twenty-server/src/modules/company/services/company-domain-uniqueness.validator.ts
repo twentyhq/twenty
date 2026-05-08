@@ -236,9 +236,10 @@ export class CompanyDomainUniquenessValidator {
             { shouldBypassPermissionChecks: true },
           );
 
-        const queryBuilder = companyRepository
-          .createQueryBuilder('company')
-          .select(['company.id', 'company.domainName']);
+        // Don't .select() specific columns: domainName is a composite LINKS
+        // field stored as multiple physical columns and the query builder
+        // can't translate the field name. Let TypeORM hydrate the full row.
+        const queryBuilder = companyRepository.createQueryBuilder('company');
 
         domains.forEach((domain, index) => {
           const paramName = `domain${index}`;
