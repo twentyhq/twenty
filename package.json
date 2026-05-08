@@ -11,6 +11,7 @@
     "@types/react-dom": "^18.2.15",
     "@yarnpkg/types": "^4.0.0",
     "concurrently": "^8.2.2",
+    "cross-env": "^10.1.0",
     "http-server": "^14.1.1",
     "nx": "22.5.4",
     "tsx": "^4.17.0",
