@@ -25,7 +25,7 @@ export type MessageChannel = {
   connectedAccount: {
     id: string;
     handle: string;
-  };
+  } | null;
   createdAt: string;
   updatedAt: string;
   __typename: 'MessageChannel';

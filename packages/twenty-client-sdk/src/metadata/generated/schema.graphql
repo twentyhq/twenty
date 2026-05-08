@@ -1922,6 +1922,7 @@ type ClientConfig {
   isGoogleCalendarEnabled: Boolean!
   isConfigVariablesInDbEnabled: Boolean!
   isImapSmtpCaldavEnabled: Boolean!
+  isEmailForwardingEnabled: Boolean!
   allowRequestsToTwentyIcons: Boolean!
   calendarBookingPageId: String
   isCloudflareIntegrationEnabled: Boolean!
@@ -2773,6 +2774,7 @@ type MessageChannel {
   connectedAccountId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  connectedAccount: ConnectedAccountPublicDTO
 }
 
 enum MessageChannelVisibility {
@@ -2784,6 +2786,7 @@ enum MessageChannelVisibility {
 enum MessageChannelType {
   EMAIL
   SMS
+  EMAIL_FORWARDING
 }
 
 enum MessageChannelContactAutoCreationPolicy {
@@ -2820,6 +2823,11 @@ enum MessageChannelSyncStage {
   MESSAGES_IMPORT_SCHEDULED
   MESSAGES_IMPORT_ONGOING
   FAILED
+}
+
+type CreateEmailForwardingChannelOutput {
+  messageChannel: MessageChannel!
+  forwardingAddress: String!
 }
 
 type MessageFolder {
@@ -3239,6 +3247,7 @@ type Mutation {
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
+  createEmailForwardingChannel(input: CreateEmailForwardingChannelInput!): CreateEmailForwardingChannelOutput!
   deleteConnectedAccount(id: UUID!): ConnectedAccountDTO!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createWebhook(input: CreateWebhookInput!): Webhook!
@@ -4165,6 +4174,10 @@ input UpdateMessageChannelInputUpdates {
   isSyncEnabled: Boolean
   excludeNonProfessionalEmails: Boolean
   excludeGroupEmails: Boolean
+}
+
+input CreateEmailForwardingChannelInput {
+  handle: String!
 }
 
 input UpdateCalendarChannelInput {

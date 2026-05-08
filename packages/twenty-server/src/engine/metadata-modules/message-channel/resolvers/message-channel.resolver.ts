@@ -1,5 +1,5 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -21,6 +21,8 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateEmailForwardingChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-forwarding-channel.input';
 import { CreateEmailForwardingChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-forwarding-channel.output';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { UpdateMessageChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/update-message-channel.input';
 import {
@@ -38,10 +40,37 @@ import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/
 export class MessageChannelResolver {
   constructor(
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     @InjectRepository(MessageFolderEntity)
     private readonly messageFolderRepository: Repository<MessageFolderEntity>,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
+
+  @ResolveField('connectedAccount', () => ConnectedAccountPublicDTO, {
+    nullable: true,
+  })
+  async connectedAccount(
+    @Parent() messageChannel: MessageChannelDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<ConnectedAccountPublicDTO | null> {
+    const connectedAccount = await this.connectedAccountMetadataService.findById(
+      {
+        id: messageChannel.connectedAccountId,
+        workspaceId: workspace.id,
+      },
+    );
+
+    if (!isDefined(connectedAccount)) {
+      return null;
+    }
+
+    if (connectedAccount.userWorkspaceId !== userWorkspaceId) {
+      return null;
+    }
+
+    return connectedAccount;
+  }
 
   @Query(() => [MessageChannelDTO])
   @UseGuards(NoPermissionGuard)
