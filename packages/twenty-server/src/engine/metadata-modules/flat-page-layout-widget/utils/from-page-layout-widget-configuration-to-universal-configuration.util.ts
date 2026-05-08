@@ -126,27 +126,6 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       };
     }
 
-    case WidgetConfigurationType.GAUGE_CHART: {
-      const { aggregateFieldMetadataId, filter, ...rest } = configuration;
-
-      const aggregateFieldMetadataUniversalIdentifier =
-        getFieldMetadataUniversalIdentifier({
-          fieldMetadataId: aggregateFieldMetadataId,
-          fieldMetadataUniversalIdentifierById,
-          shouldThrowOnMissingIdentifier,
-        });
-
-      return {
-        ...rest,
-        aggregateFieldMetadataUniversalIdentifier,
-        filter: convertChartFilterToUniversalFilter({
-          filter,
-          fieldMetadataUniversalIdentifierById,
-          shouldThrowOnMissingIdentifier,
-        }),
-      };
-    }
-
     case WidgetConfigurationType.PIE_CHART: {
       const {
         aggregateFieldMetadataId,

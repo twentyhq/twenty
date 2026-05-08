@@ -178,7 +178,6 @@ describe('useCreatePageLayoutGraphWidget', () => {
 
     const widgetConfigurationTypes = [
       WidgetConfigurationType.AGGREGATE_CHART,
-      WidgetConfigurationType.GAUGE_CHART,
       WidgetConfigurationType.PIE_CHART,
       WidgetConfigurationType.BAR_CHART,
     ];
