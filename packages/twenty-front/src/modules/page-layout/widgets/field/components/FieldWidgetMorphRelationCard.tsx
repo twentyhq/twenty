@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { Fragment, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
@@ -29,6 +30,16 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledShowMoreButtonContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledGroupHeading = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xxs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  letter-spacing: 0.05em;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]}
+    ${themeCssVariables.spacing[1]};
+  text-transform: uppercase;
 `;
 
 type FieldWidgetMorphRelationCardProps = {
@@ -119,6 +130,8 @@ export const FieldWidgetMorphRelationCard = ({
       morphRelations: fieldMetadata.morphRelations,
     });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const validRecords = recordsWithObjectNameSingular.filter((item) =>
     isDefined(item.value),
   );
@@ -130,6 +143,23 @@ export const FieldWidgetMorphRelationCard = ({
   const visibleRecords = validRecords.slice(0, visibleItemsCount);
   const remainingCount = validRecords.length - visibleItemsCount;
   const hasMoreRecords = remainingCount > 0;
+
+  const groupedVisibleRecords = fieldMetadata.morphRelations
+    .map((morphRelation) => {
+      const targetNameSingular =
+        morphRelation.targetObjectMetadata.nameSingular;
+      return {
+        nameSingular: targetNameSingular,
+        labelPlural:
+          objectMetadataItems.find(
+            (item) => item.nameSingular === targetNameSingular,
+          )?.labelPlural ?? targetNameSingular,
+        records: visibleRecords.filter(
+          (record) => record.objectNameSingular === targetNameSingular,
+        ),
+      };
+    })
+    .filter((group) => group.records.length > 0);
 
   return (
     <SidePanelProvider value={{ isInSidePanel }}>
@@ -145,19 +175,28 @@ export const FieldWidgetMorphRelationCard = ({
         >
           <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
             <RecordDetailRecordsListContainer>
-              {visibleRecords.map((item) => (
-                <Fragment key={`${item.value.id}-${item.fieldMetadataId}`}>
-                  <RecordDetailRelationRecordsListItemEffect
-                    relationRecordId={item.value.id}
-                    relationObjectMetadataNameSingular={item.objectNameSingular}
-                  />
-                  <RecordDetailRelationRecordsListItem
-                    isExpanded={expandedItem === item.value.id}
-                    onClick={handleItemClick}
-                    relationRecord={item.value}
-                    relationObjectMetadataNameSingular={item.objectNameSingular}
-                    relationFieldMetadataId={item.fieldMetadataId}
-                  />
+              {groupedVisibleRecords.map((group) => (
+                <Fragment key={group.nameSingular}>
+                  <StyledGroupHeading>{group.labelPlural}</StyledGroupHeading>
+                  {group.records.map((item) => (
+                    <Fragment key={`${item.value.id}-${item.fieldMetadataId}`}>
+                      <RecordDetailRelationRecordsListItemEffect
+                        relationRecordId={item.value.id}
+                        relationObjectMetadataNameSingular={
+                          item.objectNameSingular
+                        }
+                      />
+                      <RecordDetailRelationRecordsListItem
+                        isExpanded={expandedItem === item.value.id}
+                        onClick={handleItemClick}
+                        relationRecord={item.value}
+                        relationObjectMetadataNameSingular={
+                          item.objectNameSingular
+                        }
+                        relationFieldMetadataId={item.fieldMetadataId}
+                      />
+                    </Fragment>
+                  ))}
                 </Fragment>
               ))}
               {hasMoreRecords && (
