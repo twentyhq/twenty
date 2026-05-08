@@ -1758,7 +1758,6 @@ enum FeatureFlagKey {
   IS_RICH_TEXT_V1_MIGRATED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
   IS_DATASOURCE_MIGRATED
-  IS_BILLING_V2_ENABLED
 }
 
 type WorkspaceUrls {
@@ -3253,6 +3252,7 @@ type Mutation {
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
+  deleteEmailGroupChannel(id: UUID!): MessageChannel!
   deleteConnectedAccount(id: UUID!): ConnectedAccountDTO!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createWebhook(input: CreateWebhookInput!): Webhook!

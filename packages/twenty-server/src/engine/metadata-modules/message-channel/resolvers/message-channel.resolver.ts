@@ -55,18 +55,20 @@ export class MessageChannelResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountPublicDTO | null> {
-    const connectedAccount = await this.connectedAccountMetadataService.findById(
-      {
+    const connectedAccount =
+      await this.connectedAccountMetadataService.findById({
         id: messageChannel.connectedAccountId,
         workspaceId: workspace.id,
-      },
-    );
+      });
 
     if (!isDefined(connectedAccount)) {
       return null;
     }
 
-    if (connectedAccount.userWorkspaceId !== userWorkspaceId) {
+    if (
+      messageChannel.type !== MessageChannelType.EMAIL_GROUP &&
+      connectedAccount.userWorkspaceId !== userWorkspaceId
+    ) {
       return null;
     }
 
@@ -182,18 +184,14 @@ export class MessageChannelResolver {
   async deleteEmailGroupChannel(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<MessageChannelDTO> {
-    const messageChannel = await this.messageChannelMetadataService.findById({
-      id,
-      workspaceId: workspace.id,
-    });
-
-    if (!isDefined(messageChannel)) {
-      throw new MessageChannelException(
-        `Message channel ${id} not found`,
-        MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
-      );
-    }
+    const messageChannel =
+      await this.messageChannelMetadataService.verifyOwnership({
+        id,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
 
     if (messageChannel.type !== MessageChannelType.EMAIL_GROUP) {
       throw new MessageChannelException(

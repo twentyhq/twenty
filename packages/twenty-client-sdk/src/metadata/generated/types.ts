@@ -7771,6 +7771,15 @@ export default {
                     ]
                 }
             ],
+            "deleteEmailGroupChannel": [
+                306,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "deleteConnectedAccount": [
                 282,
                 {

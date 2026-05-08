@@ -52,19 +52,15 @@ export const SettingsAccountsRowDropdownMenu = ({
   );
   const { triggerProviderReconnect } = useTriggerProviderReconnect();
 
-  const isEmailGroup =
-    account.provider === ConnectedAccountProvider.EMAIL_GROUP;
-
   const hasPendingConfiguration =
-    !isEmailGroup &&
-    (account.messageChannels.some(
+    account.messageChannels.some(
       (channel) =>
         channel.syncStage === MessageChannelSyncStage.PENDING_CONFIGURATION,
     ) ||
-      account.calendarChannels.some(
-        (channel) =>
-          channel.syncStage === CalendarChannelSyncStage.PENDING_CONFIGURATION,
-      ));
+    account.calendarChannels.some(
+      (channel) =>
+        channel.syncStage === CalendarChannelSyncStage.PENDING_CONFIGURATION,
+    );
 
   const deleteAccount = async () => {
     await deleteConnectedAccountMutation({
@@ -125,14 +121,16 @@ export const SettingsAccountsRowDropdownMenu = ({
                   closeDropdown(dropdownId);
                 }}
               />
-              <MenuItem
-                LeftIcon={IconRefresh}
-                text={t`Reconnect`}
-                onClick={() => {
-                  triggerProviderReconnect(account.provider, account.id);
-                  closeDropdown(dropdownId);
-                }}
-              />
+              {account.authFailedAt && (
+                <MenuItem
+                  LeftIcon={IconRefresh}
+                  text={t`Reconnect`}
+                  onClick={() => {
+                    triggerProviderReconnect(account.provider, account.id);
+                    closeDropdown(dropdownId);
+                  }}
+                />
+              )}
               <MenuItem
                 accent="danger"
                 LeftIcon={IconTrash}

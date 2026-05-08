@@ -22,7 +22,9 @@ export class MessagingWebhookDispatcherService {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  async confirmSnsSubscription(subscribeUrl: string | undefined): Promise<void> {
+  async confirmSnsSubscription(
+    subscribeUrl: string | undefined,
+  ): Promise<void> {
     if (!subscribeUrl) {
       return;
     }

@@ -2781,6 +2781,7 @@ export interface Mutation {
     updateMessageFolders: MessageFolder[]
     updateMessageChannel: MessageChannel
     createEmailGroupChannel: CreateEmailGroupChannelOutput
+    deleteEmailGroupChannel: MessageChannel
     deleteConnectedAccount: ConnectedAccountDTO
     updateCalendarChannel: CalendarChannel
     createWebhook: Webhook
@@ -5847,6 +5848,7 @@ export interface MutationGenqlSelection{
     updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     createEmailGroupChannel?: (CreateEmailGroupChannelOutputGenqlSelection & { __args: {input: CreateEmailGroupChannelInput} })
+    deleteEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteConnectedAccount?: (ConnectedAccountDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
@@ -8725,8 +8727,7 @@ export const enumFeatureFlagKey = {
    IS_CONNECTED_ACCOUNT_MIGRATED: 'IS_CONNECTED_ACCOUNT_MIGRATED' as const,
    IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const,
    IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' as const,
-   IS_DATASOURCE_MIGRATED: 'IS_DATASOURCE_MIGRATED' as const,
-   IS_BILLING_V2_ENABLED: 'IS_BILLING_V2_ENABLED' as const
+   IS_DATASOURCE_MIGRATED: 'IS_DATASOURCE_MIGRATED' as const
 }
 
 export const enumIdentityProviderType = {

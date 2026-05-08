@@ -8,9 +8,6 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 @Module({
   imports: [TwentyConfigModule],
   controllers: [MessagingWebhooksController],
-  providers: [
-    SnsSignatureVerifierService,
-    MessagingWebhookDispatcherService,
-  ],
+  providers: [SnsSignatureVerifierService, MessagingWebhookDispatcherService],
 })
 export class MessagingWebhooksModule {}

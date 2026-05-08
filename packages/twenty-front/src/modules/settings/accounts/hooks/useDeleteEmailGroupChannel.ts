@@ -25,8 +25,7 @@ export const useDeleteEmailGroupChannel = () => {
     ],
   });
 
-  const deleteEmailGroupChannel = (id: string) =>
-    mutate({ variables: { id } });
+  const deleteEmailGroupChannel = (id: string) => mutate({ variables: { id } });
 
   return { deleteEmailGroupChannel, loading, error };
 };

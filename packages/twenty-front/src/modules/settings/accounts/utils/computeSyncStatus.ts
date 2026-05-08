@@ -6,18 +6,12 @@ import {
   CalendarChannelSyncStatus,
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
-  MessageChannelType,
 } from 'twenty-shared/types';
 
 export const computeSyncStatus = (
-  messageChannel?: Pick<MessageChannel, 'syncStatus' | 'syncStage'> &
-    Partial<Pick<MessageChannel, 'type'>>,
+  messageChannel?: Pick<MessageChannel, 'syncStatus' | 'syncStage'>,
   calendarChannel?: Pick<CalendarChannel, 'syncStatus' | 'syncStage'>,
 ): SyncStatus => {
-  if (messageChannel?.type === MessageChannelType.EMAIL_GROUP) {
-    return SyncStatus.SYNCED;
-  }
-
   const {
     syncStatus: messageChannelSyncStatus,
     syncStage: messageChannelSyncStage,

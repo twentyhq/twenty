@@ -48,7 +48,8 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
 
   const channel = channels.find(
     (channel) =>
-      channel.id === messageChannelId && channel.type === MessageChannelType.EMAIL_GROUP,
+      channel.id === messageChannelId &&
+      channel.type === MessageChannelType.EMAIL_GROUP,
   );
 
   if (!isDefined(channel)) {

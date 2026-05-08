@@ -33,7 +33,9 @@ export class SnsSignatureVerifierService {
   }
 
   private isTopicAllowlisted(topicArn: string): boolean {
-    const allowlist = this.twentyConfigService.get('SES_SNS_TOPIC_ARN_ALLOWLIST');
+    const allowlist = this.twentyConfigService.get(
+      'SES_SNS_TOPIC_ARN_ALLOWLIST',
+    );
 
     if (typeof allowlist !== 'string' || allowlist.trim() === '') {
       return false;
