@@ -56,10 +56,6 @@ export class ApplicationRegistrationService {
     });
   }
 
-  // Tenant-scoped lookup. Only returns registrations the caller's workspace
-  // owns. System-level rows (ownerWorkspaceId IS NULL — DCR clients, marketplace
-  // catalog entries, the Twenty CLI registration) are intentionally excluded
-  // here. Admin paths must use findOneByIdGlobal instead.
   async findOneById(
     id: string,
     ownerWorkspaceId: string,
