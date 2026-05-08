@@ -88,6 +88,35 @@ For each new upgrade command file found:
 **Report the command names clearly** so push-to-uat can include them in the
 post-deploy checklist.
 
+#### Backport gotcha — pay close attention to past-version folders
+
+Twenty regularly **backports DDL fixes into older version folders** (e.g. an
+`@RegisteredInstanceCommand('2.2.0', ...)` file added by an upstream commit
+made well after 2.2 had shipped, which then arrives in our fork via a v2.4.0
+catch-up merge). When this happens, the boot-time `upgrade` entrypoint's
+forward-only cursor **will not revisit the past-version bundle and these
+commands will be silently skipped** — Nest registers them, the registry
+discovers them, but the cursor logic never visits them.
+
+Watch specifically for files added to past-version folders (older than the
+cursor's last-attempted version):
+
+```bash
+git -C /home/clive/_Projects/stratum/twenty/source diff HEAD~1..HEAD \
+  --name-only -- 'packages/twenty-server/src/database/commands/upgrade-version-command/**' \
+  | grep -E '/(1-21|1-22|1-23|2-0|2-1|2-2|2-3)/'   # adjust list to whatever is now past
+```
+
+If any such files appear, **flag this in the report** — push-to-uat's step 7
+(`run-instance-commands --force`) is mandatory rather than optional after
+this kind of merge. That command iterates the full sequence and skips
+already-completed steps, so it's the only safe way to pick up backports.
+
+Symptom of missing this: `column <Entity>.<field> does not exist` runtime
+errors when the entity references a column whose backported migration never
+ran. Hit on 2026-05-08 with `2-2/...-add-logo-to-application` arriving via
+a v2.4.0 catch-up merge.
+
 ### 5. Check for APP_VERSION bump
 
 If the merged commits include a version bump (look for "Publish new version"
@@ -122,7 +151,22 @@ and runs only what hasn't been recorded yet. No manual per-version stepping.
 
 #### Normal flow
 
-Run `upgrade` — it handles the whole cross-version sequence in one go:
+Two complementary commands. Run both — they target different layers and
+each catches gaps the other misses.
+
+**(a) `run-instance-commands --force`** — iterates the entire instance-command
+sequence (TypeORM migrations + `@RegisteredInstanceCommand` files), skipping
+ones already recorded as completed. Picks up commands that the boot cursor
+skipped, including backports into past-version folders.
+
+```bash
+railway ssh --environment uat --service twenty -- \
+  "cd /app/packages/twenty-server && node dist/command/command.js run-instance-commands --force"
+```
+
+**(b) `upgrade`** — runs workspace commands (per-workspace data fixes) using
+cursor-based progression. Use this for new workspace commands the upstream
+merge added, or for a workspace-version delta.
 
 ```bash
 railway ssh --environment uat --service twenty -- \
@@ -141,6 +185,12 @@ railway ssh --environment uat --service twenty -- \
 railway ssh --environment uat --service twenty -- \
   "cd /app/packages/twenty-server && node dist/command/command.js upgrade --dry-run --verbose"
 ```
+
+**Why both:** `upgrade` advances a single forward-only cursor through versions
+and silently skips instance commands inserted into past-version folders by
+upstream backports. `run-instance-commands` is order-agnostic for instance
+steps but doesn't run workspace commands. So `run-instance-commands` covers
+the backport blind spot and `upgrade` covers fresh workspace data fixes.
 
 #### Inspecting and repairing state
 

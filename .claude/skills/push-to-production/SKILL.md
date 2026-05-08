@@ -191,17 +191,30 @@ Check both `twenty` and `twenty-worker` services if the deploy touches worker co
 
 ---
 
-### 5. Run TypeORM migrations (always — every deployment)
+### 5. Run instance commands (always — every deployment)
 
-Run this unconditionally after every deploy. It is idempotent — if there is
-nothing to apply, it prints "No migrations to run" and exits cleanly.
+Run this unconditionally after every deploy. The package.json's
+`database:migrate:prod` is literally `node dist/command/command run-instance-commands`,
+and it covers two layers:
+
+- New TypeORM migrations
+- Twenty `@RegisteredInstanceCommand` files (DDL + data fixes), **including
+  ones backported by upstream into past-version folders that the boot-time
+  forward-only `upgrade` cursor silently skips**
+
+The `--force` flag bypasses the workspace-version safety check (which has
+its own cursor-based logic that can fail under the same backport scenario).
+Idempotent — already-completed commands print "already executed, skipping".
 
 ```bash
 railway ssh --service twenty --environment production -- \
-  "cd /app && yarn database:migrate:prod"
+  "cd /app/packages/twenty-server && node dist/command/command.js run-instance-commands --force"
 ```
 
 Check output for errors before continuing. **Do not skip this step.**
+
+Symptom of skipping it after an upstream catch-up merge:
+`column <Entity>.<field> does not exist` runtime errors.
 
 ---
 

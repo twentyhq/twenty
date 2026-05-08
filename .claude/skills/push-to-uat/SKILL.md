@@ -74,18 +74,37 @@ railway logs --service twenty --environment uat --lines 20
 The server is ready when the logs contain:
 `Successfully registered all background sync jobs!`
 
-### 7. Run TypeORM migrations (if new migration files were merged)
+### 7. Run instance commands (always — every deploy)
 
-If the push included a merge from upstream that added new migration files,
-run migrations via SSH:
+Run this unconditionally after every deploy. It is a strict superset of
+"run TypeORM migrations" (the package.json's `database:migrate:prod` is
+literally `node dist/command/command run-instance-commands`), and it covers
+both:
+
+- New TypeORM migrations merged from upstream.
+- Twenty `@RegisteredInstanceCommand` files (DDL + data fixes) — including
+  ones that upstream backported into older version folders. The boot-time
+  `upgrade` entrypoint walks a forward-only cursor and **silently skips
+  newly-inserted past-version commands**; only `run-instance-commands`
+  iterates the entire sequence and runs every step that's not yet recorded
+  as completed (idempotent — already-done steps print "already executed,
+  skipping" and exit immediately).
 
 ```bash
-railway environment uat
-cd /home/clive/_Projects/stratum/twenty && railway ssh --service twenty -- \
-  "cd /app && yarn database:migrate:prod"
+railway ssh --service twenty --environment uat -- \
+  "cd /app/packages/twenty-server && node dist/command/command.js run-instance-commands --force"
 ```
 
-Check the output for any errors before continuing.
+`--force` skips the workspace-version safety check (which has its own
+cursor-based logic that can fail in the same backport scenario). Inspect
+output for any `failed` lines.
+
+If anything new ran, also flush the workspace cache:
+
+```bash
+railway ssh --service twenty --environment uat -- \
+  "cd /app/packages/twenty-server && node dist/command/command.js cache:flush"
+```
 
 ### 8. Run any pending upgrade commands
 
@@ -125,3 +144,11 @@ No output = healthy. Then hard-refresh the browser to confirm the UI looks corre
   `railway run` executes locally and will fail with "Cannot find module" errors.
 - The sidebar in v1.20+ is fully driven by `navigationMenuItems`. If objects are
   missing after an upgrade, run `cache:flat-cache-invalidate --all-metadata`.
+- **Why step 7 is non-negotiable after upstream merges:** Twenty regularly
+  backports DDL fixes into past version folders (e.g. `2-2/2-2-instance-command-fast-…-add-logo-to-application.ts`
+  arriving in our fork via a v2.4.0 catch-up merge). The boot-time `upgrade`
+  cursor walks forward only and won't revisit a version it has already passed.
+  `run-instance-commands --force` walks the full sequence and is the only
+  reliable way to pick up retroactive additions. Symptom of skipping it:
+  `column <Entity>.<field> does not exist` errors at runtime when the entity
+  references a column whose backported migration never ran.
