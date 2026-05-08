@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { SetCalendarEventDescriptionDisplayedMaxRowsCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-workspace-command-1786000000000-set-calendar-event-description-displayed-max-rows.command';
 import { ResyncCompanyDomainNameAndAuditCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-workspace-command-1798000001000-resync-company-domain-name-and-audit.command';
+import { DropCompanyDomainNameMaxValuesCapCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-workspace-command-1798000002000-drop-company-domain-name-max-values-cap.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -25,6 +26,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   providers: [
     SetCalendarEventDescriptionDisplayedMaxRowsCommand,
     ResyncCompanyDomainNameAndAuditCommand,
+    DropCompanyDomainNameMaxValuesCapCommand,
   ],
 })
 export class V2_2_UpgradeVersionCommandModule {}
