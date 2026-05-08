@@ -1,0 +1,102 @@
+---
+title: Layouturi de pagină
+description: Personalizează paginile de detaliu ale înregistrărilor — filele, widgeturile și locul în care se redau componentele front-end — folosind definePageLayout și definePageLayoutTab.
+icon: table-columns
+---
+
+Un **layout de pagină** controlează modul în care este aranjată pagina de detalii a unei înregistrări: ce file apar și ce widgeturi conțin acestea. Folosește `definePageLayout()` pentru a declara un layout pentru un obiect pe care îl deții sau `definePageLayoutTab()` pentru a adăuga o singură filă la un layout care există deja (al tău sau un layout standard Twenty).
+
+| Caz de utilizare                                                                        | Entitate              |
+| --------------------------------------------------------------------------------------- | --------------------- |
+| Definește întregul layout pentru o pagină de înregistrare pe un obiect pe care îl deții | `definePageLayout`    |
+| Adaugă o filă la un layout existent (obiectul tău sau unul standard)                    | `definePageLayoutTab` |
+
+## definePageLayout
+
+Folosește aceasta atunci când deții întreaga pagină de detalii — de obicei pentru un obiect personalizat pe care l-ai definit chiar tu.
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+### Puncte cheie
+
+* `type` este de obicei `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
+* `objectUniversalIdentifier` specifică la ce obiect se aplică această machetă.
+* Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode` (`CANVAS` pentru layout liber).
+* Fiecare `widget` dintr-o filă poate reda un [front component](/l/ro/developers/extend/apps/layout/front-components), o listă de relații sau alte tipuri de widgeturi integrate.
+* `position` pe file le controlează ordinea. Folosește valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
+
+## definePageLayoutTab
+
+Folosește aceasta atunci când vrei doar să **adaugi** o filă la un layout existent — de exemplu, o filă de analize pe pagina standard Company sau o filă de rezumat AI atașată layoutului obiectului tău.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+### Puncte cheie
+
+* `pageLayoutUniversalIdentifier` este **obligatoriu** și trebuie să indice către un layout de pagină care există deja la momentul instalării — fie un layout standard Twenty, fie unul definit de propria ta aplicație. Referințele cross-app către layouturi deținute de o altă aplicație instalată nu sunt acceptate în prezent. Când lipsește layoutul părinte, instalarea eșuează cu o eroare clară de validare.
+* `widgets` sunt limitate doar la această filă — fac referire la [front components](/l/ro/developers/extend/apps/layout/front-components), vizualizări etc., exact ca widgeturile definite inline în `definePageLayout`.
+* `position` controlează ordonarea în raport cu filele existente din layoutul țintă. Alege o valoare care să plaseze fila ta acolo unde dorești, relativ la filele predefinite.
+* Folosește aceasta în loc de `definePageLayout` atunci când vrei doar să adaugi la un layout existent. Folosește `definePageLayout` atunci când deții întregul layout.

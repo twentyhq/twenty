@@ -18,7 +18,7 @@ import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { ReleaseNotes } from '@/sections/ReleaseNotes/components';
 import { theme } from '@/theme';
-import { buildRouteMetadata } from '@/lib/seo';
+import { buildReleaseListJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
 import { Fragment } from 'react';
 
 export const generateMetadata = buildRouteMetadata('releases');
@@ -43,6 +43,9 @@ export default async function ReleasesPage({ params }: ReleasesPageProps) {
 
   return (
     <>
+      {visibleNotes.length > 0 ? (
+        <JsonLd data={buildReleaseListJsonLd(visibleNotes)} />
+      ) : null}
       {/*
        * Above-the-fold milestone scene texture. Preload kicks off the
        * fetch in parallel with the JS chunk download.

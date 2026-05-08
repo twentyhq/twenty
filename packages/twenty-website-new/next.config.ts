@@ -115,8 +115,13 @@ const nextConfig: LinariaConfig = {
         permanent: true,
       },
       {
+        source: '/why-twenty',
+        destination: '/resources/why-twenty',
+        permanent: true,
+      },
+      {
         source: '/story',
-        destination: '/why-twenty',
+        destination: '/resources/why-twenty',
         permanent: true,
       },
       {

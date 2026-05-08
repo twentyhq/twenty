@@ -11,9 +11,11 @@ import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateD
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { getJoinColumnNameOrThrow } from '@/object-record/record-field/ui/utils/junction/getJoinColumnNameOrThrow';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationGqlFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const useRelationToOneFieldDisplay = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
@@ -42,9 +44,9 @@ export const useRelationToOneFieldDisplay = () => {
     fieldDefinition,
   );
 
-  const joinColumnName = getJoinColumnNameOrThrow(
-    fieldDefinition.metadata.settings,
-  );
+  const joinColumnName = computeRelationGqlFieldJoinColumnName({
+    name: fieldName,
+  });
 
   const foreignKeyFieldValue = useRecordFieldValue<string | null | undefined>(
     recordId,

@@ -1,0 +1,55 @@
+---
+title: Overview
+description: Server-side TypeScript that runs inside Twenty — triggered by HTTP routes, cron schedules, database events, AI tools, or workflow actions.
+icon: "bolt"
+---
+
+A Twenty app's **logic layer** is the code that *runs* — server-side TypeScript handlers reacting to HTTP requests, cron schedules, and record changes; AI skills and agents that live inside the workspace; and OAuth connections that let your functions act on a user's behalf in third-party services.
+
+```text
+            ┌─ HTTP route      ──┐
+            │  Cron schedule     │
+            │  Database event    │      ┌────────────────────┐
+  triggers ─┤  AI tool call      ├─────▶│ Logic function     │
+            │  Workflow action   │      │ (your handler)     │
+            │  Manual exec       │      └────────────────────┘
+            └────────────────────┘                │
+                                                  ▼
+                                  ┌────────────────────────────┐
+                                  │ Twenty API (records)       │
+                                  │ Third-party API            │
+                                  │   (via Connection token)   │
+                                  └────────────────────────────┘
+```
+
+## In this section
+
+<CardGroup cols={2}>
+  <Card title="Logic Functions" icon="bolt" href="/developers/extend/apps/logic/logic-functions">
+    The core building block — trigger types, payloads, and the typed API client.
+  </Card>
+  <Card title="Skills & Agents" icon="robot" href="/developers/extend/apps/logic/skills-and-agents">
+    Reusable AI agent instructions and assistants with custom system prompts.
+  </Card>
+  <Card title="Connections" icon="plug" href="/developers/extend/apps/logic/connections">
+    OAuth credentials your app holds for third-party services — Linear, GitHub, Slack, and more.
+  </Card>
+</CardGroup>
+
+## Trigger types at a glance
+
+A logic function picks one or more triggers — every entry below is a separate field on `defineLogicFunction()`:
+
+| Trigger | When it runs | Setting |
+|---------|--------------|---------|
+| **HTTP route** | A request hits your `/s/<path>` endpoint | `httpRouteTriggerSettings` |
+| **Cron** | A CRON expression matches | `cronTriggerSettings` |
+| **Database event** | A workspace record is created, updated, or deleted | `databaseEventTriggerSettings` |
+| **AI tool** | A Twenty AI feature decides to call your function | `toolTriggerSettings` |
+| **Workflow action** | A workflow step invokes your function | `workflowActionTriggerSettings` |
+
+Functions run sandboxed in isolated Node.js processes and access the workspace through a typed API client scoped to the role declared on [`defineApplication()`](/developers/extend/apps/config/application).
+
+<Note>
+**Install-time hooks** — code that runs before or after the install — share this runtime but use their own define functions and live under [Config → Install Hooks](/developers/extend/apps/config/install-hooks).
+</Note>

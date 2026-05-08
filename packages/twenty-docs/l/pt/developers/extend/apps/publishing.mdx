@@ -198,6 +198,14 @@ export default defineApplication({
 
 Veja o [acordeão de defineApplication](/l/pt/developers/extend/apps/building#defineentity-functions) na página Building Apps para a lista completa de campos do marketplace (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
 
+#### Dimensões recomendadas para capturas de tela
+
+O marketplace renderiza `screenshots` em um contêiner fixo de `8:5` (por exemplo, `1600×1000 px`).
+
+<Note>
+Capturas de tela de qualquer proporção são exibidas por completo e nunca são cortadas, mas qualquer coisa significativamente mais alta ou mais estreita que `8:5` exibirá faixas vazias nas laterais.
+</Note>
+
 ### Publicar
 
 ```bash filename="Terminal"
@@ -217,9 +225,9 @@ O servidor Twenty sincroniza seu catálogo do marketplace a partir do registro d
 Você pode acionar a sincronização imediatamente em vez de esperar:
 
 ```bash filename="Terminal"
-yarn twenty catalog-sync
+yarn twenty server catalog-sync
 # To target a specific remote:
-# yarn twenty catalog-sync --remote production
+# yarn twenty server catalog-sync --remote production
 ```
 
 Os metadados exibidos no marketplace vêm da sua configuração `defineApplication()` — campos como `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` e `termsUrl`.

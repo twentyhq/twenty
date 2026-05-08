@@ -1,0 +1,102 @@
+---
+title: Layouts de Página
+description: Personalize páginas de detalhes de registros — abas, widgets e onde os front components são renderizados — usando `definePageLayout` e `definePageLayoutTab`.
+icon: table-columns
+---
+
+Um **layout de página** controla como a página de detalhes de um registro é organizada: quais abas aparecem e quais widgets elas contêm. Use `definePageLayout()` para declarar um layout para um objeto que você possui ou `definePageLayoutTab()` para adicionar uma única aba a um layout que já existe (seu ou um padrão da Twenty).
+
+| Caso de uso                                                                    | Entidade              |
+| ------------------------------------------------------------------------------ | --------------------- |
+| Definir todo o layout para uma página de registro em um objeto que você possui | `definePageLayout`    |
+| Adicionar uma aba a um layout existente (seu próprio objeto ou um padrão)      | `definePageLayoutTab` |
+
+## definePageLayout
+
+Use isto quando você possuir toda a página de detalhes — normalmente para um objeto personalizado que você próprio definiu.
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+### Pontos-chave
+
+* `type` geralmente é `'RECORD_PAGE'` para personalizar a visualização de detalhes de um objeto específico.
+* `objectUniversalIdentifier` especifica a qual objeto este layout se aplica.
+* Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode` (`CANVAS` para layout livre).
+* Cada `widget` dentro de uma aba pode renderizar um [front component](/l/pt/developers/extend/apps/layout/front-components), uma lista de relações ou outros tipos de widget nativos.
+* `position` nas abas controla sua ordem. Use valores mais altos (por exemplo, 50) para colocar abas personalizadas após as nativas.
+
+## definePageLayoutTab
+
+Use isto quando você quiser apenas **adicionar** uma aba a um layout existente — por exemplo, uma aba de analytics na página padrão de Company ou uma aba de resumo de IA anexada ao layout do seu próprio objeto.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+### Pontos-chave
+
+* `pageLayoutUniversalIdentifier` é **obrigatório** e deve apontar para um layout de página que já exista no momento da instalação — seja um layout padrão da Twenty ou um definido pelo seu próprio aplicativo. Referências entre aplicativos para layouts pertencentes a outro aplicativo instalado não são compatíveis atualmente. Quando o layout pai estiver ausente, a instalação falha com um erro de validação claro.
+* `widgets` têm escopo apenas para esta aba — eles referenciam [front components](/l/pt/developers/extend/apps/layout/front-components), visualizações etc., exatamente como widgets definidos inline em `definePageLayout`.
+* `position` controla a ordenação em relação às abas existentes no layout de destino. Escolha um valor que posicione sua aba onde você deseja em relação às abas nativas.
+* Use isto em vez de `definePageLayout` quando você quiser apenas adicionar a um layout existente. Use `definePageLayout` quando você possuir todo o layout.

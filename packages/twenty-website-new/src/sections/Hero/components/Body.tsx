@@ -56,6 +56,10 @@ const StyledBody = styled.div`
       white-space: pre-line;
     }
 
+    &[data-page='articles'] {
+      max-width: 550px;
+    }
+
     &[data-page='caseStudies'] {
       max-width: 550px;
     }

@@ -1,0 +1,44 @@
+---
+title: Itens do menu de navegação
+description: Adicione entradas personalizadas à barra lateral do espaço de trabalho — links para visualizações salvas ou URLs externas.
+icon: bars
+---
+
+Um **item do menu de navegação** é uma entrada na barra lateral esquerda. Use `defineNavigationMenuItem()` para disponibilizar links personalizados na barra lateral — normalmente um por [visualização](/l/pt/developers/extend/apps/layout/views) que você disponibiliza — ou para apontar para URLs externas.
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## Pontos-chave
+
+* `type` determina para onde o item de menu aponta. Cada tipo é associado a um campo identificador específico:
+
+  | Tipo                                 | O que faz                                   | Campo obrigatório                                                                        |
+  | ------------------------------------ | ------------------------------------------- | ---------------------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | Abre uma visualização salva                 | `viewUniversalIdentifier`                                                                |
+  | `NavigationMenuItemType.LINK`        | Abre uma URL externa                        | `link`                                                                                   |
+  | `NavigationMenuItemType.FOLDER`      | Agrupa itens aninhados sob um rótulo        | `name` (e itens filhos fazem referência à pasta por meio de `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.OBJECT`      | Abre a página de índice padrão de um objeto | `targetObjectUniversalIdentifier`                                                        |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | Abre um layout de página independente       | `pageLayoutUniversalIdentifier`                                                          |
+
+* `position` controla a ordenação na barra lateral.
+
+* `icon` e `color` são opcionais e personalizam a aparência da entrada.
+
+* `folderUniversalIdentifier` também está disponível em qualquer item para aninhá-lo dentro de um pai do tipo `FOLDER`.
+
+<Note>
+**Armadilha comum:** criar um objeto sem uma visualização associada + item do menu de navegação torna esse objeto invisível para os usuários. A menos que seja um objeto técnico/interno, todo objeto personalizado deve ter uma visualização padrão *e* uma entrada na barra lateral apontando para ela.
+</Note>

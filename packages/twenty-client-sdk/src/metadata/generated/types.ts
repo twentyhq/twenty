@@ -213,6 +213,9 @@ export default {
             "updatedAt": [
                 4
             ],
+            "isConfigured": [
+                6
+            ],
             "__typename": [
                 1
             ]
@@ -2953,6 +2956,9 @@ export default {
             "priceUsageType": [
                 136
             ],
+            "creditAmount": [
+                11
+            ],
             "__typename": [
                 1
             ]
@@ -3140,7 +3146,10 @@ export default {
             "planKey": [
                 135
             ],
-            "licensedProducts": [
+            "baseProducts": [
+                143
+            ],
+            "resourceCreditProducts": [
                 143
             ],
             "meteredProducts": [
