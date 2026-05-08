@@ -310,8 +310,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'existing-account-id',
         handle: 'test@example.com',
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-        connectionParameters:
-          inputWithConnectedAccountId.connectionParameters,
+        connectionParameters: inputWithConnectedAccountId.connectionParameters,
         userWorkspaceId: 'user-workspace-id',
         workspaceId: 'workspace-id',
       });
