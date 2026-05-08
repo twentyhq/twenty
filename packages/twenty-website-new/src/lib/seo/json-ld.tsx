@@ -6,8 +6,8 @@ import type { LocalReleaseNote } from '@/lib/releases/types';
 import { getSiteUrl } from './site-url';
 
 type FaqEntryLike = {
-  question: { text: MessageDescriptor };
-  answer: { text: MessageDescriptor };
+  question: MessageDescriptor;
+  answer: MessageDescriptor;
 };
 
 type JsonLdPrimitive = boolean | number | string | null;
@@ -82,10 +82,10 @@ export const buildFaqPageJsonLd = (
   '@type': 'FAQPage',
   mainEntity: questions.map((question) => ({
     '@type': 'Question',
-    name: renderText(question.question.text),
+    name: renderText(question.question),
     acceptedAnswer: {
       '@type': 'Answer',
-      text: renderText(question.answer.text),
+      text: renderText(question.answer),
     },
   })),
 });
@@ -188,5 +188,27 @@ export const buildArticleJsonLd = (post: Article): JsonLdValue => {
       name: 'Twenty',
       url: siteUrl,
     },
+  };
+};
+
+type BreadcrumbItem = {
+  name: string;
+  path: string;
+};
+
+export const buildBreadcrumbListJsonLd = (
+  items: readonly BreadcrumbItem[],
+): JsonLdValue => {
+  const siteUrl = getSiteUrl();
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: `${siteUrl}${item.path}`,
+    })),
   };
 };

@@ -1,7 +1,7 @@
-import type { MessageBody } from '@/lib/i18n/message-body';
-import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import type { MessageDescriptor } from '@lingui/core';
+import type { ReactNode } from 'react';
 
 export type HomeStepperStepType = {
-  body: MessageBody;
-  heading: MessageHeadingSegment[];
+  body: MessageDescriptor;
+  heading: ReactNode;
 };

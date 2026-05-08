@@ -4,9 +4,7 @@ import type { SalesforceDataType } from '@/sections/Salesforce/types';
 const SALESFORCE_POPUP_TITLE = msg`Good choice!`;
 
 export const SALESFORCE_DATA: SalesforceDataType = {
-  body: {
-    text: msg`Some call this enterprise pricing. We prefer a CRM where API access, webhooks, and workflows don't show up as surprise add-ons.`,
-  },
+  body: msg`Some call this enterprise pricing. We prefer a CRM where API access, webhooks, and workflows don't show up as surprise add-ons.`,
   pricing: {
     addons: [
       {

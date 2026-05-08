@@ -2,7 +2,7 @@ import {
   observeElementVisibility,
   type ObserveElementVisibilityOptions,
 } from '@/lib/dom/observe-element-visibility';
-import { runCleanupTasks } from '@/lib/lifecycle/run-cleanup-tasks';
+import { runCleanupTasks } from '@/lib/react/run-cleanup-tasks';
 
 export type VisualRenderLoop = {
   dispose: () => void;

@@ -5,8 +5,8 @@ import {
   BaseButton,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
-import { Body, Heading } from '@/design-system/components';
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import { Body, Heading, HeadingPart } from '@/design-system/components';
+import { useLingui } from '@lingui/react';
 import { useTimeoutRegistry } from '@/lib/react';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
@@ -140,7 +140,7 @@ const nextStepItemClassName = css`
 `;
 
 export function EnterpriseActivateClient() {
-  const renderText = useRenderMessage();
+  const { i18n } = useLingui();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const timeoutRegistry = useTimeoutRegistry();
@@ -222,55 +222,39 @@ export function EnterpriseActivateClient() {
   return (
     <ContentStack>
       {loading && (
-        <Body
-          body={{ text: msg`Activating your enterprise license…` }}
-          renderText={renderText}
-          size="sm"
-          variant="body-paragraph"
-        />
+        <Body size="sm" variant="body-paragraph">
+          {i18n._(msg`Activating your enterprise license…`)}
+        </Body>
       )}
 
       {error !== null && <ErrorBox>{error}</ErrorBox>}
 
       {result !== null && (
         <>
-          <Body
-            body={{
-              text: msg`Your enterprise license has been activated successfully.`,
-            }}
-            className={successLeadClassName}
-            renderText={renderText}
-            size="md"
-            weight="medium"
-          />
+          <Body className={successLeadClassName} size="md" weight="medium">
+            {i18n._(
+              msg`Your enterprise license has been activated successfully.`,
+            )}
+          </Body>
 
           <LicenseeRow>
-            <Body
-              as="span"
-              body={{ text: msg`Licensee:` }}
-              renderText={renderText}
-              size="sm"
-              weight="medium"
-            />{' '}
+            <Body as="span" size="sm" weight="medium">
+              {i18n._(msg`Licensee:`)}
+            </Body>{' '}
             <LicenseeValue>{result.licensee}</LicenseeValue>
           </LicenseeRow>
 
           <KeySection>
-            <Heading
-              as="h2"
-              renderText={renderText}
-              segments={{ fontFamily: 'sans', text: msg`Your enterprise key` }}
-              size="xs"
-              weight="medium"
-            />
-            <Body
-              body={{
-                text: msg`Copy this key and paste it into your Twenty self-hosted instance settings.`,
-              }}
-              renderText={renderText}
-              size="sm"
-              variant="body-paragraph"
-            />
+            <Heading as="h2" size="xs" weight="medium">
+              <HeadingPart fontFamily="sans">
+                {i18n._(msg`Your enterprise key`)}
+              </HeadingPart>
+            </Heading>
+            <Body size="sm" variant="body-paragraph">
+              {i18n._(
+                msg`Copy this key and paste it into your Twenty self-hosted instance settings.`,
+              )}
+            </Body>
 
             <KeyBlock>
               {result.enterpriseKey}
@@ -284,7 +268,7 @@ export function EnterpriseActivateClient() {
               >
                 <BaseButton
                   color="primary"
-                  label={renderText(copied ? msg`Copied!` : msg`Copy`)}
+                  label={i18n._(copied ? msg`Copied!` : msg`Copy`)}
                   size="small"
                   variant="contained"
                 />
@@ -293,36 +277,28 @@ export function EnterpriseActivateClient() {
           </KeySection>
 
           <NextStepsBox>
-            <Heading
-              as="h3"
-              renderText={renderText}
-              segments={{ fontFamily: 'sans', text: msg`Next steps` }}
-              size="xs"
-              weight="medium"
-            />
+            <Heading as="h3" size="xs" weight="medium">
+              <HeadingPart fontFamily="sans">
+                {i18n._(msg`Next steps`)}
+              </HeadingPart>
+            </Heading>
             <NextStepsList>
               <li className={nextStepItemClassName}>
-                <Body
-                  body={{ text: msg`Copy the enterprise key above.` }}
-                  renderText={renderText}
-                  size="sm"
-                />
+                <Body size="sm">
+                  {i18n._(msg`Copy the enterprise key above.`)}
+                </Body>
               </li>
               <li className={nextStepItemClassName}>
-                <Body
-                  body={{
-                    text: msg`Open your Twenty self-hosted instance Settings → Enterprise.`,
-                  }}
-                  renderText={renderText}
-                  size="sm"
-                />
+                <Body size="sm">
+                  {i18n._(
+                    msg`Open your Twenty self-hosted instance Settings → Enterprise.`,
+                  )}
+                </Body>
               </li>
               <li className={nextStepItemClassName}>
-                <Body
-                  body={{ text: msg`Paste the key and click Activate.` }}
-                  renderText={renderText}
-                  size="sm"
-                />
+                <Body size="sm">
+                  {i18n._(msg`Paste the key and click Activate.`)}
+                </Body>
               </li>
             </NextStepsList>
           </NextStepsBox>

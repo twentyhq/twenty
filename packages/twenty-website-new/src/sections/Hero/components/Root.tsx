@@ -1,7 +1,7 @@
 import { Container } from '@/design-system/components';
 import { WebGlMount } from '@/lib/visual-runtime';
 import { HomeBackgroundHalftone } from '@/sections/Hero/visuals/HomeBackgroundHalftone';
-import { theme } from '@/theme';
+import { theme, type Scheme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
@@ -14,6 +14,21 @@ const StyledSection = styled.section`
   &[data-color-scheme='secondary'] {
     --hero-body-color: ${theme.colors.secondary.text[80]};
     color: ${theme.colors.secondary.text[100]};
+  }
+
+  &[data-scheme='light'] {
+    background-color: var(--color-white);
+    color: var(--color-text);
+  }
+
+  &[data-scheme='muted'] {
+    background-color: var(--color-neutral);
+    color: var(--color-text);
+  }
+
+  &[data-scheme='dark'] {
+    background-color: var(--color-black);
+    color: var(--color-text);
   }
 
   min-width: 0;
@@ -55,9 +70,10 @@ const StyledContainer = styled(Container)`
 `;
 
 type RootProps = {
-  backgroundColor: string;
+  backgroundColor?: string;
   children: ReactNode;
   colorScheme?: 'primary' | 'secondary';
+  scheme?: Scheme;
   showHomeBackground?: boolean;
 };
 
@@ -65,10 +81,15 @@ export function Root({
   backgroundColor,
   children,
   colorScheme = 'primary',
+  scheme,
   showHomeBackground = false,
 }: RootProps) {
   return (
-    <StyledSection data-color-scheme={colorScheme} style={{ backgroundColor }}>
+    <StyledSection
+      data-color-scheme={scheme ? undefined : colorScheme}
+      data-scheme={scheme}
+      style={scheme ? undefined : { backgroundColor }}
+    >
       {showHomeBackground ? (
         <StyledBackground>
           <WebGlMount priority>

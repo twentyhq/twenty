@@ -7,6 +7,7 @@ export { buildRouteMetadata } from './build-route-metadata';
 export {
   buildArticleListJsonLd,
   buildArticleJsonLd,
+  buildBreadcrumbListJsonLd,
   buildFaqPageJsonLd,
   buildOrganizationJsonLd,
   buildReleaseListJsonLd,

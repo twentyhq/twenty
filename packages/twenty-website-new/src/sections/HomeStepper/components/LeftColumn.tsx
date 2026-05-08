@@ -1,10 +1,10 @@
 'use client';
 
-import { Body, Heading } from '@/design-system/components';
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
-import { StepperSwipeDeck } from '@/lib/stepper';
+import { Body } from '@/design-system/components';
+import { StepperSwipeDeck } from '@/sections/Stepper';
 import { HOME_STEPPER_HOLD_FRACTIONS } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
 import { theme } from '@/theme';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import type { HomeStepperStepType } from './../types/HomeStepperStep';
 import { ProgressBar } from './ProgressBar';
@@ -143,7 +143,7 @@ export function LeftColumn({
   onMobileStepIndexChange,
   steps,
 }: HomeStepperLeftColumnProps) {
-  const renderText = useRenderMessage();
+  const { i18n } = useLingui();
 
   return (
     <LeftColumnRoot>
@@ -164,13 +164,8 @@ export function LeftColumn({
                 const step = steps[stepIndex];
                 return (
                   <SwipeStepBlock>
-                    <Heading
-                      renderText={renderText}
-                      segments={step.heading}
-                      size="lg"
-                      weight="light"
-                    />
-                    <Body body={step.body} renderText={renderText} size="sm" />
+                    {step.heading}
+                    <Body size="sm">{i18n._(step.body)}</Body>
                   </SwipeStepBlock>
                 );
               }}
@@ -190,14 +185,10 @@ export function LeftColumn({
                   $transform={transform}
                   data-active={String(index === activeStepIndex)}
                   key={index}
+                  suppressHydrationWarning
                 >
-                  <Heading
-                    renderText={renderText}
-                    segments={step.heading}
-                    size="lg"
-                    weight="light"
-                  />
-                  <Body body={step.body} renderText={renderText} size="sm" />
+                  {step.heading}
+                  <Body size="sm">{i18n._(step.body)}</Body>
                 </StepBlock>
               );
             })

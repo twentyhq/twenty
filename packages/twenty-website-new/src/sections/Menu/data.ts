@@ -47,7 +47,7 @@ function buildNavItems(): MenuNavItemType[] {
           external: true,
           icon: 'code',
           preview: {
-            image: '/images/shared/menu/developers-preview.png',
+            image: '/images/shared/menu/developers-preview.webp',
             imageAlt: 'Blue developer illustration with branching arrows',
             imagePosition: 'center',
             imageScale: 1.6,

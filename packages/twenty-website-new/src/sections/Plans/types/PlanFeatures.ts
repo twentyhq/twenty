@@ -1,5 +1,5 @@
-import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageDescriptor } from '@lingui/core';
 
 export type PlanFeaturesType = {
-  bullets: MessageBody[];
+  bullets: MessageDescriptor[];
 };

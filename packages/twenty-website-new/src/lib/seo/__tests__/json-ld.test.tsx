@@ -54,12 +54,12 @@ describe('buildFaqPageJsonLd', () => {
   it('produces a FAQPage with one Question per input, each carrying an Answer', () => {
     const questions = [
       {
-        question: { fontFamily: 'sans' as const, text: descriptor('Q1?') },
-        answer: { text: descriptor('A1.') },
+        question: descriptor('Q1?'),
+        answer: descriptor('A1.'),
       },
       {
-        question: { fontFamily: 'sans' as const, text: descriptor('Q2?') },
-        answer: { text: descriptor('A2.') },
+        question: descriptor('Q2?'),
+        answer: descriptor('A2.'),
       },
     ];
 
@@ -85,10 +85,8 @@ describe('buildFaqPageJsonLd', () => {
     const data = buildFaqPageJsonLd(
       [
         {
-          question: {
-            text: { id: 'faq.q', message: 'Resolved question' },
-          },
-          answer: { text: { id: 'faq.a', message: 'Resolved answer' } },
+          question: { id: 'faq.q', message: 'Resolved question' },
+          answer: { id: 'faq.a', message: 'Resolved answer' },
         },
       ],
       renderText,

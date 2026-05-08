@@ -2,7 +2,7 @@
 
 import { Container, IconButton, LinkButton } from '@/design-system/components';
 import { CloseIcon, MenuIcon } from '@/icons';
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import { useLingui } from '@lingui/react';
 import { useTimeoutRegistry } from '@/lib/react';
 import type {
   MenuNavItemType,
@@ -103,7 +103,7 @@ export function Root({
   surfaceColor,
   socialLinks,
 }: RootProps) {
-  const renderText = useRenderMessage();
+  const { i18n } = useLingui();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -182,7 +182,7 @@ export function Root({
               <LinkButton
                 color={buttonColor.linkButton}
                 href="https://app.twenty.com/welcome"
-                label={renderText(msg`Get started`)}
+                label={i18n._(msg`Get started`)}
                 variant="contained"
               />
               <IconButton

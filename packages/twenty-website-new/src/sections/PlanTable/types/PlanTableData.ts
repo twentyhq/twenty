@@ -1,6 +1,5 @@
-import type { MessageBody } from '@/lib/i18n/message-body';
-import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import type { MessageDescriptor } from '@lingui/core';
+import type { ReactNode } from 'react';
 import type { PlansHostingMode, PlansTierId } from '@/sections/Plans/types';
 
 export type PlanTableTierColumnType = {
@@ -54,8 +53,8 @@ export type PlanTableCalculatorDataType = {
   };
   sections: PlanTableCalculatorSectionDataType[];
   visual: {
-    body: MessageBody;
-    heading: MessageHeadingSegment[];
+    body: MessageDescriptor;
+    heading: ReactNode;
     imageAlt?: string;
     imageSrc?: string;
   };

@@ -1,26 +1,18 @@
 import {
   Body as BaseBody,
-  type BodyType,
-  type BodyProps,
+  type BodyAs,
+  type BodyFamily,
+  type BodySize,
+  type BodyVariant,
+  type BodyWeight,
 } from '@/design-system/components/Body';
 import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-const defaultHeroBodyColor = `var(--hero-body-color, ${theme.colors.primary.text[60]})`;
-
 const StyledBody = styled.div`
-  --body-sm-color: ${defaultHeroBodyColor};
-  color: ${defaultHeroBodyColor};
-
-  &[data-color-scheme='primary'] {
-    --hero-body-color: ${theme.colors.primary.text[60]};
-  }
-
-  &[data-color-scheme='secondary'] {
-    --hero-body-color: ${theme.colors.secondary.text[80]};
-  }
+  color: var(--color-text-muted, ${theme.colors.primary.text[60]});
 
   &[data-preserve-line-breaks='true'] {
     white-space: pre-line;
@@ -66,59 +58,41 @@ const StyledBody = styled.div`
   }
 `;
 
-export type HeroBodyColorScheme = 'primary' | 'secondary';
-
-export type HeroBodyProps<TText = ReactNode> = Omit<
-  BodyProps<TText>,
-  'renderText'
-> & {
+type HeroBodyProps = {
+  as?: BodyAs;
+  children: ReactNode;
+  className?: string;
+  family?: BodyFamily;
   page: Page;
-  colorScheme?: HeroBodyColorScheme;
   preserveLineBreaks?: boolean;
-  renderText?: (text: TText) => ReactNode;
+  size?: BodySize;
+  variant?: BodyVariant;
+  weight?: BodyWeight;
 };
 
-export function Body<TText = ReactNode>({
+export function Body({
   as,
-  body,
+  children,
   className,
-  page,
-  colorScheme,
   family,
+  page,
   preserveLineBreaks = false,
-  renderText,
   size,
   variant,
   weight,
-}: HeroBodyProps<TText>) {
+}: HeroBodyProps) {
   return (
-    <StyledBody
-      data-color-scheme={colorScheme}
-      data-page={page}
-      data-preserve-line-breaks={preserveLineBreaks}
-    >
-      {renderText === undefined ? (
-        <BaseBody
-          as={as}
-          body={body as BodyType<ReactNode>}
-          className={className}
-          family={family}
-          size={size}
-          variant={variant}
-          weight={weight}
-        />
-      ) : (
-        <BaseBody<TText>
-          as={as}
-          body={body}
-          className={className}
-          family={family}
-          renderText={renderText}
-          size={size}
-          variant={variant}
-          weight={weight}
-        />
-      )}
+    <StyledBody data-page={page} data-preserve-line-breaks={preserveLineBreaks}>
+      <BaseBody
+        as={as}
+        className={className}
+        family={family}
+        size={size}
+        variant={variant}
+        weight={weight}
+      >
+        {children}
+      </BaseBody>
     </StyledBody>
   );
 }

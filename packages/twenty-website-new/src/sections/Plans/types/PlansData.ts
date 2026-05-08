@@ -1,5 +1,4 @@
-import type { MessageBody } from '@/lib/i18n/message-body';
-import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import type { MessageDescriptor } from '@lingui/core';
 import type { PlanIconType } from './PlanCard';
 import type { PlanPriceType } from './PlanPrice';
 
@@ -8,7 +7,7 @@ export type PlansBillingPeriod = 'monthly' | 'yearly';
 export type PlansTierId = 'pro' | 'organization';
 
 export type PlansTierCellType = {
-  featureBullets: MessageBody[];
+  featureBullets: MessageDescriptor[];
   price: PlanPriceType;
 };
 
@@ -24,7 +23,7 @@ export type PlansTierCellsType = {
 
 export type PlansTierType = {
   cells: PlansTierCellsType;
-  heading: MessageHeadingSegment;
+  heading: MessageDescriptor;
   icon: PlanIconType;
 };
 

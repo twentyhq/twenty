@@ -1,7 +1,7 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import { useLingui } from '@lingui/react';
 import type { MessageDescriptor } from '@lingui/core';
 import type {
   SalesforceAddonRowType,
@@ -135,12 +135,19 @@ const getScatteredPopupPosition = (
 };
 
 type FlowProps = Omit<SalesforceDataType, 'heading'> & {
-  backgroundColor: string;
+  backgroundColor?: string;
   children: ReactNode;
+  scheme?: 'light' | 'muted' | 'dark';
 };
 
-export function Flow({ backgroundColor, body, children, pricing }: FlowProps) {
-  const renderText = useRenderMessage();
+export function Flow({
+  backgroundColor,
+  body,
+  children,
+  pricing,
+  scheme,
+}: FlowProps) {
+  const { i18n } = useLingui();
   const rightColumnRef = useRef<HTMLDivElement>(null);
   const popupSequenceRef = useRef(0);
   const [isPricingWindowVisible, setIsPricingWindowVisible] = useState(true);
@@ -272,18 +279,14 @@ export function Flow({ backgroundColor, body, children, pricing }: FlowProps) {
   }, []);
 
   return (
-    <Root backgroundColor={backgroundColor}>
+    <Root backgroundColor={backgroundColor} scheme={scheme}>
       <CopyColumn>
         <Heading as="h2" size="lg" weight="light">
           {children}
         </Heading>
-        <Body
-          body={body}
-          family="sans"
-          renderText={renderText}
-          size="md"
-          weight="regular"
-        />
+        <Body family="sans" size="md" weight="regular">
+          {i18n._(body)}
+        </Body>
       </CopyColumn>
       <RightColumn ref={rightColumnRef}>
         {isPricingWindowVisible ? (

@@ -27,7 +27,7 @@ import type {
   HalftoneExportPose,
   HalftoneStudioSettings,
 } from '@/lib/halftone/state';
-import { runCleanupTasks } from '@/lib/lifecycle/run-cleanup-tasks';
+import { runCleanupTasks } from '@/lib/react/run-cleanup-tasks';
 import { useLatestRef } from '@/lib/react';
 import {
   createSiteWebGlRenderer,

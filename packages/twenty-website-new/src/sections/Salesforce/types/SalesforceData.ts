@@ -1,4 +1,3 @@
-import type { MessageBody } from '@/lib/i18n/message-body';
 import type { MessageDescriptor } from '@lingui/core';
 
 export type SalesforceWrongChoicePopupType = {
@@ -48,6 +47,6 @@ export type SalesforcePricingPanelType = {
 };
 
 export type SalesforceDataType = {
-  body: MessageBody;
+  body: MessageDescriptor;
   pricing: SalesforcePricingPanelType;
 };

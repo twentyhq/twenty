@@ -1,10 +1,9 @@
-import type { MessageBody } from '@/lib/i18n/message-body';
-import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import type { MessageDescriptor } from '@lingui/core';
 import type { ImageType } from '@/design-system/components/Image';
 
 type ThreeCardsFeatureCardBaseType = {
-  heading: MessageHeadingSegment;
-  body: MessageBody;
+  heading: MessageDescriptor;
+  body: MessageDescriptor;
   backgroundImageSrc?: string;
   backgroundImageRotationDeg?: number;
   icon: 'fast-path' | 'live-data' | 'users-group';

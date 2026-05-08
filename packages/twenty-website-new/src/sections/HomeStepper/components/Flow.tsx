@@ -1,7 +1,7 @@
 'use client';
 
 import { ScrollProgressEffect } from '@/lib/scroll';
-import { useStepperMdUp } from '@/lib/stepper';
+import { useStepperMdUp } from '@/sections/Stepper';
 import type { HomeStepperStepType } from '@/sections/HomeStepper/types/HomeStepperStep';
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { LeftColumn } from './LeftColumn';

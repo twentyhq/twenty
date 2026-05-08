@@ -9,7 +9,7 @@ export {
   isPublicAppLocale,
 } from './app-locale-set';
 export { createI18nInstance } from './create-i18n-instance';
-export { createMessageDescriptorRenderer } from './create-message-descriptor-renderer';
+export { getServerI18n } from './get-server-i18n';
 export { detectLocale, LOCALE_COOKIE_NAME } from './detect-locale';
 export { getRouteI18n, type LocaleRouteParams } from './get-route-i18n';
 export { I18nProvider } from './I18nProvider';
@@ -27,5 +27,4 @@ export {
   localeToUrlSegment,
 } from './website-locale-segments';
 export { useLocale } from './use-locale';
-export { useRenderMessage } from './use-render-message';
 export { useUnlocalizedPathname } from './use-unlocalized-pathname';

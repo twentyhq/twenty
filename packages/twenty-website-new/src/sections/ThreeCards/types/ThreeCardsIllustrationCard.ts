@@ -1,5 +1,3 @@
-import type { MessageBody } from '@/lib/i18n/message-body';
-import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import type { MessageDescriptor } from '@lingui/core';
 import { type ThreeCardsIllustrationCardAttributionType } from './ThreeCardsIllustrationCardAttribution';
 
@@ -20,7 +18,8 @@ export type ThreeCardsIllustrationCardActionType = {
   programId: 'technology' | 'content' | 'solutions';
 };
 
-export type ThreeCardsIllustrationBenefitType = MessageBody & {
+export type ThreeCardsIllustrationBenefitType = {
+  text: MessageDescriptor;
   icon?:
     | 'book'
     | 'check'
@@ -33,8 +32,8 @@ export type ThreeCardsIllustrationBenefitType = MessageBody & {
 };
 
 export type ThreeCardsIllustrationCardType = {
-  heading: MessageHeadingSegment;
-  body: MessageBody;
+  heading: MessageDescriptor;
+  body: MessageDescriptor;
   benefits?: ThreeCardsIllustrationBenefitType[];
   action?: ThreeCardsIllustrationCardActionType;
   attribution?: ThreeCardsIllustrationCardAttributionType;

@@ -1,6 +1,6 @@
-import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageDescriptor } from '@lingui/core';
 
 export type ThreeCardsIllustrationCardAttributionType = {
-  role: MessageBody;
-  company: MessageBody;
+  role: MessageDescriptor;
+  company: MessageDescriptor;
 };
