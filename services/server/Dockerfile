@@ -10,10 +10,11 @@
 FROM twentycrm/twenty:v0.32.0
 
 # Twenty's official entrypoint already runs migrations on boot and starts
-# the NestJS server on port 3000. We don't need to override anything here —
-# this Dockerfile exists only so Railway has something concrete to build.
+# the NestJS server. We don't need to override anything here; this Dockerfile
+# exists only so Railway has something concrete to build.
 
 # Railway expects services to listen on $PORT. Twenty respects NODE_PORT.
-# We set NODE_PORT=$PORT at runtime via railway.toml.
+# The live crm.xopure.com domain is currently mapped to port 8080, so set
+# NODE_PORT=8080 and PORT=8080 on the Railway web service.
 
-EXPOSE 3000
+EXPOSE 8080

@@ -1,5 +1,5 @@
 -- =============================================================================
--- XO2 Affiliate Platform Core Schema
+-- XO Pure Affiliate Platform Core Schema
 -- Baseline source-controlled version of the live Supabase schema used by XO Pure.
 -- This migration is intentionally additive/idempotent for the application tables.
 -- =============================================================================
