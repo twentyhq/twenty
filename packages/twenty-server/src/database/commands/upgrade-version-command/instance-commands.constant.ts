@@ -29,7 +29,7 @@ import { TransformApplicationVariableToSyncableEntityFastInstanceCommand } from 
 import { AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1797000001000-add-tool-and-workflow-action-trigger-settings';
 import { BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1777966965588-backfill-application-variable-universal-identifier';
 import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1797000002000-migrate-tool-trigger-settings';
-import { PermissionFlagDefinitionSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1799000000000-permission-flag-definition-syncable-entity';
+import { PermissionFlagDefinitionSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778235340021-permission-flag-definition-syncable-entity';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

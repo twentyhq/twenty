@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.4.0', 1799000000000)
+@RegisteredInstanceCommand('2.4.0', 1778235340021)
 export class PermissionFlagDefinitionSyncableEntityFastInstanceCommand
   implements FastInstanceCommand
 {
@@ -35,19 +35,19 @@ export class PermissionFlagDefinitionSyncableEntityFastInstanceCommand
     );
 
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_PERMISSION_FLAG_DEFINITION_WORKSPACE_UNIVERSAL_IDENTIFIER" ON "core"."permissionFlagDefinition" ("workspaceId", "universalIdentifier")`,
+      `CREATE UNIQUE INDEX "IDX_d7771c026b81fb7762da3f7512" ON "core"."permissionFlagDefinition" ("workspaceId", "universalIdentifier")`,
     );
 
     await queryRunner.query(
       `ALTER TABLE "core"."permissionFlagDefinition"
-       ADD CONSTRAINT "FK_PERMISSION_FLAG_DEFINITION_WORKSPACE"
+       ADD CONSTRAINT "FK_5faba4fac7d98e26a02eac5eebc"
        FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
     await queryRunner.query(
       `ALTER TABLE "core"."permissionFlagDefinition"
-       ADD CONSTRAINT "FK_PERMISSION_FLAG_DEFINITION_APPLICATION"
+       ADD CONSTRAINT "FK_90a41ee79a926b30490b7f60c6d"
        FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
@@ -55,13 +55,13 @@ export class PermissionFlagDefinitionSyncableEntityFastInstanceCommand
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."permissionFlagDefinition" DROP CONSTRAINT IF EXISTS "FK_PERMISSION_FLAG_DEFINITION_APPLICATION"`,
+      `ALTER TABLE "core"."permissionFlagDefinition" DROP CONSTRAINT IF EXISTS "FK_90a41ee79a926b30490b7f60c6d"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."permissionFlagDefinition" DROP CONSTRAINT IF EXISTS "FK_PERMISSION_FLAG_DEFINITION_WORKSPACE"`,
+      `ALTER TABLE "core"."permissionFlagDefinition" DROP CONSTRAINT IF EXISTS "FK_5faba4fac7d98e26a02eac5eebc"`,
     );
     await queryRunner.query(
-      `DROP INDEX IF EXISTS "core"."IDX_PERMISSION_FLAG_DEFINITION_WORKSPACE_UNIVERSAL_IDENTIFIER"`,
+      `DROP INDEX IF EXISTS "core"."IDX_d7771c026b81fb7762da3f7512"`,
     );
     await queryRunner.query(
       `DROP INDEX IF EXISTS "core"."IDX_PERMISSION_FLAG_DEFINITION_APPLICATION_ID"`,
