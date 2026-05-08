@@ -1,24 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
-import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
+import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 
 export type ConnectedAccountTokens = {
   accessToken: string;
-  refreshToken: string;
+  refreshToken: string | null;
 };
 
 const CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;
@@ -44,13 +46,6 @@ export class ConnectedAccountRefreshTokensService {
   ): Promise<ConnectedAccountTokens> {
     const { refreshToken, accessToken } = connectedAccount;
 
-    if (!refreshToken) {
-      throw new ConnectedAccountRefreshAccessTokenException(
-        `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
-        ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
-      );
-    }
-
     const isAccessTokenValid =
       await this.isAccessTokenStillValid(connectedAccount);
 
@@ -69,6 +64,13 @@ export class ConnectedAccountRefreshTokensService {
         accessToken,
         refreshToken,
       };
+    }
+
+    if (!isNonEmptyString(refreshToken)) {
+      throw new ConnectedAccountRefreshAccessTokenException(
+        `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+        ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
+      );
     }
 
     this.logger.debug(
@@ -101,8 +103,7 @@ export class ConnectedAccountRefreshTokensService {
   ): Promise<boolean> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
-      case ConnectedAccountProvider.MICROSOFT:
-      case ConnectedAccountProvider.APP: {
+      case ConnectedAccountProvider.MICROSOFT: {
         if (!connectedAccount.lastCredentialsRefreshedAt) {
           return false;
         }
@@ -111,6 +112,29 @@ export class ConnectedAccountRefreshTokensService {
 
         const tokenExpirationTime =
           CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION - BUFFER_TIME;
+
+        return (
+          connectedAccount.lastCredentialsRefreshedAt >
+          new Date(Date.now() - tokenExpirationTime)
+        );
+      }
+      case ConnectedAccountProvider.APP: {
+        if (!isDefined(connectedAccount.accessToken)) {
+          return false;
+        }
+
+        if (!isNonEmptyString(connectedAccount.refreshToken)) {
+          return true;
+        }
+
+        if (!connectedAccount.lastCredentialsRefreshedAt) {
+          return false;
+        }
+
+        const bufferTime = 5 * 60 * 1000;
+
+        const tokenExpirationTime =
+          CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION - bufferTime;
 
         return (
           connectedAccount.lastCredentialsRefreshedAt >
