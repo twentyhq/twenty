@@ -189,7 +189,40 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       workspace.id,
     );
 
+    // Self-heal: a userWorkspace row without a matching core.roleTargets row
+    // is the residue of a sign-in that crashed (e.g. mid-deploy) between the
+    // userWorkspace insert and the role assignment — the two writes can't
+    // share a transaction because roleTargets goes through the workspace
+    // migration pipeline. The membership exists but the user has no role
+    // and is invisible to permission checks. Finish the missing assignment
+    // here so the next sign-in repairs the orphan instead of bailing early.
     if (existingUserWorkspace) {
+      const hasRoleTarget = await this.roleTargetRepository.exists({
+        where: {
+          userWorkspaceId: existingUserWorkspace.id,
+          workspaceId: workspace.id,
+        },
+      });
+
+      if (hasRoleTarget) {
+        return;
+      }
+
+      const resolvedRoleIdForOrphan = await this.resolveRoleIdForNewMember(
+        roleId,
+        workspace,
+      );
+
+      this.logger.warn(
+        `Self-healing orphan userWorkspace ${existingUserWorkspace.id} for ${user.email}: assigning role ${resolvedRoleIdForOrphan}.`,
+      );
+
+      await this.userRoleService.assignRoleToManyUserWorkspace({
+        workspaceId: workspace.id,
+        userWorkspaceIds: [existingUserWorkspace.id],
+        roleId: resolvedRoleIdForOrphan,
+      });
+
       return;
     }
 
