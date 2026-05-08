@@ -1,4 +1,6 @@
 import { loadLocalReleaseNotes } from '@/lib/releases/load-local-release-notes';
+import type { MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
 const IMAGE_REGEX_GLOBAL = /!\[[^\]]*\]\(([^)]+)\)/g;
 const HEADING_REGEX_GLOBAL = /^#\s+(.+)$/gm;
@@ -7,8 +9,8 @@ export type LatestReleasePreview = {
   image: string;
   imageAlt: string;
   imageScale?: number;
-  title: string;
-  description: string;
+  title: MessageDescriptor;
+  description: MessageDescriptor;
 };
 
 export function getLatestReleasePreview(): LatestReleasePreview | null {
@@ -37,8 +39,7 @@ export function getLatestReleasePreview(): LatestReleasePreview | null {
     image,
     imageAlt: `Twenty release ${latest.release}${featureTitle ? ` — ${featureTitle}` : ''}`,
     imageScale: 1.04,
-    title: `See what shipped in ${latest.release}`,
-    description:
-      'Track every release with changelogs, highlights and demos of the newest features.',
+    title: msg`See what shipped in ${latest.release}`,
+    description: msg`Track every release with changelogs, highlights and demos of the newest features.`,
   };
 }

@@ -1,19 +1,31 @@
+import { msg } from '@lingui/core/macro';
 import { FAQ_DATA } from '@/sections/Faq/data';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/[locale]/partners/three-cards-illustration.data';
-import { HERO_DATA } from '@/app/[locale]/partners/hero.data';
-import { SIGNOFF_DATA } from '@/app/[locale]/partners/signoff.data';
+import { HERO_COPY } from '@/app/[locale]/partners/hero.data';
+import { SIGNOFF_COPY } from '@/app/[locale]/partners/signoff.data';
 import { TESTIMONIALS_DATA } from '@/app/[locale]/partners/testimonials.data';
 import {
   PartnerHeroCtas,
   PartnerSignoffCtas,
 } from '@/app/[locale]/partners/components/PartnerApplication';
-import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
-import { Pages } from '@/lib/pages';
+import {
+  Body,
+  Eyebrow,
+  Heading,
+  HeadingPart,
+  LinkButton,
+} from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
+import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
 import { Faq } from '@/sections/Faq/components';
@@ -47,8 +59,16 @@ const PromoSpacing = styled.div`
 
 export const generateMetadata = buildRouteMetadata('partners');
 
-export default async function PartnerPage() {
-  const stats = await fetchCommunityStats();
+type PartnerPageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function PartnerPage({ params }: PartnerPageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
@@ -66,8 +86,20 @@ export default async function PartnerPage() {
       </Menu.Root>
 
       <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
-        <Hero.Heading page={Pages.Partners} segments={HERO_DATA.heading} />
-        <Hero.Body page={Pages.Partners} body={HERO_DATA.body} />
+        <Hero.Heading page={Pages.Partners}>
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`Become`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">
+            {renderText(msg`our partner`)}
+          </HeadingPart>
+        </Hero.Heading>
+        <Hero.Body
+          page={Pages.Partners}
+          body={{ text: HERO_COPY.body }}
+          renderText={renderText}
+        />
         <Hero.Cta>
           <PartnerHeroCtas />
         </Hero.Cta>
@@ -78,15 +110,22 @@ export default async function PartnerPage() {
         backgroundColor={theme.colors.primary.background[100]}
         compactBottom
       >
-        <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
+        <TrustedBy.Separator
+          renderText={renderText}
+          separator={TRUSTED_BY_DATA.separator}
+        />
         <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
-        <TrustedBy.ClientCount label={TRUSTED_BY_DATA.clientCountLabel.text} />
+        <TrustedBy.ClientCount
+          label={TRUSTED_BY_DATA.clientCountLabel.text}
+          renderText={renderText}
+        />
       </TrustedBy.Root>
 
       <PromoSpacing>
         <CaseStudyCatalog.Promo
           compactTop
           entries={CASE_STUDY_CATALOG_ENTRIES}
+          renderText={renderText}
         />
       </PromoSpacing>
 
@@ -95,13 +134,23 @@ export default async function PartnerPage() {
           <Eyebrow
             colorScheme="primary"
             heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
+            renderText={renderText}
           />
-          <Heading
-            segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
-            size="lg"
-            weight="light"
-          />
-          <Body body={THREE_CARDS_ILLUSTRATION_DATA.body} size="sm" />
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {renderText(msg`Find the program that fits your business`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderText(msg`and unlock new opportunities with Twenty`)}
+            </HeadingPart>
+          </Heading>
+          {THREE_CARDS_ILLUSTRATION_DATA.body && (
+            <Body
+              body={THREE_CARDS_ILLUSTRATION_DATA.body}
+              renderText={renderText}
+              size="sm"
+            />
+          )}
         </ThreeCards.Intro>
         <ThreeCards.IllustrationCards
           illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
@@ -128,11 +177,20 @@ export default async function PartnerPage() {
         color={theme.colors.primary.text[100]}
         page={Pages.Partners}
       >
-        <Signoff.Heading
+        <Signoff.Heading page={Pages.Partners}>
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`Ready to grow`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">
+            {renderText(msg`with Twenty?`)}
+          </HeadingPart>
+        </Signoff.Heading>
+        <Signoff.Body
+          body={{ text: SIGNOFF_COPY.body }}
           page={Pages.Partners}
-          segments={SIGNOFF_DATA.heading}
+          renderText={renderText}
         />
-        <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.Partners} />
         <Signoff.Cta>
           <PartnerSignoffCtas />
         </Signoff.Cta>
@@ -140,19 +198,30 @@ export default async function PartnerPage() {
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
-          <Faq.Heading segments={FAQ_DATA.heading} />
+          <Eyebrow
+            colorScheme="secondary"
+            heading={FAQ_DATA.eyebrow.heading}
+            renderText={renderText}
+          />
+          <Faq.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderText(msg`Stop fighting custom.`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {renderText(msg`Start building, with Twenty`)}
+            </HeadingPart>
+          </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label="Get started"
-              type="anchor"
+              label={renderText(msg`Get started`)}
               variant="contained"
             />
             <TalkToUsButton
               color="primary"
-              label="Talk to us"
+              label={msg`Talk to us`}
               variant="outlined"
             />
           </Faq.Cta>

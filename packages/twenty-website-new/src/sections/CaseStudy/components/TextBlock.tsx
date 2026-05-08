@@ -6,6 +6,7 @@ import {
   Heading,
 } from '@/design-system/components';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 
 const Section = styled.section`
@@ -124,12 +125,14 @@ function parseCallout(raw: string): {
 type TextBlockProps = {
   block: CaseStudyTextBlock;
   isLast?: boolean;
+  renderText: (descriptor: MessageDescriptor) => string;
   sectionId?: string;
 };
 
 export function TextBlock({
   block,
   isLast = false,
+  renderText,
   sectionId,
 }: TextBlockProps) {
   return (
@@ -140,10 +143,17 @@ export function TextBlock({
             <Eyebrow
               colorScheme="primary"
               heading={{ fontFamily: 'sans', text: block.eyebrow }}
+              renderText={renderText}
             />
           )}
 
-          <Heading as="h2" segments={block.heading} size="md" weight="light" />
+          <Heading
+            as="h2"
+            renderText={renderText}
+            segments={block.heading}
+            size="md"
+            weight="light"
+          />
 
           <BodyStack>
             {block.paragraphs.map((paragraph, index) => (
@@ -151,6 +161,7 @@ export function TextBlock({
                 key={index}
                 body={{ text: paragraph }}
                 family="sans"
+                renderText={renderText}
                 size="md"
                 variant="body-paragraph"
                 weight="regular"

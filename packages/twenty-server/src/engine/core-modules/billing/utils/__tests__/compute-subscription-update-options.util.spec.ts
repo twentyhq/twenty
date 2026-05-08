@@ -11,7 +11,7 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
 
     expect(result).toEqual({
-      proration: 'create_prorations',
+      proration: 'always_invoice',
       metadata: {
         plan: BillingPlanKey.PRO,
       },
@@ -25,7 +25,7 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
 
     expect(result).toEqual({
-      proration: 'create_prorations',
+      proration: 'always_invoice',
       metadata: {
         plan: BillingPlanKey.ENTERPRISE,
       },

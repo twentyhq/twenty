@@ -2,12 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { addMonths, addYears } from 'date-fns';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/billing/payment-received';
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
 import {
   BillingException,
@@ -22,6 +25,7 @@ import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/se
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
@@ -41,6 +45,8 @@ export class BillingWebhookInvoiceService {
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
     private readonly meteredCreditService: MeteredCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly auditService: AuditService,
   ) {}
 
   async processStripeEvent(
@@ -97,7 +103,18 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    if (periodStart) {
+    const trialEnd = isDefined(subscription.trialEnd)
+      ? Math.floor(subscription.trialEnd.getTime() / 1000)
+      : undefined;
+
+    const TRIAL_END_TOLERANCE_SECONDS = 60;
+
+    const isFirstPeriodAfterTrial =
+      isDefined(trialEnd) &&
+      isDefined(periodStart) &&
+      Math.abs(periodStart - trialEnd) <= TRIAL_END_TOLERANCE_SECONDS;
+
+    if (periodStart && !isFirstPeriodAfterTrial) {
       await this.processRollover(
         subscription,
         new Date(periodStart * 1000),
@@ -105,11 +122,18 @@ export class BillingWebhookInvoiceService {
       );
     }
 
-    // Pass the new period start (which is the invoiced period's end) for alert threshold calculation
-    await this.meteredCreditService.recreateBillingAlertForSubscription(
-      subscription,
-      new Date(periodEnd * 1000),
+    const isV2 = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_BILLING_V2_ENABLED,
+      subscription.workspaceId,
     );
+
+    if (!isV2) {
+      // Pass the new period start (which is the invoiced period's end) for alert threshold calculation
+      await this.meteredCreditService.recreateBillingAlertForSubscription(
+        subscription,
+        new Date(periodEnd * 1000),
+      );
+    }
   }
 
   private async processRollover(
@@ -117,6 +141,33 @@ export class BillingWebhookInvoiceService {
     invoicedPeriodStart: Date,
     invoicedPeriodEnd: Date,
   ): Promise<void> {
+    const isV2 = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_BILLING_V2_ENABLED,
+      subscription.workspaceId,
+    );
+
+    if (isV2) {
+      const v2Params =
+        await this.meteredCreditService.getResourceCreditRolloverParameters(
+          subscription.id,
+        );
+
+      if (!isDefined(v2Params)) {
+        return;
+      }
+
+      await this.billingCreditRolloverService.processRolloverOnPeriodTransitionV2(
+        {
+          workspaceId: subscription.workspaceId,
+          stripeCustomerId: subscription.stripeCustomerId,
+          tierQuantity: v2Params.tierQuantity,
+          previousPeriodStart: invoicedPeriodStart,
+        },
+      );
+
+      return;
+    }
+
     const rolloverParams =
       await this.meteredCreditService.getMeteredRolloverParameters(
         subscription.id,
@@ -170,7 +221,19 @@ export class BillingWebhookInvoiceService {
       paidInvoicePeriodEnd,
     );
 
-    await this.delaySuspendedWorkspaceCleanup(stripeCustomerId);
+    const billingCustomer = await this.billingCustomerRepository.findOne({
+      where: { stripeCustomerId },
+    });
+
+    if (isDefined(billingCustomer)) {
+      await this.delaySuspendedWorkspaceCleanup(billingCustomer);
+
+      this.auditService
+        .createContext({ workspaceId: billingCustomer.workspaceId })
+        .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
+          amountPaid: data.object.amount_paid,
+        });
+    }
 
     return { stripeSubscriptionId };
   }
@@ -204,16 +267,8 @@ export class BillingWebhookInvoiceService {
   }
 
   private async delaySuspendedWorkspaceCleanup(
-    stripeCustomerId: string,
+    billingCustomer: BillingCustomerEntity,
   ): Promise<void> {
-    const billingCustomer = await this.billingCustomerRepository.findOne({
-      where: { stripeCustomerId },
-    });
-
-    if (!isDefined(billingCustomer)) {
-      return;
-    }
-
     const workspace = await this.workspaceRepository.findOne({
       where: {
         id: billingCustomer.workspaceId,

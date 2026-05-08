@@ -1,0 +1,28 @@
+name: Auto-Draft External PRs
+
+on:
+  pull_request_target:
+    types: [opened]
+
+permissions: {}
+
+jobs:
+  dispatch:
+    if: |
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.author_association != 'MEMBER' &&
+      github.event.pull_request.author_association != 'OWNER' &&
+      github.event.pull_request.author_association != 'COLLABORATOR'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch to ci-privileged
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            -f event_type=convert-pr-to-draft \
+            -f "client_payload[pr_number]=$PR_NUMBER" \
+            -f "client_payload[pr_node_id]=$PR_NODE_ID"

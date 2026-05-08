@@ -75,8 +75,7 @@ export const SettingsLogicFunctionTestTab = ({
     httpRouteTriggerSettings,
     cronTriggerSettings,
     databaseEventTriggerSettings,
-    toolInputSchema,
-    isTool,
+    toolTriggerSettings,
   } = formValues;
 
   const triggerButtons: TriggerButton[] = [];
@@ -93,7 +92,7 @@ export const SettingsLogicFunctionTestTab = ({
       Icon: IconDatabase,
     });
   }
-  if (isTool) {
+  if (isDefined(toolTriggerSettings)) {
     triggerButtons.push({ kind: 'tool', label: t`AI tool`, Icon: IconTool });
   }
 
@@ -119,7 +118,7 @@ export const SettingsLogicFunctionTestTab = ({
             ? buildDatabaseEventPayload(databaseEventTriggerSettings)
             : {};
         case 'tool':
-          return buildToolPayloadFromSchema(toolInputSchema);
+          return buildToolPayloadFromSchema(toolTriggerSettings?.inputSchema);
       }
     })();
     updateLogicFunctionInput(payload);

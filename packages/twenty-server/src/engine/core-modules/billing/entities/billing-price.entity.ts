@@ -22,6 +22,7 @@ import { BillingPriceTaxBehavior } from 'src/engine/core-modules/billing/enums/b
 import { BillingPriceType } from 'src/engine/core-modules/billing/enums/billing-price-type.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
+import { BillingPriceMetadata } from 'src/engine/core-modules/billing/types/billing-price-metadata.type';
 
 @Entity({ name: 'billingPrice', schema: 'core' })
 export class BillingPriceEntity {
@@ -93,6 +94,9 @@ export class BillingPriceEntity {
 
   @Column({ nullable: true, type: 'text' })
   stripeMeterId: string | null;
+
+  @Column({ nullable: false, type: 'jsonb', default: {} })
+  metadata: BillingPriceMetadata;
 
   @Field(() => BillingUsageType)
   @Column({

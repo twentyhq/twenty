@@ -44,6 +44,7 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
+import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { SettingsApplicationCustomTab } from '~/pages/settings/applications/tabs/SettingsApplicationCustomTab';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
@@ -67,6 +68,9 @@ export const SettingsApplicationDetails = () => {
   });
 
   const application = data?.findOneApplication;
+
+  const { connectionProviders } =
+    useFindApplicationConnectionProviders(applicationId);
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: application?.universalIdentifier ?? '' },
@@ -227,16 +231,21 @@ export const SettingsApplicationDetails = () => {
         : undefined,
       disabled: !isDefined(application?.defaultRoleId),
     },
-    {
-      id: 'settings',
-      title: t`Settings`,
-      Icon: IconSettings,
-      tooltipContent:
-        (application?.applicationVariables ?? []).length === 0
-          ? t`No variables to set for this application`
+    (() => {
+      const hasVariables = (application?.applicationVariables ?? []).length > 0;
+      const hasConnectionProviders = connectionProviders.length > 0;
+      const hasNothingToConfigure = !hasVariables && !hasConnectionProviders;
+
+      return {
+        id: 'settings',
+        title: t`Settings`,
+        Icon: IconSettings,
+        tooltipContent: hasNothingToConfigure
+          ? t`Nothing to configure for this application`
           : undefined,
-      disabled: (application?.applicationVariables ?? []).length === 0,
-    },
+        disabled: hasNothingToConfigure,
+      };
+    })(),
     ...(isDefined(settingsCustomTabFrontComponentId)
       ? [{ id: 'custom', title: t`Custom`, Icon: IconApps }]
       : []),

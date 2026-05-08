@@ -1,0 +1,29 @@
+---
+title: Prezentare generală
+description: Construiește, testează și livrează aplicația ta — comenzi CLI, teste de integrare, CI și publicare pe un server sau pe npm.
+icon: rocket
+---
+
+**Stratul de operațiuni** este tot ceea ce faci *asupra* aplicației tale, mai degrabă decât *cu* ea: invocarea comenzilor CLI, rularea testelor de integrare pe un server Twenty real, configurarea CI și livrarea versiunilor — fie ca un tarball implementat pe un singur server, fie ca un pachet npm listat în marketplace.
+
+```text
+   develop ─▶ test ─▶ build ─▶ deploy / publish
+   ───────    ────    ─────    ─────────────────
+   yarn       yarn    yarn     yarn twenty deploy   (tarball → one server)
+   twenty     test    twenty
+   dev                build    yarn twenty publish  (npm → marketplace)
+```
+
+## În această secțiune
+
+<CardGroup cols={2}>
+  <Card title="CLI" icon="terminal" href="/l/ro/developers/extend/apps/operations/cli">
+    Referință pentru `yarn twenty` — exec, logs, uninstall, remotes.
+  </Card>
+  <Card title="Testare" icon="flask" href="/l/ro/developers/extend/apps/operations/testing">
+    Configurare Vitest, teste de integrare, verificare a tipurilor, flux de lucru CI.
+  </Card>
+  <Card title="Publicare" icon="upload" href="/l/ro/developers/extend/apps/operations/publishing">
+    Construire, implementare a unui tarball, publicare pe npm, instalare.
+  </Card>
+</CardGroup>

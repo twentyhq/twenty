@@ -1,0 +1,374 @@
+---
+title: Logikfunktionen
+description: Definieren Sie serverseitige TypeScript-Funktionen mit HTTP-, cron- und Datenbankereignis-Triggern.
+icon: bolt
+---
+
+Logikfunktionen sind serverseitige TypeScript-Funktionen, die auf der Twenty-Plattform ausgeführt werden. Sie können durch HTTP-Anfragen, cron-Zeitpläne oder Datenbankereignisse ausgelöst werden — und außerdem als Tools für KI-Agenten bereitgestellt werden.
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="Logikfunktionen und deren Trigger definieren">
+
+Jede Funktionsdatei verwendet `defineLogicFunction()`, um eine Konfiguration mit einem Handler und optionalen Triggern zu exportieren.
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const body = (params.body ?? {}) as { name?: string };
+  const name = body.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+Verfügbare Trigger-Typen:
+* **httpRoute**: Stellt Ihre Funktion unter einem HTTP-Pfad und einer Methode **unter dem Endpunkt `/s/`** bereit:
+> z. B. `path: '/post-card/create'` ist unter `https://your-twenty-server.com/s/post-card/create` aufrufbar
+* **cron**: Führt Ihre Funktion nach Zeitplan mithilfe eines CRON-Ausdrucks aus.
+* **databaseEvent**: Wird bei Lebenszyklusereignissen von Workspace-Objekten ausgeführt. Wenn die Ereignisoperation `updated` ist, können bestimmte zu überwachende Felder im Array `updatedFields` angegeben werden. Wenn das Array undefiniert oder leer ist, löst jede Aktualisierung die Funktion aus.
+> z. B. `person.updated`, `*.created`, `company.*`
+
+<Note>
+Sie können eine Funktion auch manuell über die CLI ausführen:
+
+```bash filename="Terminal"
+yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+Sie können Protokolle mit folgendem Befehl ansehen:
+
+```bash filename="Terminal"
+yarn twenty logs
+```
+</Note>
+
+#### Routen-Trigger-Payload
+
+Wenn ein Route-Trigger Ihre Logikfunktion aufruft, erhält sie ein `RoutePayload`-Objekt, das dem [AWS-HTTP-API-v2-Format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html) folgt.
+Importieren Sie den Typ `RoutePayload` aus `twenty-sdk`:
+
+```ts
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+Der Typ `RoutePayload` hat die folgende Struktur:
+
+  | Eigenschaft                  | Typ                                                     | Beschreibung                                                                                                                                                                                                                           | Beispiel                                                                   |
+  | ---------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | HTTP-Header (nur die in `forwardedRequestHeaders` aufgelisteten)                                                                                                                                                                       | siehe Abschnitt unten                                                      |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Query-String-Parameter (mehrere Werte mit Kommas verbunden)                                                                                                                                                                            | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Aus dem Routenmuster extrahierte Pfadparameter                                                                                                                                                                                         | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Geparster Request-Body (JSON)                                                                                                                                                                                                          | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | Ursprünglicher UTF-8-Request-Body vor dem JSON-Parsing. Nützlich zur Verifizierung von Webhook-Signaturen im HMAC-Stil (z. B. GitHubs `X-Hub-Signature-256`, Stripe). `undefined`, wenn die Laufzeitumgebung es nicht beibehalten hat. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Gibt an, ob der Body Base64-codiert ist                                                                                                                                                                                                |                                                                            |
+  | `requestContext.http.method` | `string`                                                | HTTP-Methode (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                           |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Rohpfad der Anfrage                                                                                                                                                                                                                    |                                                                            |
+
+
+#### forwardedRequestHeaders
+
+Standardmäßig werden HTTP-Header von eingehenden Anfragen aus Sicherheitsgründen nicht an Ihre Logikfunktion weitergegeben.
+Um auf bestimmte Header zuzugreifen, listen Sie diese im Array `forwardedRequestHeaders` auf:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+Greifen Sie in Ihrem Handler wie folgt auf die weitergeleiteten Header zu:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+Header-Namen werden in Kleinbuchstaben normalisiert. Greifen Sie mit Schlüsseln in Kleinbuchstaben darauf zu (z. B. `event.headers['content-type']`).
+</Note>
+
+#### Eine Funktion als KI-Tool oder Workflow-Aktion verfügbar machen
+
+Logikfunktionen können auf zwei Oberflächen verfügbar gemacht werden, jeweils mit eigenem Trigger:
+
+* **`toolTriggerSettings`** — macht die Funktion über die KI-Funktionen von Twenty (Chat, MCP, Funktionsaufrufe) auffindbar. Verwendet das standardmäßige JSON Schema, das Format, das LLMs nativ verstehen.
+* **`workflowActionTriggerSettings`** — lässt die Funktion als Schritt im visuellen Workflow-Builder erscheinen. Verwendet das umfangreiche `InputSchema` von Twenty, sodass der Builder geeignete Feldeditoren, Variablenauswahlen und Beschriftungen rendern kann.
+
+Eine Funktion kann sich für eine, die andere oder beide entscheiden. Sie stehen neben `cronTriggerSettings`, `databaseEventTriggerSettings` und `httpRouteTriggerSettings` — gleiches Muster, gleiche Struktur.
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  toolTriggerSettings: {},
+});
+```
+
+Hauptpunkte:
+
+* Eine Funktion kann Oberflächen mischen — deklarieren Sie sowohl `toolTriggerSettings` als auch `workflowActionTriggerSettings`, um sie im Chat UND im Workflow-Builder bereitzustellen.
+* `toolTriggerSettings.inputSchema` und `workflowActionTriggerSettings.inputSchema` sind beide optional. Wenn sie weggelassen werden, leitet der Manifest-Builder sie aus dem Handler-Quellcode ab (JSON Schema für das KI-Tool, das `InputSchema` von Twenty für die Workflow-Aktion). Geben Sie eines explizit an, wenn Sie eine reichere Typisierung wünschen — zum Beispiel mit `FieldMetadataType`-fähigen Feldern wie `CURRENCY` oder `RELATION` für den Workflow-Builder oder mit `description`-Feldern, die der KI-Agent lesen kann:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
+      },
+      required: ['companyName'],
+    },
+  },
+});
+```
+
+<Note>
+**Schreiben Sie eine gute `description`.** KI-Agenten verlassen sich auf das `description`-Feld der Funktion, um zu entscheiden, wann das Tool verwendet werden soll. Seien Sie konkret darin, was das Tool tut und wann es aufgerufen werden soll.
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+**Installations-Hooks** – Vorinstallations- und Nachinstallations-Handler – teilen sich diese Laufzeit, werden aber mit ihren eigenen define-Funktionen deklariert und verwenden keine Trigger-Einstellungen. Siehe [Installations-Hooks](/l/de/developers/extend/apps/config/install-hooks) für `definePreInstallLogicFunction` und `definePostInstallLogicFunction`.
+</Note>
+
+## Typisierte API-Clients (twenty-client-sdk)
+
+Das Paket `twenty-client-sdk` stellt zwei typisierte GraphQL-Clients bereit, um aus Ihren Logikfunktionen und Frontend-Komponenten mit der Twenty-API zu interagieren.
+
+| Client              | Importieren                  | Endpunkt                                                  | Generiert?                           |
+| ------------------- | ---------------------------- | --------------------------------------------------------- | ------------------------------------ |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — Arbeitsbereichsdaten (Datensätze, Objekte)   | Ja, zur Entwicklungs-/Build-Zeit     |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — Arbeitsbereichskonfiguration, Datei-Uploads | Nein, wird vorgefertigt ausgeliefert |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="Arbeitsbereichsdaten (Datensätze, Objekte) abfragen und ändern">
+
+Der `CoreApiClient` ist der Haupt-Client zum Abfragen und Ändern von Arbeitsbereichsdaten. Er wird während `yarn twenty dev` oder `yarn twenty build` **aus Ihrem Arbeitsbereichsschema generiert** und ist daher vollständig typisiert, passend zu Ihren Objekten und Feldern.
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+Der Client verwendet eine Selection-Set-Syntax: Übergeben Sie `true`, um ein Feld einzuschließen, verwenden Sie `__args` für Argumente, und verschachteln Sie Objekte für Relationen. Sie erhalten vollständige Autovervollständigung und Typprüfung basierend auf Ihrem Arbeitsbereichsschema.
+
+<Note>
+**Der CoreApiClient wird zur Entwicklungs-/Build-Zeit generiert.** Wenn Sie ihn verwenden, ohne zuvor `yarn twenty dev` oder `yarn twenty build` ausgeführt zu haben, wird ein Fehler ausgelöst. Die Generierung erfolgt automatisch — die CLI inspiziert das GraphQL-Schema Ihres Arbeitsbereichs und erzeugt mit `@genql/cli` einen typisierten Client.
+</Note>
+
+#### Verwendung von CoreSchema für Typannotationen
+
+`CoreSchema` stellt TypeScript-Typen bereit, die Ihren Arbeitsbereichsobjekten entsprechen — nützlich zum Typisieren von Komponentenzustand oder Funktionsparametern:
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="Konfiguration des Arbeitsbereichs, Anwendungen und Dateiuploads">
+
+`MetadataApiClient` ist im SDK bereits vorgefertigt enthalten (keine Generierung erforderlich). Er fragt den Endpunkt `/metadata` nach Arbeitsbereichskonfiguration, Anwendungen und Datei-Uploads ab.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### Dateien hochladen
+
+Der `MetadataApiClient` enthält eine Methode `uploadFile`, um Dateien an Felder des Typs Datei anzuhängen:
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| Parameter                          | Typ      | Beschreibung                                                          |
+| ---------------------------------- | -------- | --------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Der Rohinhalt der Datei                                               |
+| `filename`                         | `string` | Der Name der Datei (wird für Speicherung und Anzeige verwendet)       |
+| `contentType`                      | `string` | MIME-Typ (standardmäßig `application/octet-stream`, wenn weggelassen) |
+| `fieldMetadataUniversalIdentifier` | `string` | Der `universalIdentifier` des Dateityp-Felds in Ihrem Objekt          |
+
+Hauptpunkte:
+* Sie verwendet den `universalIdentifier` des Feldes (nicht dessen arbeitsbereichsspezifische ID), sodass Ihr Upload-Code in jedem Arbeitsbereich funktioniert, in dem Ihre App installiert ist.
+* Die zurückgegebene `url` ist eine signierte URL, mit der Sie auf die hochgeladene Datei zugreifen können.
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+  Wenn Ihr Code auf Twenty ausgeführt wird (Logikfunktionen oder Frontend-Komponenten), injiziert die Plattform Anmeldedaten als Umgebungsvariablen:
+
+  * `TWENTY_API_URL` — Basis-URL der Twenty-API
+  * `TWENTY_APP_ACCESS_TOKEN` — Kurzlebiger Schlüssel, der auf die Standard-Funktionsrolle Ihrer Anwendung begrenzt ist
+
+  Sie müssen diese **nicht** an die Clients übergeben — sie lesen automatisch aus `process.env`. Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, die mit `defineApplicationRole()` deklariert wird (oder über `defaultRoleUniversalIdentifier` in `application-config.ts` referenziert wird).
+</Note>

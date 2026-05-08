@@ -2,8 +2,17 @@ import { localizeHref, stripLocale } from '../localize-href';
 
 describe('localizeHref', () => {
   it('does not emit locale prefixes for locales the website does not publish yet', () => {
-    expect(localizeHref('fr-FR', '/pricing')).toBe('/pricing');
     expect(localizeHref('de-DE', '/pricing')).toBe('/pricing');
+  });
+
+  it('emits the URL-segment prefix (not the AppLocale) for published non-default locales', () => {
+    expect(localizeHref('fr-FR', '/pricing')).toBe('/fr/pricing');
+    expect(localizeHref('fr-FR', '/')).toBe('/fr');
+  });
+
+  it('strips the canonical /fr URL segment when re-localising to the default locale', () => {
+    expect(localizeHref('en', '/fr/pricing')).toBe('/pricing');
+    expect(localizeHref('en', '/fr')).toBe('/');
   });
 
   it('returns paths unprefixed for the default locale (English at root)', () => {
@@ -12,7 +21,7 @@ describe('localizeHref', () => {
   });
 
   it('keeps the root path unprefixed for unpublished locales', () => {
-    expect(localizeHref('fr-FR', '/')).toBe('/');
+    expect(localizeHref('de-DE', '/')).toBe('/');
   });
 
   it('preserves query strings and hash fragments', () => {
@@ -24,19 +33,18 @@ describe('localizeHref', () => {
     );
   });
 
-  it('strips legacy locale prefixes when targeting an unpublished locale', () => {
-    expect(localizeHref('fr-FR', '/de-DE/why-twenty')).toBe('/why-twenty');
-    expect(localizeHref('fr-FR', '/fr-FR/pricing')).toBe('/pricing');
-  });
-
   it('strips a redundant /en prefix when targeting the default locale', () => {
-    expect(localizeHref('en', '/en/why-twenty')).toBe('/why-twenty');
+    expect(localizeHref('en', '/en/resources/why-twenty')).toBe(
+      '/resources/why-twenty',
+    );
     expect(localizeHref('en', '/en')).toBe('/');
   });
 
   it('strips an /en-prefixed path when targeting an unpublished locale', () => {
-    expect(localizeHref('fr-FR', '/en/why-twenty')).toBe('/why-twenty');
-    expect(localizeHref('fr-FR', '/en')).toBe('/');
+    expect(localizeHref('de-DE', '/en/resources/why-twenty')).toBe(
+      '/resources/why-twenty',
+    );
+    expect(localizeHref('de-DE', '/en')).toBe('/');
   });
 
   it('passes external https URLs through unchanged', () => {
@@ -64,33 +72,35 @@ describe('localizeHref', () => {
     expect(localizeHref('en', '../parent')).toBe('../parent');
   });
 
-  it('handles a locale segment immediately followed by a query string', () => {
+  it('handles a published locale segment immediately followed by a query string', () => {
     expect(localizeHref('en', '/en?ref=hero')).toBe('/?ref=hero');
-    expect(localizeHref('fr-FR', '/en?ref=hero')).toBe('/?ref=hero');
-    expect(localizeHref('fr-FR', '/de-DE?ref=hero')).toBe('/?ref=hero');
+    expect(localizeHref('en', '/fr?ref=hero')).toBe('/?ref=hero');
   });
 
-  it('handles a locale segment immediately followed by a hash fragment', () => {
+  it('handles a published locale segment immediately followed by a hash fragment', () => {
     expect(localizeHref('en', '/en#anchor')).toBe('/#anchor');
-    expect(localizeHref('fr-FR', '/en#anchor')).toBe('/#anchor');
-    expect(localizeHref('fr-FR', '/de-DE#anchor')).toBe('/#anchor');
+    expect(localizeHref('en', '/fr#anchor')).toBe('/#anchor');
   });
 });
 
 describe('stripLocale', () => {
-  it('removes a known locale prefix from the pathname', () => {
-    expect(stripLocale('/en/why-twenty')).toBe('/why-twenty');
-    expect(stripLocale('/fr-FR/customers/9dots')).toBe('/customers/9dots');
+  it('removes a published-locale URL-segment prefix from the pathname', () => {
+    expect(stripLocale('/en/resources/why-twenty')).toBe(
+      '/resources/why-twenty',
+    );
+    expect(stripLocale('/fr/customers/9dots')).toBe('/customers/9dots');
   });
 
   it('returns the root path when the pathname is just the locale segment', () => {
     expect(stripLocale('/en')).toBe('/');
-    expect(stripLocale('/zh-CN')).toBe('/');
+    expect(stripLocale('/fr')).toBe('/');
   });
 
-  it('returns the pathname unchanged when no known locale prefix is present', () => {
-    expect(stripLocale('/why-twenty')).toBe('/why-twenty');
+  it('returns the pathname unchanged when no published locale prefix is present', () => {
+    expect(stripLocale('/resources/why-twenty')).toBe('/resources/why-twenty');
     expect(stripLocale('/')).toBe('/');
+    expect(stripLocale('/fr-FR/foo')).toBe('/fr-FR/foo');
+    expect(stripLocale('/zh-CN')).toBe('/zh-CN');
   });
 
   it('returns the pathname unchanged when the input does not start with a slash', () => {
@@ -100,8 +110,8 @@ describe('stripLocale', () => {
 
   it('preserves query and hash when the locale segment is immediately followed by them', () => {
     expect(stripLocale('/en?ref=hero')).toBe('/?ref=hero');
-    expect(stripLocale('/fr-FR#anchor')).toBe('/#anchor');
-    expect(stripLocale('/fr-FR/customers?ref=hero#top')).toBe(
+    expect(stripLocale('/fr#anchor')).toBe('/#anchor');
+    expect(stripLocale('/fr/customers?ref=hero#top')).toBe(
       '/customers?ref=hero#top',
     );
   });

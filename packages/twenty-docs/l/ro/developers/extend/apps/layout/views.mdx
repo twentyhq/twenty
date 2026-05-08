@@ -1,0 +1,43 @@
+---
+title: Vizualizări
+description: Livrați vizualizări salvate preconfigurate — ordinea coloanelor, filtre, grupuri — pentru obiectele din aplicația dvs.
+icon: listă
+---
+
+O **vizualizare** este o configurație salvată pentru modul în care sunt afișate înregistrările unui obiect: ce câmpuri apar, ordinea lor, dacă sunt vizibile și ce filtre sau grupuri sunt aplicate. Folosiți `defineView()` pentru a livra vizualizări preconfigurate împreună cu aplicația dvs. — de obicei o vizualizare index implicită pentru fiecare obiect personalizat pe care îl creați.
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## Puncte cheie
+
+* `objectUniversalIdentifier` specifică la ce obiect se aplică această vizualizare. Poate fi un obiect personalizat pe care l-ați definit sau un obiect standard Twenty.
+* `key` determină tipul vizualizării — `ViewKey.INDEX` este principala vizualizare de listă pentru obiect.
+* `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`.
+* Puteți declara, de asemenea, `filters`, `filterGroups`, `groups` și `fieldGroups` pentru configurații avansate.
+* `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
+
+## Cum apar vizualizările în interfața utilizatorului
+
+O vizualizare, de una singură, nu este accesibilă din bara laterală. Pentru a o face să apară acolo, asociați-o cu un [element de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) de tip `VIEW` care indică către `universalIdentifier` al vizualizării. Acesta este modelul canonic: fiecare obiect personalizat livrează, de obicei, o vizualizare implicită + o intrare în bara laterală care o deschide.

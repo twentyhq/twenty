@@ -180,11 +180,27 @@ const SettingsApplicationDetails = lazy(() =>
   ),
 );
 
+const SettingsApplicationConnectionDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsApplicationConnectionDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationConnectionDetail,
+  })),
+);
+
 const SettingsApplicationFrontComponentDetail = lazy(() =>
   import(
     '~/pages/settings/applications/SettingsApplicationFrontComponentDetail'
   ).then((module) => ({
     default: module.SettingsApplicationFrontComponentDetail,
+  })),
+);
+
+const SettingsApplicationCommandMenuItemDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsApplicationCommandMenuItemDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationCommandMenuItemDetail,
   })),
 );
 
@@ -421,6 +437,30 @@ const SettingsAdminIndicatorHealthStatus = lazy(() =>
   ).then((module) => ({
     default: module.SettingsAdminIndicatorHealthStatus,
   })),
+);
+
+const SettingsAdminInferredVersion = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminInferredVersion').then(
+    (module) => ({
+      default: module.SettingsAdminInferredVersion,
+    }),
+  ),
+);
+
+const SettingsAdminInstanceStatus = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminInstanceStatus').then(
+    (module) => ({
+      default: module.SettingsAdminInstanceStatus,
+    }),
+  ),
+);
+
+const SettingsAdminWorkspacesStatus = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminWorkspacesStatus').then(
+    (module) => ({
+      default: module.SettingsAdminWorkspacesStatus,
+    }),
+  ),
 );
 
 const SettingsAdminQueueDetail = lazy(() =>
@@ -763,6 +803,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsApplicationDetails />}
         />
         <Route
+          path={SettingsPath.ApplicationConnectionDetail}
+          element={<SettingsApplicationConnectionDetail />}
+        />
+        <Route
           path={SettingsPath.AvailableApplicationDetail}
           element={<SettingsAvailableApplicationDetails />}
         />
@@ -777,6 +821,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApplicationFrontComponentDetail}
           element={<SettingsApplicationFrontComponentDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationCommandMenuItemDetail}
+          element={<SettingsApplicationCommandMenuItemDetail />}
         />
         <Route
           path={SettingsPath.ApplicationViewDetail}
@@ -822,6 +870,18 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
                 replace
               />
             }
+          />
+          <Route
+            path={SettingsPath.AdminPanelInferredVersion}
+            element={<SettingsAdminInferredVersion />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelInstanceStatus}
+            element={<SettingsAdminInstanceStatus />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelWorkspacesStatus}
+            element={<SettingsAdminWorkspacesStatus />}
           />
           <Route
             path={SettingsPath.AdminPanelIndicatorHealthStatus}
