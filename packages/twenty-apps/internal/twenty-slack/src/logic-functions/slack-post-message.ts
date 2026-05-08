@@ -1,4 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
+import { isDefined } from 'twenty-shared/utils';
 
 import { SLACK_POST_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
@@ -41,7 +42,7 @@ const handler = async (
       channel: parameters.slack_channel_id,
       text: parameters.message_text,
       thread_ts:
-        parentTimestamp !== undefined && parentTimestamp.trim().length > 0
+        isDefined(parentTimestamp) && parentTimestamp.trim().length > 0
           ? parentTimestamp.trim()
           : undefined,
       mrkdwn: parameters.use_slack_markdown === true ? true : undefined,
