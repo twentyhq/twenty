@@ -8,6 +8,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class InboundEmailS3ClientProvider {
+  private s3Client: S3Client | null = null;
+
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   isConfigured(): boolean {
@@ -42,6 +44,10 @@ export class InboundEmailS3ClientProvider {
   }
 
   getClient(): S3Client {
+    if (this.s3Client) {
+      return this.s3Client;
+    }
+
     const region = this.twentyConfigService.get('STORAGE_S3_REGION');
 
     if (!isNonEmptyString(region)) {
@@ -67,6 +73,8 @@ export class InboundEmailS3ClientProvider {
       config.credentials = { accessKeyId, secretAccessKey };
     }
 
-    return new S3Client(config);
+    this.s3Client = new S3Client(config);
+
+    return this.s3Client;
   }
 }
