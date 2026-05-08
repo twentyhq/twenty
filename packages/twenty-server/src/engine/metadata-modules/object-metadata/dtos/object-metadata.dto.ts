@@ -26,7 +26,7 @@ import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-m
   disableSort: true,
   maxResultsSize: 1000,
 })
-@CursorConnection('fields', () => FieldMetadataDTO)
+@CursorConnection('fields', () => FieldMetadataDTO, { disableFilter: true })
 @CursorConnection('indexMetadatas', () => IndexMetadataDTO)
 export class ObjectMetadataDTO {
   @IDField(() => UUIDScalarType)
