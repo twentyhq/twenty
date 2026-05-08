@@ -27,6 +27,13 @@ export default defineLogicFunction({
           type: 'string',
           description: 'Optional issue description (Markdown supported).',
         },
+        priority: {
+          type: 'integer',
+          description:
+            'Issue priority: 0 = No priority, 1 = Urgent, 2 = High, 3 = Medium, 4 = Low.',
+          minimum: 0,
+          maximum: 4,
+        },
       },
       required: ['teamId', 'title'],
     },
@@ -40,6 +47,7 @@ export default defineLogicFunction({
           teamId: { type: 'string' },
           title: { type: 'string' },
           description: { type: 'string' },
+          priority: { type: 'number' },
         },
       },
     ],

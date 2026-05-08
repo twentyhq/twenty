@@ -49,6 +49,7 @@ export const createLinearIssueHandler = async (
         teamId: input.teamId,
         title: input.title,
         description: input.description,
+        ...(input.priority !== undefined && { priority: input.priority }),
       },
     },
   });
