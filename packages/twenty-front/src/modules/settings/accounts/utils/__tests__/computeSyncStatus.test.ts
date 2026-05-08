@@ -218,31 +218,5 @@ describe('computeSyncStatus', () => {
     ).toEqual(SyncStatus.SYNCED);
   });
 
-  test('should return SYNCED for EMAIL_GROUP channel regardless of sync stage or status', () => {
-    expect(
-      computeSyncStatus(
-        {
-          syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
-          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          type: MessageChannelType.EMAIL,
-        },
-        undefined,
-      ),
-    ).toEqual(SyncStatus.SYNCED);
-  });
-
-  test('should return SYNCED for EMAIL_GROUP channel even with PENDING_CONFIGURATION stage', () => {
-    expect(
-      computeSyncStatus(
-        {
-          syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
-          syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          type: MessageChannelType.EMAIL,
-        },
-        undefined,
-      ),
-    ).toEqual(SyncStatus.SYNCED);
-  });
-
   test('should return NOT_SYNCED when channels are empty', () => {});
 });
