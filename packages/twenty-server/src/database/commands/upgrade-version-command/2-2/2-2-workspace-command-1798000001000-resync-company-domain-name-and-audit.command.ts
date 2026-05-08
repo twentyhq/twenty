@@ -1,12 +1,18 @@
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { Command } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { getAllCompanyDomains } from 'src/modules/company/utils/get-all-company-domains.util';
 
@@ -14,13 +20,17 @@ import { getAllCompanyDomains } from 'src/modules/company/utils/get-all-company-
 @Command({
   name: 'upgrade:2-2:resync-company-domain-name-and-audit',
   description:
-    'Re-sync standard fields so the Company.domainName max-values cap is dropped, and report any pre-existing duplicate domains.',
+    'Drop the maxNumberOfValues:1 cap on Company.domainName for existing workspaces and report any pre-existing duplicate domains.',
 })
 export class ResyncCompanyDomainNameAndAuditCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly twentyStandardApplicationService: TwentyStandardApplicationService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(workspaceIteratorService);
   }
@@ -32,27 +42,14 @@ export class ResyncCompanyDomainNameAndAuditCommand extends ActiveOrSuspendedWor
     const isDryRun = options.dryRun ?? false;
     const prefix = isDryRun ? '[DRY RUN] ' : '';
 
-    this.logger.log(
-      `${prefix}Re-syncing Company.domainName field metadata for workspace ${workspaceId}`,
-    );
-
-    if (!isDryRun) {
-      try {
-        await this.twentyStandardApplicationService.synchronizeTwentyStandardApplicationOrThrow(
-          { workspaceId },
-        );
-      } catch (error) {
-        // Tolerate sync failures so the upgrade chain isn't blocked. The
-        // primary effect of this command (dropping the Company.domainName
-        // max-values cap) is delivered by the multi-domain commit
-        // f508691d39 directly. The audit step below is the only remaining
-        // useful work and can run independently.
-        this.logger.warn(
-          `${prefix}Standard application sync failed for workspace ${workspaceId} — continuing with audit. ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-      }
+    try {
+      await this.dropMaxNumberOfValuesCap({ workspaceId, isDryRun, prefix });
+    } catch (error) {
+      this.logger.warn(
+        `${prefix}Failed to drop maxNumberOfValues cap on Company.domainName for workspace ${workspaceId}. ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
     }
 
     try {
@@ -64,6 +61,78 @@ export class ResyncCompanyDomainNameAndAuditCommand extends ActiveOrSuspendedWor
         }`,
       );
     }
+  }
+
+  private async dropMaxNumberOfValuesCap({
+    workspaceId,
+    isDryRun,
+    prefix,
+  }: {
+    workspaceId: string;
+    isDryRun: boolean;
+    prefix: string;
+  }): Promise<void> {
+    const companyObjectMetadata = await this.objectMetadataRepository.findOne({
+      where: { workspaceId, nameSingular: 'company' },
+    });
+
+    if (!isDefined(companyObjectMetadata)) {
+      this.logger.warn(
+        `${prefix}No Company object metadata found in workspace ${workspaceId} — skipping cap removal`,
+      );
+
+      return;
+    }
+
+    const fieldMetadata = await this.fieldMetadataRepository.findOne({
+      where: {
+        workspaceId,
+        objectMetadataId: companyObjectMetadata.id,
+        name: 'domainName',
+      },
+    });
+
+    if (!isDefined(fieldMetadata)) {
+      this.logger.warn(
+        `${prefix}No Company.domainName field metadata in workspace ${workspaceId} — skipping cap removal`,
+      );
+
+      return;
+    }
+
+    const settings = (fieldMetadata.settings ?? {}) as Record<string, unknown>;
+
+    if (!('maxNumberOfValues' in settings)) {
+      this.logger.log(
+        `${prefix}Company.domainName cap already lifted for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    if (isDryRun) {
+      this.logger.log(
+        `${prefix}Would drop maxNumberOfValues cap on Company.domainName for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    const { maxNumberOfValues: _droppedCap, ...remainingSettings } = settings;
+    const newSettings =
+      Object.keys(remainingSettings).length > 0 ? remainingSettings : null;
+
+    await this.fieldMetadataRepository.update(fieldMetadata.id, {
+      settings: newSettings as FieldMetadataEntity['settings'],
+    });
+
+    await this.workspaceCacheService.flush(workspaceId, [
+      'flatFieldMetadataMaps',
+    ]);
+
+    this.logger.log(
+      `Dropped maxNumberOfValues cap on Company.domainName for workspace ${workspaceId}`,
+    );
   }
 
   private async auditDomainCollisions({
