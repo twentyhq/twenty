@@ -15,7 +15,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.NOT_SYNCED,
@@ -31,7 +31,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.NOT_SYNCED,
@@ -47,7 +47,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.ACTIVE,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.ACTIVE,
@@ -63,7 +63,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
           syncStage: MessageChannelSyncStage.FAILED,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.FAILED_UNKNOWN,
@@ -79,7 +79,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
           syncStage: MessageChannelSyncStage.FAILED,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.ACTIVE,
@@ -95,7 +95,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
           syncStage: MessageChannelSyncStage.FAILED,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.ACTIVE,
@@ -111,7 +111,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.ACTIVE,
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.FAILED_UNKNOWN,
@@ -127,7 +127,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.ACTIVE,
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
@@ -143,7 +143,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.ONGOING,
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
 
         {
@@ -160,7 +160,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.ACTIVE,
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.ONGOING,
@@ -176,7 +176,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.NOT_SYNCED,
@@ -192,7 +192,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.ACTIVE,
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.NOT_SYNCED,
@@ -208,7 +208,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         {
           syncStatus: CalendarChannelSyncStatus.ACTIVE,
@@ -224,7 +224,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         undefined,
       ),
@@ -237,7 +237,7 @@ describe('computeSyncStatus', () => {
         {
           syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          type: MessageChannelType.EMAIL
+          type: MessageChannelType.EMAIL,
         },
         undefined,
       ),
