@@ -17,11 +17,13 @@ fields, relations), and migrate workflows.
 
 | Layer | How it's promoted |
 |---|---|
+| **User-visible state** | Maintenance handler 503-page on the prod `twenty` service for the destructive window (Step 0g on, Step 12 off; briefly off again for Step 8 / 10a) |
+| **Recovery point** | Fresh `pg_dump` to S3 immediately before any non-read-only action (Step 0h) — recovery point if anything in Steps 4–8 corrupts prod |
 | **Code** | Merge `uat` → `prod`; Railway auto-deploys `prod` to production |
-| **TypeORM migrations** | Always run `yarn database:migrate:prod` after every deploy |
-| **Twenty upgrade commands** | Run if version bumped (one minor version at a time) |
-| **Custom objects / fields / relations** | Diff UAT vs prod → write migration scripts → dry-run → apply |
-| **Workflows** | Export from UAT workspace Postgres, recreate in prod (see Step 8) |
+| **Instance commands (TypeORM migrations + DDL)** | `run-instance-commands --force` after every deploy (Step 5) |
+| **Twenty upgrade commands** | `upgrade` if version bumped (Step 6); cross-version sequence runs in one go |
+| **Custom objects / fields / relations** | Diff UAT vs prod → write migration scripts → dry-run → apply (Step 8); MORPH_RELATION deletes go via direct SQL, not the API |
+| **Workflows** | Export from UAT workspace Postgres, recreate in prod (Step 11) |
 
 ## Repo layout
 
@@ -44,36 +46,47 @@ Work through each step in order. **Do not skip steps.**
 This step produces a complete picture of what the deployment will do. Complete
 it and review the results with the user before touching any git or Railway state.
 
-#### 0a. Collect API keys
+#### 0a. Source API keys from `.env`
 
-Ask the user for both:
+Both keys are stored in `/home/clive/_Projects/stratum/.env` as
+`TWENTY_UAT_API_KEY` / `TWENTY_PROD_API_KEY` (and matching `TWENTY_UAT_URL` /
+`TWENTY_PROD_URL`). Source the file before running diff/migration scripts:
 
-> "Please provide your **UAT** Twenty API key and your **production** Twenty API key
-> (Settings → API & Webhooks → API Keys in each environment)."
+```bash
+set -a; . /home/clive/_Projects/stratum/.env; set +a
+```
+
+If those env vars aren't set (fresh checkout or different machine), ask the
+user to copy them from Settings → API & Webhooks → API Keys in each environment.
 
 #### 0b. Metadata diff — find all gaps between UAT and production
 
 ```bash
-cd /home/clive/_Projects/stratum
-SOURCE_KEY=<uat-api-key> TARGET_KEY=<prod-api-key> \
-  python3 scripts/diff-environments.py
+cd /home/clive/_Projects/stratum/twenty/source/scripts/stratum
+SOURCE_KEY="$TWENTY_UAT_API_KEY" TARGET_KEY="$TWENTY_PROD_API_KEY" \
+  python3 diff-environments.py
 ```
 
 Review the output carefully:
 - Custom objects in UAT but missing in production
 - Custom fields (on any object) in UAT but missing in production
+- Same-name fields whose label / options / settings differ — pay attention to
+  these too, the diff script flags them as "EXTRA in target" or similar
 
 If the diff reveals gaps, **write and test the Python migration scripts now**
 (see Step 7 below) — before the code is deployed. Do not proceed to Step 1
 until migration scripts exist for all gaps.
 
+> **Polarity reminder:** in `diff-environments.py` output, `EXTRA` means
+> "in target (prod) but NOT in source (UAT)", and `MISSING` means "in source
+> but NOT in target". Read the labels carefully — getting the direction wrong
+> led to writing migrations that ran the wrong way on 2026-05-09.
+
 #### 0c. Migration status — check what Python migrations are applied in production
 
 ```bash
-cd /home/clive/_Projects/stratum
-TWENTY_API_KEY=<prod-api-key> \
-  TWENTY_API_URL=https://twenty-production-eea0.up.railway.app/graphql \
-  python3 scripts/run-migrations.py --status
+TWENTY_API_KEY="$TWENTY_PROD_API_KEY" TWENTY_API_URL="$TWENTY_PROD_URL" \
+  python3 run-migrations.py --status
 ```
 
 Any `✗ NOT APPLIED` or `~ PARTIAL` entries must be accounted for before continuing.
@@ -113,6 +126,67 @@ Workflows to check: [list any new workflows in UAT]
 ```
 
 Get explicit confirmation before continuing.
+
+#### 0g. Put production into maintenance mode
+
+Before any non-read-only action on prod, ask the user to set a Custom Start
+Command on the production `twenty` service that returns 503 to all HTTP traffic.
+This protects users from seeing inconsistent metadata or partial-state errors
+during the deploy + DDL window.
+
+> **Ask the user:**
+>
+> "Please set a Custom Start Command on the **production** `twenty` service in
+> Railway dashboard → Settings → Deploy:
+>
+> ```
+> node -e "require('http').createServer((_,r)=>{r.writeHead(503,{'Content-Type':'text/html'});r.end('<h1>Maintenance in progress</h1><p>Stratum CRM will be back shortly.</p>');}).listen(process.env.PORT)"
+> ```
+>
+> Save → Railway will redeploy the service with the maintenance handler. Tell
+> me when users see the maintenance page."
+
+Wait for explicit confirmation before continuing.
+
+**What still works under maintenance:**
+- `railway ssh --service twenty …` and any commands run inside the container
+  (`node dist/command/command.js …`, `psql`, etc.) — the maintenance handler
+  only replaces the HTTP server, not the container.
+
+**What's blocked under maintenance:**
+- HTTP API: `/graphql`, `/metadata`, `/rest/*` all return 503. Anything that
+  goes via the public URL (the Python migration scripts, `diff-environments.py`,
+  `curl https://twenty-production-…/graphql`) will fail with 503 until
+  maintenance is off again.
+- Step 8 (metadata migrations) and Step 10a (metadata diff) need the HTTP API
+  and have an explicit "maintenance off" instruction.
+
+#### 0h. Fresh pg_dump before any destructive action
+
+The nightly `twenty-db-backup` service runs at 02:00 UTC. For a push happening
+later in the day, force a fresh backup right now so the recovery point is
+seconds before the deploy starts:
+
+```bash
+railway ssh --service twenty-db-backup --environment production -- \
+  '/bin/bash /scripts/backup.sh'
+```
+
+Confirm the new file landed in S3:
+
+```bash
+railway ssh --service twenty-db-backup --environment production -- \
+  'AWS_ACCESS_KEY_ID=$S3_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$S3_SECRET_ACCESS_KEY \
+   aws s3 ls "s3://${S3_BUCKET}/${S3_PREFIX}/" --endpoint-url $S3_ENDPOINT --region $S3_REGION \
+   | tail -3'
+```
+
+Note the filename (e.g. `railway_2026-05-09T08:42:00Z.sql.gz`) — it's the
+recovery point if anything in Steps 4–8 corrupts the prod DB. The surgical
+restore pattern used on 2026-05-09 (download backup, extract specific tables
+into a recovery schema, ALTER + UPDATE FROM, drop recovery schema) is documented
+in this repo's git history under "fix(scripts): build_recovery.py …" — re-use
+that approach if you need it.
 
 ---
 
@@ -256,20 +330,58 @@ railway ssh --service twenty --environment production -- \
 
 ### 8. Metadata migrations (objects, fields, relations)
 
-Scripts live in `scripts/migrations/NNN-description.py` and are run by
-`scripts/run-migrations.py`. All scripts are idempotent.
+Scripts live in `scripts/stratum/migrations/NNN-description.py` (under
+`twenty/source/`) and are run by `scripts/stratum/run-migrations.py`.
+All scripts are idempotent.
 
 If migration scripts were written/updated in Step 0, they are ready to apply.
+
+> **⚠️ MORPH_RELATION DANGER — read before any migration that deletes a
+> MORPH_RELATION variant field**
+>
+> Twenty's `delete_field` API on a MORPH_RELATION variant cascades and drops
+> *every* `target*` column on the morph host object at the DB level. Hit
+> this on 2026-05-09 with migration 019: deleting `attachment.targetAccounttag`
+> wiped all 24 `target*` columns on `attachment`, plus the same on
+> `noteTarget`/`taskTarget`/`timelineActivity` — 84 columns + 17,796 rows of
+> foreign-key data dropped, requiring full surgical restore from backup.
+>
+> If a planned migration deletes a MORPH_RELATION variant, **don't** use the
+> Python migration script. Instead, drop just the single column with direct
+> SQL, then DELETE the single fieldMetadata row, then `cache:flat-cache-invalidate`.
+> Test on UAT first.
+
+> **Maintenance handler must be off for this step.** The Python scripts hit
+> the prod `/metadata` HTTP endpoint, which the maintenance handler intercepts
+> with a 503. Ask the user:
+>
+> "Please clear the Custom Start Command on the production `twenty` service
+> in Railway dashboard → Settings → Deploy and save. Wait for the new build
+> to come up (~10 min) and tell me when prod returns 200 to a basic GraphQL
+> probe."
+>
+> ```bash
+> set -a; . /home/clive/_Projects/stratum/.env; set +a
+> curl -sS -o /dev/null -w "%{http_code}\n" -H "Authorization: Bearer $TWENTY_PROD_API_KEY" \
+>   -X POST https://twenty-production-eea0.up.railway.app/graphql \
+>   -H "Content-Type: application/json" -d '{"query":"{ __typename }"}'
+> ```
+>
+> If you anticipate further destructive work after this step, ask the user
+> to put maintenance back on after Step 8 completes; otherwise leave it off
+> through Step 11.
+
+Working dir for the next three sub-steps: `/home/clive/_Projects/stratum/twenty/source/scripts/stratum/`.
 
 #### 8a — Dry-run against UAT first
 
 Verify script logic against UAT (where all objects already exist):
 
 ```bash
-cd /home/clive/_Projects/stratum
-TWENTY_API_KEY=<uat-api-key> \
-  TWENTY_API_URL=https://twenty-uat-0a4c.up.railway.app/graphql \
-  python3 scripts/run-migrations.py --dry-run
+set -a; . /home/clive/_Projects/stratum/.env; set +a
+cd /home/clive/_Projects/stratum/twenty/source/scripts/stratum
+TWENTY_API_KEY="$TWENTY_UAT_API_KEY" TWENTY_API_URL="$TWENTY_UAT_URL" \
+  python3 run-migrations.py --dry-run
 ```
 
 All steps for existing objects/fields should show `[skip]`. Any `[error]`
@@ -278,9 +390,8 @@ lines indicate a missing dependency — fix the script before continuing.
 #### 8b — Dry-run against production
 
 ```bash
-TWENTY_API_KEY=<prod-api-key> \
-  TWENTY_API_URL=https://twenty-production-eea0.up.railway.app/graphql \
-  python3 scripts/run-migrations.py --dry-run
+TWENTY_API_KEY="$TWENTY_PROD_API_KEY" TWENTY_API_URL="$TWENTY_PROD_URL" \
+  python3 run-migrations.py --dry-run
 ```
 
 Review what will be created. Dependency `[error]` lines for new objects are
@@ -289,10 +400,14 @@ expected in dry-run mode — they will not appear in the live run.
 #### 8c — Apply to production
 
 ```bash
-TWENTY_API_KEY=<prod-api-key> \
-  TWENTY_API_URL=https://twenty-production-eea0.up.railway.app/graphql \
-  python3 scripts/run-migrations.py
+TWENTY_API_KEY="$TWENTY_PROD_API_KEY" TWENTY_API_URL="$TWENTY_PROD_URL" \
+  python3 run-migrations.py
 ```
+
+If a particular migration is destructive (e.g. deletes fields), apply with
+`--only <id>` and pause for explicit user confirmation before running it.
+For MORPH_RELATION-deleting migrations, see the warning above — use direct
+SQL instead.
 
 ---
 
@@ -304,7 +419,7 @@ customisations made on UAT via the `manage-record-layout` skill must be replayed
 on production using the idempotent SQL scripts in:
 
 ```
-/home/clive/_Projects/stratum/scripts/layout-migrations/
+/home/clive/_Projects/stratum/twenty/source/scripts/stratum/layout-migrations/
   NNN-<object>-layout.sql
 ```
 
@@ -312,7 +427,7 @@ For each script:
 
 1. **Test on UAT first** — should produce only `NOTICE` lines, no inserts/deletes:
    ```bash
-   B64=$(base64 -w0 /home/clive/_Projects/stratum/scripts/layout-migrations/NNN-xxx.sql)
+   B64=$(base64 -w0 /home/clive/_Projects/stratum/twenty/source/scripts/stratum/layout-migrations/NNN-xxx.sql)
    railway ssh --environment uat --service twenty -- \
      "printf '%s' '$B64' | base64 -d > /tmp/m.sql && psql \"\$PG_DATABASE_URL\" -f /tmp/m.sql"
    ```
@@ -341,9 +456,10 @@ This step is not optional. The deployment is not complete until the diff is clea
 #### 10a — Re-run the metadata diff
 
 ```bash
-cd /home/clive/_Projects/stratum
-SOURCE_KEY=<uat-api-key> TARGET_KEY=<prod-api-key> \
-  python3 scripts/diff-environments.py
+set -a; . /home/clive/_Projects/stratum/.env; set +a
+cd /home/clive/_Projects/stratum/twenty/source/scripts/stratum
+SOURCE_KEY="$TWENTY_UAT_API_KEY" TARGET_KEY="$TWENTY_PROD_API_KEY" \
+  python3 diff-environments.py
 ```
 
 **Expected result: zero gaps.** If gaps remain, return to Step 8 and resolve them.
@@ -351,9 +467,8 @@ SOURCE_KEY=<uat-api-key> TARGET_KEY=<prod-api-key> \
 #### 10b — Re-run migration status
 
 ```bash
-TWENTY_API_KEY=<prod-api-key> \
-  TWENTY_API_URL=https://twenty-production-eea0.up.railway.app/graphql \
-  python3 scripts/run-migrations.py --status
+TWENTY_API_KEY="$TWENTY_PROD_API_KEY" TWENTY_API_URL="$TWENTY_PROD_URL" \
+  python3 run-migrations.py --status
 ```
 
 All migrations should show `✓ APPLIED`.
@@ -419,6 +534,37 @@ For each workflow in UAT:
 > GraphQL API could automate this. The relevant mutations are `createOneWorkflow`
 > and `createOneWorkflowVersion`. Field/object IDs must be re-resolved against
 > the production metadata API before creating.
+
+---
+
+### 12. Take production out of maintenance mode
+
+Final step. After all Step 10 verification passes and any Step 11 workflow
+recreation is done, restore prod to normal operation.
+
+> **Ask the user:**
+>
+> "Please clear the Custom Start Command on the production `twenty` service
+> in Railway dashboard → Settings → Deploy and save. Railway will redeploy
+> with the normal Twenty start command (~10 min). Tell me when the build
+> completes and the maintenance page is gone."
+
+If you set the same Custom Start Command on `twenty-worker`, clear it there
+too.
+
+Wait for confirmation, then run a final smoke check:
+
+```bash
+set -a; . /home/clive/_Projects/stratum/.env; set +a
+curl -sS -o /dev/null -w "GraphQL: %{http_code}\n" \
+  -H "Authorization: Bearer $TWENTY_PROD_API_KEY" \
+  -X POST https://twenty-production-eea0.up.railway.app/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query":"{ currentUser { id email } }"}'
+```
+
+Should return 200 with the current user. If you see a 503 still, the
+Custom Start Command wasn't fully cleared — ask the user to check.
 
 ---
 
