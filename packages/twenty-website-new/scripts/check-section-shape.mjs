@@ -44,12 +44,9 @@ async function readFileOrNull(absPath) {
 }
 
 async function findBarrel(sectionDir) {
-  const sectionName = path.basename(sectionDir);
   const candidates = [
     path.join(sectionDir, 'components', 'index.ts'),
     path.join(sectionDir, 'components', 'index.tsx'),
-    path.join(sectionDir, `${sectionName}.ts`),
-    path.join(sectionDir, `${sectionName}.tsx`),
     path.join(sectionDir, 'index.ts'),
     path.join(sectionDir, 'index.tsx'),
   ];

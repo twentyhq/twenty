@@ -38,6 +38,11 @@ export const SelectInput = styled.select`
   &:hover {
     border-color: rgba(255, 255, 255, 0.25);
   }
+
+  &:focus-visible {
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+  }
 `;
 
 type SelectControlProps = {

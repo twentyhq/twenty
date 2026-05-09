@@ -23,10 +23,15 @@ export function useEnterpriseActivation(
 
   useEffect(() => {
     if (!sessionId) {
+      setResult(null);
       setError('No session ID provided. Please complete the checkout first.');
       setLoading(false);
       return;
     }
+
+    setResult(null);
+    setError(null);
+    setLoading(true);
 
     const abortController = new AbortController();
 
