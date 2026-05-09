@@ -201,7 +201,7 @@ msgstr "Visite o website do Twenty"
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Github"
-msgstr "Github"
+msgstr "GitHub"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
