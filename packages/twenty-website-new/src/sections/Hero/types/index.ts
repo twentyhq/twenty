@@ -28,4 +28,4 @@ export type {
   HeroSidebarItem,
   HeroTablePageDefinition,
   HeroVisualType,
-} from './HeroHomeData';
+} from './hero-home-data';

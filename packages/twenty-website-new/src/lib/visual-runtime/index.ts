@@ -16,8 +16,8 @@ export {
 } from './active-webgl-context-budget';
 
 export { useWebGlPolicy } from './use-webgl-policy';
-export { WebGlErrorBoundary } from './webgl-error-boundary';
-export { WebGlMount } from './webgl-mount';
+export { WebGlErrorBoundary } from './WebglErrorBoundary';
+export { WebGlMount } from './WebglMount';
 export { loadVisualImage } from './load-visual-image';
 export {
   createVisualMountScheduler,

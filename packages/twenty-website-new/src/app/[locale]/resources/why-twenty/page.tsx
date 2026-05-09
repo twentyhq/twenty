@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { MENU_DATA } from '@/sections/Menu/data';
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import {
@@ -8,10 +7,10 @@ import {
 } from '@/lib/i18n/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Editorial } from '@/sections/Editorial/components';
-import { Hero } from '@/sections/Hero/components';
+import { Editorial } from '@/sections/Editorial';
+import { Hero } from '@/sections/Hero';
 import { Marquee } from '@/sections/Marquee';
-import { Menu } from '@/sections/Menu/components';
+import { Menu, MENU_DATA } from '@/sections/Menu';
 import { Signoff } from '@/sections/Signoff';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';

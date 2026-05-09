@@ -1,6 +1,6 @@
 import type { MessageDescriptor } from '@lingui/core';
 import type { ReactNode } from 'react';
-import type { PlansHostingMode, PlansTierId } from '@/sections/Plans/types';
+import type { PlansHostingMode, PlansTierId } from '@/sections/Plans';
 
 export type PlanTableTierColumnType = {
   id: PlansTierId;

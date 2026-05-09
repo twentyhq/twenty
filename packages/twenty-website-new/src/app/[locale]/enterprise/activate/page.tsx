@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { MENU_DATA } from '@/sections/Menu/data';
 import { EnterpriseActivateClient } from '@/app/[locale]/enterprise/activate/EnterpriseActivateClient';
 import {
   Body,
@@ -14,8 +13,8 @@ import {
 } from '@/lib/i18n/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
 import { Suspense } from 'react';

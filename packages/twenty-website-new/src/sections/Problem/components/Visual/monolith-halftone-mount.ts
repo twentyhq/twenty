@@ -457,9 +457,7 @@ function createAbortTask(signal: AbortSignal) {
   return { cleanup, promise };
 }
 
-export async function mountHalftoneCanvas(
-  options: MountHalftoneCanvasOptions,
-) {
+export async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
   const { container, imageUrl, signal } = options;
   const tuning = DEFAULT_TUNING;
 

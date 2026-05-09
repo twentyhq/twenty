@@ -4,7 +4,7 @@ import {
   type BaseButtonProps,
   buttonBaseStyles,
 } from './BaseButton';
-import type { SubmitButtonType } from './types/SubmitButtonType';
+import type { SubmitButtonType } from './types/submit-button-type';
 
 const StyledSubmitButton = styled.button`
   ${buttonBaseStyles}

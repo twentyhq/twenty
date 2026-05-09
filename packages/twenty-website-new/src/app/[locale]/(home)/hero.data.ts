@@ -4,7 +4,7 @@ import type {
   HeroKanbanPageDefinition,
   HeroTablePageDefinition,
   HeroVisualType,
-} from '@/sections/Hero/types';
+} from '@/sections/Hero';
 import { SHARED_PEOPLE_AVATAR_URLS } from '@/content/site/asset-paths';
 
 const PEOPLE_AVATAR_URLS = {

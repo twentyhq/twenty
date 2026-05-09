@@ -2,7 +2,7 @@
 
 import { ScrollProgressEffect } from '@/lib/scroll';
 import { useStepperMdUp } from '@/sections/Stepper';
-import type { HomeStepperStepType } from '@/sections/HomeStepper/types/HomeStepperStep';
+import type { HomeStepperStepType } from '@/sections/HomeStepper/types/home-stepper-step';
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { LeftColumn } from './LeftColumn';
 import { RightColumn } from './RightColumn';

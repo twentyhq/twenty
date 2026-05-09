@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
-import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { DEMO_DATA } from '@/app/[locale]/product/demo.data';
@@ -8,7 +7,6 @@ import {
   FEATURE_MASK,
   FEATURE_TILES,
 } from '@/app/[locale]/product/feature.data';
-import type { ProductStepperStepType } from '@/sections/ProductStepper/Flow';
 import { TABS } from '@/app/[locale]/product/tabs.data';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/product/three-cards.data';
 import {
@@ -26,12 +24,15 @@ import {
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Feature } from '@/sections/Feature';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
-import { Demo } from '@/sections/Demo/components';
-import { ProductStepper } from '@/sections/ProductStepper/ProductStepper';
-import { Tabs } from '@/sections/Tabs/components';
-import { ThreeCards } from '@/sections/ThreeCards/components';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import { Demo } from '@/sections/Demo';
+import {
+  ProductStepper,
+  type ProductStepperStepType,
+} from '@/sections/ProductStepper';
+import { Tabs } from '@/sections/Tabs';
+import { ThreeCards } from '@/sections/ThreeCards';
 import { theme } from '@/theme';
 import {
   buildBreadcrumbListJsonLd,

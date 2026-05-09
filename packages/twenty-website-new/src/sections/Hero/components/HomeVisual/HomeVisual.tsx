@@ -14,7 +14,7 @@ import { HomeVisualViewbar } from './Shell/HomeVisualViewbar';
 import {
   preloadDeferredHomeVisualPages,
   renderPageDefinition,
-} from './Shell/home-visual-page-renderers';
+} from './Shell/HomeVisualPageRenderers';
 import { useHomeVisualState } from './Shell/use-home-visual-state';
 import { WindowOrderProvider } from './WindowOrder/WindowOrderProvider';
 

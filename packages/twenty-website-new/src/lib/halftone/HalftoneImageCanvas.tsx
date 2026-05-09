@@ -15,7 +15,7 @@ import {
   HalftoneCanvas,
   type HalftoneImageInteractionSettings,
   type HalftoneSnapshotFn,
-} from './halftone-canvas';
+} from './HalftoneCanvas';
 import type { HalftoneExportPose, HalftoneStudioSettings } from './state';
 import type { HalftoneImageFit } from './footprint';
 

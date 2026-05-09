@@ -5,7 +5,7 @@ import {
   type BaseButtonProps,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
-import type { LinkButtonType } from '@/design-system/components/Button/types/LinkButtonType';
+import type { LinkButtonType } from '@/design-system/components/Button/types/link-button-type';
 import { styled } from '@linaria/react';
 
 import { LocalizedLink } from './LocalizedLink';

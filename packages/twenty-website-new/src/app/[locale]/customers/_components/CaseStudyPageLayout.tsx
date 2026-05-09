@@ -1,9 +1,8 @@
 import { getCaseStudyPalette, type CaseStudyData } from '@/lib/customers';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { CaseStudy } from '@/sections/CaseStudy/components';
-import { Menu } from '@/sections/Menu/components';
-import { MENU_DATA } from '@/sections/Menu/data';
+import { CaseStudy } from '@/sections/CaseStudy';
+import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 
 import { CustomersCaseStudySignoff } from './CustomersCaseStudySignoff';

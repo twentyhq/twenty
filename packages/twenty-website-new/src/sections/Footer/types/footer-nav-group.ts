@@ -1,6 +1,6 @@
 import type { MessageDescriptor } from '@lingui/core';
-import type { FooterCtaType } from './FooterCta';
-import type { FooterNavLinkType } from './FooterNavLink';
+import type { FooterCtaType } from './footer-cta';
+import type { FooterNavLinkType } from './footer-nav-link';
 
 export type FooterNavGroupType = {
   ctas: FooterCtaType[];

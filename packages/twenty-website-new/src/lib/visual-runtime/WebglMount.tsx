@@ -15,7 +15,7 @@ import {
   type VisualMountPriority,
 } from './visual-mount-scheduler';
 import { useWebGlPolicy } from './use-webgl-policy';
-import { WebGlErrorBoundary } from './webgl-error-boundary';
+import { WebGlErrorBoundary } from './WebglErrorBoundary';
 
 const NON_PRIORITY_ROOT_MARGIN = '50% 0px 50% 0px';
 const PRIORITY_ROOT_MARGIN = '125% 0px 125% 0px';

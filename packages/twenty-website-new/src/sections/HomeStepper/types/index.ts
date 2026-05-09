@@ -1,1 +1,1 @@
-export type { HomeStepperStepType } from './HomeStepperStep';
+export type { HomeStepperStepType } from './home-stepper-step';

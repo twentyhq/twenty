@@ -1,11 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ChangeEventHandler, type ReactNode } from 'react';
 
-import {
-  Toggle,
-  ToggleInput,
-  ToggleTrack,
-} from './ControlsFormPrimitives';
+import { Toggle, ToggleInput, ToggleTrack } from './ControlsFormPrimitives';
 
 export const Section = styled.section<{ $first?: boolean }>`
   border-top: ${(props) =>

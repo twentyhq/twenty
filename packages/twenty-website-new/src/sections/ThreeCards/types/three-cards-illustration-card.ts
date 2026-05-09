@@ -1,5 +1,5 @@
 import type { MessageDescriptor } from '@lingui/core';
-import { type ThreeCardsIllustrationCardAttributionType } from './ThreeCardsIllustrationCardAttribution';
+import { type ThreeCardsIllustrationCardAttributionType } from './three-cards-illustration-card-attribution';
 
 export type ThreeCardsIllustrationId =
   | 'connect'

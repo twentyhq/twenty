@@ -18,10 +18,9 @@ import {
   buildRouteMetadata,
   JsonLd,
 } from '@/lib/seo';
-import { Articles } from '@/sections/Articles/components';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
-import { MENU_DATA } from '@/sections/Menu/data';
+import { Articles } from '@/sections/Articles';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
 import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { css } from '@linaria/core';
 

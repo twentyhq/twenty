@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
-import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
@@ -23,13 +22,15 @@ import {
 } from '@/lib/i18n/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
+import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
 import { Signoff } from '@/sections/Signoff';
 import { Testimonials } from '@/sections/Testimonials';
-import { ThreeCards } from '@/sections/ThreeCards/components';
-import type { ThreeCardsScrollLayoutOptions } from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
+import {
+  ThreeCards,
+  type ThreeCardsScrollLayoutOptions,
+} from '@/sections/ThreeCards';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
 import { styled } from '@linaria/react';

@@ -3,9 +3,9 @@ export {
   type HalftoneImageInteractionSettings,
   type HalftoneRenderStrategy,
   type HalftoneSnapshotFn,
-} from './halftone-canvas';
-export { HalftoneImageCanvas } from './halftone-image-canvas';
-export { HalftoneModelCanvas } from './halftone-model-canvas';
+} from './HalftoneCanvas';
+export { HalftoneImageCanvas } from './HalftoneImageCanvas';
+export { HalftoneModelCanvas } from './HalftoneModelCanvas';
 
 export {
   createFallbackGeometry,

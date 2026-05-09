@@ -5,10 +5,8 @@ import { Problem, type ProblemPointType } from '@/sections/Problem';
 import { HOME_TESTIMONIALS } from '@/app/[locale]/(home)/testimonials.data';
 import { FEATURE_CARDS } from '@/app/[locale]/(home)/three-cards-feature.data';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/(home)/three-cards-illustration.data';
-import type { HomeStepperStepType } from '@/sections/HomeStepper/types/HomeStepperStep';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
-import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import {
   Body,
@@ -25,11 +23,11 @@ import {
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Helped } from '@/sections/Helped';
-import { Hero } from '@/sections/Hero/components';
-import { HomeStepper } from '@/sections/HomeStepper/components';
-import { Menu } from '@/sections/Menu/components';
+import { Hero } from '@/sections/Hero';
+import { HomeStepper, type HomeStepperStepType } from '@/sections/HomeStepper';
+import { Menu, MENU_DATA } from '@/sections/Menu';
 import { Testimonials } from '@/sections/Testimonials';
-import { ThreeCards } from '@/sections/ThreeCards/components';
+import { ThreeCards } from '@/sections/ThreeCards';
 import { buildFaqPageJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';

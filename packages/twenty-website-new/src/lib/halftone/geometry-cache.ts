@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import type * as THREE from 'three';
 import {
   loadImportedGeometry,
   type HalftoneModelLoader,
@@ -83,9 +83,7 @@ export async function getGeometryForSpec(
   return Promise.resolve(created);
 }
 
-export function disposeGeometryCache(
-  cache: Map<string, GeometryCacheEntry>,
-) {
+export function disposeGeometryCache(cache: Map<string, GeometryCacheEntry>) {
   for (const value of cache.values()) {
     if (!(value instanceof Promise)) {
       value.dispose();

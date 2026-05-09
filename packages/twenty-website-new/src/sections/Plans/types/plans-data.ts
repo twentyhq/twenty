@@ -1,6 +1,6 @@
 import type { MessageDescriptor } from '@lingui/core';
-import type { PlanIconType } from './PlanCard';
-import type { PlanPriceType } from './PlanPrice';
+import type { PlanIconType } from './plan-card';
+import type { PlanPriceType } from './plan-price';
 
 export type PlansHostingMode = 'cloud' | 'selfHost';
 export type PlansBillingPeriod = 'monthly' | 'yearly';

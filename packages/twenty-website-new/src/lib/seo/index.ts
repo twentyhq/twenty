@@ -13,5 +13,5 @@ export {
   buildReleaseListJsonLd,
   buildSoftwareApplicationJsonLd,
   JsonLd,
-} from './json-ld';
+} from './JsonLd';
 export { getAbsoluteUrl, getSiteUrl } from './site-url';

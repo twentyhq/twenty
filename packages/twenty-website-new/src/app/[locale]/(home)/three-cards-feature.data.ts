@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import type { ThreeCardsFeatureCardType } from '@/sections/ThreeCards/types/ThreeCardsFeatureCard';
+import type { ThreeCardsFeatureCardType } from '@/sections/ThreeCards';
 
 export const FEATURE_CARDS: ThreeCardsFeatureCardType[] = [
   {

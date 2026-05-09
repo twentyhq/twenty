@@ -20,7 +20,7 @@ import {
 import {
   HalftoneCanvas,
   type HalftoneSnapshotFn,
-} from '@/lib/halftone/halftone-canvas';
+} from '@/lib/halftone/HalftoneCanvas';
 import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/footprint';
 import {
   createFallbackGeometry,

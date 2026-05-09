@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { MENU_DATA } from '@/sections/Menu/data';
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { GitHubIcon } from '@/icons';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -12,9 +11,9 @@ import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels'
 import { fetchLatestGithubReleaseTag } from '@/lib/releases/fetch-latest-release-tag';
 import { getVisibleReleaseNotes } from '@/lib/releases/get-visible-releases';
 import { loadLocalReleaseNotes } from '@/lib/releases/load-local-release-notes';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
-import { ReleaseNotes } from '@/sections/ReleaseNotes/components';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import { ReleaseNotes } from '@/sections/ReleaseNotes';
 import { theme } from '@/theme';
 import { buildReleaseListJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
 import { Fragment } from 'react';

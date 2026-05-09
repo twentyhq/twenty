@@ -38,11 +38,7 @@ export {
   ValueDisplay,
 } from './ControlsPanelShell';
 
-export {
-  TabButton,
-  TabContent,
-  TabsBar,
-} from './ControlsTabs';
+export { TabButton, TabContent, TabsBar } from './ControlsTabs';
 
 export {
   Section,

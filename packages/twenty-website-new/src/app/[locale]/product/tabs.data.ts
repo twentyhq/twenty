@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-import type { TabType } from '@/sections/Tabs/types';
+import type { TabType } from '@/sections/Tabs';
 
 export const TABS: TabType[] = [
   {

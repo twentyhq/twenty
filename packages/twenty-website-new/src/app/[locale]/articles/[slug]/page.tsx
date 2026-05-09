@@ -9,9 +9,8 @@ import { localeToUrlSegment } from '@/lib/i18n/website-locale-segments';
 import { resolveLocaleParam } from '@/lib/i18n';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { buildArticleJsonLd, buildPageMetadata, JsonLd } from '@/lib/seo';
-import { Articles } from '@/sections/Articles/components';
-import { Menu } from '@/sections/Menu/components';
-import { MENU_DATA } from '@/sections/Menu/data';
+import { Articles } from '@/sections/Articles';
+import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 
 type ArticleSlugParams = LocaleRouteParams & { slug: string };

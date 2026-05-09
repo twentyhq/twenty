@@ -30,7 +30,7 @@ import {
   SliderControl,
   TabContent,
   UploadButton,
-} from './ControlsUi';
+} from './controls-ui';
 
 const DEFAULT_IMAGE_FILE_NAME = 'twenty-logo.svg';
 const DEFAULT_IMAGE_OPTION_LABEL = 'Twenty image';

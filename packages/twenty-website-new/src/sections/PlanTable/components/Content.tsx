@@ -7,7 +7,7 @@ import {
 import { CheckIcon } from '@/icons';
 import { useLingui } from '@lingui/react';
 import type { MessageDescriptor } from '@lingui/core';
-import { usePricingState } from '@/sections/Plans/context/PricingStateContext';
+import { usePricingState } from '@/sections/Plans';
 import type {
   PlanTableBodyRowDataType,
   PlanTableCellType,

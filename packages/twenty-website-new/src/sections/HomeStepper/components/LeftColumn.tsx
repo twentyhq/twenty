@@ -6,7 +6,7 @@ import { HOME_STEPPER_HOLD_FRACTIONS } from '@/sections/HomeStepper/utils/home-s
 import { theme } from '@/theme';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import type { HomeStepperStepType } from './../types/HomeStepperStep';
+import type { HomeStepperStepType } from './../types/home-stepper-step';
 import { ProgressBar } from './ProgressBar';
 
 const LeftColumnRoot = styled.div`

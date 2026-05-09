@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types/ThreeCardsIllustrationCard';
+import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards';
 
 export const ILLUSTRATION_CARDS: ThreeCardsIllustrationCardType[] = [
   {

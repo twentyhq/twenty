@@ -13,7 +13,7 @@ import type {
 import { AnimationsTab } from './controls/AnimationsTab';
 import { DesignTab } from './controls/DesignTab';
 import { ExportTab } from './controls/ExportTab';
-import { PanelShell, TabButton, TabsBar } from './controls/ControlsUi';
+import { PanelShell, TabButton, TabsBar } from './controls/controls-ui';
 
 type ControlsPanelProps = {
   activeTab: HalftoneTabId;

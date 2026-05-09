@@ -19,7 +19,7 @@ import {
   SelectControl,
   TabContent,
   ToggleControl,
-} from './ControlsUi';
+} from './controls-ui';
 
 const RESOLUTION_OPTIONS = [
   { label: '720p (1280 × 720)', value: '1280x720' },

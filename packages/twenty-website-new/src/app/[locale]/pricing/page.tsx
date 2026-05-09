@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
-import { MENU_DATA } from '@/sections/Menu/data';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { BecomePartnerButton } from '@/app/[locale]/partners/components/PartnerApplication';
 import { PLAN_TABLE_DATA } from '@/app/[locale]/pricing/plan-table.data';
@@ -13,12 +12,11 @@ import {
 } from '@/lib/i18n/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { EngagementBand } from '@/sections/EngagementBand/components';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
-import { Plans } from '@/sections/Plans/components';
-import { PricingStateProvider } from '@/sections/Plans/context/PricingStateContext';
-import { PlanTable } from '@/sections/PlanTable/components';
+import { EngagementBand } from '@/sections/EngagementBand';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import { Plans, PricingStateProvider } from '@/sections/Plans';
+import { PlanTable } from '@/sections/PlanTable';
 import { Salesforce } from '@/sections/Salesforce';
 import { theme } from '@/theme';
 import { buildFaqPageJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';

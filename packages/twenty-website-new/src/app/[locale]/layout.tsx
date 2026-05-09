@@ -24,8 +24,7 @@ import {
 import { getLocaleMessages } from '@/lib/i18n/messages-by-locale';
 import { setServerI18n } from '@/lib/i18n/set-server-i18n';
 import { ContactCalModalRoot } from '@/sections/ContactCal';
-import { Footer } from '@/sections/Footer/components';
-import { FOOTER_DATA } from '@/sections/Footer/data';
+import { Footer, FOOTER_DATA } from '@/sections/Footer';
 import { PartnerApplicationModalRoot } from '@/sections/PartnerApplication';
 
 const hostGrotesk = Host_Grotesk({
