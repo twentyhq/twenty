@@ -45,8 +45,12 @@ export function useGeometryLoader(
     }
 
     let cancelled = false;
+    const geometryCache = geometryCacheReference.current;
 
+    // Invalidate cached geometry when an imported file changes so we don't
+    // serve stale geometry from a previous file under the same key.
     if (selectedShape.kind === 'imported') {
+      geometryCache.delete(selectedShape.key);
       callbacks.onLoadStart(selectedShape.label);
     } else {
       callbacks.onLoadSuccess();
@@ -55,7 +59,7 @@ export function useGeometryLoader(
     void getGeometryForSpec(
       selectedShape,
       importedFiles[selectedShape.key],
-      geometryCacheReference.current,
+      geometryCache,
     )
       .then((geometry) => {
         if (cancelled) {

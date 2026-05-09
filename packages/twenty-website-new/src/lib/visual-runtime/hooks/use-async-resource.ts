@@ -24,22 +24,24 @@ export function useAsyncResource<T>(
 
     setResource(null);
 
-    void loader().then(
-      (result) => {
-        if (cancelled) {
-          options?.dispose?.(result);
-          return;
-        }
+    void Promise.resolve()
+      .then(() => loader())
+      .then(
+        (result) => {
+          if (cancelled) {
+            options?.dispose?.(result);
+            return;
+          }
 
-        loadedResource = result;
-        setResource(result);
-      },
-      (error) => {
-        if (!cancelled) {
-          console.error(error);
-        }
-      },
-    );
+          loadedResource = result;
+          setResource(result);
+        },
+        (error) => {
+          if (!cancelled) {
+            console.error(error);
+          }
+        },
+      );
 
     return () => {
       cancelled = true;

@@ -2,7 +2,7 @@
 
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { TAB_LABEL_WIDTH } from './controls-form-constants';
 
@@ -105,12 +105,18 @@ type ColorFieldProps = {
 export function ColorField({ ariaLabel, onChange, value }: ColorFieldProps) {
   const normalizedValue = value.toUpperCase();
   const [draftValue, setDraftValue] = useState(normalizedValue);
+  const escapePressedReference = useRef(false);
 
   useEffect(() => {
     setDraftValue(normalizedValue);
   }, [normalizedValue]);
 
   const commitDraftValue = () => {
+    if (escapePressedReference.current) {
+      escapePressedReference.current = false;
+      return;
+    }
+
     const nextValue = normalizeHexColor(draftValue);
 
     if (!nextValue) {
@@ -142,6 +148,7 @@ export function ColorField({ ariaLabel, onChange, value }: ColorFieldProps) {
 
           if (event.key === 'Escape') {
             event.preventDefault();
+            escapePressedReference.current = true;
             setDraftValue(normalizedValue);
             event.currentTarget.blur();
           }

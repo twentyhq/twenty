@@ -202,7 +202,7 @@ export function SliderControl({
       return;
     }
 
-    const nextValue = Number.parseFloat(draftValue);
+    const nextValue = Number(draftValue);
     setDraftValue(null);
 
     if (!Number.isFinite(nextValue)) {

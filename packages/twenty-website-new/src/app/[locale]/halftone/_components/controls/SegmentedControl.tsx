@@ -2,7 +2,7 @@
 
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 
 import { TAB_LABEL_WIDTH } from './controls-form-constants';
 
@@ -67,14 +67,40 @@ export function SegmentedControl({
   options,
   value,
 }: SegmentedControlProps) {
+  const groupReference = useRef<HTMLDivElement>(null);
+
+  const handleKeyDown = (event: React.KeyboardEvent, currentIndex: number) => {
+    let nextIndex: number | null = null;
+
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      nextIndex = (currentIndex + 1) % options.length;
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      nextIndex = (currentIndex - 1 + options.length) % options.length;
+    }
+
+    if (nextIndex === null) {
+      return;
+    }
+
+    event.preventDefault();
+    onChange(options[nextIndex].value);
+
+    const buttons =
+      groupReference.current?.querySelectorAll<HTMLButtonElement>(
+        '[role="radio"]',
+      );
+    buttons?.[nextIndex]?.focus();
+  };
+
   return (
     <SegmentedLabel>
       <span>{children}</span>
       <SegmentedGroup
         aria-label={typeof children === 'string' ? children : undefined}
+        ref={groupReference}
         role="radiogroup"
       >
-        {options.map((option) => {
+        {options.map((option, index) => {
           const isActive = option.value === value;
 
           return (
@@ -87,7 +113,9 @@ export function SegmentedControl({
                   onChange(option.value);
                 }
               }}
+              onKeyDown={(event) => handleKeyDown(event, index)}
               role="radio"
+              tabIndex={isActive ? 0 : -1}
               type="button"
             >
               {option.label}
