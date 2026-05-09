@@ -2,11 +2,7 @@
 
 import { SHARED_COMPANY_LOGO_URLS } from '@/content/site/asset-paths';
 import { useHorizontalDragScroll } from '@/lib/dom/use-horizontal-drag-scroll';
-import {
-  Chip,
-  ChipVariant,
-} from '@/sections/Hero/components/HomeVisual/Shared/HomeVisualChip';
-import { VISUAL_TOKENS } from '@/sections/Hero/components/HomeVisual/Shared/home-visual-tokens';
+import { Chip, ChipVariant, VISUAL_TOKENS } from '@/sections/Hero';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
