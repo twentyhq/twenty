@@ -3,8 +3,8 @@ import {
   generateStandaloneHtml,
   parseExportedPreset,
   type ReactExportSettings,
-} from '@/app/[locale]/halftone/_lib/exporters';
-import { resolveExportArtifactNames } from '@/app/[locale]/halftone/_lib/export-names';
+} from '@/lib/halftone/exporters';
+import { resolveExportArtifactNames } from '@/lib/halftone/export-names';
 import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/footprint';
 import {
   DEFAULT_HALFTONE_SETTINGS,

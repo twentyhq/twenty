@@ -9,14 +9,14 @@ import {
   getExportedModelFile,
   parseExportedPreset,
   type ReactExportSettings,
-} from '@/app/[locale]/halftone/_lib/exporters';
-import { resolveExportArtifactNames } from '@/app/[locale]/halftone/_lib/export-names';
-import { generateImageHalftoneSvg } from '@/app/[locale]/halftone/_lib/image-svg-export';
+} from '@/lib/halftone/exporters';
+import { resolveExportArtifactNames } from '@/lib/halftone/export-names';
+import { generateImageHalftoneSvg } from '@/lib/halftone/image-svg-export';
 import {
   buildShareUrl,
   decodeShareState,
   encodeShareState,
-} from '@/app/[locale]/halftone/_lib/share';
+} from '@/lib/halftone/share';
 import {
   HalftoneCanvas,
   type HalftoneSnapshotFn,

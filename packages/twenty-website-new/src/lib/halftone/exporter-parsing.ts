@@ -1,4 +1,4 @@
-import { normalizeExportComponentName } from '@/app/[locale]/halftone/_lib/export-names';
+import { normalizeExportComponentName } from '@/lib/halftone/export-names';
 import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/footprint';
 import {
   LEGACY_HALFTONE_SETTING_KEYS,

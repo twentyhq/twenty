@@ -1,8 +1,8 @@
 'use client';
 
-import type { ReactExportSettings } from '@/app/[locale]/halftone/_lib/exporters';
-import { resolveExportArtifactNames } from '@/app/[locale]/halftone/_lib/export-names';
-import { formatAnimationName } from '@/app/[locale]/halftone/_lib/formatters';
+import type { ReactExportSettings } from '@/lib/halftone/exporters';
+import { resolveExportArtifactNames } from '@/lib/halftone/export-names';
+import { formatAnimationName } from '@/lib/halftone/formatters';
 import type {
   HalftoneGeometrySpec,
   HalftoneStudioSettings,

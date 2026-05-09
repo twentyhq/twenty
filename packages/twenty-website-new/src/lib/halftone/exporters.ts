@@ -1,4 +1,4 @@
-import { normalizeExportComponentName } from '@/app/[locale]/halftone/_lib/export-names';
+import { normalizeExportComponentName } from '@/lib/halftone/export-names';
 import {
   HALFTONE_FOOTPRINT_RUNTIME_SOURCE,
   VIRTUAL_RENDER_HEIGHT,

@@ -3,7 +3,7 @@
 import {
   formatAngle,
   formatDecimal,
-} from '@/app/[locale]/halftone/_lib/formatters';
+} from '@/lib/halftone/formatters';
 import {
   DEFAULT_GLASS_ANIMATION_SETTINGS,
   DEFAULT_GLASS_LIGHTING_SETTINGS,

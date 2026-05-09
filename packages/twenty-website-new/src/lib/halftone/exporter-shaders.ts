@@ -1,4 +1,4 @@
-import { GLASS_ENVIRONMENT_DATA_URL } from '@/app/[locale]/halftone/_lib/glass-environment-data';
+import { GLASS_ENVIRONMENT_DATA_URL } from '@/lib/halftone/glass-environment-data';
 import { DRACO_DECODER_PATH } from '@/lib/visual-runtime/draco-decoder-path';
 import type { HalftoneGeometrySpec } from '@/lib/halftone/state';
 

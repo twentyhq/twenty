@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactExportSettings } from '@/app/[locale]/halftone/_lib/exporters';
+import type { ReactExportSettings } from '@/lib/halftone/exporters';
 import { IconLayoutSidebarRightCollapse, IconShare } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import type {

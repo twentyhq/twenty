@@ -4,7 +4,7 @@ import {
   formatAngle,
   formatDecimal,
   formatPercent,
-} from '@/app/[locale]/halftone/_lib/formatters';
+} from '@/lib/halftone/formatters';
 import type { HalftoneStudioSettings } from '@/lib/halftone/state';
 import {
   ColorControlLabel,
