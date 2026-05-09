@@ -39,6 +39,14 @@ import {
   type WebhookResponseTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/webhook/webhook-response';
 import {
+  type PAYMENT_RECEIVED_EVENT,
+  type PaymentReceivedTrackEvent,
+} from 'src/engine/core-modules/audit/utils/events/workspace-event/billing/payment-received';
+import {
+  type WORKSPACE_CREATED_EVENT,
+  type WorkspaceCreatedTrackEvent,
+} from 'src/engine/core-modules/audit/utils/events/workspace-event/workspace/workspace-created';
+import {
   type WORKSPACE_ENTITY_CREATED_EVENT,
   type WorkspaceEntityCreatedTrackEvent,
 } from 'src/engine/core-modules/audit/utils/events/workspace-event/workspace-entity/workspace-entity-created';
@@ -55,7 +63,9 @@ export type TrackEventName =
   | typeof OBJECT_RECORD_UPDATED_EVENT
   | typeof OBJECT_RECORD_DELETED_EVENT
   | typeof OBJECT_RECORD_UPSERTED_EVENT
-  | typeof USER_SIGNUP_EVENT;
+  | typeof USER_SIGNUP_EVENT
+  | typeof WORKSPACE_CREATED_EVENT
+  | typeof PAYMENT_RECEIVED_EVENT;
 
 // Map event names to their corresponding event types
 export interface TrackEvents {
@@ -70,6 +80,8 @@ export interface TrackEvents {
   [OBJECT_RECORD_CREATED_EVENT]: ObjectRecordCreatedTrackEvent;
   [OBJECT_RECORD_UPDATED_EVENT]: ObjectRecordUpdatedTrackEvent;
   [OBJECT_RECORD_UPSERTED_EVENT]: ObjectRecordUpsertedTrackEvent;
+  [WORKSPACE_CREATED_EVENT]: WorkspaceCreatedTrackEvent;
+  [PAYMENT_RECEIVED_EVENT]: PaymentReceivedTrackEvent;
 }
 
 export type TrackEventProperties<T extends TrackEventName> =

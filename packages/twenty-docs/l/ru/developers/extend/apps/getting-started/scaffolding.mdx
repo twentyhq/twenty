@@ -1,0 +1,58 @@
+---
+title: Создание каркаса
+description: Интерактивно генерируйте файлы сущностей с помощью yarn twenty add — объекты, поля, представления, логические функции и многое другое.
+icon: wand-magic-sparkles
+---
+
+Вместо ручного создания файлов сущностей используйте интерактивный генератор:
+
+```bash filename="Terminal"
+yarn twenty add
+```
+
+Он предлагает выбрать тип сущности и пошагово проводит через обязательные поля, а затем записывает готовый к использованию файл со стабильным `universalIdentifier` и корректным вызовом `defineEntity()`.
+
+Вы также можете передать тип сущности напрямую, чтобы пропустить первый запрос:
+
+```bash filename="Terminal"
+yarn twenty add object
+yarn twenty add logicFunction
+yarn twenty add frontComponent
+```
+
+## Доступные типы сущностей
+
+| Тип сущности         | Команда                              | Сгенерированный файл                                    |
+| -------------------- | ------------------------------------ | ------------------------------------------------------- |
+| Объект               | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| Поле                 | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| Логическая функция   | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| Компонент фронтенда  | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| Роль                 | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| Навык                | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| Агент                | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| Представление        | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| Пункт меню навигации | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| Макет страницы       | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+
+## Что генерирует скэффолдер
+
+У каждого типа сущности есть свой шаблон. Например, `yarn twenty add object` запрашивает:
+
+1. **Имя (единственное число)** — например, `invoice`
+2. **Имя (множественное число)** — например, `invoices`
+3. **Метка (единственное число)** — заполняется автоматически из имени (например, `Invoice`)
+4. **Метка (множественное число)** — заполняется автоматически (например, `Invoices`)
+5. **Создать представление и пункт навигации?** — если вы ответите «да», скэффолдер также сгенерирует соответствующее представление и ссылку в боковой панели для нового объекта.
+
+У других типов сущностей подсказки проще — в большинстве случаев запрашивается только имя.
+
+Тип сущности `field` более детализирован: он запрашивает имя поля, метку, тип (из списка всех доступных типов полей, таких как `TEXT`, `NUMBER`, `SELECT`, `RELATION` и т. д.), а также `universalIdentifier` целевого объекта.
+
+## Пользовательский путь вывода
+
+Используйте флаг `--path`, чтобы поместить сгенерированный файл в пользовательское расположение:
+
+```bash filename="Terminal"
+yarn twenty add logicFunction --path src/custom-folder
+```

@@ -1,0 +1,43 @@
+---
+title: Представления
+description: Поставляйте предварительно настроенные сохранённые представления — порядок столбцов, фильтры, группы — для объектов в вашем приложении.
+icon: list
+---
+
+**Представление** — это сохранённая конфигурация того, как отображаются записи объекта: какие поля появляются, их порядок, видимость, а также применённые фильтры и группы. Используйте `defineView()` для поставки предварительно настроенных представлений вместе с вашим приложением — обычно это представление списка по умолчанию для каждого создаваемого вами пользовательского объекта.
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## Основные моменты
+
+* `objectUniversalIdentifier` указывает, к какому объекту применяется это представление. Это может быть пользовательский объект, который вы определили, или стандартный объект Twenty.
+* `key` определяет тип представления — `ViewKey.INDEX` — это основное представление списка для объекта.
+* `fields` управляет тем, какие столбцы отображаются и в каком порядке. Каждое поле ссылается на `fieldMetadataUniversalIdentifier`.
+* Также вы можете определить `filters`, `filterGroups`, `groups` и `fieldGroups` для более продвинутых конфигураций.
+* `position` управляет порядком, когда для одного и того же объекта существует несколько представлений.
+
+## Как представления отображаются в интерфейсе
+
+Само по себе представление недоступно из боковой панели. Чтобы оно появилось там, свяжите его с [пунктом навигационного меню](/l/ru/developers/extend/apps/layout/navigation-menu-items) типа `VIEW`, который указывает на `universalIdentifier` представления. Это канонический шаблон: каждый пользовательский объект обычно поставляется с представлением по умолчанию и пунктом боковой панели, который его открывает.

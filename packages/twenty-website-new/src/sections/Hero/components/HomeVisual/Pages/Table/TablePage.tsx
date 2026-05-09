@@ -7,11 +7,9 @@ import { useState } from 'react';
 import type { HeroTablePageDefinition } from '@/sections/Hero/types';
 import { TablePageCheckbox } from './TablePageCheckbox';
 import { renderTableCellValue } from './TablePageCellValue';
-import {
-  ChevronDownMini,
-  PlusMini,
-  renderTableHeaderIcon,
-} from './TablePageMiniIcons';
+import { ChevronDownMini } from './ChevronDownMini';
+import { PlusMini } from './PlusMini';
+import { renderTableHeaderIcon } from './render-table-header-icon';
 import {
   TABLE_PAGE_CELL_HORIZONTAL_PADDING,
   TABLE_PAGE_COLORS,

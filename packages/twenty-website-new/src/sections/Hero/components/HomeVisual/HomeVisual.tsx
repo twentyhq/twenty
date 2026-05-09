@@ -7,14 +7,12 @@ import { useEffect } from 'react';
 import type { HeroVisualType } from '@/sections/Hero/types';
 import { DraggableAppWindow } from './DraggableAppWindow/DraggableAppWindow';
 import { DraggableTerminal } from './DraggableTerminal/DraggableTerminal';
-import { COLORS } from './Shared/home-visual-theme';
+import { COLORS } from './Shared/utils/home-visual-theme';
 import { HomeVisualNavbar } from './Shell/HomeVisualNavbar';
 import { HomeVisualSidebar } from './Shell/HomeVisualSidebar';
 import { HomeVisualViewbar } from './Shell/HomeVisualViewbar';
-import {
-  preloadDeferredHomeVisualPages,
-  renderPageDefinition,
-} from './Shell/home-visual-page-renderers';
+import { renderPageDefinition } from './Shell/HomeVisualPageRenderers';
+import { preloadDeferredHomeVisualPages } from './Shell/preload-deferred-home-visual-pages';
 import { useHomeVisualState } from './Shell/use-home-visual-state';
 import { WindowOrderProvider } from './WindowOrder/WindowOrderProvider';
 

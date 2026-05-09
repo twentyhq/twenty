@@ -1,10 +1,10 @@
 import {
-  HALFTONE_FOOTPRINT_RUNTIME_SOURCE,
   getContainedImageRect,
   getImageFootprintScale,
   getMeshFootprintScale,
   REFERENCE_PREVIEW_DISTANCE,
-} from '@/lib/halftone/footprint';
+} from '@/lib/halftone/utils/footprint';
+import { HALFTONE_FOOTPRINT_RUNTIME_SOURCE } from '@/lib/halftone/generated/footprint-runtime-source';
 import * as THREE from 'three';
 
 describe('halftone footprint helpers', () => {

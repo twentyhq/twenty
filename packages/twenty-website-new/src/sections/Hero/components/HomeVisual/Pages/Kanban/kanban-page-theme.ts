@@ -1,4 +1,4 @@
-import { VISUAL_TOKENS } from '../../Shared/homeVisualTokens';
+import { VISUAL_TOKENS } from '../../Shared/utils/home-visual-tokens';
 
 export const KANBAN_PAGE_FONT = VISUAL_TOKENS.font.family;
 export const KANBAN_PAGE_TABLER_STROKE = 1.6;

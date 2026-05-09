@@ -8,8 +8,8 @@ import type { HeroSidebarEntry, HeroSidebarItem } from '@/sections/Hero/types';
 import { HomeVisualSidebarControls } from './HomeVisualSidebarControls';
 import { HomeVisualSidebarHeader } from './HomeVisualSidebarHeader';
 import { HomeVisualSidebarItem } from './HomeVisualSidebarItem';
-import { isFolder } from './home-visual-navigation';
-import { APP_FONT, COLORS } from '../Shared/home-visual-theme';
+import { isFolder } from './is-folder';
+import { APP_FONT, COLORS } from '../Shared/utils/home-visual-theme';
 
 const SidebarPanel = styled.aside`
   background: transparent;
@@ -63,7 +63,7 @@ const SidebarSectionLabel = styled.span<{ $workspace?: boolean }>`
   }
 `;
 
-export type HomeVisualSidebarProps = {
+type HomeVisualSidebarProps = {
   favoritesNav?: HeroSidebarItem[];
   highlightedItemId?: string;
   onSelectLabel: (label: string) => void;

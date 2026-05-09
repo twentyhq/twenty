@@ -9,7 +9,11 @@ import {
 } from '@tabler/icons-react';
 
 import type { HeroPageType } from '@/sections/Hero/types';
-import { APP_FONT, COLORS, TABLER_STROKE } from '../Shared/home-visual-theme';
+import {
+  APP_FONT,
+  COLORS,
+  TABLER_STROKE,
+} from '../Shared/utils/home-visual-theme';
 
 const ViewbarBar = styled.div`
   align-items: center;
@@ -125,7 +129,7 @@ function KanbanMini({
   );
 }
 
-export type HomeVisualViewbarProps = {
+type HomeVisualViewbarProps = {
   actions: string[];
   count?: number;
   pageType: HeroPageType;

@@ -155,7 +155,27 @@
           "label": "概览"
         },
         "apps": {
-          "label": "应用"
+          "label": "应用",
+          "groups": {
+            "appsGettingStarted": {
+              "label": "开始使用"
+            },
+            "appsConfig": {
+              "label": "配置"
+            },
+            "appsData": {
+              "label": "数据"
+            },
+            "appsLogic": {
+              "label": "逻辑"
+            },
+            "appsLayout": {
+              "label": "布局"
+            },
+            "appsOperations": {
+              "label": "操作"
+            }
+          }
         },
         "api": {
           "label": "接口"

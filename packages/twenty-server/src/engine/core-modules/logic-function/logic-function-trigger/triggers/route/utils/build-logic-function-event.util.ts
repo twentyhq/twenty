@@ -117,10 +117,12 @@ export const buildLogicFunctionEvent = ({
   request,
   pathParameters,
   forwardedRequestHeaders,
+  userWorkspaceId,
 }: {
   request: Request;
   pathParameters: Record<string, string | string[] | undefined>;
   forwardedRequestHeaders: string[];
+  userWorkspaceId: string | null;
 }): LogicFunctionEvent => {
   const rawBody = extractRawBody(request);
 
@@ -140,5 +142,6 @@ export const buildLogicFunctionEvent = ({
         path: request.path,
       },
     },
+    userWorkspaceId,
   };
 };

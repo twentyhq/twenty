@@ -1,5 +1,8 @@
 import { Container } from '@/design-system/components';
+import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 const Section = styled.section`
@@ -111,14 +114,15 @@ const Label = styled.span`
 `;
 
 type HighlightsProps = {
-  industry?: string;
-  kpis?: { value: string; label: string }[];
+  industry?: MessageDescriptor;
+  kpis?: { value: MessageDescriptor; label: MessageDescriptor }[];
 };
 
 export function Highlights({ industry, kpis }: HighlightsProps) {
-  const cells: { value: string; label: string }[] = [];
+  const i18n = getServerI18n();
+  const cells: { value: MessageDescriptor; label: MessageDescriptor }[] = [];
   if (industry) {
-    cells.push({ value: industry, label: 'Industry' });
+    cells.push({ value: industry, label: msg`Industry` });
   }
   if (kpis) {
     for (const kpi of kpis) {
@@ -136,9 +140,9 @@ export function Highlights({ industry, kpis }: HighlightsProps) {
         <ContentWrap>
           <Card count={cells.length}>
             {cells.map((cell, index) => (
-              <Cell count={cells.length} index={index} key={cell.label}>
-                <Value>{cell.value}</Value>
-                <Label>{cell.label}</Label>
+              <Cell count={cells.length} index={index} key={index}>
+                <Value>{i18n._(cell.value)}</Value>
+                <Label>{i18n._(cell.label)}</Label>
               </Cell>
             ))}
           </Card>

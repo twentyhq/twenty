@@ -3,7 +3,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { type RelationType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName } from 'twenty-shared/utils';
+import { computeMorphRelationGqlFieldName } from 'twenty-shared/utils';
 
 type MorphOneToManyFamilyKey = {
   recordId: string;
@@ -24,7 +24,7 @@ export const recordStoreMorphOneToManyValueWithObjectNameFamilySelector =
         ({ get }) => {
           const morphValuesWithObjectName = morphRelations.map(
             (morphRelation) => {
-              const fieldName = computeMorphRelationFieldName({
+              const fieldName = computeMorphRelationGqlFieldName({
                 fieldName: morphRelation.sourceFieldMetadata.name,
                 relationType: morphRelation.type as RelationType,
                 targetObjectMetadataNameSingular:

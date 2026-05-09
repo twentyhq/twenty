@@ -1,8 +1,10 @@
 import { Body, Heading } from '@/design-system/components';
+import { useLingui } from '@lingui/react';
 import type { PlanTableCalculatorDataType } from '@/sections/PlanTable/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
+import type { ReactNode } from 'react';
 
 const CALCULATOR_BORDER = '#feffb7';
 
@@ -164,10 +166,15 @@ const PricePeriod = styled.span`
 `;
 
 type CalculatorEmbedProps = {
-  calculator: PlanTableCalculatorDataType;
+  calculator: Omit<PlanTableCalculatorDataType, 'visual'> & {
+    visual: Omit<PlanTableCalculatorDataType['visual'], 'heading'> & {
+      heading: ReactNode;
+    };
+  };
 };
 
 export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
+  const { i18n } = useLingui();
   const { priceLine, sections, visual } = calculator;
 
   return (
@@ -184,21 +191,25 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
             />
           </VisualFrame>
         ) : null}
-        <Heading as="h3" segments={visual.heading} size="lg" weight="light" />
+        <Heading as="h3" size="lg" weight="light">
+          {visual.heading}
+        </Heading>
         <BodyOnDark>
-          <Body body={visual.body} family="sans" size="md" weight="regular" />
+          <Body family="sans" size="md" weight="regular">
+            {i18n._(visual.body)}
+          </Body>
         </BodyOnDark>
       </VisualColumn>
       <ControlsColumn>
         {sections.map((section) => (
           <SectionBlock key={section.id}>
             <SectionTitleRow>
-              <span>{section.title}</span>
+              <span>{i18n._(section.title)}</span>
               <span aria-hidden="true">☑</span>
             </SectionTitleRow>
             <FieldsRow>
               <Field>
-                <FieldLabel>{section.requestField.label}</FieldLabel>
+                <FieldLabel>{i18n._(section.requestField.label)}</FieldLabel>
                 <FakeInput>
                   <StepperInner>
                     <StepperBtn aria-hidden="true">‹</StepperBtn>
@@ -208,7 +219,7 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
                 </FakeInput>
               </Field>
               <Field>
-                <FieldLabel>{section.tasksField.label}</FieldLabel>
+                <FieldLabel>{i18n._(section.tasksField.label)}</FieldLabel>
                 <FakeInput>
                   <span>{section.tasksField.value}</span>
                   <span aria-hidden="true">▾</span>
@@ -217,7 +228,7 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
             </FieldsRow>
             {section.modelField ? (
               <Field>
-                <FieldLabel>{section.modelField.label}</FieldLabel>
+                <FieldLabel>{i18n._(section.modelField.label)}</FieldLabel>
                 <FakeInput>
                   <span>{section.modelField.value}</span>
                   <span aria-hidden="true">▾</span>
@@ -228,10 +239,10 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
         ))}
         <PriceFooter>
           <PriceRow>
-            <span>{priceLine.label}</span>
+            <span>{i18n._(priceLine.label)}</span>
             <span>
               <PriceAmount>{priceLine.amount}</PriceAmount>
-              <PricePeriod> {priceLine.periodSuffix}</PricePeriod>
+              <PricePeriod> {i18n._(priceLine.periodSuffix)}</PricePeriod>
             </span>
           </PriceRow>
         </PriceFooter>

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should match snapshot 1`] = `
 {
@@ -20,6 +20,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "evaluationInputs",
     ],
   },
+  "applicationVariable": {
+    "propertiesToCompare": [
+      "key",
+      "description",
+      "isSecret",
+    ],
+    "propertiesToStringify": [],
+  },
   "commandMenuItem": {
     "propertiesToCompare": [
       "label",
@@ -37,6 +45,17 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToStringify": [
       "payload",
       "hotKeys",
+    ],
+  },
+  "connectionProvider": {
+    "propertiesToCompare": [
+      "name",
+      "displayName",
+      "type",
+      "oauthConfig",
+    ],
+    "propertiesToStringify": [
+      "oauthConfig",
     ],
   },
   "fieldMetadata": {
@@ -103,20 +122,21 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "checksum",
       "sourceHandlerPath",
       "handlerName",
-      "toolInputSchema",
-      "isTool",
       "isBuildUpToDate",
       "deletedAt",
       "cronTriggerSettings",
       "databaseEventTriggerSettings",
       "httpRouteTriggerSettings",
+      "toolTriggerSettings",
+      "workflowActionTriggerSettings",
       "builtHandlerPath",
     ],
     "propertiesToStringify": [
-      "toolInputSchema",
       "cronTriggerSettings",
       "databaseEventTriggerSettings",
       "httpRouteTriggerSettings",
+      "toolTriggerSettings",
+      "workflowActionTriggerSettings",
     ],
   },
   "navigationMenuItem": {
@@ -145,6 +165,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "labelIdentifierFieldMetadataUniversalIdentifier",
       "standardOverrides",
       "isSearchable",
+      "imageIdentifierFieldMetadataUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "standardOverrides",

@@ -2,6 +2,7 @@ import * as ts from 'typescript';
 
 export enum TargetFunction {
   DefineApplication = 'defineApplication',
+  DefineApplicationRole = 'defineApplicationRole',
   DefineField = 'defineField',
   DefineLogicFunction = 'defineLogicFunction',
   DefinePostInstallLogicFunction = 'definePostInstallLogicFunction',
@@ -10,11 +11,13 @@ export enum TargetFunction {
   DefineRole = 'defineRole',
   DefineSkill = 'defineSkill',
   DefineAgent = 'defineAgent',
+  DefineConnectionProvider = 'defineConnectionProvider',
   DefineFrontComponent = 'defineFrontComponent',
   DefineView = 'defineView',
   DefineNavigationMenuItem = 'defineNavigationMenuItem',
   DefinePageLayout = 'definePageLayout',
   DefinePageLayoutTab = 'definePageLayoutTab',
+  DefineCommandMenuItem = 'defineCommandMenuItem',
 }
 
 export enum ManifestEntityKey {
@@ -25,12 +28,14 @@ export enum ManifestEntityKey {
   Roles = 'roles',
   Skills = 'skills',
   Agents = 'agents',
+  ConnectionProviders = 'connectionProviders',
   FrontComponents = 'frontComponents',
   PublicAssets = 'publicAssets',
   Views = 'views',
   NavigationMenuItems = 'navigationMenuItems',
   PageLayouts = 'pageLayouts',
   PageLayoutTabs = 'pageLayoutTabs',
+  CommandMenuItems = 'commandMenuItems',
 }
 
 export type EntityFilePaths = Record<ManifestEntityKey, string[]>;
@@ -40,6 +45,7 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   ManifestEntityKey
 > = {
   [TargetFunction.DefineApplication]: ManifestEntityKey.Application,
+  [TargetFunction.DefineApplicationRole]: ManifestEntityKey.Roles,
   [TargetFunction.DefineField]: ManifestEntityKey.Fields,
   [TargetFunction.DefineLogicFunction]: ManifestEntityKey.LogicFunctions,
   [TargetFunction.DefinePostInstallLogicFunction]:
@@ -50,12 +56,15 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefineRole]: ManifestEntityKey.Roles,
   [TargetFunction.DefineSkill]: ManifestEntityKey.Skills,
   [TargetFunction.DefineAgent]: ManifestEntityKey.Agents,
+  [TargetFunction.DefineConnectionProvider]:
+    ManifestEntityKey.ConnectionProviders,
   [TargetFunction.DefineFrontComponent]: ManifestEntityKey.FrontComponents,
   [TargetFunction.DefineView]: ManifestEntityKey.Views,
   [TargetFunction.DefineNavigationMenuItem]:
     ManifestEntityKey.NavigationMenuItems,
   [TargetFunction.DefinePageLayout]: ManifestEntityKey.PageLayouts,
   [TargetFunction.DefinePageLayoutTab]: ManifestEntityKey.PageLayoutTabs,
+  [TargetFunction.DefineCommandMenuItem]: ManifestEntityKey.CommandMenuItems,
 };
 
 const computeIsTargetFunctionCall = (node: ts.Node): string | undefined => {

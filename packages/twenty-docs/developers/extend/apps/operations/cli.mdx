@@ -1,0 +1,78 @@
+---
+title: CLI
+description: yarn twenty commands for executing functions, streaming logs, managing app installations, and switching remotes.
+icon: "terminal"
+---
+
+Beyond `dev`, `build`, `add`, and `typecheck`, the `yarn twenty` CLI provides commands for executing functions, viewing logs, and managing app installations.
+
+## Executing functions (`yarn twenty exec`)
+
+Run a logic function manually without triggering it via HTTP, cron, or database event:
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty exec --postInstall
+```
+
+## Viewing function logs (`yarn twenty logs`)
+
+Stream execution logs for your app's logic functions:
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty logs
+
+# Filter by function name
+yarn twenty logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+This is different from `yarn twenty server logs`, which shows the Docker container logs. `yarn twenty logs` shows your app's function execution logs from the Twenty server.
+</Note>
+
+## Uninstalling an app (`yarn twenty uninstall`)
+
+Remove your app from the active workspace:
+
+```bash filename="Terminal"
+yarn twenty uninstall
+
+# Skip the confirmation prompt
+yarn twenty uninstall --yes
+```
+
+## Managing remotes
+
+A **remote** is a Twenty server that your app connects to. During setup, the scaffolder creates one for you automatically. You can add more remotes or switch between them at any time.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+Your credentials are stored in `~/.twenty/config.json`.

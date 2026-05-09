@@ -9,14 +9,14 @@ import {
   type ReactNode,
 } from 'react';
 import { theme } from '@/theme';
-import { VISUAL_TOKENS } from '../Shared/homeVisualTokens';
+import { VISUAL_TOKENS } from '../Shared/utils/home-visual-tokens';
 import { useWindowPointerInteractions } from '../WindowInteraction/use-window-pointer-interactions';
 import type {
   WindowPosition as Position,
   WindowSize as Size,
 } from '../WindowInteraction/window-geometry';
-import { useWindowOrder } from '../WindowOrder/WindowOrderProvider';
-import { WINDOW_SHADOWS } from '../Shared/windowShadows';
+import { useWindowOrder } from '../WindowOrder/use-window-order';
+import { WINDOW_SHADOWS } from '../Shared/utils/window-shadows';
 import { MacWindowBar } from './MacWindowBar';
 
 const WINDOW_ID = 'twenty-app-window';

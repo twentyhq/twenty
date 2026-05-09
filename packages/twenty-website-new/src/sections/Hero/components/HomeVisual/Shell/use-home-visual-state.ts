@@ -2,17 +2,15 @@ import { useTimeoutRegistry } from '@/lib/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { HeroSidebarEntry, HeroVisualType } from '@/sections/Hero/types';
-import { normalizeHeroPage } from '../Data/normalizeHeroPage';
-import {
-  findActiveItem,
-  findContainingFolderId,
-  isFolder,
-} from './home-visual-navigation';
+import { normalizeHeroPage } from '../Data/normalize-hero-page';
+import { findActiveItem } from './find-active-item';
+import { findContainingFolderId } from './find-containing-folder-id';
+import { isFolder } from './is-folder';
 import {
   COMPANIES_ITEM_ID,
   COMPANIES_ITEM_LABEL,
   CRM_OBJECT_SEQUENCE,
-} from '../Data/rocketObject';
+} from '../Data/rocket-object';
 
 const DEFAULT_TABLE_WIDTH = 1700;
 const COMPLETED_CREATED_OBJECT_IDS = CRM_OBJECT_SEQUENCE.map(({ id }) => id);

@@ -1,0 +1,64 @@
+---
+title: App-Konfiguration
+description: Deklarieren Sie die Identität, die Standardrolle, Variablen und Marktplatz-Metadaten Ihrer App mit `defineApplication`.
+icon: rocket
+---
+
+Jede App muss genau einen Aufruf von `defineApplication` haben. Dieser deklariert:
+
+* **Identität** — universeller Bezeichner, Anzeigename, Beschreibung.
+* **Berechtigungen** — unter welcher Rolle ihre Logikfunktionen und Frontend-Komponenten ausgeführt werden.
+* **Variablen** *(optional)* — Schlüssel–Wert-Paare, die Ihrem Code als Umgebungsvariablen zur Verfügung gestellt werden.
+* **Pre-install-/Post-install-Hooks** *(optional)* — siehe [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions).
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+});
+```
+
+Notizen:
+
+* `universalIdentifier`-Felder sind deterministische IDs, die Ihnen gehören. Erzeugen Sie sie einmal und halten Sie sie über Synchronisierungen hinweg stabil.
+* `applicationVariables` werden zu Umgebungsvariablen für Ihre Funktionen und Frontend-Komponenten (z. B. ist `DEFAULT_RECIPIENT_NAME` als `process.env.DEFAULT_RECIPIENT_NAME` verfügbar).
+* Die Standardrolle wird automatisch aus der Rollen-Datei erkannt, die mit [`defineApplicationRole()`](/l/de/developers/extend/apps/config/roles) markiert ist – Sie müssen sie nicht aus `defineApplication()` referenzieren.
+* Pre- und Post-Installationsfunktionen werden während des Manifest-Builds automatisch erkannt — Sie müssen sie in `defineApplication()` nicht referenzieren.
+* Die explizite Übergabe von `defaultRoleUniversalIdentifier` wird für die Abwärtskompatibilität weiterhin unterstützt, ist jedoch zugunsten von `defineApplicationRole()` veraltet.
+
+## Standard-Funktionsrolle
+
+Die mit [`defineApplicationRole()`](/l/de/developers/extend/apps/config/roles) deklarierte Rolle steuert, worauf die Logikfunktionen und Frontend-Komponenten der App zugreifen können:
+
+* Das zur Laufzeit als `TWENTY_APP_ACCESS_TOKEN` injizierte Token wird aus dieser Rolle abgeleitet.
+* Der typisierte API-Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.
+* Befolgen Sie das Least-Privilege-Prinzip: Deklarieren Sie nur die Berechtigungen, die Ihre Funktionen benötigen.
+
+Wenn Sie eine neue App erzeugen, erstellt die CLI eine Starter-Rolldatei unter `src/roles/default-role.ts`. Die vollständige Referenz finden Sie unter [Rollen & Berechtigungen](/l/de/developers/extend/apps/config/roles).
+
+## Marktplatz-Metadaten
+
+Wenn Sie planen, [Ihre App zu veröffentlichen](/l/de/developers/extend/apps/operations/publishing), steuern diese optionalen Felder, wie Ihre App im Marktplatz erscheint:
+
+| Feld               | Beschreibung                                                                                                                    |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `author`           | Name des Autors oder des Unternehmens                                                                                           |
+| `category`         | App-Kategorie für die Filterung im Marktplatz                                                                                   |
+| `logoUrl`          | Pfad zu Ihrem App-Logo (z. B. `public/logo.png`)                                                                                |
+| `screenshots`      | Array von Screenshot-Pfaden (z. B. `public/screenshot-1.png`)                                                                   |
+| `aboutDescription` | Längere Markdown-Beschreibung für den Tab "Info". Wenn weggelassen, verwendet der Marktplatz die `README.md` des Pakets von npm |
+| `websiteUrl`       | Link zu Ihrer Website                                                                                                           |
+| `termsUrl`         | Link zu den Nutzungsbedingungen                                                                                                 |
+| `emailSupport`     | Support-E-Mail-Adresse                                                                                                          |
+| `issueReportUrl`   | Link zum Issue-Tracker                                                                                                          |

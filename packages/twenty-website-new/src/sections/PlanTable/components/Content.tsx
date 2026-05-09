@@ -5,7 +5,9 @@ import {
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { CheckIcon } from '@/icons';
-import { usePricingState } from '@/sections/Plans/context/PricingStateContext';
+import { useLingui } from '@lingui/react';
+import type { MessageDescriptor } from '@lingui/core';
+import { usePricingState } from '@/sections/Plans';
 import type {
   PlanTableBodyRowDataType,
   PlanTableCellType,
@@ -14,6 +16,7 @@ import type {
   PlanTableTierColumnType,
 } from '@/sections/PlanTable/types';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useMemo, useState } from 'react';
 import { CalculatorEmbed } from './CalculatorEmbed';
@@ -136,20 +139,21 @@ type CellValueProps = {
 };
 
 function CellValue({ cell }: CellValueProps) {
+  const { i18n } = useLingui();
   if (cell.kind === 'dash') {
-    return <TierText>No</TierText>;
+    return <TierText>{i18n._(msg`No`)}</TierText>;
   }
 
   if (cell.kind === 'text') {
-    return <TierText>{cell.text}</TierText>;
+    return <TierText>{i18n._(cell.text)}</TierText>;
   }
 
-  const label = cell.label ?? 'Yes';
+  const label = cell.label ?? msg`Yes`;
 
   return (
     <YesRow>
       <CheckIcon color={theme.colors.highlight[100]} size={16} />
-      <TierText>{label}</TierText>
+      <TierText>{i18n._(label)}</TierText>
     </YesRow>
   );
 }
@@ -193,9 +197,10 @@ type FeatureRowProps = {
 };
 
 function FeatureRow({ row, tierColumns }: FeatureRowProps) {
+  const { i18n } = useLingui();
   return (
     <GridRow>
-      <FeatureLabel>{row.featureLabel}</FeatureLabel>
+      <FeatureLabel>{i18n._(row.featureLabel)}</FeatureLabel>
       {tierColumns.map((column) => (
         <TierCell key={column.id}>
           <CellValue cell={row.tiers[column.id]} />
@@ -206,14 +211,15 @@ function FeatureRow({ row, tierColumns }: FeatureRowProps) {
 }
 
 type CategoryRowProps = {
-  title: string;
+  title: MessageDescriptor;
 };
 
 function CategoryRow({ title }: CategoryRowProps) {
+  const { i18n } = useLingui();
   return (
     <GridRow>
       <CategoryBand>
-        <CategoryTitle>{title}</CategoryTitle>
+        <CategoryTitle>{i18n._(title)}</CategoryTitle>
       </CategoryBand>
       <CategoryBand aria-hidden="true" />
       <CategoryBand aria-hidden="true" />
@@ -226,6 +232,7 @@ type ContentProps = {
 };
 
 export function Content({ data }: ContentProps) {
+  const { i18n } = useLingui();
   const [expanded, setExpanded] = useState(false);
   const { hosting } = usePricingState();
 
@@ -273,9 +280,9 @@ export function Content({ data }: ContentProps) {
   return (
     <TableScope>
       <GridRow>
-        <HeadFeature>{data.featureColumnLabel}</HeadFeature>
+        <HeadFeature>{i18n._(data.featureColumnLabel)}</HeadFeature>
         {data.tierColumns.map((column) => (
-          <HeadTier key={column.id}>{column.label}</HeadTier>
+          <HeadTier key={column.id}>{i18n._(column.label)}</HeadTier>
         ))}
       </GridRow>
 
@@ -299,7 +306,7 @@ export function Content({ data }: ContentProps) {
           >
             <BaseButton
               color="primary"
-              label={toggleLabel}
+              label={i18n._(toggleLabel)}
               variant="outlined"
             />
           </ToggleButton>

@@ -10,7 +10,7 @@ import { type ApplicationContentRow } from '~/pages/settings/applications/compon
 
 type InstalledApplicationForObjectAndFields = Omit<
   Application,
-  'objects' | 'universalIdentifier' | 'frontComponents'
+  'objects' | 'universalIdentifier' | 'frontComponents' | 'commandMenuItems'
 > & {
   objects: { id: string }[];
 };

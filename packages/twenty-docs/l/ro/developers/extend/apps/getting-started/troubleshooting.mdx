@@ -1,0 +1,12 @@
+---
+title: Depanare
+description: Probleme comune la prima rulare — Docker, versiunea Node, Yarn, dependențe.
+icon: wrench
+---
+
+* **Erori Docker** — Asigurați-vă că Docker Desktop (sau daemonul) rulează înainte de `yarn twenty server start`. Mesajul de eroare va afișa comanda corectă de pornire pentru sistemul dvs. de operare.
+* **Versiune Node greșită** — Aveți nevoie de 24+. Verificați cu `node -v`.
+* **Lipsește Yarn 4** — Rulați `corepack enable`.
+* **Dependențe nefuncționale** — `rm -rf node_modules && yarn install`.
+
+Blocat? Întrebați pe [Discordul Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

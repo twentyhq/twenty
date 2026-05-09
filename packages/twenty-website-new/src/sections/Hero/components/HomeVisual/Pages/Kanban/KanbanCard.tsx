@@ -17,11 +17,9 @@ import type {
   HeroCellPerson,
   HeroKanbanCardType,
 } from '@/sections/Hero/types';
-import {
-  HomeVisualFaviconLogo,
-  HomeVisualPersonAvatar,
-} from '../../Shared/home-visual-identity';
-import { Chip } from '../../Shared/homeVisualChip';
+import { HomeVisualFaviconLogo } from '../../Shared/components/HomeVisualFaviconLogo';
+import { HomeVisualPersonAvatar } from '../../Shared/components/HomeVisualPersonAvatar';
+import { Chip } from '../../Shared/components/HomeVisualChip';
 import {
   KANBAN_PAGE_COLORS,
   KANBAN_PAGE_FONT,

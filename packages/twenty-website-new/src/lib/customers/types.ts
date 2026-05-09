@@ -1,10 +1,11 @@
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageDescriptor } from '@lingui/core';
+import type { ReactNode } from 'react';
 
 export type CaseStudyTextBlock = {
   type: 'text';
-  eyebrow?: string;
-  heading: HeadingType[];
-  paragraphs: string[];
+  eyebrow?: MessageDescriptor;
+  heading: ReactNode;
+  paragraphs: MessageDescriptor[];
   callout?: string;
 };
 
@@ -17,45 +18,52 @@ export type CaseStudyVisualBlock = {
 export type CaseStudyContentBlock = CaseStudyTextBlock | CaseStudyVisualBlock;
 
 export type CaseStudyKpi = {
-  value: string;
-  label: string;
+  value: MessageDescriptor;
+  label: MessageDescriptor;
 };
 
 export type CaseStudyQuote = {
-  text: string;
+  text: MessageDescriptor;
   author: string;
-  role: string;
+  role: MessageDescriptor;
 };
 
 export type CaseStudyData = {
-  meta: { title: string; description: string };
+  meta: { title: MessageDescriptor; description: MessageDescriptor };
   hero: {
     readingTime: string;
-    title: HeadingType[];
+    title: ReactNode;
     author: string;
     authorAvatarSrc?: string;
     clientIcon: string;
     heroImageSrc: string;
-    industry?: string;
-    authorRole?: string;
+    industry?: MessageDescriptor;
+    authorRole?: MessageDescriptor;
     kpis?: CaseStudyKpi[];
     quote?: CaseStudyQuote;
   };
   sections: CaseStudyContentBlock[];
-  tableOfContents: string[];
+  tableOfContents: MessageDescriptor[];
   catalogCard: {
-    summary: string;
-    date: string;
+    summary: MessageDescriptor;
+    date: MessageDescriptor;
     coverImageSrc?: string;
   };
 };
 
 export type CaseStudyCatalogEntry = {
   href: string;
-  industry: string;
+  industry: MessageDescriptor;
   kpis: CaseStudyKpi[];
-  authorRole: string;
+  authorRole: MessageDescriptor;
   quote?: CaseStudyQuote;
-  hero: CaseStudyData['hero'];
+  hero: {
+    readingTime: string;
+    title: MessageDescriptor;
+    author: string;
+    authorAvatarSrc?: string;
+    clientIcon: string;
+    heroImageSrc: string;
+  };
   catalogCard: CaseStudyData['catalogCard'];
 };

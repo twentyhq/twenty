@@ -4,7 +4,7 @@ import {
   getClientIpKey,
   readJsonBody,
 } from '@/lib/api';
-import { splitFullName } from '@/lib/partner-application';
+import { splitFullName } from '@/sections/PartnerApplication';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 

@@ -4,7 +4,7 @@ import type {
 } from '@/sections/Hero/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { VISUAL_TOKENS } from '../../Shared/homeVisualTokens';
+import { VISUAL_TOKENS } from '../../Shared/utils/home-visual-tokens';
 
 const APP_FONT = VISUAL_TOKENS.font.family;
 const CARD_BACKGROUND = VISUAL_TOKENS.background.secondary;

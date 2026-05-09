@@ -16,6 +16,8 @@ export const resolveFieldMetadataStandardOverride = (
   locale: keyof typeof APP_LOCALES | undefined,
   i18nInstance: I18n,
 ): string => {
+  const safeLocale = locale ?? SOURCE_LOCALE;
+
   if (fieldMetadata.isCustom) {
     return fieldMetadata[labelKey] ?? '';
   }
@@ -26,21 +28,17 @@ export const resolveFieldMetadataStandardOverride = (
 
   if (
     isDefined(fieldMetadata.standardOverrides?.translations) &&
-    isDefined(locale) &&
     labelKey !== 'icon'
   ) {
     const translationValue =
-      fieldMetadata.standardOverrides.translations[locale]?.[labelKey];
+      fieldMetadata.standardOverrides.translations[safeLocale]?.[labelKey];
 
     if (isDefined(translationValue)) {
       return translationValue;
     }
   }
 
-  if (
-    locale === SOURCE_LOCALE &&
-    isNonEmptyString(fieldMetadata.standardOverrides?.[labelKey])
-  ) {
+  if (isNonEmptyString(fieldMetadata.standardOverrides?.[labelKey])) {
     return fieldMetadata.standardOverrides[labelKey] ?? '';
   }
 

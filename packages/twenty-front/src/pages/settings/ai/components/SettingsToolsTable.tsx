@@ -139,7 +139,7 @@ export const SettingsToolsTable = () => {
   const allTools: ToolItem[] = useMemo(
     () => [
       ...logicFunctions
-        .filter((fn) => fn.isTool === true)
+        .filter((fn) => isDefined(fn.toolTriggerSettings))
         .map((fn) => ({
           identifier: fn.id,
           name: fn.name,

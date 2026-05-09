@@ -1,8 +1,8 @@
 import { Heading as BaseHeading } from '@/design-system/components';
 import type { HeadingSize } from '@/design-system/components/Heading';
-import type { HeadingType } from '@/design-system/components/Heading';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import type { ReactNode } from 'react';
 
 const StyledHeading = styled(BaseHeading)`
   white-space: pre-line;
@@ -13,10 +13,14 @@ const StyledHeading = styled(BaseHeading)`
 `;
 
 type HeadingProps = {
-  segments: HeadingType;
+  children: ReactNode;
   size?: HeadingSize;
 };
 
-export function Heading({ segments, size = 'sm' }: HeadingProps) {
-  return <StyledHeading segments={segments} size={size} weight="light" />;
+export function Heading({ children, size = 'sm' }: HeadingProps) {
+  return (
+    <StyledHeading size={size} weight="light">
+      {children}
+    </StyledHeading>
+  );
 }

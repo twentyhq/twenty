@@ -1,4 +1,3 @@
-export type { HeroBaseDataType } from './HeroBaseData';
 export type {
   HeroDashboardChartImageType,
   HeroDashboardDataType,
@@ -21,7 +20,6 @@ export type {
   HeroCellText,
   HeroCellValue,
   HeroColumnDef,
-  HeroHomeDataType,
   HeroRowDef,
   HeroPageType,
   HeroSidebarEntry,
@@ -30,5 +28,4 @@ export type {
   HeroSidebarItem,
   HeroTablePageDefinition,
   HeroVisualType,
-} from './HeroHomeData';
-export type { HeroWhyTwentyDataType } from './HeroWhyTwentyData';
+} from './hero-home-data';

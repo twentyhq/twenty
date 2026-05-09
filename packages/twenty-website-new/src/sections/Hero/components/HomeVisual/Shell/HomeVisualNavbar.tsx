@@ -23,14 +23,14 @@ import type {
   HeroNavbarActionType,
   HeroSidebarItem,
 } from '@/sections/Hero/types';
-import { OBJECT_PINNED_ACTIONS } from '../Data/objectPinnedActions';
-import { renderHomeVisualIcon } from '../Shared/home-visual-icon';
+import { OBJECT_PINNED_ACTIONS } from '../Data/object-pinned-actions';
+import { renderHomeVisualIcon } from '../Shared/components/HomeVisualIcon';
 import {
   APP_FONT,
   COLORS,
   NAVBAR_ACTION_TABLER_STROKE,
-} from '../Shared/home-visual-theme';
-import { VISUAL_TOKENS } from '../Shared/homeVisualTokens';
+} from '../Shared/utils/home-visual-theme';
+import { VISUAL_TOKENS } from '../Shared/utils/home-visual-tokens';
 
 const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
   box: IconBox,
@@ -335,7 +335,7 @@ function renderDefaultActions(
   );
 }
 
-export type HomeVisualNavbarProps = {
+type HomeVisualNavbarProps = {
   activeItem?: HeroSidebarItem;
   activeLabel: string;
   navbarActions?: HeroNavbarActionType[];

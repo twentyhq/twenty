@@ -1,10 +1,10 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { TerminalPromptFooter } from './TerminalPromptFooter';
-import { TerminalPromptMessage } from './TerminalPromptMessage';
-import { TERMINAL_TOKENS } from '../terminalTokens';
-import { useTerminalPromptEasterEgg } from './use-terminal-prompt-easter-egg';
+import { TerminalPromptFooter } from './components/TerminalPromptFooter';
+import { TerminalPromptMessage } from './components/TerminalPromptMessage';
+import { TERMINAL_TOKENS } from '../utils/terminal-tokens';
+import { useTerminalPromptEasterEgg } from './hooks/use-terminal-prompt-easter-egg';
 
 const PromptArea = styled.div`
   box-sizing: border-box;

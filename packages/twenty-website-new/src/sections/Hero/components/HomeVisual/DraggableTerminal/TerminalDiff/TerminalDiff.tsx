@@ -2,14 +2,14 @@
 
 import { IconArrowsVertical } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
-import { TERMINAL_TOKENS } from '../terminalTokens';
+import { TERMINAL_TOKENS } from '../utils/terminal-tokens';
 import {
   DIFF_FILES,
   type DiffChunk,
   type DiffFile,
   type DiffToken,
   type DiffTokenKind,
-} from './diffData';
+} from './diff-data';
 
 const Root = styled.div`
   background: rgba(0, 0, 0, 0.02);

@@ -1,12 +1,18 @@
 'use client';
 
-import { Body, Heading } from '@/design-system/components';
-import { StepperSwipeDeck } from '@/lib/stepper';
-import { HOME_STEPPER_HOLD_FRACTIONS } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
+import { Body } from '@/design-system/components';
+import { StepperSwipeDeck } from '@/sections/Stepper';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import type { HomeStepperStepType } from './../types/HomeStepperStep';
+import { useLingui } from '@lingui/react';
+import type { HomeStepperStepType } from './../types/home-stepper-step';
 import { ProgressBar } from './ProgressBar';
+
+const HOME_STEPPER_HOLD_FRACTIONS = [
+  240 / 285,
+  (880 - 285) / (925 - 285),
+  1,
+] as const;
 
 const LeftColumnRoot = styled.div`
   min-width: 0;
@@ -95,9 +101,9 @@ const SwipeStepBlock = styled.div`
   row-gap: ${theme.spacing(4)};
 `;
 
-export type HomeStepperLayoutMode = 'scroll' | 'swipe';
+type HomeStepperLayoutMode = 'scroll' | 'swipe';
 
-export type HomeStepperLeftColumnProps = {
+type HomeStepperLeftColumnProps = {
   activeStepIndex: number;
   layoutMode: HomeStepperLayoutMode;
   localProgress: number;
@@ -142,6 +148,8 @@ export function LeftColumn({
   onMobileStepIndexChange,
   steps,
 }: HomeStepperLeftColumnProps) {
+  const { i18n } = useLingui();
+
   return (
     <LeftColumnRoot>
       <StickyPanel>
@@ -161,8 +169,8 @@ export function LeftColumn({
                 const step = steps[stepIndex];
                 return (
                   <SwipeStepBlock>
-                    <Heading segments={step.heading} size="lg" weight="light" />
-                    <Body body={step.body} size="sm" />
+                    {step.heading}
+                    <Body size="sm">{i18n._(step.body)}</Body>
                   </SwipeStepBlock>
                 );
               }}
@@ -182,9 +190,10 @@ export function LeftColumn({
                   $transform={transform}
                   data-active={String(index === activeStepIndex)}
                   key={index}
+                  suppressHydrationWarning
                 >
-                  <Heading segments={step.heading} size="lg" weight="light" />
-                  <Body body={step.body} size="sm" />
+                  {step.heading}
+                  <Body size="sm">{i18n._(step.body)}</Body>
                 </StepBlock>
               );
             })

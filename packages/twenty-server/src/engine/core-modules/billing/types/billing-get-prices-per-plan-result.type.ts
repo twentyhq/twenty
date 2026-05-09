@@ -3,6 +3,7 @@
 import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 
 export type BillingGetPricesPerPlanResult = {
-  meteredProductsPrices: BillingPriceEntity[];
-  licensedProductsPrices: BillingPriceEntity[];
+  meteredProductPrices: BillingPriceEntity[];
+  baseProductPrices: BillingPriceEntity[];
+  resourceCreditProductPrices: BillingPriceEntity[];
 };

@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useMemo, useState, type ReactNode } from 'react';
 
 type WindowOrderApi = {
   register: (id: string) => void;
@@ -16,8 +8,8 @@ type WindowOrderApi = {
   activate: (id: string) => void;
 };
 
-const WindowOrderApiContext = createContext<WindowOrderApi | null>(null);
-const WindowOrderStackContext = createContext<ReadonlyArray<string>>([]);
+export const WindowOrderApiContext = createContext<WindowOrderApi | null>(null);
+export const WindowOrderStackContext = createContext<ReadonlyArray<string>>([]);
 
 export const WindowOrderProvider = ({ children }: { children: ReactNode }) => {
   const [stack, setStack] = useState<string[]>([]);
@@ -48,30 +40,4 @@ export const WindowOrderProvider = ({ children }: { children: ReactNode }) => {
       </WindowOrderStackContext.Provider>
     </WindowOrderApiContext.Provider>
   );
-};
-
-export const useWindowOrder = (id: string) => {
-  const api = useContext(WindowOrderApiContext);
-  const stack = useContext(WindowOrderStackContext);
-
-  useEffect(() => {
-    if (!api) {
-      return undefined;
-    }
-    api.register(id);
-    return () => {
-      api.unregister(id);
-    };
-  }, [api, id]);
-
-  const zIndex = useMemo(() => {
-    const index = stack.indexOf(id);
-    return index === -1 ? 1 : index + 2;
-  }, [stack, id]);
-
-  const activate = useCallback(() => {
-    api?.activate(id);
-  }, [api, id]);
-
-  return { activate, zIndex };
 };

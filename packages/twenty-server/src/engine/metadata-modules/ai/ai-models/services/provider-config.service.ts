@@ -44,6 +44,7 @@ export class ProviderConfigService {
   private resolveProviderTemplates(config: AiProviderConfig): AiProviderConfig {
     return {
       ...config,
+      baseUrl: this.resolveTemplate(config.baseUrl),
       apiKey: this.resolveTemplate(config.apiKey),
       accessKeyId: this.resolveTemplate(config.accessKeyId),
       secretAccessKey: this.resolveTemplate(config.secretAccessKey),

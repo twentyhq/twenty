@@ -9,20 +9,17 @@ import type {
   HeroCellText,
   HeroCellValue,
 } from '@/sections/Hero/types';
-import {
-  getHomeVisualInitials,
-  HomeVisualAvatar,
-  HomeVisualFaviconLogo,
-  HomeVisualPersonAvatar,
-} from '../../Shared/home-visual-identity';
-import { Chip, ChipVariant } from '../../Shared/homeVisualChip';
-import { VISUAL_TOKENS } from '../../Shared/homeVisualTokens';
-import {
-  CheckMini,
-  CloseMini,
-  CopyMini,
-  PencilMini,
-} from './TablePageMiniIcons';
+import { getHomeVisualInitials } from '../../Shared/utils/get-home-visual-initials';
+import { HomeVisualAvatar } from '../../Shared/components/HomeVisualAvatar';
+import { HomeVisualFaviconLogo } from '../../Shared/components/HomeVisualFaviconLogo';
+import { HomeVisualPersonAvatar } from '../../Shared/components/HomeVisualPersonAvatar';
+import { ChipVariant } from '../../Shared/utils/chip-variant';
+import { Chip } from '../../Shared/components/HomeVisualChip';
+import { VISUAL_TOKENS } from '../../Shared/utils/home-visual-tokens';
+import { CheckMini } from './CheckMini';
+import { CloseMini } from './CloseMini';
+import { CopyMini } from './CopyMini';
+import { PencilMini } from './PencilMini';
 import { TablePageCheckbox } from './TablePageCheckbox';
 import {
   TABLE_PAGE_CELL_HORIZONTAL_PADDING,

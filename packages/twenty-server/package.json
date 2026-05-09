@@ -17,6 +17,7 @@
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^4.0.97",
     "@ai-sdk/anthropic": "^3.0.72",
+    "@ai-sdk/azure": "^3.0.55",
     "@ai-sdk/google": "^3.0.65",
     "@ai-sdk/mistral": "^3.0.31",
     "@ai-sdk/openai": "^3.0.54",
@@ -175,6 +176,7 @@
     "rxjs": "7.8.1",
     "semver": "7.6.3",
     "sharp": "0.32.6",
+    "sns-payload-validator": "^2.1.0",
     "stripe": "19.3.1",
     "tar": "^7.5.9",
     "temporal-polyfill": "^0.3.0",

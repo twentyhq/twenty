@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next';
 
+import type { MessageDescriptor } from '@lingui/core';
+
 export type WebsiteRouteId =
   | 'home'
   | 'whyTwenty'
@@ -8,19 +10,22 @@ export type WebsiteRouteId =
   | 'partners'
   | 'releases'
   | 'customers'
+  | 'articles'
   | 'privacyPolicy'
   | 'terms'
   | 'halftone'
   | 'enterpriseActivate'
+  | `articles:${string}`
   | `customer:${string}`;
 
 export type WebsiteRoute = {
   changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'];
-  description: string;
+  description: MessageDescriptor;
   id: WebsiteRouteId;
   indexed: boolean;
+  localeMode?: 'all' | 'source';
   path: string;
   priority: number;
   robotsDisallow?: boolean;
-  title: string;
+  title: MessageDescriptor;
 };

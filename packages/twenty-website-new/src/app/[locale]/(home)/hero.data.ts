@@ -1,10 +1,10 @@
 import type {
   HeroDashboardDataType,
   HeroDashboardPageDefinition,
-  HeroHomeDataType,
   HeroKanbanPageDefinition,
   HeroTablePageDefinition,
-} from '@/sections/Hero/types';
+  HeroVisualType,
+} from '@/sections/Hero';
 import { SHARED_PEOPLE_AVATAR_URLS } from '@/content/site/asset-paths';
 
 const PEOPLE_AVATAR_URLS = {
@@ -323,15 +323,7 @@ function createTablePage({
   };
 }
 
-export const HERO_DATA: HeroHomeDataType = {
-  heading: [
-    { text: 'Build', fontFamily: 'serif' },
-    { text: ' your Enterprise CRM ', fontFamily: 'serif' },
-    { text: 'at\u00A0AI\u00A0Speed', fontFamily: 'sans' },
-  ],
-  body: {
-    text: 'Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.',
-  },
+export const HERO_DATA: { visual: HeroVisualType } = {
   visual: {
     workspace: { icon: 'apple', name: 'Apple' },
     tableWidth: 1700,
