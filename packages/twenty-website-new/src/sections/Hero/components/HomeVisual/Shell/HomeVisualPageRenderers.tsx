@@ -14,7 +14,7 @@ import type {
 } from '@/sections/Hero/types';
 import { KanbanPage } from '../Pages/Kanban/KanbanPage';
 import { TablePage } from '../Pages/Table/TablePage';
-import { PagePreviewLoader } from '../Shared/PagePreviewLoader';
+import { PagePreviewLoader } from '../Shared/components/PagePreviewLoader';
 
 const DashboardViewport = styled.div`
   flex: 1 1 auto;
@@ -57,25 +57,6 @@ const WorkflowPage = dynamic(
     ssr: false,
   },
 );
-
-let deferredPagePreloadPromise: Promise<void> | null = null;
-
-export function preloadDeferredHomeVisualPages() {
-  deferredPagePreloadPromise ??= Promise.all([
-    loadSalesDashboardPageModule(),
-    loadWorkflowPageModule(),
-  ])
-    .then(() => undefined)
-    .catch((error: unknown) => {
-      deferredPagePreloadPromise = null;
-
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('Home visual deferred page preload failed:', error);
-      }
-    });
-
-  return deferredPagePreloadPromise;
-}
 
 const PAGE_RENDERERS = {
   table: (page: HeroTablePageDefinition) => <TablePage page={page} />,

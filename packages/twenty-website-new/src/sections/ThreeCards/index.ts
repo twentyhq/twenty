@@ -4,4 +4,4 @@ export type {
   ThreeCardsIllustrationCardAttributionType,
   ThreeCardsIllustrationCardType,
 } from './types';
-export type { ThreeCardsScrollLayoutOptions } from './utils/three-cards-scroll-layout';
+export type { ThreeCardsScrollLayoutOptions } from './utils/three-cards-scroll-layout-options';

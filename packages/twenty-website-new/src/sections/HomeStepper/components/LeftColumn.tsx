@@ -2,12 +2,17 @@
 
 import { Body } from '@/design-system/components';
 import { StepperSwipeDeck } from '@/sections/Stepper';
-import { HOME_STEPPER_HOLD_FRACTIONS } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
 import { theme } from '@/theme';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react';
 import type { HomeStepperStepType } from './../types/home-stepper-step';
 import { ProgressBar } from './ProgressBar';
+
+const HOME_STEPPER_HOLD_FRACTIONS = [
+  240 / 285,
+  (880 - 285) / (925 - 285),
+  1,
+] as const;
 
 const LeftColumnRoot = styled.div`
   min-width: 0;
@@ -96,9 +101,9 @@ const SwipeStepBlock = styled.div`
   row-gap: ${theme.spacing(4)};
 `;
 
-export type HomeStepperLayoutMode = 'scroll' | 'swipe';
+type HomeStepperLayoutMode = 'scroll' | 'swipe';
 
-export type HomeStepperLeftColumnProps = {
+type HomeStepperLeftColumnProps = {
   activeStepIndex: number;
   layoutMode: HomeStepperLayoutMode;
   localProgress: number;

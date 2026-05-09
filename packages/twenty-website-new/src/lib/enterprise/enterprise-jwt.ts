@@ -1,12 +1,12 @@
 import * as crypto from 'crypto';
 
-export type EnterpriseKeyPayload = {
+type EnterpriseKeyPayload = {
   sub: string;
   licensee: string;
   iat: number;
 };
 
-export type EnterpriseValidityPayload = {
+type EnterpriseValidityPayload = {
   sub: string;
   status: 'valid';
   iat: number;
@@ -32,7 +32,7 @@ const getValidityTokenDurationDays = (): number => {
   return parsed;
 };
 
-export type SignValidityTokenOptions = {
+type SignValidityTokenOptions = {
   subscriptionCancelAt: number | null;
 };
 

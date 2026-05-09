@@ -4,7 +4,7 @@ import {
   getSiteUrl,
   JsonLd,
 } from '@/lib/seo';
-import { DRACO_DECODER_ORIGIN } from '@/lib/visual-runtime/draco-decoder-path';
+import { DRACO_DECODER_ORIGIN } from '@/lib/visual-runtime/utils/draco-decoder-path';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
 import { css } from '@linaria/core';
@@ -21,8 +21,8 @@ import {
   PUBLIC_APP_LOCALE_LIST,
   resolveLocaleParam,
 } from '@/lib/i18n';
-import { getLocaleMessages } from '@/lib/i18n/messages-by-locale';
-import { setServerI18n } from '@/lib/i18n/set-server-i18n';
+import { getLocaleMessages } from '@/lib/i18n/utils/messages-by-locale';
+import { setServerI18n } from '@/lib/i18n/utils/set-server-i18n';
 import { ContactCalModalRoot } from '@/sections/ContactCal';
 import { Footer, FOOTER_DATA } from '@/sections/Footer';
 import { PartnerApplicationModalRoot } from '@/sections/PartnerApplication';

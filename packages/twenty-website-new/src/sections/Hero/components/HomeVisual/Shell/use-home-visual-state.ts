@@ -3,11 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { HeroSidebarEntry, HeroVisualType } from '@/sections/Hero/types';
 import { normalizeHeroPage } from '../Data/normalize-hero-page';
-import {
-  findActiveItem,
-  findContainingFolderId,
-  isFolder,
-} from './home-visual-navigation';
+import { findActiveItem } from './find-active-item';
+import { findContainingFolderId } from './find-containing-folder-id';
+import { isFolder } from './is-folder';
 import {
   COMPANIES_ITEM_ID,
   COMPANIES_ITEM_LABEL,

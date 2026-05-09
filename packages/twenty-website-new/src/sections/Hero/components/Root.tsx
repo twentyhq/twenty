@@ -1,6 +1,6 @@
 import { Container } from '@/design-system/components';
 import { WebGlMount } from '@/lib/visual-runtime';
-import { HomeBackgroundHalftone } from '@/sections/Hero/visuals/HomeBackgroundHalftone';
+import { HomeBackgroundHalftone } from '@/sections/Hero/visuals/components/HomeBackgroundHalftone';
 import { theme, type Scheme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';

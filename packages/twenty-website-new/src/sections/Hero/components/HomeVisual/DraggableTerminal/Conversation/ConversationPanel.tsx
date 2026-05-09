@@ -1,13 +1,10 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { AssistantResponse } from './AssistantResponse';
-import { useConversationAutoScroll } from './use-conversation-auto-scroll';
-import { UserMessage } from './UserMessage';
-
-export type ConversationMessage =
-  | { id: string; role: 'user'; text: string }
-  | { id: string; role: 'assistant' };
+import { AssistantResponse } from './components/AssistantResponse';
+import type { ConversationMessage } from './types/conversation-message-types';
+import { useConversationAutoScroll } from './hooks/use-conversation-auto-scroll';
+import { UserMessage } from './components/UserMessage';
 
 type ConversationPanelProps = {
   instantComplete?: boolean;

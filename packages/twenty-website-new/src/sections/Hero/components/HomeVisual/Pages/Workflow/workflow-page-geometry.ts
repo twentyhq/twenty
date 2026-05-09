@@ -3,24 +3,12 @@ import type {
   WorkflowEdgeDefinition,
   WorkflowNodeDefinition,
 } from './workflow-page-data';
+import { getWorkflowNodeById } from './get-workflow-node-by-id';
 
 type Point = {
   x: number;
   y: number;
 };
-
-export function getWorkflowNodeById(
-  nodes: ReadonlyArray<WorkflowNodeDefinition>,
-  nodeId: string,
-) {
-  const node = nodes.find((workflowNode) => workflowNode.id === nodeId);
-
-  if (!node) {
-    throw new Error(`Unknown workflow node: ${nodeId}`);
-  }
-
-  return node;
-}
 
 function getNodeTopCenter(node: WorkflowNodeDefinition): Point {
   return {

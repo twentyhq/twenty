@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, type CSSProperties } from 'react';
-import { DEFAULT_TUNING, mountHalftoneCanvas } from './monolith-halftone-mount';
+import { useRef, type CSSProperties } from 'react';
+import { DEFAULT_TUNING } from './monolith-halftone-mount';
+import { useMonolithHalftone } from './use-monolith-halftone';
 
 const IMAGE_SRC = '/images/home/problem/monolith-problem.webp';
 
@@ -16,30 +17,7 @@ export default function Monolith({
 }: MonolithProps) {
   const mountReference = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const container = mountReference.current;
-
-    if (!container) {
-      return;
-    }
-
-    const abortController = new AbortController();
-    const unmountPromise = mountHalftoneCanvas({
-      container,
-      imageUrl,
-      signal: abortController.signal,
-    }).catch((error) => {
-      if (error.name !== 'AbortError') {
-        console.error(error);
-      }
-      return undefined;
-    });
-
-    return () => {
-      abortController.abort();
-      void unmountPromise.then((dispose) => dispose?.());
-    };
-  }, [imageUrl]);
+  useMonolithHalftone({ imageUrl, mountRef: mountReference });
 
   return (
     <div

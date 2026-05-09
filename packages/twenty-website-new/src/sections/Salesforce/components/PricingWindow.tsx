@@ -598,7 +598,7 @@ const SelectAllButton = styled.button`
   }
 `;
 
-export type PricingWindowProps = {
+type PricingWindowProps = {
   checkedIds: ReadonlySet<string>;
   onAddonToggle: (
     addon: SalesforceAddonRowType,

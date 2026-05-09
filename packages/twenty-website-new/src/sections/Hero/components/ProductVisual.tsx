@@ -1,5 +1,6 @@
 import { WebGlMount } from '@/lib/visual-runtime';
-import { Product, ProductPlaceholder } from '@/sections/Hero/visuals/Product';
+import { Product } from '@/sections/Hero/visuals/components/Product';
+import { ProductPlaceholder } from '@/sections/Hero/visuals/components/ProductPlaceholder';
 
 export function ProductVisual() {
   return (

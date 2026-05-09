@@ -4,8 +4,8 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { getPublishedArticle, getPublishedArticles } from '@/lib/articles';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { type LocaleRouteParams } from '@/lib/i18n/get-route-i18n';
-import { localeToUrlSegment } from '@/lib/i18n/website-locale-segments';
+import { type LocaleRouteParams } from '@/lib/i18n/utils/get-route-i18n';
+import { localeToUrlSegment } from '@/lib/i18n/utils/website-locale-segments';
 import { resolveLocaleParam } from '@/lib/i18n';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { buildArticleJsonLd, buildPageMetadata, JsonLd } from '@/lib/seo';

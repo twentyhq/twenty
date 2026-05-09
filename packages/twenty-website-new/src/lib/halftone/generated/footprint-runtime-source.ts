@@ -1,7 +1,10 @@
 // Untyped JS mirror of the footprint helpers in ../footprint.ts.
 // Injected into exported standalone HTML. Keep in sync — validated by
 // __tests__/footprint.test.ts which evals this string and compares results.
-import { MIN_FOOTPRINT_SCALE, REFERENCE_PREVIEW_DISTANCE } from '../footprint';
+import {
+  MIN_FOOTPRINT_SCALE,
+  REFERENCE_PREVIEW_DISTANCE,
+} from '../utils/footprint';
 
 export const HALFTONE_FOOTPRINT_RUNTIME_SOURCE = `
 const REFERENCE_PREVIEW_DISTANCE = ${REFERENCE_PREVIEW_DISTANCE};

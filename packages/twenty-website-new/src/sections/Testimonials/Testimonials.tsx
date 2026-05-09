@@ -2,12 +2,10 @@ import { Container } from '@/design-system/components';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
-import { Carousel } from './TestimonialsCarousel';
-import { PartnerCarousel } from './TestimonialsPartnerCarousel';
-import {
-  MountedTestimonialsHomeVisual,
-  MountedTestimonialsPartnerVisual,
-} from './TestimonialsVisuals';
+import { Carousel } from './components/TestimonialsCarousel';
+import { PartnerCarousel } from './components/TestimonialsPartnerCarousel';
+import { MountedTestimonialsHomeVisual } from './components/MountedTestimonialsHomeVisual';
+import { MountedTestimonialsPartnerVisual } from './components/MountedTestimonialsPartnerVisual';
 
 const TESTIMONIALS_SHAPE_PATH =
   'M0 4a4 4 0 0 1 4-4h344.32c4.197 0 8.369.66 12.361 1.958l49.5 16.084A40 40 0 0 0 422.542 20h517.7c4.293 0 8.559-.691 12.633-2.047l47.785-15.906A40 40 0 0 1 1013.29 0H1356a4 4 0 0 1 4 4v16H0z';

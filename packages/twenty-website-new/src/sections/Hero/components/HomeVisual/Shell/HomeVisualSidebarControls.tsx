@@ -8,7 +8,11 @@ import {
   IconMessageCirclePlus,
 } from '@tabler/icons-react';
 
-import { APP_FONT, COLORS, TABLER_STROKE } from '../Shared/home-visual-theme';
+import {
+  APP_FONT,
+  COLORS,
+  TABLER_STROKE,
+} from '../Shared/utils/home-visual-theme';
 
 const SidebarControls = styled.div`
   align-items: center;

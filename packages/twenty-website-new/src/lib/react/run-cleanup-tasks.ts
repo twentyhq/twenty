@@ -1,6 +1,6 @@
-export type CleanupErrorHandler = (error: unknown) => void;
+type CleanupErrorHandler = (error: unknown) => void;
 
-export const reportCleanupErrorInDevelopment: CleanupErrorHandler = (error) => {
+const reportCleanupErrorInDevelopment: CleanupErrorHandler = (error) => {
   if (process.env.NODE_ENV !== 'production') {
     console.error('Cleanup task failed:', error);
   }

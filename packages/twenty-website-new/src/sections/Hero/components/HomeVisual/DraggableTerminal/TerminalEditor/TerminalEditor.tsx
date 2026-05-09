@@ -2,13 +2,17 @@
 
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { type EditorFile } from './editor-data.types';
-import { EDITOR_FILES, EXPLORER_NODES } from './editor-data';
-import { findFileById, tokenizeSource } from './tokenize-editor-source';
-import { EDITOR_TOKENS } from './editor-tokens';
-import { TerminalEditorCodeView } from './TerminalEditorCodeView';
-import { TerminalEditorExplorer } from './TerminalEditorExplorer';
-import { TerminalEditorTabs } from './TerminalEditorTabs';
+import { type EditorFile } from './types/editor-data.types';
+import { EDITOR_FILES } from './utils/editor-data';
+import { EXPLORER_NODES } from './utils/editor-explorer-nodes';
+import { tokenizeSource } from './utils/tokenize-editor-source';
+
+const findFileById = (fileId: string): EditorFile | undefined =>
+  EDITOR_FILES.find((file) => file.id === fileId);
+import { EDITOR_TOKENS } from './utils/editor-tokens';
+import { TerminalEditorCodeView } from './components/TerminalEditorCodeView';
+import { TerminalEditorExplorer } from './components/TerminalEditorExplorer';
+import { TerminalEditorTabs } from './components/TerminalEditorTabs';
 import {
   closeTerminalEditorFile,
   getInitialTerminalEditorState,
@@ -16,7 +20,7 @@ import {
   getVisibleTerminalEditorExplorerNodes,
   selectTerminalEditorFile,
   syncTerminalEditorStateWithGeneratedFiles,
-} from './terminal-editor-state';
+} from './utils/terminal-editor-state';
 
 const Root = styled.div`
   background: ${EDITOR_TOKENS.surface.body};

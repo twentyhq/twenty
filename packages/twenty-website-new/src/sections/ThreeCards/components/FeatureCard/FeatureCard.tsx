@@ -9,9 +9,9 @@ import { styled } from '@linaria/react';
 import { IconUsersGroup } from '@tabler/icons-react';
 import Image from 'next/image';
 import { type ReactNode, useRef, useState } from 'react';
-import { FamiliarInterfaceVisual } from './FamiliarInterfaceVisual';
-import { FastPathVisual } from './FastPathVisual';
-import { LiveDataVisual } from './LiveDataVisual';
+import { FamiliarInterfaceVisual } from './components/FamiliarInterfaceVisual';
+import { FastPathVisual } from './components/FastPathVisual';
+import { LiveDataVisual } from './components/LiveDataVisual';
 
 const FeatureCardContainer = styled.div`
   display: grid;

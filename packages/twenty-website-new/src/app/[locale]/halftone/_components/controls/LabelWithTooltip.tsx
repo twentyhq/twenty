@@ -4,6 +4,8 @@ import { styled } from '@linaria/react';
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
+import { TooltipPositionEffect } from './effect-components/TooltipPositionEffect';
+
 const LabelWithInfoRow = styled.span`
   align-items: center;
   display: inline-flex;
@@ -94,38 +96,13 @@ export function LabelWithTooltip({
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const updateTooltipPosition = () => {
-      const button = buttonReference.current;
-
-      if (!button) {
-        return;
-      }
-
-      const rect = button.getBoundingClientRect();
-      setTooltipPosition({
-        left: rect.left + rect.width / 2,
-        top: rect.bottom + 12,
-      });
-    };
-
-    updateTooltipPosition();
-
-    window.addEventListener('resize', updateTooltipPosition);
-    window.addEventListener('scroll', updateTooltipPosition, true);
-
-    return () => {
-      window.removeEventListener('resize', updateTooltipPosition);
-      window.removeEventListener('scroll', updateTooltipPosition, true);
-    };
-  }, [isOpen]);
-
   return (
     <LabelWithInfoRow>
+      <TooltipPositionEffect
+        buttonRef={buttonReference}
+        isOpen={isOpen}
+        setTooltipPosition={setTooltipPosition}
+      />
       <span>{label}</span>
       <InfoTooltipRoot>
         <InfoTooltipButton

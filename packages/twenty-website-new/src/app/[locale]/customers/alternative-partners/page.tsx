@@ -4,7 +4,7 @@ import type { CaseStudyData } from '@/lib/customers';
 import {
   getRouteI18n,
   type LocaleRouteParams,
-} from '@/lib/i18n/get-route-i18n';
+} from '@/lib/i18n/utils/get-route-i18n';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
 

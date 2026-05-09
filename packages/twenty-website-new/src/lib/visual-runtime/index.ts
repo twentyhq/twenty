@@ -1,17 +1,17 @@
-export { evaluateWebGlPolicy } from './visual-runtime-policy';
+export { evaluateWebGlPolicy } from './utils/visual-runtime-policy';
 
-export { WebGlMount } from './WebglMount';
-export { loadVisualImage } from './load-visual-image';
-export { scheduleVisualMount } from './visual-mount-scheduler';
+export { WebGlMount } from './components/WebglMount';
+export { loadVisualImage } from './utils/load-visual-image';
+export { scheduleVisualMount } from './utils/visual-mount-scheduler';
 export {
   createSiteWebGlRenderer,
   tryCreateSiteWebGlRenderer,
-} from './create-site-webgl-renderer';
+} from './utils/create-site-webgl-renderer';
 
 export {
   createVisualRenderLoop,
   type VisualRenderLoop,
   type VisualRenderLoopFrame,
-} from './visual-render-loop';
+} from './utils/visual-render-loop';
 
-export { createBoundedFailureCache } from './bounded-failure-cache';
+export { createBoundedFailureCache } from './utils/bounded-failure-cache';

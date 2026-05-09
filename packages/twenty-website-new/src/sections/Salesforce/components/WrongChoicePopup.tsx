@@ -1,14 +1,12 @@
 'use client';
 
 import { useLingui } from '@lingui/react';
-import { useTimeoutRegistry } from '@/lib/react';
 import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { useEffect, useState } from 'react';
 
+import { useTimedPopupDismissal } from './use-timed-popup-dismissal';
 import { WRONG_CHOICE_POPUP_WIDTH } from './wrong-choice-popup-constants';
-const POPUP_VISIBLE_DURATION_MS = 3000;
 const POPUP_FADE_DURATION_MS = 240;
 
 const Shell = styled.div<{
@@ -121,30 +119,7 @@ export function WrongChoicePopup({
   titleId,
 }: WrongChoicePopupProps) {
   const { i18n } = useLingui();
-  const timeoutRegistry = useTimeoutRegistry();
-  const [isClosing, setIsClosing] = useState(false);
-
-  useEffect(() => {
-    return timeoutRegistry.schedule(() => {
-      setIsClosing(true);
-    }, POPUP_VISIBLE_DURATION_MS);
-  }, [timeoutRegistry]);
-
-  useEffect(() => {
-    if (isClosingRequested) {
-      setIsClosing(true);
-    }
-  }, [isClosingRequested]);
-
-  useEffect(() => {
-    if (!isClosing) {
-      return;
-    }
-
-    return timeoutRegistry.schedule(() => {
-      onClose();
-    }, POPUP_FADE_DURATION_MS);
-  }, [isClosing, onClose, timeoutRegistry]);
+  const isClosing = useTimedPopupDismissal(isClosingRequested, onClose);
 
   return (
     <Shell

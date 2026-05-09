@@ -1,8 +1,6 @@
 export { Plans } from './components';
-export {
-  PricingStateProvider,
-  usePricingState,
-} from './context/PricingStateContext';
+export { PricingStateProvider } from './context/PricingStateContext';
+export { usePricingState } from './context/use-pricing-state';
 export type {
   PlanCardType,
   PlanFeaturesType,

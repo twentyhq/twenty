@@ -6,10 +6,7 @@ import type {
   HeroWorkflowPageDefinition,
 } from '@/sections/Hero/types';
 
-export type HeroPageDefaults = {
-  defaultActions: string[];
-  defaultTableWidth?: number;
-};
+import type { HeroPageDefaults } from './hero-page-defaults';
 
 function normalizeTablePage(
   page: HeroTablePageDefinition,

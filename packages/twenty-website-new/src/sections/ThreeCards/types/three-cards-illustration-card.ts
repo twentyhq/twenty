@@ -1,24 +1,14 @@
 import type { MessageDescriptor } from '@lingui/core';
 import { type ThreeCardsIllustrationCardAttributionType } from './three-cards-illustration-card-attribution';
+import type { ThreeCardsIllustrationId } from './three-cards-illustration-id';
 
-export type ThreeCardsIllustrationId =
-  | 'connect'
-  | 'diamond'
-  | 'eye'
-  | 'flash'
-  | 'grow'
-  | 'lock'
-  | 'programming'
-  | 'singleScreen'
-  | 'speed';
-
-export type ThreeCardsIllustrationCardActionType = {
+type ThreeCardsIllustrationCardActionType = {
   kind: 'partnerApplication';
   label: MessageDescriptor;
   programId: 'technology' | 'content' | 'solutions';
 };
 
-export type ThreeCardsIllustrationBenefitType = {
+type ThreeCardsIllustrationBenefitType = {
   text: MessageDescriptor;
   icon?:
     | 'book'

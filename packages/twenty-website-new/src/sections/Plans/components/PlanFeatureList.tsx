@@ -2,16 +2,14 @@
 
 import { Body } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
-import { getMessageDescriptorSource } from '@/lib/i18n/get-message-descriptor-source';
+import { getMessageDescriptorSource } from '@/lib/i18n/utils/get-message-descriptor-source';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
-import {
-  FEATURE_ITEM_STAGGER_MS,
-  type FeatureTransitionPhase,
-} from './use-feature-transition';
+import { FEATURE_ITEM_STAGGER_MS } from './feature-item-stagger-ms';
+import type { FeatureTransitionPhase } from './feature-transition-phase';
 
 const FEATURES_SWITCH_ANIMATION_MS = 110;
 const FEATURE_ITEM_EXPANDED_HEIGHT = theme.spacing(8);

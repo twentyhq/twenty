@@ -3,15 +3,15 @@ export {
   type HalftoneImageInteractionSettings,
   type HalftoneRenderStrategy,
   type HalftoneSnapshotFn,
-} from './HalftoneCanvas';
-export { HalftoneImageCanvas } from './HalftoneImageCanvas';
-export { HalftoneModelCanvas } from './HalftoneModelCanvas';
+} from './components/HalftoneCanvas';
+export { HalftoneImageCanvas } from './components/HalftoneImageCanvas';
+export { HalftoneModelCanvas } from './components/HalftoneModelCanvas';
 
 export {
   createFallbackGeometry,
   loadImportedGeometryFromUrl,
   type ImportedGeometryNormalizationOptions,
-} from './geometry-registry';
+} from './utils/geometry-registry';
 
 export {
   DEFAULT_GLASS_ANIMATION_SETTINGS,
@@ -26,7 +26,7 @@ export {
   DEFAULT_SOLID_LIGHTING_SETTINGS,
   DEFAULT_SOLID_MATERIAL_SETTINGS,
   normalizeHalftoneStudioSettings,
-} from './state';
+} from './utils/state';
 
 export type {
   HalftoneAnimationSettings,
@@ -40,7 +40,7 @@ export type {
   HalftoneStudioSettings,
   HalftoneStudioSettingsOverrides,
   HalftoneToneTarget,
-} from './state';
+} from './utils/state';
 
 export {
   getContainedImageRect,
@@ -50,6 +50,6 @@ export {
   type HalftoneImageFit,
   REFERENCE_PREVIEW_DISTANCE,
   VIRTUAL_RENDER_HEIGHT,
-} from './footprint';
+} from './utils/footprint';
 
 export { HALFTONE_FOOTPRINT_RUNTIME_SOURCE } from './generated/footprint-runtime-source';

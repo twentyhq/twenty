@@ -3,14 +3,14 @@ import {
   generateStandaloneHtml,
   parseExportedPreset,
   type ReactExportSettings,
-} from '@/lib/halftone/exporters';
-import { resolveExportArtifactNames } from '@/lib/halftone/export-names';
-import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/footprint';
+} from '@/lib/halftone/utils/exporters';
+import { resolveExportArtifactNames } from '@/lib/halftone/utils/export-names';
+import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/utils/footprint';
 import {
   DEFAULT_HALFTONE_SETTINGS,
   normalizeHalftoneStudioSettings,
   type HalftoneGeometrySpec,
-} from '@/lib/halftone/state';
+} from '@/lib/halftone/utils/state';
 
 const IMPORTED_GLB_SHAPE: HalftoneGeometrySpec = {
   key: 'userUpload_connect',

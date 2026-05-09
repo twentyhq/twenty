@@ -1,13 +1,13 @@
 import type { MessageDescriptor } from '@lingui/core';
 
-import { getMessageDescriptorSource } from '@/lib/i18n/get-message-descriptor-source';
+import { getMessageDescriptorSource } from '@/lib/i18n/utils/get-message-descriptor-source';
 import { useTimeoutRegistry } from '@/lib/react';
 import { useEffect, useState } from 'react';
 
-const FEATURES_SWITCH_ANIMATION_MS = 110;
-export const FEATURE_ITEM_STAGGER_MS = 8;
+import { FEATURE_ITEM_STAGGER_MS } from './feature-item-stagger-ms';
+import type { FeatureTransitionPhase } from './feature-transition-phase';
 
-export type FeatureTransitionPhase = 'stable' | 'exiting' | 'entering';
+const FEATURES_SWITCH_ANIMATION_MS = 110;
 
 function getBulletsKey(bullets: MessageDescriptor[]) {
   return bullets.map((bullet) => getMessageDescriptorSource(bullet)).join('||');

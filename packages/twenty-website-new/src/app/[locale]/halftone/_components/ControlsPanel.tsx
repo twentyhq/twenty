@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactExportSettings } from '@/lib/halftone/exporters';
+import type { ReactExportSettings } from '@/lib/halftone/utils/exporters';
 import { IconLayoutSidebarRightCollapse } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import type {
@@ -9,7 +9,7 @@ import type {
   HalftoneSourceMode,
   HalftoneStudioSettings,
   HalftoneTabId,
-} from '@/lib/halftone/state';
+} from '@/lib/halftone/utils/state';
 import { AnimationsTab } from './controls/AnimationsTab';
 import { DesignTab } from './controls/DesignTab';
 import { ExportTab } from './controls/ExportTab';

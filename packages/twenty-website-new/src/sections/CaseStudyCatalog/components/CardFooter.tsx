@@ -1,5 +1,5 @@
 import { ArrowRightIcon } from '@/icons';
-import { getServerI18n } from '@/lib/i18n/get-server-i18n';
+import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';

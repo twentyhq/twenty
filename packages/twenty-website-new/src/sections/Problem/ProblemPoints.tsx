@@ -1,14 +1,10 @@
 import { Body } from '@/design-system/components/Body';
-import { getServerI18n } from '@/lib/i18n/get-server-i18n';
-import type { MessageDescriptor } from '@lingui/core';
+import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import React, { type ReactNode } from 'react';
+import React from 'react';
 
-export type ProblemPointType = {
-  heading: ReactNode;
-  body: MessageDescriptor;
-};
+import type { ProblemPointType } from './problem-point-type';
 
 const StyledPoints = styled.div`
   display: grid;

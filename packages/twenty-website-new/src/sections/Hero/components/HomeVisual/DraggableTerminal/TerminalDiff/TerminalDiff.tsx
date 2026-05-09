@@ -2,7 +2,7 @@
 
 import { IconArrowsVertical } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
-import { TERMINAL_TOKENS } from '../terminal-tokens';
+import { TERMINAL_TOKENS } from '../utils/terminal-tokens';
 import {
   DIFF_FILES,
   type DiffChunk,

@@ -15,7 +15,7 @@ import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-export type ProductStepperContentStepType = {
+type ProductStepperContentStepType = {
   body: MessageDescriptor;
   heading: ReactNode;
   icon: string;

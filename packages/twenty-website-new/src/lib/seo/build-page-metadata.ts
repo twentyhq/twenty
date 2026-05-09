@@ -4,9 +4,9 @@ import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 import {
   PUBLIC_APP_LOCALE_LIST,
   isPublicAppLocale,
-} from '@/lib/i18n/app-locale-set';
-import { createI18nInstance } from '@/lib/i18n/create-i18n-instance';
-import { localeToUrlSegment } from '@/lib/i18n/website-locale-segments';
+} from '@/lib/i18n/utils/app-locale-set';
+import { createI18nInstance } from '@/lib/i18n/utils/create-i18n-instance';
+import { localeToUrlSegment } from '@/lib/i18n/utils/website-locale-segments';
 import type { MessageDescriptor } from '@lingui/core';
 
 import { getSiteUrl } from './site-url';

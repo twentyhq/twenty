@@ -12,13 +12,9 @@ import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-type ActivationResult = {
-  enterpriseKey: string;
-  licensee: string;
-  subscriptionId: string;
-};
+import { useEnterpriseActivation } from './use-enterprise-activation';
 
 const ContentStack = styled.div`
   display: flex;
@@ -144,68 +140,8 @@ export function EnterpriseActivateClient() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const timeoutRegistry = useTimeoutRegistry();
-  const [result, setResult] = useState<ActivationResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { result, error, loading } = useEnterpriseActivation(sessionId);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (!sessionId) {
-      setError('No session ID provided. Please complete the checkout first.');
-      setLoading(false);
-
-      return;
-    }
-
-    const abortController = new AbortController();
-
-    const activate = async () => {
-      try {
-        const response = await fetch(
-          `/api/enterprise/activate?session_id=${encodeURIComponent(sessionId)}`,
-          { signal: abortController.signal },
-        );
-        const data: { error?: string } & Partial<ActivationResult> =
-          await response.json();
-
-        if (abortController.signal.aborted) {
-          return;
-        }
-
-        if (!response.ok) {
-          setError(data.error ?? 'Activation failed');
-
-          return;
-        }
-
-        if (data.enterpriseKey && data.licensee && data.subscriptionId) {
-          setResult({
-            enterpriseKey: data.enterpriseKey,
-            licensee: data.licensee,
-            subscriptionId: data.subscriptionId,
-          });
-        } else {
-          setError('Activation response was incomplete.');
-        }
-      } catch {
-        if (abortController.signal.aborted) {
-          return;
-        }
-
-        setError('Failed to activate enterprise key. Please try again.');
-      } finally {
-        if (!abortController.signal.aborted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void activate();
-
-    return () => {
-      abortController.abort();
-    };
-  }, [sessionId]);
 
   const handleCopy = async () => {
     if (!result) {

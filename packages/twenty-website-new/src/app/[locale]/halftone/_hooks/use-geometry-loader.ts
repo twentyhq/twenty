@@ -2,8 +2,8 @@ import {
   createFallbackGeometry,
   disposeGeometryCache,
   getGeometryForSpec,
-} from '@/lib/halftone/geometry-registry';
-import type { HalftoneGeometrySpec } from '@/lib/halftone/state';
+} from '@/lib/halftone/utils/geometry-registry';
+import type { HalftoneGeometrySpec } from '@/lib/halftone/utils/state';
 import { useEffect, useRef, useState } from 'react';
 import type * as THREE from 'three';
 

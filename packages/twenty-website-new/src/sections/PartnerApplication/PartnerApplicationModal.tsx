@@ -23,7 +23,9 @@ import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { IconChevronDown } from '@tabler/icons-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+
+import { usePartnerFormReset } from './use-partner-form-reset';
 
 const partnerPanelClass = css`
   --modal-panel-width: min(360px, 100%);
@@ -284,24 +286,18 @@ export function PartnerApplicationModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const copy = PARTNER_APPLICATION_MODAL_COPY;
 
-  useEffect(() => {
-    if (open) {
-      setProgramId(initialProgramId);
-    }
-  }, [open, initialProgramId]);
+  const formResetCallbacks = useMemo(
+    () => ({
+      formRef,
+      setProgramId,
+      setDropdownOpen,
+      setSubmitError,
+      setIsSubmitting,
+    }),
+    [],
+  );
 
-  useEffect(() => {
-    if (open) {
-      setSubmitError(null);
-      return;
-    }
-
-    formRef.current?.reset();
-    setProgramId('technology');
-    setDropdownOpen(false);
-    setSubmitError(null);
-    setIsSubmitting(false);
-  }, [open]);
+  usePartnerFormReset(open, initialProgramId, formResetCallbacks);
 
   const handleDropdownBlur = useCallback(
     (event: React.FocusEvent<HTMLDivElement>) => {

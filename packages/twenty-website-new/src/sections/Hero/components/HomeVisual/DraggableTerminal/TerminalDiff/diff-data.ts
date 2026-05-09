@@ -1,4 +1,4 @@
-import { CHANGESET_TOTALS } from '../Conversation/rocket-changeset';
+import { CHANGESET_TOTALS } from '../Conversation/utils/changeset-totals';
 
 export type DiffTokenKind =
   | 'text'

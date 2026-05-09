@@ -9,14 +9,14 @@ import {
   getExportedModelFile,
   parseExportedPreset,
   type ReactExportSettings,
-} from '@/lib/halftone/exporters';
-import { resolveExportArtifactNames } from '@/lib/halftone/export-names';
-import { generateImageHalftoneSvg } from '@/lib/halftone/image-svg-export';
+} from '@/lib/halftone/utils/exporters';
+import { resolveExportArtifactNames } from '@/lib/halftone/utils/export-names';
+import { generateImageHalftoneSvg } from '@/lib/halftone/utils/image-svg-export';
 import {
   HalftoneCanvas,
   type HalftoneSnapshotFn,
-} from '@/lib/halftone/HalftoneCanvas';
-import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/footprint';
+} from '@/lib/halftone/components/HalftoneCanvas';
+import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/utils/footprint';
 import {
   DEFAULT_IMAGE_HALFTONE_SETTINGS,
   DEFAULT_SHAPE_HALFTONE_SETTINGS,
@@ -27,7 +27,7 @@ import {
   type HalftoneModelLoader,
   type HalftoneSourceMode,
   normalizeHalftoneStudioSettings,
-} from '@/lib/halftone/state';
+} from '@/lib/halftone/utils/state';
 import { Logo as LogoIcon } from '@/icons';
 import { useTimeoutRegistry } from '@/lib/react';
 import { theme } from '@/theme';
@@ -42,6 +42,7 @@ import {
 
 import { CopyHalftoneShortcutEffect } from './effect-components/CopyHalftoneShortcutEffect';
 import { PasteImageEffect } from './effect-components/PasteImageEffect';
+import { useDefaultHalftoneImage } from '../_hooks/use-default-halftone-image';
 import { useGeometryLoader } from '../_hooks/use-geometry-loader';
 import { useImageElement } from '../_hooks/use-image-element';
 
@@ -1055,15 +1056,7 @@ export function HalftoneStudio() {
     state.settings,
   ]);
 
-  useEffect(() => {
-    void loadDefaultImageFile()
-      .then((file) => {
-        setImageFile((currentFile) => currentFile ?? file);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [loadDefaultImageFile]);
+  useDefaultHalftoneImage({ loadDefaultImageFile, setImageFile });
 
   const background = state.settings.background.color;
   const backgroundTone = isLightColor(background) ? 'light' : 'dark';

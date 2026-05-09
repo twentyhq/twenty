@@ -1,10 +1,8 @@
 export { Hero } from './components';
-export {
-  Chip,
-  ChipVariant,
-  type ChipProps,
-} from './components/HomeVisual/Shared/HomeVisualChip';
-export { VISUAL_TOKENS } from './components/HomeVisual/Shared/home-visual-tokens';
+export { Chip } from './components/HomeVisual/Shared/components/HomeVisualChip';
+export { type ChipProps } from './components/HomeVisual/Shared/utils/chip-props';
+export { ChipVariant } from './components/HomeVisual/Shared/utils/chip-variant';
+export { VISUAL_TOKENS } from './components/HomeVisual/Shared/utils/home-visual-tokens';
 export type {
   HeroCellBoolean,
   HeroCellEntity,

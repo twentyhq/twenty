@@ -1,8 +1,9 @@
 import type { Scheme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
-export type { HeadingCardType, HelpedVisualId } from './helped-visuals';
-import { Scene } from './HelpedScene';
+export type { HeadingCardType } from './types/heading-card-type';
+export type { HelpedVisualId } from './types/helped-visual-id';
+import { Scene } from './components/HelpedScene';
 
 const StyledSection = styled.section`
   width: 100%;

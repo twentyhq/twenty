@@ -1,10 +1,10 @@
-export type AnimationFrameLoopController = {
+type AnimationFrameLoopController = {
   isRunning: () => boolean;
   start: () => void;
   stop: () => void;
 };
 
-export type CreateAnimationFrameLoopOptions = {
+type CreateAnimationFrameLoopOptions = {
   cancelAnimationFrame?: (handle: number) => void;
   onFrame: (timestamp: number) => boolean | void;
   requestAnimationFrame?: (callback: FrameRequestCallback) => number;

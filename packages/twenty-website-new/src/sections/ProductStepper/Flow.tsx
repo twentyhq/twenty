@@ -55,12 +55,8 @@ export function Flow({ body, children, eyebrow, steps }: FlowProps) {
   const isMdUp = useStepperMdUp();
   const [scrollProgress, setScrollProgress] = useState(0);
   const scrollContainerRef = useRef<HTMLElement>(null);
-  const {
-    activeStepIndex,
-    localProgress,
-    mobileStepIndex,
-    setMobileStepIndex,
-  } = useBreakpointStepSync(isMdUp, scrollProgress, steps.length);
+  const { activeStepIndex, localProgress, setMobileStepIndex } =
+    useBreakpointStepSync(isMdUp, scrollProgress, steps.length);
 
   const contentSteps = steps.map(
     ({ body: stepBody, heading: stepHeading, icon }) => ({
