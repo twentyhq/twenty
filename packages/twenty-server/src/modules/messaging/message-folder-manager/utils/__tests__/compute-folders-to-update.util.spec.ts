@@ -124,4 +124,71 @@ describe('computeFoldersToUpdate', () => {
 
     expect(result.size).toBe(0);
   });
+
+  describe('syncCursor reset logic', () => {
+    it('should reset syncCursor to null when isSynced changes from false to true', () => {
+      const discoveredFolders = [
+        {
+          name: 'Inbox',
+          externalId: 'INBOX',
+          isSynced: true,
+          isSentFolder: false,
+          parentFolderId: null,
+        },
+      ];
+
+      const existingFolders = [
+        {
+          id: 'folder-id',
+          name: 'Inbox',
+          externalId: 'INBOX',
+          isSynced: false,
+          isSentFolder: false,
+          parentFolderId: null,
+          syncCursor: 'old-cursor',
+          pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+        },
+      ];
+
+      const result = computeFoldersToUpdate({
+        discoveredFolders,
+        existingFolders,
+      });
+
+      expect(result.get('folder-id')?.syncCursor).toBeNull();
+    });
+
+    it('should not touch syncCursor when isSynced is already true, even if other fields change', () => {
+      const discoveredFolders = [
+        {
+          name: 'New Name',
+          externalId: 'INBOX',
+          isSynced: true,
+          isSentFolder: false,
+          parentFolderId: null,
+        },
+      ];
+
+      const existingFolders = [
+        {
+          id: 'folder-id',
+          name: 'Old Name',
+          externalId: 'INBOX',
+          isSynced: true,
+          isSentFolder: false,
+          parentFolderId: null,
+          syncCursor: 'existing-cursor',
+          pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+        },
+      ];
+
+      const result = computeFoldersToUpdate({
+        discoveredFolders,
+        existingFolders,
+      });
+
+      expect(result.get('folder-id')?.name).toBe('New Name');
+      expect(result.get('folder-id')).not.toHaveProperty('syncCursor');
+    });
+  });
 });

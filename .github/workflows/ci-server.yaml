@@ -276,6 +276,23 @@ jobs:
     needs: server-build
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -289,11 +306,16 @@ jobs:
           key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Build twenty-shared
         run: npx nx build twenty-shared
+      - name: Server / Write .env
+        run: npx nx reset:env twenty-server
+      - name: Server / Metadata Sync
+        run: npx nx command-no-deps twenty-server -- metadata:sync || echo "Metadata sync failed, continuing..."
       - name: Server / Run Tests
         uses: ./.github/actions/nx-affected
         with:
           tag: scope:backend
           tasks: test
+
 
   server-integration-test:
     timeout-minutes: 30
