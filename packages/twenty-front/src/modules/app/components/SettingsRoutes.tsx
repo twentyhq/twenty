@@ -136,7 +136,6 @@ const SettingsWorkspaceEmailGroupChannelDetail = lazy(() =>
   })),
 );
 
-
 const SettingsSubdomainPage = lazy(() =>
   import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
     default: module.SettingsSubdomainPage,
