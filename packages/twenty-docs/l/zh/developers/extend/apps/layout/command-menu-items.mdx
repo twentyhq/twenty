@@ -1,10 +1,10 @@
 ---
-title: Command Menu Items
-description: Surface front components as quick actions and command menu (Cmd+K) entries with defineCommandMenuItem.
+title: 命令菜单项
+description: 使用 defineCommandMenuItem 将前端组件暴露为快速操作和命令菜单（Cmd+K）条目。
 icon: terminal
 ---
 
-A **command menu item** is the bridge between the user and a [front component](/l/zh/developers/extend/apps/layout/front-components). It registers the component in Twenty's command menu (Cmd+K) and, optionally, as a pinned quick-action button in the top-right corner of the page.
+**命令菜单项** 是用户与[前端组件](/l/zh/developers/extend/apps/layout/front-components)之间的桥梁。 它会在 Twenty 的命令菜单（Cmd+K）中注册该组件，并可选地将其作为页面右上角的固定快速操作按钮。
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -20,25 +20,25 @@ export default defineCommandMenuItem({
 });
 ```
 
-## Configuration fields
+## 配置字段
 
-| Field                                   | Required | Description                                                                                                                                                                    |
-| --------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | Yes      | Stable unique ID for the command                                                                                                                                               |
-| `label`                                 | Yes      | Full label shown in the command menu (Cmd+K)                                                                                                                                   |
-| `frontComponentUniversalIdentifier`     | Yes      | The `universalIdentifier` of the front component this command opens                                                                                                            |
-| `shortLabel`                            | No       | Shorter label displayed on the pinned quick-action button                                                                                                                      |
-| `icon`                                  | No       | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`)                                                                                                        |
-| `isPinned`                              | No       | When `true`, shows the command as a quick-action button in the top-right corner of the page                                                                                    |
-| `availabilityType`                      | No       | Controls where the command appears: `'GLOBAL'` (always available), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
-| `availabilityObjectUniversalIdentifier` | No       | Restrict the command to pages of a specific object type (e.g. only on Company records)                                                                                         |
-| `conditionalAvailabilityExpression`     | No       | A boolean expression that dynamically controls visibility (see below)                                                                                                          |
+| 字段                                      | 必填 | 描述                                                                               |
+| --------------------------------------- | -- | -------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | 是  | 该命令的稳定唯一 ID                                                                      |
+| `label`                                 | 是  | 在命令菜单（Cmd+K）中显示的完整标签                                                             |
+| `frontComponentUniversalIdentifier`     | 是  | 此命令打开的前端组件的 `universalIdentifier`                                                |
+| `shortLabel`                            | 否  | 固定的快速操作按钮上显示的较短标签                                                                |
+| `icon`                                  | 否  | 显示在标签旁边的图标名称（例如 `'IconBolt'`、`'IconSend'`）                                       |
+| `isPinned`                              | 否  | 为 `true` 时，会将该命令显示为页面右上角的快速操作按钮                                                  |
+| `availabilityType`                      | 否  | 控制命令出现的位置：'GLOBAL'（始终可用）、'RECORD_SELECTION'（仅在选择了记录时），或 'FALLBACK'（当没有其他命令匹配时显示） |
+| `availabilityObjectUniversalIdentifier` | 否  | 将该命令限制在特定对象类型的页面上（例如仅在 Company 记录上）                                              |
+| `conditionalAvailabilityExpression`     | 否  | 用于动态控制可见性的布尔表达式（见下文）                                                             |
 
-## Headless commands
+## 无头命令
 
-A command menu item paired with a [headless front component](/l/zh/developers/extend/apps/layout/front-components#headless-vs-non-headless) is the idiomatic way to ship a one-click action — run code, navigate, or confirm and execute. The Front Components page covers the [SDK Command components](/l/zh/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) that handle the action-and-unmount pattern.
+与[无头前端组件](/l/zh/developers/extend/apps/layout/front-components#headless-vs-non-headless)配对的命令菜单项，是交付一键操作（运行代码、导航，或确认并执行）的惯用方式。 Front Components 页面介绍了处理“执行操作并卸载”模式的 [SDK Command 组件](/l/zh/developers/extend/apps/layout/front-components#sdk-command-components)（`Command`、`CommandLink`、`CommandModal`、`CommandOpenSidePanelPage`）。
 
-A typical flow:
+一个典型的流程：
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -79,9 +79,9 @@ export default defineCommandMenuItem({
 });
 ```
 
-## Conditional availability expressions
+## 条件可用性表达式
 
-The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
+通过 `conditionalAvailabilityExpression` 字段，您可以基于当前页面上下文控制命令何时可见。 从 `twenty-sdk` 导入带类型的变量和运算符来构建表达式：
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -103,42 +103,42 @@ export default defineCommandMenuItem({
 });
 ```
 
-### Context variables
+### 上下文变量
 
-These represent the current state of the page:
+这些变量表示页面的当前状态：
 
-| Variable                       | Type      | Description                                                      |
-| ------------------------------ | --------- | ---------------------------------------------------------------- |
-| `pageType`                     | `string`  | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
-| `isInSidePanel`                | `boolean` | Whether the component is rendered in a side panel                |
-| `numberOfSelectedRecords`      | `number`  | Number of currently selected records                             |
-| `isSelectAll`                  | `boolean` | Whether "select all" is active                                   |
-| `selectedRecords`              | `array`   | The selected record objects                                      |
-| `favoriteRecordIds`            | `array`   | IDs of favorited records                                         |
-| `objectPermissions`            | `object`  | Permissions for the current object type                          |
-| `targetObjectReadPermissions`  | `object`  | Read permissions for the target object                           |
-| `targetObjectWritePermissions` | `object`  | Write permissions for the target object                          |
-| `featureFlags`                 | `object`  | Active feature flags                                             |
-| `objectMetadataItem`           | `object`  | Metadata of the current object type                              |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter                |
+| 变量                             | 类型        | 描述                                            |
+| ------------------------------ | --------- | --------------------------------------------- |
+| `pageType`                     | `string`  | 当前页面类型（例如 'RecordIndexPage'、'RecordShowPage'） |
+| `isInSidePanel`                | `boolean` | 组件是否在侧边栏中渲染                                   |
+| `numberOfSelectedRecords`      | `number`  | 当前选中的记录数量                                     |
+| `isSelectAll`                  | `boolean` | “全选”是否已激活                                     |
+| `selectedRecords`              | `array`   | 已选记录对象                                        |
+| `favoriteRecordIds`            | `array`   | 已收藏记录的 ID                                     |
+| `objectPermissions`            | `object`  | 当前对象类型的权限                                     |
+| `targetObjectReadPermissions`  | `object`  | 目标对象的读取权限                                     |
+| `targetObjectWritePermissions` | `object`  | 目标对象的写入权限                                     |
+| `featureFlags`                 | `object`  | 当前启用的功能标志                                     |
+| `objectMetadataItem`           | `object`  | 当前对象类型的元数据                                    |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | 当前视图是否包含软删除筛选器                                |
 
-### Operators
+### 运算符
 
-Combine variables into boolean expressions:
+将变量组合为布尔表达式：
 
-| Operator                            | Description                                                       |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| `isDefined(value)`                  | `true` if the value is not null/undefined                         |
-| `isNonEmptyString(value)`           | `true` if the value is a non-empty string                         |
-| `includes(array, value)`            | `true` if the array contains the value                            |
-| `includesEvery(array, prop, value)` | `true` if every item's property includes the value                |
-| `every(array, prop)`                | `true` if the property is truthy on every item                    |
-| `everyDefined(array, prop)`         | `true` if the property is defined on every item                   |
-| `everyEquals(array, prop, value)`   | `true` if the property equals the value on every item             |
-| `some(array, prop)`                 | `true` if the property is truthy on at least one item             |
-| `someDefined(array, prop)`          | `true` if the property is defined on at least one item            |
-| `someEquals(array, prop, value)`    | `true` if the property equals the value on at least one item      |
-| `someNonEmptyString(array, prop)`   | `true` if the property is a non-empty string on at least one item |
-| `none(array, prop)`                 | `true` if the property is falsy on every item                     |
-| `noneDefined(array, prop)`          | `true` if the property is undefined on every item                 |
-| `noneEquals(array, prop, value)`    | `true` if the property does not equal the value on any item       |
+| 运算符                                 | 描述                               |
+| ----------------------------------- | -------------------------------- |
+| `isDefined(value)`                  | 当该值不是 null/undefined 时为 `true`   |
+| `isNonEmptyString(value)`           | 当该值为非空字符串时为 `true`               |
+| `includes(array, value)`            | 当数组包含该值时为 `true`                 |
+| `includesEvery(array, prop, value)` | 当每个条目的属性都包含该值时为 `true`           |
+| `every(array, prop)`                | 当该属性在每个条目上都为 truthy 时为 `true`    |
+| `everyDefined(array, prop)`         | 当该属性在每个条目上都已定义时为 `true`          |
+| `everyEquals(array, prop, value)`   | 当该属性在每个条目上都等于该值时为 `true`         |
+| `some(array, prop)`                 | 当至少一个条目上的该属性为 truthy 时为 `true`   |
+| `someDefined(array, prop)`          | 当至少一个条目上的该属性已定义时为 `true`         |
+| `someEquals(array, prop, value)`    | 当至少一个条目上的该属性等于该值时为 `true`        |
+| `someNonEmptyString(array, prop)`   | 当至少一个条目上的该属性为非空字符串时为 `true`      |
+| `none(array, prop)`                 | 当该属性在每个条目上都为 falsy 时为 `true`     |
+| `noneDefined(array, prop)`          | 当该属性在每个条目上都为 undefined 时为 `true` |
+| `noneEquals(array, prop, value)`    | 当该属性在任意条目上都不等于该值时为 `true`        |

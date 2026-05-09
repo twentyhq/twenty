@@ -1,19 +1,19 @@
 ---
-title: Skills & Agents
-description: Define AI skills and agents for your app.
+title: Beceriler ve Ajanlar
+description: Uygulamanız için yapay zekâ yetenekleri ve ajanları tanımlayın.
 icon: robot
 ---
 
 <Warning>
-  Skills and agents are currently in alpha. The feature works but is still evolving.
+  Beceriler ve ajanlar şu anda alfa aşamasında. Özellik işlevsel ancak hâlâ gelişmekte.
 </Warning>
 
-Apps can define AI capabilities that live inside the workspace — reusable skill instructions and agents with custom system prompts.
+Uygulamalar, çalışma alanı içinde yer alan yapay zekâ yeteneklerini — yeniden kullanılabilir yetenek yönergeleri ve özel sistem istemlerine sahip ajanları — tanımlayabilir.
 
 <AccordionGroup>
-<Accordion title="defineSkill" description="Define AI agent skills">
+<Accordion title="defineSkill" description="Yapay zekâ ajanı yeteneklerini tanımlayın">
 
-Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+Yetenekler, yapay zekâ ajanlarının çalışma alanınızda kullanabileceği yeniden kullanılabilir yönergeleri ve kabiliyetleri tanımlar. Yerleşik doğrulamayla yetenekleri tanımlamak için `defineSkill()` kullanın:
 
 ```ts src/skills/example-skill.ts
 import { defineSkill } from 'twenty-sdk/define';
@@ -32,17 +32,17 @@ export default defineSkill({
 });
 ```
 
-Key points:
-* `name` is a unique identifier string for the skill (kebab-case recommended).
-* `label` is the human-readable display name shown in the UI.
-* `content` contains the skill instructions — this is the text the AI agent uses.
-* `icon` (optional) sets the icon displayed in the UI.
-* `description` (optional) provides additional context about the skill's purpose.
+Önemli noktalar:
+* `name`, yetenek için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
+* `label`, UI'de gösterilen, insan tarafından okunabilir addır.
+* `content`, yetenek yönergelerini içerir — bu, yapay zekâ ajanının kullandığı metindir.
+* `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
+* `description` (isteğe bağlı), yeteneğin amacı hakkında ek bağlam sağlar.
 
 </Accordion>
-<Accordion title="defineAgent" description="Define AI agents with custom prompts">
+<Accordion title="defineAgent" description="Özel istemlerle yapay zekâ ajanları tanımlayın">
 
-Agents are AI assistants that live inside your workspace. Use `defineAgent()` to create agents with a custom system prompt:
+Ajanlar, çalışma alanınız içinde bulunan yapay zekâ asistanlarıdır. Özel bir sistem istemiyle ajanlar oluşturmak için `defineAgent()` kullanın:
 
 ```ts src/agents/example-agent.ts
 import { defineAgent } from 'twenty-sdk/define';
@@ -57,13 +57,13 @@ export default defineAgent({
 });
 ```
 
-Key points:
-* `name` is the unique identifier string for the agent (kebab-case recommended).
-* `label` is the display name shown in the UI.
-* `prompt` is the system prompt that defines the agent's behavior.
-* `description` (optional) provides context about what the agent does.
-* `icon` (optional) sets the icon displayed in the UI.
-* `modelId` (optional) overrides the default AI model used by the agent.
+Önemli noktalar:
+* `name`, ajan için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
+* `label`, UI'de gösterilen görünen addır.
+* `prompt`, ajanın davranışını tanımlayan sistem istemidir.
+* `description` (isteğe bağlı), ajanın ne yaptığı hakkında bağlam sağlar.
+* `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
+* `modelId` (isteğe bağlı), ajanın kullandığı varsayılan yapay zekâ modelini geçersiz kılar.
 
 </Accordion>
 </AccordionGroup>

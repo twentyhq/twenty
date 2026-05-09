@@ -1,18 +1,18 @@
 ---
-title: Scaffolding
-description: Generate entity files interactively with yarn twenty add — objects, fields, views, logic functions, and more.
+title: 脚手架
+description: 通过 yarn twenty add 以交互方式生成实体文件——对象、字段、视图、逻辑函数等。
 icon: wand-magic-sparkles
 ---
 
-Instead of creating entity files by hand, use the interactive scaffolder:
+无需手动创建实体文件，使用交互式脚手架：
 
 ```bash filename="Terminal"
 yarn twenty add
 ```
 
-It prompts you to pick an entity type and walks you through the required fields, then writes a ready-to-use file with a stable `universalIdentifier` and the correct `defineEntity()` call.
+它会提示你选择一个实体类型，引导你填写所需字段，然后生成一个可直接使用的文件，其中包含稳定的 `universalIdentifier` 和正确的 `defineEntity()` 调用。
 
-You can also pass the entity type directly to skip the first prompt:
+你也可以直接传入实体类型以跳过第一个提示：
 
 ```bash filename="Terminal"
 yarn twenty add object
@@ -20,38 +20,38 @@ yarn twenty add logicFunction
 yarn twenty add frontComponent
 ```
 
-## Available entity types
+## 可用的实体类型
 
-| Entity type          | Command                              | Generated file                                          |
-| -------------------- | ------------------------------------ | ------------------------------------------------------- |
-| Object               | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
-| Field                | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
-| Logic function       | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
-| Front component      | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
-| Role                 | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
-| Skill                | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
-| Agent                | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
-| View                 | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
-| Navigation menu item | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
-| Page layout          | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+| 实体类型  | 命令                                   | 生成的文件                                                   |
+| ----- | ------------------------------------ | ------------------------------------------------------- |
+| 对象    | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| 字段    | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| 逻辑函数  | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| 前端组件  | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| 角色    | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| 技能    | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| 代理    | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| 视图    | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| 导航菜单项 | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| 页面布局  | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
 
-## What the scaffolder generates
+## 脚手架生成的内容
 
-Each entity type has its own template. For example, `yarn twenty add object` asks for:
+每种实体类型都有其自己的模板。 例如，`yarn twenty add object` 会询问：
 
-1. **Name (singular)** — e.g., `invoice`
-2. **Name (plural)** — e.g., `invoices`
-3. **Label (singular)** — auto-populated from the name (e.g., `Invoice`)
-4. **Label (plural)** — auto-populated (e.g., `Invoices`)
-5. **Create a view and navigation item?** — if you answer yes, the scaffolder also generates a matching view and sidebar link for the new object.
+1. **名称（单数）**——例如，`invoice`
+2. **名称（复数）**——例如，`invoices`
+3. **标签（单数）**——根据名称自动填充（例如，`Invoice`）
+4. **标签（复数）**——自动填充（例如，`Invoices`）
+5. **创建视图和导航项？**——如果你选择是，脚手架还会为新对象生成相应的视图和侧边栏链接。
 
-Other entity types have simpler prompts — most only ask for a name.
+其他实体类型的提示更简单——大多只会询问名称。
 
-The `field` entity type is more detailed: it asks for the field name, label, type (from a list of all available field types like `TEXT`, `NUMBER`, `SELECT`, `RELATION`, etc.), and the target object's `universalIdentifier`.
+`field` 实体类型更为详细：它会询问字段名称、标签、类型（从所有可用字段类型列表中选择，如 `TEXT`、`NUMBER`、`SELECT`、`RELATION` 等），以及目标对象的 `universalIdentifier`。
 
-## Custom output path
+## 自定义输出路径
 
-Use the `--path` flag to place the generated file in a custom location:
+使用 `--path` 标志将生成的文件放置在自定义位置：
 
 ```bash filename="Terminal"
 yarn twenty add logicFunction --path src/custom-folder

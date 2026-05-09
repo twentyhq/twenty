@@ -1,25 +1,25 @@
 ---
-title: Public Assets
-description: Ship static files — images, icons, fonts — alongside your app via the public/ folder.
+title: 公共资源
+description: 通过 public/ 文件夹将静态文件（图像、图标、字体）与应用一起发布。
 icon: folder-open
 ---
 
-The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
+应用根目录中的 `public/` 文件夹包含静态文件——图像、图标、字体，或应用在运行时所需的任何其他资源。 这些文件会在构建时自动包含、在开发模式下同步，并上传到服务器。
 
-Files placed in `public/` are:
+放置在 `public/` 中的文件：
 
-* **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
-* **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
-* **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
-* **Used for marketplace metadata** — the `logoUrl` and `screenshots` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published.
-* **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-* **Included in builds** — `yarn twenty build` bundles all public assets into the distribution output.
+* **公开可访问**——同步到服务器后，资源将通过公共 URL 提供服务。 访问它们无需身份验证。
+* **在前端组件中可用**——使用资源 URL 在 React 组件中显示图像、图标或任何媒体。
+* **在逻辑函数中可用**——在电子邮件、API 响应或任何服务端逻辑中引用资源 URL。
+* **用于市场元数据**——`defineApplication()` 中的 `logoUrl` 和 `screenshots` 字段引用此文件夹中的文件（例如，`public/logo.png`）。 应用发布后，这些内容会显示在市场中。
+* **在开发模式下自动同步**——当在 `public/` 中添加、更新或删除文件时，会自动同步到服务器。 无需重启。
+* **包含在构建中**——`yarn twenty build` 会将所有公共资源打包到分发产物中。
 
-## Accessing public assets with `getPublicAssetUrl`
+## 使用 `getPublicAssetUrl` 访问公共资源
 
-Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
+使用来自 `twenty-sdk` 的 `getPublicAssetUrl` 辅助函数获取 `public/` 目录中文件的完整 URL。 它可在 **逻辑函数** 和 **前端组件** 中使用。
 
-**In a logic function:**
+**在逻辑函数中：**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
@@ -44,7 +44,7 @@ export default defineLogicFunction({
 });
 ```
 
-**In a front component:**
+**在前端组件中：**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
@@ -56,4 +56,4 @@ export default defineFrontComponent(() => {
 });
 ```
 
-The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+`path` 参数是相对于应用的 `public/` 文件夹的。 `getPublicAssetUrl('logo.png')` 和 `getPublicAssetUrl('public/logo.png')` 均解析为相同的 URL——如果存在，`public/` 前缀会被自动移除。

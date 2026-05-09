@@ -29,6 +29,7 @@ import { TransformApplicationVariableToSyncableEntityFastInstanceCommand } from 
 import { AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1797000001000-add-tool-and-workflow-action-trigger-settings';
 import { BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1777966965588-backfill-application-variable-universal-identifier';
 import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1797000002000-migrate-tool-trigger-settings';
+import { AddEmailGroupChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778256809018-add-email-group-channel-type';
 import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1798000003000-add-application-id-to-public-domain';
 
 export const INSTANCE_COMMANDS = [
@@ -61,5 +62,6 @@ export const INSTANCE_COMMANDS = [
   RemoveUserDefaultAvatarUrlFastInstanceCommand,
   TransformApplicationVariableToSyncableEntityFastInstanceCommand,
   BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand,
+  AddEmailGroupChannelTypeFastInstanceCommand,
   AddApplicationIdToPublicDomainFastInstanceCommand,
 ];

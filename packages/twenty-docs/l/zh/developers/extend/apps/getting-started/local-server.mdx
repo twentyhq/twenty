@@ -1,61 +1,61 @@
 ---
-title: Local Server
-description: Manage the local Twenty Docker server — start, stop, upgrade, parallel test instance, and manual SDK setup.
+title: 本地服务器
+description: 管理本地 Twenty Docker 服务器 — 启动、停止、升级、并行测试实例，以及手动设置 SDK。
 icon: server
 ---
 
-## Managing the local server
+## 管理本地服务器
 
-Use `yarn twenty server` to control the local Twenty container:
+使用 `yarn twenty server` 控制本地的 Twenty 容器：
 
-| Command                                | What it does                                 |
-| -------------------------------------- | -------------------------------------------- |
-| `yarn twenty server start`             | Start the server (pulls the image if needed) |
-| `yarn twenty server start --port 3030` | Start on a custom port                       |
-| `yarn twenty server stop`              | Stop the server (preserves data)             |
-| `yarn twenty server status`            | Show URL, version, and login credentials     |
-| `yarn twenty server logs`              | Stream server logs                           |
-| `yarn twenty server reset`             | Wipe data and start fresh                    |
-| `yarn twenty server upgrade`           | Pull the latest `twenty-app-dev` image       |
-| `yarn twenty server upgrade 2.2.0`     | Upgrade to a specific version                |
+| 命令                                     | 作用                        |
+| -------------------------------------- | ------------------------- |
+| `yarn twenty server start`             | 启动服务器（按需拉取镜像）             |
+| `yarn twenty server start --port 3030` | 在自定义端口启动                  |
+| `yarn twenty server stop`              | 停止服务器（保留数据）               |
+| `yarn twenty server status`            | 显示 URL、版本和登录凭据            |
+| `yarn twenty server logs`              | 流式输出服务器日志                 |
+| `yarn twenty server reset`             | 清空数据并全新开始                 |
+| `yarn twenty server upgrade`           | 拉取最新的 `twenty-app-dev` 镜像 |
+| `yarn twenty server upgrade 2.2.0`     | 升级到指定版本                   |
 
-Data persists across restarts in two Docker volumes (`twenty-app-dev-data` for PostgreSQL, `twenty-app-dev-storage` for files). Use `reset` to wipe everything.
+数据在重启后会保留，存储于两个 Docker 卷中（`twenty-app-dev-data` 用于 PostgreSQL，`twenty-app-dev-storage` 用于文件）。 使用 `reset` 清空所有内容。
 
-## Upgrading the server image
+## 升级服务器镜像
 
-`yarn twenty server upgrade` pulls the latest image, compares digests, and only recreates the container if anything actually changed. Volumes are preserved — only the container is replaced. If a new image was pulled and the container was running, the upgrade automatically starts a new container; run `yarn twenty server start` afterward to wait for it to become healthy.
+`yarn twenty server upgrade` 将拉取最新镜像、比较摘要，并且仅在确有变更时才重新创建容器。 数据卷将被保留——只会替换容器。 如果已拉取新镜像且容器正在运行，升级会自动启动一个新容器；之后运行 `yarn twenty server start` 以等待其变为健康状态。
 
 ```bash filename="Terminal"
 yarn twenty server upgrade            # Latest
 yarn twenty server upgrade 2.2.0      # Specific version
 ```
 
-Verify the running version with `yarn twenty server status` (it shows the `APP_VERSION` baked into the container).
+使用 `yarn twenty server status` 验证正在运行的版本（它会显示写入容器的 `APP_VERSION`）。
 
-## Running a parallel test instance
+## 运行并行测试实例
 
-Pass `--test` to any `server` command to manage a second, fully isolated instance — useful for integration tests or experiments without touching your main dev data:
+向任意 `server` 命令传递 `--test` 以管理第二个、完全隔离的实例——这有助于在不影响主开发数据的情况下进行集成测试或试验：
 
-| Command                             | What it does                                    |
-| ----------------------------------- | ----------------------------------------------- |
-| `yarn twenty server start --test`   | Start the test instance (defaults to port 2021) |
-| `yarn twenty server stop --test`    | Stop it                                         |
-| `yarn twenty server status --test`  | Show its status                                 |
-| `yarn twenty server logs --test`    | Stream its logs                                 |
-| `yarn twenty server reset --test`   | Wipe its data                                   |
-| `yarn twenty server upgrade --test` | Upgrade its image                               |
+| 命令                                  | 作用                  |
+| ----------------------------------- | ------------------- |
+| `yarn twenty server start --test`   | 启动测试实例 (默认端口为 2021) |
+| `yarn twenty server stop --test`    | 停止它                 |
+| `yarn twenty server status --test`  | 显示其状态               |
+| `yarn twenty server logs --test`    | 流式输出其日志             |
+| `yarn twenty server reset --test`   | 清空其数据               |
+| `yarn twenty server upgrade --test` | 升级其镜像               |
 
-The test instance has its own container (`twenty-app-dev-test`), volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`), and config — it runs alongside your main instance without conflicts. Combine `--test` with `--port` to override 2021.
+测试实例有其自己的容器（`twenty-app-dev-test`）、卷（`twenty-app-dev-test-data`、`twenty-app-dev-test-storage`）和配置——它可与你的主实例并行运行且不会发生冲突。 将 `--test` 与 `--port` 组合使用以覆盖 2021 端口。
 
-## Manual setup (without the scaffolder)
+## 手动设置（不使用脚手架）
 
-Skip the scaffolder if you're adding the SDK to an existing project:
+如果你要将 SDK 添加到现有项目中，可跳过脚手架：
 
 ```bash filename="Terminal"
 yarn add twenty-sdk twenty-client-sdk
 ```
 
-Add the script to `package.json`:
+在 `package.json` 中添加该脚本：
 
 ```json filename="package.json"
 {
@@ -65,8 +65,8 @@ Add the script to `package.json`:
 }
 ```
 
-You can now run `yarn twenty dev`, `yarn twenty server start`, and the rest.
+现在你可以运行 `yarn twenty dev`、`yarn twenty server start`，以及其他命令。
 
 <Note>
-Don't install `twenty-sdk` globally — pin it per project so each app uses its own version.
+不要全局安装 `twenty-sdk` —— 在每个项目中固定其版本，使每个应用都使用各自的版本。
 </Note>

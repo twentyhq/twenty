@@ -1,19 +1,19 @@
 ---
 title: Layouturi de pagină
-description: Customize record detail pages — tabs, widgets, and where front components render — using definePageLayout and definePageLayoutTab.
+description: Personalizează paginile de detaliu ale înregistrărilor — filele, widgeturile și locul în care se redau componentele front-end — folosind definePageLayout și definePageLayoutTab.
 icon: table-columns
 ---
 
-A **page layout** controls how a record's detail page is arranged: which tabs appear and what widgets they contain. Use `definePageLayout()` to declare a layout for an object you own, or `definePageLayoutTab()` to add a single tab to a layout that already exists (yours or a standard Twenty one).
+Un **layout de pagină** controlează modul în care este aranjată pagina de detalii a unei înregistrări: ce file apar și ce widgeturi conțin acestea. Folosește `definePageLayout()` pentru a declara un layout pentru un obiect pe care îl deții sau `definePageLayoutTab()` pentru a adăuga o singură filă la un layout care există deja (al tău sau un layout standard Twenty).
 
-| Use case                                                               | Entitate              |
-| ---------------------------------------------------------------------- | --------------------- |
-| Define the entire layout for a record page on an object you own        | `definePageLayout`    |
-| Add one tab to an existing layout (your own object, or a standard one) | `definePageLayoutTab` |
+| Caz de utilizare                                                                        | Entitate              |
+| --------------------------------------------------------------------------------------- | --------------------- |
+| Definește întregul layout pentru o pagină de înregistrare pe un obiect pe care îl deții | `definePageLayout`    |
+| Adaugă o filă la un layout existent (obiectul tău sau unul standard)                    | `definePageLayoutTab` |
 
 ## definePageLayout
 
-Use this when you own the entire detail page — typically for a custom object you defined yourself.
+Folosește aceasta atunci când deții întreaga pagină de detalii — de obicei pentru un obiect personalizat pe care l-ai definit chiar tu.
 
 ```ts src/page-layouts/example-record-page-layout.ts
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -54,12 +54,12 @@ export default definePageLayout({
 * `type` este de obicei `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
 * `objectUniversalIdentifier` specifică la ce obiect se aplică această machetă.
 * Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode` (`CANVAS` pentru layout liber).
-* Each `widget` inside a tab can render a [front component](/l/ro/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
-* `position` pe file le controlează ordinea. Folosiți valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
+* Fiecare `widget` dintr-o filă poate reda un [front component](/l/ro/developers/extend/apps/layout/front-components), o listă de relații sau alte tipuri de widgeturi integrate.
+* `position` pe file le controlează ordinea. Folosește valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
 
 ## definePageLayoutTab
 
-Use this when you only want to **add** a tab to an existing layout — for example, an analytics tab on the standard Company page, or an AI summary tab attached to your own object's layout.
+Folosește aceasta atunci când vrei doar să **adaugi** o filă la un layout existent — de exemplu, o filă de analize pe pagina standard Company sau o filă de rezumat AI atașată layoutului obiectului tău.
 
 ```ts src/page-layouts/example-extra-tab.ts
 import {
@@ -96,7 +96,7 @@ export default definePageLayoutTab({
 
 ### Puncte cheie
 
-* `pageLayoutUniversalIdentifier` is **required** and must point to a page layout that already exists at install time — either a standard Twenty layout or one defined by your own app. Cross-app references to layouts owned by another installed app are not supported today. When the parent layout is missing, installation fails with a clear validation error.
-* `widgets` are scoped to this tab only — they reference [front components](/l/ro/developers/extend/apps/layout/front-components), views, etc. exactly like widgets defined inline in `definePageLayout`.
+* `pageLayoutUniversalIdentifier` este **obligatoriu** și trebuie să indice către un layout de pagină care există deja la momentul instalării — fie un layout standard Twenty, fie unul definit de propria ta aplicație. Referințele cross-app către layouturi deținute de o altă aplicație instalată nu sunt acceptate în prezent. Când lipsește layoutul părinte, instalarea eșuează cu o eroare clară de validare.
+* `widgets` sunt limitate doar la această filă — fac referire la [front components](/l/ro/developers/extend/apps/layout/front-components), vizualizări etc., exact ca widgeturile definite inline în `definePageLayout`.
 * `position` controlează ordonarea în raport cu filele existente din layoutul țintă. Alege o valoare care să plaseze fila ta acolo unde dorești, relativ la filele predefinite.
-* Use this instead of `definePageLayout` when you only want to add to an existing layout. Use `definePageLayout` when you own the entire layout.
+* Folosește aceasta în loc de `definePageLayout` atunci când vrei doar să adaugi la un layout existent. Folosește `definePageLayout` atunci când deții întregul layout.

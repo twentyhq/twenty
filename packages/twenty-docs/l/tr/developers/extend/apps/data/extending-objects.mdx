@@ -1,10 +1,10 @@
 ---
-title: Extending Objects
-description: Add fields to standard Twenty objects (Person, Company, …) or to objects from other apps using defineField.
+title: Nesneleri Genişletme
+description: Standart Twenty nesnelerine (Person, Company, …) alanlar ekleyin veya `defineField` kullanarak diğer uygulamalardaki nesnelere alan ekleyin.
 icon: wand-magic-sparkles
 ---
 
-Use `defineField()` to add a field to an object you don't own — a standard Twenty object like Person or Company, or an object shipped by another installed app. Unlike inline fields declared inside [`defineObject`](/l/tr/developers/extend/apps/data/objects), standalone fields require an `objectUniversalIdentifier` to specify which object they extend.
+Sahibi olmadığınız bir nesneye alan eklemek için `defineField()` kullanın — Person veya Company gibi standart bir Twenty nesnesi ya da başka bir yüklü uygulama tarafından sağlanan bir nesne. [`defineObject`](/l/tr/developers/extend/apps/data/objects) içinde tanımlanan satır içi alanların aksine, bağımsız alanlar, hangi nesneyi genişlettiklerini belirtmek için bir `objectUniversalIdentifier` gerektirir.
 
 ```ts src/fields/company-loyalty-tier.field.ts
 import { defineField, FieldType } from 'twenty-sdk/define';
@@ -24,9 +24,9 @@ export default defineField({
 });
 ```
 
-## Key points
+## Önemli noktalar
 
-* `objectUniversalIdentifier` identifies the target object. For standard Twenty objects, import the constant from `twenty-sdk`:
+* `objectUniversalIdentifier` hedef nesneyi tanımlar. Standart Twenty nesneleri için sabiti `twenty-sdk` içinden içe aktarın:
 
   ```ts
   import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
@@ -37,12 +37,12 @@ export default defineField({
   // …
   ```
 
-* When defining fields **inline inside `defineObject()`**, you do **not** need `objectUniversalIdentifier` — it's inherited from the parent object.
+* Alanları **`defineObject()` içinde satır içi tanımlarken**, `objectUniversalIdentifier`'a **ihtiyaç duymazsınız** — üst nesneden devralınır.
 
-* `defineField()` is the only way to add fields to objects you didn't create with `defineObject()`.
+* `defineField()`, `defineObject()` ile oluşturmadığınız nesnelere alan eklemenin tek yoludur.
 
-* File location is up to you. The convention is `src/fields/\<name>.field.ts`, but the SDK detects fields anywhere in `src/`.
+* Dosya konumu size bağlıdır. Genel kabul gören yapı `src/fields/\<name>.field.ts` şeklindedir, ancak SDK `src/` içinde herhangi bir yerdeki alanları algılar.
 
-## Adding a relation to an existing object
+## Mevcut bir nesneye ilişki ekleme
 
-To add a relation field (e.g. linking your custom object to a standard `Person`), use `defineField()` with `FieldType.RELATION`. The pattern is the same as for inline relations but with `objectUniversalIdentifier` set explicitly. See [Relations](/l/tr/developers/extend/apps/data/relations) for the bidirectional pattern.
+Bir ilişki alanı eklemek için (örneğin özel nesnenizi standart bir `Person` nesnesine bağlamak), `FieldType.RELATION` ile `defineField()` kullanın. Desen, satır içi ilişkilerle aynıdır ancak `objectUniversalIdentifier` açıkça ayarlanır. Çift yönlü desen için [Relations](/l/tr/developers/extend/apps/data/relations) bölümüne bakın.

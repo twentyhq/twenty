@@ -1,26 +1,26 @@
 ---
-title: Front Components
-description: Build React components that render inside Twenty's UI with sandboxed isolation.
+title: Ön uç bileşenleri
+description: Twenty'nin UI'si içinde, korumalı alan (sandbox) izolasyonu ile görüntülenen React bileşenleri oluşturun.
 icon: window-maximize
 ---
 
-Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code is sandboxed but renders natively in the page, not in an iframe.
+Ön uç bileşenler, Twenty'nin UI'si içinde doğrudan görüntülenen React bileşenleridir. Remote DOM kullanan izole bir Web Worker içinde çalışırlar — kodunuz izole bir ortamda (sandbox) çalışır ancak bir iframe içinde değil, sayfada yerel olarak işlenir.
 
-## Where front components can be used
+## Ön uç bileşenlerinin kullanılabileceği yerler
 
-Front components can render in two locations within Twenty:
+Ön uç bileşenler, Twenty içinde iki konumda işlenebilir:
 
-* **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
-* **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/l/tr/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
+* **Yan panel** — Headless olmayan ön uç bileşenler, sağ taraftaki yan panelde açılır. Bir ön uç bileşeni komut menüsünden tetiklendiğinde varsayılan davranış budur.
+* **Widget'lar (panolar ve kayıt sayfaları)** — Ön uç bileşenler, [sayfa düzenleri](/l/tr/developers/extend/apps/layout/page-layouts) içinde widget olarak gömülebilir. Bir pano veya kayıt sayfası düzeni yapılandırılırken kullanıcılar bir ön uç bileşen widget'ı ekleyebilir.
 
-A front component on its own isn't reachable from the UI — you need to *surface* it. The two ways to do that are:
+Tek başına bir ön uç bileşenine kullanıcı arayüzünden erişilemez — onu görünür hâle getirmeniz gerekir. Bunu yapmanın iki yolu vardır:
 
-* **Pair it with a [command menu item](/l/tr/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
-* **Embed it as a widget in a [page layout](/l/tr/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
+* **Onu bir [komut menüsü öğesi](/l/tr/developers/extend/apps/layout/command-menu-items) ile eşleştirin** — komut menüsüne (Cmd+K) ve isteğe bağlı olarak sabitlenmiş hızlı işlem olarak kaydeder.
+* **Onu bir [sayfa düzeni](/l/tr/developers/extend/apps/layout/page-layouts) içinde widget olarak gömün** — bir kaydın ayrıntı sayfasına veya panosuna yerleştirir.
 
-## Basic example
+## Basit örnek
 
-The quickest way to see a front component in action is to pair it with a [`defineCommandMenuItem`](/l/tr/developers/extend/apps/layout/command-menu-items), so it appears as a quick-action button in the top-right corner of the page:
+Bir ön uç bileşenini çalışır halde görmenin en hızlı yolu, onu [`defineCommandMenuItem`](/l/tr/developers/extend/apps/layout/command-menu-items) ile eşleştirmektir; böylece sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak görünür:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -56,35 +56,35 @@ export default defineCommandMenuItem({
 });
 ```
 
-After syncing with `yarn twenty dev` (or running a one-shot `yarn twenty dev --once`), the quick action appears in the top-right corner of the page:
+`yarn twenty dev` ile senkronize ettikten sonra (veya tek seferlik bir `yarn twenty dev --once` çalıştırdıktan sonra), hızlı işlem sayfanın sağ üst köşesinde görünür:
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Sağ üst köşedeki hızlı işlem düğmesi" />
 </div>
 
-Click it to render the component inline.
+Bileşeni satır içi işlemek için üzerine tıklayın.
 
-## Configuration fields
+## Yapılandırma alanları
 
-| Field                 | Required | Description                                                  |
-| --------------------- | -------- | ------------------------------------------------------------ |
-| `universalIdentifier` | Yes      | Stable unique ID for this component                          |
-| `component`           | Yes      | A React component function                                   |
-| `name`                | No       | Display name                                                 |
-| `description`         | No       | Description of what the component does                       |
-| `isHeadless`          | No       | Set to `true` if the component has no visible UI (see below) |
+| Alan                  | Zorunlu | Açıklama                                                                              |
+| --------------------- | ------- | ------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Evet    | Bu bileşen için kalıcı benzersiz kimlik                                               |
+| `component`           | Evet    | Bir React bileşen fonksiyonu                                                          |
+| `name`                | Hayır   | Görünen Ad                                                                            |
+| `description`         | Hayır   | Bileşenin ne yaptığına dair açıklama                                                  |
+| `isHeadless`          | Hayır   | Bileşenin görünür bir kullanıcı arayüzü yoksa `true` olarak ayarlayın (aşağıya bakın) |
 
-## Placing a front component on a page
+## Bir ön uç bileşenini bir sayfaya yerleştirme
 
-Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See [Page Layouts](/l/tr/developers/extend/apps/layout/page-layouts) for details.
+Komutların ötesinde, bir ön uç bileşenini bir **sayfa düzeninde** widget olarak ekleyerek doğrudan bir kayıt sayfasına gömebilirsiniz. Ayrıntılar için [Sayfa Düzenleri](/l/tr/developers/extend/apps/layout/page-layouts) bölümüne bakın.
 
-## Headless vs non-headless
+## Headless ve headless olmayan
 
-Front components come in two rendering modes controlled by the `isHeadless` option:
+Ön uç bileşenler, `isHeadless` seçeneğiyle kontrol edilen iki işleme kipiyle gelir:
 
-**Non-headless (default)** — The component renders a visible UI. When triggered from the command menu it opens in the side panel. This is the default behavior when `isHeadless` is `false` or omitted.
+**Headless olmayan (varsayılan)** — Bileşen görünür bir kullanıcı arayüzü (UI) oluşturur. Komut menüsünden tetiklendiğinde yan panelde açılır. `isHeadless` `false` olduğunda veya belirtilmediğinde bu varsayılan davranıştır.
 
-**Headless (`isHeadless: true`)** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
+**Headless (`isHeadless: true`)** — Bileşen arka planda görünmez şekilde bağlanır. Yan paneli açmaz. Headless bileşenler, mantığı çalıştırıp ardından kendilerini kaldıran eylemler için tasarlanmıştır — örneğin, bir async görevi çalıştırma, bir sayfaya gitme veya bir onay modalı gösterme. Aşağıda açıklanan SDK Command bileşenleriyle doğal olarak eşleşirler.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -110,20 +110,20 @@ export default defineFrontComponent({
 });
 ```
 
-Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
+Bileşen `null` döndürdüğü için, Twenty bunun için bir kapsayıcı oluşturmayı atlar — düzende boş alan görünmez. Bileşen yine de tüm hook'lara ve host iletişim API'sine erişime sahiptir.
 
-## SDK Command components
+## SDK Command bileşenleri
 
-The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
+`twenty-sdk` paketi, headless ön uç bileşenler için tasarlanmış dört Command yardımcı bileşeni sağlar. Her bileşen bağlandığında bir eylem yürütür, hataları bir snackbar bildirimi göstererek ele alır ve tamamlandığında ön bileşeni otomatik olarak kaldırır.
 
-Import them from `twenty-sdk/command`:
+Bunları `twenty-sdk/command` içinden içe aktarın:
 
-* **`Command`** — Runs an async callback via the `execute` prop.
-* **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Opens a specific side panel page. Props: `page`, `pageTitle`, `pageIcon`.
+* **`Command`** — `execute` prop'u aracılığıyla async bir geri çağrıyı çalıştırır.
+* **`CommandLink`** — Bir uygulama yoluna gider. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Bir onay modalı açar. Kullanıcı onaylarsa `execute` geri çağrısını yürütür. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Belirli bir yan panel sayfasını açar. Props: `page`, `pageTitle`, `pageIcon`.
 
-Here is a full example of a headless front component using `Command` to run an action from the command menu:
+`Command` kullanarak komut menüsünden bir eylem çalıştıran headless bir ön uç bileşenin tam örneği:
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -165,7 +165,7 @@ export default defineCommandMenuItem({
 });
 ```
 
-And an example using `CommandModal` to ask for confirmation before executing:
+Ve yürütmeden önce onay istemek için `CommandModal` kullanan bir örnek:
 
 ```tsx src/front-components/delete-draft.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -196,9 +196,9 @@ export default defineFrontComponent({
 });
 ```
 
-## Accessing runtime context
+## Çalışma zamanı bağlamına erişme
 
-Inside your component, use SDK hooks to access the current user, record, and component instance:
+Bileşeninizin içinde, geçerli kullanıcıya, kayda ve bileşen örneğine erişmek için SDK hook'larını kullanın:
 
 ```tsx src/front-components/record-info.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -229,31 +229,31 @@ export default defineFrontComponent({
 });
 ```
 
-Available hooks:
+Kullanılabilir hook'lar:
 
-| Hook                                          | Returns            | Description                                                |
-| --------------------------------------------- | ------------------ | ---------------------------------------------------------- |
-| `useUserId()`                                 | `string` or `null` | The current user's ID                                      |
-| `useSelectedRecordIds()`                      | `string[]`         | All selected record IDs (empty array if none selected)     |
-| `useRecordId()`                               | `string` or `null` | **Deprecated.** Use `useSelectedRecordIds()` instead       |
-| `useFrontComponentId()`                       | `string`           | This component instance's ID                               |
-| `useFrontComponentExecutionContext(selector)` | varies             | Access the full execution context with a selector function |
+| Hook                                          | Döndürür             | Açıklama                                                                   |
+| --------------------------------------------- | -------------------- | -------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` veya `null` | Geçerli kullanıcının ID'si                                                 |
+| `useSelectedRecordIds()`                      | `string[]`           | Tüm seçili kayıt kimlikleri (hiçbiri seçilmediyse boş dizi)                |
+| `useRecordId()`                               | `string` veya `null` | **Kullanımdan kaldırıldı.** Bunun yerine `useSelectedRecordIds()` kullanın |
+| `useFrontComponentId()`                       | `string`             | Bu bileşen örneğinin ID'si                                                 |
+| `useFrontComponentExecutionContext(selector)` | değişir              | Bir seçici işlevle tam yürütme bağlamına erişin                            |
 
-## Host communication API
+## Host iletişim API'si
 
-Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:
+Ön uç bileşenleri, `twenty-sdk`'deki işlevleri kullanarak gezinmeyi, modalları ve bildirimleri tetikleyebilir:
 
-| Function                                        | Description                   |
-| ----------------------------------------------- | ----------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navigate to a page in the app |
-| `openSidePanelPage(params)`                     | Open a side panel             |
-| `closeSidePanel()`                              | Close the side panel          |
-| `openCommandConfirmationModal(params)`          | Show a confirmation dialog    |
-| `enqueueSnackbar(params)`                       | Show a toast notification     |
-| `unmountFrontComponent()`                       | Unmount the component         |
-| `updateProgress(progress)`                      | Update a progress indicator   |
+| Fonksiyon                                       | Açıklama                           |
+| ----------------------------------------------- | ---------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Uygulamada bir sayfaya git         |
+| `openSidePanelPage(params)`                     | Bir yan panel aç                   |
+| `closeSidePanel()`                              | Yan paneli kapat                   |
+| `openCommandConfirmationModal(params)`          | Bir onay iletişim kutusu göster    |
+| `enqueueSnackbar(params)`                       | Bir toast bildirimi göster         |
+| `unmountFrontComponent()`                       | Bileşeni kaldır (unmount)          |
+| `updateProgress(progress)`                      | Bir ilerleme göstergesini güncelle |
 
-Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
+Bir eylem tamamlandıktan sonra bir snackbar göstermek ve yan paneli kapatmak için host API'sini kullanan bir örnek:
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -298,9 +298,9 @@ export default defineFrontComponent({
 });
 ```
 
-### Working with multiple records
+### Birden çok kayıtla çalışma
 
-Use `useSelectedRecordIds()` to handle multiple selected records. This is useful for bulk operations:
+Birden çok seçili kaydı yönetmek için `useSelectedRecordIds()` kullanın. Bu, toplu işlemler için kullanışlıdır:
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -353,9 +353,9 @@ export default defineFrontComponent({
 });
 ```
 
-## Public assets
+## Genel varlıklar
 
-Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
+Ön uç bileşenleri, `getPublicAssetUrl` kullanarak uygulamanın `public/` dizinindeki dosyalara erişebilir:
 
 ```tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
@@ -369,18 +369,18 @@ export default defineFrontComponent({
 });
 ```
 
-See the [public assets section](/l/tr/developers/extend/apps/config/public-assets) for details.
+Ayrıntılar için [genel varlıklar bölümüne](/l/tr/developers/extend/apps/config/public-assets) bakın.
 
-## Styling
+## Stil
 
-Front components support multiple styling approaches. You can use:
+Ön uç bileşenleri birden fazla biçimlendirme yaklaşımını destekler. Şunları kullanabilirsiniz:
 
-* **Inline styles** — `style={{ color: 'red' }}`
-* **Twenty UI components** — import from `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar, and more)
-* **Emotion** — CSS-in-JS with `@emotion/react`
-* **Styled-components** — `styled.div` patterns
-* **Tailwind CSS** — utility classes
-* **Any CSS-in-JS library** compatible with React
+* **Satır içi stiller** — `style={{ color: 'red' }}`
+* **Twenty UI bileşenleri** — `twenty-sdk/ui` içinden içe aktarın (Button, Tag, Status, Chip, Avatar ve daha fazlası)
+* **Emotion** — `@emotion/react` ile CSS-in-JS
+* **Styled-components** — `styled.div` kalıpları
+* **Tailwind CSS** — yardımcı sınıflar
+* **React ile uyumlu herhangi bir CSS-in-JS kitaplığı**
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

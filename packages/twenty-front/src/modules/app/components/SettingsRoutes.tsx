@@ -74,6 +74,14 @@ const SettingsEditImapSmtpCaldavConnection = lazy(() =>
   })),
 );
 
+const SettingsNewEmailGroupChannel = lazy(() =>
+  import(
+    '@/settings/accounts/components/SettingsAccountsNewEmailGroupChannel'
+  ).then((module) => ({
+    default: module.SettingsAccountsNewEmailGroupChannel,
+  })),
+);
+
 const SettingsObjectDetailPage = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectDetailPage').then(
     (module) => ({
@@ -119,6 +127,15 @@ const SettingsWorkspace = lazy(() =>
     default: module.SettingsWorkspace,
   })),
 );
+
+const SettingsWorkspaceEmailGroupChannelDetail = lazy(() =>
+  import(
+    '~/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail'
+  ).then((module) => ({
+    default: module.SettingsWorkspaceEmailGroupChannelDetail,
+  })),
+);
+
 
 const SettingsSubdomainPage = lazy(() =>
   import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
@@ -172,6 +189,14 @@ const SettingsApplicationDetails = lazy(() =>
       default: module.SettingsApplicationDetails,
     }),
   ),
+);
+
+const SettingsApplicationConnectionDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsApplicationConnectionDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationConnectionDetail,
+  })),
 );
 
 const SettingsApplicationFrontComponentDetail = lazy(() =>
@@ -605,6 +630,14 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
         <Route
+          path={SettingsPath.NewEmailGroupChannel}
+          element={<SettingsNewEmailGroupChannel />}
+        />
+        <Route
+          path={SettingsPath.EmailGroupChannelDetail}
+          element={<SettingsWorkspaceEmailGroupChannelDetail />}
+        />
+        <Route
           path={SettingsPath.ApiWebhooks}
           element={<SettingsApiWebhooks />}
         />
@@ -803,6 +836,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApplicationDetail}
           element={<SettingsApplicationDetails />}
+        />
+        <Route
+          path={SettingsPath.ApplicationConnectionDetail}
+          element={<SettingsApplicationConnectionDetail />}
         />
         <Route
           path={SettingsPath.AvailableApplicationDetail}

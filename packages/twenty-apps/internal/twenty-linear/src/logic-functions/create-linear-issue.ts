@@ -31,4 +31,35 @@ export default defineLogicFunction({
       required: ['teamId', 'title'],
     },
   },
+  workflowActionTriggerSettings: {
+    label: 'Create Linear Issue',
+    inputSchema: [
+      {
+        type: 'object',
+        properties: {
+          teamId: { type: 'string' },
+          title: { type: 'string' },
+          description: { type: 'string' },
+        },
+      },
+    ],
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean' },
+          issue: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              identifier: { type: 'string' },
+              title: { type: 'string' },
+              url: { type: 'string' },
+            },
+          },
+          error: { type: 'string' },
+        },
+      },
+    ],
+  },
 });

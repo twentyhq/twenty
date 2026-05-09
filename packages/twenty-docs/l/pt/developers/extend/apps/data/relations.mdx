@@ -1,30 +1,30 @@
 ---
 title: Relações
-description: Connect objects together with bidirectional MANY_TO_ONE / ONE_TO_MANY relations.
+description: Conecte objetos entre si com relações bidirecionais MANY_TO_ONE / ONE_TO_MANY.
 icon: diagram-project
 ---
 
-Relations connect two objects together. In Twenty, relations are always **bidirectional** — every relation has two sides, and each side is declared as a field that references the other.
+As relações conectam dois objetos entre si. No Twenty, as relações são sempre **bidirecionais** — cada relação tem dois lados, e cada lado é declarado como um campo que faz referência ao outro.
 
 | Tipo de relação | Descrição                                                         | Tem chave estrangeira? |
 | --------------- | ----------------------------------------------------------------- | ---------------------- |
 | `MANY_TO_ONE`   | Muitos registros deste objeto apontam para um registro do destino | Sim (`joinColumnName`) |
-| `ONE_TO_MANY`   | Um registro deste objeto possui muitos registros do destino       | No (the inverse side)  |
+| `ONE_TO_MANY`   | Um registro deste objeto possui muitos registros do destino       | Não (o lado inverso)   |
 
-## How relations work
+## Como as relações funcionam
 
-Every relation requires **two fields** that reference each other:
+Toda relação requer **dois campos** que façam referência um ao outro:
 
-1. The **MANY_TO_ONE** side — lives on the object that holds the foreign key.
-2. The **ONE_TO_MANY** side — lives on the object that owns the collection.
+1. O lado **MANY_TO_ONE** — fica no objeto que contém a chave estrangeira.
+2. O lado **ONE_TO_MANY** — fica no objeto que possui a coleção.
 
-Both fields use `FieldType.RELATION` and cross-reference each other via `relationTargetFieldMetadataUniversalIdentifier`.
+Ambos os campos usam `FieldType.RELATION` e fazem referência cruzada um ao outro via `relationTargetFieldMetadataUniversalIdentifier`.
 
-## Example: Post Card has many Recipients
+## Exemplo: Um cartão postal tem muitos destinatários
 
-A `PostCard` can be sent to many `PostCardRecipient` records. Each recipient belongs to exactly one post card.
+Um `PostCard` pode ser enviado para muitos registros `PostCardRecipient`. Cada destinatário pertence a exatamente um cartão postal.
 
-**Step 1: Define the ONE_TO_MANY side on PostCard** (the "one" side):
+**Etapa 1: Defina o lado ONE_TO_MANY em PostCard** (o lado "um"):
 
 ```ts src/fields/post-card-recipients-on-post-card.field.ts
 import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
@@ -51,7 +51,7 @@ export default defineField({
 });
 ```
 
-**Step 2: Define the MANY_TO_ONE side on PostCardRecipient** (the "many" side — holds the foreign key):
+**Etapa 2: Defina o lado MANY_TO_ONE em PostCardRecipient** (o lado "muitos" — contém a chave estrangeira):
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
 import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
@@ -81,12 +81,12 @@ export default defineField({
 ```
 
 <Note>
-**Circular imports:** both relation fields reference each other's `universalIdentifier`. To avoid circular import issues, export your field IDs as named constants from each file and import them in the other. The build system resolves these at compile time.
+**Importações circulares:** ambos os campos de relação fazem referência ao `universalIdentifier` um do outro. Para evitar problemas de importação circular, exporte os IDs dos seus campos como constantes nomeadas de cada arquivo e importe-os no outro. O sistema de build resolve isso em tempo de compilação.
 </Note>
 
-## Relating to standard objects
+## Relacionando a objetos padrão
 
-To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+Para criar uma relação com um objeto integrado do Twenty (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
 
 ```ts src/fields/person-on-self-hosting-user.field.ts
 import {
@@ -120,20 +120,20 @@ export default defineField({
 });
 ```
 
-## Relation field properties
+## Propriedades de campos de relação
 
-| Property                                          | Required         | Description                                                                                           |
-| ------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
-| `type`                                            | Yes              | Must be `FieldType.RELATION`                                                                          |
-| `relationTargetObjectMetadataUniversalIdentifier` | Yes              | The `universalIdentifier` of the target object                                                        |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Yes              | The `universalIdentifier` of the matching field on the target object                                  |
-| `universalSettings.relationType`                  | Yes              | `RelationType.MANY_TO_ONE` or `RelationType.ONE_TO_MANY`                                              |
-| `universalSettings.onDelete`                      | MANY_TO_ONE only | What happens when the referenced record is deleted: `CASCADE`, `SET_NULL`, `RESTRICT`, or `NO_ACTION` |
-| `universalSettings.joinColumnName`                | MANY_TO_ONE only | Database column name for the foreign key (e.g., `postCardId`)                                         |
+| Propriedade                                       | Obrigatório             | Descrição                                                                                                  |
+| ------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `type`                                            | Sim                     | Deve ser `FieldType.RELATION`                                                                              |
+| `relationTargetObjectMetadataUniversalIdentifier` | Sim                     | O `universalIdentifier` do objeto de destino                                                               |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Sim                     | O `universalIdentifier` do campo correspondente no objeto de destino                                       |
+| `universalSettings.relationType`                  | Sim                     | `RelationType.MANY_TO_ONE` ou `RelationType.ONE_TO_MANY`                                                   |
+| `universalSettings.onDelete`                      | Apenas para MANY_TO_ONE | O que acontece quando o registro referenciado é excluído: `CASCADE`, `SET_NULL`, `RESTRICT` ou `NO_ACTION` |
+| `universalSettings.joinColumnName`                | Apenas para MANY_TO_ONE | Nome da coluna no banco de dados para a chave estrangeira (por exemplo, `postCardId`)                      |
 
-## Inline relation fields
+## Campos de relação inline
 
-You can also declare a relation directly inside [`defineObject`](/l/pt/developers/extend/apps/data/objects). When inline, omit `objectUniversalIdentifier` — it's inherited from the parent object:
+Você também pode declarar uma relação diretamente dentro de [`defineObject`](/l/pt/developers/extend/apps/data/objects). Quando estiver inline, omita `objectUniversalIdentifier` — ele é herdado do objeto pai:
 
 ```ts
 export default defineObject({
