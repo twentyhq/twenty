@@ -1,60 +1,8 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { SLACK_ADD_REACTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { slackAddReactionHandler } from 'src/logic-functions/handlers/slack-add-reaction-handler';
 import { slackAddReactionInputSchema } from './schemas/slack-add-reaction-input.schema';
-import { type SlackAddReactionInput } from './types/slack-add-reaction-input.type';
-import { type SlackToolResult } from './types/slack-tool-result.type';
-import { createSlackWebClient } from '../utils/create-slack-web-client';
-import { getSlackErrorMessage } from '../utils/get-slack-error-message';
-import { validateReactionName } from '../utils/reaction-name';
-
-const handler = async (
-  parameters: SlackAddReactionInput,
-): Promise<SlackToolResult> => {
-  const connectionResult = await getSlackConnection();
-
-  if (!connectionResult.success) {
-    return {
-      success: false,
-      message: 'Slack is not connected',
-      error: connectionResult.error,
-    };
-  }
-
-  const reactionError = validateReactionName(parameters.emoji_name);
-
-  if (reactionError) {
-    return {
-      success: false,
-      message: 'Invalid reaction name',
-      error: reactionError,
-    };
-  }
-
-  const client = createSlackWebClient(connectionResult.accessToken);
-
-  try {
-    await client.reactions.add({
-      channel: parameters.slack_channel_id,
-      timestamp: parameters.message_timestamp,
-      name: parameters.emoji_name.trim(),
-    });
-
-    return {
-      success: true,
-      message: `Reaction "${parameters.emoji_name.trim()}" added to the message.`,
-      slackTs: parameters.message_timestamp,
-      channel: parameters.slack_channel_id,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: 'Failed to add Slack reaction',
-      error: getSlackErrorMessage(error),
-    };
-  }
-};
 
 export default defineLogicFunction({
   universalIdentifier: SLACK_ADD_REACTION_UNIVERSAL_IDENTIFIER,
@@ -91,5 +39,5 @@ export default defineLogicFunction({
       },
     ],
   },
-  handler,
+  handler: slackAddReactionHandler,
 });
