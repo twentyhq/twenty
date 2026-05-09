@@ -1,0 +1,144 @@
+---
+title: Itens do menu de comandos
+description: Exponha componentes de front-end como ações rápidas e entradas do menu de comandos (Cmd+K) com `defineCommandMenuItem`.
+icon: terminal
+---
+
+Um **item de menu de comando** é a ponte entre o usuário e um [front component](/l/pt/developers/extend/apps/layout/front-components). Ele registra o componente no menu de comandos (Cmd+K) do Twenty e, opcionalmente, como um botão fixado de ação rápida no canto superior direito da página.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+## Campos de configuração
+
+| Campo                                   | Obrigatório | Descrição                                                                                                                                                                                            |
+| --------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Sim         | ID exclusivo e estável para o comando                                                                                                                                                                |
+| `label`                                 | Sim         | Rótulo completo exibido no menu de comandos (Cmd+K)                                                                                                                                                  |
+| `frontComponentUniversalIdentifier`     | Sim         | O `universalIdentifier` do componente de front-end que este comando abre                                                                                                                             |
+| `shortLabel`                            | Não         | Rótulo mais curto exibido no botão fixado de ação rápida                                                                                                                                             |
+| `icon`                                  | Não         | Nome do ícone exibido ao lado do rótulo (por exemplo, `'IconBolt'`, `'IconSend'`)                                                                                                                    |
+| `isPinned`                              | Não         | Quando `true`, mostra o comando como um botão de ação rápida no canto superior direito da página                                                                                                     |
+| `availabilityType`                      | Não         | Controla onde o comando aparece: `'GLOBAL'` (sempre disponível), `'RECORD_SELECTION'` (apenas quando registros estão selecionados) ou `'FALLBACK'` (exibido quando nenhum outro comando corresponde) |
+| `availabilityObjectUniversalIdentifier` | Não         | Restringe o comando a páginas de um tipo específico de objeto (por exemplo, somente em registros de Company)                                                                                         |
+| `conditionalAvailabilityExpression`     | Não         | Uma expressão booleana que controla dinamicamente a visibilidade (veja abaixo)                                                                                                                       |
+
+## Comandos sem interface
+
+Um item do menu de comandos emparelhado com um [componente de front-end sem interface](/l/pt/developers/extend/apps/layout/front-components#headless-vs-non-headless) é a forma idiomática de disponibilizar uma ação de um clique — executar código, navegar ou confirmar e executar. A página de Front Components aborda os [SDK Command components](/l/pt/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) que lidam com o padrão de ação e desmontagem.
+
+Um fluxo típico:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+## Expressões de disponibilidade condicional
+
+O campo `conditionalAvailabilityExpression` permite controlar quando um comando é visível com base no contexto da página atual. Importe variáveis tipadas e operadores de `twenty-sdk` para construir expressões:
+
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  objectPermissions,
+  everyEquals,
+} from 'twenty-sdk/front-component';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
+});
+```
+
+### Variáveis de contexto
+
+Elas representam o estado atual da página:
+
+| Variável                       | Tipo      | Descrição                                                                   |
+| ------------------------------ | --------- | --------------------------------------------------------------------------- |
+| `pageType`                     | `string`  | Tipo de página atual (por exemplo, `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Se o componente é renderizado em um painel lateral                          |
+| `numberOfSelectedRecords`      | `number`  | Número de registros atualmente selecionados                                 |
+| `isSelectAll`                  | `boolean` | Se "selecionar tudo" está ativo                                             |
+| `selectedRecords`              | `array`   | Os objetos de registro selecionados                                         |
+| `favoriteRecordIds`            | `array`   | IDs dos registros marcados como favoritos                                   |
+| `objectPermissions`            | `object`  | Permissões para o tipo de objeto atual                                      |
+| `targetObjectReadPermissions`  | `object`  | Permissões de leitura para o objeto alvo                                    |
+| `targetObjectWritePermissions` | `object`  | Permissões de escrita para o objeto alvo                                    |
+| `featureFlags`                 | `object`  | Flags de recurso ativas                                                     |
+| `objectMetadataItem`           | `object`  | Metadados do tipo de objeto atual                                           |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Se a visualização atual tem um filtro de soft-delete                        |
+
+### Operadores
+
+Combine variáveis em expressões booleanas:
+
+| Operador                            | Descrição                                                              |
+| ----------------------------------- | ---------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` se o valor não for null/undefined                               |
+| `isNonEmptyString(value)`           | `true` se o valor for uma string não vazia                             |
+| `includes(array, value)`            | `true` se o array contiver o valor                                     |
+| `includesEvery(array, prop, value)` | `true` se a propriedade de cada item incluir o valor                   |
+| `every(array, prop)`                | `true` se a propriedade for truthy em cada item                        |
+| `everyDefined(array, prop)`         | `true` se a propriedade estiver definida em cada item                  |
+| `everyEquals(array, prop, value)`   | `true` se a propriedade for igual ao valor em cada item                |
+| `some(array, prop)`                 | `true` se a propriedade for truthy em pelo menos um item               |
+| `someDefined(array, prop)`          | `true` se a propriedade estiver definida em pelo menos um item         |
+| `someEquals(array, prop, value)`    | `true` se a propriedade for igual ao valor em pelo menos um item       |
+| `someNonEmptyString(array, prop)`   | `true` se a propriedade for uma string não vazia em pelo menos um item |
+| `none(array, prop)`                 | `true` se a propriedade for falsy em cada item                         |
+| `noneDefined(array, prop)`          | `true` se a propriedade for undefined em cada item                     |
+| `noneEquals(array, prop, value)`    | `true` se a propriedade não for igual ao valor em nenhum item          |

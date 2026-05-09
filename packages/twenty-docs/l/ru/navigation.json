@@ -155,7 +155,27 @@
           "label": "Обзор"
         },
         "apps": {
-          "label": "Приложения"
+          "label": "Приложения",
+          "groups": {
+            "appsGettingStarted": {
+              "label": "Начало работы"
+            },
+            "appsConfig": {
+              "label": "Конфигурация"
+            },
+            "appsData": {
+              "label": "Данные"
+            },
+            "appsLogic": {
+              "label": "Логика"
+            },
+            "appsLayout": {
+              "label": "Макет"
+            },
+            "appsOperations": {
+              "label": "Операции"
+            }
+          }
         },
         "api": {
           "label": "API"

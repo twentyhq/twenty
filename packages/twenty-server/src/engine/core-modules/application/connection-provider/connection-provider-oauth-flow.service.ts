@@ -254,6 +254,7 @@ export class ConnectionProviderOAuthFlowService {
       scopes: tokenResponse.scopes ?? provider.oauthConfig.scopes,
       lastCredentialsRefreshedAt: new Date(),
       authFailedAt: null,
+      visibility,
     };
 
     if (isDefined(reconnectingConnectedAccountId)) {

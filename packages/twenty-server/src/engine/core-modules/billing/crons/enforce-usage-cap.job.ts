@@ -4,6 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { enforceUsageCapCronPattern } from 'src/engine/core-modules/billing/crons/enforce-usage-cap.cron.pattern';
@@ -14,6 +15,7 @@ import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -35,6 +37,7 @@ export class EnforceUsageCapJob {
     private readonly billingProductRepository: Repository<BillingProductEntity>,
     private readonly billingUsageCapService: BillingUsageCapService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Process(EnforceUsageCapJob.name)
@@ -155,11 +158,35 @@ export class EnforceUsageCapJob {
         }
       }
 
-      const evaluations = this.billingUsageCapService.evaluateCapBatch(
-        batch,
+      // Collect V2 workspace IDs in this batch (Redis-cached, so ~0 cost per call)
+      const v2WorkspaceIds = new Set<string>();
+
+      for (const subscription of batch) {
+        const isV2 = await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_BILLING_V2_ENABLED,
+          subscription.workspaceId,
+        );
+
+        if (isV2) {
+          v2WorkspaceIds.add(subscription.workspaceId);
+        }
+      }
+
+      const v2Batch = batch.filter((s) => v2WorkspaceIds.has(s.workspaceId));
+      const v1Batch = batch.filter((s) => !v2WorkspaceIds.has(s.workspaceId));
+
+      const v1Evaluations = this.billingUsageCapService.evaluateCapBatch(
+        v1Batch,
         usageByWorkspace,
         creditBalanceByCustomer,
       );
+      const v2Evaluations = this.billingUsageCapService.evaluateCapBatchV2(
+        v2Batch,
+        usageByWorkspace,
+        creditBalanceByCustomer,
+      );
+
+      const evaluations = new Map([...v1Evaluations, ...v2Evaluations]);
 
       const idsToCapTrue: string[] = [];
       const idsToCapFalse: string[] = [];
@@ -177,10 +204,15 @@ export class EnforceUsageCapJob {
 
         evaluated += 1;
 
+        // V2: find item by RESOURCE_CREDIT; V1: find by WORKFLOW_NODE_EXECUTION
+        const targetProductKey = v2WorkspaceIds.has(subscription.workspaceId)
+          ? BillingProductKey.RESOURCE_CREDIT
+          : BillingProductKey.WORKFLOW_NODE_EXECUTION;
+
         const meteredItem = subscription.billingSubscriptionItems.find(
           (item) =>
             productByStripeProductId.get(item.stripeProductId)?.metadata
-              ?.productKey === BillingProductKey.WORKFLOW_NODE_EXECUTION,
+              ?.productKey === targetProductKey,
         );
 
         if (!meteredItem) {

@@ -3,10 +3,11 @@ import { FAQ_DATA } from '@/sections/Faq/data';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
+import { DEMO_DATA } from '@/app/[locale]/product/demo.data';
 import { FEATURE_DATA } from '@/app/[locale]/product/feature.data';
 import { HERO_COPY } from '@/app/[locale]/product/hero.data';
-import { SIGNOFF_COPY } from '@/app/[locale]/product/signoff.data';
 import { STEPPER_DATA } from '@/app/[locale]/product/stepper.data';
+import { TABS_DATA } from '@/app/[locale]/product/tabs.data';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/[locale]/product/three-cards.data';
 import {
   Body,
@@ -27,8 +28,9 @@ import { Faq } from '@/sections/Faq/components';
 import { Feature } from '@/sections/Feature/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
+import { Demo } from '@/sections/Demo/components';
 import { ProductStepper } from '@/sections/ProductStepper/components';
-import { Signoff } from '@/sections/Signoff/components';
+import { Tabs } from '@/sections/Tabs/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
@@ -113,6 +115,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
         />
       </TrustedBy.Root>
 
+      <Tabs.Root>
+        <Eyebrow
+          colorScheme="secondary"
+          heading={TABS_DATA.eyebrow.heading}
+          renderText={renderText}
+        />
+        <Heading size="lg" weight="light">
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`AI that actually`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`helps you`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {renderText(msg`work faster`)}
+          </HeadingPart>
+        </Heading>
+        <Body
+          body={{ text: msg`The AI understands your CRM and takes action.` }}
+          renderText={renderText}
+          size="sm"
+        />
+        <Tabs.TabGroup tabs={TABS_DATA.tabs} />
+      </Tabs.Root>
+
       <Feature.Root backgroundColor={theme.colors.primary.background[100]}>
         <Feature.Intro align="center" page={Pages.Product}>
           <Eyebrow
@@ -177,42 +205,34 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </HeadingPart>
       </ProductStepper.Flow>
 
-      <Signoff.Root
-        backgroundColor={theme.colors.secondary.background[5]}
-        color={theme.colors.primary.text[100]}
-        page={Pages.Product}
-      >
-        <Signoff.Heading page={Pages.Product}>
-          <HeadingPart fontFamily="serif">
-            {renderText(msg`Ready to grow`)}
-          </HeadingPart>
-          <br />
-          <HeadingPart fontFamily="serif">
-            {renderText(msg`with`)}
-          </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">
-            {renderText(msg`Twenty?`)}
-          </HeadingPart>
-        </Signoff.Heading>
-        <Signoff.Body
-          body={{ text: SIGNOFF_COPY.body }}
-          page={Pages.Product}
+      <Demo.Root>
+        <Eyebrow
+          colorScheme="primary"
+          heading={{
+            text: msg`Try it live`,
+            fontFamily: 'sans',
+          }}
           renderText={renderText}
         />
-        <Signoff.Cta>
+        <Heading size="lg" weight="light">
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`A demo worth a`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">
+            {renderText(msg`thousand words`)}
+          </HeadingPart>
+        </Heading>
+        <Demo.Cta>
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label={renderText(msg`Get started`)}
+            label={renderText(msg`Try Twenty Cloud`)}
             variant="contained"
           />
-          <TalkToUsButton
-            color="secondary"
-            label={msg`Talk to us`}
-            variant="outlined"
-          />
-        </Signoff.Cta>
-      </Signoff.Root>
+        </Demo.Cta>
+        <Demo.Screenshot image={DEMO_DATA.image} />
+      </Demo.Root>
 
       <Faq.Root>
         <Faq.Intro>

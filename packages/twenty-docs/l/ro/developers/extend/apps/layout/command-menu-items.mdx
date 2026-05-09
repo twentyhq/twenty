@@ -1,0 +1,144 @@
+---
+title: Elemente din meniul de comenzi
+description: Expune componente front-end ca acțiuni rapide și intrări în meniul de comenzi (Cmd+K) folosind defineCommandMenuItem.
+icon: terminal
+---
+
+Un element din meniul de comenzi este puntea dintre utilizator și un [front component](/l/ro/developers/extend/apps/layout/front-components). Acesta înregistrează componenta în meniul de comenzi Twenty (Cmd+K) și, opțional, ca buton fixat de acțiune rapidă în colțul din dreapta sus al paginii.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+## Câmpuri de configurare
+
+| Câmp                                    | Obligatoriu | Descriere                                                                                                                                                                                        |
+| --------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | Da          | ID unic stabil pentru comandă                                                                                                                                                                    |
+| `label`                                 | Da          | Etichetă completă afișată în meniul de comenzi (Cmd+K)                                                                                                                                           |
+| `frontComponentUniversalIdentifier`     | Da          | `universalIdentifier` al componentei front-end pe care această comandă o deschide                                                                                                                |
+| `shortLabel`                            | Nu          | Etichetă mai scurtă afișată pe butonul de acțiune rapidă fixat                                                                                                                                   |
+| `icon`                                  | Nu          | Numele pictogramei afișat lângă etichetă (de ex. `'IconBolt'`, `'IconSend'`)                                                                                                                     |
+| `isPinned`                              | Nu          | Când este `true`, afișează comanda ca buton de acțiune rapidă în colțul din dreapta sus al paginii                                                                                               |
+| `availabilityType`                      | Nu          | Controlează unde apare comanda: `'GLOBAL'` (mereu disponibilă), `'RECORD_SELECTION'` (doar când sunt selectate înregistrări) sau `'FALLBACK'` (afișată când nicio altă comandă nu se potrivește) |
+| `availabilityObjectUniversalIdentifier` | Nu          | Restricționați comanda la paginile unui anumit tip de obiect (de ex., doar pe înregistrările Company)                                                                                            |
+| `conditionalAvailabilityExpression`     | Nu          | O expresie booleană care controlează dinamic vizibilitatea (vezi mai jos)                                                                                                                        |
+
+## Comenzi headless
+
+Un element din meniul de comenzi asociat cu un [headless front component](/l/ro/developers/extend/apps/layout/front-components#headless-vs-non-headless) este modalitatea standard de a oferi o acțiune cu un singur clic — de a rula cod, de a naviga sau de a confirma și executa. Pagina Front Components acoperă [SDK Command components](/l/ro/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`) care gestionează modelul acțiune-și-demontare.
+
+Un flux tipic:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+## Expresii de disponibilitate condițională
+
+Câmpul `conditionalAvailabilityExpression` vă permite să controlați când este vizibilă o comandă în funcție de contextul paginii curente. Importați variabile tipizate și operatori din `twenty-sdk` pentru a construi expresii:
+
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  objectPermissions,
+  everyEquals,
+} from 'twenty-sdk/front-component';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
+});
+```
+
+### Variabile de context
+
+Acestea reprezintă starea curentă a paginii:
+
+| Variabilă                      | Tip       | Descriere                                                              |
+| ------------------------------ | --------- | ---------------------------------------------------------------------- |
+| `pageType`                     | `string`  | Tipul paginii curente (de ex. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Dacă componenta este redată într-un panou lateral                      |
+| `numberOfSelectedRecords`      | `number`  | Numărul de înregistrări selectate în prezent                           |
+| `isSelectAll`                  | `boolean` | Dacă "select all" este activ                                           |
+| `selectedRecords`              | `array`   | Obiectele înregistrărilor selectate                                    |
+| `favoriteRecordIds`            | `array`   | ID-urile înregistrărilor marcate ca favorite                           |
+| `objectPermissions`            | `object`  | Permisiuni pentru tipul de obiect curent                               |
+| `targetObjectReadPermissions`  | `object`  | Permisiuni de citire pentru obiectul țintă                             |
+| `targetObjectWritePermissions` | `object`  | Permisiuni de scriere pentru obiectul țintă                            |
+| `featureFlags`                 | `object`  | Steaguri de caracteristici active                                      |
+| `objectMetadataItem`           | `object`  | Metadatele tipului de obiect curent                                    |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Dacă vizualizarea curentă are un filtru soft-delete                    |
+
+### Operatori
+
+Combinați variabilele în expresii booleene:
+
+| Operator                            | Descriere                                                               |
+| ----------------------------------- | ----------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` dacă valoarea nu este null/undefined                             |
+| `isNonEmptyString(value)`           | `true` dacă valoarea este un șir nevid                                  |
+| `includes(array, value)`            | `true` dacă array-ul conține valoarea                                   |
+| `includesEvery(array, prop, value)` | `true` dacă proprietatea fiecărui element include valoarea              |
+| `every(array, prop)`                | `true` dacă proprietatea este truthy pentru fiecare element             |
+| `everyDefined(array, prop)`         | `true` dacă proprietatea este definită pentru fiecare element           |
+| `everyEquals(array, prop, value)`   | `true` dacă proprietatea este egală cu valoarea pentru fiecare element  |
+| `some(array, prop)`                 | `true` dacă proprietatea este truthy pe cel puțin un element            |
+| `someDefined(array, prop)`          | `true` dacă proprietatea este definită pe cel puțin un element          |
+| `someEquals(array, prop, value)`    | `true` dacă proprietatea este egală cu valoarea pe cel puțin un element |
+| `someNonEmptyString(array, prop)`   | `true` dacă proprietatea este un șir nevid pe cel puțin un element      |
+| `none(array, prop)`                 | `true` dacă proprietatea este falsy pentru fiecare element              |
+| `noneDefined(array, prop)`          | `true` dacă proprietatea este nedefinită pentru fiecare element         |
+| `noneEquals(array, prop, value)`    | `true` dacă proprietatea nu este egală cu valoarea pe niciun element    |

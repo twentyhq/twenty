@@ -1,0 +1,12 @@
+---
+title: Troubleshooting
+description: Common first-run issues — Docker, Node version, Yarn, dependencies.
+icon: "wrench"
+---
+
+- **Docker errors** — Make sure Docker Desktop (or the daemon) is running before `yarn twenty server start`. The error message will show the right start command for your OS.
+- **Wrong Node version** — Need 24+. Check with `node -v`.
+- **Yarn 4 missing** — Run `corepack enable`.
+- **Dependencies broken** — `rm -rf node_modules && yarn install`.
+
+Stuck? Ask on the [Twenty Discord](https://discord.com/channels/1130383047699738754/1130386664812982322).

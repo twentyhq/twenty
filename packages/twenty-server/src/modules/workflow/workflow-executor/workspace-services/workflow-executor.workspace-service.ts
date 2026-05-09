@@ -22,6 +22,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
@@ -60,6 +61,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -363,6 +365,22 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string,
     workflowId: string,
   ) {
+    let periodStart: Date | undefined;
+    if (this.billingService.isBillingEnabled()) {
+      const {
+        billingSubscription: { currentPeriodStart },
+      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'billingSubscription',
+      ]);
+
+      periodStart = currentPeriodStart;
+
+      await this.billingUsageService.decrementAvailableCredits({
+        workspaceId,
+        usedCredits: 100,
+      });
+    }
+
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
       [
@@ -373,17 +391,11 @@ export class WorkflowExecutorWorkspaceService {
           quantity: 1,
           unit: UsageUnit.INVOCATION,
           resourceId: workflowId,
+          periodStart,
         },
       ],
       workspaceId,
     );
-
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: 100,
-      });
-    }
   }
 
   private async processStepExecutionResult({

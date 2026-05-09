@@ -167,6 +167,7 @@ export class RouteTriggerService {
     const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
 
     let userWorkspaceId: string | null = null;
+    let userId: string | null = null;
 
     if (httpRouteSettings?.isAuthRequired) {
       const authContext = await this.validateWorkspaceFromRequest({
@@ -175,6 +176,7 @@ export class RouteTriggerService {
       });
 
       userWorkspaceId = authContext.userWorkspaceId ?? null;
+      userId = authContext.user?.id ?? null;
     }
 
     const event = buildLogicFunctionEvent({
@@ -191,6 +193,8 @@ export class RouteTriggerService {
         logicFunctionId: logicFunction.id,
         workspaceId: logicFunction.workspaceId,
         payload: event,
+        ...(userId ? { userId } : {}),
+        ...(userWorkspaceId ? { userWorkspaceId } : {}),
       });
     } catch (error) {
       if (error instanceof RouteTriggerException) {

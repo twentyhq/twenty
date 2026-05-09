@@ -1,0 +1,59 @@
+---
+title: 公共资源
+description: 通过 public/ 文件夹将静态文件（图像、图标、字体）与应用一起发布。
+icon: folder-open
+---
+
+应用根目录中的 `public/` 文件夹包含静态文件——图像、图标、字体，或应用在运行时所需的任何其他资源。 这些文件会在构建时自动包含、在开发模式下同步，并上传到服务器。
+
+放置在 `public/` 中的文件：
+
+* **公开可访问**——同步到服务器后，资源将通过公共 URL 提供服务。 访问它们无需身份验证。
+* **在前端组件中可用**——使用资源 URL 在 React 组件中显示图像、图标或任何媒体。
+* **在逻辑函数中可用**——在电子邮件、API 响应或任何服务端逻辑中引用资源 URL。
+* **用于市场元数据**——`defineApplication()` 中的 `logoUrl` 和 `screenshots` 字段引用此文件夹中的文件（例如，`public/logo.png`）。 应用发布后，这些内容会显示在市场中。
+* **在开发模式下自动同步**——当在 `public/` 中添加、更新或删除文件时，会自动同步到服务器。 无需重启。
+* **包含在构建中**——`yarn twenty build` 会将所有公共资源打包到分发产物中。
+
+## 使用 `getPublicAssetUrl` 访问公共资源
+
+使用来自 `twenty-sdk` 的 `getPublicAssetUrl` 辅助函数获取 `public/` 目录中文件的完整 URL。 它可在 **逻辑函数** 和 **前端组件** 中使用。
+
+**在逻辑函数中：**
+
+```ts src/logic-functions/send-invoice.ts
+import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const handler = async (): Promise<any> => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+  const invoiceUrl = getPublicAssetUrl('templates/invoice.png');
+
+  // Fetch the file content (no auth required — public endpoint)
+  const response = await fetch(invoiceUrl);
+  const buffer = await response.arrayBuffer();
+
+  return { logoUrl, size: buffer.byteLength };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'a1b2c3d4-...',
+  name: 'send-invoice',
+  description: 'Sends an invoice with the app logo',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+**在前端组件中：**
+
+```tsx src/front-components/company-card.tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+export default defineFrontComponent(() => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+
+  return <img src={logoUrl} alt="App logo" />;
+});
+```
+
+`path` 参数是相对于应用的 `public/` 文件夹的。 `getPublicAssetUrl('logo.png')` 和 `getPublicAssetUrl('public/logo.png')` 均解析为相同的 URL——如果存在，`public/` 前缀会被自动移除。

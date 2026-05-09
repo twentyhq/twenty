@@ -49,7 +49,7 @@ export const workspaceLogoUrl =
 
 // Extract Pro monthly base product from mockBillingPlans to use in workspace billing mocks
 const PRO_PLAN = mockBillingPlans.listPlans.find((p) => p.planKey === 'PRO')!;
-const PRO_BASE_LICENSED_PRODUCT = PRO_PLAN?.licensedProducts?.[0]!;
+const PRO_BASE_LICENSED_PRODUCT = PRO_PLAN?.baseProducts?.[0]!;
 const PRO_BASE_MONTHLY_PRICE = PRO_BASE_LICENSED_PRODUCT?.prices?.find(
   (pr) => pr.recurringInterval === 'Month',
 )!;
