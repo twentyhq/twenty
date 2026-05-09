@@ -176,14 +176,92 @@ const FORCED_PROPS_BY_TAG: Record<string, Record<string, unknown>> = {
   iframe: { sandbox: '' },
 };
 
+// input types that have a text selection — others (checkbox, radio, file,
+// color, range...) don't need caret handling.
+const TEXT_LIKE_INPUT_TYPES = new Set([
+  'text',
+  'search',
+  'url',
+  'tel',
+  'password',
+  'email',
+  'number',
+  '',
+]);
+
+const shouldPreserveCaret = (htmlTag: string, type: unknown): boolean => {
+  if (htmlTag === 'textarea') return true;
+  if (htmlTag !== 'input') return false;
+  const inputType = typeof type === 'string' ? type.toLowerCase() : '';
+  return TEXT_LIKE_INPUT_TYPES.has(inputType);
+};
+
+type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;
+
+// The remote-DOM bridge applies value updates via `el.value = X`, which
+// resets the caret to the end. Skip the assignment when the DOM already
+// matches and otherwise restore the prior selection.
+const syncValuePreservingCaret = (
+  element: CaretPreservingElement,
+  nextValue: string,
+): void => {
+  if (element.value === nextValue) return;
+
+  const isFocused = document.activeElement === element;
+  const start = isFocused ? element.selectionStart : null;
+  const end = isFocused ? element.selectionEnd : null;
+
+  element.value = nextValue;
+
+  if (isFocused && start !== null && end !== null) {
+    try {
+      element.setSelectionRange(start, end);
+    } catch {
+      // setSelectionRange throws on input types that don't support it (e.g. number)
+    }
+  }
+};
+
 export const createHtmlHostWrapper = (htmlTag: string) => {
   const isVoid = VOID_ELEMENTS.has(htmlTag);
   const forcedProps = FORCED_PROPS_BY_TAG[htmlTag];
+  const isInput = htmlTag === 'input';
+  const isTextarea = htmlTag === 'textarea';
+  const preservesCaret = isInput || isTextarea;
 
-  return ({ children, ...props }: WrapperProps) =>
-    React.createElement(
+  return ({ children, ...props }: WrapperProps) => {
+    const reactProps = filterProps(props);
+
+    if (preservesCaret && shouldPreserveCaret(htmlTag, reactProps.type)) {
+      // Apply `value` imperatively via a ref callback so we can preserve the
+      // caret position on every prop update.
+      const { value, defaultValue, ...rest } = reactProps as Record<
+        string,
+        unknown
+      >;
+      const initialValue =
+        typeof defaultValue === 'string'
+          ? defaultValue
+          : typeof value === 'string'
+            ? value
+            : undefined;
+      return React.createElement(htmlTag, {
+        ...rest,
+        ...forcedProps,
+        defaultValue: initialValue,
+        ref: (node: CaretPreservingElement | null) => {
+          if (node === null) return;
+          if (typeof value === 'string') {
+            syncValuePreservingCaret(node, value);
+          }
+        },
+      });
+    }
+
+    return React.createElement(
       htmlTag,
-      { ...filterProps(props), ...forcedProps },
+      { ...reactProps, ...forcedProps },
       isVoid ? undefined : children,
     );
+  };
 };
