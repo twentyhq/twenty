@@ -1,21 +1,21 @@
 'use client';
 
-import { msg } from '@lingui/core/macro';
 import {
   Eyebrow,
   GuideCrosshair,
   Heading,
   HeadingPart,
 } from '@/design-system/components';
-import { useLingui } from '@lingui/react';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { useEffect, useRef } from 'react';
 import { HelpedCard } from './HelpedCard';
 import { HelpedSceneScrollLayoutEffect } from './HelpedSceneScrollLayoutEffect';
-import type { HeadingCardType } from './helped-visuals';
 import { preloadHelpedVisualGeometries } from './helped-visual-models';
+import type { HeadingCardType } from './helped-visuals';
 
 const GUIDE_INTERSECTION_TOP = '176px';
 

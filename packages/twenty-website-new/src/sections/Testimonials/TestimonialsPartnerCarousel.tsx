@@ -3,6 +3,7 @@
 import {
   Body,
   Eyebrow,
+  Heading,
   HeadingPart,
   IconButton,
 } from '@/design-system/components';
@@ -10,9 +11,9 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
 import { PartnerEffect } from '@/sections/Testimonials/PartnerEffect';
 import type { TestimonialCardType } from '@/sections/Testimonials/Testimonials';
 import { theme } from '@/theme';
-import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react';
 import { type ReactNode, useState } from 'react';
 import { Separator } from './TestimonialsSeparator';
 
@@ -153,6 +154,12 @@ const QuoteArea = styled.div`
   @media (min-width: ${theme.breakpoints.md}px) {
     min-height: 392px;
   }
+`;
+
+const quoteHeadingClassName = css`
+  color: ${theme.colors.secondary.text[100]};
+  position: relative;
+  z-index: 1;
 `;
 
 const QuoteStack = styled.div`
@@ -324,7 +331,14 @@ export function PartnerCarousel({
                 key={testimonialIndex}
                 data-active={testimonialIndex === index}
               >
-                {i18n._(testimonial.heading)}
+                <Heading
+                  as="h2"
+                  className={quoteHeadingClassName}
+                  size="md"
+                  weight="light"
+                >
+                  {i18n._(testimonial.heading)}
+                </Heading>
               </QuoteWrapper>
             ))}
           </QuoteStack>

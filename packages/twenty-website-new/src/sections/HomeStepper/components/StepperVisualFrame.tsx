@@ -13,9 +13,10 @@ export const STEPPER_VISUAL_POINTER_ROOT_SELECTOR =
   '[data-stepper-visual-pointer-root]';
 
 const FrameRoot = styled.div`
+  aspect-ratio: 672 / 705;
+  contain: layout style paint;
   position: relative;
   width: 100%;
-  aspect-ratio: 672 / 705;
 `;
 
 const PatternBackdrop = styled.div`

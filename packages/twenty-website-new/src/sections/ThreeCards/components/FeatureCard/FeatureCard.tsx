@@ -177,6 +177,7 @@ export function FeatureCard({ featureCard }: FeatureCardProps) {
         src={featureCard.image.src}
         alt={featureCard.image.alt}
         fill
+        sizes="(max-width: 768px) 100vw, 411px"
         style={{ objectFit: 'cover' }}
       />
     );

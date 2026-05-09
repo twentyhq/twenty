@@ -3,6 +3,7 @@
 import {
   Body,
   Eyebrow,
+  Heading,
   HeadingPart,
   IconButton,
 } from '@/design-system/components';
@@ -54,9 +55,11 @@ const CounterSlot = styled.div`
 const VisualSlot = styled.div`
   align-self: start;
   justify-self: start;
+  min-height: 279px;
   order: 2;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    min-height: 476px;
     order: 1;
   }
 `;
@@ -206,7 +209,9 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
               key={testimonialIndex}
               data-active={testimonialIndex === index}
             >
-              {i18n._(testimonial.heading)}
+              <Heading as="h2" size="md" weight="light">
+                {i18n._(testimonial.heading)}
+              </Heading>
             </HeadingWrapper>
           ))}
         </HeadingContainer>

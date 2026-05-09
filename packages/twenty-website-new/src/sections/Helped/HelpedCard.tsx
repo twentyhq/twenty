@@ -86,6 +86,7 @@ const Rule = styled.div`
 const VisualShell = styled.div`
   background-color: ${theme.colors.secondary.background[100]};
   border-radius: ${theme.radius(2)};
+  contain: strict;
   height: 240px;
   overflow: hidden;
   position: relative;

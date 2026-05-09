@@ -18,3 +18,7 @@ export function Product() {
     </StyledContainer>
   );
 }
+
+export function ProductPlaceholder() {
+  return <StyledContainer />;
+}

@@ -178,9 +178,13 @@ export default async function HomePage({ params }: HomePageProps) {
        */}
       <link
         as="image"
+        fetchPriority="high"
         href="/illustrations/generated/home-background-bridge.png"
         rel="preload"
       />
+      <link rel="prefetch" href="/illustrations/home/helped/target.glb" as="fetch" />
+      <link rel="prefetch" href="/illustrations/home/helped/spaceship.glb" as="fetch" />
+      <link rel="prefetch" href="/illustrations/home/helped/money.glb" as="fetch" />
       <Menu.Root
         backgroundColor={HOME_TOP_BACKGROUND_COLOR}
         scheme="primary"

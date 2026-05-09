@@ -15,18 +15,18 @@ import { type ReactNode } from 'react';
 
 import { FooterVisibilityGate } from '@/app/_components/FooterVisibilityGate';
 import { ScrollToTopOnRouteChange } from '@/app/_components/ScrollToTopOnRouteChange';
-import { ContactCalModalRoot } from '@/sections/ContactCal';
 import {
   I18nProvider,
-  PUBLIC_APP_LOCALE_LIST,
   localeToUrlSegment,
+  PUBLIC_APP_LOCALE_LIST,
   resolveLocaleParam,
 } from '@/lib/i18n';
 import { getLocaleMessages } from '@/lib/i18n/messages-by-locale';
 import { setServerI18n } from '@/lib/i18n/set-server-i18n';
-import { PartnerApplicationModalRoot } from '@/sections/PartnerApplication';
+import { ContactCalModalRoot } from '@/sections/ContactCal';
 import { Footer } from '@/sections/Footer/components';
 import { FOOTER_DATA } from '@/sections/Footer/data';
+import { PartnerApplicationModalRoot } from '@/sections/PartnerApplication';
 
 const hostGrotesk = Host_Grotesk({
   subsets: ['latin'],

@@ -2,13 +2,7 @@
 
 import { styled } from '@linaria/react';
 import { DotLottieReact, type DotLottie } from '@lottiefiles/dotlottie-react';
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES,
@@ -87,7 +81,7 @@ export function StepperLottie({ scrollProgress }: StepperLottieProps) {
     };
   }, [player]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     applyScrollToDotLottie(player, scrollProgress, totalFrames);
   }, [player, scrollProgress, totalFrames]);
 

@@ -55,6 +55,15 @@ const nextConfig: LinariaConfig = {
         source: '/:path*',
         headers: SECURITY_HEADERS.map((h) => ({ ...h })),
       },
+      {
+        source: '/(images|illustrations|halftone|lottie)/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ];
   },
   async redirects() {

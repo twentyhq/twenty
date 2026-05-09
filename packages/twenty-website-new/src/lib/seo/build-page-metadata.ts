@@ -13,6 +13,7 @@ import { getSiteUrl } from './site-url';
 
 const SITE_NAME = 'Twenty';
 const TWITTER_HANDLE = '@twentycrm';
+const DEFAULT_OG_IMAGE_PATH = '/images/og/default.png';
 
 export type BuildPageMetadataInput = {
   locale: AppLocale;
@@ -68,16 +69,14 @@ export function buildPageMetadata({
   const resolvedTitle = i18n._(title);
   const resolvedDescription = i18n._(description);
 
-  const ogImages =
-    ogImage === undefined
-      ? undefined
-      : [
-          {
-            url: /^https?:\/\//i.test(ogImage)
-              ? ogImage
-              : `${siteUrl}${ogImage.startsWith('/') ? ogImage : `/${ogImage}`}`,
-          },
-        ];
+  const resolvedOgImage = ogImage ?? DEFAULT_OG_IMAGE_PATH;
+  const ogImages = [
+    {
+      url: /^https?:\/\//i.test(resolvedOgImage)
+        ? resolvedOgImage
+        : `${siteUrl}${resolvedOgImage.startsWith('/') ? resolvedOgImage : `/${resolvedOgImage}`}`,
+    },
+  ];
 
   const baseMetadata: Metadata = {
     title: { absolute: resolvedTitle },
@@ -93,7 +92,7 @@ export function buildPageMetadata({
       siteName: SITE_NAME,
       locale: metadataLocale,
       type,
-      ...(ogImages && { images: ogImages }),
+      images: ogImages,
     },
     twitter: {
       card: 'summary_large_image',
@@ -101,7 +100,7 @@ export function buildPageMetadata({
       description: resolvedDescription,
       site: TWITTER_HANDLE,
       creator: TWITTER_HANDLE,
-      ...(ogImages && { images: ogImages.map((image) => image.url) }),
+      images: ogImages.map((image) => image.url),
     },
   };
 

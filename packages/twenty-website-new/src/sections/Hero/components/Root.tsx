@@ -39,6 +39,11 @@ const StyledSection = styled.section`
 `;
 
 const StyledBackground = styled.div`
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 40%,
+    rgba(245, 243, 240, 0.6) 0%,
+    transparent 70%
+  );
   bottom: 0;
   left: -20%;
   overflow: clip;
