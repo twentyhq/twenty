@@ -48,7 +48,8 @@ export {
   getImagePreviewZoom,
   getMeshFootprintScale,
   type HalftoneImageFit,
-  HALFTONE_FOOTPRINT_RUNTIME_SOURCE,
   REFERENCE_PREVIEW_DISTANCE,
   VIRTUAL_RENDER_HEIGHT,
 } from './footprint';
+
+export { HALFTONE_FOOTPRINT_RUNTIME_SOURCE } from './generated/footprint-runtime-source';

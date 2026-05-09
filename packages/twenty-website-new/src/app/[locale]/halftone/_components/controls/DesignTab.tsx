@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  formatAngle,
-  formatDecimal,
-} from '@/lib/halftone/formatters';
+import { formatAngle, formatDecimal } from '@/lib/halftone/formatters';
 import {
   DEFAULT_GLASS_ANIMATION_SETTINGS,
   DEFAULT_GLASS_LIGHTING_SETTINGS,

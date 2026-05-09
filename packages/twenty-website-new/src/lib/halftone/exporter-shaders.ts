@@ -53,6 +53,7 @@ export const imagePassthroughFragmentShader = `
   uniform vec2 viewportSize;
   uniform float zoom;
   uniform float contrast;
+  uniform float imageFit;
 
   varying vec2 vUv;
 
@@ -64,10 +65,18 @@ export const imagePassthroughFragmentShader = `
 
     if (imageAspect > viewAspect) {
       float scale = viewAspect / imageAspect;
-      uv.y = (uv.y - 0.5) / scale + 0.5;
+      if (imageFit > 0.5) {
+        uv.x = (uv.x - 0.5) * scale + 0.5;
+      } else {
+        uv.y = (uv.y - 0.5) / scale + 0.5;
+      }
     } else {
       float scale = imageAspect / viewAspect;
-      uv.x = (uv.x - 0.5) / scale + 0.5;
+      if (imageFit > 0.5) {
+        uv.y = (uv.y - 0.5) * scale + 0.5;
+      } else {
+        uv.x = (uv.x - 0.5) / scale + 0.5;
+      }
     }
 
     uv = (uv - 0.5) / zoom + 0.5;
@@ -1205,7 +1214,9 @@ export function getExportedShapeLoader(
   return null;
 }
 
-export function createImportedGeometryRuntimeSource(shape: ExportedShapeDescriptor) {
+export function createImportedGeometryRuntimeSource(
+  shape: ExportedShapeDescriptor,
+) {
   if (shape.kind !== 'imported') {
     return '';
   }

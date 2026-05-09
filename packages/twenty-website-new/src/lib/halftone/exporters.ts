@@ -1,14 +1,31 @@
 import { normalizeExportComponentName } from '@/lib/halftone/export-names';
+import { VIRTUAL_RENDER_HEIGHT } from '@/lib/halftone/footprint';
+import { HALFTONE_FOOTPRINT_RUNTIME_SOURCE } from '@/lib/halftone/generated/footprint-runtime-source';
 import {
-  HALFTONE_FOOTPRINT_RUNTIME_SOURCE,
-  VIRTUAL_RENDER_HEIGHT,
-} from '@/lib/halftone/footprint';
+  IMAGE_HOVER_FADE_IN,
+  IMAGE_HOVER_FADE_OUT,
+  IMAGE_POINTER_FOLLOW,
+  IMAGE_POINTER_VELOCITY_DAMPING,
+} from '@/lib/halftone/halftone-image-constants';
+import {
+  RESET_INTERACTION_STATE_RUNTIME_SOURCE,
+  SPRING_STEP_RUNTIME_SOURCE,
+} from '@/lib/halftone/interaction-state';
 import type {
   HalftoneExportPose,
   HalftoneGeometrySpec,
   HalftoneStudioSettings,
 } from '@/lib/halftone/state';
 
+import {
+  emitBlurMaterials,
+  emitBlurPasses,
+  emitCleanup,
+  emitHalftoneMaterial,
+  emitPostScenes,
+  emitRendererSetup,
+  emitSizingHelpers,
+} from './exporter-mount-fragments';
 import {
   blurFragmentShader,
   createImportedGeometryRuntimeSource,
@@ -308,29 +325,9 @@ function setPrimaryLightPosition(light, angleDegrees, height) {
   light.position.set(Math.cos(lightAngle) * 5, height, Math.sin(lightAngle) * 5);
 }
 
-function applySpringStep(current, target, velocity, strength, damping) {
-  const nextVelocity = (velocity + (target - current) * strength) * damping;
-  const nextValue = current + nextVelocity;
+${SPRING_STEP_RUNTIME_SOURCE}
 
-  return {
-    value: nextValue,
-    velocity: nextVelocity,
-  };
-}
-
-function resetInteractionState(interactionState) {
-  interactionState.dragging = false;
-  interactionState.mouseX = 0.5;
-  interactionState.mouseY = 0.5;
-  interactionState.targetRotationX = 0;
-  interactionState.targetRotationY = 0;
-  interactionState.velocityX = 0;
-  interactionState.velocityY = 0;
-  interactionState.rotationVelocityX = 0;
-  interactionState.rotationVelocityY = 0;
-  interactionState.rotationVelocityZ = 0;
-  interactionState.autoElapsed = 0;
-}
+${RESET_INTERACTION_STATE_RUNTIME_SOURCE}
 
 async function createGeometry(modelUrl) {
   if (shape.kind === 'imported') {
@@ -357,14 +354,7 @@ async function mountHalftoneCanvas(options) {
     onError,
   } = options;
 
-  const getWidth = () => Math.max(container.clientWidth, 1);
-  const getHeight = () => Math.max(container.clientHeight, 1);
-  const getVirtualHeight = () => Math.max(VIRTUAL_RENDER_HEIGHT, getHeight());
-  const getVirtualWidth = () =>
-    Math.max(
-      Math.round(getVirtualHeight() * (getWidth() / Math.max(getHeight(), 1))),
-      1,
-    );
+${emitSizingHelpers()}
 
   let geometry;
 
@@ -375,20 +365,7 @@ async function mountHalftoneCanvas(options) {
     return () => {};
   }
 
-  // boundary-allow-next-line:no-raw-webgl-renderer -- emitted into the standalone HTML export; runs in the user's downloaded file with no access to lib/visual-runtime
-  const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setPixelRatio(1);
-  renderer.setClearColor(0x000000, 0);
-  renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
-
-  const canvas = renderer.domElement;
-  canvas.style.cursor = settings.animation.followDragEnabled ? 'grab' : 'default';
-  canvas.style.display = 'block';
-  canvas.style.height = '100%';
-  canvas.style.touchAction = 'none';
-  canvas.style.width = '100%';
-  container.appendChild(canvas);
+${emitRendererSetup("settings.animation.followDragEnabled ? 'grab' : 'default'")}
 
   const materialAssets = await createHalftoneMaterialAssets(renderer);
 
@@ -432,79 +409,9 @@ async function mountHalftoneCanvas(options) {
   const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
   const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-  const blurHorizontalMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      tInput: { value: null },
-      dir: { value: new THREE.Vector2(1, 0) },
-      res: { value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()) },
-    },
-    vertexShader: passThroughVertexShader,
-    fragmentShader: blurFragmentShader,
-  });
-
-  const blurVerticalMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      tInput: { value: null },
-      dir: { value: new THREE.Vector2(0, 1) },
-      res: { value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()) },
-    },
-    vertexShader: passThroughVertexShader,
-    fragmentShader: blurFragmentShader,
-  });
-
-  const halftoneMaterial = new THREE.ShaderMaterial({
-    transparent: true,
-    uniforms: {
-      tScene: { value: sceneTarget.texture },
-      tGlow: { value: blurTargetB.texture },
-      effectResolution: {
-        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
-      },
-      logicalResolution: {
-        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
-      },
-      tile: { value: settings.halftone.scale },
-      s_3: { value: settings.halftone.power },
-      s_4: { value: settings.halftone.width },
-      applyToDarkAreas: {
-        value: settings.halftone.toneTarget === 'dark' ? 1 : 0,
-      },
-      dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
-      hoverDashColor: {
-        value: new THREE.Color(settings.halftone.hoverDashColor),
-      },
-      time: { value: 0 },
-      waveAmount: { value: 0 },
-      waveSpeed: { value: 1 },
-      footprintScale: { value: 1.0 },
-      interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
-      interactionVelocity: { value: new THREE.Vector2(0, 0) },
-      dragOffset: { value: new THREE.Vector2(0, 0) },
-      hoverHalftoneActive: { value: 0 },
-      hoverHalftonePowerShift: { value: 0 },
-      hoverHalftoneRadius: { value: 0.2 },
-      hoverHalftoneWidthShift: { value: 0 },
-      hoverLightStrength: { value: 0 },
-      hoverLightRadius: { value: 0.2 },
-      hoverFlowStrength: { value: 0 },
-      hoverFlowRadius: { value: 0.18 },
-      dragFlowStrength: { value: 0 },
-      cropToBounds: { value: 0 },
-    },
-    vertexShader: passThroughVertexShader,
-    fragmentShader: halftoneFragmentShader,
-  });
-
-  const blurHorizontalScene = new THREE.Scene();
-  blurHorizontalScene.add(
-    new THREE.Mesh(fullScreenGeometry, blurHorizontalMaterial),
-  );
-
-  const blurVerticalScene = new THREE.Scene();
-  blurVerticalScene.add(new THREE.Mesh(fullScreenGeometry, blurVerticalMaterial));
-
-  const postScene = new THREE.Scene();
-  postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
+${emitBlurMaterials()}
+${emitHalftoneMaterial({ cropToBounds: 0, hoverHalftoneRadius: '0.2', hoverLightRadius: '0.2', waveSpeed: '1' })}
+${emitPostScenes()}
 
   const updateViewportUniforms = (
     logicalWidth,
@@ -680,6 +587,7 @@ async function mountHalftoneCanvas(options) {
   let animationFrameId = 0;
 
   const renderFrame = (timestamp) => {
+    // boundary-allow-next-line:no-raw-animation-frame -- emitted into standalone HTML export
     animationFrameId = window.requestAnimationFrame(renderFrame);
     clock.update(timestamp);
 
@@ -905,56 +813,15 @@ async function mountHalftoneCanvas(options) {
 
     renderer.setRenderTarget(sceneTarget);
     renderer.render(scene3d, camera);
-
-    blurHorizontalMaterial.uniforms.tInput.value = sceneTarget.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
-
-    blurHorizontalMaterial.uniforms.tInput.value = blurTargetB.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
-
-    renderer.setRenderTarget(null);
-    renderer.clear();
-    renderer.render(postScene, orthographicCamera);
+${emitBlurPasses()}
   };
 
   renderFrame();
 
-  return () => {
-    window.cancelAnimationFrame(animationFrameId);
-    clock.dispose();
-    resizeObserver.disconnect();
-    canvas.removeEventListener('pointermove', handlePointerMove);
-    canvas.removeEventListener('pointerleave', handlePointerLeave);
-    window.removeEventListener('pointerup', handlePointerUp);
-    window.removeEventListener('pointermove', handleWindowPointerMove);
-    canvas.removeEventListener('pointercancel', handlePointerCancel);
-    window.removeEventListener('blur', handleWindowBlur);
-    canvas.removeEventListener('pointerdown', handlePointerDown);
-    blurHorizontalMaterial.dispose();
-    blurVerticalMaterial.dispose();
-    halftoneMaterial.dispose();
-    fullScreenGeometry.dispose();
-    material.dispose();
-    sceneTarget.dispose();
-    blurTargetA.dispose();
-    blurTargetB.dispose();
-    disposeHalftoneMaterialAssets(materialAssets);
-    renderer.dispose();
-
-    if (canvas.parentNode === container) {
-      container.removeChild(canvas);
-    }
-  };
+${emitCleanup(
+  `    material.dispose();\n    disposeHalftoneMaterialAssets(materialAssets);`,
+  `    canvas.removeEventListener('pointermove', handlePointerMove);\n    canvas.removeEventListener('pointerleave', handlePointerLeave);\n    window.removeEventListener('pointerup', handlePointerUp);\n    window.removeEventListener('pointermove', handleWindowPointerMove);\n    canvas.removeEventListener('pointercancel', handlePointerCancel);\n    window.removeEventListener('blur', handleWindowBlur);\n    canvas.removeEventListener('pointerdown', handlePointerDown);`,
+)}
 }
 `;
 }
@@ -968,14 +835,7 @@ async function mountHalftoneCanvas(options) {
     onError,
   } = options;
 
-  const getWidth = () => Math.max(container.clientWidth, 1);
-  const getHeight = () => Math.max(container.clientHeight, 1);
-  const getVirtualHeight = () => Math.max(VIRTUAL_RENDER_HEIGHT, getHeight());
-  const getVirtualWidth = () =>
-    Math.max(
-      Math.round(getVirtualHeight() * (getWidth() / Math.max(getHeight(), 1))),
-      1,
-    );
+${emitSizingHelpers()}
 
   const image = await new Promise((resolve, reject) => {
     const img = new Image();
@@ -984,20 +844,7 @@ async function mountHalftoneCanvas(options) {
     img.src = imageUrl;
   });
 
-  // boundary-allow-next-line:no-raw-webgl-renderer -- emitted into the standalone HTML export; runs in the user's downloaded file with no access to lib/visual-runtime
-  const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setPixelRatio(1);
-  renderer.setClearColor(0x000000, 0);
-  renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
-
-  const canvas = renderer.domElement;
-  canvas.style.cursor = 'default';
-  canvas.style.display = 'block';
-  canvas.style.height = '100%';
-  canvas.style.touchAction = 'none';
-  canvas.style.width = '100%';
-  container.appendChild(canvas);
+${emitRendererSetup('default')}
 
   const imageTexture = new THREE.Texture(image);
   imageTexture.colorSpace = THREE.SRGBColorSpace;
@@ -1024,77 +871,9 @@ async function mountHalftoneCanvas(options) {
   const imageScene = new THREE.Scene();
   imageScene.add(new THREE.Mesh(fullScreenGeometry, imageMaterial));
 
-  const blurHorizontalMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      tInput: { value: null },
-      dir: { value: new THREE.Vector2(1, 0) },
-      res: { value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()) },
-    },
-    vertexShader: passThroughVertexShader,
-    fragmentShader: blurFragmentShader,
-  });
-
-  const blurVerticalMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      tInput: { value: null },
-      dir: { value: new THREE.Vector2(0, 1) },
-      res: { value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()) },
-    },
-    vertexShader: passThroughVertexShader,
-    fragmentShader: blurFragmentShader,
-  });
-
-  const halftoneMaterial = new THREE.ShaderMaterial({
-    transparent: true,
-    uniforms: {
-      tScene: { value: sceneTarget.texture },
-      tGlow: { value: blurTargetB.texture },
-      effectResolution: {
-        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
-      },
-      logicalResolution: {
-        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
-      },
-      tile: { value: settings.halftone.scale },
-      s_3: { value: settings.halftone.power },
-      s_4: { value: settings.halftone.width },
-      applyToDarkAreas: {
-        value: settings.halftone.toneTarget === 'dark' ? 1 : 0,
-      },
-      dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
-      hoverDashColor: {
-        value: new THREE.Color(settings.halftone.hoverDashColor),
-      },
-      time: { value: 0 },
-      waveAmount: { value: 0 },
-      waveSpeed: { value: settings.animation.waveSpeed },
-      footprintScale: { value: 1.0 },
-      interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
-      interactionVelocity: { value: new THREE.Vector2(0, 0) },
-      dragOffset: { value: new THREE.Vector2(0, 0) },
-      hoverHalftoneActive: { value: 0 },
-      hoverHalftonePowerShift: { value: 0 },
-      hoverHalftoneRadius: { value: settings.animation.hoverHalftoneRadius },
-      hoverHalftoneWidthShift: { value: 0 },
-      hoverLightStrength: { value: 0 },
-      hoverLightRadius: { value: settings.animation.hoverLightRadius },
-      hoverFlowStrength: { value: 0 },
-      hoverFlowRadius: { value: 0.18 },
-      dragFlowStrength: { value: 0 },
-      cropToBounds: { value: 1 },
-    },
-    vertexShader: passThroughVertexShader,
-    fragmentShader: halftoneFragmentShader,
-  });
-
-  const blurHorizontalScene = new THREE.Scene();
-  blurHorizontalScene.add(new THREE.Mesh(fullScreenGeometry, blurHorizontalMaterial));
-
-  const blurVerticalScene = new THREE.Scene();
-  blurVerticalScene.add(new THREE.Mesh(fullScreenGeometry, blurVerticalMaterial));
-
-  const postScene = new THREE.Scene();
-  postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
+${emitBlurMaterials()}
+${emitHalftoneMaterial({ cropToBounds: 1, hoverHalftoneRadius: 'settings.animation.hoverHalftoneRadius', hoverLightRadius: 'settings.animation.hoverLightRadius', waveSpeed: 'settings.animation.waveSpeed' })}
+${emitPostScenes()}
 
   const updateViewportUniforms = (
     logicalWidth,
@@ -1125,10 +904,10 @@ async function mountHalftoneCanvas(options) {
     });
 
   const interaction = createInteractionState();
-  const imagePointerFollow = 0.38;
-  const imagePointerVelocityDamping = 0.82;
-  const imageHoverFadeIn = 18;
-  const imageHoverFadeOut = 7;
+  const imagePointerFollow = ${IMAGE_POINTER_FOLLOW};
+  const imagePointerVelocityDamping = ${IMAGE_POINTER_VELOCITY_DAMPING};
+  const imageHoverFadeIn = ${IMAGE_HOVER_FADE_IN};
+  const imageHoverFadeOut = ${IMAGE_HOVER_FADE_OUT};
 
   const syncSize = () => {
     const virtualWidth = getVirtualWidth();
@@ -1264,6 +1043,7 @@ async function mountHalftoneCanvas(options) {
   let animationFrameId = 0;
 
   const renderFrame = (timestamp) => {
+    // boundary-allow-next-line:no-raw-animation-frame -- emitted into standalone HTML export
     animationFrameId = window.requestAnimationFrame(renderFrame);
     clock.update(timestamp);
 
@@ -1322,55 +1102,15 @@ async function mountHalftoneCanvas(options) {
 
     renderer.setRenderTarget(sceneTarget);
     renderer.render(imageScene, orthographicCamera);
-
-    blurHorizontalMaterial.uniforms.tInput.value = sceneTarget.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
-
-    blurHorizontalMaterial.uniforms.tInput.value = blurTargetB.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
-
-    renderer.setRenderTarget(null);
-    renderer.clear();
-    renderer.render(postScene, orthographicCamera);
+${emitBlurPasses()}
   };
 
   renderFrame();
 
-  return () => {
-    window.cancelAnimationFrame(animationFrameId);
-    clock.dispose();
-    resizeObserver.disconnect();
-    canvas.removeEventListener('pointermove', handlePointerMove);
-    canvas.removeEventListener('pointerleave', handlePointerLeave);
-    canvas.removeEventListener('pointerup', handlePointerUp);
-    canvas.removeEventListener('pointercancel', handlePointerCancel);
-    window.removeEventListener('blur', handleWindowBlur);
-    canvas.removeEventListener('pointerdown', handlePointerDown);
-    blurHorizontalMaterial.dispose();
-    blurVerticalMaterial.dispose();
-    halftoneMaterial.dispose();
-    imageMaterial.dispose();
-    imageTexture.dispose();
-    fullScreenGeometry.dispose();
-    sceneTarget.dispose();
-    blurTargetA.dispose();
-    blurTargetB.dispose();
-    renderer.dispose();
-
-    if (canvas.parentNode === container) {
-      container.removeChild(canvas);
-    }
-  };
+${emitCleanup(
+  `    imageMaterial.dispose();\n    imageTexture.dispose();`,
+  `    canvas.removeEventListener('pointermove', handlePointerMove);\n    canvas.removeEventListener('pointerleave', handlePointerLeave);\n    canvas.removeEventListener('pointerup', handlePointerUp);\n    canvas.removeEventListener('pointercancel', handlePointerCancel);\n    window.removeEventListener('blur', handleWindowBlur);\n    canvas.removeEventListener('pointerdown', handlePointerDown);`,
+)}
 }
 `;
 }

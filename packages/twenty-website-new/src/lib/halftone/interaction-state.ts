@@ -106,3 +106,26 @@ export const resetHalftoneInteractionState = (
     interactionState.autoElapsed = 0;
   }
 };
+
+// Runtime JS string equivalents for standalone exported HTML.
+// Used by the exporter to avoid maintaining parallel inline copies.
+export const SPRING_STEP_RUNTIME_SOURCE = `
+function applySpringStep(current, target, velocity, strength, damping) {
+  const nextVelocity = (velocity + (target - current) * strength) * damping;
+  return { value: current + nextVelocity, velocity: nextVelocity };
+}`;
+
+export const RESET_INTERACTION_STATE_RUNTIME_SOURCE = `
+function resetInteractionState(interactionState) {
+  interactionState.dragging = false;
+  interactionState.mouseX = 0.5;
+  interactionState.mouseY = 0.5;
+  interactionState.targetRotationX = 0;
+  interactionState.targetRotationY = 0;
+  interactionState.velocityX = 0;
+  interactionState.velocityY = 0;
+  interactionState.rotationVelocityX = 0;
+  interactionState.rotationVelocityY = 0;
+  interactionState.rotationVelocityZ = 0;
+  interactionState.autoElapsed = 0;
+}`;

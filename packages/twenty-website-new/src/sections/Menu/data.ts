@@ -58,7 +58,7 @@ function buildNavItems(): MenuNavItemType[] {
         {
           label: msg`Why Twenty`,
           description: msg`The open source CRM built to be customised`,
-          href: '/resources/why-twenty',
+          href: '/why-twenty',
           preview: {
             image: '/images/why-twenty/hero/background.webp',
             imageAlt: 'Why Twenty',

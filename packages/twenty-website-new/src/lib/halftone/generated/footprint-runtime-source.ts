@@ -1,45 +1,13 @@
-import * as THREE from 'three';
+// Untyped JS mirror of the footprint helpers in ../footprint.ts.
+// Injected into exported standalone HTML. Keep in sync — validated by
+// __tests__/footprint.test.ts which evals this string and compares results.
+import { MIN_FOOTPRINT_SCALE, REFERENCE_PREVIEW_DISTANCE } from '../footprint';
 
-export interface HalftoneRect {
-  height: number;
-  width: number;
-  x: number;
-  y: number;
-}
+export const HALFTONE_FOOTPRINT_RUNTIME_SOURCE = `
+const REFERENCE_PREVIEW_DISTANCE = ${REFERENCE_PREVIEW_DISTANCE};
+const MIN_FOOTPRINT_SCALE = ${MIN_FOOTPRINT_SCALE};
 
-export type HalftoneImageFit = 'contain' | 'cover';
-
-export interface ImageFootprintScaleArgs {
-  imageFit?: HalftoneImageFit;
-  imageHeight: number;
-  imageWidth: number;
-  previewDistance: number;
-  viewportHeight: number;
-  viewportWidth: number;
-}
-
-export interface ProjectedBoundsArgs {
-  camera: THREE.PerspectiveCamera;
-  localBounds: THREE.Box3;
-  meshMatrixWorld: THREE.Matrix4;
-  viewportHeight: number;
-  viewportWidth: number;
-}
-
-export interface MeshFootprintScaleArgs extends ProjectedBoundsArgs {
-  lookAtTarget: THREE.Vector3;
-}
-
-export const VIRTUAL_RENDER_HEIGHT = 768;
-export const REFERENCE_PREVIEW_DISTANCE = 4;
-
-export const MIN_FOOTPRINT_SCALE = 0.001;
-
-function clampRectToViewport(
-  rect: HalftoneRect,
-  viewportWidth: number,
-  viewportHeight: number,
-) {
+function clampRectToViewport(rect, viewportWidth, viewportHeight) {
   const minX = Math.max(rect.x, 0);
   const minY = Math.max(rect.y, 0);
   const maxX = Math.min(rect.x + rect.width, viewportWidth);
@@ -57,7 +25,7 @@ function clampRectToViewport(
   };
 }
 
-function getRectArea(rect: HalftoneRect | null) {
+function getRectArea(rect) {
   if (!rect) {
     return 0;
   }
@@ -65,7 +33,7 @@ function getRectArea(rect: HalftoneRect | null) {
   return Math.max(rect.width, 0) * Math.max(rect.height, 0);
 }
 
-function createBox3Corners(bounds: THREE.Box3) {
+function createBox3Corners(bounds) {
   const { min, max } = bounds;
 
   return [
@@ -80,24 +48,17 @@ function createBox3Corners(bounds: THREE.Box3) {
   ];
 }
 
-export function getImagePreviewZoom(previewDistance: number) {
+function getImagePreviewZoom(previewDistance) {
   return REFERENCE_PREVIEW_DISTANCE / Math.max(previewDistance, 0.001);
 }
 
-export function getContainedImageRect({
+function getContainedImageRect({
   imageFit = 'contain',
   imageHeight,
   imageWidth,
   viewportHeight,
   viewportWidth,
   zoom,
-}: {
-  imageFit?: HalftoneImageFit;
-  imageHeight: number;
-  imageWidth: number;
-  viewportHeight: number;
-  viewportWidth: number;
-  zoom: number;
 }) {
   if (
     imageWidth <= 0 ||
@@ -143,10 +104,7 @@ export function getContainedImageRect({
   );
 }
 
-export function getFootprintScaleFromRects(
-  currentRect: HalftoneRect | null,
-  referenceRect: HalftoneRect | null,
-) {
+function getFootprintScaleFromRects(currentRect, referenceRect) {
   const currentArea = getRectArea(currentRect);
   const referenceArea = getRectArea(referenceRect);
 
@@ -154,17 +112,20 @@ export function getFootprintScaleFromRects(
     return 1;
   }
 
-  return Math.max(Math.sqrt(currentArea / referenceArea), MIN_FOOTPRINT_SCALE);
+  return Math.max(
+    Math.sqrt(currentArea / referenceArea),
+    MIN_FOOTPRINT_SCALE,
+  );
 }
 
-export function getImageFootprintScale({
+function getImageFootprintScale({
   imageFit = 'contain',
   imageHeight,
   imageWidth,
   previewDistance,
   viewportHeight,
   viewportWidth,
-}: ImageFootprintScaleArgs) {
+}) {
   const currentRect = getContainedImageRect({
     imageFit,
     imageHeight,
@@ -185,14 +146,18 @@ export function getImageFootprintScale({
   return getFootprintScaleFromRects(currentRect, referenceRect);
 }
 
-export function projectBox3ToViewport({
+function projectBox3ToViewport({
   camera,
   localBounds,
   meshMatrixWorld,
   viewportHeight,
   viewportWidth,
-}: ProjectedBoundsArgs) {
-  if (localBounds.isEmpty() || viewportWidth <= 0 || viewportHeight <= 0) {
+}) {
+  if (
+    localBounds.isEmpty() ||
+    viewportWidth <= 0 ||
+    viewportHeight <= 0
+  ) {
     return null;
   }
 
@@ -240,14 +205,14 @@ export function projectBox3ToViewport({
   );
 }
 
-export function getMeshFootprintScale({
+function getMeshFootprintScale({
   camera,
   localBounds,
   lookAtTarget,
   meshMatrixWorld,
   viewportHeight,
   viewportWidth,
-}: MeshFootprintScaleArgs) {
+}) {
   const currentRect = projectBox3ToViewport({
     camera,
     localBounds,
@@ -277,3 +242,4 @@ export function getMeshFootprintScale({
 
   return getFootprintScaleFromRects(currentRect, referenceRect);
 }
+`;

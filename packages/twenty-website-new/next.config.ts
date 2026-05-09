@@ -124,13 +124,13 @@ const nextConfig: LinariaConfig = {
         permanent: true,
       },
       {
-        source: '/why-twenty',
-        destination: '/resources/why-twenty',
+        source: '/resources/why-twenty',
+        destination: '/why-twenty',
         permanent: true,
       },
       {
         source: '/story',
-        destination: '/resources/why-twenty',
+        destination: '/why-twenty',
         permanent: true,
       },
       {
