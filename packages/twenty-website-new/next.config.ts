@@ -56,7 +56,7 @@ const nextConfig: LinariaConfig = {
         headers: SECURITY_HEADERS.map((h) => ({ ...h })),
       },
       {
-        source: '/(images|illustrations|halftone|lottie)/:path*',
+        source: '/(images|illustrations|lottie)/:path*',
         headers: [
           {
             key: 'Cache-Control',

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type ChangeEventHandler, type ReactNode } from 'react';
+import { type ChangeEventHandler, type ReactNode, useId } from 'react';
 
 import { Toggle, ToggleInput, ToggleTrack } from './ControlsFormPrimitives';
 
@@ -43,11 +43,20 @@ export function SectionToggleHeader({
   onChange,
   preserveCase,
 }: SectionToggleHeaderProps) {
+  const titleId = useId();
+
   return (
     <SectionHeader>
-      <SectionTitle $preserveCase={preserveCase}>{children}</SectionTitle>
+      <SectionTitle $preserveCase={preserveCase} id={titleId}>
+        {children}
+      </SectionTitle>
       <Toggle>
-        <ToggleInput checked={checked} onChange={onChange} type="checkbox" />
+        <ToggleInput
+          aria-labelledby={titleId}
+          checked={checked}
+          onChange={onChange}
+          type="checkbox"
+        />
         <ToggleTrack />
       </Toggle>
     </SectionHeader>
