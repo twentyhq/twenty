@@ -202,8 +202,14 @@ export function SliderControl({
       return;
     }
 
-    const nextValue = Number(draftValue);
+    const trimmed = draftValue.trim();
     setDraftValue(null);
+
+    if (trimmed === '') {
+      return;
+    }
+
+    const nextValue = Number(trimmed);
 
     if (!Number.isFinite(nextValue)) {
       return;
