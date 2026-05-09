@@ -40,6 +40,8 @@ RUN yarn workspaces focus twenty twenty-server twenty-emails twenty-shared twent
 
 FROM server-deps AS twenty-server-build
 
+# Cache-bust 2026-05-09T07:30Z — force rebuild after a prior deploy reused
+# a stale dist that was missing the 2-2/2-3/2-4 upgrade-version-command files.
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
