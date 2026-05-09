@@ -7,7 +7,7 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 
-export const WRONG_CHOICE_POPUP_WIDTH = 321;
+import { WRONG_CHOICE_POPUP_WIDTH } from './wrong-choice-popup-constants';
 const POPUP_VISIBLE_DURATION_MS = 3000;
 const POPUP_FADE_DURATION_MS = 240;
 
@@ -99,7 +99,7 @@ const BodyText = styled.p`
   margin: 0;
 `;
 
-export type WrongChoicePopupProps = {
+type WrongChoicePopupProps = {
   body: MessageDescriptor;
   isClosingRequested?: boolean;
   layerIndex: number;

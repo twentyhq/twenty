@@ -1,22 +1,15 @@
 'use client';
 
 import { Container } from '@/design-system/components';
-import type { ImageType } from '@/design-system/components/Image';
-import type { MessageDescriptor } from '@lingui/core';
 import { ScrollProgressEffect } from '@/lib/scroll';
 import { useStepperMdUp } from '@/sections/Stepper';
+import { useBreakpointStepSync } from '@/sections/Stepper/use-breakpoint-step-sync';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 import { Content } from './Content';
+import type { ProductStepperStepType } from './types';
 import { Visual } from './Visual';
-
-export type ProductStepperStepType = {
-  body: MessageDescriptor;
-  heading: ReactNode;
-  icon: string;
-  image: ImageType;
-};
 
 const StyledSection = styled.section`
   background-color: ${theme.colors.primary.text[5]};
@@ -61,28 +54,13 @@ type FlowProps = {
 export function Flow({ body, children, eyebrow, steps }: FlowProps) {
   const isMdUp = useStepperMdUp();
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [mobileStepIndex, setMobileStepIndex] = useState(0);
   const scrollContainerRef = useRef<HTMLElement>(null);
-  const previousMdUpRef = useRef(isMdUp);
-
-  useEffect(() => {
-    if (previousMdUpRef.current && !isMdUp) {
-      const scrollDerivedIndex = Math.min(
-        steps.length - 1,
-        Math.floor(scrollProgress * steps.length),
-      );
-      setMobileStepIndex(scrollDerivedIndex);
-    }
-    previousMdUpRef.current = isMdUp;
-  }, [isMdUp, scrollProgress, steps.length]);
-
-  const activeStepIndex = isMdUp
-    ? Math.min(steps.length - 1, Math.floor(scrollProgress * steps.length))
-    : mobileStepIndex;
-
-  const localProgress = isMdUp
-    ? scrollProgress * steps.length - activeStepIndex
-    : 0;
+  const {
+    activeStepIndex,
+    localProgress,
+    mobileStepIndex,
+    setMobileStepIndex,
+  } = useBreakpointStepSync(isMdUp, scrollProgress, steps.length);
 
   const contentSteps = steps.map(
     ({ body: stepBody, heading: stepHeading, icon }) => ({

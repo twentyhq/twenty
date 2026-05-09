@@ -5,7 +5,7 @@ import { useTimeoutRegistry } from '@/lib/react';
 import { useEffect, useState } from 'react';
 
 const FEATURES_SWITCH_ANIMATION_MS = 110;
-const FEATURE_ITEM_STAGGER_MS = 8;
+export const FEATURE_ITEM_STAGGER_MS = 8;
 
 export type FeatureTransitionPhase = 'stable' | 'exiting' | 'entering';
 

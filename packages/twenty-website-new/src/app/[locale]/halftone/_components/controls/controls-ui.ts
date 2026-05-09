@@ -1,3 +1,5 @@
+export { TAB_LABEL_WIDTH } from './controls-form-constants';
+
 export {
   ColorControlLabel,
   ColorControlRow,
@@ -7,23 +9,9 @@ export {
   ColorPickerField,
   ColorSwatch,
   ColorSwatchButton,
-  ControlValue,
-  LabelWithTooltip,
-  SegmentedControl,
-  SegmentedLabel,
-  SelectControl,
-  SelectInput,
-  SelectLabel,
-  SliderControl,
-  SliderInput,
-  SliderLabel,
-  Toggle,
-  ToggleControl,
-  ToggleInput,
-  ToggleRow,
-  ToggleText,
-  ToggleTrack,
-} from './ControlsFormPrimitives';
+} from './ColorField';
+
+export { LabelWithTooltip } from './LabelWithTooltip';
 
 export {
   ControlGrid,
@@ -38,7 +26,27 @@ export {
   ValueDisplay,
 } from './ControlsPanelShell';
 
+export { SegmentedControl, SegmentedLabel } from './SegmentedControl';
+
+export { SelectControl, SelectInput, SelectLabel } from './SelectControl';
+
+export {
+  ControlValue,
+  SliderControl,
+  SliderInput,
+  SliderLabel,
+} from './SliderControl';
+
 export { TabButton, TabContent, TabsBar } from './ControlsTabs';
+
+export {
+  Toggle,
+  ToggleControl,
+  ToggleInput,
+  ToggleRow,
+  ToggleText,
+  ToggleTrack,
+} from './ToggleControl';
 
 export {
   Section,

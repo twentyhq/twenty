@@ -7,7 +7,8 @@ import {
   type HalftoneAnimationSettings,
   type HalftoneExportPose,
 } from '@/lib/halftone';
-import { type CSSProperties, useEffect, useState } from 'react';
+import { useAsyncGeometry } from '@/lib/visual-runtime/use-async-geometry';
+import { type CSSProperties, useCallback } from 'react';
 import type * as THREE from 'three';
 
 import {
@@ -76,31 +77,11 @@ export function PartnerThreeCard({
   modelUrl,
   style,
 }: PartnerThreeCardProps) {
-  const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    let loadedGeometry: THREE.BufferGeometry | null = null;
-
-    setGeometry(null);
-
-    void loadPartnerThreeCardGeometry({ meshScaleMultiplier, modelUrl }).then(
-      (nextGeometry) => {
-        if (cancelled) {
-          nextGeometry.dispose();
-          return;
-        }
-
-        loadedGeometry = nextGeometry;
-        setGeometry(nextGeometry);
-      },
-    );
-
-    return () => {
-      cancelled = true;
-      loadedGeometry?.dispose();
-    };
-  }, [meshScaleMultiplier, modelUrl]);
+  const loadGeometry = useCallback(
+    () => loadPartnerThreeCardGeometry({ meshScaleMultiplier, modelUrl }),
+    [meshScaleMultiplier, modelUrl],
+  );
+  const geometry = useAsyncGeometry(loadGeometry, [loadGeometry]);
 
   return (
     <div

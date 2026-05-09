@@ -1,2 +1,2 @@
 export { ProductStepper } from './ProductStepper';
-export type { ProductStepperStepType } from './Flow';
+export type { ProductStepperStepType } from './types';

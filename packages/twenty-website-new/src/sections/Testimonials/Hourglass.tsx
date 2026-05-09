@@ -1,8 +1,8 @@
 'use client';
 
+import { useAsyncGeometry } from '@/lib/visual-runtime/use-async-geometry';
 import { styled } from '@linaria/react';
-import { useEffect, useState } from 'react';
-import type * as THREE from 'three';
+import { useCallback } from 'react';
 import { loadImportedGeometryFromUrl } from '@/lib/halftone';
 import { HourglassCanvas } from './HourglassCanvas';
 
@@ -81,34 +81,11 @@ const HourglassFill = styled.div`
 `;
 
 export function Hourglass() {
-  const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    let loadedGeometry: THREE.BufferGeometry | null = null;
-
-    void loadImportedGeometryFromUrl('glb', GLB_URL, 'hourglass.glb')
-      .then((nextGeometry) => {
-        if (cancelled) {
-          nextGeometry.dispose();
-          return;
-        }
-
-        loadedGeometry = nextGeometry;
-        setGeometry(nextGeometry);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
-    return () => {
-      cancelled = true;
-
-      if (loadedGeometry) {
-        loadedGeometry.dispose();
-      }
-    };
-  }, []);
+  const loadGeometry = useCallback(
+    () => loadImportedGeometryFromUrl('glb', GLB_URL, 'hourglass.glb'),
+    [],
+  );
+  const geometry = useAsyncGeometry(loadGeometry, [loadGeometry]);
 
   return (
     <HourglassFill>

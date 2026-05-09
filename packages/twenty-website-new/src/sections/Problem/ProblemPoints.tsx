@@ -38,7 +38,7 @@ const StyledPoint = styled.div`
   }
 `;
 
-export type PointsProps = {
+type PointsProps = {
   points: ProblemPointType[];
 };
 

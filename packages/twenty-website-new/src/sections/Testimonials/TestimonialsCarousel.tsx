@@ -8,7 +8,7 @@ import {
   IconButton,
 } from '@/design-system/components';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
-import type { TestimonialCardType } from '@/sections/Testimonials/Testimonials';
+import type { TestimonialCardType } from '@/sections/Testimonials/types';
 import { theme } from '@/theme';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';

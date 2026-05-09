@@ -3,7 +3,6 @@
 import { Container, IconButton, LinkButton } from '@/design-system/components';
 import { CloseIcon, MenuIcon } from '@/icons';
 import { useLingui } from '@lingui/react';
-import { useTimeoutRegistry } from '@/lib/react';
 import type {
   MenuNavItemType,
   MenuScheme,
@@ -13,11 +12,10 @@ import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { CloseDrawerWhenNavigationExpandsEffect } from './../effect-components/CloseDrawerWhenNavigationExpandsEffect';
+import { ScrollTrackingEffect } from './../effect-components/ScrollTrackingEffect';
 import { MenuDrawer } from './Drawer';
-
-const SCROLL_IDLE_TIMEOUT_MS = 150;
 
 const StyledSection = styled.section<{
   $enableBackdropBlur: boolean;
@@ -107,31 +105,14 @@ export function Root({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
-  const timeoutRegistry = useTimeoutRegistry();
 
-  useEffect(() => {
-    let cancelScrollIdle: (() => void) | null = null;
-
-    const handleScroll = () => {
-      setHasScrolled(window.scrollY > 8);
-      setIsScrolling(true);
-
-      cancelScrollIdle?.();
-
-      cancelScrollIdle = timeoutRegistry.schedule(() => {
-        setIsScrolling(false);
-        cancelScrollIdle = null;
-      }, SCROLL_IDLE_TIMEOUT_MS);
-    };
-
-    setHasScrolled(window.scrollY > 8);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      cancelScrollIdle?.();
-    };
-  }, [timeoutRegistry]);
+  const handleScrollStateChange = useCallback(
+    (scrolled: boolean, scrolling: boolean) => {
+      setHasScrolled(scrolled);
+      setIsScrolling(scrolling);
+    },
+    [],
+  );
 
   const buttonColor: {
     border: string;
@@ -166,6 +147,7 @@ export function Root({
       <CloseDrawerWhenNavigationExpandsEffect
         onClose={() => setIsDrawerOpen(false)}
       />
+      <ScrollTrackingEffect onScrollStateChange={handleScrollStateChange} />
       <StyledSection
         $enableBackdropBlur={enableBackdropBlur}
         $isElevated={isScrolling || hasScrolled}

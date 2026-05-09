@@ -13,7 +13,8 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useCallback, useRef, useState } from 'react';
 import { PricingWindow } from './PricingWindow';
 import { Root } from './Root';
-import { WrongChoicePopup, WRONG_CHOICE_POPUP_WIDTH } from './WrongChoicePopup';
+import { WrongChoicePopup } from './WrongChoicePopup';
+import { WRONG_CHOICE_POPUP_WIDTH } from './wrong-choice-popup-constants';
 
 const CopyColumn = styled.div`
   color: ${theme.colors.primary.text[100]};

@@ -1,5 +1,6 @@
 'use client';
 
+import { formatArticleDate } from '@/lib/articles/format-article-date';
 import {
   Body,
   Eyebrow,
@@ -9,19 +10,13 @@ import {
 } from '@/design-system/components';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
 import { PartnerEffect } from '@/sections/Testimonials/PartnerEffect';
-import type { TestimonialCardType } from '@/sections/Testimonials/Testimonials';
+import type { TestimonialCardType } from '@/sections/Testimonials/types';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react';
 import { type ReactNode, useState } from 'react';
 import { Separator } from './TestimonialsSeparator';
-
-const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
 
 const nameTextClassName = css`
   &&& {
@@ -306,7 +301,7 @@ export function PartnerCarousel({
 
             {current.author.date ? (
               <p className={dateTextClassName}>
-                {DATE_FORMATTER.format(current.author.date)}
+                {formatArticleDate(current.author.date!)}
               </p>
             ) : null}
           </AuthorMeta>

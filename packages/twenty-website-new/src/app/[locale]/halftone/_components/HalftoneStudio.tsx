@@ -18,11 +18,6 @@ import {
 } from '@/lib/halftone/HalftoneCanvas';
 import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/footprint';
 import {
-  createFallbackGeometry,
-  disposeGeometryCache,
-  getGeometryForSpec,
-} from '@/lib/halftone/geometry-registry';
-import {
   DEFAULT_IMAGE_HALFTONE_SETTINGS,
   DEFAULT_SHAPE_HALFTONE_SETTINGS,
   createInitialHalftoneStudioState,
@@ -44,7 +39,11 @@ import {
   useRef,
   useState,
 } from 'react';
-import type * as THREE from 'three';
+
+import { CopyHalftoneShortcutEffect } from './effect-components/CopyHalftoneShortcutEffect';
+import { PasteImageEffect } from './effect-components/PasteImageEffect';
+import { useGeometryLoader } from '../_hooks/use-geometry-loader';
+import { useImageElement } from '../_hooks/use-image-element';
 
 import {
   CanvasLayer,
@@ -58,20 +57,11 @@ import {
   StudioShell,
 } from './halftone-studio.styles';
 
-type GeometryCacheEntry = THREE.BufferGeometry | Promise<THREE.BufferGeometry>;
 const STATUS_CLEAR_DELAY_MS = 2000;
 
 const DEFAULT_PREVIEW_DISTANCE = 6;
 const DEFAULT_IMAGE_ASSET_PATH = '/images/shared/halftone/twenty-logo.svg';
 const DEFAULT_IMAGE_FILENAME = 'twenty-logo.svg';
-const CLIPBOARD_IMAGE_EXTENSION_BY_MIME: Record<string, string> = {
-  'image/bmp': '.bmp',
-  'image/gif': '.gif',
-  'image/jpeg': '.jpg',
-  'image/png': '.png',
-  'image/svg+xml': '.svg',
-  'image/webp': '.webp',
-};
 type PendingFilePicker = {
   resolve: (file: File | null) => void;
 };
@@ -122,42 +112,6 @@ function getAssetFilenameFromUrl(assetUrl: string, fallbackFilename: string) {
   return assetFilename && assetFilename.length > 0
     ? assetFilename
     : fallbackFilename;
-}
-
-function isEditablePasteTarget(target: EventTarget | null) {
-  if (!(target instanceof HTMLElement)) {
-    return false;
-  }
-
-  return (
-    target.isContentEditable ||
-    target instanceof HTMLInputElement ||
-    target instanceof HTMLTextAreaElement ||
-    target.closest('[contenteditable=""], [contenteditable="true"]') !== null
-  );
-}
-
-function createPastedImageFile(file: File) {
-  const hasExtension = /\.[^.]+$/i.test(file.name);
-
-  if (hasExtension) {
-    return file;
-  }
-
-  const extension =
-    CLIPBOARD_IMAGE_EXTENSION_BY_MIME[file.type] ??
-    CLIPBOARD_IMAGE_EXTENSION_BY_MIME['image/png'];
-
-  return new File([file], `pasted-image-${Date.now()}${extension}`, {
-    type: file.type || 'image/png',
-    lastModified: Date.now(),
-  });
-}
-
-function hasTextSelection() {
-  const selection = window.getSelection();
-
-  return selection !== null && selection.toString().trim().length > 0;
 }
 
 function createInitialExportPose(): HalftoneExportPose {
@@ -243,18 +197,12 @@ export function HalftoneStudio() {
   const [previewDistance, setPreviewDistance] = useState(
     DEFAULT_PREVIEW_DISTANCE,
   );
-  const [activeGeometry, setActiveGeometry] = useState<THREE.BufferGeometry>(
-    () => createFallbackGeometry(),
-  );
   const [exportBackground, setExportBackground] = useState(false);
   const [exportName, setExportName] = useState('');
   const [reactExportSettings, setReactExportSettings] =
     useState<ReactExportSettings>(DEFAULT_REACT_EXPORT_SETTINGS);
   const [reactAssetPublicUrl, setReactAssetPublicUrl] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imageElement, setImageElement] = useState<HTMLImageElement | null>(
-    null,
-  );
   const [canvasInitialPose, setCanvasInitialPose] =
     useState<HalftoneExportPose>();
   const defaultImageFileReference = useRef<File | null>(null);
@@ -265,10 +213,6 @@ export function HalftoneStudio() {
   const presetFileInputReference = useRef<HTMLInputElement>(null);
   const pendingFilePickerReference = useRef<PendingFilePicker | null>(null);
   const pendingPresetPickerReference = useRef<PendingPresetPicker | null>(null);
-  const geometryCacheReference = useRef<Map<string, GeometryCacheEntry>>(
-    new Map([['torusKnot', activeGeometry]]),
-  );
-  const lastSuccessfulShapeReference = useRef(state.settings.shapeKey);
   const exportPoseReference = useRef<HalftoneExportPose>(
     createInitialExportPose(),
   );
@@ -285,6 +229,8 @@ export function HalftoneStudio() {
     );
   }, [timeoutRegistry]);
 
+  const imageElement = useImageElement(imageFile);
+
   const selectedShape = useMemo(
     () =>
       state.geometrySpecs.find(
@@ -292,6 +238,26 @@ export function HalftoneStudio() {
       ),
     [state.geometrySpecs, state.settings.shapeKey],
   );
+
+  const geometryLoaderCallbacks = useMemo(
+    () => ({
+      onLoadStart: (label: string) =>
+        dispatch({ type: 'setStatus', message: `Loading ${label}…` }),
+      onLoadSuccess: () => dispatch({ type: 'clearStatus' }),
+      onLoadError: (message: string) =>
+        dispatch({ type: 'setStatus', message, isError: true }),
+      onFallbackShape: (key: string) =>
+        dispatch({ type: 'setShapeKey', value: key }),
+    }),
+    [],
+  );
+
+  const activeGeometry = useGeometryLoader(
+    selectedShape,
+    state.importedFiles,
+    geometryLoaderCallbacks,
+  );
+
   const shapeOptions = useMemo(
     () =>
       state.geometrySpecs.map((shape) => ({
@@ -425,37 +391,6 @@ export function HalftoneStudio() {
     },
     [clearStatusLater, exportBackground, state.settings.background.color],
   );
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const isCopyShortcut =
-        (event.metaKey || event.ctrlKey) &&
-        !event.shiftKey &&
-        !event.altKey &&
-        event.key.toLowerCase() === 'c';
-
-      if (!isCopyShortcut) {
-        return;
-      }
-
-      if (isEditablePasteTarget(event.target) || hasTextSelection()) {
-        return;
-      }
-
-      const canvasLayer = canvasLayerReference.current;
-      const width = Math.max(canvasLayer?.clientWidth ?? 0, 1);
-      const height = Math.max(canvasLayer?.clientHeight ?? 0, 1);
-
-      event.preventDefault();
-      void handleCopyHalftoneImage(width, height);
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [handleCopyHalftoneImage]);
 
   const openFilePicker = useCallback(
     (accept: string) => {
@@ -652,47 +587,6 @@ export function HalftoneStudio() {
     },
     [state.settings.halftone, state.settings.sourceMode],
   );
-
-  useEffect(() => {
-    const handlePaste = (event: ClipboardEvent) => {
-      if (isEditablePasteTarget(event.target)) {
-        return;
-      }
-
-      const imageItem = Array.from(event.clipboardData?.items ?? []).find(
-        (item) => item.type.startsWith('image/'),
-      );
-
-      if (!imageItem) {
-        return;
-      }
-
-      const pastedFile = imageItem.getAsFile();
-
-      if (!pastedFile) {
-        dispatch({
-          type: 'setStatus',
-          message: 'Could not read the pasted image.',
-          isError: true,
-        });
-        return;
-      }
-
-      event.preventDefault();
-      activateUploadedImage(createPastedImageFile(pastedFile));
-      dispatch({
-        type: 'setStatus',
-        message: 'Image pasted from clipboard.',
-      });
-      clearStatusLater();
-    };
-
-    window.addEventListener('paste', handlePaste);
-
-    return () => {
-      window.removeEventListener('paste', handlePaste);
-    };
-  }, [activateUploadedImage, clearStatusLater]);
 
   const handleUploadSource = useCallback(async () => {
     const file = await openFilePicker(
@@ -1171,95 +1065,46 @@ export function HalftoneStudio() {
       });
   }, [loadDefaultImageFile]);
 
-  useEffect(() => {
-    if (!imageFile) {
-      setImageElement(null);
-      return;
-    }
-
-    const url = URL.createObjectURL(imageFile);
-    const img = new Image();
-    img.onload = () => setImageElement(img);
-    img.src = url;
-
-    return () => URL.revokeObjectURL(url);
-  }, [imageFile]);
-
-  useEffect(() => {
-    const geometryCache = geometryCacheReference.current;
-
-    return () => {
-      disposeGeometryCache(geometryCache);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!selectedShape) {
-      return;
-    }
-
-    let cancelled = false;
-
-    if (selectedShape.kind === 'imported') {
-      dispatch({
-        type: 'setStatus',
-        message: `Loading ${selectedShape.label}…`,
-      });
-    } else {
-      dispatch({ type: 'clearStatus' });
-    }
-
-    void getGeometryForSpec(
-      selectedShape,
-      state.importedFiles[selectedShape.key],
-      geometryCacheReference.current,
-    )
-      .then((geometry) => {
-        if (cancelled) {
-          return;
-        }
-
-        lastSuccessfulShapeReference.current = selectedShape.key;
-        setActiveGeometry(geometry);
-        dispatch({ type: 'clearStatus' });
-      })
-      .catch((error) => {
-        if (cancelled) {
-          return;
-        }
-
-        console.error(error);
-
-        dispatch({
-          type: 'setStatus',
-          message:
-            error instanceof Error
-              ? error.message
-              : `${selectedShape.label} failed to load.`,
-          isError: true,
-        });
-
-        if (lastSuccessfulShapeReference.current !== selectedShape.key) {
-          dispatch({
-            type: 'setShapeKey',
-            value: lastSuccessfulShapeReference.current,
-          });
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedShape, state.importedFiles]);
-
   const background = state.settings.background.color;
   const backgroundTone = isLightColor(background) ? 'light' : 'dark';
   const handleFirstInteraction = useCallback(() => {
     dispatch({ type: 'hideHint' });
   }, []);
 
+  const handlePasteImage = useCallback(
+    (file: File) => {
+      activateUploadedImage(file);
+      dispatch({ type: 'setStatus', message: 'Image pasted from clipboard.' });
+      clearStatusLater();
+    },
+    [activateUploadedImage, clearStatusLater],
+  );
+
+  const handlePasteError = useCallback(() => {
+    dispatch({
+      type: 'setStatus',
+      message: 'Could not read the pasted image.',
+      isError: true,
+    });
+  }, []);
+
+  const handleCopyShortcut = useCallback(
+    (width: number, height: number) => {
+      void handleCopyHalftoneImage(width, height);
+    },
+    [handleCopyHalftoneImage],
+  );
+
   return (
     <StudioShell $background={background}>
+      <CopyHalftoneShortcutEffect
+        canvasLayerRef={canvasLayerReference}
+        onCopy={handleCopyShortcut}
+      />
+      <PasteImageEffect
+        onPasteImage={handlePasteImage}
+        onPasteError={handlePasteError}
+      />
       <LogoLink aria-label="Go to homepage" href="/">
         <LogoIcon
           backgroundColor={theme.colors.secondary.background[100]}

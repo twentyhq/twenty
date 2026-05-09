@@ -1,7 +1,7 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
-import { TAB_LABEL_WIDTH } from './ControlsFormPrimitives';
+import { TAB_LABEL_WIDTH } from './controls-form-constants';
 
 export const PanelShell = styled.aside<{ $collapsed?: boolean }>`
   background: rgba(18, 18, 22, 0.88);

@@ -1,10 +1,11 @@
 'use client';
 
 import { HalftoneCanvas, type HalftoneStudioSettings } from '@/lib/halftone';
+import { useAsyncImage } from '@/lib/visual-runtime/use-async-image';
 import { loadVisualImage } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 const PARTNER_EFFECT_PREVIEW_DISTANCE = 4;
@@ -138,9 +139,6 @@ type PartnerEffectProps = {
 };
 
 export function PartnerEffect({ alt, fallback, src }: PartnerEffectProps) {
-  const [imageElement, setImageElement] = useState<HTMLImageElement | null>(
-    null,
-  );
   const geometryReference = useRef<THREE.PlaneGeometry | null>(null);
 
   if (geometryReference.current === null) {
@@ -156,27 +154,11 @@ export function PartnerEffect({ alt, fallback, src }: PartnerEffectProps) {
     };
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    setImageElement(null);
-
-    void loadVisualImage(src, { label: 'testimonial portrait' })
-      .then((image) => {
-        if (!cancelled) {
-          setImageElement(image);
-        }
-      })
-      .catch((error: unknown) => {
-        if (!cancelled) {
-          console.error(error);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [src]);
+  const loadImage = useCallback(
+    () => loadVisualImage(src, { label: 'testimonial portrait' }),
+    [src],
+  );
+  const imageElement = useAsyncImage(loadImage, [loadImage]);
 
   return (
     <EffectFrame aria-label={alt} role="img">

@@ -6,8 +6,9 @@ import {
   type HalftoneExportPose,
   type HalftoneStudioSettings,
 } from '@/lib/halftone';
+import { useAsyncGeometry } from '@/lib/visual-runtime/use-async-geometry';
 import { styled } from '@linaria/react';
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import * as THREE from 'three';
 
 const GLB_URL = '/illustrations/partner/testimonials/quote.glb';
@@ -123,32 +124,11 @@ const PartnerFill = styled.div`
 `;
 
 export function Partner() {
-  const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    let loadedGeometry: THREE.BufferGeometry | null = null;
-
-    void loadImportedGeometryFromUrl('glb', GLB_URL, PARTNER_QUOTE_LABEL).then(
-      (nextGeometry) => {
-        if (cancelled) {
-          nextGeometry.dispose();
-          return;
-        }
-
-        loadedGeometry = nextGeometry;
-        setGeometry(nextGeometry);
-      },
-      (error) => {
-        console.error(error);
-      },
-    );
-
-    return () => {
-      cancelled = true;
-      loadedGeometry?.dispose();
-    };
-  }, []);
+  const loadGeometry = useCallback(
+    () => loadImportedGeometryFromUrl('glb', GLB_URL, PARTNER_QUOTE_LABEL),
+    [],
+  );
+  const geometry = useAsyncGeometry(loadGeometry, [loadGeometry]);
 
   return (
     <PartnerFill>

@@ -8,10 +8,12 @@ import type { MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
-import type { FeatureTransitionPhase } from './use-feature-transition';
+import {
+  FEATURE_ITEM_STAGGER_MS,
+  type FeatureTransitionPhase,
+} from './use-feature-transition';
 
 const FEATURES_SWITCH_ANIMATION_MS = 110;
-const FEATURE_ITEM_STAGGER_MS = 8;
 const FEATURE_ITEM_EXPANDED_HEIGHT = theme.spacing(8);
 const FEATURE_ITEM_SPACING = theme.spacing(4);
 const FEATURE_LIST_ROW_LAYOUT_HEIGHT = theme.spacing(5.5);
