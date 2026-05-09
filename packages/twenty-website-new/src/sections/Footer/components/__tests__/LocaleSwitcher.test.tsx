@@ -4,7 +4,7 @@ jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
 }));
 
-jest.mock('@/lib/i18n/use-locale', () => ({
+jest.mock('@/lib/i18n/hooks/use-locale', () => ({
   useLocale: jest.fn(),
 }));
 
