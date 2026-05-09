@@ -46,9 +46,7 @@ export default defineConfig(({ command }) => {
     : path.resolve(__dirname, './tsconfig.json');
 
   const checkersConfig: Checkers = {
-    typescript: {
-      tsconfigPath: tsConfigPath,
-    },
+    typescript: true,
   };
 
   const dtsConfig: PluginOptions = {
@@ -81,7 +79,7 @@ export default defineConfig(({ command }) => {
       react(),
       tsconfigPaths({
         root: __dirname,
-        projects: ['tsconfig.json'],
+        projects: [tsConfigPath],
       }),
       svgr(),
       dts(dtsConfig),
