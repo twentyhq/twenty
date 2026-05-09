@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import {
   ASSISTANT_RESPONSE_STREAMING_STAGES,
   buildAssistantResponseSegments,
-} from './assistant-response-segments';
+} from './AssistantResponseSegments';
 import { AssistantResponseParagraph } from './AssistantResponseParagraph';
 import { ChangesSummaryCard } from './ChangesSummaryCard';
 import { ThinkingIndicator } from './ThinkingIndicator';

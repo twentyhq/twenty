@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
-import { FAQ_QUESTIONS } from '@/sections/Faq/faq.data';
+import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { MENU_DATA } from '@/sections/Menu/data';
-import { TRUSTED_BY_LOGOS } from '@/sections/TrustedBy/trusted-by.data';
+import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { DEMO_DATA } from '@/app/[locale]/product/demo.data';
 import {
@@ -25,15 +25,13 @@ import {
 } from '@/lib/i18n/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Faq } from '@/sections/Faq/Faq';
-import { Feature } from '@/sections/Feature/Feature';
+import { Feature } from '@/sections/Feature';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { Demo } from '@/sections/Demo/components';
 import { ProductStepper } from '@/sections/ProductStepper/ProductStepper';
 import { Tabs } from '@/sections/Tabs/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
-import { TrustedBy } from '@/sections/TrustedBy/TrustedBy';
 import { theme } from '@/theme';
 import {
   buildBreadcrumbListJsonLd,

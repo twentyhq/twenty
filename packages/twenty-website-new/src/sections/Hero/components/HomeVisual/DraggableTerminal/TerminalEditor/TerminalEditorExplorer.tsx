@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { TERMINAL_TOKENS } from '../terminalTokens';
-import { type ExplorerNode, type FileIconKind } from './editorData';
-import { EDITOR_TOKENS } from './editorTokens';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
+import { type ExplorerNode, type FileIconKind } from './editor-data.types';
+import { EDITOR_TOKENS } from './editor-tokens';
 
 const Sidebar = styled.div`
   background: ${EDITOR_TOKENS.surface.sidebar};

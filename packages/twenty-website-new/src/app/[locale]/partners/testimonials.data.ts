@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import type { TestimonialCardType } from '@/sections/Testimonials/Testimonials';
+import type { TestimonialCardType } from '@/sections/Testimonials';
 
 export const PARTNER_TESTIMONIALS: TestimonialCardType[] = [
   {

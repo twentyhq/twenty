@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import type { ImageType } from '@/design-system/components/Image';
-import type { FeatureTileType } from '@/sections/Feature/Feature';
+import type { FeatureTileType } from '@/sections/Feature';
 
 export const FEATURE_MASK: ImageType = {
   src: '/images/product/feature/mask.webp',

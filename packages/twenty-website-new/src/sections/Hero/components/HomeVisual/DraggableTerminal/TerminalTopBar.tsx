@@ -3,9 +3,9 @@
 import { styled } from '@linaria/react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { DiffPill } from './TerminalDiff/DiffPill';
-import { DIFF_TOTALS } from './TerminalDiff/diffData';
-import { EDITOR_TOKENS } from './TerminalEditor/editorTokens';
-import { TERMINAL_TOKENS } from './terminalTokens';
+import { DIFF_TOTALS } from './TerminalDiff/diff-data';
+import { EDITOR_TOKENS } from './TerminalEditor/editor-tokens';
+import { TERMINAL_TOKENS } from './terminal-tokens';
 import { TerminalToggle, type TerminalToggleValue } from './TerminalToggle';
 import { TerminalTrafficLights } from './TerminalTrafficLights/TerminalTrafficLights';
 

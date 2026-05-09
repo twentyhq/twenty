@@ -1,5 +1,5 @@
-import { normalizeExportComponentName } from '@/app/[locale]/halftone/_lib/exportNames';
-import { GLASS_ENVIRONMENT_DATA_URL } from '@/app/[locale]/halftone/_lib/glassEnvironmentData';
+import { normalizeExportComponentName } from '@/app/[locale]/halftone/_lib/export-names';
+import { GLASS_ENVIRONMENT_DATA_URL } from '@/app/[locale]/halftone/_lib/glass-environment-data';
 import {
   HALFTONE_FOOTPRINT_RUNTIME_SOURCE,
   REFERENCE_PREVIEW_DISTANCE,

@@ -2,7 +2,7 @@
 
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
-import { TERMINAL_TOKENS } from '../terminalTokens';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
 
 type TerminalPromptChipProps = {
   icon: ReactNode;

@@ -2,7 +2,7 @@
 
 import { styled } from '@linaria/react';
 
-import { renderStreamingSegments } from './render-streaming-segments';
+import { renderStreamingSegments } from './RenderStreamingSegments';
 import type { StreamingSegment } from './streaming-text-types';
 import { useStreamingTextProgress } from './use-streaming-text-progress';
 

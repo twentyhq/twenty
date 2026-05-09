@@ -2,14 +2,10 @@
 
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  EDITOR_FILES,
-  EXPLORER_NODES,
-  findFileById,
-  tokenizeSource,
-  type EditorFile,
-} from './editorData';
-import { EDITOR_TOKENS } from './editorTokens';
+import { type EditorFile } from './editor-data.types';
+import { EDITOR_FILES, EXPLORER_NODES } from './editor-data';
+import { findFileById, tokenizeSource } from './tokenize-editor-source';
+import { EDITOR_TOKENS } from './editor-tokens';
 import { TerminalEditorCodeView } from './TerminalEditorCodeView';
 import { TerminalEditorExplorer } from './TerminalEditorExplorer';
 import { TerminalEditorTabs } from './TerminalEditorTabs';

@@ -6,7 +6,7 @@ import {
   DEFAULT_TRAFFIC_LIGHT_HORIZONTAL_INSET,
   TRAFFIC_LIGHT_GAP,
 } from './terminal-traffic-light-constants';
-import { TRAFFIC_LIGHT_DOT_DEFINITIONS } from './terminal-traffic-light-definitions';
+import { TRAFFIC_LIGHT_DOT_DEFINITIONS } from './TerminalTrafficLightDefinitions';
 import { TerminalFlyingTrafficLights } from './TerminalFlyingTrafficLights';
 import { TerminalTrafficLightDot } from './TerminalTrafficLightDot';
 import { useTerminalTrafficLightsEscape } from './use-terminal-traffic-lights-escape';

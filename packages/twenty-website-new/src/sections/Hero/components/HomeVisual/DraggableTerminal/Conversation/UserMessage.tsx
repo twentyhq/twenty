@@ -1,8 +1,8 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { TERMINAL_TOKENS } from '../terminalTokens';
-import { CHAT_TIMINGS } from './animationTiming';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
+import { CHAT_TIMINGS } from './animation-timing';
 
 type UserMessageProps = {
   instant?: boolean;

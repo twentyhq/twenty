@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { IconChevronRight } from '@tabler/icons-react';
 
-import type { FileChange } from './rocketChangeset';
+import type { FileChange } from './rocket-changeset';
 import { ChangesSummaryDiffCounts } from './ChangesSummaryDiffCounts';
 
 const FileRow = styled.div<{ $delay: string }>`

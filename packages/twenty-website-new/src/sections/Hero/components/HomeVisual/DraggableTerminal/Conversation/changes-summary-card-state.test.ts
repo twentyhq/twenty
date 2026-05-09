@@ -3,7 +3,7 @@ import {
   getHiddenChangesCount,
   getVisibleChanges,
 } from './changes-summary-card-state';
-import type { FileChange } from './rocketChangeset';
+import type { FileChange } from './rocket-changeset';
 
 const changes: FileChange[] = [
   { added: 10, path: 'one.ts', removed: 0 },

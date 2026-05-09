@@ -1,4 +1,4 @@
-import { TERMINAL_TOKENS } from '../terminalTokens';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
 
 const CloseGlyph = () => (
   <svg aria-hidden width="6" height="6" viewBox="0 0 6 6">

@@ -4,7 +4,7 @@ import {
   parseExportedPreset,
   type ReactExportSettings,
 } from '@/app/[locale]/halftone/_lib/exporters';
-import { resolveExportArtifactNames } from '@/app/[locale]/halftone/_lib/exportNames';
+import { resolveExportArtifactNames } from '@/app/[locale]/halftone/_lib/export-names';
 import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/footprint';
 import {
   DEFAULT_HALFTONE_SETTINGS,

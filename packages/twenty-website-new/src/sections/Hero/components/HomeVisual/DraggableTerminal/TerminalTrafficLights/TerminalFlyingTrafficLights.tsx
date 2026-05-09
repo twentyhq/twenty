@@ -5,7 +5,7 @@ import type { ComponentType, RefCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { theme } from '@/theme';
 import { TRAFFIC_LIGHT_DOT_SIZE } from './terminal-traffic-light-constants';
-import { TRAFFIC_LIGHT_DOT_DEFINITIONS } from './terminal-traffic-light-definitions';
+import { TRAFFIC_LIGHT_DOT_DEFINITIONS } from './TerminalTrafficLightDefinitions';
 
 const FlyingDotContainer = styled.button`
   background: transparent;

@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from 'react';
 
-import { VISUAL_TOKENS } from './homeVisualTokens';
+import { VISUAL_TOKENS } from './home-visual-tokens';
 
 export enum ChipVariant {
   Highlighted = 'highlighted',

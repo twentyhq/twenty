@@ -1,8 +1,5 @@
-import {
-  DEFAULT_EDITOR_FILE_ID,
-  STARTER_EDITOR_FILE_ID,
-  type ExplorerNode,
-} from './editorData';
+import { type ExplorerNode } from './editor-data.types';
+import { DEFAULT_EDITOR_FILE_ID, STARTER_EDITOR_FILE_ID } from './editor-data';
 import {
   closeTerminalEditorFile,
   getInitialTerminalEditorState,

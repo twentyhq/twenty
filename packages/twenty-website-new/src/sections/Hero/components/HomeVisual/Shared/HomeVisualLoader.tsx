@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { VISUAL_TOKENS } from './homeVisualTokens';
+import { VISUAL_TOKENS } from './home-visual-tokens';
 
 const DEFAULT_LOADER_COLOR = `var(--tw-button-color, ${VISUAL_TOKENS.font.color.tertiary})`;
 

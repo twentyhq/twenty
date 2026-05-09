@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import type { SalesforceDataType } from '@/sections/Salesforce/types';
+import type { SalesforceDataType } from '@/sections/Salesforce';
 
 const SALESFORCE_POPUP_TITLE = msg`Good choice!`;
 

@@ -8,9 +8,9 @@ import type { HeroSidebarItem } from '@/sections/Hero/types';
 import {
   getSidebarIconToneRgb,
   renderHomeVisualIcon,
-} from '../Shared/home-visual-icon';
+} from '../Shared/HomeVisualIcon';
 import { APP_FONT, COLORS, TABLER_STROKE } from '../Shared/home-visual-theme';
-import { VISUAL_TOKENS } from '../Shared/homeVisualTokens';
+import { VISUAL_TOKENS } from '../Shared/home-visual-tokens';
 
 const SidebarItemRow = styled.div<{
   $active?: boolean;

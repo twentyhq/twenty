@@ -22,8 +22,7 @@ import { Articles } from '@/sections/Articles/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { MENU_DATA } from '@/sections/Menu/data';
-import { TrustedBy } from '@/sections/TrustedBy/TrustedBy';
-import { TRUSTED_BY_LOGOS } from '@/sections/TrustedBy/trusted-by.data';
+import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { css } from '@linaria/core';
 
 export const generateMetadata = buildRouteMetadata('articles');

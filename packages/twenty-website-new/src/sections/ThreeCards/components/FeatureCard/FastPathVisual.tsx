@@ -26,10 +26,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import {
-  CONFETTI_PARTICLES,
-  DENSE_CONFETTI_PARTICLES,
-} from './fast-path-confetti.data';
+import { DENSE_CONFETTI_PARTICLES } from './fast-path-confetti.data';
 import { FastPathGradientBackdrop } from './FastPathGradientBackdrop';
 
 const APP_FONT = `'Inter', ${theme.font.family.sans}`;

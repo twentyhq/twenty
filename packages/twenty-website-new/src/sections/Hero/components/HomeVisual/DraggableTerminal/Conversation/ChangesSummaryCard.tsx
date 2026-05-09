@@ -8,7 +8,7 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
-import { CHAT_TIMINGS } from './animationTiming';
+import { CHAT_TIMINGS } from './animation-timing';
 import {
   getChangesSummaryRowDelay,
   getHiddenChangesCount,
@@ -16,7 +16,7 @@ import {
 } from './changes-summary-card-state';
 import { DiffAdded, DiffRemoved } from './ChangesSummaryDiffCounts';
 import { ChangesSummaryFileRow } from './ChangesSummaryFileRow';
-import { CHANGESET_TOTALS, ROCKET_CHANGESET } from './rocketChangeset';
+import { CHANGESET_TOTALS, ROCKET_CHANGESET } from './rocket-changeset';
 
 const CardRoot = styled.div`
   animation: chatCardRise ${CHAT_TIMINGS.fileCardEnterMs}ms

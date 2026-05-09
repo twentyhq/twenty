@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import type { HeadingCardType } from '@/sections/Helped/Helped';
+import type { HeadingCardType } from '@/sections/Helped';
 
 export const HELPED_CARDS: HeadingCardType[] = [
   {

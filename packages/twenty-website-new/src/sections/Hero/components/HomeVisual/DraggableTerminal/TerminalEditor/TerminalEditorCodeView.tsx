@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
-import { TERMINAL_TOKENS } from '../terminalTokens';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
 import {
   type CodeLine,
   type CodeToken,
   type EditorFile,
   type TokenKind,
-} from './editorData';
-import { EDITOR_TOKENS } from './editorTokens';
+} from './editor-data.types';
+import { EDITOR_TOKENS } from './editor-tokens';
 
 const CodeRegion = styled.div`
   background: ${EDITOR_TOKENS.surface.body};

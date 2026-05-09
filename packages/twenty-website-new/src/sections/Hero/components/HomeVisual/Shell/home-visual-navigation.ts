@@ -6,7 +6,7 @@ import type {
 import {
   normalizeHeroPage,
   type HeroPageDefaults,
-} from '../Data/normalizeHeroPage';
+} from '../Data/normalize-hero-page';
 
 export function isFolder(entry: HeroSidebarEntry): entry is HeroSidebarFolder {
   return 'items' in entry;

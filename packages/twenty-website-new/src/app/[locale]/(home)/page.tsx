@@ -1,15 +1,15 @@
 import { msg } from '@lingui/core/macro';
 import { HELPED_CARDS } from '@/app/[locale]/(home)/helped.data';
 import { HERO_DATA } from '@/app/[locale]/(home)/hero.data';
-import type { ProblemPointType } from '@/sections/Problem/ProblemPoints';
+import { Problem, type ProblemPointType } from '@/sections/Problem';
 import { HOME_TESTIMONIALS } from '@/app/[locale]/(home)/testimonials.data';
 import { FEATURE_CARDS } from '@/app/[locale]/(home)/three-cards-feature.data';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/(home)/three-cards-illustration.data';
 import type { HomeStepperStepType } from '@/sections/HomeStepper/types/HomeStepperStep';
 import { TalkToUsButton } from '@/sections/ContactCal';
-import { FAQ_QUESTIONS } from '@/sections/Faq/faq.data';
+import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { MENU_DATA } from '@/sections/Menu/data';
-import { TRUSTED_BY_LOGOS } from '@/sections/TrustedBy/trusted-by.data';
+import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import {
   Body,
   Eyebrow,
@@ -24,16 +24,13 @@ import {
 } from '@/lib/i18n/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Faq } from '@/sections/Faq/Faq';
-import { Helped } from '@/sections/Helped/Helped';
+import { Helped } from '@/sections/Helped';
 import { Hero } from '@/sections/Hero/components';
 import { HomeStepper } from '@/sections/HomeStepper/components';
 import { Menu } from '@/sections/Menu/components';
-import { Problem } from '@/sections/Problem/Problem';
-import { Testimonials } from '@/sections/Testimonials/Testimonials';
+import { Testimonials } from '@/sections/Testimonials';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { buildFaqPageJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
-import { TrustedBy } from '@/sections/TrustedBy/TrustedBy';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -182,9 +179,21 @@ export default async function HomePage({ params }: HomePageProps) {
         href="/illustrations/generated/home-background-bridge.png"
         rel="preload"
       />
-      <link rel="prefetch" href="/illustrations/home/helped/target.glb" as="fetch" />
-      <link rel="prefetch" href="/illustrations/home/helped/spaceship.glb" as="fetch" />
-      <link rel="prefetch" href="/illustrations/home/helped/money.glb" as="fetch" />
+      <link
+        rel="prefetch"
+        href="/illustrations/home/helped/target.glb"
+        as="fetch"
+      />
+      <link
+        rel="prefetch"
+        href="/illustrations/home/helped/spaceship.glb"
+        as="fetch"
+      />
+      <link
+        rel="prefetch"
+        href="/illustrations/home/helped/money.glb"
+        as="fetch"
+      />
       <Menu.Root
         backgroundColor={HOME_TOP_BACKGROUND_COLOR}
         scheme="primary"

@@ -4,8 +4,8 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { ClaudeLogo } from './ClaudeLogo';
 import { CursorLogo } from './CursorLogo';
-import { EDITOR_TOKENS } from './TerminalEditor/editorTokens';
-import { TERMINAL_TOKENS } from './terminalTokens';
+import { EDITOR_TOKENS } from './TerminalEditor/editor-tokens';
+import { TERMINAL_TOKENS } from './terminal-tokens';
 
 export type TerminalToggleValue = 'editor' | 'ai-chat';
 

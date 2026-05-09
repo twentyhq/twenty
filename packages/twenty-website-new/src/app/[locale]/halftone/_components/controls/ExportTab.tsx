@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactExportSettings } from '@/app/[locale]/halftone/_lib/exporters';
-import { resolveExportArtifactNames } from '@/app/[locale]/halftone/_lib/exportNames';
+import { resolveExportArtifactNames } from '@/app/[locale]/halftone/_lib/export-names';
 import { formatAnimationName } from '@/app/[locale]/halftone/_lib/formatters';
 import type {
   HalftoneGeometrySpec,
@@ -19,7 +19,7 @@ import {
   SelectControl,
   TabContent,
   ToggleControl,
-} from './controls-ui';
+} from './ControlsUi';
 
 const RESOLUTION_OPTIONS = [
   { label: '720p (1280 × 720)', value: '1280x720' },

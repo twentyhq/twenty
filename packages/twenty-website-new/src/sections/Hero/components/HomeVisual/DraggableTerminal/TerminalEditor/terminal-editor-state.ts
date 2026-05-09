@@ -1,9 +1,9 @@
+import { type ExplorerNode } from './editor-data.types';
 import {
   DEFAULT_EDITOR_FILE_ID,
   GENERATED_FILE_IDS,
   STARTER_EDITOR_FILE_ID,
-  type ExplorerNode,
-} from './editorData';
+} from './editor-data';
 
 export type TerminalEditorState = {
   activeFileId: string;

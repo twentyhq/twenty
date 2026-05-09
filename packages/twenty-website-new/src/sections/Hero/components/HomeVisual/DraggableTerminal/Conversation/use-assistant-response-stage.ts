@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useTimeoutRegistry } from '@/lib/react';
 
-import { CHAT_TIMINGS } from './animationTiming';
+import { CHAT_TIMINGS } from './animation-timing';
 import {
   ASSISTANT_RESPONSE_STAGE_DELAYS,
   getAssistantResponseStageTransition,

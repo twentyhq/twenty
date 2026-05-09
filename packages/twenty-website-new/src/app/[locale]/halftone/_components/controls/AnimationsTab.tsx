@@ -19,7 +19,7 @@ import {
   SliderControl,
   TabContent,
   ToggleControl,
-} from './controls-ui';
+} from './ControlsUi';
 
 const MIN_ROTATION_SPEED = 0.01;
 const ROTATION_SPEED_STEP = 0.01;

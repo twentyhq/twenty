@@ -10,8 +10,8 @@ import {
   parseExportedPreset,
   type ReactExportSettings,
 } from '@/app/[locale]/halftone/_lib/exporters';
-import { resolveExportArtifactNames } from '@/app/[locale]/halftone/_lib/exportNames';
-import { generateImageHalftoneSvg } from '@/app/[locale]/halftone/_lib/imageSvgExport';
+import { resolveExportArtifactNames } from '@/app/[locale]/halftone/_lib/export-names';
+import { generateImageHalftoneSvg } from '@/app/[locale]/halftone/_lib/image-svg-export';
 import {
   buildShareUrl,
   decodeShareState,

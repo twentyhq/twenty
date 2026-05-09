@@ -3,13 +3,13 @@
 import { styled } from '@linaria/react';
 import { useCallback } from 'react';
 import { theme } from '@/theme';
-import { WINDOW_SHADOWS } from '../Shared/windowShadows';
-import { EDITOR_TOKENS } from './TerminalEditor/editorTokens';
+import { WINDOW_SHADOWS } from '../Shared/window-shadows';
+import { EDITOR_TOKENS } from './TerminalEditor/editor-tokens';
 import { TerminalContent } from './TerminalContent';
 import { TerminalResizeHandles } from './TerminalResizeHandles';
 import { TerminalTopBar } from './TerminalTopBar';
 import type { TerminalToggleValue } from './TerminalToggle';
-import { TERMINAL_TOKENS } from './terminalTokens';
+import { TERMINAL_TOKENS } from './terminal-tokens';
 import { useTerminalConversationWorkflow } from './use-terminal-conversation-workflow';
 import { useTerminalWindowLayout } from './use-terminal-window-layout';
 

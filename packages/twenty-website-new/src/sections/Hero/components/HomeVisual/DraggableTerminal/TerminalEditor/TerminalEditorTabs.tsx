@@ -1,8 +1,8 @@
 import { IconX } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
-import { TERMINAL_TOKENS } from '../terminalTokens';
-import { type EditorFile } from './editorData';
-import { EDITOR_TOKENS } from './editorTokens';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
+import { type EditorFile } from './editor-data.types';
+import { EDITOR_TOKENS } from './editor-tokens';
 
 const TabBar = styled.div`
   background: ${EDITOR_TOKENS.surface.tabBar};

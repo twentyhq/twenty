@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-import { TERMINAL_TOKENS } from '../terminalTokens';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
 import type { AssistantResponseStreamingStage } from './assistant-response-stage';
 import type { StreamingSegment } from './StreamingText';
 

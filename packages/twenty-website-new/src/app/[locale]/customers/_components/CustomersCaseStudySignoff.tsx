@@ -3,7 +3,7 @@ import { TalkToUsButton } from '@/sections/ContactCal';
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/get-server-i18n';
 import { Pages } from '@/lib/pages';
-import { Signoff } from '@/sections/Signoff/Signoff';
+import { Signoff } from '@/sections/Signoff';
 
 export function CustomersCaseStudySignoff() {
   const i18n = getServerI18n();

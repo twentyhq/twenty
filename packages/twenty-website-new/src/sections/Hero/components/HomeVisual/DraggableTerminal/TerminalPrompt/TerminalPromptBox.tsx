@@ -3,7 +3,7 @@
 import { styled } from '@linaria/react';
 import { TerminalPromptFooter } from './TerminalPromptFooter';
 import { TerminalPromptMessage } from './TerminalPromptMessage';
-import { TERMINAL_TOKENS } from '../terminalTokens';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
 import { useTerminalPromptEasterEgg } from './use-terminal-prompt-easter-egg';
 
 const PromptArea = styled.div`

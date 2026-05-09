@@ -3,7 +3,7 @@
 import { IconArrowBackUp, IconArrowUp } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import { TerminalSendButtonFingerHint } from './TerminalSendButtonFingerHint';
-import { TERMINAL_TOKENS } from '../terminalTokens';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
 import { useTerminalSendButtonHint } from './use-terminal-send-button-hint';
 
 type TerminalSendButtonProps = {

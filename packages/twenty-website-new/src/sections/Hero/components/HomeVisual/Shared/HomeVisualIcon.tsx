@@ -21,7 +21,7 @@ import {
 import type { ReactNode } from 'react';
 
 import type { HeroSidebarIcon } from '@/sections/Hero/types';
-import { HomeVisualFaviconLogo } from './home-visual-identity';
+import { HomeVisualFaviconLogo } from './HomeVisualIdentity';
 import {
   APP_FONT,
   COLORS,

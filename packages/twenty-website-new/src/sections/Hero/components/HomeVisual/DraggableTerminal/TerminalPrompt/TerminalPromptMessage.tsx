@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { TERMINAL_TOKENS } from '../terminalTokens';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
 
 const PromptTextRow = styled.div<{ $clickable?: boolean }>`
   align-items: flex-start;

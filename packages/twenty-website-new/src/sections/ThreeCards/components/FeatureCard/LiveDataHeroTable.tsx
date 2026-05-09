@@ -5,8 +5,8 @@ import { useHorizontalDragScroll } from '@/lib/dom/use-horizontal-drag-scroll';
 import {
   Chip,
   ChipVariant,
-} from '@/sections/Hero/components/HomeVisual/Shared/homeVisualChip';
-import { VISUAL_TOKENS } from '@/sections/Hero/components/HomeVisual/Shared/homeVisualTokens';
+} from '@/sections/Hero/components/HomeVisual/Shared/HomeVisualChip';
+import { VISUAL_TOKENS } from '@/sections/Hero/components/HomeVisual/Shared/home-visual-tokens';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {

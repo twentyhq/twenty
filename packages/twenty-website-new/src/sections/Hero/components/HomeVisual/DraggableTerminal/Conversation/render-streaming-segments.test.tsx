@@ -1,6 +1,6 @@
 import { isValidElement } from 'react';
 
-import { renderStreamingSegments } from './render-streaming-segments';
+import { renderStreamingSegments } from './RenderStreamingSegments';
 import type { StreamingSegment } from './streaming-text-types';
 
 const getRenderedText = (segment: unknown): string => {

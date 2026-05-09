@@ -14,9 +14,9 @@ import {
   HomeVisualAvatar,
   HomeVisualFaviconLogo,
   HomeVisualPersonAvatar,
-} from '../../Shared/home-visual-identity';
-import { Chip, ChipVariant } from '../../Shared/homeVisualChip';
-import { VISUAL_TOKENS } from '../../Shared/homeVisualTokens';
+} from '../../Shared/HomeVisualIdentity';
+import { Chip, ChipVariant } from '../../Shared/HomeVisualChip';
+import { VISUAL_TOKENS } from '../../Shared/home-visual-tokens';
 import {
   CheckMini,
   CloseMini,

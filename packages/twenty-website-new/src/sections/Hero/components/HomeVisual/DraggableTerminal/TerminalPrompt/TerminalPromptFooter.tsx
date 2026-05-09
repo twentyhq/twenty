@@ -3,7 +3,7 @@ import { IconFolder, IconGitBranch } from '@tabler/icons-react';
 
 import { TerminalPromptChip } from './TerminalPromptChip';
 import { TerminalSendButton } from './TerminalSendButton';
-import { TERMINAL_TOKENS } from '../terminalTokens';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
 
 const PromptFooter = styled.div`
   align-items: center;

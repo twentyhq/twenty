@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
 
-import { TERMINAL_TOKENS } from '../terminalTokens';
+import { TERMINAL_TOKENS } from '../terminal-tokens';
 import {
   type AssistantResponseStage,
   type AssistantResponseStreamingStage,
 } from './assistant-response-stage';
-import { CHAT_TIMINGS } from './animationTiming';
+import { CHAT_TIMINGS } from './animation-timing';
 import { StreamingText, type StreamingSegment } from './StreamingText';
 
 const Paragraph = styled.p`

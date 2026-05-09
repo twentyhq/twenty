@@ -20,8 +20,8 @@ import type {
 import {
   HomeVisualFaviconLogo,
   HomeVisualPersonAvatar,
-} from '../../Shared/home-visual-identity';
-import { Chip } from '../../Shared/homeVisualChip';
+} from '../../Shared/HomeVisualIdentity';
+import { Chip } from '../../Shared/HomeVisualChip';
 import {
   KANBAN_PAGE_COLORS,
   KANBAN_PAGE_FONT,

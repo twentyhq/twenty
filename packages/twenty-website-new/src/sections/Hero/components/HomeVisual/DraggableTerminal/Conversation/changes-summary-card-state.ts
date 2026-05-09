@@ -1,4 +1,4 @@
-import type { FileChange } from './rocketChangeset';
+import type { FileChange } from './rocket-changeset';
 
 export const CHANGES_SUMMARY_COLLAPSED_FILE_COUNT = 3;
 export const CHANGES_SUMMARY_ROW_BASE_DELAY_MS = 40;

@@ -1,4 +1,4 @@
-import { VISUAL_TOKENS } from './homeVisualTokens';
+import { VISUAL_TOKENS } from './home-visual-tokens';
 
 export const APP_FONT = VISUAL_TOKENS.font.family;
 
