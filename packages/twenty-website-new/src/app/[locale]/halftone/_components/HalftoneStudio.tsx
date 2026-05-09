@@ -13,11 +13,6 @@ import {
 import { resolveExportArtifactNames } from '@/lib/halftone/export-names';
 import { generateImageHalftoneSvg } from '@/lib/halftone/image-svg-export';
 import {
-  buildShareUrl,
-  decodeShareState,
-  encodeShareState,
-} from '@/lib/halftone/share';
-import {
   HalftoneCanvas,
   type HalftoneSnapshotFn,
 } from '@/lib/halftone/HalftoneCanvas';
@@ -374,67 +369,6 @@ export function HalftoneStudio() {
       ...state.settings.halftone,
     };
   }, [state.settings.halftone, state.settings.sourceMode]);
-
-  const hashHydratedReference = useRef(false);
-  useEffect(() => {
-    if (hashHydratedReference.current) {
-      return;
-    }
-
-    hashHydratedReference.current = true;
-
-    const decoded = decodeShareState(window.location.hash);
-
-    if (!decoded) {
-      return;
-    }
-
-    dispatch({ type: 'replaceSettings', value: decoded.settings });
-    setPreviewDistance(decoded.previewDistance);
-    setExportName(decoded.exportName);
-  }, []);
-
-  const hashSyncInitializedReference = useRef(false);
-  useEffect(() => {
-    if (!hashSyncInitializedReference.current) {
-      hashSyncInitializedReference.current = true;
-      return;
-    }
-
-    const timeout = window.setTimeout(() => {
-      const hash = encodeShareState({
-        settings: state.settings,
-        previewDistance,
-        exportName,
-      });
-      const nextUrl = `${window.location.pathname}${window.location.search}#${hash}`;
-      window.history.replaceState(null, '', nextUrl);
-    }, 250);
-
-    return () => window.clearTimeout(timeout);
-  }, [state.settings, previewDistance, exportName]);
-
-  const handleCopyShareLink = useCallback(() => {
-    const url = buildShareUrl({
-      settings: state.settings,
-      previewDistance,
-      exportName,
-    });
-
-    void navigator.clipboard
-      .writeText(url)
-      .then(() => {
-        dispatch({ type: 'setStatus', message: 'Link copied to clipboard.' });
-        clearStatusLater();
-      })
-      .catch(() => {
-        dispatch({
-          type: 'setStatus',
-          message: 'Could not copy the share link.',
-          isError: true,
-        });
-      });
-  }, [clearStatusLater, exportName, previewDistance, state.settings]);
 
   const handleCopyHalftoneImage = useCallback(
     async (width: number, height: number) => {
@@ -1379,7 +1313,6 @@ export function HalftoneStudio() {
             onAnimationSettingsChange={(value) =>
               dispatch({ type: 'patchAnimation', value })
             }
-            onCopyShareLink={handleCopyShareLink}
             onDashColorChange={(value) =>
               dispatch({
                 type: 'patchHalftone',
