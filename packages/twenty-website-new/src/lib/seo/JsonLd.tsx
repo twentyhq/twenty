@@ -1,6 +1,8 @@
 import type { MessageDescriptor } from '@lingui/core';
+import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
 import type { Article } from '@/lib/articles';
+import { localeToUrlSegment } from '@/lib/i18n/website-locale-segments';
 import type { LocalReleaseNote } from '@/lib/releases/types';
 
 import { getSiteUrl } from './site-url';
@@ -198,8 +200,11 @@ type BreadcrumbItem = {
 
 export const buildBreadcrumbListJsonLd = (
   items: readonly BreadcrumbItem[],
+  locale?: AppLocale,
 ): JsonLdValue => {
   const siteUrl = getSiteUrl();
+  const prefix =
+    locale && locale !== SOURCE_LOCALE ? `/${localeToUrlSegment(locale)}` : '';
 
   return {
     '@context': 'https://schema.org',
@@ -208,7 +213,7 @@ export const buildBreadcrumbListJsonLd = (
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `${siteUrl}${item.path}`,
+      item: `${siteUrl}${prefix}${item.path}`,
     })),
   };
 };

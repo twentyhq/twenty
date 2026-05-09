@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import type { AppLocale } from 'twenty-shared/translations';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { TalkToUsButton } from '@/sections/ContactCal';
@@ -92,10 +93,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <>
       <JsonLd
-        data={buildBreadcrumbListJsonLd([
-          { name: 'Home', path: '/' },
-          { name: 'Product', path: '/product' },
-        ])}
+        data={buildBreadcrumbListJsonLd(
+          [
+            { name: 'Home', path: '/' },
+            { name: 'Product', path: '/product' },
+          ],
+          i18n.locale as AppLocale,
+        )}
       />
       <link
         as="fetch"

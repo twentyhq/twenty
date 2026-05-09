@@ -76,10 +76,13 @@ export default async function ArticlesPage({ params }: ArticlesPageProps) {
   return (
     <>
       <JsonLd
-        data={buildBreadcrumbListJsonLd([
-          { name: 'Home', path: '/' },
-          { name: 'Articles', path: '/articles' },
-        ])}
+        data={buildBreadcrumbListJsonLd(
+          [
+            { name: 'Home', path: '/' },
+            { name: 'Articles', path: '/articles' },
+          ],
+          locale,
+        )}
       />
       {posts.length > 0 ? (
         <JsonLd data={buildArticleListJsonLd(posts)} />
