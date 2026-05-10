@@ -14,10 +14,6 @@ import { type AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
 import { isEmail } from 'class-validator';
 import { type Request } from 'express';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
 export type SAMLRequest = Omit<
@@ -83,36 +79,49 @@ export class SamlAuthStrategy extends PassportStrategy(
   }
 
   authenticate(req: Request, options: AuthenticateOptions) {
+    const workspaceInviteHash = req.query.workspaceInviteHash;
+
     super.authenticate(req, {
       ...options,
-      additionalParams: {
-        RelayState: JSON.stringify({
-          identityProviderId: req.params.identityProviderId,
-          ...(req.query.workspaceInviteHash
-            ? { workspaceInviteHash: req.query.workspaceInviteHash }
-            : {}),
-        }),
-      },
+      ...(typeof workspaceInviteHash === 'string'
+        ? {
+            additionalParams: {
+              RelayState: JSON.stringify({ workspaceInviteHash }),
+            },
+          }
+        : {}),
     });
   }
 
-  private extractState(req: Request): {
-    identityProviderId: string;
-    workspaceInviteHash?: string;
-  } {
-    try {
-      if ('RelayState' in req.body && typeof req.body.RelayState === 'string') {
-        const RelayState = JSON.parse(req.body.RelayState);
+  // RelayState is an unsigned, attacker-shapeable form field. It must never
+  // carry the identity-provider id (that lives in the ACS URL path and is what
+  // selects the cert that verifies the SAML signature). The only legitimate
+  // payload here is `workspaceInviteHash`, which is an SP-side query param
+  // that has no other way to survive the IdP round-trip.
+  private extractWorkspaceInviteHash(req: Request): string | undefined {
+    if (
+      !('RelayState' in req.body) ||
+      typeof req.body.RelayState !== 'string'
+    ) {
+      return undefined;
+    }
 
-        return {
-          identityProviderId: RelayState.identityProviderId,
-          workspaceInviteHash: RelayState.workspaceInviteHash,
-        };
+    try {
+      const parsed: unknown = JSON.parse(req.body.RelayState);
+
+      if (
+        typeof parsed === 'object' &&
+        parsed !== null &&
+        'workspaceInviteHash' in parsed &&
+        typeof (parsed as { workspaceInviteHash: unknown })
+          .workspaceInviteHash === 'string'
+      ) {
+        return (parsed as { workspaceInviteHash: string }).workspaceInviteHash;
       }
 
-      throw new Error();
+      return undefined;
     } catch {
-      throw new AuthException('Invalid state', AuthExceptionCode.INVALID_INPUT);
+      return undefined;
     }
   }
 
@@ -127,27 +136,15 @@ export class SamlAuthStrategy extends PassportStrategy(
       if (!isEmail(email)) {
         return done(new Error('Invalid email'));
       }
-      const state = this.extractState(request);
-      const verifiedIdentityProviderId = request.params.identityProviderId;
 
-      // The IdP cert that just verified this SAML assertion was selected from
-      // `req.params.identityProviderId` in `getSamlOptions`. RelayState, in
-      // contrast, is part of the attacker-controllable ACS POST body. If the
-      // two disagree we must refuse the auth: otherwise an assertion signed by
-      // IdP A could be attached to a session that the controller then resolves
-      // against IdP B's workspace.
-      if (state.identityProviderId !== verifiedIdentityProviderId) {
-        return done(
-          new AuthException(
-            'SAML RelayState identity provider mismatch',
-            AuthExceptionCode.INVALID_INPUT,
-          ),
-        );
-      }
-
+      // `identityProviderId` is sourced exclusively from the URL path. That
+      // value is what `getSamlOptions` used to pick the IdP cert that just
+      // verified this assertion, so it is the only identifier cryptographically
+      // bound to the signed payload. Reading it from RelayState would let an
+      // attacker route an assertion signed by IdP A into IdP B's workspace.
       done(null, {
-        identityProviderId: verifiedIdentityProviderId,
-        workspaceInviteHash: state.workspaceInviteHash,
+        identityProviderId: request.params.identityProviderId,
+        workspaceInviteHash: this.extractWorkspaceInviteHash(request),
         email,
       });
     } catch (err) {
