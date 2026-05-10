@@ -1,4 +1,4 @@
-import type { ChatUpdateArguments } from '@slack/web-api';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { type SlackUpdateMessageInput } from 'src/logic-functions/types/slack-update-message-input.type';
@@ -33,15 +33,14 @@ export const slackUpdateMessageHandler = async (
   const client = createSlackWebClient(connectionResult.accessToken);
 
   try {
-    // `mrkdwn` is supported by the Slack API but missing from ChatUpdateArguments in @slack/web-api.
     const updatePayload = {
       channel: parameters.slack_channel_id,
       ts: parameters.message_timestamp,
       text: parameters.new_message_text,
-      ...(parameters.use_slack_markdown === true
-        ? { mrkdwn: true as const }
+      ...(isDefined(parameters.use_slack_markdown)
+        ? { mrkdwn: parameters.use_slack_markdown }
         : {}),
-    } as ChatUpdateArguments & { mrkdwn?: boolean };
+    };
 
     const data = await client.chat.update(updatePayload);
 

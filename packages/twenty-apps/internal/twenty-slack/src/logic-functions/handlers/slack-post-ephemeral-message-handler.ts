@@ -1,4 +1,4 @@
-import type { ChatPostEphemeralArguments } from '@slack/web-api';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type SlackPostEphemeralMessageInput } from 'src/logic-functions/types/slack-post-ephemeral-message-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
@@ -33,15 +33,14 @@ export const slackPostEphemeralMessageHandler = async (
   const client = createSlackWebClient(connectionResult.accessToken);
 
   try {
-    // `mrkdwn` is supported by the Slack API but missing from ChatPostEphemeralArguments in @slack/web-api.
     const postEphemeralPayload = {
       channel: parameters.slack_channel_id,
       user: parameters.recipient_slack_user_id,
       text: parameters.message_text,
-      ...(parameters.use_slack_markdown === true
-        ? { mrkdwn: true as const }
+      ...(isDefined(parameters.use_slack_markdown)
+        ? { mrkdwn: parameters.use_slack_markdown }
         : {}),
-    } as ChatPostEphemeralArguments & { mrkdwn?: boolean };
+    };
 
     await client.chat.postEphemeral(postEphemeralPayload);
 

@@ -42,7 +42,9 @@ export const slackPostMessageHandler = async (
         isDefined(parentTimestamp) && parentTimestamp.trim().length > 0
           ? parentTimestamp.trim()
           : undefined,
-      mrkdwn: parameters.use_slack_markdown === true ? true : undefined,
+      ...(isDefined(parameters.use_slack_markdown)
+        ? { mrkdwn: parameters.use_slack_markdown }
+        : {}),
     });
 
     const slackTs = typeof data.ts === 'string' ? data.ts : undefined;
