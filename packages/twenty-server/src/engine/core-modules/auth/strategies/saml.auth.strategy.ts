@@ -17,11 +17,7 @@ import { z } from 'zod';
 
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
-const RELAY_STATE_PAYLOAD_SCHEMA = z.object({
-  workspaceInviteHash: z.string().optional(),
-});
-
-const SAML_LOGIN_QUERY_SCHEMA = z.object({
+const WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA = z.object({
   workspaceInviteHash: z.string().optional(),
 });
 
@@ -40,7 +36,7 @@ const RELAY_STATE_BODY_SCHEMA = z.object({
         return z.NEVER;
       }
     })
-    .pipe(RELAY_STATE_PAYLOAD_SCHEMA),
+    .pipe(WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA),
 });
 
 export type SAMLRequest = Omit<
@@ -106,7 +102,9 @@ export class SamlAuthStrategy extends PassportStrategy(
   }
 
   authenticate(req: Request, options: AuthenticateOptions) {
-    const queryParseResult = SAML_LOGIN_QUERY_SCHEMA.safeParse(req.query);
+    const queryParseResult = WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA.safeParse(
+      req.query,
+    );
     const workspaceInviteHash = queryParseResult.success
       ? queryParseResult.data.workspaceInviteHash
       : undefined;
