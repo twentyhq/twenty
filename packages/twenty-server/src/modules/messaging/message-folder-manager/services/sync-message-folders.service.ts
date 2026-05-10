@@ -43,7 +43,7 @@ export class SyncMessageFoldersService {
   }: {
     messageChannel: Pick<
       MessageChannelEntity,
-      'id' | 'messageFolderImportPolicy'
+      'id' | 'messageFolderImportPolicy' | 'syncCursor'
     > & {
       connectedAccount: Pick<
         ConnectedAccountEntity,
@@ -71,6 +71,7 @@ export class SyncMessageFoldersService {
       existingFolders,
       messageChannelId,
       workspaceId,
+      messageChannel.connectedAccount.provider,
     );
   }
 
@@ -114,6 +115,7 @@ export class SyncMessageFoldersService {
     existingFolders: MessageFolder[],
     messageChannelId: string,
     workspaceId: string,
+    provider: ConnectedAccountProvider,
   ): Promise<MessageFolder[]> {
     const foldersToCreate = computeFoldersToCreate({
       discoveredFolders,
@@ -145,10 +147,33 @@ export class SyncMessageFoldersService {
         }
 
         if (foldersToUpdate.size > 0) {
+          let anyFolderReEnabled = false;
+
           for (const [id, data] of foldersToUpdate.entries()) {
+            const existingFolder = existingFolders.find(
+              (folder) => folder.id === id,
+            );
+
+            if (data.isSynced === true && existingFolder?.isSynced === false) {
+              anyFolderReEnabled = true;
+            }
+
             await this.messageFolderRepository.update(
               { id, messageChannelId, workspaceId },
               data as Record<string, unknown>,
+            );
+          }
+
+          if (anyFolderReEnabled && provider === ConnectedAccountProvider.GOOGLE) {
+            const messageChannelRepository =
+              await this.globalWorkspaceOrmManager.getRepository<MessageChannelEntity>(
+                workspaceId,
+                'messageChannel',
+              );
+
+            await messageChannelRepository.update(
+              { id: messageChannelId, workspaceId },
+              { syncCursor: null },
             );
           }
         }

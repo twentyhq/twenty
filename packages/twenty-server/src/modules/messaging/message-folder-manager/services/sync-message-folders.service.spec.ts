@@ -381,6 +381,7 @@ describe('SyncMessageFoldersService', () => {
             name: 'INBOX',
             isSentFolder: false,
             parentFolderId: null,
+            isSynced: true,
           }),
         ];
         const messageChannel = createMockMessageChannel({
@@ -536,6 +537,7 @@ describe('SyncMessageFoldersService', () => {
           createMockDiscoveredFolder({
             externalId: 'inbox-ext',
             name: 'INBOX',
+            isSynced: true,
           }),
         ];
         const messageChannel = createMockMessageChannel({

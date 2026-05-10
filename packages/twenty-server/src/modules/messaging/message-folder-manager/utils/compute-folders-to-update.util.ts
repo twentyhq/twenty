@@ -8,6 +8,8 @@ import {
 
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 
+import { matchFolders } from './match-folders.util';
+
 export const computeFoldersToUpdate = ({
   discoveredFolders,
   existingFolders,
@@ -15,16 +17,16 @@ export const computeFoldersToUpdate = ({
   discoveredFolders: DiscoveredMessageFolder[];
   existingFolders: MessageFolder[];
 }): Map<string, Partial<MessageFolderEntity>> => {
-  const existingFoldersByExternalId = new Map(
-    existingFolders.map((folder) => [folder.externalId, folder]),
-  );
+  const { matches } = matchFolders({ discoveredFolders, existingFolders });
 
   const foldersToUpdate = new Map<string, Partial<MessageFolderEntity>>();
 
-  for (const discoveredFolder of discoveredFolders) {
-    const existingFolder = existingFoldersByExternalId.get(
-      discoveredFolder.externalId,
-    );
+  const existingFoldersMap = new Map(
+    existingFolders.map((folder) => [folder.id, folder]),
+  );
+
+  for (const [existingFolderId, discoveredFolder] of matches.entries()) {
+    const existingFolder = existingFoldersMap.get(existingFolderId);
 
     if (!existingFolder) {
       continue;
@@ -38,6 +40,7 @@ export const computeFoldersToUpdate = ({
       name: discoveredFolder.name,
       isSentFolder: discoveredFolder.isSentFolder,
       isSynced: discoveredFolder.isSynced,
+      externalId: discoveredFolder.externalId,
       parentFolderId,
     };
 
@@ -45,6 +48,7 @@ export const computeFoldersToUpdate = ({
       name: existingFolder.name,
       isSentFolder: existingFolder.isSentFolder,
       isSynced: existingFolder.isSynced,
+      externalId: existingFolder.externalId,
       parentFolderId: isNonEmptyString(existingFolder.parentFolderId)
         ? existingFolder.parentFolderId
         : null,
@@ -55,6 +59,7 @@ export const computeFoldersToUpdate = ({
         name: discoveredFolder.name,
         isSentFolder: discoveredFolder.isSentFolder,
         isSynced: discoveredFolder.isSynced,
+        externalId: discoveredFolder.externalId,
         parentFolderId,
       };
 
