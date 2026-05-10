@@ -3,9 +3,11 @@ title: Alan Adı Ayarları
 description: Çalışma alanı alan adını, onaylanmış erişim alan adlarını ve herkese açık alan adlarını yapılandırın.
 ---
 
-Alan adı ayarlarını **Ayarlar → Alan Adları** bölümünde yapılandırın.
+Domain settings live in three places, depending on what you're configuring.
 
 ## İş Alanı Alan Adı
+
+Configure under **Settings → General → Workspace Domain**.
 
 Alt alan adınızı düzenleyin veya çalışma alanınız için özel bir alan adı ayarlayın.
 
@@ -18,6 +20,8 @@ Alt alan adınızı düzenleyin veya çalışma alanınız için özel bir alan 
 Özel alan adları için, DNS ayarlarını alan adı sağlayıcınız üzerinden yapılandırmanız gerekir.
 
 ## Onaylanmış Alan Adları
+
+Configure under **Settings → Members → Access**.
 
 Bu alan adlarındaki bir e-posta adresine sahip olan herkes bu çalışma alanına otomatik olarak kaydolabilir.
 
@@ -35,13 +39,16 @@ Bu, çalışma alanını kuruluşunuzla sınırlı tutarken tüm ekibinizin kend
 
 ## Herkese Açık Alan Adları
 
-Bu alan adları üzerinde eksiksiz ve güvenli bir barındırma ortamı sağlayın.
+Configure under **Settings → Apps → Developer**.
+
+Bu alan adları üzerinde eksiksiz ve güvenli bir barındırma ortamı sağlayın. A public domain can be bound to a specific app — when bound, only that app's HTTP-routed logic functions are reachable on the domain. Leave the binding empty to expose all workspace HTTP routes.
 
 ### Kamusal Alan Ekle
 
 1. **Herkese Açık Alan Adı Ekle**'ye tıklayın
 2. Kullanmak istediğiniz alan adını girin
-3. DNS ayarlarını talimatlara uygun şekilde yapılandırın
-4. Alan adını doğrulayın
+3. Optionally bind it to an app
+4. DNS ayarlarını talimatlara uygun şekilde yapılandırın
+5. Alan adını doğrulayın
 
 Herkese açık alan adları için SSL sertifikaları otomatik olarak sağlanır.

@@ -3,9 +3,11 @@ title: Domäneneinstellungen
 description: Konfigurieren Sie die Arbeitsbereichsdomäne, genehmigte Zugriffsdomänen und öffentliche Domänen.
 ---
 
-Konfigurieren Sie die Domäneneinstellungen unter **Einstellungen → Domänen**.
+Domain settings live in three places, depending on what you're configuring.
 
 ## Arbeitsbereichsdomäne
+
+Configure under **Settings → General → Workspace Domain**.
 
 Bearbeiten Sie den Namen Ihrer Subdomäne oder legen Sie eine benutzerdefinierte Domäne für Ihren Arbeitsbereich fest.
 
@@ -18,6 +20,8 @@ Bearbeiten Sie den Namen Ihrer Subdomäne oder legen Sie eine benutzerdefinierte
 Für benutzerdefinierte Domänen müssen Sie die DNS-Einstellungen bei Ihrem Domänenanbieter konfigurieren.
 
 ## Genehmigte Domänen
+
+Configure under **Settings → Members → Access**.
 
 Jede Person mit einer E-Mail-Adresse in diesen Domänen darf sich automatisch für diesen Arbeitsbereich registrieren.
 
@@ -35,13 +39,16 @@ Dies ist nützlich, um Ihrem gesamten Team die Selbstregistrierung zu ermöglich
 
 ## Öffentliche Domains
 
-Stellen Sie eine vollständige und sichere Hosting-Umgebung auf diesen Domains bereit.
+Configure under **Settings → Apps → Developer**.
+
+Stellen Sie eine vollständige und sichere Hosting-Umgebung auf diesen Domains bereit. A public domain can be bound to a specific app — when bound, only that app's HTTP-routed logic functions are reachable on the domain. Leave the binding empty to expose all workspace HTTP routes.
 
 ### Öffentliche Domäne hinzufügen
 
 1. Klicken Sie auf **Öffentliche Domäne hinzufügen**
 2. Geben Sie die Domäne ein, die Sie verwenden möchten
-3. Konfigurieren Sie die DNS-Einstellungen gemäß Anleitung
-4. Überprüfen Sie die Domäne
+3. Optionally bind it to an app
+4. Konfigurieren Sie die DNS-Einstellungen gemäß Anleitung
+5. Überprüfen Sie die Domäne
 
 SSL-Zertifikate werden für öffentliche Domänen automatisch bereitgestellt.

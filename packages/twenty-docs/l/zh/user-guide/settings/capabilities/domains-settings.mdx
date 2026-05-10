@@ -3,9 +3,11 @@ title: Domain Settings
 description: Configure workspace domain, approved access domains, and public domains.
 ---
 
-Configure domain settings under **Settings → Domains**.
+Domain settings live in three places, depending on what you're configuring.
 
 ## Workspace Domain
+
+Configure under **Settings → General → Workspace Domain**.
 
 Edit your subdomain name or set a custom domain for your workspace.
 
@@ -18,6 +20,8 @@ Edit your subdomain name or set a custom domain for your workspace.
 For custom domains, you'll need to configure DNS settings with your domain provider.
 
 ## 批准的域名
+
+Configure under **Settings → Members → Access**.
 
 Anyone with an email address at these domains is allowed to sign up for this workspace automatically.
 
@@ -35,13 +39,16 @@ This is useful for allowing your entire team to self-register while keeping the 
 
 ## Public Domains
 
-在这些域名上提供一个完整且安全的托管环境。
+Configure under **Settings → Apps → Developer**.
+
+在这些域名上提供一个完整且安全的托管环境。 A public domain can be bound to a specific app — when bound, only that app's HTTP-routed logic functions are reachable on the domain. Leave the binding empty to expose all workspace HTTP routes.
 
 ### Add Public Domain
 
 1. Click **Add Public Domain**
 2. Enter the domain you want to use
-3. Configure DNS settings as instructed
-4. Verify the domain
+3. Optionally bind it to an app
+4. Configure DNS settings as instructed
+5. Verify the domain
 
 SSL certificates are automatically provisioned for public domains.

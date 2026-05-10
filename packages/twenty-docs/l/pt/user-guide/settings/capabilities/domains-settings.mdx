@@ -3,9 +3,11 @@ title: Configurações de Domínio
 description: Configure o domínio do espaço de trabalho, os domínios de acesso aprovados e os domínios públicos.
 ---
 
-Configure as configurações de domínio em **Configurações → Domínios**.
+Domain settings live in three places, depending on what you're configuring.
 
 ## Domínio do espaço de trabalho
+
+Configure under **Settings → General → Workspace Domain**.
 
 Edite o nome do seu subdomínio ou defina um domínio personalizado para o seu espaço de trabalho.
 
@@ -18,6 +20,8 @@ Edite o nome do seu subdomínio ou defina um domínio personalizado para o seu e
 Para domínios personalizados, você precisará configurar as configurações de DNS com o seu provedor de domínio.
 
 ## Domínios Aprovados
+
+Configure under **Settings → Members → Access**.
 
 Qualquer pessoa com um endereço de e-mail nesses domínios pode inscrever-se neste espaço de trabalho automaticamente.
 
@@ -35,13 +39,16 @@ Isso é útil para permitir que toda a sua equipe se registre por conta própria
 
 ## Domínios Públicos
 
-Provisionar um ambiente de hospedagem completo e seguro nestes domínios.
+Configure under **Settings → Apps → Developer**.
+
+Provisionar um ambiente de hospedagem completo e seguro nestes domínios. A public domain can be bound to a specific app — when bound, only that app's HTTP-routed logic functions are reachable on the domain. Leave the binding empty to expose all workspace HTTP routes.
 
 ### Adicionar Domínio Público
 
 1. Clique em **Adicionar Domínio Público**
 2. Insira o domínio que você deseja usar
-3. Configure as configurações de DNS conforme as instruções
-4. Verifique o domínio
+3. Optionally bind it to an app
+4. Configure as configurações de DNS conforme as instruções
+5. Verifique o domínio
 
 Os certificados SSL são provisionados automaticamente para domínios públicos.
