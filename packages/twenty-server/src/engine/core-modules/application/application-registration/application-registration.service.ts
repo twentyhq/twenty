@@ -292,6 +292,7 @@ export class ApplicationRegistrationService {
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
         isFeatured,
+        isListed: true,
       });
     } else {
       const registration = this.applicationRegistrationRepository.create({
@@ -362,6 +363,24 @@ export class ApplicationRegistrationService {
         sourceType: ApplicationRegistrationSourceType.NPM,
       },
     });
+  }
+
+  async unlistOrphanedRegistrations(activeUids: string[]): Promise<void> {
+    await this.applicationRegistrationRepository
+      .createQueryBuilder()
+      .update()
+      .set({ isListed: false })
+      .where('sourceType = :sourceType', {
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      })
+      .andWhere('isListed = true')
+      .andWhere('universalIdentifier NOT IN (:...activeUids)', {
+        activeUids:
+          activeUids.length > 0
+            ? activeUids
+            : ['00000000-0000-0000-0000-000000000000'],
+      })
+      .execute();
   }
 
   async getStats(

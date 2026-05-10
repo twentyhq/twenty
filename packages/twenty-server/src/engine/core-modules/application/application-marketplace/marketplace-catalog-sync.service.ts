@@ -26,6 +26,9 @@ export class MarketplaceCatalogSyncService {
   private async syncRegistryApps(): Promise<void> {
     const packages = await this.marketplaceService.fetchAppsFromRegistry();
 
+    const syncedUniversalIdentifiers: string[] = [];
+    let syncFailed = false;
+
     for (const pkg of packages) {
       try {
         const fetchedManifest =
@@ -80,11 +83,24 @@ export class MarketplaceCatalogSyncService {
           latestAvailableVersion: pkg.version ?? null,
           manifest: manifestWithResolvedUrls,
         });
+
+        syncedUniversalIdentifiers.push(universalIdentifier);
       } catch (error) {
+        syncFailed = true;
         this.logger.error(
           `Failed to sync registry app "${pkg.name}": ${error instanceof Error ? error.message : String(error)}`,
         );
       }
+    }
+
+    if (!syncFailed && syncedUniversalIdentifiers.length > 0) {
+      await this.applicationRegistrationService.unlistOrphanedRegistrations(
+        syncedUniversalIdentifiers,
+      );
+    } else {
+      this.logger.warn(
+        'Skipping marketplace GC due to partial sync failure or empty registry.',
+      );
     }
   }
 }

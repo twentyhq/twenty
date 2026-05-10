@@ -1,6 +1,7 @@
 import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 
-let uuidCounter = 0;
+// eslint-disable-next-line no-var
+var uuidCounter = 0;
 
 jest.mock('uuid', () => ({
   v4: jest.fn(

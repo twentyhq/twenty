@@ -47,6 +47,9 @@ const jestConfig = {
   moduleNameMapper: {
     '^src/(.*)': '<rootDir>/src/$1',
     '^test/(.*)': '<rootDir>/test/$1',
+    '^twenty-shared/(.*)': '<rootDir>/../twenty-shared/src/$1',
+    '^twenty-shared': '<rootDir>/../twenty-shared/src/index',
+    '^@/(.*)': '<rootDir>/../twenty-shared/src/$1',
     '^file-type$': require.resolve('file-type'),
   },
   moduleFileExtensions: ['js', 'json', 'ts'],
