@@ -26,6 +26,8 @@ export class MarketplaceCatalogSyncService {
   private async syncRegistryApps(): Promise<void> {
     const packages = await this.marketplaceService.fetchAppsFromRegistry();
 
+    const seenPackages = new Map<string, string>();
+
     for (const pkg of packages) {
       try {
         const fetchedManifest =
@@ -41,6 +43,8 @@ export class MarketplaceCatalogSyncService {
 
         const universalIdentifier =
           fetchedManifest.application.universalIdentifier;
+
+        seenPackages.set(pkg.name, universalIdentifier);
 
         const aboutDescription =
           fetchedManifest.application.aboutDescription ??
@@ -85,6 +89,17 @@ export class MarketplaceCatalogSyncService {
           `Failed to sync registry app "${pkg.name}": ${error instanceof Error ? error.message : String(error)}`,
         );
       }
+    }
+
+    const unlistedCount =
+      await this.applicationRegistrationService.unlistOrphanedNpmRegistrations(
+        seenPackages,
+      );
+
+    if (unlistedCount > 0) {
+      this.logger.log(
+        `Unlisted ${unlistedCount} orphaned NPM registration(s)`,
+      );
     }
   }
 }

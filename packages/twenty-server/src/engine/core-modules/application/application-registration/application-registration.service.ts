@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { In, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -396,6 +396,53 @@ export class ApplicationRegistrationService {
       mostInstalledVersion,
       versionDistribution,
     };
+  }
+
+  async unlistOrphanedNpmRegistrations(
+    seenPackages: Map<string, string>,
+  ): Promise<number> {
+    if (seenPackages.size === 0) {
+      return 0;
+    }
+
+    const sourcePackages = Array.from(seenPackages.keys());
+    const orphanedRegistrations = await this.applicationRegistrationRepository
+      .createQueryBuilder('registration')
+      .select([
+        'registration.id',
+        'registration.sourcePackage',
+        'registration.universalIdentifier',
+      ])
+      .where('registration.sourceType = :sourceType', {
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      })
+      .andWhere('registration.isListed = :isListed', { isListed: true })
+      .andWhere('registration.sourcePackage IN (:...sourcePackages)', {
+        sourcePackages,
+      })
+      .getMany();
+
+    const orphanedIds = orphanedRegistrations
+      .filter((registration) => {
+        const currentUid = seenPackages.get(registration.sourcePackage!);
+
+        return (
+          currentUid !== undefined &&
+          registration.universalIdentifier !== currentUid
+        );
+      })
+      .map((registration) => registration.id);
+
+    if (orphanedIds.length === 0) {
+      return 0;
+    }
+
+    await this.applicationRegistrationRepository.update(
+      { id: In(orphanedIds) },
+      { isListed: false },
+    );
+
+    return orphanedIds.length;
   }
 
   async transferOwnership(params: {
