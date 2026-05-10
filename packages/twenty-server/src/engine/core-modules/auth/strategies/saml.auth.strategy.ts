@@ -128,8 +128,28 @@ export class SamlAuthStrategy extends PassportStrategy(
         return done(new Error('Invalid email'));
       }
       const state = this.extractState(request);
+      const verifiedIdentityProviderId = request.params.identityProviderId;
 
-      done(null, { ...state, email });
+      // The IdP cert that just verified this SAML assertion was selected from
+      // `req.params.identityProviderId` in `getSamlOptions`. RelayState, in
+      // contrast, is part of the attacker-controllable ACS POST body. If the
+      // two disagree we must refuse the auth: otherwise an assertion signed by
+      // IdP A could be attached to a session that the controller then resolves
+      // against IdP B's workspace.
+      if (state.identityProviderId !== verifiedIdentityProviderId) {
+        return done(
+          new AuthException(
+            'SAML RelayState identity provider mismatch',
+            AuthExceptionCode.INVALID_INPUT,
+          ),
+        );
+      }
+
+      done(null, {
+        identityProviderId: verifiedIdentityProviderId,
+        workspaceInviteHash: state.workspaceInviteHash,
+        email,
+      });
     } catch (err) {
       done(err);
     }
