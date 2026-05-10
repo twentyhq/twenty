@@ -3,7 +3,6 @@ import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-resul
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
 import { createSlackWebClient } from 'src/utils/create-slack-web-client';
 import { getSlackErrorMessage } from 'src/utils/get-slack-error-message';
-import { validateReactionName } from 'src/utils/reaction-name';
 
 export const slackAddReactionHandler = async (
   parameters: SlackAddReactionInput,
@@ -15,16 +14,6 @@ export const slackAddReactionHandler = async (
       success: false,
       message: 'Slack is not connected',
       error: connectionResult.error,
-    };
-  }
-
-  const reactionError = validateReactionName(parameters.emoji_name);
-
-  if (reactionError) {
-    return {
-      success: false,
-      message: 'Invalid reaction name',
-      error: reactionError,
     };
   }
 
