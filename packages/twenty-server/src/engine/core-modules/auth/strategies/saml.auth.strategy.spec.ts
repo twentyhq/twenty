@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { type Request } from 'express';
 
 import { type SSOService } from 'src/engine/core-modules/sso/services/sso.service';
@@ -198,6 +200,6 @@ describe('SamlAuthStrategy.validate', () => {
 
     expect(done).toHaveBeenCalledTimes(1);
     expect(done.mock.calls[0][0]).toBeInstanceOf(Error);
-    expect(done.mock.calls[0][0].message).toBe('Profile is must be provided');
+    expect(done.mock.calls[0][0].message).toBe('Profile must be provided');
   });
 });

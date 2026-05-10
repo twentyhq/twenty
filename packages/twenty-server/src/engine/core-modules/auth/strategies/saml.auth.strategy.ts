@@ -17,7 +17,11 @@ import { z } from 'zod';
 
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 
-const WORKSPACE_INVITE_HASH_SCHEMA = z.object({
+const RELAY_STATE_PAYLOAD_SCHEMA = z.object({
+  workspaceInviteHash: z.string().optional(),
+});
+
+const SAML_LOGIN_QUERY_SCHEMA = z.object({
   workspaceInviteHash: z.string().optional(),
 });
 
@@ -36,7 +40,7 @@ const RELAY_STATE_BODY_SCHEMA = z.object({
         return z.NEVER;
       }
     })
-    .pipe(WORKSPACE_INVITE_HASH_SCHEMA),
+    .pipe(RELAY_STATE_PAYLOAD_SCHEMA),
 });
 
 export type SAMLRequest = Omit<
@@ -102,7 +106,7 @@ export class SamlAuthStrategy extends PassportStrategy(
   }
 
   authenticate(req: Request, options: AuthenticateOptions) {
-    const queryParseResult = WORKSPACE_INVITE_HASH_SCHEMA.safeParse(req.query);
+    const queryParseResult = SAML_LOGIN_QUERY_SCHEMA.safeParse(req.query);
     const workspaceInviteHash = queryParseResult.success
       ? queryParseResult.data.workspaceInviteHash
       : undefined;
@@ -130,7 +134,7 @@ export class SamlAuthStrategy extends PassportStrategy(
   validate: VerifyWithRequest = async (request, profile, done) => {
     try {
       if (!profile) {
-        return done(new Error('Profile is must be provided'));
+        return done(new Error('Profile must be provided'));
       }
 
       const email = profile.email ?? profile.mail ?? profile.nameID;
