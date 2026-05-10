@@ -3,7 +3,7 @@ import type { AppLocale } from 'twenty-shared/translations';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { TalkToUsButton } from '@/sections/ContactCal';
-import { DEMO_DATA } from '@/app/[locale]/product/demo.data';
+import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import {
   FEATURE_MASK,
   FEATURE_TILES,
@@ -247,7 +247,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             variant="contained"
           />
         </Demo.Cta>
-        <Demo.Screenshot image={DEMO_DATA.image} />
+        <Demo.Preview visual={APP_PREVIEW_DATA.visual} />
       </Demo.Root>
 
       <Faq.Root>

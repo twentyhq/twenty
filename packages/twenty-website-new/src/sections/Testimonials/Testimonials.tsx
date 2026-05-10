@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 import { Carousel } from './components/TestimonialsCarousel';
 import { PartnerCarousel } from './components/TestimonialsPartnerCarousel';
-import { MountedTestimonialsHomeVisual } from './components/MountedTestimonialsHomeVisual';
+import { MountedTestimonialsVisual } from './components/MountedTestimonialsVisual';
 import { MountedTestimonialsPartnerVisual } from './components/MountedTestimonialsPartnerVisual';
 
 const TESTIMONIALS_SHAPE_PATH =
@@ -133,7 +133,7 @@ function Root({
 
 export const Testimonials = {
   Carousel,
-  HomeVisual: MountedTestimonialsHomeVisual,
+  HourglassVisual: MountedTestimonialsVisual,
   PartnerCarousel,
   PartnerVisual: MountedTestimonialsPartnerVisual,
   Root,

@@ -12,7 +12,7 @@ import {
 } from '@tabler/icons-react';
 import { type RefObject, useRef, useState } from 'react';
 import { LiveDataGradientBackdrop } from './LiveDataGradientBackdrop';
-import { LiveDataHeroTable } from './LiveDataHeroTable';
+import { LiveDataTable } from './LiveDataTable';
 import { MarkerCursor } from './MarkerCursor';
 import { TomCursor } from './TomCursor';
 import {
@@ -321,7 +321,7 @@ export function LiveDataVisual({
               </FilterRow>
 
               <TableBodyArea>
-                <LiveDataHeroTable
+                <LiveDataTable
                   editedStatusLabel={isFirstTagRenamed ? typedTagLabel : ''}
                   isFirstTagEdited={isFirstTagEdited}
                   isFirstTagHoveredByAlice={isFirstTagHoveredByAlice}
