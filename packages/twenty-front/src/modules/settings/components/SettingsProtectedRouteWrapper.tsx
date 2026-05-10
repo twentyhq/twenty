@@ -1,5 +1,4 @@
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
-import { useHasAnyPermissionFlag } from '@/settings/roles/hooks/useHasAnyPermissionFlag';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type ReactNode } from 'react';
@@ -14,19 +13,16 @@ import {
 type SettingsProtectedRouteWrapperProps = {
   children?: ReactNode;
   settingsPermission?: PermissionFlagType;
-  anySettingsPermission?: PermissionFlagType[];
   requiredFeatureFlag?: FeatureFlagKey;
 };
 
 export const SettingsProtectedRouteWrapper = ({
   children,
   settingsPermission,
-  anySettingsPermission,
   requiredFeatureFlag,
 }: SettingsProtectedRouteWrapperProps) => {
   const hasAccessTokenPair = useHasAccessTokenPair();
   const hasPermission = useHasPermissionFlag(settingsPermission);
-  const hasAnyPermission = useHasAnyPermissionFlag(anySettingsPermission);
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
     requiredFeatureFlag || null,
   );
@@ -38,11 +34,7 @@ export const SettingsProtectedRouteWrapper = ({
   // TODO: this should be part of PageChangeEffect as otherwise we will have multiple sources of redirection that can:
   // - conflict (race conditions)
   // - degrade performance as we will redirect multiple times
-  if (
-    (requiredFeatureFlag && !requiredFeatureFlagEnabled) ||
-    !hasPermission ||
-    !hasAnyPermission
-  ) {
+  if ((requiredFeatureFlag && !requiredFeatureFlagEnabled) || !hasPermission) {
     return <Navigate to={getSettingsPath(SettingsPath.ProfilePage)} replace />;
   }
 

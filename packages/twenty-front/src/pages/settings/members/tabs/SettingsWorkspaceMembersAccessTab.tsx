@@ -1,9 +1,10 @@
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useQuery } from '@apollo/client/react';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useContext, useEffect, useMemo } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import { useContext, useMemo } from 'react';
 
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -14,12 +15,10 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
-import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
-import { workspaceInvitationsState } from '@/workspace-invitation/states/workspaceInvitationsStates';
-import { useQuery } from '@apollo/client/react';
+import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
+import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
@@ -34,6 +33,7 @@ import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -76,6 +76,7 @@ export const SettingsWorkspaceMembersAccessTab = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const roles = useSettingsAllRoles();
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const rolesById = useMemo(
     () => new Map(roles.map((role) => [role.id, role])),
@@ -87,20 +88,13 @@ export const SettingsWorkspaceMembersAccessTab = () => {
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const workspaceInvitations = useAtomStateValue(workspaceInvitationsState);
-  const setWorkspaceInvitations = useSetAtomState(workspaceInvitationsState);
-
   const { data: invitationsData, error: invitationsError } = useQuery(
     GetWorkspaceInvitationsDocument,
   );
 
   useSnackBarOnQueryError(invitationsError);
 
-  useEffect(() => {
-    if (invitationsData) {
-      setWorkspaceInvitations(invitationsData?.findWorkspaceInvitations ?? []);
-    }
-  }, [invitationsData, setWorkspaceInvitations]);
+  const workspaceInvitations = invitationsData?.findWorkspaceInvitations ?? [];
 
   const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
     const result = await deleteWorkspaceInvitation({ appTokenId });
@@ -127,15 +121,9 @@ export const SettingsWorkspaceMembersAccessTab = () => {
   };
 
   const getExpiresAtText = (expiresAt: string) => {
-    const msLeft = new Date(expiresAt).getTime() - Date.now();
-
-    if (msLeft <= 0) return t`Expired`;
-
-    const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
-
-    if (daysLeft === 1) return t`1 day`;
-
-    return t`${daysLeft} days`;
+    const expirationDate = new Date(expiresAt);
+    if (expirationDate.getTime() <= Date.now()) return t`Expired`;
+    return formatDistanceToNow(expirationDate, { locale: localeCatalog });
   };
 
   return (
@@ -179,7 +167,7 @@ export const SettingsWorkspaceMembersAccessTab = () => {
                 <TableHeader></TableHeader>
               </TableRow>
               <StyledTableRows>
-                {workspaceInvitations?.map((workspaceInvitation) => (
+                {workspaceInvitations.map((workspaceInvitation) => (
                   <TableRow
                     gridAutoColumns="2fr 1fr 1fr 80px"
                     mobileGridAutoColumns="2fr 1fr 1fr 72px"

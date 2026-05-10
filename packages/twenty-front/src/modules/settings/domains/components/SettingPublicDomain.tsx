@@ -24,7 +24,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CheckPublicDomainValidRecordsEffect } from '@/settings/domains/components/CheckPublicDomainValidRecordsEffect';
 import { selectedPublicDomainState } from '@/settings/domains/states/selectedPublicDomainState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -90,19 +90,17 @@ export const SettingPublicDomain = () => {
 
   const { data: applicationsData } = useQuery(FindManyApplicationsDocument);
 
-  const applicationPinnedOption: SelectOption<string | null> = useMemo(
-    () => ({ value: null, label: t`Workspace (all apps)` }),
-    [t],
-  );
+  const applicationPinnedOption: SelectOption<string | null> = {
+    value: null,
+    label: t`Workspace (all apps)`,
+  };
 
-  const applicationOptions = useMemo<SelectOption<string | null>[]>(
-    () =>
-      (applicationsData?.findManyApplications ?? []).map((application) => ({
-        value: application.id,
-        label: application.name,
-      })),
-    [applicationsData],
-  );
+  const applicationOptions: SelectOption<string | null>[] = (
+    applicationsData?.findManyApplications ?? []
+  ).map((application) => ({
+    value: application.id,
+    label: application.name,
+  }));
 
   const [deletePublicDomain] = useMutation(DeletePublicDomainDocument);
 
