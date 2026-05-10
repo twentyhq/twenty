@@ -28,6 +28,7 @@ import {
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
+import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -53,6 +54,7 @@ export class MessagingMessageListFetchService {
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
     private readonly messagingProcessFolderActionsService: MessagingProcessFolderActionsService,
+    private readonly messagingMonitoringService: MessagingMonitoringService,
   ) {}
 
   public async processMessageListFetch(
@@ -96,6 +98,16 @@ export class MessagingMessageListFetchService {
           this.logger.error(
             `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Message channel not found`,
           );
+
+          return;
+        }
+
+        if (!isDefined(freshMessageChannel.connectedAccount)) {
+          await this.messagingMonitoringService.track({
+            eventName: 'message_list_fetch.error.connected_account_not_found',
+            workspaceId,
+            messageChannelId: freshMessageChannel.id,
+          });
 
           return;
         }

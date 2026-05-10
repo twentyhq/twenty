@@ -67,6 +67,16 @@ export class MessagingMessageListFetchJob {
         return;
       }
 
+      if (!messageChannel.connectedAccount) {
+        await this.messagingMonitoringService.track({
+          eventName: 'message_list_fetch_job.error.connected_account_not_found',
+          messageChannelId,
+          workspaceId,
+        });
+
+        return;
+      }
+
       if (
         messageChannel.syncStage !==
         MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED
