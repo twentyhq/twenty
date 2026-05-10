@@ -94,15 +94,21 @@ export class WorkspaceDomainsService {
     workspace: WorkspaceEntity | undefined;
     publicDomain: PublicDomainEntity | null;
   }> {
-    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      return {
-        workspace: await this.getDefaultWorkspace(),
-        publicDomain: null,
-      };
-    }
-
     const { subdomain, domain } =
       this.domainServerConfigService.getSubdomainAndDomainFromUrl(origin);
+
+    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      // Single-workspace: workspace is always the default. Still resolve a
+      // matching public domain so the route trigger can scope by application.
+      const publicDomain = isDefined(domain)
+        ? await this.publicDomainRepository.findOne({ where: { domain } })
+        : null;
+
+      return {
+        workspace: await this.getDefaultWorkspace(),
+        publicDomain: publicDomain ?? null,
+      };
+    }
 
     if (!domain && !subdomain) {
       return { workspace: undefined, publicDomain: null };
