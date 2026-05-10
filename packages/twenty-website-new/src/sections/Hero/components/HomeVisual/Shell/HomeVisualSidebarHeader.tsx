@@ -8,7 +8,11 @@ import {
   IconSearch,
 } from '@tabler/icons-react';
 
-import { APP_FONT, COLORS, TABLER_STROKE } from '../Shared/home-visual-theme';
+import {
+  APP_FONT,
+  COLORS,
+  TABLER_STROKE,
+} from '../Shared/utils/home-visual-theme';
 
 const APPLE_WORKSPACE_LOGO_SRC = '/images/home/hero/apple-rainbow-logo.svg';
 
@@ -143,7 +147,7 @@ function CollapseSidebarMini({
   );
 }
 
-export type HomeVisualSidebarHeaderProps = {
+type HomeVisualSidebarHeaderProps = {
   workspaceName: string;
 };
 

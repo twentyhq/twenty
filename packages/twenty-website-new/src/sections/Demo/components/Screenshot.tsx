@@ -1,6 +1,10 @@
 import type { ImageType } from '@/design-system/components/Image';
-import { theme } from '@/theme';
 import { css } from '@linaria/core';
+
+const coverImageClassName = css`
+  object-fit: cover;
+`;
+import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
@@ -20,10 +24,6 @@ const ScreenshotRoot = styled.div`
   }
 `;
 
-const screenshotImageClassName = css`
-  object-fit: cover;
-`;
-
 type ScreenshotProps = { image: ImageType };
 
 export function Screenshot({ image }: ScreenshotProps) {
@@ -31,7 +31,7 @@ export function Screenshot({ image }: ScreenshotProps) {
     <ScreenshotRoot>
       <NextImage
         alt={image.alt}
-        className={screenshotImageClassName}
+        className={coverImageClassName}
         fill
         sizes="(min-width: 921px) 800px, 100vw"
         src={image.src}

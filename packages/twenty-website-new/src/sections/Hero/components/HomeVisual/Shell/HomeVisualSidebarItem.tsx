@@ -5,12 +5,14 @@ import { styled } from '@linaria/react';
 import { IconChevronDown } from '@tabler/icons-react';
 
 import type { HeroSidebarItem } from '@/sections/Hero/types';
+import { getSidebarIconToneRgb } from '../Shared/utils/get-sidebar-icon-tone-rgb';
+import { renderHomeVisualIcon } from '../Shared/components/HomeVisualIcon';
 import {
-  getSidebarIconToneRgb,
-  renderHomeVisualIcon,
-} from '../Shared/home-visual-icon';
-import { APP_FONT, COLORS, TABLER_STROKE } from '../Shared/home-visual-theme';
-import { VISUAL_TOKENS } from '../Shared/homeVisualTokens';
+  APP_FONT,
+  COLORS,
+  TABLER_STROKE,
+} from '../Shared/utils/home-visual-theme';
+import { VISUAL_TOKENS } from '../Shared/utils/home-visual-tokens';
 
 const SidebarItemRow = styled.div<{
   $active?: boolean;
@@ -258,7 +260,7 @@ function ChevronDownMini({
   );
 }
 
-export type HomeVisualSidebarItemProps = {
+type HomeVisualSidebarItemProps = {
   collapsible?: boolean;
   expanded?: boolean;
   depth?: number;

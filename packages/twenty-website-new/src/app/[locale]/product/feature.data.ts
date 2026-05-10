@@ -1,84 +1,81 @@
 import { msg } from '@lingui/core/macro';
-import type { FeatureDataType } from '@/sections/Feature/types';
+import type { ImageType } from '@/design-system/components/Image';
+import type { FeatureTileType } from '@/sections/Feature';
 
-export const FEATURE_DATA: FeatureDataType = {
-  eyebrow: {
-    heading: {
-      text: msg`Core Features`,
-      fontFamily: 'sans',
-    },
-  },
-  mask: { src: '/images/product/feature/mask.webp', alt: '' },
-  tiles: [
-    {
-      icon: 'check',
-      image: { src: '/images/product/feature/dashboards.webp', alt: '' },
-      heading: { text: msg`Reports & Dashboards`, fontFamily: 'sans' },
-      bullets: [
-        { text: msg`Build custom dashboards` },
-        { text: msg`Aggregate, bar, line, pie, and gauge widgets` },
-        { text: msg`Filtered metrics from live CRM data` },
-      ],
-    },
-    {
-      icon: 'check',
-      image: { src: '/images/product/feature/tasks.webp', alt: '' },
-      heading: { text: msg`Tasks & Activities`, fontFamily: 'sans' },
-      bullets: [
-        { text: msg`Create tasks from records` },
-        { text: msg`Assign owners and due dates` },
-        { text: msg`Rich notes attached to records` },
-      ],
-    },
-    {
-      icon: 'check',
-      image: { src: '/images/product/feature/emails.webp', alt: '' },
-      heading: { text: msg`Email & Calendar`, fontFamily: 'sans' },
-      bullets: [
-        { text: msg`Connect Google or Microsoft accounts` },
-        { text: msg`Emails and events linked to CRM records` },
-        { text: msg`Full communication history in one place` },
-      ],
-    },
-    {
-      icon: 'check',
-      image: { src: '/images/product/feature/contacts.webp', alt: '' },
-      heading: { text: msg`Contacts & Companies`, fontFamily: 'sans' },
-      bullets: [
-        { text: msg`Custom fields and relationships` },
-        { text: msg`Unified timeline (emails, events, tasks, notes, files)` },
-        { text: msg`Email/calendar activity on each record` },
-      ],
-    },
-    {
-      icon: 'check',
-      image: { src: '/images/product/feature/pipeline.webp', alt: '' },
-      heading: { text: msg`Pipeline Management`, fontFamily: 'sans' },
-      bullets: [
-        { text: msg`Custom deal stages for your process` },
-        { text: msg`Drag-and-drop deals between stages` },
-        { text: msg`Track amount and close date` },
-      ],
-    },
-    {
-      icon: 'check',
-      image: { src: '/images/product/feature/files.webp', alt: '' },
-      heading: { text: msg`Files`, fontFamily: 'sans' },
-      bullets: [
-        { text: msg`Multi-file upload on records` },
-        { text: msg`Rename, download, and delete attachments` },
-        { text: msg`In-app preview for supported file types (when enabled)` },
-      ],
-    },
-    {
-      icon: 'check',
-      image: { src: '/images/product/feature/data.webp', alt: '' },
-      heading: { text: msg`Data import`, fontFamily: 'sans' },
-      bullets: [
-        { text: msg`CSV import flow` },
-        { text: msg`Column-to-field mapping (including relations)` },
-        { text: msg`CSV export anytime` },
-      ],
-    },
-  ],
+export const FEATURE_MASK: ImageType = {
+  src: '/images/product/feature/mask.webp',
+  alt: '',
 };
+
+export const FEATURE_TILES: FeatureTileType[] = [
+  {
+    icon: 'check',
+    image: { src: '/images/product/feature/dashboards.webp', alt: '' },
+    heading: msg`Reports & Dashboards`,
+    bullets: [
+      msg`Build custom dashboards`,
+      msg`Aggregate, bar, line, pie, and gauge widgets`,
+      msg`Filtered metrics from live CRM data`,
+    ],
+  },
+  {
+    icon: 'check',
+    image: { src: '/images/product/feature/tasks.webp', alt: '' },
+    heading: msg`Tasks & Activities`,
+    bullets: [
+      msg`Create tasks from records`,
+      msg`Assign owners and due dates`,
+      msg`Rich notes attached to records`,
+    ],
+  },
+  {
+    icon: 'check',
+    image: { src: '/images/product/feature/emails.webp', alt: '' },
+    heading: msg`Email & Calendar`,
+    bullets: [
+      msg`Connect Google or Microsoft accounts`,
+      msg`Emails and events linked to CRM records`,
+      msg`Full communication history in one place`,
+    ],
+  },
+  {
+    icon: 'check',
+    image: { src: '/images/product/feature/contacts.webp', alt: '' },
+    heading: msg`Contacts & Companies`,
+    bullets: [
+      msg`Custom fields and relationships`,
+      msg`Unified timeline (emails, events, tasks, notes, files)`,
+      msg`Email/calendar activity on each record`,
+    ],
+  },
+  {
+    icon: 'check',
+    image: { src: '/images/product/feature/pipeline.webp', alt: '' },
+    heading: msg`Pipeline Management`,
+    bullets: [
+      msg`Custom deal stages for your process`,
+      msg`Drag-and-drop deals between stages`,
+      msg`Track amount and close date`,
+    ],
+  },
+  {
+    icon: 'check',
+    image: { src: '/images/product/feature/files.webp', alt: '' },
+    heading: msg`Files`,
+    bullets: [
+      msg`Multi-file upload on records`,
+      msg`Rename, download, and delete attachments`,
+      msg`In-app preview for supported file types (when enabled)`,
+    ],
+  },
+  {
+    icon: 'check',
+    image: { src: '/images/product/feature/data.webp', alt: '' },
+    heading: msg`Data import`,
+    bullets: [
+      msg`CSV import flow`,
+      msg`Column-to-field mapping (including relations)`,
+      msg`CSV export anytime`,
+    ],
+  },
+];

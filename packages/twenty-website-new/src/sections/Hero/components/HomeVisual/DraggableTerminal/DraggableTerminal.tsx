@@ -3,15 +3,15 @@
 import { styled } from '@linaria/react';
 import { useCallback } from 'react';
 import { theme } from '@/theme';
-import { WINDOW_SHADOWS } from '../Shared/windowShadows';
-import { EDITOR_TOKENS } from './TerminalEditor/editorTokens';
-import { TerminalContent } from './TerminalContent';
-import { TerminalResizeHandles } from './TerminalResizeHandles';
-import { TerminalTopBar } from './TerminalTopBar';
-import type { TerminalToggleValue } from './TerminalToggle';
-import { TERMINAL_TOKENS } from './terminalTokens';
-import { useTerminalConversationWorkflow } from './use-terminal-conversation-workflow';
-import { useTerminalWindowLayout } from './use-terminal-window-layout';
+import { WINDOW_SHADOWS } from '../Shared/utils/window-shadows';
+import { EDITOR_TOKENS } from './TerminalEditor/utils/editor-tokens';
+import { TerminalContent } from './components/TerminalContent';
+import { TerminalResizeHandles } from './components/TerminalResizeHandles';
+import { TerminalTopBar } from './components/TerminalTopBar';
+import { useTerminalConversationWorkflow } from './hooks/use-terminal-conversation-workflow';
+import { useTerminalWindowLayout } from './hooks/use-terminal-window-layout';
+import type { TerminalToggleValue } from './types/terminal-toggle-types';
+import { TERMINAL_TOKENS } from './utils/terminal-tokens';
 
 const Shell = styled.div<{
   $isDragging: boolean;

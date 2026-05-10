@@ -124,7 +124,7 @@ export function Root({ children }: RootProps) {
         </BackgroundShape>
       </TabBackgrounds>
       <StyledSection>
-        <StyledContainer>{children}</StyledContainer>
+        <StyledContainer data-scheme="dark">{children}</StyledContainer>
       </StyledSection>
     </RootWrapper>
   );

@@ -1,12 +1,10 @@
-import { msg } from '@lingui/core/macro';
-
 import type {
   HeroDashboardDataType,
   HeroDashboardPageDefinition,
   HeroKanbanPageDefinition,
   HeroTablePageDefinition,
   HeroVisualType,
-} from '@/sections/Hero/types';
+} from '@/sections/Hero';
 import { SHARED_PEOPLE_AVATAR_URLS } from '@/content/site/asset-paths';
 
 const PEOPLE_AVATAR_URLS = {
@@ -324,10 +322,6 @@ function createTablePage({
     rows,
   };
 }
-
-export const HERO_COPY = {
-  body: msg`Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.`,
-};
 
 export const HERO_DATA: { visual: HeroVisualType } = {
   visual: {

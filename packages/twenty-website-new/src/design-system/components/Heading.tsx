@@ -1,15 +1,7 @@
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { Fragment, type ReactNode } from 'react';
-
-export type HeadingType<TText = ReactNode> = {
-  fontFamily: 'sans' | 'serif' | 'mono';
-  text: TText;
-  fontWeight?: 'light' | 'regular' | 'medium';
-  newLine?: boolean;
-  lineBreakBefore?: boolean;
-};
+import type { ReactNode } from 'react';
 
 const headingRootClassName = css`
   margin: 0;
@@ -108,6 +100,11 @@ const StyledSpan = styled.span`
   }
 `;
 
+export type HeadingAs = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+export type HeadingFamily = 'sans' | 'serif' | 'mono';
+export type HeadingWeight = 'light' | 'regular' | 'medium';
+export type HeadingSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
+
 type HeadingPartProps = {
   children: ReactNode;
   fontFamily: HeadingFamily;
@@ -126,73 +123,28 @@ export function HeadingPart({
   );
 }
 
-export type HeadingAs = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-export type HeadingFamily = 'sans' | 'serif' | 'mono';
-export type HeadingWeight = 'light' | 'regular' | 'medium';
-export type HeadingSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
-
-type HeadingTextRenderer<TText> = [TText] extends [ReactNode]
-  ? { renderText?: (text: TText) => ReactNode }
-  : { renderText: (text: TText) => ReactNode };
-
-export type HeadingProps<TText = ReactNode> = {
+export type HeadingProps = {
   as?: HeadingAs;
-  children?: ReactNode;
-  inlineSegmentSeparator?: ReactNode;
-  segments?: HeadingType<TText> | HeadingType<TText>[];
-  weight?: HeadingWeight;
-  size?: HeadingSize;
+  children: ReactNode;
   className?: string;
-} & HeadingTextRenderer<TText>;
+  size?: HeadingSize;
+  weight?: HeadingWeight;
+};
 
-export function Heading<TText = ReactNode>({
+export function Heading({
   as: Tag = 'h2',
   children,
-  inlineSegmentSeparator = ' ',
-  renderText,
-  segments,
-  weight = 'regular',
-  size = 'md',
   className,
-}: HeadingProps<TText>) {
+  size = 'md',
+  weight = 'regular',
+}: HeadingProps) {
   const rootClassName = [headingRootClassName, className]
     .filter(Boolean)
     .join(' ');
-  const renderSegmentText = (text: TText) =>
-    renderText === undefined ? (text as ReactNode) : renderText(text);
 
   return (
     <Tag className={rootClassName} data-weight={weight} data-size={size}>
-      {children !== undefined ? (
-        children
-      ) : Array.isArray(segments) ? (
-        segments.map((segment, index) => {
-          const lineBreakBefore =
-            segment.newLine === true || segment.lineBreakBefore === true;
-          const joinWithPreviousInlineSegment =
-            index > 0 && lineBreakBefore === false;
-
-          return (
-            <Fragment key={index}>
-              {lineBreakBefore ? <br /> : null}
-              {joinWithPreviousInlineSegment ? inlineSegmentSeparator : null}
-              <StyledSpan
-                data-family={segment.fontFamily}
-                data-weight={segment.fontWeight}
-              >
-                {renderSegmentText(segment.text)}
-              </StyledSpan>
-            </Fragment>
-          );
-        })
-      ) : segments !== undefined ? (
-        <StyledSpan
-          data-family={segments.fontFamily}
-          data-weight={segments.fontWeight}
-        >
-          {renderSegmentText(segments.text)}
-        </StyledSpan>
-      ) : null}
+      {children}
     </Tag>
   );
 }

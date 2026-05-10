@@ -1,4 +1,4 @@
-import { createVisualMountScheduler } from '../visual-mount-scheduler';
+import { createVisualMountScheduler } from '../utils/visual-mount-scheduler';
 
 function createManualIdleHost() {
   let nextHandle = 1;

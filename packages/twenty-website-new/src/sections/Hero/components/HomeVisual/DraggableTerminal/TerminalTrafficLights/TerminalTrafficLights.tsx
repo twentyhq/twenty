@@ -5,11 +5,11 @@ import type { MouseEvent as ReactMouseEvent } from 'react';
 import {
   DEFAULT_TRAFFIC_LIGHT_HORIZONTAL_INSET,
   TRAFFIC_LIGHT_GAP,
-} from './terminal-traffic-light-constants';
-import { TRAFFIC_LIGHT_DOT_DEFINITIONS } from './terminal-traffic-light-definitions';
-import { TerminalFlyingTrafficLights } from './TerminalFlyingTrafficLights';
-import { TerminalTrafficLightDot } from './TerminalTrafficLightDot';
-import { useTerminalTrafficLightsEscape } from './use-terminal-traffic-lights-escape';
+} from './utils/terminal-traffic-light-constants';
+import { TRAFFIC_LIGHT_DOT_DEFINITIONS } from './components/TerminalTrafficLightDefinitions';
+import { TerminalFlyingTrafficLights } from './components/TerminalFlyingTrafficLights';
+import { TerminalTrafficLightDot } from './components/TerminalTrafficLightDot';
+import { useTerminalTrafficLightsEscape } from './hooks/use-terminal-traffic-lights-escape';
 
 const TrafficLightsContainer = styled.div<{ $horizontalInset: number }>`
   align-items: center;

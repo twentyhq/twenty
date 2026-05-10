@@ -17,7 +17,7 @@ export const FOOTER_DATA: FooterDataType = {
         { label: msg`Partners`, href: '/partners', external: false },
         {
           label: msg`Why Twenty`,
-          href: '/resources/why-twenty',
+          href: '/why-twenty',
           external: false,
         },
         { label: msg`Articles`, href: '/articles', external: false },

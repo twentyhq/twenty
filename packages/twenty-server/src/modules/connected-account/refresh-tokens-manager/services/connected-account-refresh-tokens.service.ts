@@ -144,6 +144,7 @@ export class ConnectedAccountRefreshTokensService {
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:
+      case ConnectedAccountProvider.EMAIL_GROUP:
         return true;
       default:
         return assertUnreachable(
@@ -176,6 +177,7 @@ export class ConnectedAccountRefreshTokensService {
         case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         case ConnectedAccountProvider.OIDC:
         case ConnectedAccountProvider.SAML:
+        case ConnectedAccountProvider.EMAIL_GROUP:
           throw new ConnectedAccountRefreshAccessTokenException(
             `Token refresh is not supported for ${connectedAccount.provider} provider for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
             ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED,

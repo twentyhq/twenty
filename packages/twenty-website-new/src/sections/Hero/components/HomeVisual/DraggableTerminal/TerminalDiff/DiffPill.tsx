@@ -1,7 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { TERMINAL_TOKENS } from '../terminalTokens';
+import { TERMINAL_TOKENS } from '../utils/terminal-tokens';
 
 type DiffPillProps = {
   added: number;

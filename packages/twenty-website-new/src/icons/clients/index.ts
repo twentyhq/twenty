@@ -1,18 +1,18 @@
 import type { ComponentType } from 'react';
-import { ActEducationIcon } from './act-education';
+import { ActEducationIcon } from './ActEducation';
 import type { ClientIconProps } from './client-icon-props';
-import { AlternativePartnersIcon } from './alternative-partners';
-import { ElevateConsultingIcon } from './elevate-consulting';
-import { NetZeroIcon } from './netzero';
-import { NineDotsIcon } from './nine-dots';
-import { W3villaIcon } from './w3villa';
+import { AlternativePartnersIcon } from './AlternativePartners';
+import { ElevateConsultingIcon } from './ElevateConsulting';
+import { NetZeroIcon } from './Netzero';
+import { NineDotsIcon } from './NineDots';
+import { W3villaIcon } from './W3Villa';
 
-export { ActEducationIcon } from './act-education';
-export { AlternativePartnersIcon } from './alternative-partners';
-export { ElevateConsultingIcon } from './elevate-consulting';
-export { NetZeroIcon } from './netzero';
-export { NineDotsIcon } from './nine-dots';
-export { W3villaIcon } from './w3villa';
+export { ActEducationIcon } from './ActEducation';
+export { AlternativePartnersIcon } from './AlternativePartners';
+export { ElevateConsultingIcon } from './ElevateConsulting';
+export { NetZeroIcon } from './Netzero';
+export { NineDotsIcon } from './NineDots';
+export { W3villaIcon } from './W3Villa';
 export type { ClientIconProps } from './client-icon-props';
 
 export const CLIENT_ICONS: Record<string, ComponentType<ClientIconProps>> = {

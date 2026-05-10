@@ -1,6 +1,6 @@
 'use client';
 
-import { TalkToUsButton } from '@/lib/contact-cal';
+import { TalkToUsButton } from '@/sections/ContactCal';
 import { msg } from '@lingui/core/macro';
 
 import { BecomePartnerButton } from './BecomePartnerButton';

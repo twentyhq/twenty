@@ -1,8 +1,6 @@
 import type { WorkflowNodeDefinition } from './workflow-page-data';
-import {
-  getWorkflowEdgePath,
-  getWorkflowNodeById,
-} from './workflow-page-geometry';
+import { getWorkflowNodeById } from './get-workflow-node-by-id';
+import { getWorkflowEdgePath } from './workflow-page-geometry';
 import { IconPlug } from '@tabler/icons-react';
 
 const nodes: WorkflowNodeDefinition[] = [

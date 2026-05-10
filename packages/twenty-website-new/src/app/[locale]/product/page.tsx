@@ -1,14 +1,15 @@
 import { msg } from '@lingui/core/macro';
-import { FAQ_DATA } from '@/sections/Faq/data';
-import { MENU_DATA } from '@/sections/Menu/data';
-import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
-import { TalkToUsButton } from '@/lib/contact-cal';
+import type { AppLocale } from 'twenty-shared/translations';
+import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
+import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
+import { TalkToUsButton } from '@/sections/ContactCal';
 import { DEMO_DATA } from '@/app/[locale]/product/demo.data';
-import { FEATURE_DATA } from '@/app/[locale]/product/feature.data';
-import { HERO_COPY } from '@/app/[locale]/product/hero.data';
-import { STEPPER_DATA } from '@/app/[locale]/product/stepper.data';
-import { TABS_DATA } from '@/app/[locale]/product/tabs.data';
-import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/[locale]/product/three-cards.data';
+import {
+  FEATURE_MASK,
+  FEATURE_TILES,
+} from '@/app/[locale]/product/feature.data';
+import { TABS } from '@/app/[locale]/product/tabs.data';
+import { ILLUSTRATION_CARDS } from '@/app/[locale]/product/three-cards.data';
 import {
   Body,
   Eyebrow,
@@ -17,24 +18,28 @@ import {
   LinkButton,
 } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
 import {
   getRouteI18n,
   type LocaleRouteParams,
-} from '@/lib/i18n/get-route-i18n';
+} from '@/lib/i18n/utils/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Faq } from '@/sections/Faq/components';
-import { Feature } from '@/sections/Feature/components';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
-import { Demo } from '@/sections/Demo/components';
-import { ProductStepper } from '@/sections/ProductStepper/components';
-import { Tabs } from '@/sections/Tabs/components';
-import { ThreeCards } from '@/sections/ThreeCards/components';
-import { TrustedBy } from '@/sections/TrustedBy/components';
+import { Feature } from '@/sections/Feature';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import { Demo } from '@/sections/Demo';
+import {
+  ProductStepper,
+  type ProductStepperStepType,
+} from '@/sections/ProductStepper';
+import { Tabs } from '@/sections/Tabs';
+import { ThreeCards } from '@/sections/ThreeCards';
 import { theme } from '@/theme';
-import { buildRouteMetadata } from '@/lib/seo';
+import {
+  buildBreadcrumbListJsonLd,
+  buildRouteMetadata,
+  JsonLd,
+} from '@/lib/seo';
 
 export const generateMetadata = buildRouteMetadata('product');
 
@@ -47,16 +52,55 @@ export default async function ProductPage({ params }: ProductPageProps) {
     getRouteI18n(params),
     fetchCommunityStats(),
   ]);
-  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
+
+  const PRODUCT_STEPS: ProductStepperStepType[] = [
+    {
+      icon: 'users',
+      heading: (
+        <HeadingPart fontFamily="sans">{i18n._(msg`Data model`)}</HeadingPart>
+      ),
+      body: msg`Add objects and fields`,
+      image: {
+        src: '/images/product/stepper/step-one.webp',
+        alt: 'Twenty data model: add objects and fields',
+      },
+    },
+    {
+      icon: 'check',
+      heading: (
+        <HeadingPart fontFamily="sans">{i18n._(msg`Automation`)}</HeadingPart>
+      ),
+      body: msg`Create a workflow`,
+      image: {
+        src: '/images/product/stepper/step-two.webp',
+        alt: 'Twenty automation: create a workflow',
+      },
+    },
+    {
+      icon: 'eye',
+      heading: (
+        <HeadingPart fontFamily="sans">{i18n._(msg`Layout`)}</HeadingPart>
+      ),
+      body: msg`Tailor record pages, menus, and views`,
+      image: {
+        src: '/images/product/stepper/step-three.webp',
+        alt: 'Twenty layout: record pages, menus, and views',
+      },
+    },
+  ];
 
   return (
     <>
-      {/*
-       * Above-the-fold hero scene. Preload kicks off the GLB fetch in
-       * parallel with the JS chunk download, so the model is already in
-       * the browser cache by the time Three.js asks for it.
-       */}
+      <JsonLd
+        data={buildBreadcrumbListJsonLd(
+          [
+            { name: 'Home', path: '/' },
+            { name: 'Product', path: '/product' },
+          ],
+          i18n.locale as AppLocale,
+        )}
+      />
       <link
         as="fetch"
         href="/illustrations/product/hero/hero.glb"
@@ -74,160 +118,132 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
-      <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
+      <Hero.Root scheme="light">
         <Hero.Heading page={Pages.Product}>
           <HeadingPart fontFamily="serif">
-            {renderText(msg`A CRM for teams`)}
+            {i18n._(msg`A CRM for teams`)}
           </HeadingPart>
           <br />
-          <HeadingPart fontFamily="serif">
-            {renderText(msg`that`)}
-          </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">
-            {renderText(msg`moves fast`)}
-          </HeadingPart>
+          <HeadingPart fontFamily="serif">{i18n._(msg`that`)}</HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">{i18n._(msg`moves fast`)}</HeadingPart>
         </Hero.Heading>
-        <Hero.Body
-          body={{ text: HERO_COPY.body }}
-          page={Pages.Product}
-          renderText={renderText}
-        />
+        <Hero.Body page={Pages.Product}>
+          {i18n._(
+            msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
+          )}
+        </Hero.Body>
         <Hero.Cta>
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label={renderText(msg`Get started`)}
+            label={i18n._(msg`Get started`)}
             variant="contained"
           />
         </Hero.Cta>
         <Hero.ProductVisual />
       </Hero.Root>
 
-      <TrustedBy.Root>
-        <TrustedBy.Separator
-          renderText={renderText}
-          separator={TRUSTED_BY_DATA.separator}
-        />
-        <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
-        <TrustedBy.ClientCount
-          label={TRUSTED_BY_DATA.clientCountLabel.text}
-          renderText={renderText}
-        />
-      </TrustedBy.Root>
+      <TrustedBy.Root
+        separator={i18n._(msg`trusted by`)}
+        logos={TRUSTED_BY_LOGOS}
+        clientCount={i18n._(msg`+10k others`)}
+      />
 
       <Tabs.Root>
-        <Eyebrow
-          colorScheme="secondary"
-          heading={TABS_DATA.eyebrow.heading}
-          renderText={renderText}
-        />
+        <Eyebrow colorScheme="secondary">
+          <HeadingPart fontFamily="sans">
+            {i18n._(msg`AI & Automation`)}
+          </HeadingPart>
+        </Eyebrow>
         <Heading size="lg" weight="light">
           <HeadingPart fontFamily="serif">
-            {renderText(msg`AI that actually`)}
+            {i18n._(msg`AI that actually`)}
           </HeadingPart>
           <br />
           <HeadingPart fontFamily="serif">
-            {renderText(msg`helps you`)}
+            {i18n._(msg`helps you`)}
           </HeadingPart>{' '}
           <HeadingPart fontFamily="sans">
-            {renderText(msg`work faster`)}
+            {i18n._(msg`work faster`)}
           </HeadingPart>
         </Heading>
-        <Body
-          body={{ text: msg`The AI understands your CRM and takes action.` }}
-          renderText={renderText}
-          size="sm"
-        />
-        <Tabs.TabGroup tabs={TABS_DATA.tabs} />
+        <Body size="sm">
+          {i18n._(msg`The AI understands your CRM and takes action.`)}
+        </Body>
+        <Tabs.TabGroup tabs={TABS} />
       </Tabs.Root>
 
-      <Feature.Root backgroundColor={theme.colors.primary.background[100]}>
+      <Feature.Root scheme="light">
         <Feature.Intro align="center" page={Pages.Product}>
-          <Eyebrow
-            colorScheme="primary"
-            heading={FEATURE_DATA.eyebrow.heading}
-            renderText={renderText}
-          />
+          <Eyebrow>
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Core Features`)}
+            </HeadingPart>
+          </Eyebrow>
           <Heading size="lg" weight="light">
             <HeadingPart fontFamily="serif">
-              {renderText(msg`Everything you need,`)}
+              {i18n._(msg`Everything you need,`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderText(msg`out of the box`)}
+              {i18n._(msg`out of the box`)}
             </HeadingPart>
           </Heading>
         </Feature.Intro>
-        <Feature.Tiles
-          mask={FEATURE_DATA.mask}
-          renderText={renderText}
-          tiles={FEATURE_DATA.tiles}
-        />
+        <Feature.Tiles mask={FEATURE_MASK} tiles={FEATURE_TILES} />
       </Feature.Root>
 
-      <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
+      <ThreeCards.Root scheme="light">
         <ThreeCards.Intro page={Pages.Product} align="left">
-          <Eyebrow
-            colorScheme="primary"
-            heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
-            renderText={renderText}
-          />
+          <Eyebrow>
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Stop settling for trade-offs.`)}
+            </HeadingPart>
+          </Eyebrow>
           <Heading size="lg" weight="light">
             <HeadingPart fontFamily="serif">
-              {renderText(msg`A modern CRM with`)}
+              {i18n._(msg`A modern CRM with`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderText(msg`an intuitive interface`)}
+              {i18n._(msg`an intuitive interface`)}
             </HeadingPart>
           </Heading>
-          {THREE_CARDS_ILLUSTRATION_DATA.body && (
-            <Body
-              body={THREE_CARDS_ILLUSTRATION_DATA.body}
-              renderText={renderText}
-              size="sm"
-            />
-          )}
         </ThreeCards.Intro>
-        <ThreeCards.IllustrationCards
-          illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
-        />
+        <ThreeCards.IllustrationCards illustrationCards={ILLUSTRATION_CARDS} />
       </ThreeCards.Root>
 
       <ProductStepper.Flow
-        body={STEPPER_DATA.body}
-        eyebrow={STEPPER_DATA.eyebrow}
-        steps={STEPPER_DATA.steps}
+        body={i18n._(
+          msg`Need a quick change? Skip the engineering ticket. Customize your workspace in minutes.`,
+        )}
+        eyebrow={i18n._(msg`Customization`)}
+        steps={PRODUCT_STEPS}
       >
         <HeadingPart fontFamily="serif">
-          {renderText(msg`Go the extra mile`)}
+          {i18n._(msg`Go the extra mile`)}
         </HeadingPart>{' '}
-        <HeadingPart fontFamily="sans">
-          {renderText(msg`with no-code`)}
-        </HeadingPart>
+        <HeadingPart fontFamily="sans">{i18n._(msg`with no-code`)}</HeadingPart>
       </ProductStepper.Flow>
 
       <Demo.Root>
-        <Eyebrow
-          colorScheme="primary"
-          heading={{
-            text: msg`Try it live`,
-            fontFamily: 'sans',
-          }}
-          renderText={renderText}
-        />
+        <Eyebrow>
+          <HeadingPart fontFamily="sans">
+            {i18n._(msg`Try it live`)}
+          </HeadingPart>
+        </Eyebrow>
         <Heading size="lg" weight="light">
           <HeadingPart fontFamily="serif">
-            {renderText(msg`A demo worth a`)}
+            {i18n._(msg`A demo worth a`)}
           </HeadingPart>
           <br />
           <HeadingPart fontFamily="sans">
-            {renderText(msg`thousand words`)}
+            {i18n._(msg`thousand words`)}
           </HeadingPart>
         </Heading>
         <Demo.Cta>
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label={renderText(msg`Try Twenty Cloud`)}
+            label={i18n._(msg`Try Twenty Cloud`)}
             variant="contained"
           />
         </Demo.Cta>
@@ -236,25 +252,25 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow
-            colorScheme="secondary"
-            heading={FAQ_DATA.eyebrow.heading}
-            renderText={renderText}
-          />
+          <Eyebrow colorScheme="secondary">
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Any Questions?`)}
+            </HeadingPart>
+          </Eyebrow>
           <Faq.Heading>
             <HeadingPart fontFamily="serif">
-              {renderText(msg`Stop fighting custom.`)}
+              {i18n._(msg`Stop fighting custom.`)}
             </HeadingPart>
             <br />
             <HeadingPart fontFamily="sans">
-              {renderText(msg`Start building, with Twenty`)}
+              {i18n._(msg`Start building, with Twenty`)}
             </HeadingPart>
           </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={renderText(msg`Get started`)}
+              label={i18n._(msg`Get started`)}
               variant="contained"
             />
             <TalkToUsButton
@@ -264,7 +280,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             />
           </Faq.Cta>
         </Faq.Intro>
-        <Faq.Items questions={FAQ_DATA.questions} />
+        <Faq.Items questions={FAQ_QUESTIONS} />
       </Faq.Root>
     </>
   );

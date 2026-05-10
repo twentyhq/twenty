@@ -1,10 +1,22 @@
 import { Container } from '@/design-system/components';
-import { theme } from '@/theme';
+import { theme, type Scheme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
 const StyledSection = styled.section`
   width: 100%;
+
+  &[data-scheme='light'] {
+    background-color: var(--color-white);
+  }
+
+  &[data-scheme='muted'] {
+    background-color: var(--color-neutral);
+  }
+
+  &[data-scheme='dark'] {
+    background-color: var(--color-black);
+  }
 `;
 
 const StyledContainer = styled(Container)<{ compactTop: boolean }>`
@@ -28,18 +40,23 @@ const StyledContainer = styled(Container)<{ compactTop: boolean }>`
 `;
 
 type RootProps = {
-  backgroundColor: string;
+  backgroundColor?: string;
   children: ReactNode;
   compactTop?: boolean;
+  scheme?: Scheme;
 };
 
 export function Root({
   backgroundColor,
   children,
   compactTop = false,
+  scheme,
 }: RootProps) {
   return (
-    <StyledSection style={{ backgroundColor }}>
+    <StyledSection
+      data-scheme={scheme}
+      style={scheme ? undefined : { backgroundColor }}
+    >
       <StyledContainer compactTop={compactTop}>{children}</StyledContainer>
     </StyledSection>
   );

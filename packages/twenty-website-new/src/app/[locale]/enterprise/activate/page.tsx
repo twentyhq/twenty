@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { MENU_DATA } from '@/sections/Menu/data';
 import { EnterpriseActivateClient } from '@/app/[locale]/enterprise/activate/EnterpriseActivateClient';
 import {
   Body,
@@ -8,25 +7,20 @@ import {
   HeadingPart,
 } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
 import {
   getRouteI18n,
   type LocaleRouteParams,
-} from '@/lib/i18n/get-route-i18n';
+} from '@/lib/i18n/utils/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
 import { Suspense } from 'react';
 import { styled } from '@linaria/react';
 
 export const generateMetadata = buildRouteMetadata('enterpriseActivate');
-
-const ENTERPRISE_ACTIVATE_BODY = {
-  text: msg`Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance.`,
-};
 
 const ActivatePageContent = styled.section`
   background-color: ${theme.colors.primary.background[100]};
@@ -51,7 +45,9 @@ function EnterpriseActivateFallback({
   loadingLabel,
 }: EnterpriseActivateFallbackProps) {
   return (
-    <Body body={{ text: loadingLabel }} size="sm" variant="body-paragraph" />
+    <Body size="sm" variant="body-paragraph">
+      {loadingLabel}
+    </Body>
   );
 }
 
@@ -66,7 +62,6 @@ export default async function EnterpriseActivatePage({
     getRouteI18n(params),
     fetchCommunityStats(),
   ]);
-  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
@@ -83,28 +78,23 @@ export default async function EnterpriseActivatePage({
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
-      <Hero.Root
-        backgroundColor={theme.colors.secondary.background[5]}
-        colorScheme="primary"
-      >
-        <Eyebrow
-          colorScheme="primary"
-          heading={{ text: msg`Self-hosting`, fontFamily: 'sans' }}
-          renderText={renderText}
-        />
+      <Hero.Root scheme="muted">
+        <Eyebrow>
+          <HeadingPart fontFamily="sans">
+            {i18n._(msg`Self-hosting`)}
+          </HeadingPart>
+        </Eyebrow>
         <Hero.Heading page={Pages.Pricing}>
           <HeadingPart fontFamily="serif">
-            {renderText(msg`Enterprise`)}
+            {i18n._(msg`Enterprise`)}
           </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">
-            {renderText(msg`activation`)}
-          </HeadingPart>
+          <HeadingPart fontFamily="sans">{i18n._(msg`activation`)}</HeadingPart>
         </Hero.Heading>
-        <Hero.Body
-          body={ENTERPRISE_ACTIVATE_BODY}
-          page={Pages.Pricing}
-          renderText={renderText}
-        />
+        <Hero.Body page={Pages.Pricing}>
+          {i18n._(
+            msg`Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance.`,
+          )}
+        </Hero.Body>
       </Hero.Root>
 
       <ActivatePageContent>
@@ -113,7 +103,7 @@ export default async function EnterpriseActivatePage({
             <Suspense
               fallback={
                 <EnterpriseActivateFallback
-                  loadingLabel={renderText(msg`Loading activation…`)}
+                  loadingLabel={i18n._(msg`Loading activation…`)}
                 />
               }
             >

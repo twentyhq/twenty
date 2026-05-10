@@ -1,4 +1,4 @@
-import { VISUAL_TOKENS } from '../../Shared/homeVisualTokens';
+import { VISUAL_TOKENS } from '../../Shared/utils/home-visual-tokens';
 
 export const TABLE_PAGE_FONT = VISUAL_TOKENS.font.family;
 export const TABLE_PAGE_CELL_HORIZONTAL_PADDING = 8;

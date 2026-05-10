@@ -1,37 +1,24 @@
 import { msg } from '@lingui/core/macro';
-import { FAQ_DATA } from '@/sections/Faq/data';
-import { MENU_DATA } from '@/sections/Menu/data';
-import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
-import { TalkToUsButton } from '@/lib/contact-cal';
+import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
+import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
+import { TalkToUsButton } from '@/sections/ContactCal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { Eyebrow, HeadingPart, LinkButton } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
 import {
   getRouteI18n,
   type LocaleRouteParams,
-} from '@/lib/i18n/get-route-i18n';
+} from '@/lib/i18n/utils/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
-import { Faq } from '@/sections/Faq/components';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
-import { Signoff } from '@/sections/Signoff/components';
-import { TrustedBy } from '@/sections/TrustedBy/components';
-import { theme } from '@/theme';
+import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import { Signoff } from '@/sections/Signoff';
 import { buildRouteMetadata } from '@/lib/seo';
 import { css } from '@linaria/core';
 
 export const generateMetadata = buildRouteMetadata('customers');
-
-const HERO_BODY = {
-  text: msg`Real stories from real teams about how they shaped Twenty to fit their workflow and accelerated their growth.`,
-};
-
-const SIGNOFF_BODY = {
-  text: msg`Join the teams that chose to own their CRM.\nStart building with Twenty today.`,
-};
 
 const CUSTOMERS_TOP_BACKGROUND_COLOR = '#F4F4F4';
 
@@ -72,7 +59,6 @@ export default async function CaseStudiesCatalogPage({
     getRouteI18n(params),
     fetchCommunityStats(),
   ]);
-  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
@@ -90,71 +76,56 @@ export default async function CaseStudiesCatalogPage({
       </Menu.Root>
 
       <div className={pageRevealClassName}>
-        <Hero.Root backgroundColor={CUSTOMERS_TOP_BACKGROUND_COLOR}>
+        <Hero.Root scheme="muted">
           <Hero.Heading page={Pages.CaseStudies}>
             <HeadingPart fontFamily="serif">
-              {renderText(msg`See how teams`)}
+              {i18n._(msg`See how teams`)}
             </HeadingPart>
             <br />
             <HeadingPart fontFamily="serif">
-              {renderText(msg`build`)}
+              {i18n._(msg`build`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderText(msg`on Twenty`)}
+              {i18n._(msg`on Twenty`)}
             </HeadingPart>
           </Hero.Heading>
-          <Hero.Body
-            body={HERO_BODY}
-            page={Pages.CaseStudies}
-            renderText={renderText}
-          />
+          <Hero.Body page={Pages.CaseStudies}>
+            {i18n._(
+              msg`Real stories from real teams about how they shaped Twenty to fit their workflow and accelerated their growth.`,
+            )}
+          </Hero.Body>
         </Hero.Root>
         <TrustedBy.Root
           cardBackgroundColor={CUSTOMERS_TOP_BACKGROUND_COLOR}
           compactBottom
-        >
-          <TrustedBy.Separator
-            renderText={renderText}
-            separator={TRUSTED_BY_DATA.separator}
-          />
-          <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
-          <TrustedBy.ClientCount
-            label={TRUSTED_BY_DATA.clientCountLabel.text}
-            renderText={renderText}
-          />
-        </TrustedBy.Root>
+          separator={i18n._(msg`trusted by`)}
+          logos={TRUSTED_BY_LOGOS}
+          clientCount={i18n._(msg`+10k others`)}
+        />
       </div>
 
-      <CaseStudyCatalog.Grid
-        compactTop
-        entries={CASE_STUDY_CATALOG_ENTRIES}
-        renderText={renderText}
-      />
+      <CaseStudyCatalog.Grid compactTop entries={CASE_STUDY_CATALOG_ENTRIES} />
 
-      <Signoff.Root
-        backgroundColor={theme.colors.primary.background[100]}
-        color={theme.colors.primary.text[100]}
-        page={Pages.Partners}
-      >
+      <Signoff.Root scheme="light" page={Pages.Partners}>
         <Signoff.Heading page={Pages.Partners}>
           <HeadingPart fontFamily="serif">
-            {renderText(msg`Ready to build`)}
+            {i18n._(msg`Ready to build`)}
           </HeadingPart>
           <br />
           <HeadingPart fontFamily="sans">
-            {renderText(msg`your own story?`)}
+            {i18n._(msg`your own story?`)}
           </HeadingPart>
         </Signoff.Heading>
-        <Signoff.Body
-          body={SIGNOFF_BODY}
-          page={Pages.Partners}
-          renderText={renderText}
-        />
+        <Signoff.Body page={Pages.Partners}>
+          {i18n._(
+            msg`Join the teams that chose to own their CRM.\nStart building with Twenty today.`,
+          )}
+        </Signoff.Body>
         <Signoff.Cta>
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label={renderText(msg`Get started`)}
+            label={i18n._(msg`Get started`)}
             variant="contained"
           />
           <TalkToUsButton
@@ -167,25 +138,25 @@ export default async function CaseStudiesCatalogPage({
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow
-            colorScheme="secondary"
-            heading={FAQ_DATA.eyebrow.heading}
-            renderText={renderText}
-          />
+          <Eyebrow colorScheme="secondary">
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Any Questions?`)}
+            </HeadingPart>
+          </Eyebrow>
           <Faq.Heading>
             <HeadingPart fontFamily="serif">
-              {renderText(msg`Stop fighting custom.`)}
+              {i18n._(msg`Stop fighting custom.`)}
             </HeadingPart>
             <br />
             <HeadingPart fontFamily="sans">
-              {renderText(msg`Start building, with Twenty`)}
+              {i18n._(msg`Start building, with Twenty`)}
             </HeadingPart>
           </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={renderText(msg`Get started`)}
+              label={i18n._(msg`Get started`)}
               variant="contained"
             />
             <TalkToUsButton
@@ -195,7 +166,7 @@ export default async function CaseStudiesCatalogPage({
             />
           </Faq.Cta>
         </Faq.Intro>
-        <Faq.Items questions={FAQ_DATA.questions} />
+        <Faq.Items questions={FAQ_QUESTIONS} />
       </Faq.Root>
     </>
   );
