@@ -57,8 +57,8 @@ export class SamlAuthStrategy extends PassportStrategy(
                   callbackUrl:
                     this.ssoService.buildCallbackUrl(identityProvider),
                   idpCert: sanitizedCertificate,
-                  wantAssertionsSigned: true,
-                  wantAuthnResponseSigned: false,
+                  wantAssertionsSigned: false,
+                  wantAuthnResponseSigned: true,
                   disableRequestedAuthnContext: true,
                   signatureAlgorithm: 'sha256',
                 };

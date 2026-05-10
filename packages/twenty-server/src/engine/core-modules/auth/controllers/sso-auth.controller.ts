@@ -65,7 +65,7 @@ export class SSOAuthController {
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   async generateMetadata(@Req() req: any): Promise<string | void> {
     return generateServiceProviderMetadata({
-      wantAssertionsSigned: true,
+      wantAssertionsSigned: false,
       issuer: this.ssoService.buildIssuerURL({
         id: req.params.identityProviderId,
         type: IdentityProviderType.SAML,
