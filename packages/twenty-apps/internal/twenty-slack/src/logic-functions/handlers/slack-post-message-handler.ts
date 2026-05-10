@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 import { createSlackWebClient } from 'src/utils/create-slack-web-client';
-import { getSlackErrorMessage } from 'src/utils/get-slack-error-message';
 import { validateSlackMessageText } from 'src/utils/slack-text';
 
 export const slackPostMessageHandler = async (
@@ -62,10 +62,6 @@ export const slackPostMessageHandler = async (
       channel,
     };
   } catch (error) {
-    return {
-      success: false,
-      message: 'Failed to post Slack message',
-      error: getSlackErrorMessage(error),
-    };
+    return slackToolFailure('Failed to post Slack message', error);
   }
 };

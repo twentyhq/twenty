@@ -1,8 +1,8 @@
 import { type SlackDeleteMessageInput } from 'src/logic-functions/types/slack-delete-message-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 import { createSlackWebClient } from 'src/utils/create-slack-web-client';
-import { getSlackErrorMessage } from 'src/utils/get-slack-error-message';
 
 export const slackDeleteMessageHandler = async (
   parameters: SlackDeleteMessageInput,
@@ -32,10 +32,6 @@ export const slackDeleteMessageHandler = async (
       channel: parameters.slack_channel_id,
     };
   } catch (error) {
-    return {
-      success: false,
-      message: 'Failed to delete Slack message',
-      error: getSlackErrorMessage(error),
-    };
+    return slackToolFailure('Failed to delete Slack message', error);
   }
 };

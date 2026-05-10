@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { type SlackUpdateMessageInput } from 'src/logic-functions/types/slack-update-message-input.type';
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 import { createSlackWebClient } from 'src/utils/create-slack-web-client';
-import { getSlackErrorMessage } from 'src/utils/get-slack-error-message';
 import { validateSlackMessageText } from 'src/utils/slack-text';
 
 export const slackUpdateMessageHandler = async (
@@ -54,10 +54,6 @@ export const slackUpdateMessageHandler = async (
       channel: parameters.slack_channel_id,
     };
   } catch (error) {
-    return {
-      success: false,
-      message: 'Failed to update Slack message',
-      error: getSlackErrorMessage(error),
-    };
+    return slackToolFailure('Failed to update Slack message', error);
   }
 };
