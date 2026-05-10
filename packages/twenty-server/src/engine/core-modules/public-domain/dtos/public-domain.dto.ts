@@ -15,6 +15,9 @@ export class PublicDomainDTO {
   @Field({ nullable: false })
   isValidated: boolean;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId: string | null;
+
   @Field()
   createdAt: Date;
 }

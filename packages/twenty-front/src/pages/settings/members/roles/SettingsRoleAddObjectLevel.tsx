@@ -54,6 +54,14 @@ export const SettingsRoleAddObjectLevel = () => {
           },
         ]
       : [
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: t`Members`,
+            href: getSettingsPath(SettingsPath.WorkspaceMembersPage),
+          },
           { children: t`Roles`, href: getSettingsPath(SettingsPath.Roles) },
           {
             children: settingsDraftRole.label ?? '',

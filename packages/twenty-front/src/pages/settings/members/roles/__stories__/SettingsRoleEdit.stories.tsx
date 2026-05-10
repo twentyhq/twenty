@@ -6,14 +6,14 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsRoleEdit } from '~/pages/settings/roles/SettingsRoleEdit';
+import { SettingsRoleEdit } from '~/pages/settings/members/roles/SettingsRoleEdit';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Roles/SettingsRoleEdit',
   component: SettingsRoleEdit,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/roles/:roleId',
+    routePath: '/settings/members/roles/:roleId',
     routeParams: {
       ':roleId': '1',
     },

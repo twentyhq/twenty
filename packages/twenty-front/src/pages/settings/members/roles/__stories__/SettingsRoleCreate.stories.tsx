@@ -6,14 +6,14 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsRoleCreate } from '~/pages/settings/roles/SettingsRoleCreate';
+import { SettingsRoleCreate } from '~/pages/settings/members/roles/SettingsRoleCreate';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Roles/SettingsRoleCreate',
   component: SettingsRoleCreate,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/roles/create',
+    routePath: '/settings/members/roles/create',
   },
   parameters: {
     msw: graphqlMocks,
