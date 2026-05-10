@@ -31,11 +31,14 @@ export const resolveRolePermissionConfig = ({
     return { intersectionOf: [roleId] };
   }
 
-  if (
-    isApplicationAuthContext(authContext) &&
-    isDefined(authContext.application.defaultRoleId)
-  ) {
-    return { intersectionOf: [authContext.application.defaultRoleId] };
+  if (isApplicationAuthContext(authContext)) {
+    const roleId =
+      authContext.application.defaultRoleId ??
+      authContext.workspace.defaultRoleId;
+
+    if (isDefined(roleId)) {
+      return { intersectionOf: [roleId] };
+    }
   }
 
   if (isUserAuthContext(authContext)) {
