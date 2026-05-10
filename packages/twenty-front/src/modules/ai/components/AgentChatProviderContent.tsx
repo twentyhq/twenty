@@ -2,7 +2,6 @@ import { AgentChatStreamSubscriptionEffect } from '@/ai/components/AgentChatStre
 import { AgentChatMessagesFetchEffect } from '@/ai/components/AgentChatMessagesFetchEffect';
 import { AgentChatSessionStartTimeEffect } from '@/ai/components/AgentChatSessionStartTimeEffect';
 
-import { AgentChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
 import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
 import { AgentChatThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
@@ -23,7 +22,6 @@ export const AgentChatProviderContent = ({
         <AgentChatStreamSubscriptionEffect />
         <AgentChatStreamingPartsDiffSyncEffect />
         <AgentChatSessionStartTimeEffect />
-        <AgentChatStreamingAutoScrollEffect />
         {children}
       </AgentChatComponentInstanceContext.Provider>
     </Suspense>

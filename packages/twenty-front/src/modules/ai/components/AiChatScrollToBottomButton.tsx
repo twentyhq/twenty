@@ -1,6 +1,3 @@
-import { agentChatIsScrolledToBottomSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomSelector';
-import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { IconArrowDown } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -33,16 +30,17 @@ const StyledScrollToBottomButton = styled.button<{ isVisible: boolean }>`
   }
 `;
 
-export const AiChatScrollToBottomButton = () => {
-  const agentChatIsScrolledToBottom = useAtomStateValue(
-    agentChatIsScrolledToBottomSelector,
-  );
+type AiChatScrollToBottomButtonProps = {
+  isVisible: boolean;
+  onClick: () => void;
+};
 
+export const AiChatScrollToBottomButton = ({
+  isVisible,
+  onClick,
+}: AiChatScrollToBottomButtonProps) => {
   return (
-    <StyledScrollToBottomButton
-      isVisible={!agentChatIsScrolledToBottom}
-      onClick={scrollAiChatToBottom}
-    >
+    <StyledScrollToBottomButton isVisible={isVisible} onClick={onClick}>
       <IconArrowDown size={16} />
     </StyledScrollToBottomButton>
   );

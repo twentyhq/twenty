@@ -2,26 +2,38 @@ import { AiChatErrorUnderMessageList } from '@/ai/components/AiChatErrorUnderMes
 import { AiChatLastMessageWithStreamingState } from '@/ai/components/AiChatLastMessageWithStreamingState';
 import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
 import { AiChatScrollToBottomButton } from '@/ai/components/AiChatScrollToBottomButton';
-import { AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
-import { AgentChatScrollToBottomOnMountLayoutEffect } from '@/ai/components/AgentChatScrollToBottomOnMountLayoutEffect';
-import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
-import { agentChatIsInitialScrollPendingOnThreadChangeState } from '@/ai/states/agentChatIsInitialScrollPendingOnThreadChangeState';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledScrollWrapperContainer = styled.div`
+const SCROLL_BOTTOM_THRESHOLD_PX = 100;
+
+const StyledMessageListContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+  width: calc(100% - 24px);
+`;
+
+const StyledScrollContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[3]};
-  position: relative;
-  width: calc(100% - 24px);
 `;
 
 export const AiChatTabMessageList = () => {
@@ -29,30 +41,70 @@ export const AiChatTabMessageList = () => {
     agentChatHasMessageComponentSelector,
   );
 
-  const agentChatIsInitialScrollPendingOnThreadChange = useAtomStateValue(
-    agentChatIsInitialScrollPendingOnThreadChangeState,
-  );
-
   if (!agentChatHasMessage) {
     return null;
   }
 
+  return <AiChatTabMessageListContent />;
+};
+
+const AiChatTabMessageListContent = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
+
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+
+  const scrollToBottom = useCallback(() => {
+    const container = containerRef.current;
+    if (container === null) {
+      return;
+    }
+    container.scrollTop = container.scrollHeight;
+  }, []);
+
+  useLayoutEffect(() => {
+    setIsAtBottom(true);
+    scrollToBottom();
+  }, [currentAiChatThread, scrollToBottom]);
+
+  useEffect(() => {
+    const content = contentRef.current;
+    if (content === null) {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      if (isAtBottom) {
+        scrollToBottom();
+      }
+    });
+
+    observer.observe(content);
+    return () => observer.disconnect();
+  }, [isAtBottom, scrollToBottom]);
+
+  const handleScroll = useCallback((event: React.UIEvent<HTMLDivElement>) => {
+    const target = event.currentTarget;
+    const scrollBottom =
+      target.scrollHeight - target.clientHeight - target.scrollTop;
+
+    setIsAtBottom(scrollBottom <= SCROLL_BOTTOM_THRESHOLD_PX);
+  }, []);
+
   return (
-    <StyledScrollWrapperContainer
-      style={{
-        visibility: agentChatIsInitialScrollPendingOnThreadChange
-          ? 'hidden'
-          : 'visible',
-      }}
-    >
-      <ScrollWrapper componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}>
-        <AiChatNonLastMessageIdsList />
-        <AiChatLastMessageWithStreamingState />
-        <AiChatErrorUnderMessageList />
-        <AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
-        <AgentChatScrollToBottomOnMountLayoutEffect />
-      </ScrollWrapper>
-      <AiChatScrollToBottomButton />
-    </StyledScrollWrapperContainer>
+    <StyledMessageListContainer>
+      <StyledScrollContainer ref={containerRef} onScroll={handleScroll}>
+        <div ref={contentRef}>
+          <AiChatNonLastMessageIdsList />
+          <AiChatLastMessageWithStreamingState />
+          <AiChatErrorUnderMessageList />
+        </div>
+      </StyledScrollContainer>
+      <AiChatScrollToBottomButton
+        isVisible={!isAtBottom}
+        onClick={scrollToBottom}
+      />
+    </StyledMessageListContainer>
   );
 };
