@@ -56,10 +56,54 @@ jobs:
 
       - name: Create Tunnel
         id: expose-tunnel
-        uses: codetalkio/expose-tunnel@v1.5.0
-        with:
-          service: bore.pub
-          port: 3000
+        env:
+          CLOUDFLARED_VERSION: '2026.3.0'
+        run: |
+          set -euo pipefail
+
+          # Install cloudflared (pinned for reproducibility)
+          sudo curl -fsSL -o /usr/local/bin/cloudflared \
+            "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-linux-amd64"
+          sudo chmod +x /usr/local/bin/cloudflared
+          cloudflared --version
+
+          # Start an account-less "quick tunnel" pointing at the server container.
+          # Cloudflare prints the assigned https://*.trycloudflare.com URL into the log.
+          log_file="$RUNNER_TEMP/cloudflared.log"
+          : > "$log_file"
+
+          cloudflared tunnel \
+            --url http://localhost:3000 \
+            --no-autoupdate \
+            --logfile "$log_file" \
+            --loglevel info \
+            > "$RUNNER_TEMP/cloudflared.stdout" 2>&1 &
+
+          pid=$!
+          echo "$pid" > "$RUNNER_TEMP/cloudflared.pid"
+          echo "cloudflared PID: $pid"
+
+          # Wait up to 2 minutes for the URL to appear; fail fast if cloudflared exits.
+          url=''
+          for _ in $(seq 1 60); do
+            url=$(grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$log_file" 2>/dev/null | head -n1 || true)
+            [ -n "$url" ] && break
+            if ! kill -0 "$pid" 2>/dev/null; then
+              echo "cloudflared exited before producing a URL"
+              cat "$log_file" || true
+              exit 1
+            fi
+            sleep 2
+          done
+
+          if [ -z "$url" ]; then
+            echo "Timed out waiting for tunnel URL"
+            cat "$log_file" || true
+            exit 1
+          fi
+
+          echo "Tunnel URL: $url"
+          echo "tunnel-url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Start services with correct SERVER_URL
         env:
@@ -134,6 +178,9 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
+          if [ -f "$RUNNER_TEMP/cloudflared.pid" ]; then
+            kill "$(cat "$RUNNER_TEMP/cloudflared.pid")" 2>/dev/null || true
+          fi
           cd packages/twenty-docker/
           docker compose down -v
         working-directory: ./

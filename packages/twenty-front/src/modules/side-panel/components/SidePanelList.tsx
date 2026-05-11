@@ -35,10 +35,6 @@ const StyledInnerList = styled.div`
   }
 `;
 
-const StyledSidePanelList = styled.div`
-  overflow-y: hidden;
-`;
-
 const StyledEmpty = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.light};
@@ -61,7 +57,7 @@ export const SidePanelList = ({
   );
 
   return (
-    <StyledSidePanelList>
+    <>
       <SidePanelDefaultSelectionEffect selectableItemIds={selectableItemIds} />
       <ScrollWrapper componentInstanceId={`scroll-wrapper-side-panel`}>
         <StyledInnerList>
@@ -80,6 +76,6 @@ export const SidePanelList = ({
           </SelectableList>
         </StyledInnerList>
       </ScrollWrapper>
-    </StyledSidePanelList>
+    </>
   );
 };

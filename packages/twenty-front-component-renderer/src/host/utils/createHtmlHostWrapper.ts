@@ -1,4 +1,14 @@
+import {
+  isBoolean,
+  isFunction,
+  isNonEmptyString,
+  isNumber,
+  isObject,
+  isString,
+  isUndefined,
+} from '@sniptt/guards';
 import React from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { EVENT_TO_REACT } from '@/constants/EventToReact';
 import { type SerializedEventData } from '@/constants/SerializedEventData';
@@ -31,7 +41,7 @@ const VOID_ELEMENTS = new Set([
 const parseCssString = (
   styleString: string | undefined,
 ): React.CSSProperties | undefined => {
-  if (!styleString || typeof styleString !== 'string') {
+  if (!isNonEmptyString(styleString)) {
     return styleString as React.CSSProperties | undefined;
   }
 
@@ -60,81 +70,62 @@ const parseCssString = (
 };
 
 const serializeEvent = (event: unknown): SerializedEventData => {
-  if (!event || typeof event !== 'object') {
+  if (!isObject(event)) {
     return { type: 'unknown' };
   }
 
   const domEvent = event as Record<string, unknown>;
   const serialized: SerializedEventData = {
-    type: typeof domEvent.type === 'string' ? domEvent.type : 'unknown',
+    type: isString(domEvent.type) ? domEvent.type : 'unknown',
   };
 
-  if ('altKey' in domEvent) serialized.altKey = domEvent.altKey as boolean;
-  if ('ctrlKey' in domEvent) serialized.ctrlKey = domEvent.ctrlKey as boolean;
-  if ('metaKey' in domEvent) serialized.metaKey = domEvent.metaKey as boolean;
-  if ('shiftKey' in domEvent)
-    serialized.shiftKey = domEvent.shiftKey as boolean;
+  if (isBoolean(domEvent.altKey)) serialized.altKey = domEvent.altKey;
+  if (isBoolean(domEvent.ctrlKey)) serialized.ctrlKey = domEvent.ctrlKey;
+  if (isBoolean(domEvent.metaKey)) serialized.metaKey = domEvent.metaKey;
+  if (isBoolean(domEvent.shiftKey)) serialized.shiftKey = domEvent.shiftKey;
 
-  if ('clientX' in domEvent) serialized.clientX = domEvent.clientX as number;
-  if ('clientY' in domEvent) serialized.clientY = domEvent.clientY as number;
-  if ('pageX' in domEvent) serialized.pageX = domEvent.pageX as number;
-  if ('pageY' in domEvent) serialized.pageY = domEvent.pageY as number;
-  if ('screenX' in domEvent) serialized.screenX = domEvent.screenX as number;
-  if ('screenY' in domEvent) serialized.screenY = domEvent.screenY as number;
-  if ('offsetX' in domEvent) serialized.offsetX = domEvent.offsetX as number;
-  if ('offsetY' in domEvent) serialized.offsetY = domEvent.offsetY as number;
-  if ('movementX' in domEvent)
-    serialized.movementX = domEvent.movementX as number;
-  if ('movementY' in domEvent)
-    serialized.movementY = domEvent.movementY as number;
-  if ('button' in domEvent) serialized.button = domEvent.button as number;
-  if ('buttons' in domEvent) serialized.buttons = domEvent.buttons as number;
+  if (isNumber(domEvent.clientX)) serialized.clientX = domEvent.clientX;
+  if (isNumber(domEvent.clientY)) serialized.clientY = domEvent.clientY;
+  if (isNumber(domEvent.pageX)) serialized.pageX = domEvent.pageX;
+  if (isNumber(domEvent.pageY)) serialized.pageY = domEvent.pageY;
+  if (isNumber(domEvent.screenX)) serialized.screenX = domEvent.screenX;
+  if (isNumber(domEvent.screenY)) serialized.screenY = domEvent.screenY;
+  if (isNumber(domEvent.offsetX)) serialized.offsetX = domEvent.offsetX;
+  if (isNumber(domEvent.offsetY)) serialized.offsetY = domEvent.offsetY;
+  if (isNumber(domEvent.movementX)) serialized.movementX = domEvent.movementX;
+  if (isNumber(domEvent.movementY)) serialized.movementY = domEvent.movementY;
+  if (isNumber(domEvent.button)) serialized.button = domEvent.button;
+  if (isNumber(domEvent.buttons)) serialized.buttons = domEvent.buttons;
 
-  if ('key' in domEvent) serialized.key = domEvent.key as string;
-  if ('code' in domEvent) serialized.code = domEvent.code as string;
-  if ('repeat' in domEvent) serialized.repeat = domEvent.repeat as boolean;
+  if (isString(domEvent.key)) serialized.key = domEvent.key;
+  if (isString(domEvent.code)) serialized.code = domEvent.code;
+  if (isBoolean(domEvent.repeat)) serialized.repeat = domEvent.repeat;
 
-  if ('deltaX' in domEvent) serialized.deltaX = domEvent.deltaX as number;
-  if ('deltaY' in domEvent) serialized.deltaY = domEvent.deltaY as number;
-  if ('deltaZ' in domEvent) serialized.deltaZ = domEvent.deltaZ as number;
-  if ('deltaMode' in domEvent)
-    serialized.deltaMode = domEvent.deltaMode as number;
+  if (isNumber(domEvent.deltaX)) serialized.deltaX = domEvent.deltaX;
+  if (isNumber(domEvent.deltaY)) serialized.deltaY = domEvent.deltaY;
+  if (isNumber(domEvent.deltaZ)) serialized.deltaZ = domEvent.deltaZ;
+  if (isNumber(domEvent.deltaMode)) serialized.deltaMode = domEvent.deltaMode;
 
-  const target = domEvent.target as Record<string, unknown> | undefined;
-  if (target && typeof target === 'object') {
-    if ('value' in target && typeof target.value === 'string') {
-      serialized.value = target.value;
-    }
-    if ('checked' in target && typeof target.checked === 'boolean') {
-      serialized.checked = target.checked;
-    }
-    if ('scrollTop' in target && typeof target.scrollTop === 'number') {
-      serialized.scrollTop = target.scrollTop;
-    }
-    if ('scrollLeft' in target && typeof target.scrollLeft === 'number') {
-      serialized.scrollLeft = target.scrollLeft;
-    }
-    if ('currentTime' in target && typeof target.currentTime === 'number') {
-      serialized.currentTime = target.currentTime;
-    }
-    if ('duration' in target && typeof target.duration === 'number') {
-      serialized.duration = target.duration;
-    }
-    if ('paused' in target && typeof target.paused === 'boolean') {
-      serialized.paused = target.paused;
-    }
-    if ('ended' in target && typeof target.ended === 'boolean') {
-      serialized.ended = target.ended;
-    }
-    if ('volume' in target && typeof target.volume === 'number') {
-      serialized.volume = target.volume;
-    }
-    if ('muted' in target && typeof target.muted === 'boolean') {
-      serialized.muted = target.muted;
-    }
-    if ('playbackRate' in target && typeof target.playbackRate === 'number') {
-      serialized.playbackRate = target.playbackRate;
-    }
+  const target = domEvent.target;
+  if (isObject(target)) {
+    const targetRecord = target as Record<string, unknown>;
+    if (isString(targetRecord.value)) serialized.value = targetRecord.value;
+    if (isBoolean(targetRecord.checked))
+      serialized.checked = targetRecord.checked;
+    if (isNumber(targetRecord.scrollTop))
+      serialized.scrollTop = targetRecord.scrollTop;
+    if (isNumber(targetRecord.scrollLeft))
+      serialized.scrollLeft = targetRecord.scrollLeft;
+    if (isNumber(targetRecord.currentTime))
+      serialized.currentTime = targetRecord.currentTime;
+    if (isNumber(targetRecord.duration))
+      serialized.duration = targetRecord.duration;
+    if (isBoolean(targetRecord.paused)) serialized.paused = targetRecord.paused;
+    if (isBoolean(targetRecord.ended)) serialized.ended = targetRecord.ended;
+    if (isNumber(targetRecord.volume)) serialized.volume = targetRecord.volume;
+    if (isBoolean(targetRecord.muted)) serialized.muted = targetRecord.muted;
+    if (isNumber(targetRecord.playbackRate))
+      serialized.playbackRate = targetRecord.playbackRate;
   }
 
   return serialized;
@@ -150,14 +141,14 @@ const filterProps = <T extends object>(props: T): T => {
   const filtered: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(props)) {
-    if (INTERNAL_PROPS.has(key) || value === undefined) continue;
+    if (INTERNAL_PROPS.has(key) || isUndefined(value)) continue;
 
     if (key === 'style') {
       filtered.style = parseCssString(value as string | undefined);
     } else {
       const normalizedKey = EVENT_NAME_MAP[key.toLowerCase()] || key;
 
-      if (normalizedKey.startsWith('on') && typeof value === 'function') {
+      if (normalizedKey.startsWith('on') && isFunction(value)) {
         filtered[normalizedKey] = wrapEventHandler(
           value as (detail: SerializedEventData) => void,
         );
@@ -176,14 +167,86 @@ const FORCED_PROPS_BY_TAG: Record<string, Record<string, unknown>> = {
   iframe: { sandbox: '' },
 };
 
-export const createHtmlHostWrapper = (htmlTag: string) => {
-  const isVoid = VOID_ELEMENTS.has(htmlTag);
-  const forcedProps = FORCED_PROPS_BY_TAG[htmlTag];
+const TEXT_LIKE_INPUT_TYPES = new Set([
+  'text',
+  'search',
+  'url',
+  'tel',
+  'password',
+  'email',
+  'number',
+  '',
+]);
 
-  return ({ children, ...props }: WrapperProps) =>
-    React.createElement(
+const isTextLikeInputType = (type: unknown): boolean => {
+  const inputType = isString(type) ? type.toLowerCase() : '';
+  return TEXT_LIKE_INPUT_TYPES.has(inputType);
+};
+
+type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;
+
+const syncValuePreservingCaret = (
+  element: CaretPreservingElement,
+  nextValue: string,
+): void => {
+  if (element.value === nextValue) return;
+
+  const isFocused = document.activeElement === element;
+  const start = isFocused ? element.selectionStart : null;
+  const end = isFocused ? element.selectionEnd : null;
+
+  element.value = nextValue;
+
+  if (isFocused && isDefined(start) && isDefined(end)) {
+    try {
+      element.setSelectionRange(start, end);
+    } catch {}
+  }
+};
+
+const createCaretPreservingElement = (
+  htmlTag: 'input' | 'textarea',
+  reactProps: Record<string, unknown>,
+  forcedProps: Record<string, unknown> | undefined,
+) => {
+  const { value, defaultValue, ...rest } = reactProps;
+  const initialValue = isNonEmptyString(defaultValue)
+    ? defaultValue
+    : isNonEmptyString(value)
+      ? value
+      : undefined;
+
+  return React.createElement(htmlTag, {
+    ...rest,
+    ...forcedProps,
+    defaultValue: initialValue,
+    ref: (node: CaretPreservingElement | null) => {
+      if (!isDefined(node)) return;
+      if (isNonEmptyString(value)) {
+        syncValuePreservingCaret(node, value);
+      }
+    },
+  });
+};
+
+export const createHtmlHostWrapper = (htmlTag: string) => {
+  const forcedProps = FORCED_PROPS_BY_TAG[htmlTag];
+  const isVoid = VOID_ELEMENTS.has(htmlTag);
+
+  return ({ children, ...props }: WrapperProps) => {
+    const reactProps = filterProps(props);
+
+    if (
+      htmlTag === 'textarea' ||
+      (htmlTag === 'input' && isTextLikeInputType(reactProps.type))
+    ) {
+      return createCaretPreservingElement(htmlTag, reactProps, forcedProps);
+    }
+
+    return React.createElement(
       htmlTag,
-      { ...filterProps(props), ...forcedProps },
+      { ...reactProps, ...forcedProps },
       isVoid ? undefined : children,
     );
+  };
 };
