@@ -46,7 +46,9 @@ export default defineConfig(({ command }) => {
     : path.resolve(__dirname, './tsconfig.json');
 
   const checkersConfig: Checkers = {
-    typescript: true,
+    typescript: {
+      tsconfigPath: tsConfigPath,
+    },
   };
 
   const dtsConfig: PluginOptions = {
