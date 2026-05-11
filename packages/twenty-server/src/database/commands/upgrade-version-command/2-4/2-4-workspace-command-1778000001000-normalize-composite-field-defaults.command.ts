@@ -57,7 +57,6 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
     )
       .filter(isDefined)
       .filter((field) => isCompositeFieldMetadataType(field.type))
-      .filter((field) => field.id === '4a8a25a0-437d-4aab-ad15-d5318c567946')
       .filter((field) => {
         const compositeType = compositeTypeDefinitions.get(
           field.type as FieldMetadataType,
@@ -71,7 +70,6 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
           field.defaultValue,
           field.type as CompositeFieldMetadataType,
         );
-        console.log(normalizedDefaultValue, field.defaultValue);
 
         for (const property of compositeType.properties) {
           if(normalizedDefaultValue?.[property.name as keyof typeof normalizedDefaultValue] !== field.defaultValue?.[property.name as keyof typeof field.defaultValue]) {
