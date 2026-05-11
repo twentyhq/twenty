@@ -15,7 +15,7 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { normalizeCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/normalize-composite-default-value.util';
+import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 
 @RegisteredWorkspaceCommand('2.5.0', 1778000001000)
@@ -64,7 +64,7 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
           return false;
         }
 
-        const normalizedDefaultValue = normalizeCompositeDefaultValue({
+        const normalizedDefaultValue = nullifyEmptyCompositeDefaultValue({
             defaultValue: field.defaultValue,
             fieldType: field.type as CompositeFieldMetadataType,
           });
@@ -125,7 +125,7 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
         continue;
       }
 
-      const normalizedDefaultValue = normalizeCompositeDefaultValue({
+      const normalizedDefaultValue = nullifyEmptyCompositeDefaultValue({
           defaultValue: field.defaultValue,
           fieldType: field.type as CompositeFieldMetadataType,
         });
@@ -149,7 +149,7 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
       await this.fieldMetadataService.updateOneField({
         updateFieldInput: {
           id: field.id,
-          defaultValue: normalizeCompositeDefaultValue({
+          defaultValue: nullifyEmptyCompositeDefaultValue({
               defaultValue: field.defaultValue,
               fieldType: field.type as CompositeFieldMetadataType,
             }),

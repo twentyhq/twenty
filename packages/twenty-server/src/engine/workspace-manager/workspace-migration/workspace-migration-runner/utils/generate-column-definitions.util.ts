@@ -27,7 +27,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
-import { normalizeCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/normalize-composite-default-value.util';
+import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 
 export const generateCompositeColumnDefinition = ({
   compositeProperty,
@@ -59,7 +59,7 @@ export const generateCompositeColumnDefinition = ({
     parentFlatFieldMetadata.name,
     compositeProperty,
   );
-  const normalizedDefaultValue = normalizeCompositeDefaultValue({
+  const normalizedDefaultValue = nullifyEmptyCompositeDefaultValue({
     defaultValue: parentFlatFieldMetadata.defaultValue,
     fieldType: parentFlatFieldMetadata.type as CompositeFieldMetadataType,
   });

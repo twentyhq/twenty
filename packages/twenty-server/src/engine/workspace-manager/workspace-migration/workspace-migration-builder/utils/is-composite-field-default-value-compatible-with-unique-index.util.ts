@@ -1,5 +1,5 @@
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
-import { normalizeCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/normalize-composite-default-value.util';
+import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import {
   type CompositeProperty,
   type FieldMetadataDefaultValueForAnyType,
@@ -19,7 +19,7 @@ export const isCompositeFieldDefaultValueCompatibleWithUniqueIndex = ({
     return true;
   }
 
-  const normalizedDefaultValue = normalizeCompositeDefaultValue({
+  const normalizedDefaultValue = nullifyEmptyCompositeDefaultValue({
     defaultValue,
     fieldType,
   });
