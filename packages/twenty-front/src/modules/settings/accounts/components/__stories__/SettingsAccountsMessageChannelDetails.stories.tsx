@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
   MessageChannelContactAutoCreationPolicy,
+  MessageChannelType,
   MessageFolderImportPolicy,
 } from 'twenty-shared/types';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
@@ -22,6 +23,7 @@ const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
   args: {
     messageChannel: {
       id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6a',
+      type: MessageChannelType.EMAIL,
       contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy.SENT,
       excludeNonProfessionalEmails: true,
       excludeGroupEmails: false,

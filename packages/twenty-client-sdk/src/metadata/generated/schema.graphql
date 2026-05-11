@@ -1752,6 +1752,7 @@ enum FeatureFlagKey {
   IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
   IS_PUBLIC_DOMAIN_ENABLED
   IS_EMAILING_DOMAIN_ENABLED
+  IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_CONNECTED_ACCOUNT_MIGRATED
   IS_RICH_TEXT_V1_MIGRATED
@@ -1926,6 +1927,7 @@ type ClientConfig {
   isGoogleCalendarEnabled: Boolean!
   isConfigVariablesInDbEnabled: Boolean!
   isImapSmtpCaldavEnabled: Boolean!
+  isEmailGroupEnabled: Boolean!
   allowRequestsToTwentyIcons: Boolean!
   calendarBookingPageId: String
   isCloudflareIntegrationEnabled: Boolean!
@@ -2354,6 +2356,7 @@ type PublicDomain {
   id: UUID!
   domain: String!
   isValidated: Boolean!
+  applicationId: UUID
   createdAt: DateTime!
 }
 
@@ -2777,6 +2780,7 @@ type MessageChannel {
   connectedAccountId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  connectedAccount: ConnectedAccountPublicDTO
 }
 
 enum MessageChannelVisibility {
@@ -2788,6 +2792,7 @@ enum MessageChannelVisibility {
 enum MessageChannelType {
   EMAIL
   SMS
+  EMAIL_GROUP
 }
 
 enum MessageChannelContactAutoCreationPolicy {
@@ -2824,6 +2829,11 @@ enum MessageChannelSyncStage {
   MESSAGES_IMPORT_SCHEDULED
   MESSAGES_IMPORT_ONGOING
   FAILED
+}
+
+type CreateEmailGroupChannelOutput {
+  messageChannel: MessageChannel!
+  forwardingAddress: String!
 }
 
 type MessageFolder {
@@ -3243,6 +3253,8 @@ type Mutation {
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
+  createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
+  deleteEmailGroupChannel(id: UUID!): MessageChannel!
   deleteConnectedAccount(id: UUID!): ConnectedAccountDTO!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createWebhook(input: CreateWebhookInput!): Webhook!
@@ -3316,7 +3328,8 @@ type Mutation {
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
   enablePostgresProxy: PostgresCredentials!
   disablePostgresProxy: PostgresCredentials!
-  createPublicDomain(domain: String!): PublicDomain!
+  createPublicDomain(domain: String!, applicationId: String): PublicDomain!
+  updatePublicDomain(domain: String!, applicationId: String): PublicDomain!
   deletePublicDomain(domain: String!): Boolean!
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
   createEmailingDomain(domain: String!, driver: EmailingDomainDriver!): EmailingDomain!
@@ -4169,6 +4182,10 @@ input UpdateMessageChannelInputUpdates {
   isSyncEnabled: Boolean
   excludeNonProfessionalEmails: Boolean
   excludeGroupEmails: Boolean
+}
+
+input CreateEmailGroupChannelInput {
+  handle: String!
 }
 
 input UpdateCalendarChannelInput {
