@@ -13,6 +13,14 @@ import {
   useState,
 } from 'react';
 
+import {
+  CARD_BG,
+  CARD_BORDER,
+  CARD_FONT,
+  CARD_TEXT,
+  CARD_TEXT_TERTIARY,
+} from './visual-tokens';
+
 const TONE_MAP: Record<string, { bg: string; color: string }> = {
   gray: { bg: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' },
   purple: { bg: 'rgba(168,85,247,0.12)', color: '#c084fc' },
@@ -191,10 +199,10 @@ const LANES_META = [
 ];
 
 const Root = styled.div`
-  background: #1d1d25;
+  background: ${CARD_BG};
   display: flex;
   flex-direction: column;
-  font-family: 'Inter', sans-serif;
+  font-family: ${CARD_FONT};
   height: 100%;
   overflow: hidden;
   position: relative;
@@ -203,7 +211,7 @@ const Root = styled.div`
 
 const BoardHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid ${CARD_BORDER};
   display: flex;
   gap: 4px;
   height: 34px;
@@ -211,18 +219,18 @@ const BoardHeader = styled.div`
 `;
 
 const BoardTitle = styled.span`
-  color: rgba(255, 255, 255, 0.88);
+  color: ${CARD_TEXT};
   font-size: 13px;
   font-weight: 500;
 `;
 
 const BoardCount = styled.span`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   font-size: 13px;
 `;
 
 const ColumnsHeaderGrid = styled.div`
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid ${CARD_BORDER};
   display: grid;
   grid-template-columns: 1fr 1fr;
 `;
@@ -247,7 +255,7 @@ const LanePill = styled.span<{ $bg: string; $color: string }>`
 `;
 
 const LaneCount = styled.span`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   font-size: 12px;
 `;
 
@@ -260,7 +268,7 @@ const ColumnsGrid = styled.div`
 `;
 
 const LaneBody = styled.div`
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid ${CARD_BORDER};
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -311,7 +319,7 @@ const FieldRow = styled.div`
 
 const FieldIcon = styled.div`
   align-items: center;
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   display: flex;
   flex: 0 0 14px;
   height: 14px;
@@ -327,7 +335,7 @@ const FieldValue = styled.div`
 `;
 
 const ValueText = styled.span`
-  color: rgba(255, 255, 255, 0.88);
+  color: ${CARD_TEXT};
   font-size: 11.5px;
   line-height: 1.4;
   overflow: hidden;
@@ -375,7 +383,7 @@ const TokenImg = styled.img`
 `;
 
 const TokenLabel = styled.span`
-  color: rgba(255, 255, 255, 0.88);
+  color: ${CARD_TEXT};
   font-size: 11.5px;
   line-height: 1.4;
   overflow: hidden;
@@ -405,7 +413,7 @@ const RatingRow = styled.div`
 
 const AddCardRow = styled.div`
   align-items: center;
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   display: flex;
   font-size: 11px;
   gap: 4px;
@@ -868,7 +876,7 @@ export function PipelineVisual({ active: _active }: PipelineVisualProps) {
         <svg
           fill="none"
           height="14"
-          stroke="rgba(255,255,255,0.35)"
+          stroke={CARD_TEXT_TERTIARY}
           strokeLinecap="round"
           strokeWidth="1.6"
           viewBox="0 0 24 24"

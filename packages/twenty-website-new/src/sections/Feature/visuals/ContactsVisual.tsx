@@ -4,6 +4,16 @@ import { useHorizontalDragScroll } from '@/lib/dom/use-horizontal-drag-scroll';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
+import {
+  CARD_ACCENT,
+  CARD_BG,
+  CARD_BORDER,
+  CARD_FONT,
+  CARD_TEXT,
+  CARD_TEXT_SECONDARY,
+  CARD_TEXT_TERTIARY,
+} from './visual-tokens';
+
 const PERSON_TONES: Record<string, { background: string; color: string }> = {
   gray: { background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)' },
   purple: { background: 'rgba(168,85,247,0.15)', color: '#c084fc' },
@@ -14,10 +24,10 @@ const PERSON_TONES: Record<string, { background: string; color: string }> = {
 };
 
 const Root = styled.div`
-  background: #1d1d25;
+  background: ${CARD_BG};
   display: flex;
   flex-direction: column;
-  font-family: 'Inter', sans-serif;
+  font-family: ${CARD_FONT};
   height: 100%;
   overflow: hidden;
   width: 100%;
@@ -25,7 +35,7 @@ const Root = styled.div`
 
 const ViewHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid ${CARD_BORDER};
   display: flex;
   gap: 4px;
   height: 34px;
@@ -33,13 +43,13 @@ const ViewHeader = styled.div`
 `;
 
 const ViewTitle = styled.span`
-  color: rgba(255, 255, 255, 0.88);
+  color: ${CARD_TEXT};
   font-size: 13px;
   font-weight: 500;
 `;
 
 const ViewCount = styled.span`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   font-size: 13px;
 `;
 
@@ -51,7 +61,7 @@ const TableShell = styled.div`
 `;
 
 const GripRail = styled.div`
-  background: #1d1d25;
+  background: ${CARD_BG};
   display: grid;
   flex: 0 0 12px;
   grid-auto-rows: 32px;
@@ -59,7 +69,7 @@ const GripRail = styled.div`
 `;
 
 const GripCell = styled.div`
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid ${CARD_BORDER};
 `;
 
 const TableViewport = styled.div<{ $dragging: boolean }>`
@@ -125,9 +135,9 @@ const Cell = styled.div<{
 }>`
   align-items: center;
   background: ${({ $header, $hovered }) =>
-    $header ? '#1d1d25' : $hovered ? '#25252f' : '#1d1d25'};
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+    $header ? CARD_BG : $hovered ? '#25252f' : CARD_BG};
+  border-bottom: 1px solid ${CARD_BORDER};
+  border-right: 1px solid ${CARD_BORDER};
   box-sizing: border-box;
   display: flex;
   flex: 0 0 ${({ $width }) => `${$width}px`};
@@ -147,7 +157,7 @@ const HeaderContent = styled.div`
 `;
 
 const HeaderLabel = styled.span`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   font-size: 13px;
   font-weight: 500;
   overflow: hidden;
@@ -157,7 +167,7 @@ const HeaderLabel = styled.span`
 
 const HeaderIcon = styled.span`
   align-items: center;
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   display: inline-flex;
   flex-shrink: 0;
   height: 16px;
@@ -165,7 +175,7 @@ const HeaderIcon = styled.span`
 `;
 
 const EdgePlus = styled.span`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   display: inline-flex;
   margin-left: auto;
 `;
@@ -185,8 +195,8 @@ const ChipEl = styled.div<{ $highlighted?: boolean }>`
 `;
 
 const ChipLabel = styled.span<{ $bold?: boolean }>`
-  color: rgba(255, 255, 255, 0.88);
-  font-family: 'Inter', sans-serif;
+  color: ${CARD_TEXT};
+  font-family: ${CARD_FONT};
   font-size: 13px;
   font-weight: ${({ $bold }) => ($bold ? 500 : 400)};
   max-width: 100%;
@@ -211,8 +221,8 @@ const LinkChip = styled.div`
 `;
 
 const LinkLabel = styled.span`
-  color: rgba(255, 255, 255, 0.55);
-  font-family: 'Inter', sans-serif;
+  color: ${CARD_TEXT_SECONDARY};
+  font-family: ${CARD_FONT};
   font-size: 13px;
   max-width: 100%;
   min-width: 0;
@@ -253,7 +263,7 @@ const AvatarEl = styled.div<{ $bg: string; $color: string }>`
   color: ${({ $color }) => $color};
   display: flex;
   flex: 0 0 14px;
-  font-family: 'Inter', sans-serif;
+  font-family: ${CARD_FONT};
   font-size: 9px;
   font-weight: 500;
   height: 14px;
@@ -266,9 +276,9 @@ const AvatarEl = styled.div<{ $bg: string; $color: string }>`
 const TagChip = styled.span`
   background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
-  color: rgba(255, 255, 255, 0.55);
+  color: ${CARD_TEXT_SECONDARY};
   display: inline-flex;
-  font-family: 'Inter', sans-serif;
+  font-family: ${CARD_FONT};
   font-size: 13px;
   height: 20px;
   align-items: center;
@@ -287,7 +297,7 @@ const BooleanRow = styled.span`
 `;
 
 const BooleanText = styled.span`
-  color: rgba(255, 255, 255, 0.55);
+  color: ${CARD_TEXT_SECONDARY};
   font-size: 13px;
 `;
 
@@ -546,7 +556,7 @@ export function ContactsVisual({ active: _active }: ContactsVisualProps) {
               stroke="currentColor"
               strokeLinecap="round"
               strokeWidth="2"
-              style={{ color: 'rgba(255, 255, 255, 0.55)' }}
+              style={{ color: CARD_TEXT_SECONDARY }}
               viewBox="0 0 24 24"
               width="11"
             >
@@ -665,7 +675,7 @@ export function ContactsVisual({ active: _active }: ContactsVisualProps) {
                                 >
                                   <path
                                     d="M3 6.5L5 8.5L9 4"
-                                    stroke="#3e63dd"
+                                    stroke={CARD_ACCENT}
                                     strokeLinecap="round"
                                     strokeWidth="1.5"
                                   />

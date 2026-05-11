@@ -2,11 +2,21 @@
 
 import { styled } from '@linaria/react';
 
+import {
+  CARD_ACCENT,
+  CARD_BG,
+  CARD_BORDER,
+  CARD_FONT,
+  CARD_TEXT,
+  CARD_TEXT_SECONDARY,
+  CARD_TEXT_TERTIARY,
+} from './visual-tokens';
+
 const Root = styled.div`
-  background: #1d1d25;
+  background: ${CARD_BG};
   display: flex;
   flex-direction: column;
-  font-family: 'Inter', sans-serif;
+  font-family: ${CARD_FONT};
   height: 100%;
   overflow: hidden;
   padding: 16px;
@@ -14,14 +24,14 @@ const Root = styled.div`
 `;
 
 const PageTitle = styled.h4`
-  color: rgba(255, 255, 255, 0.88);
+  color: ${CARD_TEXT};
   font-size: 14px;
   font-weight: 600;
   margin: 0 0 6px;
 `;
 
 const PageDescription = styled.p`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   font-size: 11px;
   line-height: 1.5;
   margin: 0 0 16px;
@@ -41,14 +51,14 @@ const TableHeaderRow = styled.div`
 `;
 
 const NameHeader = styled.span`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   flex: 1;
   font-size: 11px;
   font-weight: 500;
 `;
 
 const RightsHeader = styled.span`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   font-size: 11px;
   font-weight: 500;
   text-align: right;
@@ -58,21 +68,21 @@ const RightsHeader = styled.span`
 const SectionRow = styled.div`
   align-items: center;
   background: rgba(255, 255, 255, 0.02);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid ${CARD_BORDER};
+  border-top: 1px solid ${CARD_BORDER};
   display: flex;
   gap: 6px;
   padding: 6px 12px;
 `;
 
 const SectionLabel = styled.span`
-  color: rgba(255, 255, 255, 0.55);
+  color: ${CARD_TEXT_SECONDARY};
   font-size: 10px;
   font-weight: 500;
 `;
 
 const SectionChevron = styled.span`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   display: inline-flex;
   margin-left: auto;
 `;
@@ -87,7 +97,7 @@ const TableBody = styled.div`
 
 const Row = styled.div`
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid ${CARD_BORDER};
   display: flex;
   padding: 8px 12px;
   transition: background-color 0.1s ease;
@@ -103,7 +113,7 @@ const Row = styled.div`
 
 const RoleIconEl = styled.div`
   align-items: center;
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   display: flex;
   flex-shrink: 0;
   height: 18px;
@@ -113,7 +123,7 @@ const RoleIconEl = styled.div`
 `;
 
 const RoleName = styled.span`
-  color: rgba(255, 255, 255, 0.88);
+  color: ${CARD_TEXT};
   flex: 1;
   font-size: 12px;
   font-weight: 500;
@@ -129,9 +139,9 @@ const RightsGroup = styled.div`
 
 const RightIcon = styled.div`
   align-items: center;
-  border: 1px solid #3e63dd;
+  border: 1px solid ${CARD_ACCENT};
   border-radius: 4px;
-  color: #3e63dd;
+  color: ${CARD_ACCENT};
   display: flex;
   height: 18px;
   justify-content: center;
@@ -139,7 +149,7 @@ const RightIcon = styled.div`
 `;
 
 const RowChevron = styled.span`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   display: inline-flex;
   margin-left: 8px;
 `;

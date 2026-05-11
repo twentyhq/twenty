@@ -7,13 +7,21 @@ import {
   useState,
 } from 'react';
 
+import {
+  CARD_BG,
+  CARD_FONT,
+  CARD_TEXT,
+  CARD_TEXT_SECONDARY,
+  CARD_TEXT_TERTIARY,
+} from './visual-tokens';
+
 const Root = styled.div`
-  background: #1d1d25;
+  background: ${CARD_BG};
   border: 1.5px dashed rgba(255, 255, 255, 0.12);
   border-radius: 0;
   display: flex;
   flex-direction: column;
-  font-family: 'Inter', sans-serif;
+  font-family: ${CARD_FONT};
   height: 100%;
   overflow: hidden;
   width: 100%;
@@ -33,18 +41,18 @@ const HeaderLeft = styled.div`
 `;
 
 const HeaderLabel = styled.span`
-  color: rgba(255, 255, 255, 0.88);
+  color: ${CARD_TEXT};
   font-size: 12px;
   font-weight: 500;
 `;
 
 const HeaderCount = styled.span`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   font-size: 12px;
 `;
 
 const AddButton = styled.span`
-  color: rgba(255, 255, 255, 0.55);
+  color: ${CARD_TEXT_SECONDARY};
   font-size: 11px;
   font-weight: 500;
 `;
@@ -95,7 +103,7 @@ const FileIcon = styled.div<{ $bg: string; $color: string }>`
 `;
 
 const FileName = styled.span`
-  color: rgba(255, 255, 255, 0.88);
+  color: ${CARD_TEXT};
   flex: 1;
   font-size: 12px;
   min-width: 0;
@@ -119,18 +127,18 @@ const UploadArea = styled.div`
 `;
 
 const UploadIcon = styled.div`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   margin-bottom: 4px;
 `;
 
 const UploadTitle = styled.span`
-  color: rgba(255, 255, 255, 0.55);
+  color: ${CARD_TEXT_SECONDARY};
   font-size: 11px;
   font-weight: 500;
 `;
 
 const UploadHint = styled.span`
-  color: rgba(255, 255, 255, 0.35);
+  color: ${CARD_TEXT_TERTIARY};
   font-size: 10px;
 `;
 
