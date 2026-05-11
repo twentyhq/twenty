@@ -1580,6 +1580,9 @@ export default {
             "direction": [
                 67
             ],
+            "subFieldName": [
+                1
+            ],
             "viewId": [
                 3
             ],
@@ -9184,6 +9187,9 @@ export default {
             "direction": [
                 67
             ],
+            "subFieldName": [
+                1
+            ],
             "viewId": [
                 3
             ],
@@ -9205,6 +9211,9 @@ export default {
         "UpdateViewSortInputUpdates": {
             "direction": [
                 67
+            ],
+            "subFieldName": [
+                1
             ],
             "__typename": [
                 1
