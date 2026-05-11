@@ -7,7 +7,7 @@
  *                              |___/
  */
 
-export { ALLOWED_FULL_NAME_SUBFIELDS } from './AllowedFullNameSubfields';
+export { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from './AllowedFullNameSortSubfields';
 export { AUTO_SELECT_FAST_MODEL_ID } from './AutoSelectFastModelId';
 export { AUTO_SELECT_SMART_MODEL_ID } from './AutoSelectSmartModelId';
 export { BACKEND_BATCH_REQUEST_MAX_COUNT } from './BackendBatchRequestMaxCount';

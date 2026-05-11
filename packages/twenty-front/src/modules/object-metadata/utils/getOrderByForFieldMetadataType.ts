@@ -9,7 +9,7 @@ import {
   type FieldLinksValue,
   type FieldPhonesValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { ALLOWED_FULL_NAME_SUBFIELDS } from 'twenty-shared/constants';
+import { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from 'twenty-shared/constants';
 import {
   type OrderBy,
   type RecordGqlOperationOrderBy,
@@ -24,7 +24,7 @@ export const getOrderByForFieldMetadataType = (
   switch (field.type) {
     case FieldMetadataType.FULL_NAME: {
       const primarySubField = resolveFullNameSortSubField(subFieldName);
-      const [firstSubField, lastSubField] = ALLOWED_FULL_NAME_SUBFIELDS;
+      const [firstSubField, lastSubField] = ALLOWED_FULL_NAME_SORT_SUBFIELDS;
       const secondarySubField =
         primarySubField === firstSubField ? lastSubField : firstSubField;
       return [

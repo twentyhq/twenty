@@ -13,10 +13,10 @@ import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
-import { ALLOWED_FULL_NAME_SUBFIELDS } from 'twenty-shared/constants';
+import { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from 'twenty-shared/constants';
 import {
   type AllowedAddressSubField,
-  type AllowedFullNameSubField,
+  type AllowedFullNameSortSubField,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/display';
@@ -31,7 +31,7 @@ type EditableSortChipProps = {
 };
 
 type SubFieldOption = {
-  value: AllowedFullNameSubField | AllowedAddressSubField;
+  value: AllowedFullNameSortSubField | AllowedAddressSubField;
   label: string;
 };
 
@@ -62,12 +62,12 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
 
   const subFieldState = useMemo<SubFieldState | undefined>(() => {
     if (fieldMetadataItem.type === FieldMetadataType.FULL_NAME) {
-      const labels: Record<AllowedFullNameSubField, string> = {
+      const labels: Record<AllowedFullNameSortSubField, string> = {
         firstName: t`First name`,
         lastName: t`Last name`,
       };
       return {
-        options: ALLOWED_FULL_NAME_SUBFIELDS.map((value) => ({
+        options: ALLOWED_FULL_NAME_SORT_SUBFIELDS.map((value) => ({
           value,
           label: labels[value],
         })),

@@ -1,19 +1,19 @@
 import { FULL_NAME_DEFAULT_SORT_SUB_FIELD } from '@/object-metadata/constants/FullNameDefaultSortSubField';
-import { ALLOWED_FULL_NAME_SUBFIELDS } from 'twenty-shared/constants';
-import { type AllowedFullNameSubField } from 'twenty-shared/types';
+import { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from 'twenty-shared/constants';
+import { type AllowedFullNameSortSubField } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-const isAllowedFullNameSubField = (
+const isAllowedFullNameSortSubField = (
   value: string | null | undefined,
-): value is AllowedFullNameSubField =>
-  ALLOWED_FULL_NAME_SUBFIELDS.includes(value as AllowedFullNameSubField);
+): value is AllowedFullNameSortSubField =>
+  ALLOWED_FULL_NAME_SORT_SUBFIELDS.includes(value as AllowedFullNameSortSubField);
 
 export const resolveFullNameSortSubField = (
   requestedSubField?: string | null,
-): AllowedFullNameSubField => {
+): AllowedFullNameSortSubField => {
   if (
     isDefined(requestedSubField) &&
-    isAllowedFullNameSubField(requestedSubField)
+    isAllowedFullNameSortSubField(requestedSubField)
   ) {
     return requestedSubField;
   }
