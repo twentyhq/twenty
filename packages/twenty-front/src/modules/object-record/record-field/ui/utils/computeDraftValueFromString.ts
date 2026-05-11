@@ -40,7 +40,7 @@ export const computeDraftValueFromString = <FieldValue>({
   if (isFieldCurrency(fieldDefinition)) {
     return {
       amount: value,
-      currenyCode: CurrencyCode.USD,
+      currenyCode: CurrencyCode.GBP,
     } as unknown as FieldInputDraftValue<FieldValue>;
   }
 
