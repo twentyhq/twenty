@@ -58,16 +58,12 @@ describe('getOrderByForRelationField', () => {
       orderByDirection: 'DescNullsLast',
     });
 
-    // Should produce nested structure with composite field
+    // Composite labels emit one array entry per sub-field — see the
+    // FULL_NAME case in getOrderByForFieldMetadataType for the
+    // Apollo-cache rationale.
     expect(result).toEqual([
-      {
-        person: {
-          name: {
-            firstName: 'DescNullsLast',
-            lastName: 'DescNullsLast',
-          },
-        },
-      },
+      { person: { name: { firstName: 'DescNullsLast' } } },
+      { person: { name: { lastName: 'DescNullsLast' } } },
     ]);
   });
 

@@ -24,12 +24,8 @@ describe('getOrderByForFieldMetadataType', () => {
           orderByDirection: 'AscNullsLast',
         }),
       ).toEqual([
-        {
-          name: {
-            firstName: 'AscNullsLast',
-            lastName: 'AscNullsLast',
-          },
-        },
+        { name: { firstName: 'AscNullsLast' } },
+        { name: { lastName: 'AscNullsLast' } },
       ]);
     });
 
@@ -39,18 +35,16 @@ describe('getOrderByForFieldMetadataType', () => {
         name: 'name',
       });
 
-      const result = getOrderByForFieldMetadataType({
-        field,
-        orderByDirection: 'DescNullsLast',
-        compositeSubField: 'lastName',
-      });
-      const keys = Object.keys(result[0].name as Record<string, unknown>);
-
-      expect(keys[0]).toBe('lastName');
-      expect(keys[1]).toBe('firstName');
-      expect((result[0].name as Record<string, string>).lastName).toBe(
-        'DescNullsLast',
-      );
+      expect(
+        getOrderByForFieldMetadataType({
+          field,
+          orderByDirection: 'DescNullsLast',
+          compositeSubField: 'lastName',
+        }),
+      ).toEqual([
+        { name: { lastName: 'DescNullsLast' } },
+        { name: { firstName: 'DescNullsLast' } },
+      ]);
     });
   });
 
