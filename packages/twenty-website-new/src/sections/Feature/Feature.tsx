@@ -147,7 +147,7 @@ const GridCell = styled.div`
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    &:nth-child(odd) {
+    &:nth-child(even) {
       border-right: ${BORDER};
     }
 

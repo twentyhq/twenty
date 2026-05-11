@@ -263,13 +263,6 @@ const AvatarEl = styled.div<{ $bg: string; $color: string }>`
   width: 14px;
 `;
 
-const AvatarImg = styled.img`
-  display: block;
-  height: 100%;
-  object-fit: cover;
-  width: 100%;
-`;
-
 const TagChip = styled.span`
   background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;

@@ -391,8 +391,19 @@ export function TasksVisual({ active: _active }: TasksVisualProps) {
                 <ActionText>{activity.action}</ActionText>
                 <TaskChip>
                   <TaskCircleEl
+                    aria-label={
+                      isCompleted ? 'Mark incomplete' : 'Mark complete'
+                    }
                     data-filled={isCompleted}
                     onClick={() => toggleComplete(index)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleComplete(index);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
                   >
                     {isCompleted && (
                       <svg

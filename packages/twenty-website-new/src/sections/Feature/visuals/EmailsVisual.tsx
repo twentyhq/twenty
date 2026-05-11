@@ -352,7 +352,7 @@ function EmailDetail({
   return (
     <>
       <DetailHeader>
-        <BackButton onClick={onBack}>
+        <BackButton aria-label="Back to inbox" onClick={onBack}>
           <svg
             fill="none"
             height="12"
@@ -425,7 +425,18 @@ export function EmailsVisual({ active: _active }: EmailsVisualProps) {
             <ComposeButton>+ Compose</ComposeButton>
           </InboxHeader>
           <EmailList>
-            <EmailRow data-selected={false} onClick={() => setOpenEmail(0)}>
+            <EmailRow
+              data-selected={false}
+              onClick={() => setOpenEmail(0)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setOpenEmail(0);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+            >
               <AvatarSingle style={{ backgroundColor: '#6366f1' }}>
                 A
               </AvatarSingle>
@@ -451,7 +462,18 @@ export function EmailsVisual({ active: _active }: EmailsVisualProps) {
               <EmailMeta>1:30pm</EmailMeta>
             </EmailRow>
 
-            <EmailRow data-selected={false} onClick={() => setOpenEmail(1)}>
+            <EmailRow
+              data-selected={false}
+              onClick={() => setOpenEmail(1)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setOpenEmail(1);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+            >
               <AvatarStack>
                 <StackedAvatar style={{ backgroundColor: '#f59e0b' }}>
                   F

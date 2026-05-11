@@ -852,12 +852,11 @@ export function PipelineVisual({ active: _active }: PipelineVisualProps) {
   };
 
   useEffect(() => {
+    const layer = interactionRef.current;
     return () => {
-      if (activePointerRef.current !== null && interactionRef.current) {
+      if (activePointerRef.current !== null && layer) {
         try {
-          interactionRef.current.releasePointerCapture(
-            activePointerRef.current,
-          );
+          layer.releasePointerCapture(activePointerRef.current);
         } catch {}
       }
     };

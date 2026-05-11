@@ -188,7 +188,7 @@ type FilesVisualProps = {
 export function FilesVisual({ active: _active }: FilesVisualProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [fileOrder, setFileOrder] = useState([0, 1, 2]);
+  const [fileOrder] = useState([0, 1, 2]);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const rootRef = useRef<HTMLDivElement>(null);
   const activePointerRef = useRef<number | null>(null);
