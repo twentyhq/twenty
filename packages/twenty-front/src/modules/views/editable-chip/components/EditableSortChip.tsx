@@ -17,6 +17,7 @@ import { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from 'twenty-shared/constants';
 import {
   type AllowedAddressSubField,
   type AllowedFullNameSortSubField,
+  type FieldMetadataSettingsMapping,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/display';
@@ -87,12 +88,17 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
         addressLat: t`Latitude`,
         addressLng: t`Longitude`,
       };
+      const addressSettings = fieldMetadataItem.settings as
+        | FieldMetadataSettingsMapping[FieldMetadataType.ADDRESS]
+        | null
+        | undefined;
       return {
-        options: getEnabledAddressSubFields(fieldMetadataItem.settings).map(
-          (value) => ({ value, label: labels[value] }),
-        ),
+        options: getEnabledAddressSubFields(addressSettings).map((value) => ({
+          value,
+          label: labels[value],
+        })),
         resolvedValue: resolveAddressSortSubField({
-          settings: fieldMetadataItem.settings,
+          settings: addressSettings,
           compositeSubField: recordSort.subFieldName,
         }),
       };

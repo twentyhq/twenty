@@ -1,9 +1,10 @@
 import { ADDRESS_DEFAULT_SORT_SUB_FIELD } from '@/object-metadata/constants/AddressDefaultSortSubField';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getEnabledAddressSubFields } from '@/object-metadata/utils/getEnabledAddressSubFields';
 import {
   ALLOWED_ADDRESS_SUBFIELDS,
   type AllowedAddressSubField,
+  type FieldMetadataSettingsMapping,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,7 +17,10 @@ export const resolveAddressSortSubField = ({
   settings,
   compositeSubField,
 }: {
-  settings: FieldMetadataItem['settings'] | null | undefined;
+  settings:
+    | FieldMetadataSettingsMapping[FieldMetadataType.ADDRESS]
+    | null
+    | undefined;
   compositeSubField?: string | null;
 }): AllowedAddressSubField => {
   const enabledSubFields = getEnabledAddressSubFields(settings);
