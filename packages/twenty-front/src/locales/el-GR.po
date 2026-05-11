@@ -799,7 +799,6 @@ msgid "About your app"
 msgstr ""
 
 #. js-lingui-id: LuXP9q
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Access"
 msgstr ""
@@ -1987,7 +1986,7 @@ msgid "Anyone in this workspace can use this credential."
 msgstr ""
 
 #. js-lingui-id: xJR+Wq
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "Οποιοσδήποτε με διεύθυνση email σε αυτούς τους τομείς επιτρέπεται να εγγραφεί για αυτό το χώρο εργασίας."
 
@@ -2212,7 +2211,7 @@ msgid "Approved access domain validated"
 msgstr "Επικυρώθηκε το εγκεκριμένο domain πρόσβασης"
 
 #. js-lingui-id: 9tggYj
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Approved Domains"
 msgstr "Εγκεκριμένοι Τομείς"
 
@@ -5002,7 +5001,7 @@ msgid "Default palette"
 msgstr "Προεπιλεγμένη παλέτα"
 
 #. js-lingui-id: v41VX6
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Default role"
 msgstr "Προεπιλεγμένος Ρόλος"
@@ -5880,7 +5879,7 @@ msgstr "αλλιώς εάν"
 #. js-lingui-id: O3oNi5
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/auth/PasswordReset.tsx
@@ -6447,7 +6446,7 @@ msgid "Error deleting app"
 msgstr "Σφάλμα κατά τη διαγραφή της εφαρμογής"
 
 #. js-lingui-id: QnVLjD
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Error deleting invitation"
 msgstr "Σφάλμα κατά τη διαγραφή της πρόσκλησης"
 
@@ -6512,7 +6511,7 @@ msgid "Error regenerating api key."
 msgstr "Σφάλμα κατά την επαναδημιουργία κλειδιού api."
 
 #. js-lingui-id: clfpgU
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Error resending invitation"
 msgstr "Σφάλμα κατά την επαναποστολή της πρόσκλησης"
 
@@ -6828,7 +6827,7 @@ msgid "Expiration Date"
 msgstr "Ημερομηνία λήξης"
 
 #. js-lingui-id: M1RnFv
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expired"
 msgstr "Έληξε"
@@ -6839,7 +6838,7 @@ msgid "Expires"
 msgstr "Λήγει"
 
 #. js-lingui-id: i9qiyR
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Expires in"
 msgstr "Λήγει σε"
 
@@ -8661,17 +8660,18 @@ msgstr "Προσκλήσεις"
 
 #. js-lingui-id: MFKlMB
 #: src/utils/title-utils.ts
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
 msgstr "Πρόσκληση"
 
 #. js-lingui-id: 0M8+El
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Invite by email"
 msgstr "Πρόσκληση μέσω email"
 
 #. js-lingui-id: PWIq/W
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Invite by link"
 msgstr "Πρόσκληση μέσω συνδέσμου"
 
@@ -13106,7 +13106,7 @@ msgid "role"
 msgstr "ρόλος"
 
 #. js-lingui-id: GDvlUT
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -13902,7 +13902,7 @@ msgid "Send"
 msgstr ""
 
 #. js-lingui-id: mjK8F3
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Send an invite email to your team"
 msgstr "Στείλτε ένα email πρόσκλησης στην ομάδα σας"
 
@@ -14109,7 +14109,7 @@ msgid "Share"
 msgstr "Κοινοποίηση"
 
 #. js-lingui-id: Vy9kmk
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Share this link to invite users to join your workspace"
 msgstr "Μοιραστείτε αυτόν τον σύνδεσμο για να προσκαλέσετε χρήστες να συμμετάσχουν στον χώρο εργασίας σας"
 

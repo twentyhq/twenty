@@ -799,7 +799,6 @@ msgid "About your app"
 msgstr ""
 
 #. js-lingui-id: LuXP9q
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Access"
 msgstr ""
@@ -1987,7 +1986,7 @@ msgid "Anyone in this workspace can use this credential."
 msgstr ""
 
 #. js-lingui-id: xJR+Wq
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "Свако са имејл адресом на овим доменима може се пријавити за овај радни простор."
 
@@ -2212,7 +2211,7 @@ msgid "Approved access domain validated"
 msgstr "Потврђен одобрен приступни домен"
 
 #. js-lingui-id: 9tggYj
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Approved Domains"
 msgstr "Одобрени домени"
 
@@ -5002,7 +5001,7 @@ msgid "Default palette"
 msgstr "Подразумевана палета"
 
 #. js-lingui-id: v41VX6
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Default role"
 msgstr "Подразумевана улога"
@@ -5880,7 +5879,7 @@ msgstr "иначе ако"
 #. js-lingui-id: O3oNi5
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/auth/PasswordReset.tsx
@@ -6447,7 +6446,7 @@ msgid "Error deleting app"
 msgstr "Грешка приликом брисања апликације"
 
 #. js-lingui-id: QnVLjD
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Error deleting invitation"
 msgstr "Грешка приликом брисања позивнице"
 
@@ -6512,7 +6511,7 @@ msgid "Error regenerating api key."
 msgstr "Грешка приликом поновног генерисања API кључа."
 
 #. js-lingui-id: clfpgU
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Error resending invitation"
 msgstr "Грешка у поновном слању позивнице"
 
@@ -6828,7 +6827,7 @@ msgid "Expiration Date"
 msgstr "Датум истека"
 
 #. js-lingui-id: M1RnFv
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expired"
 msgstr "Истекло"
@@ -6839,7 +6838,7 @@ msgid "Expires"
 msgstr "Истиче"
 
 #. js-lingui-id: i9qiyR
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Expires in"
 msgstr "Истиче за"
 
@@ -8661,17 +8660,18 @@ msgstr "Позивнице"
 
 #. js-lingui-id: MFKlMB
 #: src/utils/title-utils.ts
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
 msgstr "Позови"
 
 #. js-lingui-id: 0M8+El
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Invite by email"
 msgstr "Позив преко имејла"
 
 #. js-lingui-id: PWIq/W
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Invite by link"
 msgstr "Позив преко линка"
 
@@ -13106,7 +13106,7 @@ msgid "role"
 msgstr "улога"
 
 #. js-lingui-id: GDvlUT
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -13902,7 +13902,7 @@ msgid "Send"
 msgstr ""
 
 #. js-lingui-id: mjK8F3
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Send an invite email to your team"
 msgstr "Пошаљите имејл позивницу вашем тиму"
 
@@ -14109,7 +14109,7 @@ msgid "Share"
 msgstr "Дели"
 
 #. js-lingui-id: Vy9kmk
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Share this link to invite users to join your workspace"
 msgstr "Поделите овај линк да бисте позвали кориснике у свој радни простор"
 

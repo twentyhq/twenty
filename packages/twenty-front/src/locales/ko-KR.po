@@ -799,7 +799,6 @@ msgid "About your app"
 msgstr ""
 
 #. js-lingui-id: LuXP9q
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Access"
 msgstr ""
@@ -1987,7 +1986,7 @@ msgid "Anyone in this workspace can use this credential."
 msgstr ""
 
 #. js-lingui-id: xJR+Wq
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "이 도메인의 이메일 주소를 가진 사람은 이 작업 공간에 가입할 수 있습니다."
 
@@ -2212,7 +2211,7 @@ msgid "Approved access domain validated"
 msgstr "승인된 액세스 도메인이 검증되었습니다"
 
 #. js-lingui-id: 9tggYj
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Approved Domains"
 msgstr "승인된 도메인"
 
@@ -5002,7 +5001,7 @@ msgid "Default palette"
 msgstr "기본 팔레트"
 
 #. js-lingui-id: v41VX6
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Default role"
 msgstr "기본 역할"
@@ -5880,7 +5879,7 @@ msgstr "그 외의 조건"
 #. js-lingui-id: O3oNi5
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/auth/PasswordReset.tsx
@@ -6447,7 +6446,7 @@ msgid "Error deleting app"
 msgstr "앱 삭제 오류"
 
 #. js-lingui-id: QnVLjD
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Error deleting invitation"
 msgstr "초대 삭제 오류"
 
@@ -6512,7 +6511,7 @@ msgid "Error regenerating api key."
 msgstr "API 키 재생성 오류."
 
 #. js-lingui-id: clfpgU
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Error resending invitation"
 msgstr "초대 재발송 오류"
 
@@ -6828,7 +6827,7 @@ msgid "Expiration Date"
 msgstr "만료일"
 
 #. js-lingui-id: M1RnFv
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expired"
 msgstr "만료됨"
@@ -6839,7 +6838,7 @@ msgid "Expires"
 msgstr "만료"
 
 #. js-lingui-id: i9qiyR
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Expires in"
 msgstr "만료까지 남은 시간"
 
@@ -8661,17 +8660,18 @@ msgstr "초대"
 
 #. js-lingui-id: MFKlMB
 #: src/utils/title-utils.ts
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
 msgstr "초대"
 
 #. js-lingui-id: 0M8+El
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Invite by email"
 msgstr "이메일로 초대"
 
 #. js-lingui-id: PWIq/W
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Invite by link"
 msgstr "링크로 초대"
 
@@ -13106,7 +13106,7 @@ msgid "role"
 msgstr "역할"
 
 #. js-lingui-id: GDvlUT
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -13902,7 +13902,7 @@ msgid "Send"
 msgstr ""
 
 #. js-lingui-id: mjK8F3
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Send an invite email to your team"
 msgstr "팀에 초대 이메일 보내기"
 
@@ -14109,7 +14109,7 @@ msgid "Share"
 msgstr "공유"
 
 #. js-lingui-id: Vy9kmk
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Share this link to invite users to join your workspace"
 msgstr "이 링크를 공유하여 사용자를 워크스페이스에 초대하세요"
 
