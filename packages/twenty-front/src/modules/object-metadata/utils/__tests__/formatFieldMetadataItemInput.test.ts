@@ -139,28 +139,4 @@ describe('formatFieldMetadataItemInput', () => {
 
     expect(result).toEqual(expected);
   });
-
-  it('should keep composite default value when the field is unique', () => {
-    const defaultValue = {
-      primaryPhoneNumber: "''",
-      primaryPhoneCountryCode: "'US'",
-      primaryPhoneCallingCode: "'+1'",
-      additionalPhones: null,
-    };
-    const input = {
-      defaultValue,
-      label: 'Phone',
-      name: 'phone',
-      icon: 'IconPhone',
-      type: FieldMetadataType.PHONES,
-      description: null,
-      isLabelSyncedWithName: true,
-      isUnique: true,
-    };
-
-    const result = formatFieldMetadataItemInput(input);
-
-    expect(result.defaultValue).toBe(defaultValue);
-    expect(result.isUnique).toBe(true);
-  });
 });

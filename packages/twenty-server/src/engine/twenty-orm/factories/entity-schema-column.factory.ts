@@ -23,7 +23,6 @@ import {
   type EntitySchemaObjectMetadata,
 } from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
-import { getCompositePropertyDefaultValueForWorkspaceSchema } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/composite-unique-default-value.util';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 
 type EntitySchemaColumnMap = {
@@ -139,12 +138,10 @@ export class EntitySchemaColumnFactory {
         compositeProperty,
       );
       const columnType = fieldMetadataTypeToColumnType(compositeProperty.type);
-      const propertyDefaultValue =
-        getCompositePropertyDefaultValueForWorkspaceSchema({
-          compositeProperty,
-          parentFieldMetadata: fieldMetadata,
-        });
-      const defaultValue = serializeDefaultValue(propertyDefaultValue);
+      const defaultValue = serializeDefaultValue(
+        // @ts-expect-error legacy noImplicitAny
+        fieldMetadata.defaultValue?.[compositeProperty.name],
+      );
 
       entitySchemaColumnMap[columnName] = {
         name: columnName,

@@ -14,7 +14,6 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
-import { getCompositePropertyDefaultValueForWorkspaceSchema } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/composite-unique-default-value.util';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
 import {
   WorkspaceMigrationActionExecutionException,
@@ -22,6 +21,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
+import { normalizeCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/normalize-composite-default-value.util';
 
 export const generateCompositeColumnDefinition = ({
   compositeProperty,
@@ -53,10 +53,9 @@ export const generateCompositeColumnDefinition = ({
     parentFlatFieldMetadata.name,
     compositeProperty,
   );
-  const defaultValue = getCompositePropertyDefaultValueForWorkspaceSchema({
-    compositeProperty,
-    parentFieldMetadata: parentFlatFieldMetadata,
-  });
+  const normalizedDefaultValue =
+    normalizeCompositeDefaultValue(parentFlatFieldMetadata.defaultValue, parentFlatFieldMetadata.type as CompositeFieldMetadataType);
+  const defaultValue = normalizedDefaultValue?.[compositeProperty.name as keyof typeof normalizedDefaultValue];
   const columnType = fieldMetadataTypeToColumnType(compositeProperty.type);
   const serializedDefaultValue = serializeDefaultValue({
     columnName,

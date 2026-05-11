@@ -15,7 +15,8 @@ import { IndexExceptionCode } from 'src/engine/metadata-modules/flat-index-metad
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { canCompositeFieldDefaultValueBeUsedInUniqueIndex } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/composite-unique-default-value.util';
+import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
+import { isCompositeFieldDefaultValueCompatibleWithUniqueIndex } from '../../utils/is-composite-field-default-value-compatible-with-unique-index.ts';
 
 @Injectable()
 export class FlatIndexValidatorService {
@@ -154,18 +155,16 @@ export class FlatIndexValidatorService {
             }
 
             if (flatIndexToValidate.isUnique) {
-              const canUseDefaultValueInUniqueIndex =
-                isDefined(compositeType) &&
-                canCompositeFieldDefaultValueBeUsedInUniqueIndex({
-                  compositeProperties: compositeType.properties,
-                  defaultValue: relatedFlatField.defaultValue,
-                });
+              const canUseDefaultValueInUniqueIndex = isDefined(compositeType)
+                ? isCompositeFieldDefaultValueCompatibleWithUniqueIndex({
+                    fieldType:
+                      relatedFlatField.type as CompositeFieldMetadataType,
+                    compositeProperties: compositeType.properties,
+                    defaultValue: relatedFlatField.defaultValue,
+                  })
+                : !isDefined(relatedFlatField.defaultValue);
 
-              if (
-                isDefined(relatedFlatField.defaultValue) &&
-                relatedFlatField.isUnique &&
-                !canUseDefaultValueInUniqueIndex
-              ) {
+              if (!canUseDefaultValueInUniqueIndex && relatedFlatField.isUnique) {
                 const fieldName = relatedFlatField.name;
                 const fieldType = relatedFlatField.type;
 

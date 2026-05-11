@@ -30,7 +30,6 @@ import {
   FlatUpdateFieldAction,
   UniversalUpdateFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
-import { getCompositePropertyDefaultValueForWorkspaceSchema } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/composite-unique-default-value.util';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
 import { fromUniversalSettingsToFlatFieldMetadataSettings } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-settings-to-flat-field-metadata-settings.util';
 import {
@@ -458,14 +457,8 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           flatFieldMetadata.name,
           property,
         );
-        const compositeDefaultValue =
-          getCompositePropertyDefaultValueForWorkspaceSchema({
-            compositeProperty: property,
-            parentFieldMetadata: {
-              ...flatFieldMetadata,
-              defaultValue: toDefaultValue,
-            },
-          });
+        // @ts-expect-error - TODO: fix this
+        const compositeDefaultValue = toDefaultValue?.[property.name];
 
         const serializedNewDefaultValue = serializeDefaultValue({
           columnName: compositeColumnName,
