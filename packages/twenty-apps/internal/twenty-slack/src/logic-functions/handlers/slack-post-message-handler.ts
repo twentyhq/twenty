@@ -36,19 +36,13 @@ export const slackPostMessageHandler = async (
         : {}),
     });
 
-    const slackTs = typeof data.ts === 'string' ? data.ts : undefined;
-    const channel =
-      typeof data.channel === 'string'
-        ? data.channel
-        : parameters.slack_channel_id;
-
     return {
       success: true,
-      message: slackTs
-        ? `Message posted to Slack (ts=${slackTs}).`
+      message: data.ts
+        ? `Message posted to Slack (ts=${data.ts}).`
         : 'Message posted to Slack.',
-      slackTs,
-      channel,
+      slackTs: data.ts,
+      channel: data.channel,
     };
   } catch (error) {
     return slackToolFailure('Failed to post Slack message', error);
