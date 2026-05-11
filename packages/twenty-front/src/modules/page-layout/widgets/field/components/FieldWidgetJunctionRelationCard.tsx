@@ -32,6 +32,29 @@ const StyledShowMoreButtonContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledGroupHeading = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xxs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  letter-spacing: 0.05em;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]}
+    ${themeCssVariables.spacing[1]};
+  text-transform: uppercase;
+`;
+
+// Fork-specific override: when the junction-target is a morph, render each
+// target-type as its own sub-section with an independent initial visible-items
+// count. Falls back to FIELD_WIDGET_RELATION_CARD_INITIAL_VISIBLE_ITEMS for any
+// target type not listed here.
+const INITIAL_VISIBLE_PER_OBJECT_NAME: Record<string, number> = {
+  person: 5,
+  company: 3,
+};
+
+const getInitialVisibleForObject = (objectNameSingular: string): number =>
+  INITIAL_VISIBLE_PER_OBJECT_NAME[objectNameSingular] ??
+  FIELD_WIDGET_RELATION_CARD_INITIAL_VISIBLE_ITEMS;
+
 type FieldWidgetJunctionRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   relationValue: any;
@@ -48,9 +71,9 @@ export const FieldWidgetJunctionRelationCard = ({
   const widget = useCurrentWidget();
 
   const [expandedItem, setExpandedItem] = useState('');
-  const [visibleItemsCount, setVisibleItemsCount] = useState(
-    FIELD_WIDGET_RELATION_CARD_INITIAL_VISIBLE_ITEMS,
-  );
+  const [visibleItemsCountPerGroup, setVisibleItemsCountPerGroup] = useState<
+    Record<string, number>
+  >({});
   const targetRecord = useTargetRecord();
 
   const instanceId = generateFieldWidgetInstanceId({
@@ -63,10 +86,17 @@ export const FieldWidgetJunctionRelationCard = ({
   const handleItemClick = (id: string) =>
     setExpandedItem(id === expandedItem ? '' : id);
 
-  const handleShowMore = () => {
-    setVisibleItemsCount(
-      (prevCount) => prevCount + FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT,
-    );
+  const getVisibleCountForGroup = (objectNameSingular: string) =>
+    visibleItemsCountPerGroup[objectNameSingular] ??
+    getInitialVisibleForObject(objectNameSingular);
+
+  const handleShowMore = (objectNameSingular: string) => () => {
+    setVisibleItemsCountPerGroup((prev) => ({
+      ...prev,
+      [objectNameSingular]:
+        getVisibleCountForGroup(objectNameSingular) +
+        FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT,
+    }));
   };
 
   const fieldMetadata = fieldDefinition.metadata;
@@ -151,9 +181,49 @@ export const FieldWidgetJunctionRelationCard = ({
     return null;
   }
 
-  const visibleRecords = targetRecordsWithMetadata.slice(0, visibleItemsCount);
-  const remainingCount = targetRecordsWithMetadata.length - visibleItemsCount;
-  const hasMoreRecords = remainingCount > 0;
+  // Determine the canonical variant order for grouping. For morph junctions,
+  // use the morphRelations array on the target field so order is stable and
+  // matches the field definition. For non-morph junctions, fall back to a
+  // single derived variant — produces a single group with no heading.
+  const targetField = junctionConfig.targetFields[0];
+  const variantOrder: { nameSingular: string; labelPlural: string }[] =
+    junctionConfig.isMorphRelation
+      ? (targetField.morphRelations ?? []).map((morphRelation) => {
+          const nameSingular = morphRelation.targetObjectMetadata.nameSingular;
+          return {
+            nameSingular,
+            labelPlural:
+              objectMetadataItems.find((o) => o.nameSingular === nameSingular)
+                ?.labelPlural ?? nameSingular,
+          };
+        })
+      : (() => {
+          const distinctNames = Array.from(
+            new Set(targetRecordsWithMetadata.map((r) => r.objectNameSingular)),
+          );
+          return distinctNames.map((nameSingular) => ({
+            nameSingular,
+            labelPlural:
+              objectMetadataItems.find((o) => o.nameSingular === nameSingular)
+                ?.labelPlural ?? nameSingular,
+          }));
+        })();
+
+  const groups = variantOrder
+    .map((variant) => {
+      const all = targetRecordsWithMetadata.filter(
+        (r) => r.objectNameSingular === variant.nameSingular,
+      );
+      const visibleCount = getVisibleCountForGroup(variant.nameSingular);
+      const visible = all.slice(0, visibleCount);
+      const remaining = all.length - visibleCount;
+      return { ...variant, all, visible, remaining };
+    })
+    .filter((g) => g.all.length > 0);
+
+  // Only render section headings if there is more than one target variant in
+  // play — preserves the existing single-group UX for non-polymorphic junctions.
+  const shouldShowHeadings = groups.length > 1;
 
   return (
     <SidePanelProvider value={{ isInSidePanel }}>
@@ -171,29 +241,40 @@ export const FieldWidgetJunctionRelationCard = ({
         >
           <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
             <RecordDetailRecordsListContainer>
-              {visibleRecords.map((item) => (
-                <Fragment key={item.record.id}>
-                  <RecordDetailRelationRecordsListItemEffect
-                    relationRecordId={item.record.id}
-                    relationObjectMetadataNameSingular={item.objectNameSingular}
-                  />
-                  <RecordDetailRelationRecordsListItem
-                    isExpanded={expandedItem === item.record.id}
-                    onClick={handleItemClick}
-                    relationRecord={item.record}
-                    relationObjectMetadataNameSingular={item.objectNameSingular}
-                    relationFieldMetadataId=""
-                  />
+              {groups.map((group) => (
+                <Fragment key={group.nameSingular}>
+                  {shouldShowHeadings && (
+                    <StyledGroupHeading>{group.labelPlural}</StyledGroupHeading>
+                  )}
+                  {group.visible.map((item) => (
+                    <Fragment key={item.record.id}>
+                      <RecordDetailRelationRecordsListItemEffect
+                        relationRecordId={item.record.id}
+                        relationObjectMetadataNameSingular={
+                          item.objectNameSingular
+                        }
+                      />
+                      <RecordDetailRelationRecordsListItem
+                        isExpanded={expandedItem === item.record.id}
+                        onClick={handleItemClick}
+                        relationRecord={item.record}
+                        relationObjectMetadataNameSingular={
+                          item.objectNameSingular
+                        }
+                        relationFieldMetadataId=""
+                      />
+                    </Fragment>
+                  ))}
+                  {group.remaining > 0 && (
+                    <StyledShowMoreButtonContainer>
+                      <FieldWidgetShowMoreButton
+                        remainingCount={group.remaining}
+                        onClick={handleShowMore(group.nameSingular)}
+                      />
+                    </StyledShowMoreButtonContainer>
+                  )}
                 </Fragment>
               ))}
-              {hasMoreRecords && (
-                <StyledShowMoreButtonContainer>
-                  <FieldWidgetShowMoreButton
-                    remainingCount={remainingCount}
-                    onClick={handleShowMore}
-                  />
-                </StyledShowMoreButtonContainer>
-              )}
             </RecordDetailRecordsListContainer>
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
