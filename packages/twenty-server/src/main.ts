@@ -68,6 +68,7 @@ const bootstrap = async () => {
     limit: settings.storage.maxFileSize,
     extended: true,
   });
+  app.useBodyParser('text', { type: 'text/plain', limit: '1024kb' });
 
   // Graphql file upload
   app.use(

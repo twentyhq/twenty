@@ -1,10 +1,22 @@
 import { Container } from '@/design-system/components';
-import { theme } from '@/theme';
+import { theme, type Scheme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
 const StyledSection = styled.section`
   width: 100%;
+
+  &[data-scheme='light'] {
+    background-color: var(--color-white);
+  }
+
+  &[data-scheme='muted'] {
+    background-color: var(--color-neutral);
+  }
+
+  &[data-scheme='dark'] {
+    background-color: var(--color-black);
+  }
 `;
 
 const Grid = styled(Container)`
@@ -31,13 +43,17 @@ const Grid = styled(Container)`
 `;
 
 type RootProps = {
-  backgroundColor: string;
+  backgroundColor?: string;
   children: ReactNode;
+  scheme?: Scheme;
 };
 
-export function Root({ backgroundColor, children }: RootProps) {
+export function Root({ backgroundColor, children, scheme }: RootProps) {
   return (
-    <StyledSection style={{ backgroundColor }}>
+    <StyledSection
+      data-scheme={scheme}
+      style={scheme ? undefined : { backgroundColor }}
+    >
       <Grid>{children}</Grid>
     </StyledSection>
   );

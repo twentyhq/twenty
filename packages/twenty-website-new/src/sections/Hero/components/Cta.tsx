@@ -9,7 +9,7 @@ const CTAsContainer = styled.div`
   justify-content: center;
 `;
 
-export type HeroCtaProps = { children: ReactNode };
+type HeroCtaProps = { children: ReactNode };
 
 export function Cta({ children }: HeroCtaProps) {
   return <CTAsContainer>{children}</CTAsContainer>;

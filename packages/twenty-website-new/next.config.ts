@@ -55,6 +55,15 @@ const nextConfig: LinariaConfig = {
         source: '/:path*',
         headers: SECURITY_HEADERS.map((h) => ({ ...h })),
       },
+      {
+        source: '/(images|illustrations|lottie)/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ];
   },
   async redirects() {
@@ -115,13 +124,13 @@ const nextConfig: LinariaConfig = {
         permanent: true,
       },
       {
-        source: '/why-twenty',
-        destination: '/resources/why-twenty',
+        source: '/resources/why-twenty',
+        destination: '/why-twenty',
         permanent: true,
       },
       {
         source: '/story',
-        destination: '/resources/why-twenty',
+        destination: '/why-twenty',
         permanent: true,
       },
       {

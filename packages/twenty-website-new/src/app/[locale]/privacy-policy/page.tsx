@@ -1,7 +1,7 @@
-import { MENU_DATA } from '@/sections/Menu/data';
+import { MENU_DATA } from '@/sections/Menu';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { LegalDocument } from '@/sections/LegalDocument/components';
+import { LegalDocument } from '@/sections/LegalDocument';
 import { buildRouteMetadata } from '@/lib/seo';
 
 import { PrivacyPolicyDocument } from './_components';

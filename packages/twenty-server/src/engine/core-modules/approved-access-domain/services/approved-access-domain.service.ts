@@ -63,7 +63,7 @@ export class ApprovedAccessDomainService {
 
     const link = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
-      pathname: getSettingsPath(SettingsPath.Domains),
+      pathname: getSettingsPath(SettingsPath.WorkspaceMembersPage),
       searchParams: {
         wtdId: approvedAccessDomain.id,
         validationToken: this.generateUniqueHash(approvedAccessDomain),
