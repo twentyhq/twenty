@@ -40,11 +40,7 @@ export class ApplicationVersionValidationService {
     const serverVersion = this.twentyConfigService.get('APP_VERSION');
 
     if (!isDefined(serverVersion) || !isDefined(semver.valid(serverVersion))) {
-      return {
-        compatible: false,
-        reason: 'INVALID_SERVER_VERSION',
-        message: `Cannot verify server compatibility: APP_VERSION "${serverVersion ?? 'undefined'}" is not a valid semver version. Self-hosted instances must set a valid APP_VERSION.`,
-      };
+      return { compatible: true };
     }
 
     if (!semver.satisfies(serverVersion, requiredServerVersion)) {
