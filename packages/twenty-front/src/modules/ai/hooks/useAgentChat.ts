@@ -132,6 +132,7 @@ export const useAgentChat = (
     store.set(errorAtom, null);
 
     const fileIds = agentChatUploadedFiles.map((file) => file.fileId);
+    const uploadedFilesSnapshot = agentChatUploadedFiles;
 
     setAgentChatUploadedFiles([]);
 
@@ -186,6 +187,7 @@ export const useAgentChat = (
           ? { [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '' }
           : {}),
       }));
+      setAgentChatUploadedFiles(uploadedFilesSnapshot);
 
       const latestMessages = store.get(messagesAtom);
 

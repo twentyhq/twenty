@@ -37,8 +37,8 @@ export const useAiChatFileUpload = () => {
         throw new Error(t`Couldn't upload the file.`);
       }
 
-      setAgentChatSelectedFiles(
-        agentChatSelectedFiles.filter((f) => f.name !== file.name),
+      setAgentChatSelectedFiles((prev) =>
+        prev.filter((f) => f.name !== file.name),
       );
       return {
         filename: file.name,
@@ -72,10 +72,7 @@ export const useAiChatFileUpload = () => {
     );
 
     if (successfulUploads.length > 0) {
-      setAgentChatUploadedFiles([
-        ...agentChatUploadedFiles,
-        ...successfulUploads,
-      ]);
+      setAgentChatUploadedFiles((prev) => [...prev, ...successfulUploads]);
     }
 
     const failedCount = uploadResults.filter(
