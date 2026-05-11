@@ -10,6 +10,6 @@ export class AddIsInternalMessagesImportEnabledFastInstanceCommand implements Fa
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('ALTER TABLE "core"."workspace" DROP COLUMN "isInternalMessagesImportEnabled"');
+    await queryRunner.query('ALTER TABLE "core"."workspace" DROP COLUMN IF EXISTS "isInternalMessagesImportEnabled"');
   }
 }
