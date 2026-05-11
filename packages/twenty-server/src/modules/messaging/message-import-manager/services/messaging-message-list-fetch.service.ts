@@ -99,6 +99,11 @@ export class MessagingMessageListFetchService {
             `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Message channel not found`,
           );
 
+          await this.messageChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
+            [messageChannel.id],
+            workspaceId,
+          );
+
           return;
         }
 
