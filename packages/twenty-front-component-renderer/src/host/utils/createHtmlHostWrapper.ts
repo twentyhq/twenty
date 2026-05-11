@@ -247,11 +247,10 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
   return ({ children, ...props }: WrapperProps) => {
     const reactProps = filterProps(props);
 
-    if (htmlTag === 'textarea') {
-      return createCaretPreservingElement(htmlTag, reactProps, forcedProps);
-    }
-
-    if (htmlTag === 'input' && isTextLikeInputType(reactProps.type)) {
+    if (
+      htmlTag === 'textarea' ||
+      (htmlTag === 'input' && isTextLikeInputType(reactProps.type))
+    ) {
       return createCaretPreservingElement(htmlTag, reactProps, forcedProps);
     }
 
