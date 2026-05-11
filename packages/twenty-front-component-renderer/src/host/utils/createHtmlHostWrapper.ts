@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import React from 'react';
 
 import { EVENT_TO_REACT } from '@/constants/EventToReact';
@@ -31,7 +32,7 @@ const VOID_ELEMENTS = new Set([
 const parseCssString = (
   styleString: string | undefined,
 ): React.CSSProperties | undefined => {
-  if (!styleString || typeof styleString !== 'string') {
+  if (!isNonEmptyString(styleString)) {
     return styleString as React.CSSProperties | undefined;
   }
 
