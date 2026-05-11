@@ -72,7 +72,9 @@ const parseCssString = (
   return style;
 };
 
-const serializeFileList = (files: unknown): SerializedFileData[] | undefined => {
+const serializeFileList = (
+  files: unknown,
+): SerializedFileData[] | undefined => {
   if (!isObject(files)) return undefined;
   const fileListLike = files as { length?: unknown } & Record<number, unknown>;
   if (!isNumber(fileListLike.length)) return undefined;
