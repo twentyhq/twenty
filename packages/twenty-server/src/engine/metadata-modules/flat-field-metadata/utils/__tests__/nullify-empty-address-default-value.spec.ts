@@ -1,7 +1,6 @@
 import { nullifyEmptyAddressDefaultValue } from '../nullify-empty-address-default-value.util';
 
 describe('nullifyEmptyAddressDefaultValue', () => {
-
   it('returns null when all sub-fields are empty-string equivalents or null', () => {
     expect(
       nullifyEmptyAddressDefaultValue({

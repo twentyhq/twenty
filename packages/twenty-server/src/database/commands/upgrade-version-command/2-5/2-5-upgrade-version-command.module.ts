@@ -14,6 +14,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceSchemaManagerModule,
     FieldMetadataModule,
   ],
-  providers: [RebuildUniquePhoneIndexesCommand, NormalizeCompositeFieldDefaultsCommand],
+  providers: [
+    RebuildUniquePhoneIndexesCommand,
+    NormalizeCompositeFieldDefaultsCommand,
+  ],
 })
 export class V2_5_UpgradeVersionCommandModule {}

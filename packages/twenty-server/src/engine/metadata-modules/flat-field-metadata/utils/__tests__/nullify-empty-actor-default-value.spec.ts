@@ -1,7 +1,6 @@
 import { nullifyEmptyActorDefaultValue } from '../nullify-empty-actor-default-value.util';
 
 describe('nullifyEmptyActorDefaultValue', () => {
-
   it('returns null when all sub-fields are null or empty-string equivalents', () => {
     expect(
       nullifyEmptyActorDefaultValue({

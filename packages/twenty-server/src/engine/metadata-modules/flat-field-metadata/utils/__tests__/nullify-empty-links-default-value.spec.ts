@@ -1,8 +1,6 @@
 import { nullifyEmptyLinksDefaultValue } from '../nullify-empty-links-default-value.util';
 
 describe('nullifyEmptyLinksDefaultValue', () => {
-
-
   it('returns null when all sub-fields are empty-string equivalents', () => {
     expect(
       nullifyEmptyLinksDefaultValue({

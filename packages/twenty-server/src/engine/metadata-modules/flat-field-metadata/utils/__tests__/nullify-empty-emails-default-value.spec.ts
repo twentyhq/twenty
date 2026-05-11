@@ -1,10 +1,12 @@
 import { nullifyEmptyEmailsDefaultValue } from '../nullify-empty-emails-default-value.util';
 
 describe('nullifyEmptyEmailsDefaultValue', () => {
-
   it('returns null when all sub-fields are empty-string equivalents', () => {
     expect(
-      nullifyEmptyEmailsDefaultValue({ primaryEmail: "''", additionalEmails: [] }),
+      nullifyEmptyEmailsDefaultValue({
+        primaryEmail: "''",
+        additionalEmails: [],
+      }),
     ).toBeNull();
   });
 

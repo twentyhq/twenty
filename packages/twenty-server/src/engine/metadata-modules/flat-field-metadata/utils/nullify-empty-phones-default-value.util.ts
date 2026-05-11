@@ -19,7 +19,9 @@ export const nullifyEmptyPhonesDefaultValue = (
     additionalPhones?: object | null;
   };
 
-  const primaryPhoneNumber = isNullEquivalentTextDefaultValue(v.primaryPhoneNumber)
+  const primaryPhoneNumber = isNullEquivalentTextDefaultValue(
+    v.primaryPhoneNumber,
+  )
     ? null
     : (v.primaryPhoneNumber ?? null);
   const primaryPhoneCountryCode = isNullEquivalentTextDefaultValue(
