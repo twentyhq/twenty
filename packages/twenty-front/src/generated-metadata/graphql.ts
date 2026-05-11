@@ -199,8 +199,8 @@ export enum AllMetadataName {
   pageLayout = 'pageLayout',
   pageLayoutTab = 'pageLayoutTab',
   pageLayoutWidget = 'pageLayoutWidget',
-  permissionFlagGrant = 'permissionFlagGrant',
   permissionFlag = 'permissionFlag',
+  permissionFlagGrant = 'permissionFlagGrant',
   role = 'role',
   roleTarget = 'roleTarget',
   rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
@@ -3967,13 +3967,6 @@ export type PathCommandMenuItemPayload = {
   path: Scalars['String'];
 };
 
-export type PermissionFlagGrant = {
-  __typename?: 'PermissionFlagGrant';
-  flag: PermissionFlagType;
-  id: Scalars['UUID'];
-  roleId: Scalars['UUID'];
-};
-
 export type PermissionFlag = {
   __typename?: 'PermissionFlag';
   applicationId: Scalars['UUID'];
@@ -3990,6 +3983,13 @@ export type PermissionFlag = {
   permissionType: Scalars['String'];
   universalIdentifier: Scalars['UUID'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type PermissionFlagGrant = {
+  __typename?: 'PermissionFlagGrant';
+  flag: PermissionFlagType;
+  id: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 };
 
 export enum PermissionFlagType {
