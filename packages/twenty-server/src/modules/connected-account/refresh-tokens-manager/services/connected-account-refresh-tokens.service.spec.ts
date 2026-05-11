@@ -49,12 +49,13 @@ describe('ConnectedAccountRefreshTokensService', () => {
   const buildSymmetricEncryptionStub = (): {
     encrypt: jest.Mock;
     decrypt: jest.Mock;
-  } => ({
-    encrypt: jest.fn(
+    encryptTokenPair: jest.Mock;
+  } => {
+    const encrypt = jest.fn(
       (value: string) =>
         `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${value})`,
-    ),
-    decrypt: jest.fn((value: string) => {
+    );
+    const decrypt = jest.fn((value: string) => {
       const match = value.match(
         new RegExp(
           `^${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER\\((.*)\\)$`,
@@ -68,8 +69,26 @@ describe('ConnectedAccountRefreshTokensService', () => {
       }
 
       return match[1];
-    }),
-  });
+    });
+
+    return {
+      encrypt,
+      decrypt,
+      encryptTokenPair: jest.fn(
+        ({
+          accessToken,
+          refreshToken,
+        }: {
+          accessToken: string;
+          refreshToken: string | null;
+        }) => ({
+          encryptedAccessToken: encrypt(accessToken),
+          encryptedRefreshToken:
+            refreshToken === null ? null : encrypt(refreshToken),
+        }),
+      ),
+    };
+  };
 
   beforeEach(async () => {
     connectedAccountTokenEncryptionService = buildSymmetricEncryptionStub();

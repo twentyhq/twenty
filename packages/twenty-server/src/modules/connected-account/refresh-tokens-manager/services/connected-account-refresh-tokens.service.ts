@@ -106,15 +106,16 @@ export class ConnectedAccountRefreshTokensService {
     );
 
     // Re-encrypt the freshly-rotated tokens before they touch the entity or
-    // the SQL — the update below must never write plaintext.
-    const reEncryptedAccessToken =
-      this.connectedAccountTokenEncryptionService.encrypt(
-        connectedAccountTokens.accessToken,
-      );
-    const reEncryptedRefreshToken =
-      this.connectedAccountTokenEncryptionService.encrypt(
-        connectedAccountTokens.refreshToken,
-      );
+    // the SQL — the update below must never write plaintext. Aliased to
+    // reEncrypted* because the function already binds encryptedAccessToken /
+    // encryptedRefreshToken at the top for the entity-loaded ciphertext.
+    const {
+      encryptedAccessToken: reEncryptedAccessToken,
+      encryptedRefreshToken: reEncryptedRefreshToken,
+    } = this.connectedAccountTokenEncryptionService.encryptTokenPair({
+      accessToken: connectedAccountTokens.accessToken,
+      refreshToken: connectedAccountTokens.refreshToken,
+    });
 
     const authContext = buildSystemAuthContext(workspaceId);
 

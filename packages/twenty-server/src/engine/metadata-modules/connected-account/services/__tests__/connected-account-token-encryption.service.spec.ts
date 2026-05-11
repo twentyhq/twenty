@@ -139,4 +139,51 @@ describe('ConnectedAccountTokenEncryptionService', () => {
       ).toBe('rt-value');
     });
   });
+
+  describe('encryptTokenPair', () => {
+    it('should encrypt both tokens and return them keyed as encrypted*', () => {
+      const { encryptionService } = buildEncryptionService();
+
+      expect(
+        encryptionService.encryptTokenPair({
+          accessToken: 'at-plaintext',
+          refreshToken: 'rt-plaintext',
+        }),
+      ).toEqual({
+        encryptedAccessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(at-plaintext)`,
+        encryptedRefreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(rt-plaintext)`,
+      });
+    });
+
+    // The OAuth provider response can omit refreshToken on subsequent grants
+    // (the IDP doesn't always reissue one). The pair API has to handle that
+    // without forcing the caller to fall back to the granular methods.
+    it('should pass a null refreshToken through unencrypted', () => {
+      const { encryptionService } = buildEncryptionService();
+
+      expect(
+        encryptionService.encryptTokenPair({
+          accessToken: 'at-plaintext',
+          refreshToken: null,
+        }),
+      ).toEqual({
+        encryptedAccessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(at-plaintext)`,
+        encryptedRefreshToken: null,
+      });
+    });
+
+    // Same safety guard as encrypt(): a caller passing already-prefixed
+    // ciphertext into the pair API would corrupt the column. The throw on the
+    // accessToken side propagates out of the pair call unchanged.
+    it('should throw when accessToken is already encrypted', () => {
+      const { encryptionService } = buildEncryptionService();
+
+      expect(() =>
+        encryptionService.encryptTokenPair({
+          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}already-encrypted`,
+          refreshToken: 'rt-plaintext',
+        }),
+      ).toThrow(/already-prefixed/);
+    });
+  });
 });

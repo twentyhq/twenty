@@ -36,14 +36,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   provider: ConnectedAccountProvider;
 
   // accessToken and refreshToken always hold ciphertext stamped with
-  // CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX. Encryption happens in the
-  // service layer via ConnectedAccountTokenEncryptionService at the moment
-  // the OAuth response is received, and decryption happens at the chokepoints
-  // that pass tokens to the IDP (OAuth2ClientManagerService and the refresh
-  // path in ConnectedAccountRefreshTokensService). A CHECK constraint added
-  // by the 2.4.0 slow instance command enforces the prefix at the schema
-  // level, so any future writer that bypasses the encryption service
-  // (workspace ORM, raw SQL, ...) is rejected by the database.
+  // CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX.
   @Column({ type: 'varchar', nullable: true })
   accessToken: string | null;
 

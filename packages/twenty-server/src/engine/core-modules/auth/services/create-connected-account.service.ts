@@ -90,10 +90,11 @@ export class CreateConnectedAccountService {
       // Encrypt at the boundary, before the entity is constructed. The
       // entity instance, the repository call, any logger that touches it,
       // and the SQL all see ciphertext from this point on.
-      const encryptedAccessToken =
-        this.connectedAccountTokenEncryptionService.encrypt(accessToken);
-      const encryptedRefreshToken =
-        this.connectedAccountTokenEncryptionService.encrypt(refreshToken);
+      const { encryptedAccessToken, encryptedRefreshToken } =
+        this.connectedAccountTokenEncryptionService.encryptTokenPair({
+          accessToken,
+          refreshToken,
+        });
 
       await input.transactionManager
         .getRepository(ConnectedAccountEntity)

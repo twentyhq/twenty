@@ -43,10 +43,6 @@ export class AppOAuthRevokeService {
     }
 
     try {
-      // Decrypt at the IDP-call boundary — the revoke endpoint expects the
-      // raw token. Without this, we'd POST `enc:v1:CIPHER(...)` to the
-      // provider and the revoke would silently no-op (the provider can't
-      // recognize a value that isn't one of its issued tokens).
       const decryptedAccessToken =
         this.connectedAccountTokenEncryptionService.decrypt(
           connectedAccount.accessToken,

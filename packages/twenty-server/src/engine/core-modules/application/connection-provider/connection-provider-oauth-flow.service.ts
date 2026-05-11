@@ -6,8 +6,8 @@ import { Repository } from 'typeorm';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
@@ -250,19 +250,11 @@ export class ConnectionProviderOAuthFlowService {
     visibility: 'user' | 'workspace';
     reconnectingConnectedAccountId: string | null;
   }): Promise<ConnectedAccountEntity> {
-    // Encrypt at the boundary, before sharedFields is constructed and before
-    // any subsequent code path (logger, ORM hook, ...) sees the entity values.
-    // tokenResponse.refreshToken can be null when the provider doesn't return
-    // one in this exchange (some providers only ship refresh tokens on first
-    // consent), so use the nullable variant.
-    const encryptedAccessToken =
-      this.connectedAccountTokenEncryptionService.encrypt(
-        tokenResponse.accessToken,
-      );
-    const encryptedRefreshToken =
-      this.connectedAccountTokenEncryptionService.encryptNullable(
-        tokenResponse.refreshToken,
-      );
+    const { encryptedAccessToken, encryptedRefreshToken } =
+      this.connectedAccountTokenEncryptionService.encryptTokenPair({
+        accessToken: tokenResponse.accessToken,
+        refreshToken: tokenResponse.refreshToken,
+      });
 
     const sharedFields = {
       accessToken: encryptedAccessToken,

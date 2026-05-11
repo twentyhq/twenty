@@ -131,6 +131,21 @@ describe('ConnectionProviderOAuthFlowService', () => {
                 ? null
                 : `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${value})`,
             ),
+            encryptTokenPair: jest.fn(
+              ({
+                accessToken,
+                refreshToken,
+              }: {
+                accessToken: string;
+                refreshToken: string | null;
+              }) => ({
+                encryptedAccessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${accessToken})`,
+                encryptedRefreshToken:
+                  refreshToken === null
+                    ? null
+                    : `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${refreshToken})`,
+              }),
+            ),
           },
         },
       ],

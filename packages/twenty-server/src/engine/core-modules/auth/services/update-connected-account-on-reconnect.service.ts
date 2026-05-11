@@ -34,14 +34,11 @@ export class UpdateConnectedAccountOnReconnectService {
       scopes,
     } = input;
 
-    // Encrypt at the boundary, before the entity ever holds plaintext. From
-    // here on the values flow as ciphertext through TypeORM, any logger that
-    // touches the update payload, and the database. This is the load-bearing
-    // line that fixes the in-flight exposure card 02 originally flagged.
-    const encryptedAccessToken =
-      this.connectedAccountTokenEncryptionService.encrypt(accessToken);
-    const encryptedRefreshToken =
-      this.connectedAccountTokenEncryptionService.encrypt(refreshToken);
+    const { encryptedAccessToken, encryptedRefreshToken } =
+      this.connectedAccountTokenEncryptionService.encryptTokenPair({
+        accessToken,
+        refreshToken,
+      });
 
     const authContext = buildSystemAuthContext(workspaceId);
 

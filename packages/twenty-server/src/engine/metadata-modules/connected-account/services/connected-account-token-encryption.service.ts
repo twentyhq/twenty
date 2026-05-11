@@ -69,4 +69,26 @@ export class ConnectedAccountTokenEncryptionService {
 
     return this.decrypt(ciphertext);
   }
+
+  // Convenience wrapper for the canonical OAuth shape (accessToken always
+  // present, refreshToken optional). Every write chokepoint that persists a
+  // freshly-issued token pair should go through this method instead of calling
+  // encrypt() + encryptNullable() side-by-side — a single call removes the
+  // "encrypt one, forget the other" failure mode and centralizes the typing
+  // of the ciphertext-bearing record.
+  encryptTokenPair({
+    accessToken,
+    refreshToken,
+  }: {
+    accessToken: string;
+    refreshToken: string | null;
+  }): {
+    encryptedAccessToken: string;
+    encryptedRefreshToken: string | null;
+  } {
+    return {
+      encryptedAccessToken: this.encrypt(accessToken),
+      encryptedRefreshToken: this.encryptNullable(refreshToken),
+    };
+  }
 }
