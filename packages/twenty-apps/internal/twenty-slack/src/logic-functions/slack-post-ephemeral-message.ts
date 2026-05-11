@@ -7,7 +7,7 @@ import { slackPostEphemeralMessageInputSchema } from './schemas/slack-post-ephem
 
 export default defineLogicFunction({
   universalIdentifier: SLACK_POST_EPHEMERAL_MESSAGE_UNIVERSAL_IDENTIFIER,
-  name: 'slack_post_ephemeral_message',
+  name: 'slack-post-ephemeral-message',
   description:
     'Send a private-on-channel note: only the chosen teammate sees it in that channel (not a DM broadcast to everyone).',
   timeoutSeconds: 30,

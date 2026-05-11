@@ -7,7 +7,7 @@ import { slackPostMessageInputSchema } from './schemas/slack-post-message-input.
 
 export default defineLogicFunction({
   universalIdentifier: SLACK_POST_MESSAGE_UNIVERSAL_IDENTIFIER,
-  name: 'slack_post_message',
+  name: 'slack-post-message',
   description:
     'Send a message to a Slack channel or DM. Optionally reply inside an existing thread using the parent message’s timestamp from a previous step.',
   timeoutSeconds: 30,

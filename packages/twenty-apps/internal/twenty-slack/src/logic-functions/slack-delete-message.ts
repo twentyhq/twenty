@@ -7,7 +7,7 @@ import { slackDeleteMessageInputSchema } from './schemas/slack-delete-message-in
 
 export default defineLogicFunction({
   universalIdentifier: SLACK_DELETE_MESSAGE_UNIVERSAL_IDENTIFIER,
-  name: 'slack_delete_message',
+  name: 'slack-delete-message',
   description:
     'Remove a message this bot sent (for example after a mistake or when a workflow is cancelled).',
   timeoutSeconds: 30,

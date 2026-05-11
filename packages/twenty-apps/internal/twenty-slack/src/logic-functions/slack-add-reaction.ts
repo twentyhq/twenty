@@ -7,7 +7,7 @@ import { slackAddReactionInputSchema } from './schemas/slack-add-reaction-input.
 
 export default defineLogicFunction({
   universalIdentifier: SLACK_ADD_REACTION_UNIVERSAL_IDENTIFIER,
-  name: 'slack_add_reaction',
+  name: 'slack-add-reaction',
   description:
     'Add an emoji reaction to a message (for example a checkmark as `white_check_mark`) so the channel can see status at a glance.',
   timeoutSeconds: 30,

@@ -9,11 +9,11 @@ messages, update/delete bot messages, and add reactions. Uses the official
 
 | Name | Slack API |
 |------|-----------|
-| `slack_post_message` | `chat.postMessage` |
-| `slack_post_ephemeral_message` | `chat.postEphemeral` |
-| `slack_update_message` | `chat.update` |
-| `slack_delete_message` | `chat.delete` |
-| `slack_add_reaction` | `reactions.add` |
+| `slack-post-message` | `chat.postMessage` |
+| `slack-post-ephemeral-message` | `chat.postEphemeral` |
+| `slack-update-message` | `chat.update` |
+| `slack-delete-message` | `chat.delete` |
+| `slack-add-reaction` | `reactions.add` |
 
 ### Workflow field names (for authors)
 

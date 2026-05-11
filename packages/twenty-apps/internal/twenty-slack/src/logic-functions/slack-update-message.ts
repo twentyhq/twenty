@@ -7,7 +7,7 @@ import { slackUpdateMessageInputSchema } from './schemas/slack-update-message-in
 
 export default defineLogicFunction({
   universalIdentifier: SLACK_UPDATE_MESSAGE_UNIVERSAL_IDENTIFIER,
-  name: 'slack_update_message',
+  name: 'slack-update-message',
   description:
     'Change the text of a message this bot already sent. You need the channel ID and the message’s timestamp from when it was posted.',
   timeoutSeconds: 30,
