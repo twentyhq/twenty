@@ -15,6 +15,6 @@ export default defineConnectionProvider({
     clientIdVariable: 'SLACK_CLIENT_ID',
     clientSecretVariable: 'SLACK_CLIENT_SECRET',
     tokenRequestContentType: 'form-urlencoded',
-    usePkce: false,
+    usePkce: true,
   },
 });
