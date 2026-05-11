@@ -26,6 +26,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('MessagingMessagesImportService', () => {
   let service: MessagingMessagesImportService;
@@ -181,6 +182,14 @@ describe('MessagingMessagesImportService', () => {
         provide: getRepositoryToken(UserWorkspaceEntity),
         useValue: {
           findOne: jest.fn().mockResolvedValue({ userId: 'user-id' }),
+        },
+      },
+      {
+        provide: getRepositoryToken(WorkspaceEntity),
+        useValue: {
+          findOne: jest
+            .fn()
+            .mockResolvedValue({ isInternalMessagesImportEnabled: false }),
         },
       },
       {
