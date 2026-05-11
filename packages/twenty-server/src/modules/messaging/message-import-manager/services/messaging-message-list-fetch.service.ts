@@ -103,11 +103,10 @@ export class MessagingMessageListFetchService {
         }
 
         if (!isDefined(freshMessageChannel.connectedAccount)) {
-          await this.messagingMonitoringService.track({
-            eventName: 'message_list_fetch.error.connected_account_not_found',
+          await this.messageChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
+            [freshMessageChannel.id],
             workspaceId,
-            messageChannelId: freshMessageChannel.id,
-          });
+          );
 
           return;
         }
