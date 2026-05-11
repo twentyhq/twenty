@@ -2,14 +2,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -39,7 +37,6 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
     private readonly messageFolderRepository: Repository<MessageFolderEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly featureFlagService: FeatureFlagService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
     super(workspaceIteratorService);
@@ -49,19 +46,6 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isMigrated = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-      workspaceId,
-    );
-
-    if (isMigrated) {
-      this.logger.log(
-        `Messaging infrastructure migration already completed for workspace ${workspaceId}. Skipping.`,
-      );
-
-      return;
-    }
-
     const isDryRun = options.dryRun ?? false;
 
     const connectedAccountWorkspaceRepository =
