@@ -130,30 +130,37 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     closeDropdown(subFieldDropdownId);
   };
 
+  // Fence the dropdown from the chip's outer onClick (which toggles
+  // ASC/DESC) — both the trigger and the portaled menu items bubble
+  // through the React tree back up to the chip.
   const subFieldNode =
     isDefined(subFieldState) && isDefined(selectedSubFieldLabel) ? (
-      <Dropdown
-        dropdownId={subFieldDropdownId}
-        clickableComponent={
-          <StyledSubFieldTrigger>{selectedSubFieldLabel}</StyledSubFieldTrigger>
-        }
-        dropdownComponents={
-          <DropdownContent>
-            <DropdownMenuItemsContainer>
-              {subFieldState.options.map((option) => (
-                <MenuItemSelect
-                  key={option.value}
-                  text={option.label}
-                  selected={option.value === subFieldState.resolvedValue}
-                  onClick={() => handleSubFieldSelect(option.value)}
-                />
-              ))}
-            </DropdownMenuItemsContainer>
-          </DropdownContent>
-        }
-        dropdownOffset={{ y: 4, x: 0 }}
-        dropdownPlacement="bottom-start"
-      />
+      <span onClick={(event) => event.stopPropagation()}>
+        <Dropdown
+          dropdownId={subFieldDropdownId}
+          clickableComponent={
+            <StyledSubFieldTrigger>
+              {selectedSubFieldLabel}
+            </StyledSubFieldTrigger>
+          }
+          dropdownComponents={
+            <DropdownContent>
+              <DropdownMenuItemsContainer>
+                {subFieldState.options.map((option) => (
+                  <MenuItemSelect
+                    key={option.value}
+                    text={option.label}
+                    selected={option.value === subFieldState.resolvedValue}
+                    onClick={() => handleSubFieldSelect(option.value)}
+                  />
+                ))}
+              </DropdownMenuItemsContainer>
+            </DropdownContent>
+          }
+          dropdownOffset={{ y: 4, x: 0 }}
+          dropdownPlacement="bottom-start"
+        />
+      </span>
     ) : undefined;
 
   return (
