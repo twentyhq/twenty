@@ -164,9 +164,20 @@ jobs:
           interval=5
           elapsed=0
 
+          ADMIN_TOKEN=$(jq -r '.APPLE_JANE_ADMIN_ACCESS_TOKEN' packages/twenty-server/test/integration/constants/test-tokens.json)
+
+          # The HTTP listener accepts connections before the workspace schema cache is
+          # populated, so a plain port-open check passes while introspection still errors.
+          # Probe with an authenticated introspection and require a 2xx OpenAPI response.
           while [ $elapsed -lt $timeout ]; do
-            if curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
-               curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
+            GRAPHQL_RESPONSE=$(curl -s -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+              -d '{"query":"{ __schema { queryType { name } } }"}' 2>/dev/null)
+
+            if echo "$GRAPHQL_RESPONSE" | jq -e '.data.__schema' > /dev/null 2>&1 && \
+               curl -fsS "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" \
+                 -H "Authorization: Bearer ${ADMIN_TOKEN}" > /dev/null 2>&1; then
               echo "Current branch server is ready!"
               break
             fi
@@ -324,9 +335,20 @@ jobs:
           interval=5
           elapsed=0
 
+          ADMIN_TOKEN=$(jq -r '.APPLE_JANE_ADMIN_ACCESS_TOKEN' packages/twenty-server/test/integration/constants/test-tokens.json)
+
+          # The HTTP listener accepts connections before the workspace schema cache is
+          # populated, so a plain port-open check passes while introspection still errors.
+          # Probe with an authenticated introspection and require a 2xx OpenAPI response.
           while [ $elapsed -lt $timeout ]; do
-            if curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
-               curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
+            GRAPHQL_RESPONSE=$(curl -s -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+              -d '{"query":"{ __schema { queryType { name } } }"}' 2>/dev/null)
+
+            if echo "$GRAPHQL_RESPONSE" | jq -e '.data.__schema' > /dev/null 2>&1 && \
+               curl -fsS "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" \
+                 -H "Authorization: Bearer ${ADMIN_TOKEN}" > /dev/null 2>&1; then
               echo "Main branch server is ready!"
               break
             fi
@@ -406,12 +428,27 @@ jobs:
         run: |
           valid=true
 
+          # GraphQL introspection error responses are syntactically valid JSON, so the
+          # check must confirm the file actually contains a schema (.data.__schema) and
+          # OpenAPI files have the expected top-level "openapi"/"swagger" field.
           for file in main-schema-introspection.json current-schema-introspection.json \
-                      main-metadata-schema-introspection.json current-metadata-schema-introspection.json \
-                      main-rest-api.json current-rest-api.json \
+                      main-metadata-schema-introspection.json current-metadata-schema-introspection.json; do
+            if [ ! -f "$file" ]; then
+              echo "::warning::Missing GraphQL schema file: $file"
+              valid=false
+            elif ! jq -e '.data.__schema' "$file" >/dev/null 2>&1; then
+              echo "::warning::File $file is not a valid GraphQL introspection result. First 200 bytes: $(head -c 200 "$file")"
+              valid=false
+            fi
+          done
+
+          for file in main-rest-api.json current-rest-api.json \
                       main-rest-metadata-api.json current-rest-metadata-api.json; do
-            if [ ! -f "$file" ] || ! jq empty "$file" 2>/dev/null; then
-              echo "::warning::Invalid or missing schema file: $file"
+            if [ ! -f "$file" ]; then
+              echo "::warning::Missing OpenAPI spec file: $file"
+              valid=false
+            elif ! jq -e '.openapi // .swagger' "$file" >/dev/null 2>&1; then
+              echo "::warning::File $file is not a valid OpenAPI spec. First 200 bytes: $(head -c 200 "$file")"
               valid=false
             fi
           done
