@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  formatAngle,
-  formatDecimal,
-} from '@/app/[locale]/halftone/_lib/formatters';
+import { formatAngle, formatDecimal } from '@/lib/halftone/utils/formatters';
 import {
   DEFAULT_GLASS_ANIMATION_SETTINGS,
   DEFAULT_GLASS_LIGHTING_SETTINGS,
@@ -14,7 +11,7 @@ import {
   type HalftoneBackgroundSettings,
   type HalftoneSourceMode,
   type HalftoneStudioSettings,
-} from '@/lib/halftone/state';
+} from '@/lib/halftone/utils/state';
 import { styled } from '@linaria/react';
 import {
   ColorControlLabel,

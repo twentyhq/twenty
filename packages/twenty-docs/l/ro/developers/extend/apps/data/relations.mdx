@@ -1,0 +1,160 @@
+---
+title: Relații
+description: Conectați obiectele între ele cu relații bidirecționale MANY_TO_ONE / ONE_TO_MANY.
+icon: diagram-project
+---
+
+Relațiile conectează două obiecte între ele. În Twenty, relațiile sunt întotdeauna **bidirecționale** — fiecare relație are două părți, iar fiecare parte este declarată ca un câmp ce o referențiază pe cealaltă.
+
+| Tip relație   | Descriere                                                                          | Are cheie străină?    |
+| ------------- | ---------------------------------------------------------------------------------- | --------------------- |
+| `MANY_TO_ONE` | Multe înregistrări ale acestui obiect indică către o singură înregistrare a țintei | Da (`joinColumnName`) |
+| `ONE_TO_MANY` | O înregistrare a acestui obiect are multe înregistrări ale țintei                  | Nu (partea inversă)   |
+
+## Cum funcționează relațiile
+
+Fiecare relație necesită **două câmpuri** care se referențiază reciproc:
+
+1. Partea **MANY_TO_ONE** — se află pe obiectul care deține cheia străină.
+2. Partea **ONE_TO_MANY** — se află pe obiectul care deține colecția.
+
+Ambele câmpuri folosesc `FieldType.RELATION` și se referențiază încrucișat prin `relationTargetFieldMetadataUniversalIdentifier`.
+
+## Exemplu: Post Card are mulți destinatari
+
+Un `PostCard` poate fi trimis către multe înregistrări `PostCardRecipient`. Fiecare destinatar aparține exact unui Post Card.
+
+**Pasul 1: Definiți partea ONE_TO_MANY pe PostCard** (partea "one"):
+
+```ts src/fields/post-card-recipients-on-post-card.field.ts
+import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+// Import from the other side
+import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  icon: 'IconUsers',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+});
+```
+
+**Pasul 2: Definiți partea MANY_TO_ONE pe PostCardRecipient** (partea "many" — deține cheia străină):
+
+```ts src/fields/post-card-on-post-card-recipient.field.ts
+import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_FIELD_ID = 'b2222222-2222-2222-2222-222222222222';
+// Import from the other side
+import { POST_CARD_RECIPIENTS_FIELD_ID } from './post-card-recipients-on-post-card.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCard',
+  label: 'Post Card',
+  icon: 'IconMail',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.CASCADE,
+    joinColumnName: 'postCardId',
+  },
+});
+```
+
+<Note>
+**Importuri circulare:** ambele câmpuri de relație se referă unul la celălalt prin `universalIdentifier`. Pentru a evita problemele de import circular, exportați ID-urile câmpurilor ca constante denumite din fiecare fișier și importați-le în celălalt. Sistemul de build le rezolvă în timpul compilării.
+</Note>
+
+## Relaționarea cu obiectele standard
+
+Pentru a crea o relație cu un obiect Twenty încorporat (Person, Company etc.), utilizați `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+
+```ts src/fields/person-on-self-hosting-user.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+
+export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+
+export default defineField({
+  universalIdentifier: PERSON_FIELD_ID,
+  objectUniversalIdentifier: SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  description: 'Person matching with the self hosting user',
+  isNullable: true,
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.SET_NULL,
+    joinColumnName: 'personId',
+  },
+});
+```
+
+## Proprietăți ale câmpului de relație
+
+| Proprietate                                       | Obligatoriu      | Descriere                                                                                                             |
+| ------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `type`                                            | Da               | Trebuie să fie `FieldType.RELATION`                                                                                   |
+| `relationTargetObjectMetadataUniversalIdentifier` | Da               | `universalIdentifier` al obiectului țintă                                                                             |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Da               | `universalIdentifier` al câmpului corespunzător de pe obiectul țintă                                                  |
+| `universalSettings.relationType`                  | Da               | `RelationType.MANY_TO_ONE` sau `RelationType.ONE_TO_MANY`                                                             |
+| `universalSettings.onDelete`                      | Doar MANY_TO_ONE | Ce se întâmplă atunci când înregistrarea referențiată este ștearsă: `CASCADE`, `SET_NULL`, `RESTRICT` sau `NO_ACTION` |
+| `universalSettings.joinColumnName`                | Doar MANY_TO_ONE | Numele coloanei din baza de date pentru cheia străină (de ex., `postCardId`)                                          |
+
+## Câmpuri de relație inline
+
+Puteți, de asemenea, să declarați o relație direct în [`defineObject`](/l/ro/developers/extend/apps/data/objects). Când este inline, omiteți `objectUniversalIdentifier` — este moștenit de la obiectul părinte:
+
+```ts
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCardRecipient',
+  // ...
+  fields: [
+    {
+      universalIdentifier: POST_CARD_FIELD_ID,
+      type: FieldType.RELATION,
+      name: 'postCard',
+      label: 'Post Card',
+      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.CASCADE,
+        joinColumnName: 'postCardId',
+      },
+    },
+    // … other fields
+  ],
+});
+```

@@ -1,0 +1,43 @@
+---
+title: Visualizações
+description: Distribua visualizações salvas e pré-configuradas — ordem das colunas, filtros, grupos — para objetos no seu app.
+icon: list
+---
+
+Uma **visualização** é uma configuração salva de como os registros de um objeto são exibidos: quais campos aparecem, sua ordem, se estão visíveis e quaisquer filtros ou grupos aplicados. Use `defineView()` para distribuir visualizações pré-configuradas com seu app — normalmente uma visualização de índice padrão para cada objeto personalizado que você cria.
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## Pontos-chave
+
+* `objectUniversalIdentifier` especifica a qual objeto esta visualização se aplica. Pode ser um objeto personalizado que você definiu ou um objeto padrão do Twenty.
+* `key` determina o tipo de visualização — `ViewKey.INDEX` é a visualização de lista principal do objeto.
+* `fields` controla quais colunas aparecem e em que ordem. Cada campo referencia um `fieldMetadataUniversalIdentifier`.
+* Você também pode declarar `filters`, `filterGroups`, `groups` e `fieldGroups` para configurações avançadas.
+* `position` controla a ordenação quando existem várias visualizações para o mesmo objeto.
+
+## Como as visualizações aparecem na UI
+
+Uma visualização por si só não é acessível a partir da barra lateral. Para fazê-la aparecer lá, associe-a a um [item de menu de navegação](/l/pt/developers/extend/apps/layout/navigation-menu-items) do tipo `VIEW` que aponte para o `universalIdentifier` da visualização. Esse é o padrão canônico: cada objeto personalizado normalmente inclui uma visualização padrão + uma entrada na barra lateral que a abre.

@@ -1,4 +1,4 @@
-import { createBoundedFailureCache } from '@/lib/visual-runtime/bounded-failure-cache';
+import { createBoundedFailureCache } from '@/lib/visual-runtime/utils/bounded-failure-cache';
 
 describe('createBoundedFailureCache', () => {
   it('records added URLs and reports them via has()', () => {

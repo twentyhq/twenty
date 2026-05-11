@@ -271,6 +271,11 @@ msgstr "{count, plural, one {Наприклад, {0}{1} для {count} деся�
 msgid "{credits} Credits - ${price}"
 msgstr "{credits} кредитів - ${price}"
 
+#. js-lingui-id: q8RNNe
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+msgid "{credits} Credits - ${priceDisplay}"
+msgstr ""
+
 #. js-lingui-id: jsKQu8
 #: src/modules/object-record/record-show/hooks/useRecordShowPagePagination.ts
 msgid "{currentRank} of {totalCount} in {objectLabelPlural}"
@@ -280,11 +285,6 @@ msgstr "{currentRank} із {totalCount} у {objectLabelPlural}"
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} день} few {{days} дні} many {{days} днів} other {{days} днів}}"
-
-#. js-lingui-id: Muj+po
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
-msgid "{daysLeft} days"
-msgstr "{daysLeft} днів"
 
 #. js-lingui-id: 0KwX9P
 #. placeholder {0}: (1000).toFixed(decimals)
@@ -572,11 +572,6 @@ msgstr "0"
 msgid "0 */1 * * *"
 msgstr "0 */1 * * *"
 
-#. js-lingui-id: gphxoA
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
-msgid "1 day"
-msgstr "1 день"
-
 #. js-lingui-id: Mkh9C8
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 msgid "1 scope"
@@ -604,7 +599,7 @@ msgid "1. Select a field type"
 msgstr "1. Виберіть тип поля"
 
 #. js-lingui-id: XSdCGq
-#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 msgid "1. Select an object"
 msgstr "1. Виберіть об'єкт"
 
@@ -804,6 +799,7 @@ msgid "About your app"
 msgstr ""
 
 #. js-lingui-id: LuXP9q
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Access"
 msgstr ""
@@ -1047,6 +1043,11 @@ msgstr "Додайте власні інструкції, специфічні �
 msgid "Add Custom Provider"
 msgstr "Додати користувацького провайдера"
 
+#. js-lingui-id: 33pO0a
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
+msgid "Add email group"
+msgstr ""
+
 #. js-lingui-id: 3O3+7h
 #: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
@@ -1167,8 +1168,8 @@ msgid "Add object"
 msgstr "Додати об'єкт"
 
 #. js-lingui-id: mFtRj8
-#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 msgid "Add object permission"
 msgstr "Додати дозвіл на об'єкт"
 
@@ -1495,7 +1496,7 @@ msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
-#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
@@ -1986,7 +1987,7 @@ msgid "Anyone in this workspace can use this credential."
 msgstr ""
 
 #. js-lingui-id: xJR+Wq
-#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "Будь-хто з електронною адресою в цих доменах може зареєструватися для цього робочого простору."
 
@@ -2133,7 +2134,9 @@ msgid "Applicability"
 msgstr "Застосовність"
 
 #. js-lingui-id: IrC12v
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Application"
 msgstr "Застосунок"
 
@@ -2180,6 +2183,7 @@ msgstr ""
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -2208,12 +2212,14 @@ msgid "Approved access domain validated"
 msgstr "Затверджений домен доступу підтверджено"
 
 #. js-lingui-id: 9tggYj
-#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 msgid "Approved Domains"
 msgstr "Затверджені домени"
 
 #. js-lingui-id: VDvaN2
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Apps"
 msgstr "Додатки"
@@ -2246,6 +2252,11 @@ msgstr "Архівні файли не можна попередньо пере�
 #. js-lingui-id: TdfEV7
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Archived"
+msgstr ""
+
+#. js-lingui-id: mk25CW
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+msgid "Are you sure you want to delete {sourceHandle}? Forwarded emails will no longer arrive in this workspace."
 msgstr ""
 
 #. js-lingui-id: 4CHeVx
@@ -2502,6 +2513,11 @@ msgstr "Для журналів аудиту потрібно налаштува
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
 msgid "Auth"
 msgstr "Авторизація"
+
+#. js-lingui-id: cNBqH+
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Auth failed at"
+msgstr ""
 
 #. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2784,6 +2800,11 @@ msgstr "Булевий тип"
 msgid "Both"
 msgstr "Обидві"
 
+#. js-lingui-id: b8ZbRG
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Bound App"
+msgstr ""
+
 #. js-lingui-id: 1hGdwj
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -3004,6 +3025,16 @@ msgstr "Не можете сканувати? Скопіюйте"
 msgid "Cancel"
 msgstr "Скасувати"
 
+#. js-lingui-id: J8nuSF
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel credit pack switching"
+msgstr ""
+
+#. js-lingui-id: ztnpYZ
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Cancel credit pack switching?"
+msgstr ""
+
 #. js-lingui-id: dV4HC5
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel interval switching"
@@ -3190,6 +3221,16 @@ msgstr "Перейти на Pro план?"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Yearly?"
 msgstr "Змінити на річний?"
+
+#. js-lingui-id: LhVon3
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Change visibility?"
+msgstr ""
+
+#. js-lingui-id: rnTfap
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Changing visibility requires reconnecting this OAuth connection. You will be redirected to authorize it again."
+msgstr ""
 
 #. js-lingui-id: nuBbBr
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
@@ -3652,6 +3693,7 @@ msgid "Configuration of this command menu item"
 msgstr ""
 
 #. js-lingui-id: iAL9tI
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Configure"
 msgstr "Налаштуйте"
@@ -3667,7 +3709,7 @@ msgid "Configure and customize your calendar preferences."
 msgstr "Налаштувати та настроїти уподобання вашого календаря."
 
 #. js-lingui-id: 5i71HM
-#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Configure and verify domains for emailing from this workspace."
 msgstr "Налаштуйте та підтвердіть домени для відправки електронної пошти з цього робочого простору."
 
@@ -3732,6 +3774,7 @@ msgid "Configure your emails and calendar settings."
 msgstr "Налаштуйте налаштування електронної пошти та календаря."
 
 #. js-lingui-id: M1co/O
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Configured"
 msgstr "Налаштовано"
@@ -3758,12 +3801,18 @@ msgstr "Підтвердити"
 msgid "Confirm changing your current credit plan."
 msgstr "Підтвердьте зміну вашого поточного кредитного плану."
 
+#. js-lingui-id: q2rgqr
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+msgid "Confirm changing your current resource credit allocation."
+msgstr ""
+
 #. js-lingui-id: FbJ7Si
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "Confirm deletion of {roleName} role? This cannot be undone. All members will be reassigned to the default role."
 msgstr "Підтвердьте видалення ролі {roleName}? Це не можна скасувати. Всі учасники будуть перепризначені на роль за замовчуванням."
 
 #. js-lingui-id: kZkFSm
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "Підтвердити пониження"
@@ -3774,6 +3823,7 @@ msgid "Confirm role update"
 msgstr "Підтвердити оновлення ролі"
 
 #. js-lingui-id: DDbn3x
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm upgrade"
 msgstr "Підтвердити оновлення"
@@ -3788,10 +3838,10 @@ msgstr ""
 msgid "Connect a new account to your workspace"
 msgstr "Під'єднайте новий обліковий запис до вашого робочого простору"
 
-#. js-lingui-id: dUcoLZ
+#. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-msgid "Connect Account"
-msgstr "Під'єднати обліковий запис"
+msgid "Connect via IMAP/SMTP"
+msgstr ""
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -3803,10 +3853,28 @@ msgstr "Під'єднатися через Google"
 msgid "Connect with Microsoft"
 msgstr "Під'єднатися через Microsoft"
 
+#. js-lingui-id: QHcLEN
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Connected"
+msgstr ""
+
 #. js-lingui-id: 9TzudL
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Connected accounts"
 msgstr "Під'єднані облікові записи"
+
+#. js-lingui-id: exyUec
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Connection"
+msgstr ""
+
+#. js-lingui-id: XYeKcu
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Connection not found"
+msgstr ""
 
 #. js-lingui-id: 54WNJ6
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -3963,6 +4031,7 @@ msgid "Copied to clipboard"
 msgstr "Скопійовано в буфер обміну"
 
 #. js-lingui-id: he3ygx
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -4301,6 +4370,7 @@ msgid "Create, edit, and delete workspace views"
 msgstr "Створюйте, редагуйте та видаляйте перегляди робочого простору"
 
 #. js-lingui-id: d+F6q9
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -4350,6 +4420,11 @@ msgstr ""
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credit consumption over time."
 msgstr "Споживання кредитів з часом."
+
+#. js-lingui-id: CYpB9A
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Credit pack switching has been cancelled."
+msgstr ""
 
 #. js-lingui-id: Efny36
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
@@ -4927,7 +5002,7 @@ msgid "Default palette"
 msgstr ""
 
 #. js-lingui-id: v41VX6
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Default role"
 msgstr "Роль за замовчуванням"
@@ -4997,11 +5072,12 @@ msgid "delete"
 msgstr "видалити"
 
 #. js-lingui-id: cnGeoo
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
@@ -5100,6 +5176,11 @@ msgstr "Видалити додаток"
 #. js-lingui-id: YFpLoV
 #: src/modules/ai/components/AiChatThreadDeleteConfirmationModal.tsx
 msgid "Delete chat"
+msgstr ""
+
+#. js-lingui-id: /BTna7
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+msgid "Delete email group"
 msgstr ""
 
 #. js-lingui-id: gf2eXy
@@ -5317,6 +5398,7 @@ msgstr ""
 #. js-lingui-id: URmyfc
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -5346,6 +5428,17 @@ msgstr ""
 #. js-lingui-id: E/QGRL
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "Disabled"
+msgstr ""
+
+#. js-lingui-id: +K0AvT
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Disconnect"
+msgstr ""
+
+#. js-lingui-id: TauHgw
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Disconnect connection?"
 msgstr ""
 
 #. js-lingui-id: Xm/s+u
@@ -5440,18 +5533,6 @@ msgstr "Домен не знайдено"
 msgid "Domain Setup"
 msgstr "Налаштування домену"
 
-#. js-lingui-id: AZ4xlc
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
-#: src/pages/settings/domains/SettingsDomains.tsx
-#: src/pages/settings/domains/SettingsDomains.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/domains/components/SettingsSubdomain.tsx
-#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
-#: src/modules/settings/domains/components/SettingPublicDomain.tsx
-msgid "Domains"
-msgstr "Домени"
-
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters."
@@ -5478,6 +5559,8 @@ msgid "Dots and comma"
 msgstr ""
 
 #. js-lingui-id: LE8J+K
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Downgrade"
@@ -5763,7 +5846,7 @@ msgid "Edit view"
 msgstr "Редагувати перегляд"
 
 #. js-lingui-id: 6o1M/Q
-#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/SettingsWorkspace.tsx
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "Редагуйте назву вашого субдомену або встановіть спеціальний домен."
 
@@ -5796,8 +5879,8 @@ msgstr "інакше якщо"
 
 #. js-lingui-id: O3oNi5
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/auth/PasswordReset.tsx
@@ -5813,6 +5896,7 @@ msgid "Email"
 msgstr "Електронна адреса"
 
 #. js-lingui-id: hzKQCy
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Email Address"
 msgstr "Імейл адреса"
@@ -5833,6 +5917,11 @@ msgstr "Електронна пошта скопійована в буфер о�
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Email Editor"
 msgstr "Редактор електронної пошти"
+
+#. js-lingui-id: KQM9eG
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
+msgid "Email Groups"
+msgstr ""
 
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -5908,7 +5997,7 @@ msgstr "Домен відправки електронної пошти успі
 #. js-lingui-id: axQccV
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
-#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Emailing Domains"
 msgstr "Домени відправки електронної пошти"
 
@@ -6230,6 +6319,11 @@ msgstr ""
 msgid "Enter the credentials to set the connection"
 msgstr "Введіть облікові дані для налаштування з'єднання"
 
+#. js-lingui-id: PTGfBH
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+msgid "Enter the email address you want to forward emails from (e.g. support@mycompany.com)."
+msgstr ""
+
 #. js-lingui-id: rGWgcm
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Enter the infos to set the connection"
@@ -6353,7 +6447,7 @@ msgid "Error deleting app"
 msgstr "Помилка видалення додатка"
 
 #. js-lingui-id: QnVLjD
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 msgid "Error deleting invitation"
 msgstr "Помилка видалення запрошення"
 
@@ -6418,7 +6512,7 @@ msgid "Error regenerating api key."
 msgstr "Помилка регенерації API-ключа."
 
 #. js-lingui-id: clfpgU
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 msgid "Error resending invitation"
 msgstr "Помилка повторного надсилання запрошення"
 
@@ -6456,6 +6550,11 @@ msgstr "Помилка оновлення змінної"
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Error validating approved access domain"
 msgstr "Помилка перевірки затвердженого домену доступу"
+
+#. js-lingui-id: du6d5C
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while cancelling credit pack switching."
+msgstr ""
 
 #. js-lingui-id: pt7mmi
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -6729,7 +6828,7 @@ msgid "Expiration Date"
 msgstr "Дата закінчення терміну дії"
 
 #. js-lingui-id: M1RnFv
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expired"
 msgstr "Термін дії закінчився"
@@ -6740,7 +6839,7 @@ msgid "Expires"
 msgstr "Закінчується"
 
 #. js-lingui-id: i9qiyR
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 msgid "Expires in"
 msgstr "Закінчується через"
 
@@ -6836,10 +6935,20 @@ msgstr "Не вдалося додати модель"
 msgid "Failed to add provider"
 msgstr "Не вдалося додати провайдера"
 
+#. js-lingui-id: d+6i8z
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+msgid "Failed to create email group channel. Email group may not be configured on this server."
+msgstr ""
+
 #. js-lingui-id: WM7GKt
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Failed to create tool"
 msgstr "Не вдалося створити інструмент"
+
+#. js-lingui-id: W4hzLB
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+msgid "Failed to delete email group channel."
+msgstr ""
 
 #. js-lingui-id: pUligB
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -7007,6 +7116,11 @@ msgstr "Не вдалося оновити ціну."
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Failed to update records. Please try again."
 msgstr "Не вдалося оновити записи. Будь ласка, спробуйте ще раз."
+
+#. js-lingui-id: j5vd/9
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+msgid "Failed to update resource credits."
+msgstr ""
 
 #. js-lingui-id: QGaQRo
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -7445,6 +7559,17 @@ msgstr "Формат: [Хвилина] [Година] [День місяця] [�
 msgid "Formats"
 msgstr "Формати"
 
+#. js-lingui-id: nm91BR
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
+msgid "Forwarding address"
+msgstr ""
+
+#. js-lingui-id: TFf85Z
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+msgid "Forwarding address copied to clipboard"
+msgstr ""
+
 #. js-lingui-id: 1hxId5
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "fourth"
@@ -7540,11 +7665,15 @@ msgstr ""
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
@@ -7651,6 +7780,11 @@ msgstr "Надати доступ до вашого робочого прост�
 msgid "Granted for this object"
 msgstr "Надано для цього об'єкта"
 
+#. js-lingui-id: MkDC2z
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Granted OAuth scopes"
+msgstr ""
+
 #. js-lingui-id: fcUyLo
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Grants permission to perform all available actions without restriction"
@@ -7736,6 +7870,11 @@ msgstr ""
 #. js-lingui-id: aNHeda
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h3"
+msgstr ""
+
+#. js-lingui-id: Nf7oXL
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Handle"
 msgstr ""
 
 #. js-lingui-id: HUk3sK
@@ -8527,12 +8666,12 @@ msgid "Invite"
 msgstr "Запросити"
 
 #. js-lingui-id: 0M8+El
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 msgid "Invite by email"
 msgstr "Запросити по електронній пошті"
 
 #. js-lingui-id: PWIq/W
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 msgid "Invite by link"
 msgstr "Запросити за посиланням"
 
@@ -8739,14 +8878,11 @@ msgid "JSON"
 msgstr ""
 
 #. js-lingui-id: UpNpMK
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
 msgid "Just for me"
-msgstr ""
-
-#. js-lingui-id: JJOCq/
-#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
-msgid "Just me"
 msgstr ""
 
 #. js-lingui-id: OGXtL8
@@ -8941,6 +9077,16 @@ msgstr "Останній платіж не вдався. Будь ласка, з
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Last payment failed. Please update your billing details."
 msgstr "Останній платіж не вдався. Будь ласка, оновіть свої платіжні дані."
+
+#. js-lingui-id: uPb/1Y
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Last refreshed"
+msgstr ""
+
+#. js-lingui-id: NYwqoV
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Last signed in"
+msgstr ""
 
 #. js-lingui-id: C3yOz3
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -9368,6 +9514,11 @@ msgstr ""
 msgid "Make HTTP requests to external APIs"
 msgstr ""
 
+#. js-lingui-id: icpEdc
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Make private"
+msgstr ""
+
 #. js-lingui-id: wckWOP
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
@@ -9409,7 +9560,7 @@ msgid "Manage feature flags for this workspace"
 msgstr ""
 
 #. js-lingui-id: T6YjCk
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "Manage Members"
 msgstr "Управління членами"
 
@@ -9424,9 +9575,14 @@ msgid "Manage support access settings"
 msgstr "Керування налаштуваннями доступу служби підтримки"
 
 #. js-lingui-id: N7fMy9
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "Manage the members of your workspace here"
 msgstr "Тут ви можете управляти членами свого робочого простору"
+
+#. js-lingui-id: 5UjiOC
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Manage this application's OAuth connection."
+msgstr ""
 
 #. js-lingui-id: /berfj
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -9559,12 +9715,16 @@ msgid "Member removed from workspace"
 msgstr ""
 
 #. js-lingui-id: wlQNTg
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
+#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+#: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
@@ -9938,7 +10098,7 @@ msgstr ""
 #: src/testing/mock-data/tableData.ts
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -10107,6 +10267,12 @@ msgstr "Нова розмова"
 msgid "New Email"
 msgstr ""
 
+#. js-lingui-id: TmlJkc
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+msgid "New Email Group"
+msgstr ""
+
 #. js-lingui-id: wqoYqp
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
@@ -10250,6 +10416,7 @@ msgstr "Дев'ятий"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "No"
 msgstr "Ні"
@@ -10597,7 +10764,7 @@ msgid "No logs yet"
 msgstr ""
 
 #. js-lingui-id: UwvrGq
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "No members"
 msgstr "Немає членів"
 
@@ -10607,7 +10774,7 @@ msgid "No members assigned"
 msgstr "Учасники не призначені"
 
 #. js-lingui-id: /nLvVj
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "No members match your search"
 msgstr "Жоден учасник не відповідає вашому запиту"
 
@@ -10991,6 +11158,7 @@ msgid "Number of decimals"
 msgstr "Кількість десяткових розрядів"
 
 #. js-lingui-id: tYOaY8
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
 msgstr "Кількість нових кредитів виділяється кожен {recurringInterval}"
@@ -11021,6 +11189,11 @@ msgstr "OAuth"
 #. js-lingui-id: IxKj9Y
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 msgid "OAuth 2.0"
+msgstr ""
+
+#. js-lingui-id: C1b55F
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "OAuth credential metadata for this application connection"
 msgstr ""
 
 #. js-lingui-id: pNEViR
@@ -11272,7 +11445,7 @@ msgid "Only you can use this credential."
 msgstr ""
 
 #. js-lingui-id: 1TNIig
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/command-menu-item/components/RecordShowSidePanelOpenRecordButton.tsx
 msgid "Open"
@@ -11862,6 +12035,7 @@ msgid "Please select at least one destination object for this relation."
 msgstr "Будь ласка, виберіть принаймні один об'єкт призначення для цього зв'язку."
 
 #. js-lingui-id: 8YnlGz
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
 msgstr "Будь ласка, спершу розпочніть свою підписку"
@@ -12093,6 +12267,7 @@ msgstr "Властивості"
 
 #. js-lingui-id: 8B+pY5
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Property"
@@ -12116,6 +12291,7 @@ msgid "Provide your OIDC provider details"
 msgstr "Надайте деталі вашого OIDC провайдера"
 
 #. js-lingui-id: aemBRq
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
@@ -12139,10 +12315,10 @@ msgstr "Провайдер \"{0}\" видалено"
 msgid "Providers"
 msgstr "Провайдери"
 
-#. js-lingui-id: AULPv1
-#: src/pages/settings/domains/SettingsDomains.tsx
-msgid "Provision a complete and secure hosting environment on these domains."
-msgstr "Налаштуйте повне і безпечне середовище хостингу на цих доменах."
+#. js-lingui-id: Ktkc8d
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Provision a complete and secure hosting environment on these domains. Bind a domain to a specific app to expose only that app's HTTP routes."
+msgstr ""
 
 #. js-lingui-id: YJgRqq
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -12176,8 +12352,13 @@ msgstr "Публічний домен успішно створено"
 msgid "Public domain successfully deleted"
 msgstr "Публічний домен успішно видалено"
 
+#. js-lingui-id: 8PGHE/
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Public domain updated successfully"
+msgstr ""
+
 #. js-lingui-id: g55kfn
-#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Public Domains"
 msgstr "Публічні домени"
 
@@ -12334,14 +12515,20 @@ msgid "Recommended Models"
 msgstr "Рекомендовані моделі"
 
 #. js-lingui-id: gcoiFh
-#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 msgid "Reconnect"
 msgstr "Перепідключити"
 
+#. js-lingui-id: NSOx3j
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Reconnect and change visibility"
+msgstr ""
+
 #. js-lingui-id: XsIxsL
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 msgid "Reconnect needed"
 msgstr ""
@@ -12794,6 +12981,16 @@ msgstr "Скинути до статичного значення"
 msgid "Reset variable"
 msgstr "Скинути змінну"
 
+#. js-lingui-id: ICm0YO
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+msgid "Resource credits"
+msgstr ""
+
+#. js-lingui-id: N0vrR6
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+msgid "Resource credits updated."
+msgstr ""
+
 #. js-lingui-id: esl+Tv
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Resource Type"
@@ -12845,6 +13042,11 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Restrict available models to a curated list"
 msgstr "Обмежити доступні моделі до відібраного списку"
+
+#. js-lingui-id: fqD5xB
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Restrict this domain to the HTTP routes of a specific app. Leave empty to expose all workspace HTTP routes."
+msgstr ""
 
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
@@ -12904,7 +13106,7 @@ msgid "role"
 msgstr "роль"
 
 #. js-lingui-id: GDvlUT
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -12947,14 +13149,12 @@ msgid "roles"
 msgstr ""
 
 #. js-lingui-id: 5dJK4M
-#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
-#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
-#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
 msgstr "Ролі"
 
@@ -13175,7 +13375,7 @@ msgid "Search a system object..."
 msgstr "Пошук системного об’єкта..."
 
 #. js-lingui-id: xdl79x
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "Search a team member..."
 msgstr "Шукати учасника команди..."
 
@@ -13466,7 +13666,7 @@ msgid "See app page"
 msgstr ""
 
 #. js-lingui-id: sFsCOG
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "See data model settings"
 msgstr ""
 
@@ -13486,7 +13686,7 @@ msgid "See on marketplace"
 msgstr ""
 
 #. js-lingui-id: vn4aKq
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "See records"
 msgstr ""
@@ -13495,6 +13695,11 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "See Records on All Objects"
 msgstr "Переглянути записи на всіх об'єктах"
+
+#. js-lingui-id: Hhnssf
+#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
+msgid "Seeded"
+msgstr ""
 
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
@@ -13697,7 +13902,7 @@ msgid "Send"
 msgstr ""
 
 #. js-lingui-id: mjK8F3
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 msgid "Send an invite email to your team"
 msgstr "Надішліть запрошення на електронну адресу вашої команди"
 
@@ -13824,6 +14029,11 @@ msgstr "Створіть поле «Дата» в {objectLabel}, щоб ство
 msgid "Set up a Select field on {objectLabel} to create a Kanban"
 msgstr "Створіть поле «Вибір» у {objectLabel}, щоб створити канбан"
 
+#. js-lingui-id: l6W1lM
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+msgid "Set up forwarding from the source address to this destination."
+msgstr ""
+
 #. js-lingui-id: 9HNKkV
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Set your application configuration variables"
@@ -13899,9 +14109,14 @@ msgid "Share"
 msgstr "Поділитися"
 
 #. js-lingui-id: Vy9kmk
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
 msgid "Share this link to invite users to join your workspace"
 msgstr "Поділіться цим посиланням, щоб запросити користувачів приєднатися до вашого робочого простору"
+
+#. js-lingui-id: bM7Rp3
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "Share with workspace"
+msgstr ""
 
 #. js-lingui-id: gaJRur
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -14224,10 +14439,21 @@ msgstr "Сортування"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Source"
 msgstr "Джерело"
+
+#. js-lingui-id: Pp9DbE
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+msgid "Source address"
+msgstr ""
+
+#. js-lingui-id: 5f1fxa
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+msgid "Source Email Address"
+msgstr ""
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -14342,6 +14568,8 @@ msgstr "Стан"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
@@ -14767,6 +14995,11 @@ msgstr "Назва завдання"
 msgid "Task Title"
 msgstr "Назва завдання"
 
+#. js-lingui-id: KM6m8p
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "Team"
+msgstr ""
+
 #. js-lingui-id: lKXcJz
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Temporary Failure"
@@ -14901,6 +15134,11 @@ msgstr ""
 #: src/pages/settings/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "Електронна адреса, пов'язана з вашим акаунтом"
+
+#. js-lingui-id: TQGLgF
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+msgid "The external address whose mail is forwarded into the workspace."
+msgstr ""
 
 #. js-lingui-id: diO3fm
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -15099,9 +15337,19 @@ msgstr "Ця дія видалить цю папку та всі {2} пункт�
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "Ця дія видалить цю папку та пункт навігаційного меню усередині. Продовжити?"
 
+#. js-lingui-id: E5I/qG
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "This app has required server variables that are not configured. Users won't be able to install it until all required variables are set."
+msgstr ""
+
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
 msgid "This component runs without a UI and renders nothing here."
+msgstr ""
+
+#. js-lingui-id: LqhE3c
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "This connection does not exist or is not available for this application."
 msgstr ""
 
 #. js-lingui-id: SLIRqz
@@ -15242,6 +15490,11 @@ msgstr "Це скасує заплановані зміни інтервалу �
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "This will cancel the scheduled plan change and keep your current plan ({planKeyWord})."
 msgstr "Це скасує заплановані зміни плану та залишить ваш поточний план ({planKeyWord})."
+
+#. js-lingui-id: PJ4qQa
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+msgid "This will disconnect {connectionLabel} from this application."
+msgstr ""
 
 #. js-lingui-id: 0+L84I
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -15680,6 +15933,7 @@ msgstr "Налаштування двофакторної аутентифіка
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
@@ -16025,6 +16279,7 @@ msgid "updated"
 msgstr "оновлено"
 
 #. js-lingui-id: +b7T3G
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -16046,6 +16301,8 @@ msgstr "Оновлення"
 
 #. js-lingui-id: kwkhPe
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
@@ -16371,6 +16628,7 @@ msgstr "Токен валідності успішно оновлено"
 #. js-lingui-id: wMHvYH
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -16612,6 +16870,8 @@ msgstr "Фіалковий"
 
 #. js-lingui-id: 2q/Q7x
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -16947,21 +17207,22 @@ msgstr "Робочі процеси"
 #: src/pages/settings/SettingsUsageUserDetail.tsx
 #: src/pages/settings/SettingsUsage.tsx
 #: src/pages/settings/SettingsBilling.tsx
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
-#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
+#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
-#: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -16980,8 +17241,8 @@ msgstr "Робочі процеси"
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
@@ -16999,7 +17260,6 @@ msgstr "Робочі процеси"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
-#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
@@ -17008,11 +17268,17 @@ msgstr "Робочі процеси"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "Workspace"
 msgstr "Працевлаштування"
+
+#. js-lingui-id: 0uEKEb
+#: src/modules/settings/domains/components/SettingPublicDomain.tsx
+msgid "Workspace (all apps)"
+msgstr ""
 
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
@@ -17025,7 +17291,7 @@ msgid "Workspace Deletion"
 msgstr "Видалення працевлаштування"
 
 #. js-lingui-id: i1AiTd
-#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/SettingsWorkspace.tsx
 msgid "Workspace Domain"
 msgstr "Домен робочої області"
 
@@ -17072,6 +17338,8 @@ msgid "Workspace name"
 msgstr "Назва працевлаштування"
 
 #. js-lingui-id: PHF7zj
+#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
 msgid "Workspace shared"
@@ -17086,6 +17354,11 @@ msgstr ""
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Workspace views require manage views permission"
 msgstr "Для перегляду робочого простору необхідно дозволити керування переглядами"
+
+#. js-lingui-id: 9Bn3vI
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
+msgid "Workspace-level shared addresses that receive forwarded mail."
+msgstr ""
 
 #. js-lingui-id: pmt7u4
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -17199,6 +17472,7 @@ msgstr "так"
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Yes"
 msgstr "Так"
 
@@ -17251,6 +17525,11 @@ msgstr "Ви не маєте дозволу на перегляд цього в�
 #. js-lingui-id: SDVtJI
 #: src/modules/object-record/record-index/components/RecordIndexEmptyStateNotShared.tsx
 msgid "You don't have access to this object."
+msgstr ""
+
+#. js-lingui-id: RDAH2t
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "You have scheduled a credit pack change. Do you want to cancel it?"
 msgstr ""
 
 #. js-lingui-id: M2lYgq

@@ -11,12 +11,18 @@ const ContainerRoot = styled.div`
 export type ContainerProps = {
   children: ReactNode;
   className?: string;
+  'data-scheme'?: string;
   style?: CSSProperties;
 };
 
-export function Container({ children, className, style }: ContainerProps) {
+export function Container({
+  children,
+  className,
+  'data-scheme': dataScheme,
+  style,
+}: ContainerProps) {
   return (
-    <ContainerRoot className={className} style={style}>
+    <ContainerRoot className={className} data-scheme={dataScheme} style={style}>
       {children}
     </ContainerRoot>
   );

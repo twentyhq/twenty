@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
 import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
@@ -6,12 +7,12 @@ import {
   type BillingPriceTiers,
   type MeteredBillingPrice,
 } from '@/settings/billing/types/billing-price-tiers.type';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -19,10 +20,9 @@ import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
 import {
-  SubscriptionInterval,
   SetMeteredSubscriptionPriceDocument,
+  SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
 const StyledRow = styled.div`
@@ -62,6 +62,19 @@ export const MeteredPriceSelector = ({
     currentMeteredBillingPrice,
   );
 
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+
+  const [setMeteredSubscriptionPrice, { loading: isUpdating }] = useMutation(
+    SetMeteredSubscriptionPriceDocument,
+  );
+
+  const { openModal } = useModal();
+  const [selectedPriceId, setSelectedPriceId] = useState<string | undefined>(
+    undefined,
+  );
+
+  if (!currentMeteredPrice) return null;
+
   const toOption = (meteredBillingPrice: MeteredBillingPrice) => {
     const price = formatNumber(meteredBillingPrice.tiers[0].flatAmount / 100);
     const credits = formatNumber(meteredBillingPrice.tiers[0].upTo, {
@@ -75,20 +88,9 @@ export const MeteredPriceSelector = ({
     };
   };
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-
-  const [setMeteredSubscriptionPrice, { loading: isUpdating }] = useMutation(
-    SetMeteredSubscriptionPriceDocument,
-  );
-
   const options = [...meteredBillingPrices]
     .sort((a, b) => a.tiers[0].flatAmount - b.tiers[0].flatAmount)
     .map(toOption);
-
-  const { openModal } = useModal();
-  const [selectedPriceId, setSelectedPriceId] = useState<string | undefined>(
-    undefined,
-  );
 
   const selectedPrice = meteredBillingPrices.find(
     ({ stripePriceId }) => stripePriceId === selectedPriceId,

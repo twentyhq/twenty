@@ -17,6 +17,10 @@ export const GET_MY_MESSAGE_CHANNELS = gql`
       syncStage
       syncStageStartedAt
       connectedAccountId
+      connectedAccount {
+        id
+        handle
+      }
       createdAt
       updatedAt
     }

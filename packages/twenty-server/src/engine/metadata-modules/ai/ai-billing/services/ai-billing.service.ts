@@ -14,6 +14,7 @@ import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export type BillingUsageInput = {
@@ -30,6 +31,7 @@ export class AiBillingService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
@@ -104,6 +106,23 @@ export class AiBillingService {
       `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,
     );
 
+    let periodStart: Date | undefined;
+
+    if (this.billingService.isBillingEnabled()) {
+      const {
+        billingSubscription: { currentPeriodStart },
+      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'billingSubscription',
+      ]);
+
+      periodStart = currentPeriodStart;
+
+      await this.billingUsageService.decrementAvailableCredits({
+        workspaceId,
+        usedCredits: creditsUsedMicro,
+      });
+    }
+
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
       [
@@ -114,17 +133,11 @@ export class AiBillingService {
           quantity: nativeWebSearchCallCount,
           unit: UsageUnit.INVOCATION,
           userWorkspaceId: userWorkspaceId || null,
+          periodStart,
         },
       ],
       workspaceId,
     );
-
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: creditsUsedMicro,
-      });
-    }
   }
 
   private async emitAiTokenUsageEvent(
@@ -136,6 +149,23 @@ export class AiBillingService {
     agentId?: string | null,
     userWorkspaceId?: string | null,
   ): Promise<void> {
+    let periodStart: Date | undefined;
+
+    if (this.billingService.isBillingEnabled()) {
+      const {
+        billingSubscription: { currentPeriodStart },
+      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'billingSubscription',
+      ]);
+
+      periodStart = currentPeriodStart;
+
+      await this.billingUsageService.decrementAvailableCredits({
+        workspaceId,
+        usedCredits: creditsUsedMicro,
+      });
+    }
+
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
       [
@@ -148,15 +178,10 @@ export class AiBillingService {
           resourceId: agentId || null,
           resourceContext: modelId,
           userWorkspaceId: userWorkspaceId || null,
+          periodStart,
         },
       ],
       workspaceId,
     );
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: creditsUsedMicro,
-      });
-    }
   }
 }

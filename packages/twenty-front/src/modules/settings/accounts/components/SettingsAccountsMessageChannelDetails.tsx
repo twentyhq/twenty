@@ -1,21 +1,23 @@
-import { styled } from '@linaria/react';
-
-import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
 import { useMutation } from '@apollo/client/react';
-import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
-import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
-import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+
+import {
+  type MessageChannelContactAutoCreationPolicy,
+  MessageChannelType,
+  type MessageFolderImportPolicy,
+} from 'twenty-shared/types';
 import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { type MessageChannel } from '@/accounts/types/MessageChannel';
+import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
+import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
+import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
+import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { type MessageChannelVisibility } from '~/generated/graphql';
-import {
-  type MessageChannelContactAutoCreationPolicy,
-  type MessageFolderImportPolicy,
-} from 'twenty-shared/types';
 
 type SettingsAccountsMessageChannelDetailsProps = {
   messageChannel: Pick<
@@ -27,8 +29,17 @@ type SettingsAccountsMessageChannelDetailsProps = {
     | 'excludeGroupEmails'
     | 'isSyncEnabled'
     | 'messageFolderImportPolicy'
+    | 'type'
   >;
 };
+
+type MessageChannelUpdateInput = Partial<{
+  visibility: MessageChannelVisibility;
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
+  excludeGroupEmails: boolean;
+  excludeNonProfessionalEmails: boolean;
+  messageFolderImportPolicy: MessageFolderImportPolicy;
+}>;
 
 const StyledDetailsContainer = styled.div`
   display: flex;
@@ -39,10 +50,10 @@ const StyledDetailsContainer = styled.div`
 export const SettingsAccountsMessageChannelDetails = ({
   messageChannel,
 }: SettingsAccountsMessageChannelDetailsProps) => {
-  const [updateMetadataChannel] = useMutation(UPDATE_MESSAGE_CHANNEL);
+  const [updateMessageChannel] = useMutation(UPDATE_MESSAGE_CHANNEL);
 
-  const updateChannel = (update: Record<string, unknown>) => {
-    updateMetadataChannel({
+  const updateChannel = (update: MessageChannelUpdateInput) => {
+    updateMessageChannel({
       variables: { input: { id: messageChannel.id, update } },
     });
   };
@@ -71,18 +82,23 @@ export const SettingsAccountsMessageChannelDetails = ({
     updateChannel({ messageFolderImportPolicy: value });
   };
 
+  const supportsFolderImportPolicy =
+    messageChannel.type === MessageChannelType.EMAIL;
+
   return (
     <StyledDetailsContainer>
-      <Section>
-        <H2Title
-          title={t`Import`}
-          description={t`Emails from the blocklist will be ignored. Manage blocklist on the "Accounts" setting page.`}
-        />
-        <SettingsAccountsMessageFolderCard
-          onChange={handleMessageFolderImportPolicyChange}
-          value={messageChannel.messageFolderImportPolicy}
-        />
-      </Section>
+      {supportsFolderImportPolicy && (
+        <Section>
+          <H2Title
+            title={t`Import`}
+            description={t`Emails from the blocklist will be ignored. Manage blocklist on the "Accounts" setting page.`}
+          />
+          <SettingsAccountsMessageFolderCard
+            onChange={handleMessageFolderImportPolicyChange}
+            value={messageChannel.messageFolderImportPolicy}
+          />
+        </Section>
+      )}
       <Section>
         <Card rounded>
           <SettingsOptionCardContentToggle

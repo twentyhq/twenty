@@ -1,6 +1,7 @@
 import { Container } from '@/design-system/components';
-import type { MessageDescriptor } from '@lingui/core';
+import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
@@ -115,10 +116,10 @@ const Label = styled.span`
 type HighlightsProps = {
   industry?: MessageDescriptor;
   kpis?: { value: MessageDescriptor; label: MessageDescriptor }[];
-  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Highlights({ industry, kpis, renderText }: HighlightsProps) {
+export function Highlights({ industry, kpis }: HighlightsProps) {
+  const i18n = getServerI18n();
   const cells: { value: MessageDescriptor; label: MessageDescriptor }[] = [];
   if (industry) {
     cells.push({ value: industry, label: msg`Industry` });
@@ -140,8 +141,8 @@ export function Highlights({ industry, kpis, renderText }: HighlightsProps) {
           <Card count={cells.length}>
             {cells.map((cell, index) => (
               <Cell count={cells.length} index={index} key={index}>
-                <Value>{renderText(cell.value)}</Value>
-                <Label>{renderText(cell.label)}</Label>
+                <Value>{i18n._(cell.value)}</Value>
+                <Label>{i18n._(cell.label)}</Label>
               </Cell>
             ))}
           </Card>

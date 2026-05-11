@@ -33,7 +33,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { createPortal } from 'react-dom';
 import {
-  computeMorphRelationFieldName,
+  computeMorphRelationGqlFieldName,
   CustomError,
 } from 'twenty-shared/utils';
 import {
@@ -153,7 +153,7 @@ export const RecordDetailRelationRecordsListItem = ({
     relationFieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION;
 
   const computedName = relationFieldMetadataItem
-    ? computeMorphRelationFieldName({
+    ? computeMorphRelationGqlFieldName({
         fieldName: relationFieldMetadataItem.name,
         relationType: relationFieldMetadataItem.settings.relationType,
         targetObjectMetadataNameSingular: objectMetadataItem.nameSingular,

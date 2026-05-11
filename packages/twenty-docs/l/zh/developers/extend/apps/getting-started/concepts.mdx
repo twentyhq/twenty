@@ -1,0 +1,101 @@
+---
+title: 概念
+description: Twenty 应用的工作方式 — 实体模型、沙盒机制和安装生命周期。
+icon: sitemap
+---
+
+Twenty 应用是 TypeScript 包，可通过自定义对象、逻辑、UI 组件和 AI 能力扩展你的工作区。 它们在 Twenty 平台上运行，具备完备的沙盒与权限控制。
+
+## 应用如何运作
+
+应用是由 `twenty-sdk` 包中的 `defineEntity()` 函数声明的**实体**集合。 SDK 在构建时通过 AST 分析检测到这些声明，并生成一份**清单**——完整描述你的应用为工作区新增的内容。 这些函数会在构建时校验你的配置，并提供 IDE 自动补全和类型安全。
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **文件组织由你决定。** 实体检测基于 AST——无论文件位于何处，SDK 都能找到 `export default defineEntity(...)` 的调用。 上述文件夹结构是一种约定，而非强制要求。
+</Note>
+
+## 实体类型
+
+| 实体        | 目的                    | 文档                                                            |
+| --------- | --------------------- | ------------------------------------------------------------- |
+| **应用程序**  | 应用标识、默认角色、变量          | [应用配置](/l/zh/developers/extend/apps/config/application)            |
+| **角色**    | 对象和字段的权限集             | [角色与权限](/l/zh/developers/extend/apps/config/roles)                 |
+| **对象**    | 带字段的自定义记录类型           | [对象](/l/zh/developers/extend/apps/data/objects)                    |
+| **字段**    | 从其他应用向对象添加字段          | [扩展对象](/l/zh/developers/extend/apps/data/extending-objects)        |
+| **关系**    | 对象之间的双向链接             | [关系](/l/zh/developers/extend/apps/data/relations)                  |
+| **逻辑函数**  | 带触发器的服务端 TypeScript   | [逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)         |
+| **技能**    | 可复用的 AI 代理指令          | [技能与代理](/l/zh/developers/extend/apps/logic/skills-and-agents)      |
+| **代理**    | 具有自定义提示词的 AI 助手       | [技能与代理](/l/zh/developers/extend/apps/logic/skills-and-agents)      |
+| **连接提供方** | 用于第三方 API 的 OAuth 凭证  | [连接](/l/zh/developers/extend/apps/logic/connections)               |
+| **视图**    | 预配置的记录列表视图            | [视图](/l/zh/developers/extend/apps/layout/views)                    |
+| **导航菜单项** | 自定义侧边栏条目              | [导航菜单项](/l/zh/developers/extend/apps/layout/navigation-menu-items) |
+| **页面布局**  | 记录详情页上的选项卡和小部件        | [页面布局](/l/zh/developers/extend/apps/layout/page-layouts)           |
+| **前端组件**  | Twenty 内的沙盒化 React UI | [前端组件](/l/zh/developers/extend/apps/layout/front-components)       |
+| **命令菜单项** | 快速操作和 Cmd+K 条目        | [命令菜单项](/l/zh/developers/extend/apps/layout/command-menu-items)    |
+
+## 沙盒化
+
+* **逻辑函数** 在服务器上的独立 Node.js 进程中运行。 它们只能通过类型化的 API 客户端访问数据，且范围受应用角色权限限制。
+* **前端组件** 在使用 Remote DOM 的 Web Worker 中运行——与主页面沙盒隔离，但渲染原生 DOM 元素（非 iframe）。 它们通过消息传递的宿主 API 与 Twenty 通信。
+* **权限** 在 API 层面强制执行。 运行时令牌（`TWENTY_APP_ACCESS_TOKEN`）源自 `defineApplication()` 中定义的角色。
+
+## 应用生命周期
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty build → yarn twenty deploy                │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — 监视你的源文件，并将更改实时同步到已连接的 Twenty 服务器。 当模式发生变化时，会自动重新生成类型化的 API 客户端。
+* **`yarn twenty build`** — 编译 TypeScript，使用 esbuild 打包逻辑函数和前端组件，并生成清单。
+* **预/后安装钩子** — 在安装过程中运行的可选函数。 详见 [安装钩子](/l/zh/developers/extend/apps/config/install-hooks)。
+
+## 后续步骤
+
+<CardGroup cols={2}>
+  <Card title="配置" icon="screwdriver-wrench" href="/l/zh/developers/extend/apps/config/overview">
+    应用标识、默认角色和安装钩子。
+  </Card>
+  <Card title="数据" icon="database" href="/l/zh/developers/extend/apps/data/overview">
+    对象、字段和双向关系。
+  </Card>
+  <Card title="逻辑" icon="bolt" href="/l/zh/developers/extend/apps/logic/overview">
+    逻辑函数、技能、代理和 OAuth 连接。
+  </Card>
+  <Card title="布局" icon="table-columns" href="/l/zh/developers/extend/apps/layout/overview">
+    视图、导航、页面布局、前端组件。
+  </Card>
+  <Card title="操作" icon="rocket" href="/l/zh/developers/extend/apps/operations/overview">
+    CLI、测试、远程、CI，以及发布你的应用。
+  </Card>
+</CardGroup>

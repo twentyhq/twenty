@@ -4,6 +4,7 @@ import { type CheckServerOrchestratorStepOutput } from '@/cli/utilities/dev/orch
 import { type StartWatchersOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
 import { type SyncApplicationOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { type UploadFilesOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
+import { type VersionInfo } from '@/cli/utilities/version/version-info';
 import { type Manifest, SyncableEntity } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
 
@@ -114,6 +115,8 @@ export class OrchestratorState {
 
   pipeline: OrchestratorStatePipeline;
 
+  versionInfo: VersionInfo | null;
+
   entities: Map<string, OrchestratorStateEntityInfo>;
   events: OrchestratorStateEvent[];
 
@@ -172,8 +175,15 @@ export class OrchestratorState {
       appName: null,
     };
 
+    this.versionInfo = null;
+
     this.entities = new Map();
     this.events = [];
+  }
+
+  setVersionInfo(versionInfo: VersionInfo): void {
+    this.versionInfo = versionInfo;
+    this.notify();
   }
 
   notify(): void {

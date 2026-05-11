@@ -101,6 +101,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingSubscriptionService,
     BillingSubscriptionUpdateService,
     BillingSubscriptionItemService,
+    BillingSubscriptionPhaseService,
     BillingPortalWorkspaceService,
     BillingService,
     BillingUsageService,

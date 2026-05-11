@@ -7,6 +7,7 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { UPDATE_WORKFLOW_RUN_STEP } from '@/workflow/graphql/mutations/updateWorkflowRunStep';
 import { type WorkflowStep, type WorkflowRun } from '@/workflow/types/Workflow';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -32,11 +33,15 @@ export const useUpdateWorkflowRunStep = () => {
   const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular: CoreObjectNameSingular.WorkflowRun,
   });
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const updateWorkflowRunStep = async (input: UpdateWorkflowRunStepInput) => {
     const result = await mutate({
       variables: {
         input: { workflowRunId: input.workflowRunId, step: input.step },
+      },
+      onError: (error) => {
+        enqueueErrorSnackBar({ apolloError: error });
       },
     });
     const updatedStep = result?.data?.updateWorkflowRunStep;

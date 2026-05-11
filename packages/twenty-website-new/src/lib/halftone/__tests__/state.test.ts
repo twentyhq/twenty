@@ -6,7 +6,7 @@ import {
   DEFAULT_SOLID_LIGHTING_SETTINGS,
   normalizeHalftoneStudioSettings,
   type HalftoneStudioSettings,
-} from '@/lib/halftone/state';
+} from '@/lib/halftone/utils/state';
 
 describe('halftone studio state defaults', () => {
   it('keeps the default scene aligned with the solid material preset', () => {

@@ -1,0 +1,12 @@
+---
+title: Fehlerbehebung
+description: Häufige Probleme beim ersten Start — Docker, Node-Version, Yarn, Abhängigkeiten.
+icon: Schraubenschlüssel
+---
+
+* **Docker-Fehler** — Stellen Sie sicher, dass Docker Desktop (oder der Daemon) läuft, bevor Sie `yarn twenty server start` ausführen. Die Fehlermeldung zeigt den richtigen Startbefehl für Ihr Betriebssystem an.
+* **Falsche Node-Version** — 24+ erforderlich. Prüfen Sie mit `node -v`.
+* **Yarn 4 fehlt** — Führen Sie `corepack enable` aus.
+* **Abhängigkeiten defekt** — `rm -rf node_modules && yarn install`.
+
+Hängen Sie fest? Bitten Sie im [Twenty-Discord](https://discord.com/channels/1130383047699738754/1130386664812982322) um Hilfe.

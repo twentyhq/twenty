@@ -33,6 +33,13 @@ describe('getSettingsPath', () => {
         connectedAccountId: 'account123',
       }),
     ).toBe('/settings/accounts/edit-imap-smtp-caldav-connection/account123');
+
+    expect(
+      getSettingsPath(SettingsPath.ApplicationConnectionDetail, {
+        applicationId: 'app123',
+        connectedAccountId: 'account123',
+      }),
+    ).toBe('/settings/applications/app123/connections/account123');
   });
 
   it('should append query params when provided', () => {

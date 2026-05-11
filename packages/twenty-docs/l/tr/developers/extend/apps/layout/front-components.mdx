@@ -1,0 +1,404 @@
+---
+title: Ön uç bileşenleri
+description: Twenty'nin UI'si içinde, korumalı alan (sandbox) izolasyonu ile görüntülenen React bileşenleri oluşturun.
+icon: window-maximize
+---
+
+Ön uç bileşenler, Twenty'nin UI'si içinde doğrudan görüntülenen React bileşenleridir. Remote DOM kullanan izole bir Web Worker içinde çalışırlar — kodunuz izole bir ortamda (sandbox) çalışır ancak bir iframe içinde değil, sayfada yerel olarak işlenir.
+
+## Ön uç bileşenlerinin kullanılabileceği yerler
+
+Ön uç bileşenler, Twenty içinde iki konumda işlenebilir:
+
+* **Yan panel** — Headless olmayan ön uç bileşenler, sağ taraftaki yan panelde açılır. Bir ön uç bileşeni komut menüsünden tetiklendiğinde varsayılan davranış budur.
+* **Widget'lar (panolar ve kayıt sayfaları)** — Ön uç bileşenler, [sayfa düzenleri](/l/tr/developers/extend/apps/layout/page-layouts) içinde widget olarak gömülebilir. Bir pano veya kayıt sayfası düzeni yapılandırılırken kullanıcılar bir ön uç bileşen widget'ı ekleyebilir.
+
+Tek başına bir ön uç bileşenine kullanıcı arayüzünden erişilemez — onu görünür hâle getirmeniz gerekir. Bunu yapmanın iki yolu vardır:
+
+* **Onu bir [komut menüsü öğesi](/l/tr/developers/extend/apps/layout/command-menu-items) ile eşleştirin** — komut menüsüne (Cmd+K) ve isteğe bağlı olarak sabitlenmiş hızlı işlem olarak kaydeder.
+* **Onu bir [sayfa düzeni](/l/tr/developers/extend/apps/layout/page-layouts) içinde widget olarak gömün** — bir kaydın ayrıntı sayfasına veya panosuna yerleştirir.
+
+## Basit örnek
+
+Bir ön uç bileşenini çalışır halde görmenin en hızlı yolu, onu [`defineCommandMenuItem`](/l/tr/developers/extend/apps/layout/command-menu-items) ile eşleştirmektir; böylece sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak görünür:
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  icon: 'IconBolt',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+`yarn twenty dev` ile senkronize ettikten sonra (veya tek seferlik bir `yarn twenty dev --once` çalıştırdıktan sonra), hızlı işlem sayfanın sağ üst köşesinde görünür:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Sağ üst köşedeki hızlı işlem düğmesi" />
+</div>
+
+Bileşeni satır içi işlemek için üzerine tıklayın.
+
+## Yapılandırma alanları
+
+| Alan                  | Zorunlu | Açıklama                                                                              |
+| --------------------- | ------- | ------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Evet    | Bu bileşen için kalıcı benzersiz kimlik                                               |
+| `component`           | Evet    | Bir React bileşen fonksiyonu                                                          |
+| `name`                | Hayır   | Görünen Ad                                                                            |
+| `description`         | Hayır   | Bileşenin ne yaptığına dair açıklama                                                  |
+| `isHeadless`          | Hayır   | Bileşenin görünür bir kullanıcı arayüzü yoksa `true` olarak ayarlayın (aşağıya bakın) |
+
+## Bir ön uç bileşenini bir sayfaya yerleştirme
+
+Komutların ötesinde, bir ön uç bileşenini bir **sayfa düzeninde** widget olarak ekleyerek doğrudan bir kayıt sayfasına gömebilirsiniz. Ayrıntılar için [Sayfa Düzenleri](/l/tr/developers/extend/apps/layout/page-layouts) bölümüne bakın.
+
+## Headless ve headless olmayan
+
+Ön uç bileşenler, `isHeadless` seçeneğiyle kontrol edilen iki işleme kipiyle gelir:
+
+**Headless olmayan (varsayılan)** — Bileşen görünür bir kullanıcı arayüzü (UI) oluşturur. Komut menüsünden tetiklendiğinde yan panelde açılır. `isHeadless` `false` olduğunda veya belirtilmediğinde bu varsayılan davranıştır.
+
+**Headless (`isHeadless: true`)** — Bileşen arka planda görünmez şekilde bağlanır. Yan paneli açmaz. Headless bileşenler, mantığı çalıştırıp ardından kendilerini kaldıran eylemler için tasarlanmıştır — örneğin, bir async görevi çalıştırma, bir sayfaya gitme veya bir onay modalı gösterme. Aşağıda açıklanan SDK Command bileşenleriyle doğal olarak eşleşirler.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+Bileşen `null` döndürdüğü için, Twenty bunun için bir kapsayıcı oluşturmayı atlar — düzende boş alan görünmez. Bileşen yine de tüm hook'lara ve host iletişim API'sine erişime sahiptir.
+
+## SDK Command bileşenleri
+
+`twenty-sdk` paketi, headless ön uç bileşenler için tasarlanmış dört Command yardımcı bileşeni sağlar. Her bileşen bağlandığında bir eylem yürütür, hataları bir snackbar bildirimi göstererek ele alır ve tamamlandığında ön bileşeni otomatik olarak kaldırır.
+
+Bunları `twenty-sdk/command` içinden içe aktarın:
+
+* **`Command`** — `execute` prop'u aracılığıyla async bir geri çağrıyı çalıştırır.
+* **`CommandLink`** — Bir uygulama yoluna gider. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Bir onay modalı açar. Kullanıcı onaylarsa `execute` geri çağrısını yürütür. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Belirli bir yan panel sayfasını açar. Props: `page`, `pageTitle`, `pageIcon`.
+
+`Command` kullanarak komut menüsünden bir eylem çalıştıran headless bir ön uç bileşenin tam örneği:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+Ve yürütmeden önce onay istemek için `CommandModal` kullanan bir örnek:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+## Çalışma zamanı bağlamına erişme
+
+Bileşeninizin içinde, geçerli kullanıcıya, kayda ve bileşen örneğine erişmek için SDK hook'larını kullanın:
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useRecordId,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const recordId = useRecordId();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+Kullanılabilir hook'lar:
+
+| Hook                                          | Döndürür             | Açıklama                                                                   |
+| --------------------------------------------- | -------------------- | -------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` veya `null` | Geçerli kullanıcının ID'si                                                 |
+| `useSelectedRecordIds()`                      | `string[]`           | Tüm seçili kayıt kimlikleri (hiçbiri seçilmediyse boş dizi)                |
+| `useRecordId()`                               | `string` veya `null` | **Kullanımdan kaldırıldı.** Bunun yerine `useSelectedRecordIds()` kullanın |
+| `useFrontComponentId()`                       | `string`             | Bu bileşen örneğinin ID'si                                                 |
+| `useFrontComponentExecutionContext(selector)` | değişir              | Bir seçici işlevle tam yürütme bağlamına erişin                            |
+
+## Host iletişim API'si
+
+Ön uç bileşenleri, `twenty-sdk`'deki işlevleri kullanarak gezinmeyi, modalları ve bildirimleri tetikleyebilir:
+
+| Fonksiyon                                       | Açıklama                           |
+| ----------------------------------------------- | ---------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Uygulamada bir sayfaya git         |
+| `openSidePanelPage(params)`                     | Bir yan panel aç                   |
+| `closeSidePanel()`                              | Yan paneli kapat                   |
+| `openCommandConfirmationModal(params)`          | Bir onay iletişim kutusu göster    |
+| `enqueueSnackbar(params)`                       | Bir toast bildirimi göster         |
+| `unmountFrontComponent()`                       | Bileşeni kaldır (unmount)          |
+| `updateProgress(progress)`                      | Bir ilerleme göstergesini güncelle |
+
+Bir eylem tamamlandıktan sonra bir snackbar göstermek ve yan paneli kapatmak için host API'sini kullanan bir örnek:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+### Birden çok kayıtla çalışma
+
+Birden çok seçili kaydı yönetmek için `useSelectedRecordIds()` kullanın. Bu, toplu işlemler için kullanışlıdır:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+  command: {
+    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+    label: 'Bulk Export',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+  },
+});
+```
+
+## Genel varlıklar
+
+Ön uç bileşenleri, `getPublicAssetUrl` kullanarak uygulamanın `public/` dizinindeki dosyalara erişebilir:
+
+```tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+Ayrıntılar için [genel varlıklar bölümüne](/l/tr/developers/extend/apps/config/public-assets) bakın.
+
+## Stil
+
+Ön uç bileşenleri birden fazla biçimlendirme yaklaşımını destekler. Şunları kullanabilirsiniz:
+
+* **Satır içi stiller** — `style={{ color: 'red' }}`
+* **Twenty UI bileşenleri** — `twenty-sdk/ui` içinden içe aktarın (Button, Tag, Status, Chip, Avatar ve daha fazlası)
+* **Emotion** — `@emotion/react` ile CSS-in-JS
+* **Styled-components** — `styled.div` kalıpları
+* **Tailwind CSS** — yardımcı sınıflar
+* **React ile uyumlu herhangi bir CSS-in-JS kitaplığı**
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button, Tag, Status } from 'twenty-sdk/ui';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```

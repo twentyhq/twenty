@@ -1,0 +1,206 @@
+---
+title: Установочные хуки
+description: Запускайте логику до или после установки — заполняйте исходные данные, создавайте резервные копии записей, проверяйте корректность обновления.
+icon: wrench
+---
+
+Установочные хуки — это специальные логические функции, которые выполняются во время установки или обновления. Они используют то же окружение выполнения обработчика, что и обычные [logic functions](/l/ru/developers/extend/apps/logic/logic-functions) и получают `InstallPayload`, но объявляются с помощью собственных функций определения — `definePostInstallLogicFunction()` и `definePreInstallLogicFunction()` — и существуют вне обычной модели триггеров (HTTP, cron, события базы данных).
+
+Каждое приложение может определить **не более одной функции pre-install** и **не более одной функции post-install**. Сборка манифеста завершится ошибкой, если будет обнаружено более одной функции любого из этих типов.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+<AccordionGroup>
+<Accordion title="definePostInstallLogicFunction" description="Выполняется после применения миграции метаданных рабочего пространства">
+
+Послеустановочная функция автоматически запускается после того, как установка вашего приложения в рабочем пространстве завершена. Сервер выполняет её **после** того, как метаданные приложения синхронизированы и клиент SDK сгенерирован, так что рабочее пространство полностью готово к использованию, а новая схема уже применена. Типичные сценарии использования включают предзаполнение данных по умолчанию, создание начальных записей, настройку параметров рабочего пространства или выделение ресурсов в сторонних сервисах.
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
+  handler,
+});
+```
+
+Вы также можете вручную выполнить постустановочную функцию в любое время с помощью CLI:
+
+```bash filename="Terminal"
+yarn twenty exec --postInstall
+```
+
+Основные моменты:
+* Послеустановочные функции используют `definePostInstallLogicFunction()` — специализированный вариант, который опускает настройки триггеров (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`).
+* Обработчик получает `InstallPayload` с `{ previousVersion?: string; newVersion: string }` — `newVersion` — это устанавливаемая версия, а `previousVersion` — версия, установленная ранее (или `undefined` при чистой установке). Используйте эти значения, чтобы отличать чистые установки от обновлений и запускать логику миграции, зависящую от версии.
+* **Когда запускается хук**: по умолчанию только при чистой установке. Передайте `shouldRunOnVersionUpgrade: true`, если хотите, чтобы он также выполнялся при обновлении приложения с предыдущей версии. Если флаг опущен, по умолчанию он равен `false`, и при обновлении хук пропускается.
+* **Модель выполнения — по умолчанию асинхронно, синхронный режим по выбору**: флаг `shouldRunSynchronously` определяет, *как* выполняется post-install.
+  * `shouldRunSynchronously: false` *(по умолчанию)* — хук **помещается в очередь сообщений** с `retryLimit: 3` и выполняется асинхронно в воркере. Ответ на установку возвращается сразу после постановки задания в очередь, поэтому медленный или дающий сбой обработчик не блокирует вызывающую сторону. Воркер выполнит до трёх повторных попыток. **Используйте это для длительных задач** — наполнение большими наборами данных, вызовы медленных сторонних API, подготовка внешних ресурсов — всего, что может выйти за разумное окно ответа HTTP.
+  * `shouldRunSynchronously: true` — хук выполняется **непосредственно в процессе установки** (тот же исполнитель, что и для pre-install). Запрос установки блокируется, пока обработчик не завершится, и если он генерирует исключение, вызывающая сторона установки получает `POST_INSTALL_ERROR`. Автоматических повторов нет. **Используйте это для быстрых задач, которые должны завершиться до отправки ответа** — например, выдача ошибки валидации пользователю или быстрая настройка, на которую клиент будет полагаться сразу после возврата вызова установки. Имейте в виду, что к моменту запуска post-install миграция метаданных уже применена, поэтому сбой в синхронном режиме **не** откатывает изменения схемы — он лишь выявляет ошибку.
+* Убедитесь, что ваш обработчик идемпотентен. В асинхронном режиме очередь может выполнить до трёх повторных попыток; в любом режиме хук может запускаться снова при обновлениях, когда `shouldRunOnVersionUpgrade: true`.
+* Переменные окружения `APPLICATION_ID`, `APP_ACCESS_TOKEN` и `API_URL` доступны внутри обработчика (как и в любой другой логической функции), поэтому вы можете вызывать API Twenty с токеном доступа приложения, ограниченным вашим приложением.
+* Для каждого приложения допускается только одна послеустановочная функция. Сборка манифеста завершится ошибкой, если будет обнаружено более одной такой функции.
+* Параметры функции `universalIdentifier`, `shouldRunOnVersionUpgrade` и `shouldRunSynchronously` автоматически добавляются в манифест приложения в поле `postInstallLogicFunction` во время сборки — вам не нужно указывать их в [`defineApplication()`](/l/ru/developers/extend/apps/config/application).
+* Тайм-аут по умолчанию установлен на 300 секунд (5 минут), чтобы позволить выполнять более длительные задачи настройки, такие как инициализация данных.
+* **Не выполняется в режиме разработки**: когда приложение зарегистрировано локально (через `yarn twenty dev`), сервер полностью пропускает процесс установки и синхронизирует файлы напрямую через наблюдатель CLI — поэтому post-install никогда не запускается в режиме разработки, независимо от `shouldRunSynchronously`. Используйте `yarn twenty exec --postInstall`, чтобы запустить это вручную для запущенного рабочего пространства.
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="Выполняется до применения миграции метаданных рабочего пространства">
+
+Функция pre-install автоматически выполняется во время установки, **до применения миграции метаданных рабочего пространства**. Она использует ту же структуру полезной нагрузки, что и post-install (`InstallPayload`), но находится раньше в процессе установки, чтобы подготовить состояние, от которого зависит предстоящая миграция, — типичные сценарии включают резервное копирование данных, проверку совместимости с новой схемой или архивирование записей, которые будут реструктурированы или удалены.
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+Вы также можете вручную выполнить предустановочную функцию в любое время с помощью CLI:
+
+```bash filename="Terminal"
+yarn twenty exec --preInstall
+```
+
+Основные моменты:
+* Функции pre-install используют `definePreInstallLogicFunction()` — та же специализированная конфигурация, что и у post-install, только привязанная к другому этапу жизненного цикла.
+* И обработчики pre-, и post-install получают один и тот же тип `InstallPayload`: `{ previousVersion?: string; newVersion: string }`. Импортируйте его один раз и используйте повторно в обоих хуках.
+* **Когда запускается хук**: выполняется непосредственно перед миграцией метаданных рабочего пространства (`synchronizeFromManifest`). Перед выполнением сервер запускает чисто добавочную «урезанную синхронизацию», которая регистрирует в метаданных рабочего пространства pre-install функцию **новой** версии — ничего больше не затрагивается — а затем выполняет её. Поскольку эта синхронизация только добавляет, объекты, поля и данные предыдущей версии остаются нетронутыми к моменту запуска вашего обработчика: вы можете безопасно читать и сохранять состояние до миграции.
+* **Модель выполнения**: pre-install выполняется **синхронно** и **блокирует установку**. Если обработчик генерирует исключение, установка прерывается до применения каких-либо изменений схемы — рабочее пространство остаётся на предыдущей версии в согласованном состоянии. Это сделано намеренно: pre-install — ваш последний шанс отказать в рискованном обновлении.
+* Как и в случае с post-install, для каждого приложения допускается только одна предустановочная функция. Она автоматически добавляется в манифест приложения в поле `preInstallLogicFunction` во время сборки.
+* **Не выполняется в режиме разработки**: как и post-install, процесс установки полностью пропускается для локально зарегистрированных приложений, поэтому pre-install никогда не запускается при `yarn twenty dev`. Используйте `yarn twenty exec --preInstall`, чтобы запустить это вручную.
+
+</Accordion>
+<Accordion title="Pre-install и post-install: когда что использовать" description="Выбор подходящего хука установки">
+
+Оба хука являются частью одного и того же процесса установки и получают один и тот же `InstallPayload`. Разница в том, **когда** они запускаются относительно миграции метаданных рабочего пространства, и это определяет, к каким данным можно безопасно обращаться.
+
+Pre-install всегда **синхронный** (он блокирует установку и может её прервать). Post-install **по умолчанию асинхронный** — ставится в очередь воркера с автоматическими повторами — но может перейти к синхронному выполнению с `shouldRunSynchronously: true`. См. аккордеон `definePostInstallLogicFunction` выше о том, когда использовать каждый режим.
+
+**Используйте `post-install` для всего, что требует наличия новой схемы.** Это распространённый случай:
+
+* Наполнение данными по умолчанию (создание начальных записей, стандартных представлений, демонстрационного контента) для недавно добавленных объектов и полей.
+* Регистрация вебхуков в сторонних сервисах теперь, когда у приложения уже есть учётные данные.
+* Вызов вашего собственного API для завершения настройки, зависящей от синхронизированных метаданных.
+* Идемпотентная логика «убедиться, что это существует», которая должна приводить состояние в соответствие при каждом обновлении — совместите с `shouldRunOnVersionUpgrade: true`.
+
+Пример — создать запись `PostCard` по умолчанию после установки:
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = createClient();
+  await client.postCard.create({
+    data: { title: 'Welcome to Postcard', content: 'Your first card!' },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  handler,
+});
+```
+
+**Используйте `pre-install`, когда миграция в противном случае уничтожит или повредит существующие данные.** Поскольку pre-install работает с *предыдущей* схемой и при сбое откатывает обновление, это правильное место для всего рискованного:
+
+* **Резервное копирование данных, которые будут удалены или реструктурированы** — например, вы удаляете поле в v2 и вам нужно скопировать его значения в другое поле или экспортировать их в хранилище до запуска миграции.
+* **Архивирование записей, которые новое ограничение сделает недопустимыми** — например, поле становится `NOT NULL`, и вам сначала нужно удалить или исправить строки со значениями null.
+* **Проверка совместимости и отказ от обновления, если текущие данные нельзя корректно мигрировать** — выбросьте исключение из обработчика, и установка прервётся без внесения изменений. Это безопаснее, чем обнаружить несовместимость в середине миграции.
+* **Переименование или изменение ключей данных** перед изменением схемы, которое привело бы к потере связи.
+
+Пример — архивировать записи перед разрушительной миграцией:
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = createClient();
+  const legacyRecords = await client.postCard.findMany({
+    where: { notes: { isNotNull: true } },
+  });
+
+  if (legacyRecords.length === 0) return;
+
+  // Copy legacy `notes` into the new `description` field before the migration
+  // drops the `notes` column. If this fails, the upgrade is aborted and the
+  // workspace stays on v1 with all data intact.
+  await Promise.all(
+    legacyRecords.map((record) =>
+      client.postCard.update({
+        where: { id: record.id },
+        data: { description: record.notes },
+      }),
+    ),
+  );
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+**Общее правило:**
+
+| Вы хотите...                                                                                                      | Использовать                                                                         |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Наполнить данными по умолчанию, настроить рабочее пространство, зарегистрировать внешние ресурсы                  | `post-install`                                                                       |
+| Выполнить длительное наполнение или сторонние вызовы, которые не должны блокировать ответ установки               | `post-install` (по умолчанию — `shouldRunSynchronously: false`, с повторами воркера) |
+| Выполнить быструю настройку, на которую вызывающая сторона будет полагаться сразу после возврата вызова установки | `post-install` с `shouldRunSynchronously: true`                                      |
+| Прочитать или сохранить данные, которые предстоящая миграция может потерять                                       | `pre-install`                                                                        |
+| Отклонить обновление, которое повредит существующие данные                                                        | `pre-install` (бросьте исключение из обработчика)                                    |
+| Выполнять согласование при каждом обновлении                                                                      | `post-install` с `shouldRunOnVersionUpgrade: true`                                   |
+| Сделать одноразовую настройку только при первой установке                                                         | `post-install` с `shouldRunOnVersionUpgrade: false` (по умолчанию)                   |
+
+<Note>
+Если сомневаетесь, выбирайте по умолчанию **post-install**. Обращайтесь к pre-install только тогда, когда сама миграция разрушительна и вам нужно перехватить предыдущее состояние, прежде чем оно исчезнет.
+</Note>
+
+</Accordion>
+</AccordionGroup>

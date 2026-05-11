@@ -7,6 +7,8 @@ import sharp from 'sharp';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const imagesRoot = path.join(__dirname, '..', 'public', 'images');
 
+const CONVERTIBLE_EXTENSIONS = /\.(png|jpe?g)$/i;
+
 let totalBefore = 0;
 let totalAfter = 0;
 let count = 0;
@@ -20,11 +22,11 @@ async function walkAndConvert(directoryPath) {
       continue;
     }
 
-    if (!entry.name.toLowerCase().endsWith('.png')) {
+    if (!CONVERTIBLE_EXTENSIONS.test(entry.name)) {
       continue;
     }
 
-    const outputPath = fullPath.replace(/\.png$/i, '.webp');
+    const outputPath = fullPath.replace(CONVERTIBLE_EXTENSIONS, '.webp');
     const beforeSize = fs.statSync(fullPath).size;
 
     await sharp(fullPath).webp({ quality: 92 }).toFile(outputPath);

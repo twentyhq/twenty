@@ -1,0 +1,55 @@
+---
+title: Genel Bakış
+description: Twenty içinde çalışan sunucu tarafı TypeScript — HTTP rotaları, cron zamanlamaları, veritabanı olayları, yapay zeka araçları veya iş akışı aksiyonları tarafından tetiklenir.
+icon: bolt
+---
+
+Bir Twenty uygulamasının **mantık katmanı**, *çalışan* koddur — HTTP isteklerine, cron zamanlamalarına ve kayıt değişikliklerine tepki veren sunucu tarafı TypeScript işleyicileri; çalışma alanının içinde yaşayan yapay zeka yetenekleri ve ajanları; ve işlevlerinizin üçüncü taraf servislerde bir kullanıcının adına hareket etmesini sağlayan OAuth bağlantıları.
+
+```text
+            ┌─ HTTP route      ──┐
+            │  Cron schedule     │
+            │  Database event    │      ┌────────────────────┐
+  triggers ─┤  AI tool call      ├─────▶│ Logic function     │
+            │  Workflow action   │      │ (your handler)     │
+            │  Manual exec       │      └────────────────────┘
+            └────────────────────┘                │
+                                                  ▼
+                                  ┌────────────────────────────┐
+                                  │ Twenty API (records)       │
+                                  │ Third-party API            │
+                                  │   (via Connection token)   │
+                                  └────────────────────────────┘
+```
+
+## Bu bölümde
+
+<CardGroup cols={2}>
+  <Card title="Mantıksal işlevler" icon="bolt" href="/l/tr/developers/extend/apps/logic/logic-functions">
+    Temel yapı taşı — tetikleyici türleri, payload'lar ve tür güvenli API istemcisi.
+  </Card>
+  <Card title="Beceriler ve Ajanlar" icon="robot" href="/l/tr/developers/extend/apps/logic/skills-and-agents">
+    Yeniden kullanılabilir yapay zeka ajan yönergeleri ve özel sistem istemlerine sahip asistanlar.
+  </Card>
+  <Card title="Bağlantılar" icon="plug" href="/l/tr/developers/extend/apps/logic/connections">
+    Uygulamanızın üçüncü taraf servisler — Linear, GitHub, Slack ve daha fazlası — için tuttuğu OAuth kimlik bilgileri.
+  </Card>
+</CardGroup>
+
+## Tetikleyici türlerine genel bakış
+
+Bir mantık fonksiyonu bir veya daha fazla tetikleyici seçer — aşağıdaki her giriş, `defineLogicFunction()` üzerinde ayrı bir alandır:
+
+| Tetikleyici           | Ne zaman çalışır                                                             | Ayar                            |
+| --------------------- | ---------------------------------------------------------------------------- | ------------------------------- |
+| **HTTP rotası**       | Bir istek `/s/\<path>` endpoint'inize ulaşır                | `httpRouteTriggerSettings`      |
+| **Cron**              | Bir CRON ifadesi eşleştiğinde                                                | `cronTriggerSettings`           |
+| **Veritabanı olayı**  | Bir çalışma alanı kaydı oluşturulduğunda, güncellendiğinde veya silindiğinde | `databaseEventTriggerSettings`  |
+| **Yapay zeka aracı**  | Bir Twenty yapay zeka özelliği, fonksiyonunuzu çağırmaya karar verdiğinde    | `toolTriggerSettings`           |
+| **İş Akışı Aksiyonu** | Bir iş akışı adımı fonksiyonunuzu çağırdığında                               | `workflowActionTriggerSettings` |
+
+Fonksiyonlar, izole Node.js süreçlerinde sandbox içinde çalışır ve çalışma alanına, [`defineApplication()`](/l/tr/developers/extend/apps/config/application) üzerinde beyan edilen role göre kapsamlandırılmış tür güvenli bir API istemcisi aracılığıyla erişir.
+
+<Note>
+**Yükleme zamanı kancaları** — yüklemeden önce veya sonra çalışan kod — bu çalışma zamanını paylaşır ancak kendi define fonksiyonlarını kullanır ve [Config → Install Hooks](/l/tr/developers/extend/apps/config/install-hooks) altında bulunur.
+</Note>

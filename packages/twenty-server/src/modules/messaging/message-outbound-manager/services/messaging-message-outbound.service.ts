@@ -38,6 +38,13 @@ export class MessagingMessageOutboundService {
           sendMessageInput,
           connectedAccount,
         );
+      case ConnectedAccountProvider.EMAIL_GROUP:
+        // Email group channels are inbound-only: replies should go through
+        // the user's own Gmail/Outlook/IMAP account to avoid masking the
+        // sender.
+        throw new Error(
+          'Email group channels are inbound-only; reply using your personal account.',
+        );
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.APP:
@@ -72,6 +79,7 @@ export class MessagingMessageOutboundService {
           sendMessageInput,
           connectedAccount,
         );
+      case ConnectedAccountProvider.EMAIL_GROUP:
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.APP:

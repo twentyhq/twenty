@@ -1,5 +1,5 @@
 import { Container, GuideCrosshair } from '@/design-system/components';
-import { theme } from '@/theme';
+import { theme, type Scheme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
@@ -9,6 +9,21 @@ const StyledSection = styled.section`
 
   &[data-has-crosshair] {
     position: relative;
+  }
+
+  &[data-scheme='light'] {
+    background-color: var(--color-white);
+    color: var(--color-text);
+  }
+
+  &[data-scheme='muted'] {
+    background-color: var(--color-neutral);
+    color: var(--color-text);
+  }
+
+  &[data-scheme='dark'] {
+    background-color: var(--color-black);
+    color: var(--color-text);
   }
 `;
 
@@ -39,10 +54,11 @@ type EditorialCrosshair = {
 };
 
 type RootProps = {
-  backgroundColor: string;
+  backgroundColor?: string;
   children: ReactNode;
-  color: string;
+  color?: string;
   crosshair?: EditorialCrosshair;
+  scheme?: Scheme;
 };
 
 export function Root({
@@ -50,11 +66,13 @@ export function Root({
   children,
   color,
   crosshair,
+  scheme,
 }: RootProps) {
   return (
     <StyledSection
       data-has-crosshair={crosshair ? '' : undefined}
-      style={{ backgroundColor, color }}
+      data-scheme={scheme}
+      style={scheme ? undefined : { backgroundColor, color }}
     >
       {crosshair ? (
         <GuideCrosshair

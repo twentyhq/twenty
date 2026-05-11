@@ -1,10 +1,19 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
@@ -47,7 +56,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @UsePipes(ResolverValidationPipe)
-@MetadataResolver()
+@MetadataResolver(() => ApplicationRegistrationEntity)
 @UseFilters(
   ApplicationRegistrationExceptionFilter,
   AuthGraphqlApiExceptionFilter,
@@ -307,6 +316,16 @@ export class ApplicationRegistrationResolver {
       applicationRegistrationId,
       targetWorkspaceSubdomain,
       currentOwnerWorkspaceId: workspaceId,
+    });
+  }
+
+  @ResolveField(() => Boolean)
+  async isConfigured(
+    @Parent() registration: ApplicationRegistrationEntity,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<boolean> {
+    return context.loaders.isConfiguredLoader.load({
+      applicationRegistrationId: registration.id,
     });
   }
 }

@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
@@ -111,11 +112,16 @@ export type ViewFilterGroupsByViewIdLoaderPayload = {
   viewId: string;
 };
 
+export type IsConfiguredLoaderPayload = {
+  applicationRegistrationId: string;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
     private readonly i18nService: I18nService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -135,6 +141,7 @@ export class DataloaderService {
     const viewGroupsByViewIdLoader = this.createViewGroupsByViewIdLoader();
     const viewFilterGroupsByViewIdLoader =
       this.createViewFilterGroupsByViewIdLoader();
+    const isConfiguredLoader = this.createIsConfiguredLoader();
 
     return {
       relationLoader,
@@ -150,6 +157,7 @@ export class DataloaderService {
       viewSortsByViewIdLoader,
       viewGroupsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
+      isConfiguredLoader,
     };
   }
 
@@ -732,5 +740,22 @@ export class DataloaderService {
           .map(fromFlatViewFilterGroupToViewFilterGroupDto);
       });
     });
+  }
+
+  private createIsConfiguredLoader() {
+    return new DataLoader<IsConfiguredLoaderPayload, boolean>(
+      async (params: IsConfiguredLoaderPayload[]) => {
+        const ids = params.map((p) => p.applicationRegistrationId);
+
+        const resultMap =
+          await this.applicationRegistrationVariableService.isConfiguredBatch(
+            ids,
+          );
+
+        return params.map(
+          (p) => resultMap.get(p.applicationRegistrationId) ?? true,
+        );
+      },
+    );
   }
 }

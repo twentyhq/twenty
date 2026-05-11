@@ -1,12 +1,12 @@
 import * as crypto from 'crypto';
 
-export type EnterpriseKeyPayload = {
+type EnterpriseKeyPayload = {
   sub: string;
   licensee: string;
   iat: number;
 };
 
-export type EnterpriseValidityPayload = {
+type EnterpriseValidityPayload = {
   sub: string;
   status: 'valid';
   iat: number;
@@ -32,7 +32,7 @@ const getValidityTokenDurationDays = (): number => {
   return parsed;
 };
 
-export type SignValidityTokenOptions = {
+type SignValidityTokenOptions = {
   subscriptionCancelAt: number | null;
 };
 
@@ -61,18 +61,11 @@ const getPrivateKey = (): string => {
 };
 
 const base64UrlEncode = (data: string): string => {
-  return Buffer.from(data)
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  return Buffer.from(data).toString('base64url');
 };
 
 const base64UrlDecode = (data: string): string => {
-  const padded = data + '='.repeat((4 - (data.length % 4)) % 4);
-  const base64 = padded.replace(/-/g, '+').replace(/_/g, '/');
-
-  return Buffer.from(base64, 'base64').toString('utf-8');
+  return Buffer.from(data, 'base64url').toString('utf-8');
 };
 
 const signJwt = (
@@ -89,10 +82,7 @@ const signJwt = (
       key: privateKey,
       padding: crypto.constants.RSA_PKCS1_PADDING,
     })
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+    .toString('base64url');
 
   return `${signingInput}.${signature}`;
 };
@@ -111,11 +101,7 @@ export const verifyJwt = <T extends Record<string, unknown>>(
     const [encodedHeader, encodedPayload, signature] = parts;
     const signingInput = `${encodedHeader}.${encodedPayload}`;
 
-    const signatureBuffer = Buffer.from(
-      signature.replace(/-/g, '+').replace(/_/g, '/') +
-        '='.repeat((4 - (signature.length % 4)) % 4),
-      'base64',
-    );
+    const signatureBuffer = Buffer.from(signature, 'base64url');
 
     const isValid = crypto.verify(
       'sha256',

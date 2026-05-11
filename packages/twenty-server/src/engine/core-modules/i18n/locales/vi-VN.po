@@ -553,6 +553,11 @@ msgstr ""
 msgid "Application is not installed in this workspace. Install it first."
 msgstr ""
 
+#. js-lingui-id: t77Ey9
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "Application not found in this workspace."
+msgstr ""
+
 #. js-lingui-id: ltvmAF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -2113,6 +2118,16 @@ msgstr "Lỗi cấu hình tên miền email."
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "Email domain not found."
 msgstr "Không tìm thấy tên miền email."
+
+#. js-lingui-id: DCoI0W
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
+msgid "Email group"
+msgstr ""
+
+#. js-lingui-id: MhPwKU
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Email group is not configured on this server."
+msgstr ""
 
 #. js-lingui-id: m9fD11
 #: src/engine/core-modules/email-verification/email-verification.exception.ts

@@ -1,4 +1,4 @@
-import { useLoadMockedMetadata } from '@/metadata-store/hooks/useLoadMockedMetadata';
+import { useLoadMockedMetadata } from '~/testing/hooks/useLoadMockedMetadata';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';

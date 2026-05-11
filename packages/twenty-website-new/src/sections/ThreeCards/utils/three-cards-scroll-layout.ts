@@ -2,6 +2,8 @@ import type { RefObject } from 'react';
 
 import { theme } from '@/theme';
 
+import type { ThreeCardsScrollLayoutOptions } from './three-cards-scroll-layout-options';
+
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
@@ -10,17 +12,9 @@ function easeOutQuint(t: number) {
   return 1 - Math.pow(1 - t, 5);
 }
 
-export type ThreeCardsScrollLayoutRefs = {
+type ThreeCardsScrollLayoutRefs = {
   cardRefs: RefObject<(HTMLDivElement | null)[]>;
   gridRef: RefObject<HTMLDivElement | null>;
-};
-
-export type ThreeCardsScrollLayoutOptions = {
-  endEdgeRatio?: number;
-  initialScale?: number;
-  initialTranslateY?: number;
-  opacityRamp?: number;
-  stagger?: number;
 };
 
 const DEFAULT_SCROLL_LAYOUT_OPTIONS: Required<ThreeCardsScrollLayoutOptions> = {

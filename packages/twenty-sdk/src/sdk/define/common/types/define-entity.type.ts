@@ -21,6 +21,7 @@ export type ValidationResult<T> = {
   success: boolean;
   config: T;
   errors: string[];
+  warnings?: string[];
 };
 
 export type DefinableEntity =

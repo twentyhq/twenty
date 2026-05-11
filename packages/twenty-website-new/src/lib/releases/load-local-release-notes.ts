@@ -4,7 +4,7 @@ import path from 'path';
 import matter from 'gray-matter';
 
 import type { LocalReleaseNote } from '@/lib/releases/types';
-import { compareSemanticVersions } from '@/lib/semver/compare-semantic-versions';
+import { compareSemanticVersions } from '@/lib/releases/compare-semantic-versions';
 
 function normalizeFrontmatterDate(dateValue: unknown): string {
   if (typeof dateValue === 'string') {

@@ -1,0 +1,43 @@
+---
+title: 视图
+description: 为你的应用中的对象提供预配置的已保存视图——列顺序、筛选器、分组。
+icon: list
+---
+
+**视图（view）** 是关于对象记录如何显示的已保存配置：包括显示哪些字段、它们的顺序、是否可见，以及应用的任何筛选器或分组。 使用 `defineView()` 为你的应用提供预配置视图——通常是你创建的每个自定义对象的默认索引视图。
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## 关键点
+
+* `objectUniversalIdentifier` 指定此视图适用于哪个对象。 它可以是你定义的自定义对象，也可以是标准的 Twenty 对象。
+* `key` 决定视图类型——`ViewKey.INDEX` 是该对象的主列表视图。
+* `fields` 控制显示哪些列以及它们的顺序。 每个字段引用一个 `fieldMetadataUniversalIdentifier`。
+* 你还可以声明 `filters`、`filterGroups`、`groups` 和 `fieldGroups` 以进行更高级的配置。
+* 当同一对象存在多个视图时，`position` 控制其排序。
+
+## 视图在 UI 中如何显示
+
+单独一个视图无法从侧边栏访问。 要让它显示在侧边栏中，请将其与类型为 `VIEW`、指向该视图 `universalIdentifier` 的[导航菜单项](/l/zh/developers/extend/apps/layout/navigation-menu-items)配对。 这是规范用法：每个自定义对象通常都会提供一个默认视图，以及一个在侧边栏中打开该视图的条目。

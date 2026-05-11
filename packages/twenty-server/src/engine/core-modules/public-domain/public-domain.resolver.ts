@@ -11,8 +11,10 @@ import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/dom
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { CreatePublicDomainInput } from 'src/engine/core-modules/public-domain/dtos/create-public-domain.input';
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
 import { PublicDomainInput } from 'src/engine/core-modules/public-domain/dtos/public-domain.input';
+import { UpdatePublicDomainInput } from 'src/engine/core-modules/public-domain/dtos/update-public-domain.input';
 import { PublicDomainExceptionFilter } from 'src/engine/core-modules/public-domain/public-domain-exception-filter';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import {
@@ -54,12 +56,25 @@ export class PublicDomainResolver {
 
   @Mutation(() => PublicDomainDTO)
   async createPublicDomain(
-    @Args() { domain }: PublicDomainInput,
+    @Args() { domain, applicationId }: CreatePublicDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<PublicDomainDTO> {
     return this.publicDomainService.createPublicDomain({
       domain,
       workspace: currentWorkspace,
+      applicationId: applicationId ?? null,
+    });
+  }
+
+  @Mutation(() => PublicDomainDTO)
+  async updatePublicDomain(
+    @Args() { domain, applicationId }: UpdatePublicDomainInput,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+  ): Promise<PublicDomainDTO> {
+    return this.publicDomainService.updatePublicDomainApplication({
+      domain,
+      workspace: currentWorkspace,
+      applicationId: applicationId ?? null,
     });
   }
 

@@ -1,0 +1,52 @@
+---
+title: 概览
+description: 定义你的应用在工作区中添加的数据结构——对象、字段和关系。
+icon: database
+---
+
+Twenty 应用的 **数据层（data layer）** 是你的应用*添加*到工作区中的数据——它声明的新记录类型、它为现有对象添加的列，以及这些记录之间如何相互关联。
+
+```text
+┌──────────────────────────────────────────────────┐
+│ Object — a record type, e.g. PostCard            │
+│    ├─ Field     (name, type, label)              │
+│    ├─ Field                                      │
+│    └─ Relation  (link to another object)         │
+└──────────────────────────────────────────────────┘
+            │
+            ├── lives in your app, OR
+            │
+            ▼
+┌──────────────────────────────────────────────────┐
+│ Standard / other apps' objects                   │
+│    └─ Field added by your app via defineField    │
+└──────────────────────────────────────────────────┘
+```
+
+## 本节内容
+
+<CardGroup cols={2}>
+  <Card title="对象" icon="表格" href="/l/zh/developers/extend/apps/data/objects">
+    `defineObject` —— 声明具有自有字段的新记录类型。
+  </Card>
+  <Card title="扩展对象" icon="wand-magic-sparkles" href="/l/zh/developers/extend/apps/data/extending-objects">
+    `defineField` —— 向标准对象或其他应用的对象添加字段。
+  </Card>
+  <Card title="关系" icon="diagram-project" href="/l/zh/developers/extend/apps/data/relations">
+    对象之间的双向 `MANY_TO_ONE` / `ONE_TO_MANY` 连接。
+  </Card>
+</CardGroup>
+
+## 实体一览
+
+| 实体     | 目的                                                    | 定义方式                                        |
+| ------ | ----------------------------------------------------- | ------------------------------------------- |
+| **对象** | 具有自有字段的新自定义记录类型（例如 PostCard、Invoice）                  | `defineObject()`                            |
+| **字段** | 对象上的一列。 独立字段可以扩展你未创建的对象（例如向 Company 添加 `loyaltyTier`） | `defineField()`                             |
+| **关系** | 两个对象之间的双向链接——双方都声明为字段                                 | 使用 `defineField()` 并指定 `FieldType.RELATION` |
+
+SDK 会在构建时通过 AST 分析检测这些内容，因此文件组织方式由你决定——约定是使用 `src/objects/` 和 `src/fields/`。 稳定的 `universalIdentifier` UUID 在不同部署之间将一切关联在一起。
+
+<Note>
+在找 **Application Config** 或 **Roles & Permissions** 吗？ 这些描述的是应用本身而不是它添加的数据——相关内容位于 [Config](/l/zh/developers/extend/apps/config/overview) 下。 在找 **Connections**（Linear、GitHub、Slack OAuth）吗？ 这些用于*从*逻辑函数中调用，并位于 [Logic](/l/zh/developers/extend/apps/logic/connections) 下。
+</Note>

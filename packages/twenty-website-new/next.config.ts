@@ -55,6 +55,15 @@ const nextConfig: LinariaConfig = {
         source: '/:path*',
         headers: SECURITY_HEADERS.map((h) => ({ ...h })),
       },
+      {
+        source: '/(images|illustrations|lottie)/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ];
   },
   async redirects() {
@@ -112,6 +121,11 @@ const nextConfig: LinariaConfig = {
       {
         source: '/twenty-ui/:slug',
         destination: 'https://docs.twenty.com/twenty-ui/:slug',
+        permanent: true,
+      },
+      {
+        source: '/resources/why-twenty',
+        destination: '/why-twenty',
         permanent: true,
       },
       {

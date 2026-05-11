@@ -1,7 +1,7 @@
 import { Body } from './Body';
 import { Cta } from './Cta';
 import { Heading } from './Heading';
-import { HomeVisual } from './HomeVisual/HomeVisual';
+import { AppPreview } from '@/sections/AppPreview';
 import { PartnerVisual } from './PartnerVisual/PartnerVisual';
 import { ProductVisual } from './ProductVisual';
 import { ReleaseNotesVisual } from './ReleaseNotesVisual';
@@ -13,7 +13,7 @@ export const Hero = {
   Heading,
   Body,
   Cta,
-  HomeVisual,
+  AppPreview,
   ProductVisual,
   ReleaseNotesVisual,
   PartnerVisual,

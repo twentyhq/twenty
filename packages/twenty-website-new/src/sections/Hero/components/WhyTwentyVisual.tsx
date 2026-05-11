@@ -1,7 +1,7 @@
 'use client';
 
 import { WebGlMount } from '@/lib/visual-runtime';
-import { WhyTwenty } from '@/sections/Hero/visuals/WhyTwenty';
+import { WhyTwenty } from '@/sections/Hero/visuals/components/WhyTwenty';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';

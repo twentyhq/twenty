@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
   MessageChannelSyncStage,
+  MessageChannelType,
 } from 'twenty-shared/types';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -63,6 +64,7 @@ export class ChannelSyncService {
         where: {
           connectedAccountId,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
+          type: Not(MessageChannelType.EMAIL_GROUP),
           workspaceId,
         },
       });

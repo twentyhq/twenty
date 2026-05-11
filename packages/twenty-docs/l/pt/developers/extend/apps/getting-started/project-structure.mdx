@@ -1,0 +1,40 @@
+---
+title: Estrutura do projeto
+description: O que há dentro de um app Twenty criado com scaffold — arquivos, pastas e o que cada um faz.
+icon: folder-tree
+---
+
+Um novo app gerado por `npx create-twenty-app` se parece com isto:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  src/
+    application-config.ts                   # Required — your app's entry point
+    default-role.ts                         # Permissions for logic functions
+    constants/
+      universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    __tests__/
+      setup-test.ts
+      app-install.integration-test.ts
+  .github/workflows/ci.yml                  # GitHub Actions
+  public/                                   # Static assets
+  vitest.config.ts                          # Test runner config
+  tsconfig.json, tsconfig.spec.json
+  .nvmrc, .yarnrc.yml, .oxlintrc.json
+  README.md, LLMS.md
+```
+
+## Arquivos principais
+
+| Arquivo / Pasta                          | Finalidade                                                               |
+| ---------------------------------------- | ------------------------------------------------------------------------ |
+| `src/application-config.ts`              | **Obrigatório.** O principal arquivo de configuração do seu aplicativo.  |
+| `src/default-role.ts`                    | Papel padrão que controla o que suas funções de lógica podem acessar.    |
+| `src/constants/universal-identifiers.ts` | UUIDs gerados automaticamente e metadados (nome de exibição, descrição). |
+| `src/__tests__/`                         | Testes de integração (configuração + teste de exemplo).                  |
+| `public/`                                | Recursos estáticos (imagens, fontes) servidos com seu aplicativo.        |
+
+<Note>
+**A organização de arquivos fica a seu critério.** As pastas acima são convenções — o SDK detecta entidades por meio de análise de AST em chamadas a `export default defineEntity(...)`, independentemente de onde o arquivo esteja.
+</Note>

@@ -74,7 +74,10 @@ export class StripeSubscriptionScheduleService {
   ) {
     if (!this.stripe) throw new Error('Billing is disabled');
 
-    return await this.stripe.subscriptionSchedules.update(scheduleId, params);
+    return await this.stripe.subscriptionSchedules.update(scheduleId, {
+      ...params,
+      proration_behavior: 'none',
+    });
   }
 
   async createSubscriptionSchedule(stripeSubscriptionId: string) {

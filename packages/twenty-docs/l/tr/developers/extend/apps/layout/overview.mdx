@@ -1,0 +1,56 @@
+---
+title: Genel Bakış
+description: Uygulamanızı Twenty'nin kullanıcı arayüzüne yerleştirin — kenar çubuğu öğeleri, kaydedilmiş görünümler, kayıt sayfası sekmeleri ve yalıtılmış React bileşenleri.
+icon: table-columns
+---
+
+Bir Twenty uygulamasının **düzen katmanı**, kullanıcının gördüğü her şeydir: uygulamanın kenar çubuğunda nerede göründüğü, hangi liste görünümlerini sunduğu, kayıt detay sayfalarının nasıl düzenlendiği ve bu sayfaların içinde hangi özel React bileşenlerinin oluşturulduğu.
+
+```text
+   Sidebar               Record list            Record detail page
+   ───────               ───────────            ──────────────────
+   [📋 My View]    ────▶ ┌──────────┐          ┌─────────────────────┐
+   [📋 Drafts ]          │ Companies│          │ Tabs: [Overview ]   │
+   [📋 Inbox  ]          │ ──────── │          │       [Notes    ]   │
+        ▲                │  Apple   │          │       [Hello    ]◀──── definePageLayoutTab
+        │                │  Acme    │          │                     │   adds a tab...
+        └ defineNavi-    │  …       │          │  ┌────────────────┐ │
+          gationMenu-    └────▲─────┘          │  │                │ │
+          Item points         │                │  │   React UI     │◀── …with a
+          to a defineView     │                │  │  (sandboxed in │ │   defineFrontComponent
+                              └ defineView     │  │   a Worker)    │ │   widget inside
+                                picks columns  │  └────────────────┘ │
+                                and filters    └─────────────────────┘
+```
+
+## Bu bölümde
+
+<CardGroup cols={2}>
+  <Card title="Görünümler" icon="list" href="/l/tr/developers/extend/apps/layout/views">
+    `defineView` — kaydedilmiş liste yapılandırmaları: görünür sütunlar, filtreler, gruplar.
+  </Card>
+  <Card title="Gezinme Menüsü Öğeleri" icon="bars" href="/l/tr/developers/extend/apps/layout/navigation-menu-items">
+    `defineNavigationMenuItem` — görünümlere veya harici URL'lere işaret eden kenar çubuğu girişleri.
+  </Card>
+  <Card title="Sayfa Düzenleri" icon="table-columns" href="/l/tr/developers/extend/apps/layout/page-layouts">
+    `definePageLayout` ve `definePageLayoutTab` — bir kaydın detay sayfasındaki sekmeler ve bileşenler.
+  </Card>
+  <Card title="Ön uç bileşenleri" icon="window-maximize" href="/l/tr/developers/extend/apps/layout/front-components">
+    `defineFrontComponent` — Twenty içinde oluşturulan yalıtılmış React bileşenleri.
+  </Card>
+  <Card title="Komut Menüsü Öğeleri" icon="terminal" href="/l/tr/developers/extend/apps/layout/command-menu-items">
+    `defineCommandMenuItem` — ön uç bileşenlerini Cmd+K girişleri ve hızlı eylemler olarak kaydedin.
+  </Card>
+</CardGroup>
+
+## Uygulamanın göründüğü yerler
+
+| Görünüm alanı                               | Neyi kontrol eder                                                                                 | Varlık                                    |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Kenar çubuğu**                            | Kaydedilmiş bir görünüme veya harici bir URL'ye bağlanan özel bir giriş                           | `defineNavigationMenuItem`                |
+| **Kayıt listesi**                           | Bir nesne için kaydedilmiş yapılandırma — görünür sütunlar, sıralama, filtreler, gruplar          | `defineView`                              |
+| **Kayıt detay sayfası**                     | Bir kayıt sayfasındaki sekmeler ve bileşenler (kendi nesnenize ait veya standart bir nesneye ait) | `definePageLayout`, `definePageLayoutTab` |
+| **Yukarıdakilerin herhangi birinin içinde** | Özel bir React bileşeni — butonlar, formlar, panolar, entegrasyonlar                              | `defineFrontComponent`                    |
+| **Komut menüsü (Cmd+K)**                    | Sabitlenmiş bir hızlı eylem veya gizli komut                                                      | `defineCommandMenuItem`                   |
+
+Ön uç bileşenleri, Remote DOM kullanan yalıtılmış bir Web Worker içinde çalışır — sayfada *yerel* olarak oluşturulurlar (bir iframe içinde değil), ancak ana makine sayfasına veya DOM'a doğrudan erişemezler. Twenty ile iletişim, mesaj iletimi yapan bir ana makine API'si aracılığıyla gerçekleşir.

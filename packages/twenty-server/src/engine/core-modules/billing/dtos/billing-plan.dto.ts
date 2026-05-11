@@ -14,7 +14,10 @@ export class BillingPlanDTO {
   planKey: BillingPlanKey;
 
   @Field(() => [BillingLicensedProduct])
-  licensedProducts: BillingLicensedProduct[];
+  baseProducts: BillingLicensedProduct[];
+
+  @Field(() => [BillingLicensedProduct])
+  resourceCreditProducts: BillingLicensedProduct[];
 
   @Field(() => [BillingMeteredProduct])
   meteredProducts: BillingMeteredProduct[];

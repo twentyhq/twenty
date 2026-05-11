@@ -1,13 +1,11 @@
 import { Body as BaseBody } from '@/design-system/components';
-import type { MessageBody } from '@/lib/i18n/message-body';
 import { theme } from '@/theme';
-import type { MessageDescriptor } from '@lingui/core';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import type { ReactNode } from 'react';
+import { Children, type ReactNode } from 'react';
 
-const BodyParagraph = styled.div<{ $color: string }>`
-  --body-paragraph-color: ${({ $color }) => $color};
-  color: ${({ $color }) => $color};
+const bodyParagraphClassName = css`
+  color: var(--color-text-muted);
   min-width: 0;
 `;
 
@@ -46,45 +44,29 @@ const SingleColumnBody = styled.div`
 `;
 
 type EditorialBodyProps = {
-  body: MessageBody | MessageBody[];
-  color: string;
+  children: ReactNode;
   layout:
     | 'centered'
     | 'indented'
     | 'two-column'
     | 'two-column-left'
     | 'two-column-right';
-  renderText: (descriptor: MessageDescriptor) => ReactNode;
 };
 
-export function Body({ body, color, layout, renderText }: EditorialBodyProps) {
-  const paragraphs = Array.isArray(body) ? (
-    body.map((item, index) => (
-      <BodyParagraph $color={color} key={index}>
-        <BaseBody
-          as="p"
-          body={item}
-          family="sans"
-          renderText={renderText}
-          size="md"
-          variant="body-paragraph"
-          weight="regular"
-        />
-      </BodyParagraph>
-    ))
-  ) : (
-    <BodyParagraph $color={color}>
+export function Body({ children, layout }: EditorialBodyProps) {
+  const paragraphs = Children.map(children, (child) => (
+    <div className={bodyParagraphClassName}>
       <BaseBody
         as="p"
-        body={body}
         family="sans"
-        renderText={renderText}
         size="md"
         variant="body-paragraph"
         weight="regular"
-      />
-    </BodyParagraph>
-  );
+      >
+        {child}
+      </BaseBody>
+    </div>
+  ));
 
   if (
     layout === 'two-column' ||

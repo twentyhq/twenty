@@ -1,0 +1,102 @@
+---
+title: Макеты страниц
+description: Настраивайте страницы деталей записей — вкладки, виджеты и места, где отображаются фронтенд-компоненты, — с помощью `definePageLayout` и `definePageLayoutTab`.
+icon: table-columns
+---
+
+**Макет страницы** управляет тем, как устроена страница деталей записи: какие вкладки отображаются и какие виджеты они содержат. Используйте `definePageLayout()` для объявления макета для объекта, которым вы владеете, или `definePageLayoutTab()` для добавления одной вкладки к макету, который уже существует (вашему или стандартному Twenty).
+
+| Сценарий использования                                                                        | Сущность              |
+| --------------------------------------------------------------------------------------------- | --------------------- |
+| Определите весь макет для страницы записи на объекте, которым вы владеете                     | `definePageLayout`    |
+| Добавьте одну вкладку в существующий макет (для вашего собственного объекта или стандартного) | `definePageLayoutTab` |
+
+## definePageLayout
+
+Используйте это, когда вы управляете всей страницей деталей — обычно для пользовательского объекта, который вы определили сами.
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+### Основные моменты
+
+* `type` обычно равен `'RECORD_PAGE'` для настройки детального представления конкретного объекта.
+* `objectUniversalIdentifier` указывает, к какому объекту применяется этот макет.
+* Каждая `tab` определяет раздел страницы с `title`, `position` и `layoutMode` (`CANVAS` для свободного макета).
+* Каждый `widget` внутри вкладки может отображать [front component](/l/ru/developers/extend/apps/layout/front-components), список связей или другие встроенные типы виджетов.
+* `position` у вкладок управляет их порядком. Используйте большие значения (например, 50), чтобы разместить пользовательские вкладки после встроенных.
+
+## definePageLayoutTab
+
+Используйте это, когда вы хотите только **добавить** вкладку к существующему макету — например, вкладку аналитики на стандартной странице Company или вкладку с AI-сводкой, прикреплённую к макету вашего собственного объекта.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+### Основные моменты
+
+* `pageLayoutUniversalIdentifier` является **обязательным** и должен указывать на макет страницы, который уже существует на момент установки — либо стандартный макет Twenty, либо определённый вашим собственным приложением. Кросс-приложенческие ссылки на макеты, которыми владеет другое установленное приложение, на данный момент не поддерживаются. Если родительский макет отсутствует, установка завершается с понятной ошибкой проверки.
+* `widgets` ограничены только этой вкладкой — они ссылаются на [front components](/l/ru/developers/extend/apps/layout/front-components), представления и т. п. точно так же, как виджеты, определённые непосредственно в `definePageLayout`.
+* `position` управляет порядком относительно существующих вкладок в целевом макете. Выберите значение, которое поместит вашу вкладку в нужное место относительно встроенных вкладок.
+* Используйте это вместо `definePageLayout`, когда вы хотите только добавить к существующему макету. Используйте `definePageLayout`, когда вы управляете всем макетом.

@@ -4,4 +4,4 @@ export type {
   SalesforcePricingPanelType,
   SalesforceRichTextPartType,
   SalesforceWrongChoicePopupType,
-} from './SalesforceData';
+} from './salesforce-data';

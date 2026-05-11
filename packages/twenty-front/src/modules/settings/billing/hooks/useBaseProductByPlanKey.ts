@@ -10,7 +10,7 @@ export const useBaseProductByPlanKey = () => {
 
   const getBaseProductByPlanKey = (planKey: BillingPlanKey) =>
     findOrThrow(
-      getPlanByPlanKey(planKey).licensedProducts,
+      getPlanByPlanKey(planKey).baseProducts,
       (product) =>
         product.metadata.productKey === BillingProductKey.BASE_PRODUCT,
       new Error('Base product not found'),

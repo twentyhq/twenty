@@ -6,6 +6,7 @@ export const FIND_MANY_PUBLIC_DOMAINS = gql`
       id
       domain
       isValidated
+      applicationId
       createdAt
     }
   }

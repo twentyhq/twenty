@@ -6,7 +6,7 @@ import type {
   SalesforceRichTextPartType,
 } from '@/sections/Salesforce/types';
 import { useAnimatedNumber } from '@/lib/animation';
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import { useLingui } from '@lingui/react';
 import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
@@ -544,7 +544,7 @@ const AddonRightPart = styled.span`
 
 const renderRightLabelParts = (
   lines: SalesforceRichTextPartType[][],
-  renderText: (descriptor: MessageDescriptor) => string,
+  translate: (descriptor: MessageDescriptor) => string,
 ) =>
   lines.map((line, lineIndex) => (
     <AddonRightLine key={lineIndex} data-muted={lineIndex > 0 || undefined}>
@@ -561,7 +561,7 @@ const renderRightLabelParts = (
           }
         >
           {partIndex > 0 ? ' ' : null}
-          {renderText(part.text)}
+          {translate(part.text)}
         </AddonRightPart>
       ))}
     </AddonRightLine>
@@ -569,8 +569,8 @@ const renderRightLabelParts = (
 
 const renderRightLabel = (
   label: MessageDescriptor,
-  renderText: (descriptor: MessageDescriptor) => string,
-) => <AddonRightLine>{renderText(label)}</AddonRightLine>;
+  translate: (descriptor: MessageDescriptor) => string,
+) => <AddonRightLine>{translate(label)}</AddonRightLine>;
 
 const SelectAllButton = styled.button`
   align-items: center;
@@ -598,7 +598,7 @@ const SelectAllButton = styled.button`
   }
 `;
 
-export type PricingWindowProps = {
+type PricingWindowProps = {
   checkedIds: ReadonlySet<string>;
   onAddonToggle: (
     addon: SalesforceAddonRowType,
@@ -616,7 +616,7 @@ export function PricingWindow({
   onSelectAll,
   pricing,
 }: PricingWindowProps) {
-  const renderText = useRenderMessage();
+  const { i18n } = useLingui();
   const addonAnchorRefs = useRef<Record<string, HTMLLabelElement | null>>({});
   const { fixedPriceAmount, perSeatPriceAmount, totalPriceAmount } =
     calculatePriceAmounts(pricing, checkedIds);
@@ -628,14 +628,14 @@ export function PricingWindow({
     <PanelWrapper>
       {pricing.promoTag ? (
         <PromoTagBorder>
-          <PromoTagInner>{renderText(pricing.promoTag)}</PromoTagInner>
+          <PromoTagInner>{i18n._(pricing.promoTag)}</PromoTagInner>
         </PromoTagBorder>
       ) : null}
       <Panel>
         <WindowChrome aria-hidden="true" />
         <PricingHeader>
           <TitleBar>
-            <TitleBarText>{renderText(pricing.windowTitle)}</TitleBarText>
+            <TitleBarText>{i18n._(pricing.windowTitle)}</TitleBarText>
             <TitleBarActions>
               <TitleBarActionButton
                 aria-label="Help"
@@ -658,9 +658,7 @@ export function PricingWindow({
               <ProductBlock>
                 <ProductHeader>
                   <ProductCopy>
-                    <ProductTitle>
-                      {renderText(pricing.productTitle)}
-                    </ProductTitle>
+                    <ProductTitle>{i18n._(pricing.productTitle)}</ProductTitle>
                     <PriceRow>
                       {perSeatPriceAmount > pricing.basePriceAmount ? (
                         <BasePriceAmount>
@@ -670,10 +668,7 @@ export function PricingWindow({
                       <PriceAmount>
                         {formatPriceAmount(animatedPerSeat)}
                       </PriceAmount>
-                      <PriceSuffix>
-                        {' '}
-                        {renderText(pricing.priceSuffix)}
-                      </PriceSuffix>
+                      <PriceSuffix> {i18n._(pricing.priceSuffix)}</PriceSuffix>
                     </PriceRow>
                     {fixedPriceAmount > 0 ? (
                       <TotalPriceRow>
@@ -681,7 +676,7 @@ export function PricingWindow({
                           {formatPriceAmount(animatedTotal)}
                         </TotalPriceAmount>
                         <TotalPriceLabel>
-                          {renderText(pricing.totalPriceLabel)}
+                          {i18n._(pricing.totalPriceLabel)}
                         </TotalPriceLabel>
                       </TotalPriceRow>
                     ) : null}
@@ -700,10 +695,10 @@ export function PricingWindow({
           <Inner>
             <SectionHeader>
               <SectionLabel>
-                {renderText(pricing.featureSectionHeading)}
+                {i18n._(pricing.featureSectionHeading)}
               </SectionLabel>
               <SelectAllButton onClick={onSelectAll} type="button">
-                {renderText(msg`Select all`)}
+                {i18n._(msg`Select all`)}
               </SelectAllButton>
             </SectionHeader>
             {pricing.addons.map((addon) => {
@@ -732,21 +727,21 @@ export function PricingWindow({
                     <CheckboxFace checked={checked} aria-hidden="true">
                       {checked ? <CheckGlyph>✓</CheckGlyph> : null}
                     </CheckboxFace>
-                    <AddonLabelText>{renderText(addon.label)}</AddonLabelText>
+                    <AddonLabelText>{i18n._(addon.label)}</AddonLabelText>
                   </CheckboxLabel>
                   <AddonRightText>
                     {addon.rightLabelParts
-                      ? renderRightLabelParts(addon.rightLabelParts, renderText)
-                      : renderRightLabel(addon.rightLabel, renderText)}
+                      ? renderRightLabelParts(addon.rightLabelParts, (d) =>
+                          i18n._(d),
+                        )
+                      : renderRightLabel(addon.rightLabel, (d) => i18n._(d))}
                   </AddonRightText>
                   {addon.tooltip ? (
                     <Tooltip>
                       <TooltipTitleBar>
-                        {renderText(addon.tooltip.title)}
+                        {i18n._(addon.tooltip.title)}
                       </TooltipTitleBar>
-                      <TooltipBody>
-                        {renderText(addon.tooltip.body)}
-                      </TooltipBody>
+                      <TooltipBody>{i18n._(addon.tooltip.body)}</TooltipBody>
                     </Tooltip>
                   ) : null}
                 </AddonRow>
@@ -755,14 +750,14 @@ export function PricingWindow({
             <FooterCtaSection>
               <Separator aria-hidden="true" />
               {pricing.secondaryCtaNote ? (
-                <FooterNote>{renderText(pricing.secondaryCtaNote)}</FooterNote>
+                <FooterNote>{i18n._(pricing.secondaryCtaNote)}</FooterNote>
               ) : null}
               <FakeButton
                 href={pricing.secondaryCtaHref}
                 rel="noreferrer"
                 target="_blank"
               >
-                {renderText(pricing.secondaryCtaLabel)}
+                {i18n._(pricing.secondaryCtaLabel)}
               </FakeButton>
             </FooterCtaSection>
           </Inner>

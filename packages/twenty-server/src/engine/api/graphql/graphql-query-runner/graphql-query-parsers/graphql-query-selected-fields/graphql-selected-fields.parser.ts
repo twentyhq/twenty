@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-aggregate.parser';
 import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-relation.parser';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
@@ -104,12 +105,11 @@ export class GraphqlQuerySelectedFieldsParser {
       if (
         isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION)
       ) {
-        const joinColumnName = fieldMetadata.settings?.joinColumnName;
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+          name: fieldMetadata.name,
+        });
 
-        if (
-          isDefined(joinColumnName) &&
-          isDefined(graphqlSelectedFields[joinColumnName])
-        ) {
+        if (isDefined(graphqlSelectedFields[joinColumnName])) {
           accumulator.select[joinColumnName] = true;
         }
 
@@ -149,12 +149,11 @@ export class GraphqlQuerySelectedFieldsParser {
           continue;
         }
 
-        const joinColumnName = fieldMetadata.settings?.joinColumnName;
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+          name: fieldMetadata.name,
+        });
 
-        if (
-          isDefined(joinColumnName) &&
-          isDefined(graphqlSelectedFields[joinColumnName])
-        ) {
+        if (isDefined(graphqlSelectedFields[joinColumnName])) {
           accumulator.select[joinColumnName] = true;
         }
 

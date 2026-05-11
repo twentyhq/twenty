@@ -1,0 +1,374 @@
+---
+title: Логические функции
+description: Определяйте серверные функции на TypeScript с триггерами HTTP, cron и событиями базы данных.
+icon: bolt
+---
+
+Функции логики — это серверные функции на TypeScript, которые выполняются на платформе Twenty. Их можно запускать HTTP-запросами, расписаниями cron или событиями базы данных — а также предоставлять как инструменты для ИИ-агентов.
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="Определяйте логические функции и их триггеры">
+
+Каждый файл функции использует `defineLogicFunction()` для экспорта конфигурации с обработчиком и необязательными триггерами.
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const body = (params.body ?? {}) as { name?: string };
+  const name = body.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+Доступные типы триггеров:
+* **httpRoute**: Публикует вашу функцию по HTTP-пути и методу **под конечной точкой `/s/`**:
+> например, `path: '/post-card/create'` вызывается по адресу `https://your-twenty-server.com/s/post-card/create`
+* **cron**: Запускает вашу функцию по расписанию с использованием выражения CRON.
+* **databaseEvent**: Запускается при событиях жизненного цикла объектов рабочего пространства. Когда операция события — `updated`, можно указать конкретные поля для отслеживания в массиве `updatedFields`. Если оставить не заданным или пустым, любое обновление будет вызывать функцию.
+> например, `person.updated`, `*.created`, `company.*`
+
+<Note>
+Вы также можете вручную выполнить функцию с помощью CLI:
+
+```bash filename="Terminal"
+yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+Вы можете просматривать логи с помощью:
+
+```bash filename="Terminal"
+yarn twenty logs
+```
+</Note>
+
+#### Полезная нагрузка триггера маршрута
+
+Когда триггер маршрута вызывает вашу логическую функцию, она получает объект `RoutePayload`, который соответствует [формату AWS HTTP API v2](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
+Импортируйте тип `RoutePayload` из `twenty-sdk`:
+
+```ts
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+Тип `RoutePayload` имеет следующую структуру:
+
+  | Свойство                     | Тип                                                     | Описание                                                                                                                                                                                                                | Пример                                                                     |
+  | ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | HTTP-заголовки (только перечисленные в `forwardedRequestHeaders`)                                                                                                                                                       | см. раздел ниже                                                            |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Параметры строки запроса (несколько значений объединяются запятыми)                                                                                                                                                     | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Параметры пути, извлечённые из шаблона маршрута                                                                                                                                                                         | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Разобранное тело запроса (JSON)                                                                                                                                                                                         | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | Исходное тело запроса в кодировке UTF-8, до разбора JSON. Полезно для проверки подписей вебхуков в стиле HMAC (например, `X-Hub-Signature-256` от GitHub, Stripe). `undefined`, если среда выполнения не сохранила его. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Является ли тело закодированным в base64                                                                                                                                                                                |                                                                            |
+  | `requestContext.http.method` | `string`                                                | Метод HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                              |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Необработанный путь запроса                                                                                                                                                                                             |                                                                            |
+
+
+#### forwardedRequestHeaders
+
+По умолчанию HTTP-заголовки из входящих запросов **не** передаются в вашу логическую функцию по соображениям безопасности.
+Чтобы получить доступ к определённым заголовкам, перечислите их в массиве `forwardedRequestHeaders`:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+В обработчике обращайтесь к переданным заголовкам следующим образом:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+Имена заголовков приводятся к нижнему регистру. Обращайтесь к ним, используя ключи в нижнем регистре (например, `event.headers['content-type']`).
+</Note>
+
+#### Предоставление функции в качестве инструмента ИИ или действия рабочего процесса
+
+Функции логики могут быть представлены в двух интерфейсах, у каждого — свой триггер:
+
+* **`toolTriggerSettings`** — делает функцию обнаруживаемой для возможностей ИИ Twenty (чат, MCP, вызов функций). Использует стандартную JSON Schema — формат, который модели LLM изначально понимают.
+* **`workflowActionTriggerSettings`** — делает функцию доступной как шаг в визуальном конструкторе рабочих процессов. Использует расширенную `InputSchema` от Twenty, чтобы конструктор мог отрисовывать корректные редакторы полей, селекторы переменных и подписи.
+
+Функция может выбрать один, другой или оба варианта. Они идут рядом с `cronTriggerSettings`, `databaseEventTriggerSettings` и `httpRouteTriggerSettings` — тот же шаблон, та же структура.
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  toolTriggerSettings: {},
+});
+```
+
+Основные моменты:
+
+* Функция может сочетать интерфейсы — объявите и `toolTriggerSettings`, и `workflowActionTriggerSettings`, чтобы сделать её доступной и в чате, и в конструкторе рабочих процессов.
+* `toolTriggerSettings.inputSchema` и `workflowActionTriggerSettings.inputSchema` — обе необязательны. Если они опущены, конструктор манифеста выводит их из исходного кода обработчика (JSON Schema — для инструмента ИИ, `InputSchema` от Twenty — для действия рабочего процесса). Укажите её явно, когда вам нужна более богатая типизация — например, с полями, учитывающими `FieldMetadataType`, такими как `CURRENCY` или `RELATION`, для конструктора рабочих процессов, или с полями `description`, которые может прочитать ИИ-агент:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
+      },
+      required: ['companyName'],
+    },
+  },
+});
+```
+
+<Note>
+**Напишите хорошее описание в поле `description`.** Агенты ИИ опираются на поле `description` функции, чтобы решить, когда использовать инструмент. Чётко опишите, что делает инструмент и когда его следует вызывать.
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+**Хуки установки** — обработчики до установки и после установки — используют тот же рантайм, но объявляются с помощью собственных функций `define` и не принимают настройки триггеров. См. раздел [Install Hooks](/l/ru/developers/extend/apps/config/install-hooks) для `definePreInstallLogicFunction` и `definePostInstallLogicFunction`.
+</Note>
+
+## Типизированные клиенты API (twenty-client-sdk)
+
+Пакет `twenty-client-sdk` предоставляет два типизированных клиента GraphQL для взаимодействия с API Twenty из ваших логических функций и фронт-компонентов.
+
+| Клиент              | Импорт                       | Конечная точка                                                    | Генерируется?                    |
+| ------------------- | ---------------------------- | ----------------------------------------------------------------- | -------------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — данные рабочего пространства (записи, объекты)       | Да, на этапе dev/build           |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — конфигурация рабочего пространства, загрузка файлов | Нет, поставляется в готовом виде |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="Запрос и изменение данных рабочего пространства (записи, объекты)">
+
+`CoreApiClient` — основной клиент для запросов и изменений данных рабочего пространства. Он **генерируется из схемы вашего рабочего пространства** во время `yarn twenty dev` или `yarn twenty build`, поэтому полностью типизирован в соответствии с вашими объектами и полями.
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+Клиент использует синтаксис selection-set: передайте `true`, чтобы включить поле, используйте `__args` для аргументов и вкладывайте объекты для отношений. Вы получаете полное автодополнение и проверку типов на основе схемы вашего рабочего пространства.
+
+<Note>
+**CoreApiClient генерируется на этапе dev/build.** Если вы используете его, не запустив сначала `yarn twenty dev` или `yarn twenty build`, он выбросит ошибку. Генерация происходит автоматически — CLI анализирует GraphQL-схему вашего рабочего пространства и создает типизированный клиент с помощью `@genql/cli`.
+</Note>
+
+#### Использование CoreSchema для аннотаций типов
+
+`CoreSchema` предоставляет типы TypeScript, соответствующие объектам вашего рабочего пространства — это полезно для типизации состояния компонентов или параметров функций:
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="Конфигурация рабочего пространства, приложения и загрузка файлов">
+
+`MetadataApiClient` поставляется в готовом виде вместе с SDK (генерация не требуется). Он выполняет запросы к эндпоинту `/metadata` для получения конфигурации рабочего пространства, приложений и загрузки файлов.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### Загрузка файлов
+
+`MetadataApiClient` включает метод `uploadFile` для прикрепления файлов к полям типа файла:
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| Параметр                           | Тип      | Описание                                                           |
+| ---------------------------------- | -------- | ------------------------------------------------------------------ |
+| `fileBuffer`                       | `Buffer` | Необработанное содержимое файла                                    |
+| `filename`                         | `string` | Имя файла (используется для хранения и отображения)                |
+| `contentType`                      | `string` | Тип MIME (по умолчанию `application/octet-stream`, если не указан) |
+| `fieldMetadataUniversalIdentifier` | `string` | Значение `universalIdentifier` для поля типа файла в вашем объекте |
+
+Основные моменты:
+* Он использует `universalIdentifier` поля (а не его идентификатор, специфичный для рабочего пространства), поэтому ваш код загрузки будет работать в любом рабочем пространстве, где установлено ваше приложение.
+* Возвращаемый `url` — это подписанный URL, который можно использовать для доступа к загруженному файлу.
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+  Когда ваш код выполняется на Twenty (логические функции или фронт-компоненты), платформа предоставляет учётные данные в виде переменных окружения:
+
+  * `TWENTY_API_URL` — базовый URL API Twenty
+  * `TWENTY_APP_ACCESS_TOKEN` — краткоживущий ключ, ограниченный ролью функции по умолчанию вашего приложения
+
+  Вам не нужно передавать их клиентам — они автоматически читаются из `process.env`. Права ключа API определяются ролью, объявленной с помощью `defineApplicationRole()` (или указанной через `defaultRoleUniversalIdentifier` в `application-config.ts`).
+</Note>

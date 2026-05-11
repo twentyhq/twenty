@@ -142,8 +142,15 @@ const buildGroup = (
   ),
 });
 
-const formatPageSlug = (slug: string, language: string): string =>
-  language === DEFAULT_LANGUAGE ? slug : `l/${language}/${slug}`;
+const formatPageSlug = (slug: string, language: string): string => {
+  if (language === DEFAULT_LANGUAGE) {
+    return slug;
+  }
+
+  const localizedPagePath = path.join(localesRoot, language, `${slug}.mdx`);
+
+  return fs.existsSync(localizedPagePath) ? `l/${language}/${slug}` : slug;
+};
 
 const hasLocaleContent = (language: string): boolean => {
   if (language === DEFAULT_LANGUAGE) {
@@ -165,4 +172,3 @@ if (!docsConfig.navigation) {
 docsConfig.navigation.languages = languages;
 
 fs.writeFileSync(docsPath, `${JSON.stringify(docsConfig, null, 2)}\n`);
-

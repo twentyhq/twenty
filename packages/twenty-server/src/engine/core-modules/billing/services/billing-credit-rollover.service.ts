@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
 
@@ -14,6 +15,7 @@ export class BillingCreditRolloverService {
   constructor(
     private readonly stripeCreditGrantService: StripeCreditGrantService,
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
+    private readonly billingUsageService: BillingUsageService,
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
   ) {}
@@ -73,6 +75,33 @@ export class BillingCreditRolloverService {
     });
 
     await this.refreshCreditBalance(stripeCustomerId, unitPriceCents);
+  }
+
+  // V2 path — reads usedCredits from ClickHouse; writes rollover directly to creditBalanceMicro
+  async processRolloverOnPeriodTransitionV2({
+    workspaceId,
+    stripeCustomerId,
+    tierQuantity,
+    previousPeriodStart,
+  }: {
+    workspaceId: string;
+    stripeCustomerId: string;
+    tierQuantity: number;
+    previousPeriodStart: Date;
+  }): Promise<void> {
+    const usedCredits =
+      await this.billingUsageService.getCurrentPeriodCreditsUsed(
+        workspaceId,
+        previousPeriodStart,
+      );
+
+    const unusedCredits = Math.max(0, tierQuantity - usedCredits);
+    const rolloverAmount = Math.min(unusedCredits, tierQuantity);
+
+    await this.billingCustomerRepository.update(
+      { stripeCustomerId },
+      { creditBalanceMicro: rolloverAmount },
+    );
   }
 
   private async refreshCreditBalance(

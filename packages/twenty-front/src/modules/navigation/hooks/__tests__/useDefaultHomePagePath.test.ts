@@ -1,5 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -25,14 +26,24 @@ const Wrapper = ({ children }: { children: ReactNode }) =>
 const renderHooks = ({
   withCurrentUser,
   withExistingView,
+  withObjectMetadataLoaded = true,
 }: {
   withCurrentUser: boolean;
   withExistingView: boolean;
+  withObjectMetadataLoaded?: boolean;
 }) => {
-  setTestObjectMetadataItemsInMetadataStore(
-    jotaiStore,
-    getTestEnrichedObjectMetadataItemsMock(),
-  );
+  if (withObjectMetadataLoaded) {
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
+      getTestEnrichedObjectMetadataItemsMock(),
+    );
+  } else {
+    jotaiStore.set(metadataStoreState.atomFamily('objectMetadataItems'), {
+      current: [],
+      draft: [],
+      status: 'empty',
+    });
+  }
 
   const { result } = renderHook(
     () => {
@@ -127,6 +138,20 @@ describe('useDefaultHomePagePath', () => {
       expect(result.current.defaultHomePagePath).toEqual(
         '/objects/companies?viewId=viewId',
       );
+    });
+  });
+  // Regression: during the post-login transition window object metadata may
+  // not yet be loaded. We must not redirect the user to /settings/profile
+  // (the genuine empty-fallback) until metadata has actually loaded.
+  it('should defer to AppPath.Index when currentUser is defined but object metadata is not loaded yet', async () => {
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      withObjectMetadataLoaded: false,
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual(AppPath.Index);
     });
   });
 });

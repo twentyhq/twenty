@@ -47,6 +47,6 @@ export const buildAndValidateManifest = async (
     success: true,
     manifest: result.manifest,
     filePaths: result.filePaths,
-    warnings: validation.warnings,
+    warnings: [...result.warnings, ...validation.warnings],
   };
 };

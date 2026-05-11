@@ -1,0 +1,375 @@
+---
+title: Funcții logice
+description: Definește funcții TypeScript pe partea de server cu declanșatoare HTTP, cron și de evenimente din baza de date.
+icon: bolt
+---
+
+Funcțiile de logică sunt funcții TypeScript pe partea de server care rulează pe platforma Twenty. Acestea pot fi declanșate de solicitări HTTP, programări cron sau evenimente din baza de date — și pot fi, de asemenea, expuse ca instrumente pentru agenți AI.
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="Definiți funcții logice și declanșatoarele acestora">
+
+Fiecare fișier de funcție folosește `defineLogicFunction()` pentru a exporta o configurație cu un handler și declanșatoare opționale.
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const body = (params.body ?? {}) as { name?: string };
+  const name = body.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+Tipuri de declanșatoare disponibile:
+* **httpRoute**: Expune funcția pe o cale și metodă HTTP **sub endpoint-ul `/s/`**:
+> de ex. `path: '/post-card/create'` este apelabil la `https://your-twenty-server.com/s/post-card/create`
+* **cron**: Rulează funcția pe un program folosind o expresie CRON.
+* **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
+> de ex. `person.updated`, `*.created`, `company.*`
+
+<Note>
+Puteți, de asemenea, să executați manual o funcție folosind CLI:
+
+```bash filename="Terminal"
+yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+Puteți urmări jurnalele cu:
+
+```bash filename="Terminal"
+yarn twenty logs
+```
+</Note>
+
+#### Payload-ul declanșatorului de rută
+
+Când un declanșator de rută invocă funcția logică, aceasta primește un obiect `RoutePayload` care urmează
+[AWS HTTP API v2 format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
+Importați tipul `RoutePayload` din `twenty-sdk`:
+
+```ts
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+Tipul `RoutePayload` are următoarea structură:
+
+  | Proprietate                  | Tip                                                     | Descriere                                                                                                                                                                                                                                               | Exemplu                                                                    |
+  | ---------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                                                                                                                                                                                          | consultați secțiunea de mai jos                                            |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                                                                                                                                                                                             | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Parametri de cale extrași din modelul rutei                                                                                                                                                                                                             | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Corpul cererii analizat (JSON)                                                                                                                                                                                                                          | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | Corpul original al cererii în UTF-8, înainte de parsarea JSON. Util pentru verificarea semnăturilor de tip HMAC pentru webhook-uri (de exemplu, `X-Hub-Signature-256` de la GitHub, Stripe). `undefined` atunci când mediul de execuție nu a păstrat-o. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Indică dacă corpul este codificat în base64                                                                                                                                                                                                             |                                                                            |
+  | `requestContext.http.method` | `string`                                                | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                                             |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Calea brută a cererii                                                                                                                                                                                                                                   |                                                                            |
+
+
+#### forwardedRequestHeaders
+
+În mod implicit, anteturile HTTP din cererile de intrare **nu** sunt transmise funcției dvs. de logică din motive de securitate.
+Pentru a accesa anumite anteturi, listați-le explicit în array-ul `forwardedRequestHeaders`:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+În handler, accesați anteturile transmise mai departe astfel:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+Numele anteturilor sunt normalizate la litere mici. Accesați-le folosind chei cu litere mici (de exemplu, `event.headers['content-type']`).
+</Note>
+
+#### Expunerea unei funcții ca instrument AI sau ca acțiune în fluxul de lucru
+
+Funcțiile logice pot fi expuse în două locuri, fiecare cu propriul declanșator:
+
+* **`toolTriggerSettings`** — face funcția descoperibilă de către funcționalitățile AI ale Twenty (chat, MCP, apelarea de funcții). Folosește JSON Schema standard, formatul pe care LLM-urile îl înțeleg nativ.
+* **`workflowActionTriggerSettings`** — determină ca funcția să apară ca un pas în constructorul vizual de fluxuri de lucru. Folosește `InputSchema` bogat al Twenty, astfel încât constructorul să poată afișa editori de câmp adecvați, selectoare de variabile și etichete.
+
+O funcție poate opta pentru una, cealaltă sau ambele. Acestea stau alături de `cronTriggerSettings`, `databaseEventTriggerSettings` și `httpRouteTriggerSettings` — același tipar, aceeași formă.
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  toolTriggerSettings: {},
+});
+```
+
+Puncte cheie:
+
+* O funcție poate combina suprafețele — declară atât `toolTriggerSettings`, cât și `workflowActionTriggerSettings` pentru a o expune atât în chat, cât și în constructorul de fluxuri de lucru.
+* `toolTriggerSettings.inputSchema` și `workflowActionTriggerSettings.inputSchema` sunt ambele opționale. Când sunt omise, generatorul de manifest le deduce din codul sursă al handlerului (JSON Schema pentru instrumentul AI, `InputSchema` al Twenty pentru acțiunea de flux de lucru). Furnizează unul în mod explicit atunci când dorești o tipizare mai bogată — de exemplu, cu câmpuri compatibile cu `FieldMetadataType`, precum `CURRENCY` sau `RELATION` pentru constructorul de fluxuri de lucru, sau cu câmpuri `description` pe care agentul AI le poate citi:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
+      },
+      required: ['companyName'],
+    },
+  },
+});
+```
+
+<Note>
+**Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+**Hook-uri de instalare** — handleri pre-instalare și post-instalare — partajează acest runtime, dar sunt declarați cu propriile lor funcții `define` și nu folosesc setări de declanșare. Consultați [Hook-uri de instalare](/l/ro/developers/extend/apps/config/install-hooks) pentru `definePreInstallLogicFunction` și `definePostInstallLogicFunction`.
+</Note>
+
+## Clienți API tipizați (twenty-client-sdk)
+
+Pachetul `twenty-client-sdk` oferă doi clienți GraphQL tipați pentru a interacționa cu API-ul Twenty din funcțiile de logică și componentele Front.
+
+| Client              | Importați                    | Endpoint                                                            | Generat?                     |
+| ------------------- | ---------------------------- | ------------------------------------------------------------------- | ---------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — date ale spațiului de lucru (înregistrări, obiecte)    | Da, în timpul dev/build      |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — configurarea spațiului de lucru, încărcări de fișiere | Nu, este livrat preconstruit |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="Interogați și modificați datele spațiului de lucru (înregistrări, obiecte)">
+
+`CoreApiClient` este clientul principal pentru interogarea și modificarea datelor din spațiul de lucru. Este generat din schema spațiului de lucru în timpul `yarn twenty dev` sau `yarn twenty build`, astfel încât este complet tipizat pentru a corespunde obiectelor și câmpurilor dvs.
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+Clientul folosește o sintaxă de tip selection-set: transmiteți `true` pentru a include un câmp, folosiți `__args` pentru argumente și imbricați obiecte pentru relații. Obțineți autocompletare și verificare completă a tipurilor, pe baza schemei spațiului dvs. de lucru.
+
+<Note>
+**CoreApiClient este generat în timpul dev/build.** Dacă îl utilizați fără a rula mai întâi `yarn twenty dev` sau `yarn twenty build`, va arunca o eroare. Generarea are loc automat — CLI inspectează schema GraphQL a spațiului dvs. de lucru și generează un client tipizat folosind `@genql/cli`.
+</Note>
+
+#### Folosirea CoreSchema pentru adnotări de tip
+
+`CoreSchema` oferă tipuri TypeScript care corespund obiectelor din spațiul dvs. de lucru — utile pentru tiparea stării componentelor sau a parametrilor funcțiilor:
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="Configurația spațiului de lucru, aplicații și încărcări de fișiere">
+
+`MetadataApiClient` este livrat preconstruit împreună cu SDK-ul (nu este necesară generarea). Interoghează endpointul `/metadata` pentru configurarea spațiului de lucru, aplicații și încărcări de fișiere.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### Încărcarea fișierelor
+
+`MetadataApiClient` include o metodă `uploadFile` pentru atașarea fișierelor la câmpuri de tip fișier:
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| Parametru                          | Tip      | Descriere                                                           |
+| ---------------------------------- | -------- | ------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Conținutul brut al fișierului                                       |
+| `filename`                         | `string` | Numele fișierului (folosit pentru stocare și afișare)               |
+| `contentType`                      | `string` | Tipul MIME (implicit `application/octet-stream` dacă este omis)     |
+| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
+
+Puncte cheie:
+* Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul dvs. de încărcare funcționează în orice spațiu de lucru în care aplicația dvs. este instalată.
+* `url` returnat este un URL semnat pe care îl puteți folosi pentru a accesa fișierul încărcat.
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+  Când codul dvs. rulează pe Twenty (funcții de logică sau componente Front), platforma injectează acreditările ca variabile de mediu:
+
+  * `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
+  * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației
+
+  Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul declarat cu `defineApplicationRole()` (sau referențiat prin `defaultRoleUniversalIdentifier` în `application-config.ts`).
+</Note>

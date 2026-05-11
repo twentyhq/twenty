@@ -1,0 +1,64 @@
+---
+title: Uygulama Yapılandırması
+description: Uygulamanızın kimliğini, varsayılan rolünü, değişkenlerini ve pazaryeri meta verilerini `defineApplication` ile bildirin.
+icon: rocket
+---
+
+Her uygulamanın, tam olarak bir adet `defineApplication` çağrısı olması gerekir. Bu çağrı şunları bildirir:
+
+* **Kimlik** — evrensel tanımlayıcı, görünen ad, açıklama.
+* **İzinler** — mantık fonksiyonlarının ve ön uç bileşenlerinin hangi rol altında çalıştığı.
+* **Değişkenler** *(isteğe bağlı)* — kodunuza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
+* **Kurulum öncesi / kurulum sonrası kancalar** *(isteğe bağlı)* — bkz. [Mantık Fonksiyonları](/l/tr/developers/extend/apps/logic/logic-functions).
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+});
+```
+
+Notlar:
+
+* `universalIdentifier` alanları, size ait deterministik kimliklerdir. Bunları bir kez oluşturun ve senkronizasyonlar boyunca kararlı tutun.
+* `applicationVariables`, fonksiyonlarınız ve ön uç bileşenleriniz için ortam değişkenlerine dönüşür (örn. `DEFAULT_RECIPIENT_NAME`, `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
+* Varsayılan rol, [`defineApplicationRole()`](/l/tr/developers/extend/apps/config/roles) ile işaretlenmiş rol dosyasından otomatik olarak algılanır — onu `defineApplication()` içinden belirtmenize gerek yoktur.
+* Kurulum öncesi ve kurulum sonrası fonksiyonlar manifest derlemesi sırasında otomatik olarak algılanır — bunlara `defineApplication()` içinde referans vermeniz gerekmez.
+* Geriye dönük uyumluluk için `defaultRoleUniversalIdentifier` değerini açıkça geçmek hâlâ desteklenmektedir, ancak `defineApplicationRole()` lehine kullanımdan kaldırılmıştır.
+
+## Varsayılan fonksiyon rolü
+
+[`defineApplicationRole()`](/l/tr/developers/extend/apps/config/roles) ile bildirilen rol, uygulamanın iş mantığı işlevlerinin ve ön uç bileşenlerinin neye erişebileceğini kontrol eder:
+
+* `TWENTY_APP_ACCESS_TOKEN` olarak enjekte edilen çalışma zamanı belirteci bu rolden türetilir.
+* Türlendirilmiş API istemcisi, o role tanınan izinlerle sınırlandırılır.
+* En az ayrıcalık ilkesini izleyin: yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri bildirin.
+
+Yeni bir uygulama iskeleti oluşturduğunuzda, CLI `src/roles/default-role.ts` konumunda bir başlangıç rol dosyası oluşturur. Tam başvuru için bkz. [Roller ve İzinler](/l/tr/developers/extend/apps/config/roles).
+
+## Pazaryeri meta verileri
+
+Eğer [uygulamanızı yayımlamayı](/l/tr/developers/extend/apps/operations/publishing) planlıyorsanız, bu isteğe bağlı alanlar uygulamanızın pazaryerinde nasıl görüneceğini kontrol eder:
+
+| Alan               | Açıklama                                                                                                                            |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `author`           | Yazar veya şirket adı                                                                                                               |
+| `category`         | Pazaryerinde filtreleme için uygulama kategorisi                                                                                    |
+| `logoUrl`          | Uygulamanızın logosuna giden yol (örn. `public/logo.png`)                                                                           |
+| `screenshots`      | Ekran görüntüsü yollarının dizisi (örn. `public/screenshot-1.png`)                                                                  |
+| `aboutDescription` | "Hakkında" sekmesi için daha uzun bir markdown açıklaması. Belirtilmezse, pazaryeri npm'deki paketin `README.md` dosyasını kullanır |
+| `websiteUrl`       | Web sitenize bağlantı                                                                                                               |
+| `termsUrl`         | Hizmet Koşulları'na bağlantı                                                                                                        |
+| `emailSupport`     | Destek e-posta adresi                                                                                                               |
+| `issueReportUrl`   | Sorun izleyicisine bağlantı                                                                                                         |

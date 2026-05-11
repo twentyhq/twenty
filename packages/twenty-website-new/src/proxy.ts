@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { KNOWN_PUBLIC_APP_LOCALE_BY_RAW } from '@/lib/i18n/app-locale-set';
-import { LOCALE_BY_URL_SEGMENT } from '@/lib/i18n/website-locale-segments';
+import { KNOWN_PUBLIC_APP_LOCALE_BY_RAW } from '@/lib/i18n/utils/app-locale-set';
+import { LOCALE_BY_URL_SEGMENT } from '@/lib/i18n/utils/website-locale-segments';
 
 export const proxy = (request: NextRequest) => {
   const { pathname, search } = request.nextUrl;

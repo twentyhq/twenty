@@ -4,6 +4,7 @@ import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
@@ -191,8 +192,9 @@ export class ProcessNestedRelationsV2Helper {
       select: columnsToSelect,
     });
 
-    const joinColumnName =
-      sourceFieldMetadata.settings.joinColumnName ?? `${sourceFieldName}Id`;
+    const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+      name: sourceFieldName,
+    });
 
     const relationIds = this.getUniqueIds({
       records: parentObjectRecords,
@@ -200,14 +202,28 @@ export class ProcessNestedRelationsV2Helper {
         relationType === RelationType.ONE_TO_MANY ? 'id' : joinColumnName,
     });
 
+    if (
+      relationType === RelationType.ONE_TO_MANY &&
+      !isDefined(targetRelationName)
+    ) {
+      throw new GraphqlQueryRunnerException(
+        `Could not resolve target relation for one-to-many field ${sourceFieldName}`,
+        GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
     const fieldMetadataTargetRelationColumnName =
-      targetRelation &&
-      isFieldMetadataEntityOfType(
-        targetRelation,
-        FieldMetadataType.MORPH_RELATION,
-      )
-        ? `${targetRelation.settings?.joinColumnName}`
-        : `${targetRelationName}Id`;
+      computeMorphOrRelationFieldJoinColumnName({
+        name:
+          targetRelation &&
+          isFieldMetadataEntityOfType(
+            targetRelation,
+            FieldMetadataType.MORPH_RELATION,
+          )
+            ? targetRelation.name
+            : (targetRelationName as string),
+      });
 
     const { relationResults, relationAggregatedFieldsResult } =
       await this.findRelations({

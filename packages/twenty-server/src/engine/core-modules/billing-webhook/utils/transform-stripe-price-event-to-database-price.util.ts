@@ -38,6 +38,7 @@ export const transformStripePriceEventToDatabasePrice = (
       data.currency_options === null ? undefined : data.currency_options,
     tiers: data.tiers === null ? undefined : data.tiers,
     recurring: data.recurring === null ? undefined : data.recurring,
+    metadata: data.metadata ?? {},
   };
 };
 

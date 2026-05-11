@@ -1,0 +1,44 @@
+---
+title: Navigationsmenüeinträge
+description: Fügen Sie der Arbeitsbereichsseitenleiste benutzerdefinierte Einträge hinzu – Links zu gespeicherten Ansichten oder externen URLs.
+icon: Balken
+---
+
+Ein **Navigationsmenüeintrag** ist ein Eintrag in der linken Seitenleiste. Verwenden Sie `defineNavigationMenuItem()`, um benutzerdefinierte Seitenleistenlinks bereitzustellen – typischerweise einen pro [Ansicht](/l/de/developers/extend/apps/layout/views), die Sie bereitstellen – oder um auf externe URLs zu verweisen.
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## Hauptpunkte
+
+* `type` legt fest, worauf der Menüeintrag verweist. Jeder Typ ist einem bestimmten Bezeichnerfeld zugeordnet:
+
+  | Typ                                  | Was es tut                                                | Pflichtfeld                                                                                    |
+  | ------------------------------------ | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | Öffnet eine gespeicherte Ansicht                          | `viewUniversalIdentifier`                                                                      |
+  | `NavigationMenuItemType.LINK`        | Öffnet eine externe URL                                   | `link`                                                                                         |
+  | `NavigationMenuItemType.FOLDER`      | Gruppiert verschachtelte Einträge unter einer Bezeichnung | `name` (und untergeordnete Einträge verweisen über `folderUniversalIdentifier` auf den Ordner) |
+  | `NavigationMenuItemType.OBJECT`      | Öffnet die Standardindexseite eines Objekts               | `targetObjectUniversalIdentifier`                                                              |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | Öffnet ein eigenständiges Seitenlayout                    | `pageLayoutUniversalIdentifier`                                                                |
+
+* `position` steuert die Reihenfolge in der Seitenleiste.
+
+* `icon` und `color` sind optional und passen das Erscheinungsbild des Eintrags an.
+
+* `folderUniversalIdentifier` ist ebenfalls bei jedem Eintrag verfügbar, um ihn innerhalb eines übergeordneten Elements vom Typ `FOLDER` zu verschachteln.
+
+<Note>
+**Häufige Falle:** Wenn Sie ein Objekt ohne zugehörige Ansicht und Navigationsmenüeintrag erstellen, ist dieses Objekt für Benutzer unsichtbar. Sofern es sich nicht um ein technisches/internes Objekt handelt, sollte jedes benutzerdefinierte Objekt eine Standardansicht *und* einen entsprechenden Eintrag in der Seitenleiste haben.
+</Note>

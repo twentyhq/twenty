@@ -84,6 +84,7 @@ export type {
   PageLayoutWidgetManifest,
 } from 'twenty-shared/application';
 
+export { defineApplicationRole } from '@/sdk/define/roles/define-application-role';
 export { defineRole } from '@/sdk/define/roles/define-role';
 export { PermissionFlag } from '@/sdk/define/roles/permission-flag-type';
 

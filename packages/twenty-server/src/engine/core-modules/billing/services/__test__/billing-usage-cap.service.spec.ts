@@ -9,9 +9,8 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('BillingUsageCapService', () => {
   let service: BillingUsageCapService;
@@ -55,18 +54,9 @@ describe('BillingUsageCapService', () => {
           },
         },
         {
-          provide: CacheStorageNamespace.EngineBillingUsage,
+          provide: FeatureFlagService,
           useValue: {
-            get: jest.fn(),
-            set: jest.fn(),
-            del: jest.fn(),
-            incrBy: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(BillingSubscriptionEntity),
-          useValue: {
-            findOne: jest.fn(),
+            isFeatureEnabled: jest.fn().mockResolvedValue(false),
           },
         },
         {
@@ -74,12 +64,6 @@ describe('BillingUsageCapService', () => {
           useValue: {
             find: jest.fn(),
             update: jest.fn(),
-          },
-        },
-        {
-          provide: WorkspaceCacheService,
-          useValue: {
-            getOrRecompute: jest.fn(),
           },
         },
       ],

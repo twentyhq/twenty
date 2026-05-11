@@ -1,10 +1,10 @@
-import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import type { MessageDescriptor } from '@lingui/core';
+import type { ReactNode } from 'react';
 
 export type CaseStudyTextBlock = {
   type: 'text';
   eyebrow?: MessageDescriptor;
-  heading: MessageHeadingSegment[];
+  heading: ReactNode;
   paragraphs: MessageDescriptor[];
   callout?: string;
 };
@@ -32,7 +32,7 @@ export type CaseStudyData = {
   meta: { title: MessageDescriptor; description: MessageDescriptor };
   hero: {
     readingTime: string;
-    title: MessageHeadingSegment[];
+    title: ReactNode;
     author: string;
     authorAvatarSrc?: string;
     clientIcon: string;
@@ -57,6 +57,13 @@ export type CaseStudyCatalogEntry = {
   kpis: CaseStudyKpi[];
   authorRole: MessageDescriptor;
   quote?: CaseStudyQuote;
-  hero: CaseStudyData['hero'];
+  hero: {
+    readingTime: string;
+    title: MessageDescriptor;
+    author: string;
+    authorAvatarSrc?: string;
+    clientIcon: string;
+    heroImageSrc: string;
+  };
   catalogCard: CaseStudyData['catalogCard'];
 };

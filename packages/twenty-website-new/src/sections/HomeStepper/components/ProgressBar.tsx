@@ -1,5 +1,5 @@
 import { StepperProgressRail } from '@/design-system/components';
-import type { HomeStepperStepType } from './../types/HomeStepperStep';
+import type { HomeStepperStepType } from './../types/home-stepper-step';
 
 type ProgressBarProps = {
   activeStepIndex: number;

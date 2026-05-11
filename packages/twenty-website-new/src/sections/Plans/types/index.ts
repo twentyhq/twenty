@@ -1,6 +1,6 @@
-export type { PlanCardType } from './PlanCard';
-export type { PlanFeaturesType } from './PlanFeatures';
-export type { PlanPriceType } from './PlanPrice';
+export type { PlanCardType } from './plan-card';
+export type { PlanFeaturesType } from './plan-features';
+export type { PlanPriceType } from './plan-price';
 export type {
   PlansBillingPeriod,
   PlansDataType,
@@ -10,4 +10,4 @@ export type {
   PlansTierCellsType,
   PlansTierId,
   PlansTierType,
-} from './PlansData';
+} from './plans-data';

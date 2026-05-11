@@ -1,0 +1,12 @@
+---
+title: Resolução de Problemas
+description: Problemas comuns na primeira execução — Docker, versão do Node, Yarn, dependências.
+icon: wrench
+---
+
+* **Erros do Docker** — Certifique-se de que o Docker Desktop (ou o daemon) esteja em execução antes de `yarn twenty server start`. A mensagem de erro mostrará o comando de inicialização correto para o seu sistema operacional.
+* **Versão errada do Node** — É necessário 24 ou superior. Verifique com `node -v`.
+* **Falta o Yarn 4** — Execute `corepack enable`.
+* **Dependências com problemas** — `rm -rf node_modules && yarn install`.
+
+Travou? Peça ajuda no [Discord da Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

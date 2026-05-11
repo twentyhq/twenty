@@ -1,0 +1,404 @@
+---
+title: Frontend-Komponenten
+description: Erstellen Sie React-Komponenten, die innerhalb der Twenty-UI gerendert werden und durch eine Sandbox isoliert sind.
+icon: window-maximize
+---
+
+Front-Komponenten sind React-Komponenten, die direkt innerhalb der Twenty-UI gerendert werden. Sie laufen in einem **isolierten Web Worker** unter Verwendung von Remote DOM — Ihr Code wird in einer Sandbox ausgeführt, rendert jedoch nativ auf der Seite, nicht in einem iframe.
+
+## Wo Front-Komponenten verwendet werden können
+
+Front-Komponenten können an zwei Stellen innerhalb von Twenty gerendert werden:
+
+* **Seitenpanel** — Nicht-Headless-Front-Komponenten werden im rechten Seitenpanel geöffnet. Dies ist das Standardverhalten, wenn eine Front-Komponente über das Befehlsmenü ausgelöst wird.
+* **Widgets (Dashboards und Datensatzseiten)** — Front-Komponenten können als Widgets in [Seitenlayouts](/l/de/developers/extend/apps/layout/page-layouts) eingebettet werden. Beim Konfigurieren eines Dashboards oder eines Datensatzseiten-Layouts können Benutzer ein Front-Komponenten-Widget hinzufügen.
+
+Eine Front-Komponente allein ist über die Benutzeroberfläche nicht erreichbar – Sie müssen sie *sichtbar machen*. Die beiden Möglichkeiten dafür sind:
+
+* **Mit einem [Befehlsmenüeintrag](/l/de/developers/extend/apps/layout/command-menu-items) verknüpfen** — registriert sie im Befehlsmenü (Cmd+K) und optional als angeheftete Schnellaktion.
+* **Als Widget in ein [Seitenlayout](/l/de/developers/extend/apps/layout/page-layouts) einbetten** — platziert es auf der Detailseite eines Datensatzes oder in einem Dashboard.
+
+## Einfaches Beispiel
+
+Die schnellste Möglichkeit, eine Front-Komponente in Aktion zu sehen, besteht darin, sie mit einem [`defineCommandMenuItem`](/l/de/developers/extend/apps/layout/command-menu-items) zu verknüpfen, sodass sie als Schnellaktionsschaltfläche in der oberen rechten Ecke der Seite erscheint:
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  icon: 'IconBolt',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+Nach dem Synchronisieren mit `yarn twenty dev` (oder durch einmaliges Ausführen von `yarn twenty dev --once`) erscheint die Schnellaktion oben rechts auf der Seite:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Schnellaktionsschaltfläche oben rechts" />
+</div>
+
+Klicken Sie darauf, um die Komponente inline zu rendern.
+
+## Konfigurationsfelder
+
+| Feld                  | Erforderlich | Beschreibung                                                                |
+| --------------------- | ------------ | --------------------------------------------------------------------------- |
+| `universalIdentifier` | Ja           | Stabile eindeutige ID für diese Komponente                                  |
+| `component`           | Ja           | Eine React-Komponentenfunktion                                              |
+| `name`                | Nein         | Anzeigename                                                                 |
+| `description`         | Nein         | Beschreibung dessen, was die Komponente macht                               |
+| `isHeadless`          | Nein         | Auf `true` setzen, wenn die Komponente keine sichtbare UI hat (siehe unten) |
+
+## Eine Front-Komponente auf einer Seite platzieren
+
+Über Befehle hinaus können Sie eine Front-Komponente direkt in eine Datensatzseite einbetten, indem Sie sie als Widget in einem **Seitenlayout** hinzufügen. Details finden Sie unter [Seitenlayouts](/l/de/developers/extend/apps/layout/page-layouts).
+
+## Headless vs. Nicht-Headless
+
+Front-Komponenten gibt es in zwei Rendering-Modi, die durch die Option `isHeadless` gesteuert werden:
+
+**Nicht-Headless (Standard)** — Die Komponente rendert eine sichtbare UI. Wird sie über das Befehlsmenü ausgelöst, öffnet sie sich im Seitenpanel. Dies ist das Standardverhalten, wenn `isHeadless` `false` ist oder weggelassen wird.
+
+**Headless (`isHeadless: true`)** — Die Komponente wird unsichtbar im Hintergrund gemountet. Sie öffnet das Seitenpanel nicht. Headless-Komponenten sind für Aktionen konzipiert, die Logik ausführen und sich anschließend selbst unmounten — zum Beispiel das Ausführen einer asynchronen Aufgabe, das Navigieren zu einer Seite oder das Anzeigen eines Bestätigungsdialogs. Sie lassen sich gut mit den unten beschriebenen SDK-Command-Komponenten kombinieren.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+Da die Komponente `null` zurückgibt, überspringt Twenty das Rendern eines Containers dafür — im Layout entsteht kein Leerraum. Die Komponente hat dennoch Zugriff auf alle Hooks und die Host-Kommunikations-API.
+
+## SDK-Command-Komponenten
+
+Das Paket `twenty-sdk` stellt vier Command-Hilfskomponenten bereit, die für Headless-Front-Komponenten ausgelegt sind. Jede Komponente führt beim Mounten eine Aktion aus, behandelt Fehler durch Anzeige einer Snackbar-Benachrichtigung und unmountet die Front-Komponente nach Abschluss automatisch.
+
+Importieren Sie sie aus `twenty-sdk/command`:
+
+* **`Command`** — Führt einen asynchronen Callback über das Prop `execute` aus.
+* **`CommandLink`** — Navigiert zu einem App-Pfad. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Öffnet einen Bestätigungsdialog. Bestätigt der Benutzer, wird der Callback `execute` ausgeführt. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Öffnet eine bestimmte Seite im Seitenpanel. Props: `page`, `pageTitle`, `pageIcon`.
+
+Hier ist ein vollständiges Beispiel einer Headless-Front-Komponente, die `Command` verwendet, um eine Aktion aus dem Befehlsmenü auszuführen:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+Und ein Beispiel, das `CommandModal` verwendet, um vor der Ausführung um Bestätigung zu bitten:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+## Zugriff auf den Laufzeitkontext
+
+Verwenden Sie innerhalb Ihrer Komponente SDK-Hooks, um auf den aktuellen Benutzer, den Datensatz und die Komponenteninstanz zuzugreifen:
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useRecordId,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const recordId = useRecordId();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+Verfügbare Hooks:
+
+| Hook                                          | Gibt zurück          | Beschreibung                                                                |
+| --------------------------------------------- | -------------------- | --------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` oder `null` | Die ID des aktuellen Benutzers                                              |
+| `useSelectedRecordIds()`                      | `string[]`           | Alle ausgewählten Datensatz-IDs (leeres Array, wenn keine ausgewählt sind)  |
+| `useRecordId()`                               | `string` oder `null` | **Veraltet.** Verwenden Sie stattdessen `useSelectedRecordIds()`            |
+| `useFrontComponentId()`                       | `string`             | Die ID dieser Komponenteninstanz                                            |
+| `useFrontComponentExecutionContext(selector)` | variiert             | Zugriff auf den vollständigen Ausführungskontext mit einer Selektorfunktion |
+
+## Host-Kommunikations-API
+
+Front-Komponenten können Navigation, Modals und Benachrichtigungen mittels Funktionen aus `twenty-sdk` auslösen:
+
+| Funktion                                        | Beschreibung                              |
+| ----------------------------------------------- | ----------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Zu einer Seite in der App navigieren      |
+| `openSidePanelPage(params)`                     | Ein Seitenpanel öffnen                    |
+| `closeSidePanel()`                              | Seitenpanel schließen                     |
+| `openCommandConfirmationModal(params)`          | Einen Bestätigungsdialog anzeigen         |
+| `enqueueSnackbar(params)`                       | Eine Toast-Benachrichtigung anzeigen      |
+| `unmountFrontComponent()`                       | Die Komponente entfernen                  |
+| `updateProgress(progress)`                      | Einen Fortschrittsindikator aktualisieren |
+
+Hier ist ein Beispiel, das die Host-API verwendet, um nach Abschluss einer Aktion eine Snackbar anzuzeigen und das Seitenpanel zu schließen:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+### Mit mehreren Datensätzen arbeiten
+
+Verwenden Sie `useSelectedRecordIds()`, um mehrere ausgewählte Datensätze zu verwalten. Dies ist nützlich für Stapelvorgänge:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+  command: {
+    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+    label: 'Bulk Export',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+  },
+});
+```
+
+## Öffentliche Assets
+
+Front-Komponenten können mit `getPublicAssetUrl` auf Dateien aus dem `public/`-Verzeichnis der App zugreifen:
+
+```tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+Details finden Sie im Abschnitt [Öffentliche Assets](/l/de/developers/extend/apps/config/public-assets).
+
+## Styling
+
+Front-Komponenten unterstützen mehrere Styling-Ansätze. Sie können verwenden:
+
+* **Inline-Styles** — `style={{ color: 'red' }}`
+* **Twenty-UI-Komponenten** — Import aus `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar und mehr)
+* **Emotion** — CSS-in-JS mit `@emotion/react`
+* **Styled-components** — `styled.div`-Muster
+* **Tailwind CSS** — Utility-Klassen
+* **Beliebige CSS-in-JS-Bibliothek**, die mit React kompatibel ist
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button, Tag, Status } from 'twenty-sdk/ui';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```

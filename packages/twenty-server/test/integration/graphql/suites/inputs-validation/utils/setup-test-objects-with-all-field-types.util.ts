@@ -6,8 +6,9 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+
+import { computeMorphRelationFlatFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-flat-field-name.util';
 
 const TEST_OBJECT_METADATA_NAME_SINGULAR = 'apiInputValidationTestObject';
 const TEST_OBJECT_METADATA_NAME_PLURAL = 'apiInputValidationTestObjects';
@@ -29,7 +30,7 @@ export const TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE =
   '20202020-b21e-4ec2-873b-de4264d89021';
 
 export const joinColumnNameForManyToOneMorphRelationField1 =
-  computeMorphRelationFieldName({
+  computeMorphRelationFlatFieldName({
     fieldName: 'manyToOneMorphRelationField',
     relationType: RelationType.MANY_TO_ONE,
     targetObjectMetadataNameSingular:

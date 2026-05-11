@@ -1,9 +1,10 @@
 'use client';
 
 import { ScrollProgressEffect } from '@/lib/scroll';
-import { useStepperMdUp } from '@/lib/stepper';
-import type { HomeStepperStepType } from '@/sections/HomeStepper/types/HomeStepperStep';
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useStepperMdUp } from '@/sections/Stepper';
+import { useBreakpointStepSync } from '@/sections/Stepper/use-breakpoint-step-sync';
+import type { HomeStepperStepType } from '@/sections/HomeStepper/types/home-stepper-step';
+import { useState, type RefObject } from 'react';
 import { LeftColumn } from './LeftColumn';
 import { RightColumn } from './RightColumn';
 import { Visual } from './Visual/Visual';
@@ -16,27 +17,12 @@ type FlowProps = {
 export function Flow({ scrollContainerRef, steps }: FlowProps) {
   const isMdUp = useStepperMdUp();
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [mobileStepIndex, setMobileStepIndex] = useState(0);
-  const previousMdUpRef = useRef(isMdUp);
-
-  useEffect(() => {
-    if (previousMdUpRef.current && !isMdUp) {
-      const scrollDerivedIndex = Math.min(
-        steps.length - 1,
-        Math.floor(scrollProgress * steps.length),
-      );
-      setMobileStepIndex(scrollDerivedIndex);
-    }
-    previousMdUpRef.current = isMdUp;
-  }, [isMdUp, scrollProgress, steps.length]);
-
-  const activeStepIndex = isMdUp
-    ? Math.min(steps.length - 1, Math.floor(scrollProgress * steps.length))
-    : mobileStepIndex;
-
-  const localProgress = isMdUp
-    ? scrollProgress * steps.length - activeStepIndex
-    : 0;
+  const {
+    activeStepIndex,
+    localProgress,
+    mobileStepIndex,
+    setMobileStepIndex,
+  } = useBreakpointStepSync(isMdUp, scrollProgress, steps.length);
 
   const visualScrollProgress = isMdUp
     ? scrollProgress

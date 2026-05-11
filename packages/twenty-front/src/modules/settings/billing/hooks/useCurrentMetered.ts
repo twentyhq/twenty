@@ -2,7 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import type { MeteredBillingPrice } from '@/settings/billing/types/billing-price-tiers.type';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { assertIsDefinedOrThrow, findOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import {
   BillingProductKey,
   type SubscriptionInterval,
@@ -29,26 +29,22 @@ export const useCurrentMetered = () => {
 
   const items =
     currentWorkspace.currentBillingSubscription?.billingSubscriptionItems;
-  if (!items) throw new Error('billingSubscriptionItems is undefined');
-  if (items.length !== 2) {
-    throw new Error('billingSubscriptionItems must contain 2 items.');
-  }
 
-  const currentMeteredBillingSubscriptionItem = findOrThrow(
-    items,
-    (it) =>
-      it.billingProduct.metadata?.['productKey'] ===
-      BillingProductKey.WORKFLOW_NODE_EXECUTION,
-    new Error('Metered billing subscription item not found'),
-  );
+  const currentMeteredBillingSubscriptionItem =
+    items?.find(
+      (it) =>
+        it.billingProduct.metadata?.['productKey'] ===
+        BillingProductKey.WORKFLOW_NODE_EXECUTION,
+    ) ?? null;
 
   const meteredPrices = getCurrentMeteredPricesByInterval();
-  const currentMeteredBillingPrice = findOrThrow(
-    meteredPrices,
-    (price) =>
-      price.stripePriceId ===
-      currentMeteredBillingSubscriptionItem.stripePriceId,
-  ) as MeteredBillingPrice;
+  const currentMeteredBillingPrice = currentMeteredBillingSubscriptionItem
+    ? ((meteredPrices.find(
+        (price) =>
+          price.stripePriceId ===
+          currentMeteredBillingSubscriptionItem.stripePriceId,
+      ) ?? null) as MeteredBillingPrice | null)
+    : null;
 
   return {
     currentMeteredBillingSubscriptionItem,

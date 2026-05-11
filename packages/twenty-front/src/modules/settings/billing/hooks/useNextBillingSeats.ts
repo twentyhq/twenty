@@ -1,16 +1,16 @@
-import { findOrThrow, isDefined } from 'twenty-shared/utils';
-import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
+import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
+import { findOrThrow, isDefined } from 'twenty-shared/utils';
 
 export const useNextBillingSeats = () => {
   const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
   const { nextBillingPhase } = useNextBillingPhase();
-  const nextLicensedPrice = splitedPhaseItemsInPrices.nextLicensedPrice;
+  const nextBasePrice = splitedPhaseItemsInPrices.nextBasePrice;
   const nextBillingSeats =
-    isDefined(nextLicensedPrice) && nextBillingPhase
+    isDefined(nextBasePrice) && nextBillingPhase
       ? findOrThrow(
           nextBillingPhase?.items,
-          ({ price }) => nextLicensedPrice.stripePriceId === price,
+          ({ price }) => nextBasePrice.stripePriceId === price,
         ).quantity
       : undefined;
 

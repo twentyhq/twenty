@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -64,13 +65,14 @@ const getRequiredRelationColumns = (
 
       if (
         !isDefined(relationValue) ||
-        !isDefined(fieldMetadata?.settings?.joinColumnName) ||
         fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
       ) {
         continue;
       }
 
-      requiredColumns.push(fieldMetadata.settings.joinColumnName);
+      requiredColumns.push(
+        computeMorphOrRelationFieldJoinColumnName({ name: fieldMetadata.name }),
+      );
     }
 
     if (
@@ -84,7 +86,7 @@ const getRequiredRelationColumns = (
         : undefined;
 
       if (
-        !fieldMetadata.settings?.relationType ||
+        fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE ||
         !isDefined(targetObjectMetadata)
       ) {
         continue;
@@ -92,14 +94,13 @@ const getRequiredRelationColumns = (
 
       const relationValue = relations[fieldMetadata.name];
 
-      if (
-        !isDefined(relationValue) ||
-        !isDefined(fieldMetadata?.settings?.joinColumnName)
-      ) {
+      if (!isDefined(relationValue)) {
         continue;
       }
 
-      requiredColumns.push(fieldMetadata.settings.joinColumnName);
+      requiredColumns.push(
+        computeMorphOrRelationFieldJoinColumnName({ name: fieldMetadata.name }),
+      );
     }
   }
 

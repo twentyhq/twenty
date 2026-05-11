@@ -14,6 +14,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { transformActorField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-actor-field.util';
 import { transformAddressField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-address-field.util';
 import { transformArrayField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-array-field.util';
@@ -56,12 +57,10 @@ import { transformLinksValue } from 'src/engine/core-modules/record-transformer/
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -245,14 +244,9 @@ export class DataArgProcessorService {
           );
         }
 
-        const joinColumnName = isFlatFieldMetadataOfType(
-          fieldMetadata,
-          FieldMetadataType.MORPH_RELATION,
-        )
-          ? computeMorphOrRelationFieldJoinColumnName({
-              name: fieldMetadata.name,
-            })
-          : relationSettings.joinColumnName;
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+          name: fieldMetadata.name,
+        });
 
         if (key === joinColumnName) {
           return validateUUIDFieldOrThrow(value, key);

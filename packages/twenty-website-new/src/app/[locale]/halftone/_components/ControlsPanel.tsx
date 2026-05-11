@@ -1,7 +1,7 @@
 'use client';
 
-import type { ReactExportSettings } from '@/app/[locale]/halftone/_lib/exporters';
-import { IconLayoutSidebarRightCollapse, IconShare } from '@tabler/icons-react';
+import type { ReactExportSettings } from '@/lib/halftone/utils/exporters';
+import { IconLayoutSidebarRightCollapse } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import type {
   HalftoneBackgroundSettings,
@@ -9,7 +9,7 @@ import type {
   HalftoneSourceMode,
   HalftoneStudioSettings,
   HalftoneTabId,
-} from '@/lib/halftone/state';
+} from '@/lib/halftone/utils/state';
 import { AnimationsTab } from './controls/AnimationsTab';
 import { DesignTab } from './controls/DesignTab';
 import { ExportTab } from './controls/ExportTab';
@@ -25,7 +25,6 @@ type ControlsPanelProps = {
     value: Partial<HalftoneStudioSettings['animation']>,
   ) => void;
   onBackgroundChange: (value: Partial<HalftoneBackgroundSettings>) => void;
-  onCopyShareLink: () => void;
   onDashColorChange: (value: string) => void;
   onHoverDashColorChange: (value: string) => void;
   onCopyHalftoneImage: (width: number, height: number) => void;
@@ -133,7 +132,6 @@ export function ControlsPanel({
   imageFileName,
   onAnimationSettingsChange,
   onBackgroundChange,
-  onCopyShareLink,
   onDashColorChange,
   onHoverDashColorChange,
   onCopyHalftoneImage,
@@ -184,14 +182,6 @@ export function ControlsPanel({
           </TabsGroup>
         ) : null}
         <PanelActions>
-          <PanelActionButton
-            aria-label="Copy share link"
-            onClick={onCopyShareLink}
-            title="Copy share link"
-            type="button"
-          >
-            <IconShare aria-hidden size={16} stroke={TABLER_STROKE} />
-          </PanelActionButton>
           <PanelToggleTabButton
             $collapsed={!visible}
             aria-expanded={visible}

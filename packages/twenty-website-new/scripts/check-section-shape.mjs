@@ -7,15 +7,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const SECTIONS_DIR = path.join(ROOT, 'src', 'sections');
 
-const SECTIONS_USING_NAMED_SLOTS = new Map([
-  ['Marquee', new Set(['Heading'])],
-  ['TrustedBy', new Set(['Separator', 'Logos', 'ClientCount'])],
-]);
+const SECTIONS_USING_NAMED_SLOTS = new Map([]);
 
 const LEAF_SECTIONS = new Set([
   'CaseStudy',
   'CaseStudyCatalog',
+  'ContactCal',
   'LegalDocument',
+  'PartnerApplication',
+  'Stepper',
 ]);
 
 async function listSections() {
@@ -47,6 +47,8 @@ async function findBarrel(sectionDir) {
   const candidates = [
     path.join(sectionDir, 'components', 'index.ts'),
     path.join(sectionDir, 'components', 'index.tsx'),
+    path.join(sectionDir, 'index.ts'),
+    path.join(sectionDir, 'index.tsx'),
   ];
   for (const candidate of candidates) {
     if (await fileExists(candidate)) return candidate;
@@ -55,8 +57,15 @@ async function findBarrel(sectionDir) {
 }
 
 async function findRoot(sectionDir) {
-  const candidate = path.join(sectionDir, 'components', 'Root.tsx');
-  if (await fileExists(candidate)) return candidate;
+  const sectionName = path.basename(sectionDir);
+  const candidates = [
+    path.join(sectionDir, 'components', 'Root.tsx'),
+    path.join(sectionDir, `${sectionName}.tsx`),
+    path.join(sectionDir, `${sectionName}.ts`),
+  ];
+  for (const candidate of candidates) {
+    if (await fileExists(candidate)) return candidate;
+  }
   return null;
 }
 

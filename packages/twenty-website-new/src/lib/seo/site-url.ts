@@ -13,12 +13,3 @@ export function getSiteUrl(): string {
 
   return DEFAULT_SITE_URL;
 }
-
-export function getAbsoluteUrl(pathOrUrl: string): string {
-  if (/^https?:\/\//i.test(pathOrUrl)) {
-    return pathOrUrl;
-  }
-
-  const path = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
-  return `${getSiteUrl()}${path}`;
-}

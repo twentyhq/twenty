@@ -5,9 +5,9 @@ import {
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { CheckIcon } from '@/icons';
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import { useLingui } from '@lingui/react';
 import type { MessageDescriptor } from '@lingui/core';
-import { usePricingState } from '@/sections/Plans/context/PricingStateContext';
+import { usePricingState } from '@/sections/Plans';
 import type {
   PlanTableBodyRowDataType,
   PlanTableCellType,
@@ -136,16 +136,16 @@ const ToggleButton = styled.button`
 
 type CellValueProps = {
   cell: PlanTableCellType;
-  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-function CellValue({ cell, renderText }: CellValueProps) {
+function CellValue({ cell }: CellValueProps) {
+  const { i18n } = useLingui();
   if (cell.kind === 'dash') {
-    return <TierText>{renderText(msg`No`)}</TierText>;
+    return <TierText>{i18n._(msg`No`)}</TierText>;
   }
 
   if (cell.kind === 'text') {
-    return <TierText>{renderText(cell.text)}</TierText>;
+    return <TierText>{i18n._(cell.text)}</TierText>;
   }
 
   const label = cell.label ?? msg`Yes`;
@@ -153,7 +153,7 @@ function CellValue({ cell, renderText }: CellValueProps) {
   return (
     <YesRow>
       <CheckIcon color={theme.colors.highlight[100]} size={16} />
-      <TierText>{renderText(label)}</TierText>
+      <TierText>{i18n._(label)}</TierText>
     </YesRow>
   );
 }
@@ -192,18 +192,18 @@ function resolveVisibleRows(
 }
 
 type FeatureRowProps = {
-  renderText: (descriptor: MessageDescriptor) => string;
   row: PlanTableFeatureRowDataType;
   tierColumns: PlanTableTierColumnType[];
 };
 
-function FeatureRow({ renderText, row, tierColumns }: FeatureRowProps) {
+function FeatureRow({ row, tierColumns }: FeatureRowProps) {
+  const { i18n } = useLingui();
   return (
     <GridRow>
-      <FeatureLabel>{renderText(row.featureLabel)}</FeatureLabel>
+      <FeatureLabel>{i18n._(row.featureLabel)}</FeatureLabel>
       {tierColumns.map((column) => (
         <TierCell key={column.id}>
-          <CellValue cell={row.tiers[column.id]} renderText={renderText} />
+          <CellValue cell={row.tiers[column.id]} />
         </TierCell>
       ))}
     </GridRow>
@@ -211,15 +211,15 @@ function FeatureRow({ renderText, row, tierColumns }: FeatureRowProps) {
 }
 
 type CategoryRowProps = {
-  renderText: (descriptor: MessageDescriptor) => string;
   title: MessageDescriptor;
 };
 
-function CategoryRow({ renderText, title }: CategoryRowProps) {
+function CategoryRow({ title }: CategoryRowProps) {
+  const { i18n } = useLingui();
   return (
     <GridRow>
       <CategoryBand>
-        <CategoryTitle>{renderText(title)}</CategoryTitle>
+        <CategoryTitle>{i18n._(title)}</CategoryTitle>
       </CategoryBand>
       <CategoryBand aria-hidden="true" />
       <CategoryBand aria-hidden="true" />
@@ -232,7 +232,7 @@ type ContentProps = {
 };
 
 export function Content({ data }: ContentProps) {
-  const renderText = useRenderMessage();
+  const { i18n } = useLingui();
   const [expanded, setExpanded] = useState(false);
   const { hosting } = usePricingState();
 
@@ -255,11 +255,7 @@ export function Content({ data }: ContentProps) {
 
       if (row.type === 'category') {
         return (
-          <CategoryRow
-            key={`${row.title}-${rowIndex}`}
-            renderText={renderText}
-            title={row.title}
-          />
+          <CategoryRow key={`${row.title}-${rowIndex}`} title={row.title} />
         );
       }
 
@@ -268,7 +264,6 @@ export function Content({ data }: ContentProps) {
           <CalculatorEmbed
             calculator={row.calculator}
             key={`calculator-${rowIndex}`}
-            renderText={renderText}
           />
         );
       }
@@ -276,7 +271,6 @@ export function Content({ data }: ContentProps) {
       return (
         <FeatureRow
           key={`${row.featureLabel}-${rowIndex}`}
-          renderText={renderText}
           row={row}
           tierColumns={data.tierColumns}
         />
@@ -286,9 +280,9 @@ export function Content({ data }: ContentProps) {
   return (
     <TableScope>
       <GridRow>
-        <HeadFeature>{renderText(data.featureColumnLabel)}</HeadFeature>
+        <HeadFeature>{i18n._(data.featureColumnLabel)}</HeadFeature>
         {data.tierColumns.map((column) => (
-          <HeadTier key={column.id}>{renderText(column.label)}</HeadTier>
+          <HeadTier key={column.id}>{i18n._(column.label)}</HeadTier>
         ))}
       </GridRow>
 
@@ -312,7 +306,7 @@ export function Content({ data }: ContentProps) {
           >
             <BaseButton
               color="primary"
-              label={renderText(toggleLabel)}
+              label={i18n._(toggleLabel)}
               variant="outlined"
             />
           </ToggleButton>

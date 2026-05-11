@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
+import { differenceInDays } from 'date-fns';
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import {
@@ -15,6 +16,7 @@ import {
 import { type BillingMeteredProductUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-metered-product-usage.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -26,10 +28,12 @@ import { buildBillingUsageAvailableCreditsCacheKey } from 'src/engine/core-modul
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 type UsageSumRow = {
   total: string | number | null;
@@ -54,6 +58,7 @@ export class BillingUsageService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly clickHouseService: ClickHouseService,
     private readonly billingUsageCapService: BillingUsageCapService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async canFeatureBeUsed(workspaceId: string): Promise<boolean> {
@@ -134,6 +139,79 @@ export class BillingUsageService {
         ),
       ),
     );
+  }
+
+  async getResourceCreditProductUsage(
+    workspace: WorkspaceEntity,
+  ): Promise<BillingMeteredProductUsageDTO[]> {
+    const subscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        { workspaceId: workspace.id },
+      );
+
+    const resourceCreditItemDetail =
+      await this.billingSubscriptionItemService.getResourceCreditSubscriptionItemDetails(
+        subscription,
+      );
+
+    if (!isDefined(resourceCreditItemDetail)) {
+      throw new BillingException(
+        `Resource credit item not found for workspace ${workspace.id}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
+      );
+    }
+
+    const { periodStart, periodEnd } = this.getSubscriptionPeriod(subscription);
+
+    return [
+      await this.buildResourceCreditUsage(
+        workspace.id,
+        subscription,
+        resourceCreditItemDetail,
+        periodStart,
+        periodEnd,
+      ),
+    ];
+  }
+
+  private async buildResourceCreditUsage(
+    workspaceId: string,
+    subscription: BillingSubscriptionEntity,
+    item: NonNullable<
+      Awaited<
+        ReturnType<
+          typeof this.billingSubscriptionItemService.getResourceCreditSubscriptionItemDetails
+        >
+      >
+    >,
+    periodStart: Date,
+    periodEnd: Date,
+  ): Promise<BillingMeteredProductUsageDTO> {
+    const usedCredits = await this.getCurrentPeriodCreditsUsed(
+      workspaceId,
+      periodStart,
+    );
+
+    const grantedCredits =
+      subscription.status === SubscriptionStatus.Trialing
+        ? item.freeTrialQuantity
+        : item.creditAmount;
+
+    const billingCustomer = await this.billingCustomerRepository.findOne({
+      where: { workspaceId },
+    });
+    const rolloverCredits = billingCustomer?.creditBalanceMicro ?? 0;
+
+    return {
+      productKey: item.productKey,
+      periodStart,
+      periodEnd,
+      usedCredits,
+      grantedCredits,
+      rolloverCredits,
+      totalGrantedCredits: grantedCredits + rolloverCredits,
+      unitPriceCents: item.unitPriceCents,
+    };
   }
 
   //TODO: TO be deprecated
@@ -254,30 +332,93 @@ export class BillingUsageService {
       );
     }
 
-    const meteredPricingInfo =
-      this.meteredCreditService.extractMeteredPricingInfoFromSubscription(
-        subscription,
+    const isV2 = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_BILLING_V2_ENABLED,
+      workspaceId,
+    );
+
+    if (isV2) {
+      const resourceUsageCap = this.getResourceUsageCap(subscription);
+
+      const { creditBalanceMicro: creditBalance } =
+        await this.billingCustomerRepository.findOneOrFail({
+          select: { creditBalanceMicro: true },
+          where: { workspaceId },
+        });
+
+      const usage = await this.getCurrentPeriodCreditsUsed(
+        subscription.workspaceId,
+        subscription.currentPeriodStart,
+      );
+      return resourceUsageCap + creditBalance - usage;
+    } else {
+      const meteredPricingInfo =
+        this.meteredCreditService.extractMeteredPricingInfoFromSubscription(
+          subscription,
+        );
+
+      if (!meteredPricingInfo) {
+        throw new BillingException(
+          `No metered item found for workspace ${workspaceId}`,
+          BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
+        );
+      }
+
+      const [creditBalance, usage] = await Promise.all([
+        this.meteredCreditService.getCreditBalance(
+          subscription.stripeCustomerId,
+          meteredPricingInfo.unitPriceCents,
+        ),
+        this.getCurrentPeriodCreditsUsed(
+          subscription.workspaceId,
+          subscription.currentPeriodStart,
+        ),
+      ]);
+      return meteredPricingInfo.tierCap + creditBalance - usage;
+    }
+  }
+
+  getResourceUsageCap(subscription: BillingSubscriptionEntity): number {
+    const isInFreeTrial = subscription.status === SubscriptionStatus.Trialing;
+
+    if (isInFreeTrial) {
+      const trialDuration =
+        isDefined(subscription.trialEnd) && isDefined(subscription.trialStart)
+          ? differenceInDays(subscription.trialEnd, subscription.trialStart)
+          : 0;
+
+      const trialWithCreditCardDuration = this.twentyConfigService.get(
+        'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS',
       );
 
-    if (!meteredPricingInfo) {
+      return trialDuration === trialWithCreditCardDuration
+        ? this.twentyConfigService.get(
+            'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD',
+          )
+        : this.twentyConfigService.get(
+            'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
+          );
+    }
+
+    const resourceCreditItem = subscription.billingSubscriptionItems.find(
+      (item) =>
+        item.billingProduct.metadata?.productKey ===
+        BillingProductKey.RESOURCE_CREDIT,
+    );
+
+    const resourceCreditPrice =
+      resourceCreditItem?.billingProduct.billingPrices.find(
+        (price) => price.stripePriceId === resourceCreditItem.stripePriceId,
+      );
+
+    if (!isDefined(resourceCreditPrice)) {
       throw new BillingException(
-        `No metered item found for workspace ${workspaceId}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
+        `Resource credit price not found for workspace ${subscription.workspaceId}`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
       );
     }
 
-    const [creditBalance, usage] = await Promise.all([
-      this.meteredCreditService.getCreditBalance(
-        subscription.stripeCustomerId,
-        meteredPricingInfo.unitPriceCents,
-      ),
-      this.getCurrentPeriodCreditsUsed(
-        subscription.workspaceId,
-        subscription.currentPeriodStart,
-      ),
-    ]);
-
-    return meteredPricingInfo.tierCap + creditBalance - usage;
+    return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);
   }
 
   async decrementAvailableCredits({

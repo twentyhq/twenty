@@ -1,29 +1,23 @@
 import { msg } from '@lingui/core/macro';
-import { FAQ_DATA } from '@/sections/Faq/data';
-import { MENU_DATA } from '@/sections/Menu/data';
-import { TalkToUsButton } from '@/lib/contact-cal';
+import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
+import { TalkToUsButton } from '@/sections/ContactCal';
 import { BecomePartnerButton } from '@/app/[locale]/partners/components/PartnerApplication';
-import { ENGAGEMENT_BAND_COPY } from '@/app/[locale]/pricing/engagement-band.data';
-import { HERO_COPY } from '@/app/[locale]/pricing/hero.data';
 import { PLAN_TABLE_DATA } from '@/app/[locale]/pricing/plan-table.data';
 import { SALESFORCE_DATA } from '@/app/[locale]/pricing/salesforce.data';
 import { Eyebrow, HeadingPart, LinkButton } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
 import {
   getRouteI18n,
   type LocaleRouteParams,
-} from '@/lib/i18n/get-route-i18n';
+} from '@/lib/i18n/utils/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { EngagementBand } from '@/sections/EngagementBand/components';
-import { Faq } from '@/sections/Faq/components';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
-import { Plans } from '@/sections/Plans/components';
-import { PricingStateProvider } from '@/sections/Plans/context/PricingStateContext';
-import { PlanTable } from '@/sections/PlanTable/components';
-import { Salesforce } from '@/sections/Salesforce/components';
+import { EngagementBand } from '@/sections/EngagementBand';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import { Plans, PricingStateProvider } from '@/sections/Plans';
+import { PlanTable } from '@/sections/PlanTable';
+import { Salesforce } from '@/sections/Salesforce';
 import { theme } from '@/theme';
 import { buildFaqPageJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
 import { styled } from '@linaria/react';
@@ -51,12 +45,11 @@ export default async function PricingPage({ params }: PricingPageProps) {
     getRouteI18n(params),
     fetchCommunityStats(),
   ]);
-  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
     <>
-      <JsonLd data={buildFaqPageJsonLd(FAQ_DATA.questions, renderText)} />
+      <JsonLd data={buildFaqPageJsonLd(FAQ_QUESTIONS, (d) => i18n._(d))} />
       <Menu.Root
         backgroundColor="#F3F3F3"
         scheme="primary"
@@ -69,34 +62,25 @@ export default async function PricingPage({ params }: PricingPageProps) {
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
-      <Hero.Root backgroundColor={theme.colors.secondary.background[5]}>
+      <Hero.Root scheme="muted">
         <Hero.Heading page={Pages.Pricing}>
-          <HeadingPart fontFamily="serif">
-            {renderText(msg`Simple`)}
-          </HeadingPart>
+          <HeadingPart fontFamily="serif">{i18n._(msg`Simple`)}</HeadingPart>
           <br />
-          <HeadingPart fontFamily="sans">
-            {renderText(msg`Pricing`)}
-          </HeadingPart>
+          <HeadingPart fontFamily="sans">{i18n._(msg`Pricing`)}</HeadingPart>
         </Hero.Heading>
-        <Hero.Body
-          body={{ text: HERO_COPY.body }}
-          page={Pages.Pricing}
-          preserveLineBreaks
-          renderText={renderText}
-        />
+        <Hero.Body page={Pages.Pricing} preserveLineBreaks>
+          {i18n._(msg`Start your free trial today\nwithout credit card.`)}
+        </Hero.Body>
       </Hero.Root>
 
       <PricingStateProvider>
-        <Plans.Root backgroundColor={theme.colors.secondary.background[5]}>
+        <Plans.Root scheme="muted">
           <PricingPlansContainer>
             <Plans.Content />
           </PricingPlansContainer>
         </Plans.Root>
 
-        <EngagementBand.Root
-          backgroundColor={theme.colors.secondary.background[5]}
-        >
+        <EngagementBand.Root scheme="muted">
           <PricingBannerContainer>
             <EngagementBand.Strip
               desktopCopyMaxWidth="60%"
@@ -104,17 +88,16 @@ export default async function PricingPage({ params }: PricingPageProps) {
               variant="primary"
             >
               <EngagementBand.Copy>
-                <EngagementBand.Heading
-                  renderText={renderText}
-                  segments={{
-                    fontFamily: 'serif',
-                    text: ENGAGEMENT_BAND_COPY.heading,
-                  }}
-                />
-                <EngagementBand.Body
-                  body={{ text: ENGAGEMENT_BAND_COPY.body }}
-                  renderText={renderText}
-                />
+                <EngagementBand.Heading>
+                  <HeadingPart fontFamily="serif">
+                    {i18n._(msg`Need help with customization?`)}
+                  </HeadingPart>
+                </EngagementBand.Heading>
+                <EngagementBand.Body>
+                  {i18n._(
+                    msg`Find the right partner to implement, customize, and tailor Twenty to your team.`,
+                  )}
+                </EngagementBand.Body>
               </EngagementBand.Copy>
               <EngagementBand.Actions>
                 <BecomePartnerButton
@@ -127,45 +110,43 @@ export default async function PricingPage({ params }: PricingPageProps) {
           </PricingBannerContainer>
         </EngagementBand.Root>
 
-        <PlanTable.Root
-          backgroundColor={theme.colors.secondary.background[100]}
-        >
+        <PlanTable.Root scheme="dark">
           <PlanTable.Content data={PLAN_TABLE_DATA} />
         </PlanTable.Root>
       </PricingStateProvider>
 
       <Salesforce.Flow
-        backgroundColor={theme.colors.secondary.background[5]}
+        scheme="muted"
         body={SALESFORCE_DATA.body}
         pricing={SALESFORCE_DATA.pricing}
       >
         <HeadingPart fontFamily="serif">
-          {renderText(msg`Trust the n°1 CRM,`)}
+          {i18n._(msg`Trust the n°1 CRM,`)}
         </HeadingPart>{' '}
-        <HeadingPart fontFamily="sans">{renderText(msg`or not !`)}</HeadingPart>
+        <HeadingPart fontFamily="sans">{i18n._(msg`or not !`)}</HeadingPart>
       </Salesforce.Flow>
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow
-            colorScheme="secondary"
-            heading={FAQ_DATA.eyebrow.heading}
-            renderText={renderText}
-          />
+          <Eyebrow colorScheme="secondary">
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Any Questions?`)}
+            </HeadingPart>
+          </Eyebrow>
           <Faq.Heading>
             <HeadingPart fontFamily="serif">
-              {renderText(msg`Stop fighting custom.`)}
+              {i18n._(msg`Stop fighting custom.`)}
             </HeadingPart>
             <br />
             <HeadingPart fontFamily="sans">
-              {renderText(msg`Start building, with Twenty`)}
+              {i18n._(msg`Start building, with Twenty`)}
             </HeadingPart>
           </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={renderText(msg`Get started`)}
+              label={i18n._(msg`Get started`)}
               variant="contained"
             />
             <TalkToUsButton
@@ -175,7 +156,7 @@ export default async function PricingPage({ params }: PricingPageProps) {
             />
           </Faq.Cta>
         </Faq.Intro>
-        <Faq.Items questions={FAQ_DATA.questions} />
+        <Faq.Items questions={FAQ_QUESTIONS} />
       </Faq.Root>
     </>
   );

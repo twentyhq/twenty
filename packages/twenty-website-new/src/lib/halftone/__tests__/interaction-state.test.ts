@@ -1,9 +1,9 @@
-import { DEFAULT_HALFTONE_SETTINGS } from '../state';
+import { DEFAULT_HALFTONE_SETTINGS } from '../utils/state';
 import {
   applySpringStep,
   createHalftoneInteractionState,
   resetHalftoneInteractionState,
-} from '../interaction-state';
+} from '../utils/interaction-state';
 
 describe('halftone interaction state', () => {
   it('hydrates pose fields while defaulting transient pointer state', () => {

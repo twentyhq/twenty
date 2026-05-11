@@ -1,7 +1,8 @@
-import { compositeTypeDefinitions } from 'twenty-shared/types';
+import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
@@ -41,14 +42,18 @@ export const computeFlatIndexFieldColumnNames = ({
     }
 
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
-      if (!isDefined(flatFieldMetadata.settings?.joinColumnName)) {
+      if (
+        flatFieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
+      ) {
         throw new FlatEntityMapsException(
-          'Join column name is not defined for relation field',
+          'Cannot index a relation field that has no join column',
           FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
         );
       }
 
-      return flatFieldMetadata.settings.joinColumnName;
+      return computeMorphOrRelationFieldJoinColumnName({
+        name: flatFieldMetadata.name,
+      });
     }
 
     if (isCompositeFieldMetadataType(flatFieldMetadata.type)) {

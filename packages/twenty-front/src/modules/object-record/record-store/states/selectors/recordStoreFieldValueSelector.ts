@@ -12,7 +12,10 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { RelationType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationGqlFieldName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 const simpleFieldValueSelector = createAtomFamilySelector<
   unknown,
@@ -49,7 +52,7 @@ const getMorphRelationFieldValueAtom = (
     const recordStore = get(recordStoreFamilyState.atomFamily(recordId));
 
     const computeMorphFieldName = (morphRelation: FieldMetadataItemRelation) =>
-      computeMorphRelationFieldName({
+      computeMorphRelationGqlFieldName({
         fieldName: morphRelation.sourceFieldMetadata.name,
         relationType: morphRelation.type,
         targetObjectMetadataNameSingular:

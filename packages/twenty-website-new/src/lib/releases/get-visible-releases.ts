@@ -1,5 +1,5 @@
 import type { LocalReleaseNote } from '@/lib/releases/types';
-import { getFormattedReleaseNumber } from '@/lib/semver/get-formatted-release-number';
+import { getFormattedReleaseNumber } from '@/lib/releases/get-formatted-release-number';
 
 function safeReleaseNumber(version: string): number | null {
   try {

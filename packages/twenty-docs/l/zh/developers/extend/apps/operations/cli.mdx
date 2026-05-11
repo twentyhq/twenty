@@ -1,0 +1,78 @@
+---
+title: CLI
+description: yarn twenty 命令可用于执行函数、流式传输日志、管理应用安装以及切换远程。
+icon: terminal
+---
+
+除了 `dev`、`build`、`add` 和 `typecheck` 外，`yarn twenty` CLI 还提供了用于执行函数、查看日志和管理应用安装的命令。
+
+## 执行函数（`yarn twenty exec`）
+
+手动运行逻辑函数，而无需通过 HTTP、定时任务或数据库事件来触发：
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty exec --postInstall
+```
+
+## 查看函数日志（`yarn twenty logs`）
+
+实时流式查看你的应用逻辑函数的执行日志：
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty logs
+
+# Filter by function name
+yarn twenty logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+这与 `yarn twenty server logs` 不同，后者显示的是 Docker 容器日志。 `yarn twenty logs` 会显示来自 Twenty 服务器的应用函数执行日志。
+</Note>
+
+## 卸载应用（`yarn twenty uninstall`）
+
+将你的应用从活动工作区中移除：
+
+```bash filename="Terminal"
+yarn twenty uninstall
+
+# Skip the confirmation prompt
+yarn twenty uninstall --yes
+```
+
+## 管理远程
+
+“远程”是指你的应用连接到的 Twenty 服务器。 在设置期间，脚手架工具会为你自动创建一个。 你可以随时添加更多远程或在它们之间切换。
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+你的凭据存储在 `~/.twenty/config.json` 中。

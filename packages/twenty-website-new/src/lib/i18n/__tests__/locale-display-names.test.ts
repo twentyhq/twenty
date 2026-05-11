@@ -1,7 +1,7 @@
 import {
   getEnglishLocaleName,
   getNativeLocaleName,
-} from '../locale-display-names';
+} from '../utils/locale-display-names';
 
 describe('getNativeLocaleName', () => {
   it('returns the language name in its own language with the first character upper-cased', () => {

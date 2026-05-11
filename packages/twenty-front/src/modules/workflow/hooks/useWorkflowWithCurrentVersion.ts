@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -10,6 +9,7 @@ import {
   type WorkflowVersion,
   type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowWithAllVersions = Omit<Workflow, 'versions'> & {

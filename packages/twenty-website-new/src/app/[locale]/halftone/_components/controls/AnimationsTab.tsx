@@ -4,8 +4,8 @@ import {
   formatAngle,
   formatDecimal,
   formatPercent,
-} from '@/app/[locale]/halftone/_lib/formatters';
-import type { HalftoneStudioSettings } from '@/lib/halftone/state';
+} from '@/lib/halftone/utils/formatters';
+import type { HalftoneStudioSettings } from '@/lib/halftone/utils/state';
 import {
   ColorControlLabel,
   ColorControlRow,

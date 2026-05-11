@@ -21,7 +21,7 @@ const HeadingContainer = styled.div`
   }
 `;
 
-export type HeroHeadingProps = HeadingProps & {
+type HeroHeadingProps = HeadingProps & {
   children?: ReactNode;
   page: Page;
 };

@@ -10,10 +10,12 @@ export type WebsiteRouteId =
   | 'partners'
   | 'releases'
   | 'customers'
+  | 'articles'
   | 'privacyPolicy'
   | 'terms'
   | 'halftone'
   | 'enterpriseActivate'
+  | `articles:${string}`
   | `customer:${string}`;
 
 export type WebsiteRoute = {
@@ -21,6 +23,7 @@ export type WebsiteRoute = {
   description: MessageDescriptor;
   id: WebsiteRouteId;
   indexed: boolean;
+  localeMode?: 'all' | 'source';
   path: string;
   priority: number;
   robotsDisallow?: boolean;

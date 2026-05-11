@@ -29,8 +29,11 @@ import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/bill
 import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -40,12 +43,14 @@ export class BillingPortalWorkspaceService {
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async computeCheckoutSessionURL({
@@ -127,14 +132,9 @@ export class BillingPortalWorkspaceService {
           !isDefined(customer) || customer.billingSubscriptions.length === 0,
       });
 
-    const createdBillingSubscription =
-      await this.billingSubscriptionService.syncSubscriptionToDatabase(
-        workspace.id,
-        stripeSubscription.id,
-      );
-
-    await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
-      createdBillingSubscription.id,
+    await this.billingSubscriptionService.syncSubscriptionToDatabase(
+      workspace.id,
+      stripeSubscription.id,
     );
 
     return successUrl;
@@ -168,10 +168,12 @@ export class BillingPortalWorkspaceService {
       relations: ['billingSubscriptions'],
     });
 
-    const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
-      quantity,
-      billingPricesPerPlan,
-    });
+    const stripeSubscriptionLineItems =
+      await this.getStripeSubscriptionLineItems({
+        quantity,
+        billingPricesPerPlan,
+        workspaceId: workspace.id,
+      });
 
     return {
       successUrl,
@@ -265,7 +267,7 @@ export class BillingPortalWorkspaceService {
     billingPricesPerPlan: BillingGetPricesPerPlanResult,
   ): BillingMeterPrice {
     const defaultMeteredProductPrice =
-      billingPricesPerPlan.meteredProductsPrices.reduce(
+      billingPricesPerPlan.meteredProductPrices.reduce(
         (result, billingPrice) => {
           if (!result) {
             return billingPrice as BillingMeterPrice;
@@ -293,20 +295,50 @@ export class BillingPortalWorkspaceService {
     return defaultMeteredProductPrice;
   }
 
-  private getStripeSubscriptionLineItems({
+  // V2 path — finds the lowest credit_amount RESOURCE_CREDIT licensed price as default
+  private getDefaultResourceCreditPrice(
+    billingPricesPerPlan: BillingGetPricesPerPlanResult,
+  ) {
+    const resourceCreditPrices =
+      billingPricesPerPlan.resourceCreditProductPrices;
+
+    if (!isDefined(resourceCreditPrices) || resourceCreditPrices.length === 0) {
+      throw new BillingException(
+        'Missing Default RESOURCE_CREDIT price',
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+    }
+
+    return resourceCreditPrices.reduce((lowest, price) => {
+      const amount = Number(price.metadata?.credit_amount ?? 0);
+      const lowestAmount = Number(lowest.metadata?.credit_amount ?? 0);
+
+      return amount < lowestAmount ? price : lowest;
+    });
+  }
+
+  private async getStripeSubscriptionLineItems({
     quantity,
     billingPricesPerPlan,
+    workspaceId,
   }: {
     quantity: number;
     billingPricesPerPlan: BillingGetPricesPerPlanResult;
-  }): Stripe.Checkout.SessionCreateParams.LineItem[] {
-    const defaultMeteredProductPrice =
-      this.getDefaultMeteredProductPrice(billingPricesPerPlan);
+    workspaceId: string;
+  }): Promise<Stripe.Checkout.SessionCreateParams.LineItem[]> {
+    const isV2 = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_BILLING_V2_ENABLED,
+      workspaceId,
+    );
 
-    const defaultLicensedProductPrice = findOrThrow(
-      billingPricesPerPlan.licensedProductsPrices,
-      (licensedProductsPrice) =>
-        licensedProductsPrice.billingProduct?.metadata.productKey ===
+    const isBillingV2EnabledForNewWorkspaces = this.twentyConfigService.get(
+      'IS_BILLING_V2_ENABLED_FOR_NEW_WORKSPACES',
+    );
+
+    const defaultBaseProductPrice = findOrThrow(
+      billingPricesPerPlan.baseProductPrices,
+      (baseProductPrice) =>
+        baseProductPrice.billingProduct?.metadata.productKey ===
         BillingProductKey.BASE_PRODUCT,
       new BillingException(
         `Base product not found`,
@@ -314,9 +346,28 @@ export class BillingPortalWorkspaceService {
       ),
     );
 
+    if (isBillingV2EnabledForNewWorkspaces || isV2) {
+      const defaultResourceCreditPrice =
+        this.getDefaultResourceCreditPrice(billingPricesPerPlan);
+
+      return [
+        {
+          price: defaultBaseProductPrice.stripePriceId,
+          quantity,
+        },
+        {
+          price: defaultResourceCreditPrice.stripePriceId,
+          quantity: 1,
+        },
+      ];
+    }
+
+    const defaultMeteredProductPrice =
+      this.getDefaultMeteredProductPrice(billingPricesPerPlan);
+
     return [
       {
-        price: defaultLicensedProductPrice.stripePriceId,
+        price: defaultBaseProductPrice.stripePriceId,
         quantity,
       },
       {

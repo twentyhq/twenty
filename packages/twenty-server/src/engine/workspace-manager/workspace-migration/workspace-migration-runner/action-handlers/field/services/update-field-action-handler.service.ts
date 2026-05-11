@@ -3,10 +3,12 @@ import { Injectable } from '@nestjs/common';
 import {
   FieldMetadataSettingsMapping,
   FieldMetadataType,
+  RelationType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -223,35 +225,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     if (isDefined(update.settings)) {
-      // Handle joinColumnName rename
-      if (isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata)) {
-        const fromSettings = optimisticFlatFieldMetadata.settings;
-        const toSettings = update.settings as
-          | FieldMetadataSettingsMapping['MORPH_RELATION']
-          | FieldMetadataSettingsMapping['RELATION'];
-
-        if (
-          isDefined(fromSettings?.joinColumnName) &&
-          isDefined(toSettings?.joinColumnName) &&
-          fromSettings.joinColumnName !== toSettings.joinColumnName
-        ) {
-          await this.workspaceSchemaManagerService.columnManager.renameColumn({
-            queryRunner,
-            schemaName,
-            tableName,
-            oldColumnName: fromSettings.joinColumnName,
-            newColumnName: toSettings.joinColumnName,
-          });
-          optimisticFlatFieldMetadata = {
-            ...optimisticFlatFieldMetadata,
-            settings: {
-              ...optimisticFlatFieldMetadata.settings,
-              joinColumnName: toSettings.joinColumnName,
-            },
-          };
-        }
-      }
-
       // Handle asExpression/generatedType change (for TS_VECTOR fields)
       if (
         isFlatFieldMetadataOfType(
@@ -302,19 +275,26 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           | FieldMetadataSettingsMapping['MORPH_RELATION']
           | FieldMetadataSettingsMapping['RELATION'];
 
+        const isManyToOne =
+          optimisticFlatFieldMetadata.settings?.relationType ===
+          RelationType.MANY_TO_ONE;
+
         if (
-          isDefined(optimisticFlatFieldMetadata.settings.joinColumnName) &&
+          isManyToOne &&
           isDefined(fromSettings?.onDelete) &&
           isDefined(toSettings?.onDelete) &&
           toSettings.onDelete !== fromSettings.onDelete
         ) {
+          const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+            name: optimisticFlatFieldMetadata.name,
+          });
           const foreignKeyName =
             await this.workspaceSchemaManagerService.foreignKeyManager.getForeignKeyName(
               {
                 queryRunner,
                 schemaName,
                 tableName,
-                columnName: optimisticFlatFieldMetadata.settings.joinColumnName,
+                columnName: joinColumnName,
               },
             );
 
@@ -351,7 +331,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
               schemaName,
               foreignKey: {
                 tableName,
-                columnName: optimisticFlatFieldMetadata.settings.joinColumnName,
+                columnName: joinColumnName,
                 referencedTableName,
                 referencedColumnName: 'id',
                 onDelete:
@@ -403,7 +383,23 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           newColumnName: toCompositeColumnName,
         });
       }
-    } else if (!isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+    } else if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+      if (
+        flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
+      ) {
+        await this.workspaceSchemaManagerService.columnManager.renameColumn({
+          queryRunner,
+          schemaName,
+          tableName,
+          oldColumnName: computeMorphOrRelationFieldJoinColumnName({
+            name: fromName,
+          }),
+          newColumnName: computeMorphOrRelationFieldJoinColumnName({
+            name: toName,
+          }),
+        });
+      }
+    } else {
       await this.workspaceSchemaManagerService.columnManager.renameColumn({
         queryRunner,
         schemaName,

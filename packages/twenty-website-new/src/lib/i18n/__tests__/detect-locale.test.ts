@@ -1,4 +1,4 @@
-import { detectLocale } from '../detect-locale';
+import { detectLocale } from '../utils/detect-locale';
 
 describe('detectLocale', () => {
   it('returns the cookie value when it is a published website locale', () => {

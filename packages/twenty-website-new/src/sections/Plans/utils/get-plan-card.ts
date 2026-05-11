@@ -1,10 +1,10 @@
-import type { PlanCardType } from '@/sections/Plans/types/PlanCard';
+import type { PlanCardType } from '@/sections/Plans/types/plan-card';
 import type {
   PlansBillingPeriod,
   PlansDataType,
   PlansHostingMode,
   PlansTierId,
-} from '@/sections/Plans/types/PlansData';
+} from '@/sections/Plans/types/plans-data';
 
 export function getPlanCard(
   plansData: PlansDataType,

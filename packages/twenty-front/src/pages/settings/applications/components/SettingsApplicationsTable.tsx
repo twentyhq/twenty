@@ -38,13 +38,26 @@ export const SettingsApplicationsTable = ({
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredApplications = applications.filter(
-    (application) =>
-      application.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (application.description ?? '')
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()),
-  );
+  const filteredApplications = applications
+    .filter(
+      (application) =>
+        application.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (application.description ?? '')
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()),
+    )
+    .sort((a, b) => {
+      const aIsOAuth =
+        a.applicationRegistration?.sourceType ===
+        ApplicationRegistrationSourceType.OAUTH_ONLY;
+      const bIsOAuth =
+        b.applicationRegistration?.sourceType ===
+        ApplicationRegistrationSourceType.OAUTH_ONLY;
+
+      if (aIsOAuth === bIsOAuth) return 0;
+
+      return aIsOAuth ? 1 : -1;
+    });
 
   return (
     <Section>
@@ -64,6 +77,7 @@ export const SettingsApplicationsTable = ({
           gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
         >
           <TableHeader> {t`Name`}</TableHeader>
+          <TableHeader> {t`Type`}</TableHeader>
           <TableHeader> {t`Description`}</TableHeader>
           <TableHeader> {''}</TableHeader>
           <TableHeader />
@@ -88,6 +102,7 @@ export const SettingsApplicationsTable = ({
                 key={application.id}
                 application={application}
                 hasUpdate={hasUpdate}
+                sourceType={application.applicationRegistration?.sourceType}
                 action={
                   <IconChevronRight
                     size={theme.icon.size.md}

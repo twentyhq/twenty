@@ -1,7 +1,7 @@
 'use client';
 
 import { PLANS_DATA } from '@/sections/Plans/data';
-import { usePricingState } from '@/sections/Plans/context/PricingStateContext';
+import { usePricingState } from '@/sections/Plans/context/use-pricing-state';
 import type { PlansBillingPeriod } from '@/sections/Plans/types';
 import { getPlanCard } from '@/sections/Plans/utils';
 import { theme } from '@/theme';

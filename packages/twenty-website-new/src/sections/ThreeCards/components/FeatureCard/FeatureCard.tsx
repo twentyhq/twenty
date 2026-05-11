@@ -1,17 +1,17 @@
 'use client';
 
-import { Body, Heading } from '@/design-system/components';
+import { Body, Heading, HeadingPart } from '@/design-system/components';
 import { FastPathIcon, LiveDataIcon } from '@/icons';
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import type { ThreeCardsFeatureCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconUsersGroup } from '@tabler/icons-react';
 import Image from 'next/image';
 import { type ReactNode, useRef, useState } from 'react';
-import { FamiliarInterfaceVisual } from './FamiliarInterfaceVisual';
-import { FastPathVisual } from './FastPathVisual';
-import { LiveDataVisual } from './LiveDataVisual';
+import { FamiliarInterfaceVisual } from './components/FamiliarInterfaceVisual';
+import { FastPathVisual } from './components/FastPathVisual';
+import { LiveDataVisual } from './components/LiveDataVisual';
 
 const FeatureCardContainer = styled.div`
   display: grid;
@@ -133,7 +133,7 @@ function renderFeatureCardIcon(icon: ThreeCardsFeatureCardType['icon']) {
 }
 
 export function FeatureCard({ featureCard }: FeatureCardProps) {
-  const renderText = useRenderMessage();
+  const { i18n } = useLingui();
   const [isHovered, setIsHovered] = useState(false);
   const imageFrameRef = useRef<HTMLDivElement>(null);
   let visual: ReactNode;
@@ -177,6 +177,7 @@ export function FeatureCard({ featureCard }: FeatureCardProps) {
         src={featureCard.image.src}
         alt={featureCard.image.alt}
         fill
+        sizes="(max-width: 768px) 100vw, 411px"
         style={{ objectFit: 'cover' }}
       />
     );
@@ -198,21 +199,16 @@ export function FeatureCard({ featureCard }: FeatureCardProps) {
         <CardTitleRow>
           <CardIcon>{renderFeatureCardIcon(featureCard.icon)}</CardIcon>
           <CardTitleWrap>
-            <Heading
-              as="h3"
-              renderText={renderText}
-              segments={featureCard.heading}
-              size="xs"
-              weight="medium"
-            />
+            <Heading as="h3" size="xs" weight="medium">
+              <HeadingPart fontFamily="sans">
+                {i18n._(featureCard.heading)}
+              </HeadingPart>
+            </Heading>
           </CardTitleWrap>
         </CardTitleRow>
-        <Body
-          body={featureCard.body}
-          renderText={renderText}
-          size="sm"
-          weight="regular"
-        />
+        <Body size="sm" weight="regular">
+          {i18n._(featureCard.body)}
+        </Body>
       </CardContent>
     </FeatureCardContainer>
   );

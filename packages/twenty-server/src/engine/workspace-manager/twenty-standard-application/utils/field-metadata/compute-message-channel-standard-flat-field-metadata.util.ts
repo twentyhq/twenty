@@ -286,6 +286,13 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
           position: 1,
           color: 'blue',
         },
+        {
+          id: '20202020-7f22-4e58-aa33-9c3e2c72ab10',
+          value: MessageChannelType.EMAIL_GROUP,
+          label: i18nLabel(msg`Email group`),
+          position: 2,
+          color: 'turquoise',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,

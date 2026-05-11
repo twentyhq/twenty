@@ -1,0 +1,51 @@
+---
+title: Übersicht
+description: Konfigurieren Sie die App selbst – ihre Identität, Standardberechtigungen und das, was zur Installationszeit ausgeführt wird.
+icon: screwdriver-wrench
+---
+
+Die **Konfigurationsebene** einer Twenty-App beschreibt die App *für die Plattform* – ihre Identität, die Berechtigungen, die sie hält, und den Code, der während der Installation oder Aktualisierung ausgeführt wird. Diese Deklarationen fügen keine neuen Datentypen oder Laufzeitverhalten hinzu; sie teilen Twenty mit, *wer die App ist* und *wie sie eingerichtet werden soll*.
+
+```text
+┌────────────────────────────────────────────────────────┐
+│ Application — identity, default role, variables,       │
+│               marketplace metadata                     │
+│                                                        │
+│   ┌──────────────────────────────────────────────────┐ │
+│   │ Role — what the app's logic functions can read   │ │
+│   │ and write (referenced by Application)            │ │
+│   └──────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────┘
+                          │
+                          ▼  (at install / upgrade time)
+       ┌──────────────────────────────────┐
+       │ Pre-install hook                 │  before metadata migration
+       └──────────────────────────────────┘
+       ┌──────────────────────────────────┐
+       │ Post-install hook                │  after metadata migration
+       └──────────────────────────────────┘
+```
+
+## In diesem Abschnitt
+
+<CardGroup cols={2}>
+  <Card title="App-Konfiguration" icon="rocket" href="/l/de/developers/extend/apps/config/application">
+    `defineApplication` – Identität, Standardrolle, Variablen, Marketplace-Metadaten.
+  </Card>
+  <Card title="Rollen & Berechtigungen" icon="shield-halved" href="/l/de/developers/extend/apps/config/roles">
+    `defineRole` – deklariert, was die Logikfunktionen Ihrer App lesen und schreiben können.
+  </Card>
+  <Card title="Installations-Hooks" icon="Schraubenschlüssel" href="/l/de/developers/extend/apps/config/install-hooks">
+    `definePreInstallLogicFunction` und `definePostInstallLogicFunction` – Daten sichern, Standardwerte befüllen, Aktualisierungen validieren.
+  </Card>
+</CardGroup>
+
+## Wie die Bausteine zusammenhängen
+
+* **Application** ist der Einstiegspunkt. Jede App hat genau einen `defineApplication()`-Aufruf, und dieser verweist auf eine **Rolle** als Standard.
+* Die **Rolle** steuert, was die Logikfunktionen und Frontend-Komponenten der App lesen und schreiben können. Folgen Sie dem Prinzip der geringsten Privilegien: Gewähren Sie nur die Berechtigungen, die Ihr Code tatsächlich benötigt.
+* **Install Hooks** laufen während der Installation oder Aktualisierung – Pre-Install vor der Metadatenmigration (so kann ein riskantes Upgrade abgelehnt werden), Post-Install nach der Migration (so können Standarddaten gegen das neue Schema befüllt werden).
+
+<Note>
+Installations-Hooks nutzen die Laufzeit der [Logikfunktion](/l/de/developers/extend/apps/logic/logic-functions) – gleiche Handler-Signatur, gleiche Umgebungsvariablen, gleicher typisierter API-Client –, werden aber mit ihren eigenen Define-Funktionen deklariert und leben außerhalb des regulären Trigger-Modells (HTTP, Cron, Datenbankereignisse).
+</Note>

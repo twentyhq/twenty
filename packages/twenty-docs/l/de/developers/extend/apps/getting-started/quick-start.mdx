@@ -1,0 +1,184 @@
+---
+title: Schnellstart
+icon: rocket
+description: Erstellen Sie in wenigen Minuten Ihre erste Twenty-App.
+---
+
+## Voraussetzungen
+
+* **Node.js 24+** — [Hier herunterladen](https://nodejs.org/)
+* **Yarn 4** — Wird mit Node.js über Corepack mitgeliefert. Aktivieren Sie es: `corepack enable`
+* **Docker** — [Hier herunterladen](https://www.docker.com/products/docker-desktop/). Erforderlich, um einen lokalen Twenty-Server auszuführen. Überspringen Sie dies, wenn Twenty bereits anderswo läuft.
+
+Das Erstellen einer Twenty-App umfasst drei Phasen. Das Scaffolding-Tool fasst sie zu einem einzigen Happy-Path-Befehl zusammen, aber jede Phase ist ein eigenes Konzept — wenn etwas fehlschlägt, hilft Ihnen das Wissen, in welcher Phase Sie sich befinden, zu erkennen, was zu beheben ist.
+
+| Phase                   | Was Sie tun                                             | Tool                          | Ergebnis                                             |
+| ----------------------- | ------------------------------------------------------- | ----------------------------- | ---------------------------------------------------- |
+| **1. Gerüst erstellen** | Den Quellcode der App erzeugen                          | `npx create-twenty-app`       | Ein TypeScript-Projekt auf der Festplatte            |
+| **2. Server starten**   | Einen Twenty-Server starten, in den synchronisiert wird | Docker + `yarn twenty server` | Eine laufende Twenty-Instanz                         |
+| **3. Synchronisieren**  | Ihren Code live mit dem Server synchronisieren          | `yarn twenty dev`             | Ihre Änderungen erscheinen in der Benutzeroberfläche |
+
+---
+
+## Phase 1 — Projektgerüst erstellen
+
+Erstellen Sie eine neue App aus der Vorlage:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app
+```
+
+Sie werden nach einem Namen und einer Beschreibung gefragt — drücken Sie **Enter** für die Standardwerte. Dadurch wird ein TypeScript-Projekt in `my-twenty-app/` erzeugt, mit einer Startdatei `application-config.ts`, einer Standardrolle, einem CI-Workflow und einem Integrationstest.
+
+**Nach dieser Phase:** Sie haben den Quellcode einer App auf Ihrem Rechner. Es läuft noch nicht — das ist Phase 2.
+
+---
+
+## Phase 2 — Einen lokalen Twenty-Server starten
+
+Ihre App benötigt einen Twenty-Server, in den sie synchronisieren kann. Der Server ist eine vollständige Twenty-Instanz — UI, GraphQL-API, PostgreSQL — die lokal in Docker läuft. Ihr lokaler Code lädt seine Definitionen auf diesen Server hoch, wodurch sie in der Benutzeroberfläche erscheinen.
+
+Das Scaffolding-Tool bietet an, einen für Sie zu starten:
+
+> **Möchten Sie eine lokale Twenty-Instanz einrichten?**
+
+* **Ja (empfohlen)** — lädt das Docker-Image `twentycrm/twenty-app-dev` herunter und startet es auf Port `2020`. Stellen Sie sicher, dass Docker läuft.
+* **Nein** — wählen Sie dies, wenn Sie bereits einen Twenty-Server haben, mit dem Sie sich verbinden möchten. Sie können die Verbindung später mit `yarn twenty remote add` herstellen.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Soll die lokale Instanz gestartet werden?" />
+</div>
+
+Sobald der Server läuft, öffnet sich ein Browser zur Anmeldung. Verwenden Sie das vorab eingerichtete Demo-Konto:
+
+* **E-Mail:** `tim@apple.dev`
+* **Passwort:** `tim@apple.dev`
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty-Anmeldebildschirm" />
+</div>
+
+Klicken Sie auf dem nächsten Bildschirm auf **Authorize** — dadurch erhält die CLI Zugriff auf Ihren Arbeitsbereich.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty-CLI-Autorisierungsbildschirm" />
+</div>
+
+Ihr Terminal bestätigt, dass alles eingerichtet ist.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="App-Gerüst erfolgreich erstellt" />
+</div>
+
+**Nach dieser Phase:** Sie haben einen laufenden Twenty-Server unter [http://localhost:2020](http://localhost:2020), und Ihre CLI ist autorisiert, mit ihm zu synchronisieren.
+
+<Note>
+Wenn Docker nicht installiert ist oder nicht läuft, zeigt das Scaffolding-Tool den richtigen Startbefehl für Ihr Betriebssystem an. Sobald Docker läuft, können Sie mit `yarn twenty server start` fortfahren — ein erneutes Scaffolding ist nicht nötig.
+</Note>
+
+---
+
+## Phase 3 — Ihre Änderungen synchronisieren
+
+Das ist die innere Schleife, in der Sie die meiste Zeit verbringen werden.
+
+```bash filename="Terminal"
+cd my-twenty-app
+yarn twenty dev
+```
+
+Dies überwacht `src/`, baut bei jeder Änderung neu und synchronisiert das Ergebnis mit dem Server. Bearbeiten Sie eine Datei, speichern Sie, und innerhalb einer Sekunde spiegelt der Server die Änderung wider. Sie sehen eine Live-Statusanzeige in Ihrem Terminal.
+
+Für ausführlichere Ausgaben (Build-Protokolle, Sync-Anfragen, Fehlerspuren) fügen Sie `--verbose` hinzu.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/dev.png" alt="Terminalausgabe im Dev-Modus" />
+</div>
+
+Öffnen Sie [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Unter **Your Apps** sollte Ihre App angezeigt werden.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Liste &#x22;Your Apps&#x22;, die &#x22;My twenty app&#x22; anzeigt" />
+</div>
+
+Klicken Sie auf **My twenty app**, um die **Anwendungsregistrierung** anzuzeigen — ein serverseitiger Datensatz, der Ihre App beschreibt (Name, Bezeichner, OAuth-Anmeldedaten, Quelle). Eine Registrierung kann in mehreren Arbeitsbereichen auf demselben Server installiert werden.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Details der Anwendungsregistrierung" />
+</div>
+
+Klicken Sie auf **View installed app**, um die Installation im Arbeitsbereich anzuzeigen. Die Registerkarte **About** zeigt die Version und Verwaltungsoptionen.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Installierte App" />
+</div>
+
+**Nach dieser Phase:** Sie haben eine Live-Entwicklungsschleife. Bearbeiten Sie eine beliebige Datei in `src/`, und sie erscheint in der Benutzeroberfläche.
+
+### Einmalige Synchronisierung für CI und Skripte
+
+Verwenden Sie `--once`, um einen einzelnen Build + Sync auszuführen und zu beenden — gleiche Pipeline, kein Watcher:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Befehl                   | Verhalten                                                                          | Wann verwenden                                                |
+| ------------------------ | ---------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `yarn twenty dev`        | Überwacht und synchronisiert bei jeder Änderung erneut. Läuft, bis Sie es stoppen. | Interaktive lokale Entwicklung.                               |
+| `yarn twenty dev --once` | Einmaliger Build + Sync, beendet sich mit `0` bei Erfolg, mit `1` bei Fehler.      | CI, Pre-Commit-Hooks, KI-Agenten, skriptgesteuerte Workflows. |
+
+Beide Modi benötigen einen Server im Entwicklungsmodus und eine authentifizierte Remote-Verbindung.
+
+<Warning>
+Der Dev-Modus ist nur auf Twenty-Instanzen verfügbar, die im Entwicklungsmodus laufen (`NODE_ENV=development`). Produktionsinstanzen lehnen Dev-Sync-Anfragen ab — verwenden Sie `yarn twenty deploy`, um auf Produktionsserver bereitzustellen. Siehe [Apps veröffentlichen](/l/de/developers/extend/apps/operations/publishing).
+</Warning>
+
+---
+
+## Mit einem Beispiel beginnen
+
+Verwenden Sie `--example`, um mit einem vollständigeren Projekt zu starten (benutzerdefinierte Objekte, Felder, Logikfunktionen, Frontend-Komponenten):
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app --example postcard
+```
+
+Die Beispiele befinden sich unter [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). Sie können auch einzelne Entitäten in einem bestehenden Projekt mit `yarn twenty add` erzeugen — siehe [Scaffolding](/l/de/developers/extend/apps/getting-started/scaffolding).
+
+---
+
+## Was Sie erstellen können
+
+Apps bestehen aus **Entitäten** — jede ist als TypeScript-Datei mit einem einzigen `export default` definiert:
+
+| Entität                    | Was es tut                                                                                        |
+| -------------------------- | ------------------------------------------------------------------------------------------------- |
+| **Objekte & Felder**       | Benutzerdefinierte Datenmodelle (Postkarte, Rechnung usw.) mit typisierten Feldern                |
+| **Logikfunktionen**        | Serverseitiges TypeScript, ausgelöst durch HTTP-Routen, Cron-Zeitpläne oder Datenbankereignisse   |
+| **Frontend-Komponenten**   | React-Komponenten, die in der UI von Twenty gerendert werden (Seitenleiste, Widgets, Befehlsmenü) |
+| **Fähigkeiten & Agenten**  | KI-Funktionen — wiederverwendbare Anweisungen und autonome Assistenten                            |
+| **Ansichten & Navigation** | Vorkonfigurierte Listenansichten und Seitenleisteneinträge                                        |
+| **Seitenlayouts**          | Benutzerdefinierte Datensatz-Detailseiten mit Tabs und Widgets                                    |
+
+Vollständige Referenz: [Konzepte](/l/de/developers/extend/apps/getting-started/concepts).
+
+## Nächste Schritte
+
+<CardGroup cols={2}>
+  <Card title="Konfiguration" icon="screwdriver-wrench" href="/l/de/developers/extend/apps/config/overview">
+    Anwendungsidentität, Standardrolle, Install-Hooks, öffentliche Assets.
+  </Card>
+  <Card title="Daten" icon="database" href="/l/de/developers/extend/apps/data/overview">
+    Objekte, Felder und bidirektionale Relationen.
+  </Card>
+  <Card title="Logik" icon="bolt" href="/l/de/developers/extend/apps/logic/overview">
+    Logikfunktionen, Skills, Agents und OAuth-Verbindungen.
+  </Card>
+  <Card title="Layout" icon="table-columns" href="/l/de/developers/extend/apps/layout/overview">
+    Ansichten, Navigation, Seiten-Layouts, Front-Komponenten.
+  </Card>
+  <Card title="Operationen" icon="rocket" href="/l/de/developers/extend/apps/operations/overview">
+    CLI, Tests, Remotes, CI und die Veröffentlichung Ihrer App.
+  </Card>
+</CardGroup>

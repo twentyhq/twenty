@@ -1,7 +1,7 @@
 'use client';
 
 import { LinkButton } from '@/design-system/components';
-import { ArrowRightUpIcon, INFORMATIVE_ICONS, SOCIAL_ICONS } from '@/icons';
+import { ArrowRightUpIcon, SOCIAL_ICONS } from '@/icons';
 import type {
   MenuNavItemType,
   MenuScheme,
@@ -10,12 +10,13 @@ import type {
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { Separator } from '@base-ui/react/separator';
-import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { LocalizedLink, useUnlocalizedPathname } from '@/lib/i18n';
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
-import React, { useState } from 'react';
+import { useLingui } from '@lingui/react';
+import React from 'react';
+
+import { DrawerNavGroup } from './DrawerNavGroup';
 
 const StyledDrawerContent = styled.div`
   display: grid;
@@ -29,9 +30,9 @@ const StyledDrawerContent = styled.div`
   left: 0;
   overflow-y: auto;
   padding-bottom: ${theme.spacing(4)};
-  padding-left: ${theme.spacing(4)};
-  padding-right: ${theme.spacing(4)};
-  padding-top: ${theme.spacing(35)};
+  padding-left: ${theme.spacing(7)};
+  padding-right: ${theme.spacing(7)};
+  padding-top: ${theme.spacing(22)};
   position: fixed;
   top: 0;
   width: 100vw;
@@ -97,121 +98,6 @@ const navItemStyles = `
 
 const NavItem = styled(LocalizedLink)`
   ${navItemStyles}
-`;
-
-const NavGroupButton = styled.button`
-  ${navItemStyles}
-  align-items: center;
-  background: none;
-  border: none;
-  column-gap: ${theme.spacing(2)};
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  padding: 0;
-  text-align: left;
-`;
-
-const NavGroupChevron = styled.span`
-  align-items: center;
-  display: inline-flex;
-  flex-shrink: 0;
-  transform: rotate(0deg);
-  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
-
-  ${NavGroupButton}[aria-expanded='true'] & {
-    transform: rotate(180deg);
-  }
-
-  svg {
-    display: block;
-  }
-`;
-
-const NavGroupChildren = styled.div`
-  display: grid;
-  margin-top: ${theme.spacing(7)};
-  padding-left: ${theme.spacing(4)};
-  row-gap: ${theme.spacing(5)};
-`;
-
-const NavChildItemStyles = `
-  align-items: center;
-  column-gap: ${theme.spacing(3)};
-  display: grid;
-  font-family: ${theme.font.family.mono};
-  font-size: ${theme.font.size(6)};
-  font-weight: ${theme.font.weight.light};
-  grid-template-columns: auto 1fr;
-  letter-spacing: 0;
-  line-height: 28px;
-  text-decoration: none;
-  text-transform: uppercase;
-  width: 100%;
-
-  &[data-scheme='primary'] {
-    color: ${theme.colors.primary.text[100]};
-  }
-
-  &[data-scheme='secondary'] {
-    color: ${theme.colors.secondary.text[100]};
-  }
-
-  &[data-active] {
-    color: ${theme.colors.highlight[100]};
-  }
-
-  &:focus-visible {
-    outline: 1px solid ${theme.colors.highlight[100]};
-    outline-offset: 1px;
-  }
-`;
-
-const NavChildItem = styled(LocalizedLink)`
-  ${NavChildItemStyles}
-`;
-
-const ExternalNavChildItem = styled.a`
-  ${NavChildItemStyles}
-`;
-
-const NavChildIcon = styled.span`
-  align-items: center;
-  display: inline-flex;
-  flex-shrink: 0;
-  height: 24px;
-  justify-content: center;
-  width: 24px;
-
-  &[data-scheme='primary'] {
-    color: ${theme.colors.primary.text[60]};
-  }
-
-  &[data-scheme='secondary'] {
-    color: ${theme.colors.secondary.text[60]};
-  }
-
-  ${NavChildItem}[data-active] &,
-  ${ExternalNavChildItem}[data-active] & {
-    color: ${theme.colors.highlight[100]};
-  }
-`;
-
-const NavChildLabel = styled.span`
-  &::before {
-    background: ${theme.colors.highlight[100]};
-    content: '';
-    display: none;
-    height: 2px;
-    margin-right: ${theme.spacing(2)};
-    vertical-align: middle;
-    width: 10px;
-  }
-
-  ${NavChildItem}[data-active] &::before,
-  ${ExternalNavChildItem}[data-active] &::before {
-    display: inline-block;
-  }
 `;
 
 const HorizontalSeparator = styled(Separator)`
@@ -280,91 +166,6 @@ const Divider = styled(Separator)`
   }
 `;
 
-type NavGroupProps = {
-  item: MenuNavItemType;
-  pathname: string;
-  renderText: (descriptor: MessageDescriptor) => string;
-  scheme: MenuScheme;
-};
-
-function NavGroup({ item, pathname, renderText, scheme }: NavGroupProps) {
-  const hasActiveChild =
-    item.children?.some(
-      (child) => !child.external && pathname.startsWith(child.href),
-    ) ?? false;
-  const [isOpen, setIsOpen] = useState(hasActiveChild);
-
-  return (
-    <div>
-      <NavGroupButton
-        type="button"
-        aria-expanded={isOpen}
-        data-scheme={scheme}
-        data-active={hasActiveChild || undefined}
-        onClick={() => setIsOpen((prev) => !prev)}
-      >
-        {renderText(item.label)}
-        <NavGroupChevron aria-hidden>
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 10 10"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M2 3.5L5 6.5L8 3.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </NavGroupChevron>
-      </NavGroupButton>
-      {isOpen && (
-        <NavGroupChildren>
-          {item.children?.map((child) => {
-            const IconComponent = child.icon
-              ? INFORMATIVE_ICONS[child.icon]
-              : null;
-
-            return (
-              <Drawer.Close
-                key={child.href}
-                nativeButton={false}
-                render={
-                  child.external ? (
-                    <ExternalNavChildItem
-                      data-scheme={scheme}
-                      href={child.href}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    />
-                  ) : (
-                    <NavChildItem
-                      data-scheme={scheme}
-                      data-active={pathname.startsWith(child.href) || undefined}
-                      href={child.href}
-                    />
-                  )
-                }
-              >
-                <NavChildIcon data-scheme={scheme} aria-hidden>
-                  {IconComponent && (
-                    <IconComponent size={20} color="currentColor" />
-                  )}
-                </NavChildIcon>
-                <NavChildLabel>{renderText(child.label)}</NavChildLabel>
-              </Drawer.Close>
-            );
-          })}
-        </NavGroupChildren>
-      )}
-    </div>
-  );
-}
-
 type MenuDrawerProps = {
   navItems: MenuNavItemType[];
   scheme: MenuScheme;
@@ -372,7 +173,7 @@ type MenuDrawerProps = {
 };
 
 export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
-  const renderText = useRenderMessage();
+  const { i18n } = useLingui();
   const pathname = useUnlocalizedPathname();
   const buttonColor = scheme === 'primary' ? 'secondary' : 'primary';
 
@@ -396,10 +197,9 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
             {topLevelItems.map((item, index) => (
               <React.Fragment key={`${index}-${item.href ?? 'group'}`}>
                 {item.children ? (
-                  <NavGroup
+                  <DrawerNavGroup
                     item={item}
                     pathname={pathname}
-                    renderText={renderText}
                     scheme={scheme}
                   />
                 ) : item.href ? (
@@ -415,7 +215,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
                       />
                     }
                   >
-                    {renderText(item.label)}
+                    {i18n._(item.label)}
                   </Drawer.Close>
                 ) : null}
                 {index < topLevelItems.length - 1 && (
@@ -436,7 +236,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
             <LinkButton
               color={buttonColor}
               href="https://app.twenty.com/welcome"
-              label={renderText(msg`Log in`)}
+              label={i18n._(msg`Log in`)}
               variant="outlined"
             />
           </CtaContainer>

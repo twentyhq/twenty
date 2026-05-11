@@ -1,0 +1,40 @@
+---
+title: Projektstruktur
+description: Was in einer generierten Twenty-App enthalten ist – Dateien, Ordner und was jede einzelne davon macht.
+icon: folder-tree
+---
+
+Eine neue App, die mit `npx create-twenty-app` generiert wurde, sieht so aus:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  src/
+    application-config.ts                   # Required — your app's entry point
+    default-role.ts                         # Permissions for logic functions
+    constants/
+      universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    __tests__/
+      setup-test.ts
+      app-install.integration-test.ts
+  .github/workflows/ci.yml                  # GitHub Actions
+  public/                                   # Static assets
+  vitest.config.ts                          # Test runner config
+  tsconfig.json, tsconfig.spec.json
+  .nvmrc, .yarnrc.yml, .oxlintrc.json
+  README.md, LLMS.md
+```
+
+## Wichtige Dateien
+
+| Datei / Ordner                           | Zweck                                                                           |
+| ---------------------------------------- | ------------------------------------------------------------------------------- |
+| `src/application-config.ts`              | **Erforderlich.** Die Hauptkonfigurationsdatei für Ihre App.                    |
+| `src/default-role.ts`                    | Standardrolle, die steuert, worauf Ihre Logikfunktionen zugreifen können.       |
+| `src/constants/universal-identifiers.ts` | Automatisch erzeugte UUIDs und Metadaten (Anzeigename, Beschreibung).           |
+| `src/__tests__/`                         | Integrationstests (Setup + Beispieltest).                                       |
+| `public/`                                | Statische Assets (Bilder, Schriftarten), die mit Ihrer App ausgeliefert werden. |
+
+<Note>
+**Die Dateiorganisation liegt bei Ihnen.** Die oben genannten Ordner sind Konventionen – das SDK erkennt Entitäten über eine AST-Analyse von `export default defineEntity(...)`-Aufrufen, unabhängig davon, wo sich die Datei befindet.
+</Note>

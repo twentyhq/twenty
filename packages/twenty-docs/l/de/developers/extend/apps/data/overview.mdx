@@ -1,0 +1,52 @@
+---
+title: Übersicht
+description: Gestalten Sie die Daten, die Ihre App zu einem Workspace hinzufügt – Objekte, Felder und Beziehungen.
+icon: database
+---
+
+Die **Datenebene** einer Twenty-App umfasst die Daten, die Ihre App zu einem Workspace *hinzufügt* – die neuen Datensatztypen, die sie deklariert, die Spalten, die sie zu bestehenden Objekten hinzufügt, und wie diese Datensätze miteinander verknüpft sind.
+
+```text
+┌──────────────────────────────────────────────────┐
+│ Object — a record type, e.g. PostCard            │
+│    ├─ Field     (name, type, label)              │
+│    ├─ Field                                      │
+│    └─ Relation  (link to another object)         │
+└──────────────────────────────────────────────────┘
+            │
+            ├── lives in your app, OR
+            │
+            ▼
+┌──────────────────────────────────────────────────┐
+│ Standard / other apps' objects                   │
+│    └─ Field added by your app via defineField    │
+└──────────────────────────────────────────────────┘
+```
+
+## In diesem Abschnitt
+
+<CardGroup cols={2}>
+  <Card title="Objekte" icon="table" href="/l/de/developers/extend/apps/data/objects">
+    `defineObject` – deklarieren Sie neue Datensatztypen mit eigenen Feldern.
+  </Card>
+  <Card title="Objekte erweitern" icon="wand-magic-sparkles" href="/l/de/developers/extend/apps/data/extending-objects">
+    `defineField` – fügen Sie Standardobjekten oder Objekten anderer Apps Felder hinzu.
+  </Card>
+  <Card title="Beziehungen" icon="diagram-project" href="/l/de/developers/extend/apps/data/relations">
+    Bidirektionale `MANY_TO_ONE`- / `ONE_TO_MANY`-Verbindungen zwischen Objekten.
+  </Card>
+</CardGroup>
+
+## Entitäten im Überblick
+
+| Entität       | Zweck                                                                                                                                                | Definiert mit                            |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **Objekt**    | Ein neuer benutzerdefinierter Datensatztyp (z. B. PostCard, Invoice) mit eigenen Feldern                                                             | `defineObject()`                         |
+| **Feld**      | Eine Spalte in einem Objekt. Eigenständige Felder können Objekte erweitern, die Sie nicht erstellt haben (z. B. `loyaltyTier` zu Company hinzufügen) | `defineField()`                          |
+| **Beziehung** | Eine bidirektionale Verknüpfung zwischen zwei Objekten – beide Seiten werden als Felder deklariert                                                   | `defineField()` mit `FieldType.RELATION` |
+
+Das SDK erkennt diese zur Build-Zeit über eine AST-Analyse, sodass die Dateiorganisation Ihnen überlassen ist – die Konvention ist `src/objects/` und `src/fields/`. Stabile `universalIdentifier`-UUIDs verknüpfen alles über Deploys hinweg.
+
+<Note>
+Suchen Sie nach **Application Config** oder **Roles & Permissions**? Diese beschreiben die App selbst und nicht die Daten, die sie hinzufügt – sie befinden sich unter [Config](/l/de/developers/extend/apps/config/overview). Suchen Sie nach **Connections** (Linear, GitHub, Slack OAuth)? Diese existieren, um *von* Logikfunktionen aufgerufen zu werden, und befinden sich unter [Logic](/l/de/developers/extend/apps/logic/connections).
+</Note>

@@ -20,7 +20,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ApolloCache } from '@apollo/client';
 import { isArray } from '@sniptt/guards';
 import {
-  computeMorphRelationFieldName,
+  computeMorphRelationGqlFieldName,
   CustomError,
   isDefined,
 } from 'twenty-shared/utils';
@@ -186,7 +186,7 @@ const triggerUpdateRelationOptimisticEffect = ({
   const gqlFieldNameOnTargetRecord =
     targetFieldMetadataFullObject.type === FieldMetadataType.RELATION
       ? targetFieldMetadataFullObject.name
-      : computeMorphRelationFieldName({
+      : computeMorphRelationGqlFieldName({
           fieldName: targetFieldMetadataFullObject.name,
           relationType: targetFieldMetadataFullObject.settings?.relationType,
           targetObjectMetadataNameSingular:
@@ -276,7 +276,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
   }
 
   morphRelations.forEach((morphRelation) => {
-    const gqlFieldMorphRelation = computeMorphRelationFieldName({
+    const gqlFieldMorphRelation = computeMorphRelationGqlFieldName({
       fieldName: fieldMetadataItemOnSourceRecord.name,
       relationType: morphRelation.type,
       targetObjectMetadataNameSingular:

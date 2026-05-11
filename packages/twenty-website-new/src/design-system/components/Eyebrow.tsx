@@ -1,11 +1,9 @@
-import { Heading, type HeadingType } from '@/design-system/components/Heading';
+import { Heading } from '@/design-system/components/Heading';
 import { RectangleFillIcon } from '@/icons';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
-
-export type EyebrowType<TText = ReactNode> = { heading: HeadingType<TText> };
 
 const EyebrowRow = styled.div`
   align-items: center;
@@ -38,31 +36,22 @@ const eyebrowLabelClassName = css`
   }
 `;
 
-type EyebrowTextRenderer<TText> = [TText] extends [ReactNode]
-  ? { renderText?: (text: TText) => ReactNode }
-  : { renderText: (text: TText) => ReactNode };
-
-type EyebrowProps<TText = ReactNode> = {
-  heading: HeadingType<TText>;
-  colorScheme: 'primary' | 'secondary';
+export type EyebrowProps = {
+  children: ReactNode;
+  colorScheme?: 'primary' | 'secondary';
   markerHeight?: number;
   markerWidth?: number;
-} & EyebrowTextRenderer<TText>;
+};
 
-export function Eyebrow<TText = ReactNode>({
-  heading,
-  colorScheme,
+export function Eyebrow({
+  children,
+  colorScheme = 'primary',
   markerHeight,
   markerWidth,
-  renderText,
-}: EyebrowProps<TText>) {
+}: EyebrowProps) {
   const colorClassName =
     colorScheme === 'primary' ? eyebrowColorPrimary : eyebrowColorSecondary;
   const headingClassName = [eyebrowLabelClassName, colorClassName].join(' ');
-  const headingSegment = {
-    fontFamily: heading.fontFamily,
-    text: heading.text,
-  };
 
   return (
     <EyebrowRow>
@@ -74,24 +63,9 @@ export function Eyebrow<TText = ReactNode>({
           width={markerWidth}
         />
       </IconWrapper>
-      {renderText === undefined ? (
-        <Heading
-          as="h3"
-          className={headingClassName}
-          segments={headingSegment as HeadingType}
-          size="xs"
-          weight="medium"
-        />
-      ) : (
-        <Heading<TText>
-          as="h3"
-          className={headingClassName}
-          renderText={renderText}
-          segments={headingSegment}
-          size="xs"
-          weight="medium"
-        />
-      )}
+      <Heading as="h3" className={headingClassName} size="xs" weight="medium">
+        {children}
+      </Heading>
     </EyebrowRow>
   );
 }

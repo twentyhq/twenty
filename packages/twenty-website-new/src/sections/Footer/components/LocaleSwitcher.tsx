@@ -3,17 +3,24 @@
 import { styled } from '@linaria/react';
 import { IconCheck, IconChevronDown, IconWorld } from '@tabler/icons-react';
 import Link from 'next/link';
-import { type ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { type AppLocale } from 'twenty-shared/translations';
 
-import { WEBSITE_LOCALE_LIST } from '@/lib/i18n/app-locale-set';
-import { localizeHref } from '@/lib/i18n/localize-href';
+import { WEBSITE_LOCALE_LIST } from '@/lib/i18n/utils/app-locale-set';
+import { localizeHref } from '@/lib/i18n/utils/localize-href';
 import {
   getEnglishLocaleName,
   getNativeLocaleName,
-} from '@/lib/i18n/locale-display-names';
-import { useLocale } from '@/lib/i18n/use-locale';
-import { useUnlocalizedPathname } from '@/lib/i18n/use-unlocalized-pathname';
+} from '@/lib/i18n/utils/locale-display-names';
+import { useLocale } from '@/lib/i18n/hooks/use-locale';
+import { useUnlocalizedPathname } from '@/lib/i18n/hooks/use-unlocalized-pathname';
+import { LocaleSwitcherDismissEffect } from '@/sections/Footer/effect-components/LocaleSwitcherDismissEffect';
 import { theme } from '@/theme';
 
 const SEARCH_THRESHOLD = 6;
@@ -178,34 +185,9 @@ export function LocaleSwitcher() {
     return ALL_LOCALES.filter((entry) => matchesQuery(entry, trimmed));
   }, [query]);
 
-  useEffect(() => {
-    if (!open) return;
-
-    const handlePointerDown = (event: MouseEvent) => {
-      if (wrapperRef.current?.contains(event.target as Node)) return;
-      setOpen(false);
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setOpen(false);
-        triggerRef.current?.focus();
-      }
-    };
-
-    document.addEventListener('mousedown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [open]);
-
-  useEffect(() => {
-    if (open && ALL_LOCALES.length > SEARCH_THRESHOLD) {
-      searchRef.current?.focus();
-    }
-  }, [open]);
+  const handleDismiss = useCallback(() => {
+    setOpen(false);
+  }, []);
 
   if (ALL_LOCALES.length < 2) return null;
 
@@ -230,6 +212,14 @@ export function LocaleSwitcher() {
 
   return (
     <Wrapper ref={wrapperRef}>
+      <LocaleSwitcherDismissEffect
+        open={open}
+        onDismiss={handleDismiss}
+        wrapperRef={wrapperRef}
+        triggerRef={triggerRef}
+        searchRef={searchRef}
+        showSearch={showSearch}
+      />
       <TriggerButton
         ref={triggerRef}
         type="button"

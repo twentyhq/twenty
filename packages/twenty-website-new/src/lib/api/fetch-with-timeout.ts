@@ -1,4 +1,4 @@
-export type FetchWithTimeoutResult =
+type FetchWithTimeoutResult =
   | { ok: true; response: Response }
   | { ok: false; error: 'timeout' | 'network' };
 

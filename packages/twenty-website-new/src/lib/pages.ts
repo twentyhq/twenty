@@ -1,4 +1,5 @@
 export const Pages = {
+  Articles: 'articles',
   CaseStudies: 'caseStudies',
   ReleaseNotes: 'releaseNotes',
   Home: 'home',

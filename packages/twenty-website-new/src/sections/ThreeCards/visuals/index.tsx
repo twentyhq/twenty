@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import type { ThreeCardsIllustrationId } from '@/sections/ThreeCards/types/ThreeCardsIllustrationCard';
+import type { ThreeCardsIllustrationId } from '@/sections/ThreeCards/types/three-cards-illustration-id';
 import { Eye } from './Eye';
 import { PartnerThreeCard } from './PartnerThreeCard';
 import { SingleScreen } from './SingleScreen';

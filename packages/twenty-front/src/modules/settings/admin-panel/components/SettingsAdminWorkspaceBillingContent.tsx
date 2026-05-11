@@ -38,6 +38,7 @@ import {
 const STRIPE_DASHBOARD_BASE_URL = 'https://dashboard.stripe.com';
 const BASE_PRODUCT_KEY = 'BASE_PRODUCT';
 const METERED_PRODUCT_KEY = 'WORKFLOW_NODE_EXECUTION';
+const RESOURCE_CREDIT_KEY = 'RESOURCE_CREDIT';
 const EM_DASH = '\u2014';
 
 type SettingsAdminWorkspaceBillingContentProps = {
@@ -319,7 +320,8 @@ export const SettingsAdminWorkspaceBillingContent = ({
           Icon:
             item.productKey === BASE_PRODUCT_KEY
               ? IconUsers
-              : item.productKey === METERED_PRODUCT_KEY
+              : item.productKey === METERED_PRODUCT_KEY ||
+                  item.productKey === RESOURCE_CREDIT_KEY
                 ? IconCoins
                 : IconBox,
           label: item.productName || t`Unnamed product`,

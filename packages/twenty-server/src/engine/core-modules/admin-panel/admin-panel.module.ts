@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AdminPanelApplicationRegistrationResolver } from 'src/engine/core-modules/admin-panel/admin-panel-application-registration.resolver';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelResolver } from 'src/engine/core-modules/admin-panel/admin-panel.resolver';
@@ -78,6 +79,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   ],
   providers: [
     AdminPanelResolver,
+    AdminPanelApplicationRegistrationResolver,
     AdminPanelUserLookupService,
     AdminPanelStatisticsService,
     AdminPanelBillingService,

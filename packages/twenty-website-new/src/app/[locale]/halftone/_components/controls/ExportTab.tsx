@@ -1,12 +1,12 @@
 'use client';
 
-import type { ReactExportSettings } from '@/app/[locale]/halftone/_lib/exporters';
-import { resolveExportArtifactNames } from '@/app/[locale]/halftone/_lib/exportNames';
-import { formatAnimationName } from '@/app/[locale]/halftone/_lib/formatters';
+import type { ReactExportSettings } from '@/lib/halftone/utils/exporters';
+import { resolveExportArtifactNames } from '@/lib/halftone/utils/export-names';
+import { formatAnimationName } from '@/lib/halftone/utils/formatters';
 import type {
   HalftoneGeometrySpec,
   HalftoneStudioSettings,
-} from '@/lib/halftone/state';
+} from '@/lib/halftone/utils/state';
 import { useState } from 'react';
 import {
   ExportButton,

@@ -7,6 +7,7 @@ import type Stripe from 'stripe';
 
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
 
@@ -33,6 +34,12 @@ describe('BillingCreditRolloverService', () => {
           provide: StripeBillingMeterEventService,
           useValue: {
             sumMeterEvents: jest.fn(),
+          },
+        },
+        {
+          provide: BillingUsageService,
+          useValue: {
+            getCurrentPeriodCreditsUsed: jest.fn().mockResolvedValue(0),
           },
         },
         {

@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import type { CaseStudyCatalogEntry } from '@/lib/customers/types';
 import { theme } from '@/theme';
 
-const PLACEHOLDER_HERO = '/images/shared/people/avatars/katherine-adams.jpg';
+const PLACEHOLDER_HERO = '/images/shared/people/avatars/katherine-adams.webp';
 
 export const CASE_STUDY_HALFTONE_PALETTE: readonly {
   dashColor: string;
@@ -53,12 +53,9 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     },
     hero: {
       readingTime: '9 min',
-      title: [
-        { text: msg`A real estate agency on WhatsApp`, fontFamily: 'serif' },
-        { text: msg`built a CRM around it`, fontFamily: 'sans' },
-      ],
+      title: msg`A real estate agency on WhatsApp built a CRM around it`,
       author: 'Mike Babiy & Azmat Parveen',
-      authorAvatarSrc: '/images/partner/testimonials/mike-babiy.png',
+      authorAvatarSrc: '/images/partner/testimonials/mike-babiy.webp',
       clientIcon: 'nine-dots',
       heroImageSrc: PLACEHOLDER_HERO,
     },
@@ -79,10 +76,7 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     ],
     hero: {
       readingTime: '7 min',
-      title: [
-        { text: msg`From Salesforce to`, fontFamily: 'serif' },
-        { text: msg`self-hosted Twenty`, fontFamily: 'sans' },
-      ],
+      title: msg`From Salesforce to self-hosted Twenty`,
       author: 'Benjamin Reynolds',
       authorAvatarSrc: '/images/partner/testimonials/benjamin-reynolds.webp',
       clientIcon: 'alternative-partners',
@@ -105,12 +99,9 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     ],
     hero: {
       readingTime: '8 min',
-      title: [
-        { text: msg`A CRM that`, fontFamily: 'serif' },
-        { text: msg`grows with you`, fontFamily: 'sans' },
-      ],
+      title: msg`A CRM that grows with you`,
       author: 'Olivier Reinaud',
-      authorAvatarSrc: '/images/partner/testimonials/olivier-reinaud.jpg',
+      authorAvatarSrc: '/images/partner/testimonials/olivier-reinaud.webp',
       clientIcon: 'netzero',
       heroImageSrc: PLACEHOLDER_HERO,
     },
@@ -128,12 +119,9 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     kpis: [{ value: msg`90%+`, label: msg`Lower CRM cost` }],
     hero: {
       readingTime: '7 min',
-      title: [
-        { text: msg`A CRM they`, fontFamily: 'serif' },
-        { text: msg`actually own`, fontFamily: 'sans' },
-      ],
+      title: msg`A CRM they actually own`,
       author: 'Joseph Chiang',
-      authorAvatarSrc: '/images/partner/testimonials/joseph-chiang.jpg',
+      authorAvatarSrc: '/images/partner/testimonials/joseph-chiang.webp',
       clientIcon: 'act-education',
       heroImageSrc: PLACEHOLDER_HERO,
     },
@@ -151,10 +139,7 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     kpis: [{ value: msg`Zero`, label: msg`Manual work at core` }],
     hero: {
       readingTime: '8 min',
-      title: [
-        { text: msg`When your CRM`, fontFamily: 'serif' },
-        { text: msg`is the product`, fontFamily: 'sans' },
-      ],
+      title: msg`When your CRM is the product`,
       author: 'Amrendra Pratap Singh',
       authorAvatarSrc: '/images/partner/testimonials/amrendra-singh.webp',
       clientIcon: 'w3villa',
@@ -183,10 +168,7 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     },
     hero: {
       readingTime: '8 min',
-      title: [
-        { text: msg`Twenty as the API backbone`, fontFamily: 'serif' },
-        { text: msg`of a go-to-market stack`, fontFamily: 'sans' },
-      ],
+      title: msg`Twenty as the API backbone of a go-to-market stack`,
       author: 'Justin Beadle',
       clientIcon: 'elevate-consulting',
       heroImageSrc: PLACEHOLDER_HERO,

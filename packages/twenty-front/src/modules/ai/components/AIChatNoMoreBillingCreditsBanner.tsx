@@ -2,17 +2,20 @@ import { AiChatBanner } from '@/ai/components/AiChatBanner';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
+import { useGetNextResourceCreditPrice } from '@/settings/billing/hooks/useGetNextResourceCreditPrice';
 import { useGetNextMeteredBillingPrice } from '@/settings/billing/hooks/useGetNextMeteredBillingPrice';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  FeatureFlagKey,
   PermissionFlagType,
   SetMeteredSubscriptionPriceDocument,
   SubscriptionInterval,
@@ -29,7 +32,14 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   const { openModal } = useModal();
   const { endTrialPeriod, isLoading: isEndTrialLoading } =
     useEndSubscriptionTrialPeriod();
+
+  const isV2 = useIsFeatureEnabled(FeatureFlagKey.IS_BILLING_V2_ENABLED);
+
   const nextMeteredBillingPrice = useGetNextMeteredBillingPrice();
+  const nextResourceCreditPrice = useGetNextResourceCreditPrice();
+
+  const nextPrice = isV2 ? nextResourceCreditPrice : nextMeteredBillingPrice;
+
   const { formatNumber } = useNumberFormat();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
@@ -50,46 +60,65 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
-  const nextTierCredits = isDefined(nextMeteredBillingPrice)
-    ? formatNumber(nextMeteredBillingPrice.tiers[0].upTo, {
-        abbreviate: true,
-        decimals: 2,
-      })
+  const nextTierCredits = isDefined(nextPrice)
+    ? isV2
+      ? formatNumber(
+          (nextPrice as typeof nextResourceCreditPrice)?.creditAmount ?? 0,
+          {
+            abbreviate: true,
+            decimals: 2,
+          },
+        )
+      : formatNumber(
+          (nextPrice as typeof nextMeteredBillingPrice)?.tiers?.[0]?.upTo ?? 0,
+          {
+            abbreviate: true,
+            decimals: 2,
+          },
+        )
     : null;
 
-  const nextTierPrice = isDefined(nextMeteredBillingPrice)
-    ? formatNumber(nextMeteredBillingPrice.tiers[0].flatAmount / 100)
+  const nextTierPrice = isDefined(nextPrice)
+    ? isV2
+      ? formatNumber(
+          ((nextPrice as typeof nextResourceCreditPrice)?.unitAmount ?? 0) /
+            100,
+        )
+      : formatNumber(
+          ((nextPrice as typeof nextMeteredBillingPrice)?.tiers?.[0]
+            ?.flatAmount ?? 0) / 100,
+        )
     : null;
 
-  const nextTierInterval = isDefined(nextMeteredBillingPrice)
-    ? nextMeteredBillingPrice.recurringInterval === SubscriptionInterval.Month
+  const nextTierInterval = isDefined(nextPrice)
+    ? nextPrice.recurringInterval === SubscriptionInterval.Month
       ? t`month`
       : t`year`
     : null;
 
   const message = isTrialing
     ? t`You've hit your usage limit. Subscribe for more usage.`
-    : isDefined(nextMeteredBillingPrice)
+    : isDefined(nextPrice)
       ? t`You've hit your usage limit. \nUpgrade to ${nextTierCredits} credits for $${nextTierPrice}/${nextTierInterval}.`
       : t`You've hit your usage limit. \nReach to our support team to upgrade.`;
 
   const buttonTitle = isTrialing
     ? t`Subscribe Now`
-    : isDefined(nextMeteredBillingPrice)
+    : isDefined(nextPrice)
       ? t`Upgrade`
       : undefined;
 
   const handleButtonClick = isTrialing
     ? () => openModal(AI_CHAT_END_TRIAL_PERIOD_MODAL_ID)
-    : isDefined(nextMeteredBillingPrice)
+    : isDefined(nextPrice)
       ? () => openModal(AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID)
       : undefined;
 
   const handleUpgradeConfirm = async () => {
-    if (!isDefined(nextMeteredBillingPrice)) return;
+    if (!isDefined(nextPrice)) return;
     try {
       const { data } = await setMeteredSubscriptionPrice({
-        variables: { priceId: nextMeteredBillingPrice.stripePriceId },
+        variables: { priceId: nextPrice.stripePriceId },
       });
       if (
         isDefined(

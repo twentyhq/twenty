@@ -1,0 +1,93 @@
+---
+title: Roller ve İzinler
+description: Uygulamanızın mantık fonksiyonlarının ve ön bileşenlerinin hangi nesne ve alanları okuyup yazabileceğini belirtin.
+icon: shield-halved
+---
+
+Bir **rol**, bir izin kümesidir: bir uygulamanın hangi nesneleri okuyup yazabileceğini, hangi alanları görebileceğini ve hangi platform düzeyindeki yetenekleri kullanabileceğini tanımlar. Her uygulamanın mantık fonksiyonları ve ön bileşenleri, `defineApplicationRole()` ile işaretlenmiş rolün izinlerini devralır (aşağıda [Varsayılan fonksiyon rolü](#the-default-function-role) bölümüne bakın).
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  PermissionFlag,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+## Varsayılan fonksiyon rolü
+
+Yeni bir uygulama iskeleti oluşturduğunuzda, CLI `defineApplicationRole()` ile bildirilen varsayılan bir rol dosyası oluşturur:
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlags: [],
+});
+```
+
+`defineApplicationRole()`, yükleme sırasında uygulamanızın varsayılanı olarak kullanılan **rolü** işaretleyen, `defineRole()` etrafında ince bir sarmalayıcıdır. Doğrulama, `defineRole` ile aynıdır, ancak derleme hattı `universalIdentifier` değerini uygulama manifestindeki `defaultRoleUniversalIdentifier` alanına otomatik olarak bağlar — bu nedenle onu [`defineApplication`](/l/tr/developers/extend/apps/config/application) içinden kendiniz referans göstermeniz gerekmez.
+
+Notlar:
+
+* Uygulama başına tam olarak **bir** `defineApplicationRole(...)`a izin verilir — birden fazla bulursa manifest derlemesi başarısız olur.
+* Uygulamanızın birlikte sunduğu **ek** roller için `defineApplicationRole()` değil, `defineRole()` kullanın.
+* `defineApplication()` üzerinde `defaultRoleUniversalIdentifier` değerini açıkça ayarlamak geriye dönük uyumluluk için hâlâ desteklenmektedir, ancak `defineApplicationRole()` lehine kullanımdan kaldırılmıştır.
+
+## En İyi Uygulamalar
+
+* Oluşturulmuş (scaffolded) rolden başlayın ve ardından giderek kısıtlayın — varsayılan rol geniş okuma erişimi verir; bu ise üretim ortamında nadiren isteyeceğiniz bir şeydir.
+* `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın gerçekten ihtiyaç duyduğu nesne ve alanlarla değiştirin.
+* `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Bunları asgari düzeyde tutun.
+* Çalışan bir örnek için bkz.: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

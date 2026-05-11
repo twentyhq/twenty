@@ -1,5 +1,5 @@
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { computeMorphRelationFieldName } from 'twenty-shared/utils';
+import { computeMorphRelationGqlFieldName } from 'twenty-shared/utils';
 export const computePossibleMorphGqlFieldForFieldName = ({
   fieldMetadata,
 }: {
@@ -9,7 +9,7 @@ export const computePossibleMorphGqlFieldForFieldName = ({
   >;
 }) =>
   fieldMetadata.morphRelations.map((morphRelation) => {
-    return computeMorphRelationFieldName({
+    return computeMorphRelationGqlFieldName({
       fieldName: fieldMetadata.fieldName,
       relationType: morphRelation.type,
       targetObjectMetadataNameSingular:

@@ -1,5 +1,5 @@
 import { WebGlMount } from '@/lib/visual-runtime';
-import { PartnerHeroHalftoneIllustration } from '@/sections/Hero/visuals/PartnerHeroHalftoneIllustration';
+import { PartnerHeroHalftoneIllustration } from '@/sections/Hero/visuals/components/PartnerHeroHalftoneIllustration';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 

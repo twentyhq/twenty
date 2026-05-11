@@ -2,6 +2,7 @@
 
 import { useEffect, type RefObject } from 'react';
 
+import { createAnimationFrameLoop } from '@/lib/animation';
 import { computeScrollProgress } from './compute-scroll-progress';
 
 type UseScrollProgressOptions = {
@@ -20,7 +21,7 @@ export function useScrollProgress(
       return;
     }
 
-    const handleScroll = () => {
+    const update = () => {
       const element = scrollContainerRef.current;
       if (!element) {
         return;
@@ -37,12 +38,22 @@ export function useScrollProgress(
       onProgress(progress);
     };
 
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll);
+    const scrollTask = createAnimationFrameLoop({
+      onFrame: () => {
+        update();
+        return false;
+      },
+    });
+
+    const schedule = scrollTask.start;
+
+    update();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      scrollTask.stop();
     };
   }, [enabled, onProgress, scrollContainerRef]);
 }

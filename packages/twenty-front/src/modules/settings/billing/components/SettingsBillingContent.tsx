@@ -4,9 +4,11 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
+import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,9 +17,9 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
   BillingPortalSessionDocument,
+  FeatureFlagKey,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
-
 export const SettingsBillingContent = () => {
   const { t } = useLingui();
 
@@ -31,8 +33,15 @@ export const SettingsBillingContent = () => {
 
   const subscriptionStatus = useSubscriptionStatus();
 
+  const isV2 = useIsFeatureEnabled(FeatureFlagKey.IS_BILLING_V2_ENABLED);
+
   const { isGetMeteredProductsUsageQueryLoaded } =
     useGetWorkflowNodeExecutionUsage();
+  const { isGetResourceCreditUsageQueryLoaded } = useGetResourceCreditUsage();
+
+  const isUsageQueryLoaded = isV2
+    ? isGetResourceCreditUsageQueryLoaded
+    : isGetMeteredProductsUsageQueryLoaded;
 
   const hasNotCanceledCurrentSubscription =
     isDefined(subscriptionStatus) &&
@@ -69,7 +78,7 @@ export const SettingsBillingContent = () => {
       {hasNotCanceledCurrentSubscription &&
         currentWorkspace &&
         currentWorkspace.currentBillingSubscription &&
-        isGetMeteredProductsUsageQueryLoaded && (
+        isUsageQueryLoaded && (
           <SettingsBillingCreditsSection
             currentBillingSubscription={
               currentWorkspace.currentBillingSubscription

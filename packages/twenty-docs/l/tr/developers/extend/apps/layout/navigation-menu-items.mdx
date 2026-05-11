@@ -1,0 +1,44 @@
+---
+title: Gezinme Menüsü Öğeleri
+description: Çalışma alanı kenar çubuğuna özel öğeler ekleyin — kaydedilmiş görünümlere veya harici URL’lere bağlantılar.
+icon: bars
+---
+
+Bir **gezinme menüsü öğesi**, sol kenar çubuğundaki bir öğedir. Özel kenar çubuğu bağlantıları sunmak için `defineNavigationMenuItem()` kullanın — genellikle sunduğunuz her [görünüm](/l/tr/developers/extend/apps/layout/views) için bir tane — veya harici URL’lere işaret etmek için kullanın.
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## Önemli noktalar
+
+* `type`, menü öğesinin neye bağlantı verdiğini belirler. Her tür, belirli bir tanımlayıcı alanıyla eşleşir:
+
+  | Tür                                  | Ne yapar                                         | Zorunlu alan                                                                           |
+  | ------------------------------------ | ------------------------------------------------ | -------------------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | Kaydedilmiş bir görünümü açar                    | `viewUniversalIdentifier`                                                              |
+  | `NavigationMenuItemType.LINK`        | Harici bir URL açar                              | `link`                                                                                 |
+  | `NavigationMenuItemType.FOLDER`      | İç içe geçmiş öğeleri bir etiket altında gruplar | `name` (ve alt öğeler klasöre `folderUniversalIdentifier` aracılığıyla referans verir) |
+  | `NavigationMenuItemType.OBJECT`      | Bir nesnenin varsayılan indeks sayfasını açar    | `targetObjectUniversalIdentifier`                                                      |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | Bağımsız bir sayfa düzeni açar                   | `pageLayoutUniversalIdentifier`                                                        |
+
+* `position`, kenar çubuğundaki sıralamayı kontrol eder.
+
+* `icon` ve `color` isteğe bağlıdır ve öğenin görünümünü özelleştirir.
+
+* `folderUniversalIdentifier`, herhangi bir öğede de mevcuttur ve onu bir `FOLDER` türü üst öğenin içine yerleştirmek için kullanılır.
+
+<Note>
+**Yaygın hata:** bir görünüm ve gezinme menüsü öğesiyle ilişkilendirilmemiş bir nesne oluşturmak, o nesneyi kullanıcılar için görünmez yapar. Teknik/içsel bir nesne olmadığı sürece, her özel nesnenin varsayılan bir görünümü *ve* ona işaret eden bir kenar çubuğu öğesi olmalıdır.
+</Note>

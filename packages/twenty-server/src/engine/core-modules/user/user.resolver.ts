@@ -557,7 +557,10 @@ export class UserResolver {
   ): Promise<OnboardingStatus | null> {
     if (!workspace) return null;
 
-    return this.onboardingService.getOnboardingStatus(user, workspace);
+    return this.onboardingService.getOnboardingStatus({
+      user,
+      workspaceId: workspace.id,
+    });
   }
 
   @ResolveField(() => WorkspaceEntity, {

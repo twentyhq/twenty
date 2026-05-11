@@ -76,3 +76,14 @@ export type FunctionExecutionResult = {
     stackTrace: string;
   };
 };
+
+export type ChokidarFsEvent =
+  | 'add'
+  | 'addDir'
+  | 'change'
+  | 'unlink'
+  | 'unlinkDir'
+  | 'ready'
+  | 'raw'
+  | 'error'
+  | 'all';

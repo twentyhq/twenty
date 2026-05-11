@@ -1,7 +1,7 @@
 import {
   createVisualRenderLoop,
   type VisualRenderLoopDocument,
-} from '../visual-render-loop';
+} from '../utils/visual-render-loop';
 
 function createAnimationFrameScheduler() {
   let nextHandle = 1;

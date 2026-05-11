@@ -1,0 +1,51 @@
+---
+title: Visão Geral
+description: Configure a própria aplicação — a sua identidade, permissões predefinidas e o que é executado no momento da instalação.
+icon: screwdriver-wrench
+---
+
+A **camada de configuração** de uma aplicação Twenty é o que descreve a aplicação *para a plataforma* — a sua identidade, as permissões que detém e o código que é executado durante a instalação ou atualização. Estas declarações não adicionam novos formatos de dados nem comportamento em tempo de execução; dizem à Twenty *quem é a aplicação* e *como configurá-la*.
+
+```text
+┌────────────────────────────────────────────────────────┐
+│ Application — identity, default role, variables,       │
+│               marketplace metadata                     │
+│                                                        │
+│   ┌──────────────────────────────────────────────────┐ │
+│   │ Role — what the app's logic functions can read   │ │
+│   │ and write (referenced by Application)            │ │
+│   └──────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────┘
+                          │
+                          ▼  (at install / upgrade time)
+       ┌──────────────────────────────────┐
+       │ Pre-install hook                 │  before metadata migration
+       └──────────────────────────────────┘
+       ┌──────────────────────────────────┐
+       │ Post-install hook                │  after metadata migration
+       └──────────────────────────────────┘
+```
+
+## Nesta secção
+
+<CardGroup cols={2}>
+  <Card title="Configuração da aplicação" icon="rocket" href="/l/pt/developers/extend/apps/config/application">
+    `defineApplication` — identidade, função predefinida, variáveis, metadados do marketplace.
+  </Card>
+  <Card title="Funções e Permissões" icon="shield-halved" href="/l/pt/developers/extend/apps/config/roles">
+    `defineRole` — declara o que as funções de lógica da sua aplicação podem ler e escrever.
+  </Card>
+  <Card title="Hooks de instalação" icon="wrench" href="/l/pt/developers/extend/apps/config/install-hooks">
+    `definePreInstallLogicFunction` e `definePostInstallLogicFunction` — criam cópias de segurança dos dados, inicializam valores predefinidos, validam atualizações.
+  </Card>
+</CardGroup>
+
+## Como as peças se relacionam
+
+* A **Aplicação** é o ponto de entrada. Cada aplicação tem exatamente uma chamada `defineApplication()`, e esta aponta para uma **Função** como predefinida.
+* A **Função** controla o que as funções de lógica e os componentes de front-end da aplicação podem ler e escrever. Siga o princípio do menor privilégio: conceda apenas as permissões de que o seu código realmente necessita.
+* Os **Hooks de instalação** são executados durante a instalação ou atualização — a pré-instalação antes da migração de metadados (para que possa recusar uma atualização arriscada) e a pós-instalação após a migração (para que possa inicializar dados predefinidos com base no novo esquema).
+
+<Note>
+Os hooks de instalação partilham o ambiente de execução de [função de lógica](/l/pt/developers/extend/apps/logic/logic-functions) — a mesma assinatura de handler, as mesmas variáveis de ambiente, o mesmo cliente de API tipado — mas são declarados com as suas próprias funções "define" e vivem fora do modelo de disparo normal (HTTP, cron, eventos de base de dados).
+</Note>

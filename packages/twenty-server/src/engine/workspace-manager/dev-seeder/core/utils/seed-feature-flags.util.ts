@@ -36,6 +36,11 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
+        key: FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
         workspaceId: workspaceId,
         value: true,

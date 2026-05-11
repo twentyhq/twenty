@@ -1,5 +1,6 @@
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { renderHook } from '@testing-library/react';
+import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mutationCallSpy = jest.fn();
@@ -29,7 +30,8 @@ describe('useResendWorkspaceInvitation', () => {
     );
 
     expect(mutationCallSpy).toHaveBeenCalledWith({
-      onCompleted: expect.any(Function),
+      onError: expect.any(Function),
+      refetchQueries: [GetWorkspaceInvitationsDocument],
       variables: params,
     });
   });

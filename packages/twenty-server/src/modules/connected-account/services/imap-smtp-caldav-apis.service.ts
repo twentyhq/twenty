@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  CalendarChannelSyncStage,
+  ConnectedAccountProvider,
+  MessageChannelSyncStage,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { EntityManager, Repository } from 'typeorm';
@@ -10,6 +14,9 @@ import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-err
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -18,8 +25,19 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import {
+  CalendarEventListFetchJob,
+  type CalendarEventListFetchJobData,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
+import {
+  MessagingMessageListFetchJob,
+  type MessagingMessageListFetchJobData,
+} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class ImapSmtpCalDavAPIService {
@@ -33,9 +51,16 @@ export class ImapSmtpCalDavAPIService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectMessageQueue(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.calendarQueue)
+    private readonly calendarQueueService: MessageQueueService,
     private readonly createMessageChannelService: CreateMessageChannelService,
     private readonly createCalendarChannelService: CreateCalendarChannelService,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
+    private readonly accountsToReconnectService: AccountsToReconnectService,
+    private readonly messagingChannelSyncStatusService: MessageChannelSyncStatusService,
+    private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
   ) {}
 
   async getImapSmtpCaldavConnectedAccount(
@@ -154,6 +179,7 @@ export class ImapSmtpCalDavAPIService {
                 connectionParameters: input.connectionParameters,
                 userWorkspaceId,
                 workspaceId,
+                authFailedAt: null,
               });
 
             if (shouldCreateMessageChannel) {
@@ -176,6 +202,14 @@ export class ImapSmtpCalDavAPIService {
           },
         );
 
+        if (isDefined(existingAccount)) {
+          await this.accountsToReconnectService.removeAccountToReconnect(
+            member.userId,
+            workspaceId,
+            newOrExistingAccountId,
+          );
+        }
+
         if (shouldCreateMessageChannel) {
           const newMessageChannel = await this.messageChannelRepository.findOne(
             {
@@ -193,6 +227,40 @@ export class ImapSmtpCalDavAPIService {
               workspaceId,
             });
           }
+        }
+
+        if (
+          isDefined(existingMessageChannel) &&
+          isDefined(input.connectionParameters.IMAP) &&
+          existingMessageChannel.syncStage !==
+            MessageChannelSyncStage.PENDING_CONFIGURATION
+        ) {
+          await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
+            [existingMessageChannel.id],
+            workspaceId,
+          );
+
+          await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+            MessagingMessageListFetchJob.name,
+            { workspaceId, messageChannelId: existingMessageChannel.id },
+          );
+        }
+
+        if (
+          isDefined(existingCalendarChannel) &&
+          isDefined(input.connectionParameters.CALDAV) &&
+          existingCalendarChannel.syncStage !==
+            CalendarChannelSyncStage.PENDING_CONFIGURATION
+        ) {
+          await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
+            [existingCalendarChannel.id],
+            workspaceId,
+          );
+
+          await this.calendarQueueService.add<CalendarEventListFetchJobData>(
+            CalendarEventListFetchJob.name,
+            { workspaceId, calendarChannelId: existingCalendarChannel.id },
+          );
         }
 
         return newOrExistingAccountId;

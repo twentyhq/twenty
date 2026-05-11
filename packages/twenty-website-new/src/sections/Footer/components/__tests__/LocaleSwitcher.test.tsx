@@ -4,13 +4,13 @@ jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
 }));
 
-jest.mock('@/lib/i18n/use-locale', () => ({
+jest.mock('@/lib/i18n/hooks/use-locale', () => ({
   useLocale: jest.fn(),
 }));
 
 import { usePathname } from 'next/navigation';
 
-import { useLocale } from '@/lib/i18n/use-locale';
+import { useLocale } from '@/lib/i18n/hooks/use-locale';
 import { LocaleSwitcher } from '@/sections/Footer/components/LocaleSwitcher';
 
 const mockUsePathname = usePathname as jest.MockedFunction<typeof usePathname>;

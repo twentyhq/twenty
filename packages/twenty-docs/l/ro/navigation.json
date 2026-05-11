@@ -155,7 +155,27 @@
           "label": "Prezentare generală"
         },
         "apps": {
-          "label": "Aplicații"
+          "label": "Aplicații",
+          "groups": {
+            "appsGettingStarted": {
+              "label": "Începeți"
+            },
+            "appsConfig": {
+              "label": "Configurare"
+            },
+            "appsData": {
+              "label": "Date"
+            },
+            "appsLogic": {
+              "label": "Logică"
+            },
+            "appsLayout": {
+              "label": "Aspect"
+            },
+            "appsOperations": {
+              "label": "Operațiuni"
+            }
+          }
         },
         "api": {
           "label": "API"

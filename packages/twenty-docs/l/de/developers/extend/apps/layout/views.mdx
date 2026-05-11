@@ -1,0 +1,43 @@
+---
+title: Ansichten
+description: Stellen Sie vorkonfigurierte gespeicherte Ansichten bereit – Spaltenreihenfolge, Filter, Gruppen – für Objekte in Ihrer App.
+icon: list
+---
+
+Eine **Ansicht** ist eine gespeicherte Konfiguration dafür, wie Datensätze eines Objekts angezeigt werden: welche Felder erscheinen, in welcher Reihenfolge, ob sie sichtbar sind und welche Filter oder Gruppen angewendet werden. Verwenden Sie `defineView()`, um vorkonfigurierte Ansichten mit Ihrer App auszuliefern – typischerweise eine Standard-Indexansicht für jedes benutzerdefinierte Objekt, das Sie erstellen.
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## Hauptpunkte
+
+* `objectUniversalIdentifier` gibt an, auf welches Objekt diese Ansicht angewendet wird. Es kann sich um ein von Ihnen definiertes benutzerdefiniertes Objekt oder ein Standardobjekt von Twenty handeln.
+* `key` bestimmt den Ansichtstyp – `ViewKey.INDEX` ist die Hauptlistenansicht für das Objekt.
+* `fields` steuert, welche Spalten erscheinen und in welcher Reihenfolge. Jedes Feld referenziert einen `fieldMetadataUniversalIdentifier`.
+* Für erweiterte Konfigurationen können Sie außerdem `filters`, `filterGroups`, `groups` und `fieldGroups` deklarieren.
+* `position` steuert die Reihenfolge, wenn mehrere Ansichten für dasselbe Objekt existieren.
+
+## Wie Ansichten in der UI angezeigt werden
+
+Eine Ansicht für sich ist aus der Seitenleiste nicht erreichbar. Damit sie dort erscheint, verknüpfen Sie sie mit einem [Navigationsmenüeintrag](/l/de/developers/extend/apps/layout/navigation-menu-items) des Typs `VIEW`, der auf den `universalIdentifier` der Ansicht zeigt. Das ist das kanonische Muster: Jedes benutzerdefinierte Objekt liefert typischerweise eine Standardansicht plus einen Eintrag in der Seitenleiste, der sie öffnet.

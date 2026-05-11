@@ -1,0 +1,43 @@
+---
+title: Görünümler
+description: Uygulamanızdaki nesneler için önceden yapılandırılmış kaydedilmiş görünümleri — sütun sırası, filtreler, gruplar — sunun.
+icon: list
+---
+
+Bir **görünüm**, bir nesnenin kayıtlarının nasıl görüntüleneceğine ilişkin kaydedilmiş bir yapılandırmadır: hangi alanların görüneceği, sıraları, görünür olup olmadıkları ve uygulanan tüm filtreler veya gruplar. Uygulamanızla birlikte önceden yapılandırılmış görünümler yayınlamak için `defineView()` kullanın — genellikle oluşturduğunuz her özel nesne için varsayılan bir indeks görünümü şeklinde olur.
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## Önemli noktalar
+
+* `objectUniversalIdentifier`, bu görünümün hangi nesneye uygulanacağını belirtir. Bu, tanımladığınız özel bir nesne veya standart bir Twenty nesnesi olabilir.
+* `key`, görünüm türünü belirler — `ViewKey.INDEX`, nesne için ana liste görünümüdür.
+* `fields`, hangi sütunların görüneceğini ve hangi sırayla görüneceğini kontrol eder. Her alan bir `fieldMetadataUniversalIdentifier` öğesine referans verir.
+* Daha gelişmiş yapılandırmalar için `filters`, `filterGroups`, `groups` ve `fieldGroups` da tanımlayabilirsiniz.
+* `position`, aynı nesne için birden fazla görünüm olduğunda sıralamayı kontrol eder.
+
+## Görünümlerin kullanıcı arayüzünde görüntülenme şekli
+
+Tek başına bir görünüm, kenar çubuğundan erişilebilir değildir. Orada görünmesini sağlamak için, türü `VIEW` olan ve görünümün `universalIdentifier` değerini işaret eden bir [navigasyon menüsü öğesi](/l/tr/developers/extend/apps/layout/navigation-menu-items) ile eşleştirin. Bu, standart örüntüdür: her özel nesne genellikle varsayılan bir görünüm ve bunu açan bir kenar çubuğu girdisiyle birlikte sunulur.

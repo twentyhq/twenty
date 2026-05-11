@@ -1,0 +1,64 @@
+---
+title: 应用程序配置
+description: 使用 defineApplication 声明应用的身份、默认角色、变量和应用市场元数据。
+icon: rocket
+---
+
+每个应用必须且只能有一个 `defineApplication` 调用。 它声明：
+
+* **应用的身份** — 通用标识符、显示名称、描述。
+* **权限** — 其逻辑函数和前端组件在何种角色下运行。
+* **变量**（可选）— 以环境变量形式暴露给代码的键值对。
+* **安装前/安装后函数**（可选）— 参见 [逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)。
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+});
+```
+
+备注：
+
+* `universalIdentifier` 字段是你拥有的确定性 ID。 只需生成一次，并在多次同步过程中保持稳定不变。
+* `applicationVariables` 会变成你的函数和前端组件可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
+* 默认角色会根据使用 [`defineApplicationRole()`](/l/zh/developers/extend/apps/config/roles) 标记的角色文件自动检测——你不需要在 `defineApplication()` 中引用它。
+* 在构建清单时会自动检测安装前/安装后函数——无需在 `defineApplication()` 中引用它们。
+* 显式传递 `defaultRoleUniversalIdentifier` 仍然受支持以保持向后兼容性，但已弃用，推荐改用 `defineApplicationRole()`。
+
+## 默认函数角色
+
+使用 [`defineApplicationRole()`](/l/zh/developers/extend/apps/config/roles) 声明的角色控制应用的逻辑函数和前端组件可以访问的内容：
+
+* 作为 `TWENTY_APP_ACCESS_TOKEN` 注入的运行时令牌来源于该角色。
+* 类型化 API 客户端将受限于授予该角色的权限。
+* 遵循最小权限原则：只声明你的函数所需的权限。
+
+当你使用脚手架创建新应用时，CLI 会在 `src/roles/default-role.ts` 中创建一个入门角色文件。 完整参考请参见 [角色与权限](/l/zh/developers/extend/apps/config/roles)。
+
+## 应用市场元数据
+
+如果你计划[发布你的应用](/l/zh/developers/extend/apps/operations/publishing)，这些可选字段将控制你的应用在应用市场中的展示：
+
+| 字段                 | 描述                                                             |
+| ------------------ | -------------------------------------------------------------- |
+| `作者`               | 作者或公司名称                                                        |
+| `类别`               | 用于应用市场筛选的应用类别                                                  |
+| `logoUrl`          | 应用徽标的路径（例如 `public/logo.png`）                                  |
+| `screenshots`      | 截图路径数组（例如 `public/screenshot-1.png`）                           |
+| `aboutDescription` | 用于“关于”选项卡的更长的 Markdown 描述。 如果省略，市场将使用该软件包在 npm 上的 `README.md`。 |
+| `websiteUrl`       | 你的网站链接                                                         |
+| `termsUrl`         | 服务条款链接                                                         |
+| `emailSupport`     | 支持电子邮件地址                                                       |
+| `issueReportUrl`   | 问题跟踪器链接                                                        |

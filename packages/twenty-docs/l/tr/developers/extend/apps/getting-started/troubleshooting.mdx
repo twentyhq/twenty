@@ -1,0 +1,12 @@
+---
+title: Sorun Giderme
+description: Yaygın ilk çalıştırma sorunları — Docker, Node sürümü, Yarn, bağımlılıklar.
+icon: anahtar
+---
+
+* **Docker hataları** — `yarn twenty server start` öncesinde Docker Desktop'ın (veya daemon'ın) çalıştığından emin olun. Hata iletisi, işletim sisteminiz için doğru başlatma komutunu gösterecektir.
+* **Yanlış Node sürümü** — 24+ gerekir. `node -v` ile kontrol edin.
+* **Yarn 4 eksik** — `corepack enable` çalıştırın.
+* **Bağımlılıklar bozuk** — `rm -rf node_modules && yarn install`.
+
+Takıldınız mı? [Twenty Discord](https://discord.com/channels/1130383047699738754/1130386664812982322) üzerinde yardım isteyin.

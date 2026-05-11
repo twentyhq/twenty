@@ -1,0 +1,52 @@
+---
+title: Prezentare generală
+description: Modelați datele pe care aplicația le adaugă într-un spațiu de lucru — obiecte, câmpuri și relații.
+icon: database
+---
+
+Stratul de **date** al unei aplicații Twenty reprezintă datele pe care aplicația le *adaugă* într-un spațiu de lucru — noile tipuri de înregistrări pe care le declară, coloanele pe care le adaugă la obiectele existente și modul în care aceste înregistrări se conectează între ele.
+
+```text
+┌──────────────────────────────────────────────────┐
+│ Object — a record type, e.g. PostCard            │
+│    ├─ Field     (name, type, label)              │
+│    ├─ Field                                      │
+│    └─ Relation  (link to another object)         │
+└──────────────────────────────────────────────────┘
+            │
+            ├── lives in your app, OR
+            │
+            ▼
+┌──────────────────────────────────────────────────┐
+│ Standard / other apps' objects                   │
+│    └─ Field added by your app via defineField    │
+└──────────────────────────────────────────────────┘
+```
+
+## În această secțiune
+
+<CardGroup cols={2}>
+  <Card title="Obiecte" icon="table" href="/l/ro/developers/extend/apps/data/objects">
+    `defineObject` — declarați noi tipuri de înregistrări cu propriile lor câmpuri.
+  </Card>
+  <Card title="Extinderea obiectelor" icon="wand-magic-sparkles" href="/l/ro/developers/extend/apps/data/extending-objects">
+    `defineField` — adăugați câmpuri la obiecte standard sau la obiectele altor aplicații.
+  </Card>
+  <Card title="Relații" icon="diagram-project" href="/l/ro/developers/extend/apps/data/relations">
+    Conexiuni bidirecționale `MANY_TO_ONE` / `ONE_TO_MANY` între obiecte.
+  </Card>
+</CardGroup>
+
+## Entități dintr-o privire
+
+| Entitate    | Scop                                                                                                                                  | Definit cu                              |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| **Obiect**  | Un nou tip de înregistrare personalizat (de ex. PostCard, Invoice) cu propriile sale câmpuri                                          | `defineObject()`                        |
+| **Câmp**    | O coloană pe un obiect. Câmpurile independente pot extinde obiecte pe care nu le-ați creat (de ex. adăugați `loyaltyTier` la Company) | `defineField()`                         |
+| **Relație** | O legătură bidirecțională între două obiecte — ambele părți declarate ca câmpuri                                                      | `defineField()` cu `FieldType.RELATION` |
+
+SDK-ul detectează acestea prin analiza AST la momentul build-ului, astfel încât organizarea fișierelor ține de dumneavoastră — convenția este `src/objects/` și `src/fields/`. UUID-urile stabile `universalIdentifier` leagă totul în toate implementările.
+
+<Note>
+Căutați **Application Config** sau **Roles & Permissions**? Acestea descriu aplicația în sine, mai degrabă decât datele pe care le adaugă — se află la [Config](/l/ro/developers/extend/apps/config/overview). Căutați **Connections** (Linear, GitHub, Slack OAuth)? Acestea există pentru a fi apelate *din* funcții de logică și se află la [Logic](/l/ro/developers/extend/apps/logic/connections).
+</Note>

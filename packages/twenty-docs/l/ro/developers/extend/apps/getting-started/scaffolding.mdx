@@ -1,0 +1,58 @@
+---
+title: Generare automată
+description: Generați fișiere de entități în mod interactiv cu yarn twenty add — obiecte, câmpuri, vizualizări, funcții logice și altele.
+icon: wand-magic-sparkles
+---
+
+În loc să creați manual fișiere de entități, folosiți generatorul interactiv (scaffolder):
+
+```bash filename="Terminal"
+yarn twenty add
+```
+
+Vă cere să alegeți un tip de entitate și vă ghidează prin câmpurile necesare, apoi scrie un fișier gata de utilizare cu un `universalIdentifier` stabil și apelul corect `defineEntity()`.
+
+Puteți de asemenea să transmiteți direct tipul de entitate pentru a sări peste primul prompt:
+
+```bash filename="Terminal"
+yarn twenty add object
+yarn twenty add logicFunction
+yarn twenty add frontComponent
+```
+
+## Tipuri de entități disponibile
+
+| Tipul entității              | Comandă                              | Fișier generat                                          |
+| ---------------------------- | ------------------------------------ | ------------------------------------------------------- |
+| Obiect                       | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| Câmp                         | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| Funcție logică               | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| Componentă frontend          | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| Rol                          | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| Abilitate                    | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| Agent                        | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| Vizualizare                  | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| Element de meniu de navigare | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| Machetă de pagină            | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+
+## Ce generează scaffolder-ul
+
+Fiecare tip de entitate are propriul său șablon. De exemplu, `yarn twenty add object` solicită:
+
+1. **Nume (singular)** — de ex., `invoice`
+2. **Nume (plural)** — de ex., `invoices`
+3. **Etichetă (singular)** — completată automat din nume (de ex., `Invoice`)
+4. **Etichetă (plural)** — completată automat (de ex., `Invoices`)
+5. **Creați o vizualizare și un element de navigare?** — dacă răspundeți afirmativ, scaffolder-ul generează, de asemenea, o vizualizare corespunzătoare și un link în bara laterală pentru noul obiect.
+
+Alte tipuri de entități au prompturi mai simple — majoritatea cer doar un nume.
+
+Tipul de entitate `field` este mai detaliat: solicită numele câmpului, eticheta, tipul (dintr-o listă cu toate tipurile de câmp disponibile precum `TEXT`, `NUMBER`, `SELECT`, `RELATION` etc.) și `universalIdentifier` al obiectului țintă.
+
+## Cale de output personalizată
+
+Utilizați opțiunea `--path` pentru a plasa fișierul generat într-o locație personalizată:
+
+```bash filename="Terminal"
+yarn twenty add logicFunction --path src/custom-folder
+```

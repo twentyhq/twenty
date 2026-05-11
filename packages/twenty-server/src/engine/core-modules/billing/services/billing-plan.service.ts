@@ -3,8 +3,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { JsonContains, Repository } from 'typeorm';
 import { findOrThrow } from 'twenty-shared/utils';
+import { JsonContains, Repository } from 'typeorm';
 
 import {
   BillingException,
@@ -82,15 +82,20 @@ export class BillingPlanService {
         (product) =>
           product.metadata.priceUsageBased === BillingUsageType.METERED,
       );
-      const licensedProducts = planProducts.filter(
+      const baseProducts = planProducts.filter(
         (product) =>
-          product.metadata.priceUsageBased === BillingUsageType.LICENSED,
+          product.metadata.productKey === BillingProductKey.BASE_PRODUCT,
+      );
+      const resourceCreditProducts = planProducts.filter(
+        (product) =>
+          product.metadata.productKey === BillingProductKey.RESOURCE_CREDIT,
       );
 
       return {
         planKey,
         meteredProducts,
-        licensedProducts,
+        baseProducts,
+        resourceCreditProducts,
       };
     });
   }
@@ -105,7 +110,12 @@ export class BillingPlanService {
             (price) => price.stripePriceId === stripePriceId,
           ),
         ) ||
-        plan.licensedProducts.some((product) =>
+        plan.baseProducts.some((product) =>
+          product.billingPrices.some(
+            (price) => price.stripePriceId === stripePriceId,
+          ),
+        ) ||
+        plan.resourceCreditProducts.some((product) =>
           product.billingPrices.some(
             (price) => price.stripePriceId === stripePriceId,
           ),
@@ -130,21 +140,24 @@ export class BillingPlanService {
         BillingExceptionCode.BILLING_PLAN_NOT_FOUND,
       );
     }
-    const { meteredProducts, licensedProducts } = plan;
+    const { meteredProducts, baseProducts, resourceCreditProducts } = plan;
 
     const filterPricesByInterval = (product: BillingProductEntity) =>
       product.billingPrices.filter((price) => price.interval === interval);
 
-    const meteredProductsPrices = meteredProducts.flatMap(
+    const meteredProductPrices = meteredProducts.flatMap(
       filterPricesByInterval,
     );
-    const licensedProductsPrices = licensedProducts.flatMap(
+    const baseProductPrices = baseProducts.flatMap(filterPricesByInterval);
+
+    const resourceCreditProductPrices = resourceCreditProducts.flatMap(
       filterPricesByInterval,
     );
 
     return {
-      meteredProductsPrices,
-      licensedProductsPrices,
+      meteredProductPrices,
+      baseProductPrices,
+      resourceCreditProductPrices,
     };
   }
 }

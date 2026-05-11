@@ -2,10 +2,6 @@ import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import type { ReactNode } from 'react';
 
-export type BodyType<TText = ReactNode> = {
-  text: TText;
-};
-
 const bodyClassName = css`
   color: inherit;
   margin: 0;
@@ -42,7 +38,7 @@ const bodyClassName = css`
   }
 
   &[data-size='sm'] {
-    color: var(--body-sm-color, ${theme.colors.primary.text[60]});
+    color: var(--color-text-muted, ${theme.colors.primary.text[60]});
     font-size: ${theme.font.size(4)};
     line-height: 1.55;
   }
@@ -70,7 +66,7 @@ const bodyClassName = css`
   }
 
   &[data-variant='body-paragraph'] {
-    color: var(--body-paragraph-color, ${theme.colors.primary.text[80]});
+    color: var(--color-text-muted, ${theme.colors.primary.text[80]});
     line-height: 1.55;
   }
 `;
@@ -81,33 +77,26 @@ export type BodyWeight = 'light' | 'regular' | 'medium';
 export type BodySize = 'md' | 'sm' | 'xs';
 export type BodyVariant = 'default' | 'body-paragraph';
 
-type BodyTextRenderer<TText> = [TText] extends [ReactNode]
-  ? { renderText?: (text: TText) => ReactNode }
-  : { renderText: (text: TText) => ReactNode };
-
-export type BodyProps<TText = ReactNode> = {
+export type BodyProps = {
   as?: BodyAs;
-  body: BodyType<TText>;
+  children: ReactNode;
   family?: BodyFamily;
   weight?: BodyWeight;
   size?: BodySize;
   variant?: BodyVariant;
   className?: string;
-} & BodyTextRenderer<TText>;
+};
 
-export function Body<TText = ReactNode>({
+export function Body({
   as: Tag = 'p',
-  body,
+  children,
   family = 'sans',
-  renderText,
   weight = 'regular',
   size = 'md',
   variant = 'default',
   className,
-}: BodyProps<TText>) {
+}: BodyProps) {
   const rootClassName = [bodyClassName, className].filter(Boolean).join(' ');
-  const content =
-    renderText === undefined ? (body.text as ReactNode) : renderText(body.text);
 
   return (
     <Tag
@@ -117,7 +106,7 @@ export function Body<TText = ReactNode>({
       data-size={size}
       data-variant={variant}
     >
-      {content}
+      {children}
     </Tag>
   );
 }

@@ -1,0 +1,72 @@
+---
+title: Lokaler Server
+description: Den lokalen Twenty Docker-Server verwalten – starten, stoppen, aktualisieren, parallele Testinstanz und manuelle SDK-Einrichtung.
+icon: server
+---
+
+## Lokalen Server verwalten
+
+Verwenden Sie `yarn twenty server`, um den lokalen Twenty-Container zu steuern:
+
+| Befehl                                 | Was es tut                                          |
+| -------------------------------------- | --------------------------------------------------- |
+| `yarn twenty server start`             | Server starten (lädt das Image bei Bedarf herunter) |
+| `yarn twenty server start --port 3030` | Auf einem benutzerdefinierten Port starten          |
+| `yarn twenty server stop`              | Server stoppen (Daten bleiben erhalten)             |
+| `yarn twenty server status`            | URL, Version und Anmeldedaten anzeigen              |
+| `yarn twenty server logs`              | Serverprotokolle streamen                           |
+| `yarn twenty server reset`             | Alle Daten löschen und neu starten                  |
+| `yarn twenty server upgrade`           | Das neueste `twenty-app-dev`-Image herunterladen    |
+| `yarn twenty server upgrade 2.2.0`     | Auf eine bestimmte Version aktualisieren            |
+
+Daten bleiben über Neustarts hinweg in zwei Docker-Volumes bestehen (`twenty-app-dev-data` für PostgreSQL, `twenty-app-dev-storage` für Dateien). Verwenden Sie `reset`, um alles zu löschen.
+
+## Aktualisieren des Server-Images
+
+`yarn twenty server upgrade` lädt das neueste Image herunter, vergleicht die Digests und erstellt den Container nur neu, wenn sich tatsächlich etwas geändert hat. Die Volumes bleiben erhalten — nur der Container wird ersetzt. Wenn ein neues Image heruntergeladen wurde und der Container lief, startet das Upgrade automatisch einen neuen Container; führen Sie anschließend `yarn twenty server start` aus, um zu warten, bis er betriebsbereit ist.
+
+```bash filename="Terminal"
+yarn twenty server upgrade            # Latest
+yarn twenty server upgrade 2.2.0      # Specific version
+```
+
+Überprüfen Sie die laufende Version mit `yarn twenty server status` (dies zeigt die im Container enthaltene `APP_VERSION` an).
+
+## Eine parallele Testinstanz ausführen
+
+Übergeben Sie `--test` an jeden `server`-Befehl, um eine zweite, vollständig isolierte Instanz zu verwalten — nützlich für Integrationstests oder Experimente, ohne Ihre Hauptentwicklungsdaten anzutasten:
+
+| Befehl                              | Was es tut                                        |
+| ----------------------------------- | ------------------------------------------------- |
+| `yarn twenty server start --test`   | Die Testinstanz starten (standardmäßig Port 2021) |
+| `yarn twenty server stop --test`    | Anhalten                                          |
+| `yarn twenty server status --test`  | Status anzeigen                                   |
+| `yarn twenty server logs --test`    | Protokolle streamen                               |
+| `yarn twenty server reset --test`   | Daten löschen                                     |
+| `yarn twenty server upgrade --test` | Image aktualisieren                               |
+
+Die Testinstanz hat ihren eigenen Container (`twenty-app-dev-test`), eigene Volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) und eine eigene Konfiguration — sie läuft parallel zu Ihrer Hauptinstanz ohne Konflikte. Kombinieren Sie `--test` mit `--port`, um den Port 2021 zu überschreiben.
+
+## Manuelle Einrichtung (ohne Scaffolding-Tool)
+
+Überspringen Sie das Scaffolding-Tool, wenn Sie das SDK zu einem bestehenden Projekt hinzufügen:
+
+```bash filename="Terminal"
+yarn add twenty-sdk twenty-client-sdk
+```
+
+Fügen Sie der `package.json` das Skript hinzu:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "twenty": "twenty"
+  }
+}
+```
+
+Sie können jetzt `yarn twenty dev`, `yarn twenty server start` und den Rest ausführen.
+
+<Note>
+Installieren Sie `twenty-sdk` nicht global — fixieren Sie es pro Projekt, damit jede App ihre eigene Version verwendet.
+</Note>

@@ -1,0 +1,48 @@
+---
+title: Расширение объектов
+description: Добавляйте поля к стандартным объектам Twenty (Person, Company, …) или к объектам из других приложений с помощью `defineField`.
+icon: wand-magic-sparkles
+---
+
+Используйте `defineField()` для добавления поля к объекту, которым вы не владеете — стандартному объекту Twenty, такому как Person или Company, или объекту, поставляемому другим установленным приложением. В отличие от встроенных полей, объявленных внутри [`defineObject`](/l/ru/developers/extend/apps/data/objects), отдельные поля требуют `objectUniversalIdentifier`, чтобы указать, какой объект они расширяют.
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+## Основные моменты
+
+* `objectUniversalIdentifier` определяет целевой объект. Для стандартных объектов Twenty импортируйте константу из `twenty-sdk`:
+
+  ```ts
+  import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier
+  // …
+  ```
+
+* При определении полей **непосредственно внутри `defineObject()`** вам **не** нужен `objectUniversalIdentifier` — он наследуется от родительского объекта.
+
+* `defineField()` — единственный способ добавить поля к объектам, которые вы не создавали с помощью `defineObject()`.
+
+* Расположение файла зависит от вас. Принятое соглашение — `src/fields/\<name>.field.ts`, но SDK обнаруживает поля в любом месте внутри `src/`.
+
+## Добавление связи к существующему объекту
+
+Чтобы добавить поле связи (например, связать ваш пользовательский объект со стандартным `Person`), используйте `defineField()` с `FieldType.RELATION`. Шаблон тот же, что и для встроенных связей, но с явным указанием `objectUniversalIdentifier`. Смотрите раздел [Relations](/l/ru/developers/extend/apps/data/relations) для двунаправленного шаблона.

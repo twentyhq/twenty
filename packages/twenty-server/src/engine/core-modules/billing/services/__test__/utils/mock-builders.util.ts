@@ -100,7 +100,7 @@ export const arrangeBillingSubscriptionRepositoryFindOneOrFail = (
 export const arrangeBillingPriceRepositoryFindOneOrFail = (
   billingPriceRepository: jest.Mocked<Repository<BillingPriceEntity>>,
   priceIdToPriceMap: Record<string, BillingPriceEntity | BillingMeterPrice>,
-) =>
+) => {
   jest
     .spyOn(billingPriceRepository, 'findOneOrFail')
     .mockImplementation(async (criteria: unknown) => {
@@ -113,6 +113,42 @@ export const arrangeBillingPriceRepositoryFindOneOrFail = (
 
       return {} as BillingPriceEntity;
     });
+
+  jest
+    .spyOn(billingPriceRepository, 'find')
+    .mockImplementation(async (criteria?: unknown) => {
+      const where = (criteria as { where?: { stripePriceId?: unknown } })
+        ?.where;
+      const stripePriceIdCondition = where?.stripePriceId;
+
+      const resolveStripePriceIds = (cond: unknown): string[] => {
+        if (typeof cond === 'string') {
+          return [cond];
+        }
+        if (
+          cond &&
+          typeof cond === 'object' &&
+          'value' in cond &&
+          (cond as { value: unknown }).value !== undefined
+        ) {
+          const value = (cond as { value: string | string[] }).value;
+
+          return Array.isArray(value) ? value : [value];
+        }
+
+        return [];
+      };
+
+      const stripePriceIds = resolveStripePriceIds(stripePriceIdCondition);
+
+      return stripePriceIds
+        .map((stripePriceId) => priceIdToPriceMap[stripePriceId])
+        .filter(
+          (entity): entity is BillingPriceEntity =>
+            entity !== null && entity !== undefined,
+        );
+    });
+};
 
 export const arrangeStripeSubscriptionScheduleServiceLoadSubscriptionSchedule =
   (

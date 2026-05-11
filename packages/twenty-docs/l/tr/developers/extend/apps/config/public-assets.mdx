@@ -1,0 +1,59 @@
+---
+title: Genel varlıklar
+description: Uygulamanızla birlikte public/ klasörü aracılığıyla statik dosyalar — görseller, simgeler, yazı tipleri — dağıtın.
+icon: folder-open
+---
+
+Uygulamanızın kökündeki `public/` klasörü, statik dosyaları barındırır — görseller, simgeler, yazı tipleri veya uygulamanızın çalışma zamanında ihtiyaç duyduğu diğer varlıklar. Bu dosyalar derlemelere otomatik olarak dahil edilir, geliştirme modunda senkronize edilir ve sunucuya yüklenir.
+
+`public/` içine yerleştirilen dosyalar şunlardır:
+
+* **Herkese açık olarak erişilebilir** — sunucuya senkronize edildikten sonra varlıklar genel bir URL'den sunulur. Onlara erişmek için kimlik doğrulama gerekmez.
+* **Ön uç bileşenlerinde kullanılabilir** — React bileşenlerinizin içinde görseller, simgeler veya herhangi bir medyayı göstermek için varlık URL'lerini kullanın.
+* **Mantık işlevlerinde kullanılabilir** — e-postalarda, API yanıtlarında veya herhangi bir sunucu tarafı mantıkta varlık URL'lerine referans verin.
+* **Pazar yeri üst verileri için kullanılır** — `defineApplication()` içindeki `logoUrl` ve `screenshots` alanları bu klasördeki dosyalara referans verir (örn. `public/logo.png`). Bunlar, uygulamanız yayımlandığında pazar yerinde görüntülenir.
+* **Geliştirme modunda otomatik senkronize edilir** — `public/` içinde bir dosya eklediğinizde, güncellediğinizde veya sildiğinizde otomatik olarak sunucuya senkronize edilir. Yeniden başlatma gerekmez.
+* **Derlemelere dahil edilir** — `yarn twenty build`, tüm genel varlıkları dağıtım çıktısına paketler.
+
+## `getPublicAssetUrl` ile genel varlıklara erişme
+
+`twenty-sdk` içindeki `getPublicAssetUrl` yardımcı işlevini kullanarak `public/` dizininizdeki bir dosyanın tam URL'sini alın. Hem **mantık işlevlerinde** hem de **ön uç bileşenlerinde** çalışır.
+
+**Bir mantık işlevinde:**
+
+```ts src/logic-functions/send-invoice.ts
+import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const handler = async (): Promise<any> => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+  const invoiceUrl = getPublicAssetUrl('templates/invoice.png');
+
+  // Fetch the file content (no auth required — public endpoint)
+  const response = await fetch(invoiceUrl);
+  const buffer = await response.arrayBuffer();
+
+  return { logoUrl, size: buffer.byteLength };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'a1b2c3d4-...',
+  name: 'send-invoice',
+  description: 'Sends an invoice with the app logo',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+**Bir ön uç bileşeninde:**
+
+```tsx src/front-components/company-card.tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+export default defineFrontComponent(() => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+
+  return <img src={logoUrl} alt="App logo" />;
+});
+```
+
+`path` bağımsız değişkeni, uygulamanızın `public/` klasörüne göre görelidir. Hem `getPublicAssetUrl('logo.png')` hem de `getPublicAssetUrl('public/logo.png')` aynı URL'ye çözümlenir — `public/` öneki varsa otomatik olarak kaldırılır.

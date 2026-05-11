@@ -11,8 +11,7 @@ export const getIsFlatFieldAJunctionRelationField = ({
   const isJunctionRelationField =
     isDefined(flatField.settings) &&
     'relationType' in flatField.settings &&
-    flatField.settings.relationType === RelationType.MANY_TO_ONE &&
-    isDefined(flatField.settings.joinColumnName);
+    flatField.settings.relationType === RelationType.MANY_TO_ONE;
 
   // TODO: refactor this when we remove hard-coded activity relations
   const isActivityRelationField =

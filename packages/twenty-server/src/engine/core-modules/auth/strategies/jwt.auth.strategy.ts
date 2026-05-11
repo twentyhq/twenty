@@ -338,6 +338,21 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
+    const targetHasAdminPrivileges =
+      impersonatedUserWorkspace.user.canImpersonate === true ||
+      impersonatedUserWorkspace.user.canAccessFullAdminPanel === true;
+
+    const impersonatorHasAdminPrivileges =
+      impersonatorUserWorkspace.user.canImpersonate === true ||
+      impersonatorUserWorkspace.user.canAccessFullAdminPanel === true;
+
+    if (targetHasAdminPrivileges && !impersonatorHasAdminPrivileges) {
+      throw new AuthException(
+        'Cannot impersonate a user with admin privileges',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     return {
       impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,

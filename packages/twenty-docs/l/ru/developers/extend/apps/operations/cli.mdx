@@ -1,0 +1,78 @@
+---
+title: CLI
+description: Команды `yarn twenty` для выполнения функций, потоковой передачи логов, управления установками приложений и переключения удалённых серверов.
+icon: terminal
+---
+
+Помимо `dev`, `build`, `add` и `typecheck`, CLI `yarn twenty` предоставляет команды для выполнения функций, просмотра логов и управления установками приложений.
+
+## Выполнение функций (`yarn twenty exec`)
+
+Запустите логическую функцию вручную, не вызывая её через HTTP, cron или событие базы данных:
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty exec --postInstall
+```
+
+## Просмотр логов функций (`yarn twenty logs`)
+
+Потоковая передача журналов выполнения логических функций вашего приложения:
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty logs
+
+# Filter by function name
+yarn twenty logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+Это отличается от `yarn twenty server logs`, который показывает логи контейнера Docker. `yarn twenty logs` показывает журналы выполнения функций вашего приложения с сервера Twenty.
+</Note>
+
+## Удаление приложения (`yarn twenty uninstall`)
+
+Удалите свое приложение из активного рабочего пространства:
+
+```bash filename="Terminal"
+yarn twenty uninstall
+
+# Skip the confirmation prompt
+yarn twenty uninstall --yes
+```
+
+## Управление удалёнными серверами
+
+**Remote** — это сервер Twenty, к которому подключается ваше приложение. Во время настройки скаффолдер автоматически создаст его для вас. Вы можете в любой момент добавлять новые удалённые серверы или переключаться между ними.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+Ваши учётные данные хранятся в `~/.twenty/config.json`.

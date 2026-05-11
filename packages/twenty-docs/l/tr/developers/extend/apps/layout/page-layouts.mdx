@@ -1,0 +1,102 @@
+---
+title: Sayfa Düzenleri
+description: definePageLayout ve definePageLayoutTab kullanarak kayıt ayrıntı sayfalarını — sekmeleri, widget'ları ve ön uç bileşenlerinin nerede oluşturulacağını — özelleştirin.
+icon: table-columns
+---
+
+Bir sayfa düzeni, bir kaydın ayrıntı sayfasının nasıl düzenleneceğini kontrol eder: hangi sekmelerin görüneceği ve bunların hangi widget'ları içereceği. Sahibi olduğunuz bir nesne için bir düzen tanımlamak amacıyla `definePageLayout()` kullanın veya halihazırda var olan bir düzene (size ait veya standart bir Twenty düzenine) tek bir sekme eklemek için `definePageLayoutTab()` kullanın.
+
+| Kullanım alanı                                                                 | Varlık                |
+| ------------------------------------------------------------------------------ | --------------------- |
+| Sahibi olduğunuz bir nesnedeki bir kayıt sayfası için tüm düzeni tanımlayın    | `definePageLayout`    |
+| Var olan bir düzene bir sekme ekleyin (kendi nesneniz veya standart bir nesne) | `definePageLayoutTab` |
+
+## definePageLayout
+
+Tüm ayrıntı sayfasına sahip olduğunuz durumlarda bunu kullanın — genellikle kendiniz tanımladığınız özel bir nesne için.
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+### Önemli noktalar
+
+* `type` genellikle belirli bir nesnenin ayrıntı görünümünü özelleştirmek için `'RECORD_PAGE'` olur.
+* `objectUniversalIdentifier`, bu düzenin hangi nesneye uygulanacağını belirtir.
+* Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar (serbest biçimli düzen için `CANVAS`).
+* Bir sekmenin içindeki her `widget`, bir [ön uç bileşeni](/l/tr/developers/extend/apps/layout/front-components), bir ilişki listesi veya diğer yerleşik widget türlerini oluşturabilir.
+* Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
+
+## definePageLayoutTab
+
+Bunu yalnızca mevcut bir düzene **sekme eklemek** istediğinizde kullanın — örneğin, standart Company sayfasında bir analitik sekmesi veya kendi nesnenizin düzenine eklenmiş bir yapay zeka özeti sekmesi.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+### Önemli noktalar
+
+* `pageLayoutUniversalIdentifier` **zorunludur** ve kurulum anında zaten var olan bir sayfa düzenini işaret etmelidir — standart bir Twenty düzeni veya kendi uygulamanız tarafından tanımlanan bir düzen olabilir. Başka yüklü bir uygulamaya ait düzenlere uygulamalar arası referanslar bugün desteklenmemektedir. Üst düzen eksik olduğunda, kurulum net bir doğrulama hatasıyla başarısız olur.
+* `widgets` yalnızca bu sekmeyle sınırlıdır — satır içi olarak `definePageLayout` içinde tanımlanan widget'larda olduğu gibi, [ön uç bileşenlerine](/l/tr/developers/extend/apps/layout/front-components), görünümlere vb. tam olarak aynı şekilde referans verirler.
+* `position`, hedeflenen düzende mevcut sekmelere göre sıralamayı kontrol eder. Yerleşik sekmelere göre sekmenizi istediğiniz konuma yerleştirecek bir değer seçin.
+* Yalnızca mevcut bir düzene ekleme yapmak istediğinizde `definePageLayout` yerine bunu kullanın. Tüm düzene sahip olduğunuzda `definePageLayout` kullanın.

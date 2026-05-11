@@ -30,6 +30,7 @@ const PROVIDERS_ICON_MAPPING = {
     [ConnectedAccountProvider.IMAP_SMTP_CALDAV]: IconMail,
     [ConnectedAccountProvider.OIDC]: IconMail,
     [ConnectedAccountProvider.SAML]: IconMail,
+    [ConnectedAccountProvider.EMAIL_GROUP]: IconMail,
     // App-managed connections aren't email accounts; this case is unreachable
     // for the EMAIL source but the lookup type still requires every provider.
     [ConnectedAccountProvider.APP]: IconMail,

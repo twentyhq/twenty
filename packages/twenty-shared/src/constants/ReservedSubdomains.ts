@@ -54,6 +54,7 @@ export const RESERVED_SUBDOMAINS = [
   'hu',
   'image',
   'images',
+  'inbound',
   'is',
   'it',
   'jobs',

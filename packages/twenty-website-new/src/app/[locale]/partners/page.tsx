@@ -1,41 +1,36 @@
 import { msg } from '@lingui/core/macro';
-import { FAQ_DATA } from '@/sections/Faq/data';
-import { MENU_DATA } from '@/sections/Menu/data';
-import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
-import { TalkToUsButton } from '@/lib/contact-cal';
+import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
+import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
+import { TalkToUsButton } from '@/sections/ContactCal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
-import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/[locale]/partners/three-cards-illustration.data';
-import { HERO_COPY } from '@/app/[locale]/partners/hero.data';
-import { SIGNOFF_COPY } from '@/app/[locale]/partners/signoff.data';
-import { TESTIMONIALS_DATA } from '@/app/[locale]/partners/testimonials.data';
+import { PARTNER_ILLUSTRATION_CARDS } from '@/app/[locale]/partners/three-cards-illustration.data';
+import { PARTNER_TESTIMONIALS } from '@/app/[locale]/partners/testimonials.data';
 import {
   PartnerHeroCtas,
   PartnerSignoffCtas,
 } from '@/app/[locale]/partners/components/PartnerApplication';
 import {
-  Body,
   Eyebrow,
   Heading,
   HeadingPart,
   LinkButton,
 } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
 import {
   getRouteI18n,
   type LocaleRouteParams,
-} from '@/lib/i18n/get-route-i18n';
+} from '@/lib/i18n/utils/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
-import { Faq } from '@/sections/Faq/components';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
-import { Signoff } from '@/sections/Signoff/components';
-import { Testimonials } from '@/sections/Testimonials/components';
-import { ThreeCards } from '@/sections/ThreeCards/components';
-import { TrustedBy } from '@/sections/TrustedBy/components';
-import type { ThreeCardsScrollLayoutOptions } from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
+import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import { Signoff } from '@/sections/Signoff';
+import { Testimonials } from '@/sections/Testimonials';
+import {
+  ThreeCards,
+  type ThreeCardsScrollLayoutOptions,
+} from '@/sections/ThreeCards';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
 import { styled } from '@linaria/react';
@@ -68,7 +63,6 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
     getRouteI18n(params),
     fetchCommunityStats(),
   ]);
-  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
@@ -85,21 +79,19 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
-      <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
+      <Hero.Root scheme="light">
         <Hero.Heading page={Pages.Partners}>
-          <HeadingPart fontFamily="serif">
-            {renderText(msg`Become`)}
-          </HeadingPart>
+          <HeadingPart fontFamily="serif">{i18n._(msg`Become`)}</HeadingPart>
           <br />
           <HeadingPart fontFamily="sans">
-            {renderText(msg`our partner`)}
+            {i18n._(msg`our partner`)}
           </HeadingPart>
         </Hero.Heading>
-        <Hero.Body
-          page={Pages.Partners}
-          body={{ text: HERO_COPY.body }}
-          renderText={renderText}
-        />
+        <Hero.Body page={Pages.Partners}>
+          {i18n._(
+            msg`We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us.`,
+          )}
+        </Hero.Body>
         <Hero.Cta>
           <PartnerHeroCtas />
         </Hero.Cta>
@@ -109,88 +101,68 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
       <TrustedBy.Root
         backgroundColor={theme.colors.primary.background[100]}
         compactBottom
-      >
-        <TrustedBy.Separator
-          renderText={renderText}
-          separator={TRUSTED_BY_DATA.separator}
-        />
-        <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
-        <TrustedBy.ClientCount
-          label={TRUSTED_BY_DATA.clientCountLabel.text}
-          renderText={renderText}
-        />
-      </TrustedBy.Root>
+        separator={i18n._(msg`trusted by`)}
+        logos={TRUSTED_BY_LOGOS}
+        clientCount={i18n._(msg`+10k others`)}
+      />
 
       <PromoSpacing>
         <CaseStudyCatalog.Promo
           compactTop
           entries={CASE_STUDY_CATALOG_ENTRIES}
-          renderText={renderText}
         />
       </PromoSpacing>
 
-      <ThreeCards.Root backgroundColor={theme.colors.secondary.background[5]}>
+      <ThreeCards.Root scheme="muted">
         <ThreeCards.Intro page={Pages.Partners} align="left">
-          <Eyebrow
-            colorScheme="primary"
-            heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
-            renderText={renderText}
-          />
+          <Eyebrow>
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Which partner program is right for you?`)}
+            </HeadingPart>
+          </Eyebrow>
           <Heading size="lg" weight="light">
             <HeadingPart fontFamily="serif">
-              {renderText(msg`Find the program that fits your business`)}
+              {i18n._(msg`Find the program that fits your business`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderText(msg`and unlock new opportunities with Twenty`)}
+              {i18n._(msg`and unlock new opportunities with Twenty`)}
             </HeadingPart>
           </Heading>
-          {THREE_CARDS_ILLUSTRATION_DATA.body && (
-            <Body
-              body={THREE_CARDS_ILLUSTRATION_DATA.body}
-              renderText={renderText}
-              size="sm"
-            />
-          )}
         </ThreeCards.Intro>
         <ThreeCards.IllustrationCards
-          illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
+          illustrationCards={PARTNER_ILLUSTRATION_CARDS}
           layoutOptions={PARTNER_ILLUSTRATION_CARDS_SCROLL_LAYOUT_OPTIONS}
           variant="simple"
         />
       </ThreeCards.Root>
 
       <Testimonials.Root
-        backgroundColor={theme.colors.secondary.background[5]}
-        color={theme.colors.secondary.text[100]}
+        scheme="muted"
         shapeFillColor={theme.colors.secondary.background[100]}
       >
         <Testimonials.PartnerCarousel
-          eyebrow={TESTIMONIALS_DATA.eyebrow}
-          testimonials={TESTIMONIALS_DATA.testimonials}
+          eyebrow={i18n._(msg`Join our growing partner ecosystem`)}
+          testimonials={PARTNER_TESTIMONIALS}
         >
           <Testimonials.PartnerVisual />
         </Testimonials.PartnerCarousel>
       </Testimonials.Root>
 
-      <Signoff.Root
-        backgroundColor={theme.colors.primary.background[100]}
-        color={theme.colors.primary.text[100]}
-        page={Pages.Partners}
-      >
+      <Signoff.Root scheme="light" page={Pages.Partners}>
         <Signoff.Heading page={Pages.Partners}>
           <HeadingPart fontFamily="serif">
-            {renderText(msg`Ready to grow`)}
+            {i18n._(msg`Ready to grow`)}
           </HeadingPart>
           <br />
           <HeadingPart fontFamily="sans">
-            {renderText(msg`with Twenty?`)}
+            {i18n._(msg`with Twenty?`)}
           </HeadingPart>
         </Signoff.Heading>
-        <Signoff.Body
-          body={{ text: SIGNOFF_COPY.body }}
-          page={Pages.Partners}
-          renderText={renderText}
-        />
+        <Signoff.Body page={Pages.Partners}>
+          {i18n._(
+            msg`Join our partner ecosystem and help businesses\ntake control of their CRM.`,
+          )}
+        </Signoff.Body>
         <Signoff.Cta>
           <PartnerSignoffCtas />
         </Signoff.Cta>
@@ -198,25 +170,25 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow
-            colorScheme="secondary"
-            heading={FAQ_DATA.eyebrow.heading}
-            renderText={renderText}
-          />
+          <Eyebrow colorScheme="secondary">
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Any Questions?`)}
+            </HeadingPart>
+          </Eyebrow>
           <Faq.Heading>
             <HeadingPart fontFamily="serif">
-              {renderText(msg`Stop fighting custom.`)}
+              {i18n._(msg`Stop fighting custom.`)}
             </HeadingPart>
             <br />
             <HeadingPart fontFamily="sans">
-              {renderText(msg`Start building, with Twenty`)}
+              {i18n._(msg`Start building, with Twenty`)}
             </HeadingPart>
           </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={renderText(msg`Get started`)}
+              label={i18n._(msg`Get started`)}
               variant="contained"
             />
             <TalkToUsButton
@@ -226,7 +198,7 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
             />
           </Faq.Cta>
         </Faq.Intro>
-        <Faq.Items questions={FAQ_DATA.questions} />
+        <Faq.Items questions={FAQ_QUESTIONS} />
       </Faq.Root>
     </>
   );

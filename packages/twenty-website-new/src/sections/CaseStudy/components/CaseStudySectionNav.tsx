@@ -1,6 +1,6 @@
 'use client';
 
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import { useLingui } from '@lingui/react';
 import { useScheduledOnScroll } from '@/lib/scroll';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
@@ -154,9 +154,9 @@ export function CaseStudySectionNav({
   items,
   label = DEFAULT_LABEL,
 }: CaseStudySectionNavProps) {
-  const renderText = useRenderMessage();
-  const resolvedLabel = renderText(label);
-  const resolvedItems = items.map(renderText);
+  const { i18n } = useLingui();
+  const resolvedLabel = i18n._(label);
+  const resolvedItems = items.map((item) => i18n._(item));
 
   const [visible, setVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);

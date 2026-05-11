@@ -1,6 +1,6 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type RelationType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName } from 'twenty-shared/utils';
+import { computeMorphRelationGqlFieldName } from 'twenty-shared/utils';
 
 export const buildRecordWithAllMorphObjectIdsToNull = ({
   morphRelations,
@@ -13,7 +13,7 @@ export const buildRecordWithAllMorphObjectIdsToNull = ({
 }): Record<string, null> => {
   return morphRelations.reduce(
     (acc, morphRelation) => {
-      const computedFieldName = computeMorphRelationFieldName({
+      const computedFieldName = computeMorphRelationGqlFieldName({
         fieldName,
         relationType,
         targetObjectMetadataNameSingular:

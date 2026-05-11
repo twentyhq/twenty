@@ -1,10 +1,10 @@
 import { FooterNavCta } from '@/sections/Footer/components/FooterNavCta';
 import { PlusIcon, RectangleFillIcon } from '@/icons';
 import { LocalizedLink } from '@/lib/i18n';
+import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
 import type { FooterNavGroupType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
 import { NavigationMenu } from '@base-ui/react/navigation-menu';
-import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import React from 'react';
 
@@ -126,10 +126,10 @@ const Actions = styled.div`
 
 type NavProps = {
   groups: FooterNavGroupType[];
-  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Nav({ groups, renderText }: NavProps) {
+export function Nav({ groups }: NavProps) {
+  const i18n = getServerI18n();
   return (
     <NavigationMenu.Root render={<FooterNav />}>
       {groups.map((group, index) => (
@@ -150,9 +150,7 @@ export function Nav({ groups, renderText }: NavProps) {
             </NavDivider>
           )}
           <NavGroup aria-labelledby={group.id}>
-            <NavGroupTitle id={group.id}>
-              {renderText(group.title)}
-            </NavGroupTitle>
+            <NavGroupTitle id={group.id}>{i18n._(group.title)}</NavGroupTitle>
             <NavMenuList>
               {group.links.map((link) => (
                 <NavigationMenu.Item key={link.href}>
@@ -175,7 +173,7 @@ export function Nav({ groups, renderText }: NavProps) {
                         fillColor={theme.colors.secondary.background[100]}
                       />
                     </NavLinkHoverIcon>
-                    {renderText(link.label)}
+                    {i18n._(link.label)}
                   </NavLink>
                 </NavigationMenu.Item>
               ))}
@@ -188,7 +186,6 @@ export function Nav({ groups, renderText }: NavProps) {
                       cta.kind === 'link' ? `${cta.href}-${cta.kind}` : cta.kind
                     }
                     cta={cta}
-                    renderText={renderText}
                   />
                 ))}
               </Actions>

@@ -1,0 +1,72 @@
+---
+title: Servidor Local
+description: Gerencie o servidor Docker local do Twenty — iniciar, parar, atualizar, executar uma instância de teste paralela e configurar manualmente o SDK.
+icon: server
+---
+
+## Gerenciando o servidor local
+
+Use `yarn twenty server` para controlar o contêiner Twenty local:
+
+| Comando                                | O que faz                                        |
+| -------------------------------------- | ------------------------------------------------ |
+| `yarn twenty server start`             | Inicia o servidor (baixa a imagem se necessário) |
+| `yarn twenty server start --port 3030` | Inicia em uma porta personalizada                |
+| `yarn twenty server stop`              | Interrompe o servidor (preserva os dados)        |
+| `yarn twenty server status`            | Mostra a URL, a versão e as credenciais de login |
+| `yarn twenty server logs`              | Transmite os logs do servidor                    |
+| `yarn twenty server reset`             | Apaga os dados e começa do zero                  |
+| `yarn twenty server upgrade`           | Baixa a imagem mais recente `twenty-app-dev`     |
+| `yarn twenty server upgrade 2.2.0`     | Atualiza para uma versão específica              |
+
+Os dados são persistidos entre reinicializações em dois volumes do Docker (`twenty-app-dev-data` para PostgreSQL, `twenty-app-dev-storage` para arquivos). Use `reset` para apagar tudo.
+
+## Atualizando a imagem do servidor
+
+`yarn twenty server upgrade` baixa a imagem mais recente, compara os digests e só recria o contêiner se algo realmente tiver mudado. Os volumes são preservados — apenas o contêiner é substituído. Se uma nova imagem foi baixada e o contêiner estava em execução, a atualização inicia automaticamente um novo contêiner; execute `yarn twenty server start` depois para aguardar até que ele fique saudável.
+
+```bash filename="Terminal"
+yarn twenty server upgrade            # Latest
+yarn twenty server upgrade 2.2.0      # Specific version
+```
+
+Verifique a versão em execução com `yarn twenty server status` (ele mostra o `APP_VERSION` incorporado ao contêiner).
+
+## Executando uma instância de teste paralela
+
+Passe `--test` para qualquer comando de `server` para gerenciar uma segunda instância totalmente isolada — útil para testes de integração ou para experimentar sem tocar nos seus dados principais de desenvolvimento:
+
+| Comando                             | O que faz                                        |
+| ----------------------------------- | ------------------------------------------------ |
+| `yarn twenty server start --test`   | Inicia a instância de teste (padrão: porta 2021) |
+| `yarn twenty server stop --test`    | Para                                             |
+| `yarn twenty server status --test`  | Mostra seu status                                |
+| `yarn twenty server logs --test`    | Transmite seus logs                              |
+| `yarn twenty server reset --test`   | Apaga seus dados                                 |
+| `yarn twenty server upgrade --test` | Atualiza sua imagem                              |
+
+A instância de teste tem seu próprio contêiner (`twenty-app-dev-test`), volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) e configuração — ela é executada junto com sua instância principal sem conflitos. Combine `--test` com `--port` para substituir 2021.
+
+## Configuração manual (sem o gerador)
+
+Ignore o gerador se você estiver adicionando o SDK a um projeto existente:
+
+```bash filename="Terminal"
+yarn add twenty-sdk twenty-client-sdk
+```
+
+Adicione o script ao `package.json`:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "twenty": "twenty"
+  }
+}
+```
+
+Agora você pode executar `yarn twenty dev`, `yarn twenty server start` e o restante.
+
+<Note>
+Não instale `twenty-sdk` globalmente — fixe-o por projeto, para que cada aplicativo use sua própria versão.
+</Note>

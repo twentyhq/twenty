@@ -9,7 +9,7 @@ import {
 } from 'twenty-shared/types';
 
 export const computeSyncStatus = (
-  messageChannel?: Pick<MessageChannel, 'syncStatus' | 'syncStage'>,
+  messageChannel?: Pick<MessageChannel, 'syncStatus' | 'syncStage' | 'type'>,
   calendarChannel?: Pick<CalendarChannel, 'syncStatus' | 'syncStage'>,
 ): SyncStatus => {
   const {
