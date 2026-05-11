@@ -60,7 +60,11 @@ export const turnSortsIntoOrderBy = (
         return [{ [`${correspondingField.name}Id`]: direction }];
       }
 
-      return getOrderByForFieldMetadataType(correspondingField, direction);
+      return getOrderByForFieldMetadataType(
+        correspondingField,
+        direction,
+        sort.subFieldName,
+      );
     })
     .filter(isDefined);
 

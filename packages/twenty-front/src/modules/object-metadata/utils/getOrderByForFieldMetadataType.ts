@@ -1,5 +1,7 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { FULL_NAME_DEFAULT_SORT_SUB_FIELD } from '@/object-metadata/constants/FullNameDefaultSortSubField';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getDefaultSortSubFieldForAddress } from '@/object-metadata/utils/getDefaultSortSubFieldForAddress';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 
 import {
@@ -8,25 +10,47 @@ import {
   type FieldPhonesValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
+  type AllowedAddressSubField,
+  type AllowedFullNameSubField,
   type OrderBy,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getOrderByForFieldMetadataType = (
-  field: Pick<FieldMetadataItem, 'id' | 'name' | 'type'>,
+  field: Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'settings'>,
   direction: OrderBy | null | undefined,
+  subFieldName?: string | null,
 ): RecordGqlOperationOrderBy => {
   switch (field.type) {
-    case FieldMetadataType.FULL_NAME:
+    case FieldMetadataType.FULL_NAME: {
+      const primarySubField = isDefined(subFieldName)
+        ? (subFieldName as AllowedFullNameSubField)
+        : FULL_NAME_DEFAULT_SORT_SUB_FIELD;
+      const secondarySubField =
+        primarySubField === 'firstName' ? 'lastName' : 'firstName';
       return [
         {
           [field.name]: {
-            firstName: direction ?? 'AscNullsLast',
-            lastName: direction ?? 'AscNullsLast',
+            [primarySubField]: direction ?? 'AscNullsLast',
+            [secondarySubField]: direction ?? 'AscNullsLast',
           },
         },
       ];
+    }
+    case FieldMetadataType.ADDRESS: {
+      const subField = isDefined(subFieldName)
+        ? (subFieldName as AllowedAddressSubField)
+        : getDefaultSortSubFieldForAddress(field.settings);
+      return [
+        {
+          [field.name]: {
+            [subField]: direction ?? 'AscNullsLast',
+          },
+        },
+      ];
+    }
     case FieldMetadataType.CURRENCY:
       return [
         {
