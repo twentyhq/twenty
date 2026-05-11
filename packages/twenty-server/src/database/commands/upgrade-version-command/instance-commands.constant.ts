@@ -32,6 +32,7 @@ import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/comm
 import { AddMetadataToBillingPriceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1777100000000-add-metadata-to-billing-price';
 import { AddEmailGroupChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778256809018-add-email-group-channel-type';
 import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1798000003000-add-application-id-to-public-domain';
+import { AddEmailingDomainTenantStatusFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1798500000000-add-emailing-domain-tenant-status';
 import { AddIsInternalMessagesImportEnabledFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778525104406-add-is-internal-messages-import-enabled';
 import { CreateSigningKeyTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778550000000-create-signing-key-table';
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
@@ -77,6 +78,7 @@ export const INSTANCE_COMMANDS = [
   BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand,
   AddEmailGroupChannelTypeFastInstanceCommand,
   AddApplicationIdToPublicDomainFastInstanceCommand,
+  AddEmailingDomainTenantStatusFastInstanceCommand,
   AddIsInternalMessagesImportEnabledFastInstanceCommand,
   CreateSigningKeyTableFastInstanceCommand,
   EncryptConnectedAccountTokensSlowInstanceCommand,

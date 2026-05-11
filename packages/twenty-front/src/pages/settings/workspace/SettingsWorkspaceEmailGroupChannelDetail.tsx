@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
@@ -14,12 +14,22 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconCopy, IconTrash } from 'twenty-ui/display';
+import { Loader } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { NotFound } from '~/pages/not-found/NotFound';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DELETE_EMAIL_GROUP_MODAL_ID = 'delete-email-group-channel-modal';
+
+const StyledLoadingContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 200px;
+  justify-content: center;
+`;
 
 const StyledForwardingRow = styled.div`
   display: flex;
@@ -33,7 +43,7 @@ const StyledForwardingInputContainer = styled.div`
 
 export const SettingsWorkspaceEmailGroupChannelDetail = () => {
   const { t } = useLingui();
-  const navigate = useNavigate();
+  const navigateSettings = useNavigateSettings();
   const { messageChannelId } = useParams<{ messageChannelId: string }>();
   const { channels, loading } = useMyMessageChannels();
   const { copyToClipboard } = useCopyToClipboard();
@@ -43,7 +53,11 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
     useDeleteEmailGroupChannel();
 
   if (loading) {
-    return null;
+    return (
+      <StyledLoadingContainer>
+        <Loader />
+      </StyledLoadingContainer>
+    );
   }
 
   const channel = channels.find(
@@ -52,20 +66,20 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
       channel.type === MessageChannelType.EMAIL_GROUP,
   );
 
-  if (!isDefined(channel)) {
-    return <Navigate to={getSettingsPath(SettingsPath.Workspace)} replace />;
+  if (!isDefined(channel) || !isDefined(channel.connectedAccount)) {
+    return <NotFound />;
   }
 
-  const sourceHandle = channel.connectedAccount?.handle ?? channel.handle;
+  const sourceHandle = channel.connectedAccount.handle;
   const forwardingAddress = channel.handle;
 
   const handleDelete = async () => {
     try {
       await deleteEmailGroupChannel(channel.id);
-      navigate(-1);
+      navigateSettings(SettingsPath.Workspace);
     } catch {
       enqueueErrorSnackBar({
-        message: t`Failed to delete email group channel.`,
+        message: t`Failed to delete email handle.`,
       });
     }
   };
@@ -100,7 +114,7 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
         <Section>
           <H2Title
             title={t`Source address`}
-            description={t`The external address whose mail is forwarded into the workspace.`}
+            description={t`The address your workspace sends and receives email from.`}
           />
           <SettingsTextInput
             instanceId="email-group-source"
@@ -139,8 +153,8 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
       </SettingsPageContainer>
       <ConfirmationModal
         modalInstanceId={DELETE_EMAIL_GROUP_MODAL_ID}
-        title={t`Delete email group`}
-        subtitle={t`Are you sure you want to delete ${sourceHandle}? Forwarded emails will no longer arrive in this workspace.`}
+        title={t`Delete email handle`}
+        subtitle={t`Are you sure you want to delete ${sourceHandle}? Inbound mail forwarded to this address and outbound replies from it will stop working.`}
         onConfirmClick={handleDelete}
         confirmButtonText={t`Delete`}
         confirmButtonAccent="danger"

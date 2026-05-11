@@ -33,6 +33,13 @@ export class MessagingAccountAuthenticationService {
     workspaceId,
     messageChannelId,
   }: ValidateAndRefreshConnectedAccountAuthenticationParams): Promise<ConnectedAccountTokens> {
+    if (connectedAccount.provider === ConnectedAccountProvider.EMAIL_GROUP) {
+      return {
+        accessToken: '',
+        refreshToken: '',
+      };
+    }
+
     if (
       connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
       isDefined(connectedAccount.connectionParameters?.IMAP)

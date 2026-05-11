@@ -39,6 +39,12 @@ const StyledTableRowContainer = styled.div`
 const StyledTableCellFontWrapper = styled.div`
   display: contents;
   font-family: monospace;
+
+  > * {
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
 `;
 
 export const SettingsDnsRecordsTable = ({
