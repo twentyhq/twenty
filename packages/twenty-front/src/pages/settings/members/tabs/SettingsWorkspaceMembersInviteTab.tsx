@@ -71,7 +71,7 @@ const StyledTableRows = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-export const SettingsWorkspaceMembersAccessTab = () => {
+export const SettingsWorkspaceMembersInviteTab = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();

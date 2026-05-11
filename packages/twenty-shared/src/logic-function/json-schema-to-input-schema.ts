@@ -46,6 +46,10 @@ const convertProperty = (jsonSchema: InputJsonSchema): InputSchemaProperty => {
     );
   }
 
+  if (jsonSchema.multiline === true) {
+    property.multiline = true;
+  }
+
   return property;
 };
 
