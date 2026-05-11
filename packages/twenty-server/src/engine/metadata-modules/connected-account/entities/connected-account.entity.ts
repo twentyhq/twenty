@@ -44,8 +44,6 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', nullable: false })
   provider: ConnectedAccountProvider;
 
-  // accessToken and refreshToken always hold ciphertext stamped with
-  // CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX.
   @Column({ type: 'varchar', nullable: true })
   accessToken: string | null;
 
