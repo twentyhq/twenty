@@ -1,8 +1,10 @@
-import { type DataSource, type QueryRunner } from 'typeorm';
+import { type DataSource } from 'typeorm';
 
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
-import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import {
+  CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
+  type ConnectedAccountTokenEncryptionService,
+} from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 type FakeRow = {
   id: string;
@@ -82,39 +84,29 @@ const buildFakeDataSource = (
   };
 };
 
-const buildFakeQueryRunner = (): {
-  queryRunner: QueryRunner;
-  queries: string[];
-} => {
-  const queries: string[] = [];
-
-  const queryRunner = {
-    query: jest.fn(async (sql: string) => {
-      queries.push(sql);
-    }),
-  } as unknown as QueryRunner;
-
-  return { queryRunner, queries };
-};
-
 describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
-  // Real AES output is asserted in SecretEncryptionService's own spec; here
-  // we use a CIPHER(...) wrapper so assertions match exact strings.
-  const buildFakeSecretEncryptionService = (): SecretEncryptionService =>
-    ({
-      encrypt: jest.fn((plaintext: string): string => `CIPHER(${plaintext})`),
-    }) as unknown as SecretEncryptionService;
+  // Real AES round-trip is asserted in ConnectedAccountTokenEncryptionService's
+  // own spec; here we use a CIPHER(...) wrapper so assertions match exact strings.
+  const buildFakeTokenEncryptionService =
+    (): ConnectedAccountTokenEncryptionService =>
+      ({
+        encrypt: jest.fn(
+          (plaintext: string): string =>
+            `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${plaintext})`,
+        ),
+      }) as unknown as ConnectedAccountTokenEncryptionService;
 
   const buildCommand = (): {
     command: EncryptConnectedAccountTokensSlowInstanceCommand;
-    secretEncryptionService: SecretEncryptionService;
+    connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService;
   } => {
-    const secretEncryptionService = buildFakeSecretEncryptionService();
+    const connectedAccountTokenEncryptionService =
+      buildFakeTokenEncryptionService();
     const command = new EncryptConnectedAccountTokensSlowInstanceCommand(
-      secretEncryptionService,
+      connectedAccountTokenEncryptionService,
     );
 
-    return { command, secretEncryptionService };
+    return { command, connectedAccountTokenEncryptionService };
   };
 
   describe('runDataMigration', () => {

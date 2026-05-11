@@ -1,9 +1,11 @@
 import { DataSource, QueryRunner } from 'typeorm';
 
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
-import { CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import {
+  CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
+  ConnectedAccountTokenEncryptionService,
+} from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 const BACKFILL_BATCH_SIZE = 500;
 
@@ -23,7 +25,7 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
   implements SlowInstanceCommand
 {
   constructor(
-    private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
   async runDataMigration(dataSource: DataSource): Promise<void> {
@@ -62,7 +64,9 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
           !row.accessToken.startsWith(CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX)
         ) {
           params.push(
-            `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}${this.secretEncryptionService.encrypt(row.accessToken)}`,
+            this.connectedAccountTokenEncryptionService.encrypt(
+              row.accessToken,
+            ),
           );
           sets.push(`"accessToken" = $${params.length}`);
         }
@@ -74,7 +78,9 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
           )
         ) {
           params.push(
-            `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}${this.secretEncryptionService.encrypt(row.refreshToken)}`,
+            this.connectedAccountTokenEncryptionService.encrypt(
+              row.refreshToken,
+            ),
           );
           sets.push(`"refreshToken" = $${params.length}`);
         }
