@@ -2,7 +2,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { resolveAddressSortSubField } from '@/object-metadata/utils/resolveAddressSortSubField';
-import { resolveFullNameSortSubField } from '@/object-metadata/utils/resolveFullNameSortSubField';
+import { resolvePrimaryFullNameSortSubField } from '@/object-metadata/utils/resolvePrimaryFullNameSortSubField';
 
 import {
   type FieldEmailsValue,
@@ -27,8 +27,8 @@ export const getOrderByForFieldMetadataType = ({
 }): RecordGqlOperationOrderBy => {
   switch (field.type) {
     case FieldMetadataType.FULL_NAME: {
-      const primarySubField = resolveFullNameSortSubField({
-        compositeSubField,
+      const primarySubField = resolvePrimaryFullNameSortSubField({
+        requestedPrimarySubField: compositeSubField,
       });
       const secondarySubField =
         primarySubField === 'firstName' ? 'lastName' : 'firstName';

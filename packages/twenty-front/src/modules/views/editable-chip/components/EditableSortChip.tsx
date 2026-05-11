@@ -1,7 +1,7 @@
 import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFieldMetadataItemByIdOrThrow';
 import { getEnabledAddressSubFields } from '@/object-metadata/utils/getEnabledAddressSubFields';
 import { resolveAddressSortSubField } from '@/object-metadata/utils/resolveAddressSortSubField';
-import { resolveFullNameSortSubField } from '@/object-metadata/utils/resolveFullNameSortSubField';
+import { resolvePrimaryFullNameSortSubField } from '@/object-metadata/utils/resolvePrimaryFullNameSortSubField';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
@@ -72,8 +72,8 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
           value,
           label: labels[value],
         })),
-        resolvedValue: resolveFullNameSortSubField({
-          compositeSubField: recordSort.subFieldName,
+        resolvedValue: resolvePrimaryFullNameSortSubField({
+          requestedPrimarySubField: recordSort.subFieldName,
         }),
       };
     }

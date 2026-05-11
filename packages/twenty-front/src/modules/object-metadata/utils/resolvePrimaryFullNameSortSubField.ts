@@ -10,16 +10,16 @@ const isAllowedFullNameSortSubField = (
     value as AllowedFullNameSortSubField,
   );
 
-export const resolveFullNameSortSubField = ({
-  compositeSubField,
+export const resolvePrimaryFullNameSortSubField = ({
+  requestedPrimarySubField,
 }: {
-  compositeSubField?: string | null;
+  requestedPrimarySubField?: string | null;
 } = {}): AllowedFullNameSortSubField => {
   if (
-    isDefined(compositeSubField) &&
-    isAllowedFullNameSortSubField(compositeSubField)
+    isDefined(requestedPrimarySubField) &&
+    isAllowedFullNameSortSubField(requestedPrimarySubField)
   ) {
-    return compositeSubField;
+    return requestedPrimarySubField;
   }
   return FULL_NAME_DEFAULT_SORT_SUB_FIELD;
 };
