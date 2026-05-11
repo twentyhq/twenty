@@ -21,7 +21,7 @@ export const ALL_METADATA_NAME = {
   pageLayoutTab: 'pageLayoutTab',
   commandMenuItem: 'commandMenuItem',
   navigationMenuItem: 'navigationMenuItem',
-  permissionFlag: 'permissionFlag',
+  permissionFlagGrant: 'permissionFlagGrant',
   permissionFlagDefinition: 'permissionFlagDefinition',
   objectPermission: 'objectPermission',
   fieldPermission: 'fieldPermission',

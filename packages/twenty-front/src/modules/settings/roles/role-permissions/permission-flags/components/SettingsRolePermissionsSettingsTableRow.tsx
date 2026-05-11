@@ -47,8 +47,8 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   );
 
   const isPermissionEnabled =
-    settingsDraftRole.permissionFlags?.some(
-      (permissionFlag) => permissionFlag.flag === permission.key,
+    settingsDraftRole.permissionFlagGrants?.some(
+      (permissionFlagGrant) => permissionFlagGrant.flag === permission.key,
     ) ?? false;
 
   const isAllSettingsOverride =
@@ -64,12 +64,12 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   );
 
   const handleChange = (value: boolean) => {
-    const currentPermissions = settingsDraftRole.permissionFlags ?? [];
+    const currentPermissions = settingsDraftRole.permissionFlagGrants ?? [];
 
     if (value === true) {
       setSettingsDraftRole({
         ...settingsDraftRole,
-        permissionFlags: [
+        permissionFlagGrants: [
           ...currentPermissions,
           {
             id: v4(),
@@ -81,7 +81,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
     } else {
       setSettingsDraftRole({
         ...settingsDraftRole,
-        permissionFlags: currentPermissions.filter(
+        permissionFlagGrants: currentPermissions.filter(
           (p) => p.flag !== permission.key,
         ),
       });

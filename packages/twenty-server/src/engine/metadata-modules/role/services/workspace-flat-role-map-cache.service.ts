@@ -12,7 +12,7 @@ import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-
 import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/from-role-entity-to-flat-role.util';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
+import { PermissionFlagGrantEntity } from 'src/engine/metadata-modules/permission-flag-grant/permission-flag-grant.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
@@ -36,8 +36,8 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(ObjectPermissionEntity)
     private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
-    @InjectRepository(PermissionFlagEntity)
-    private readonly permissionFlagRepository: Repository<PermissionFlagEntity>,
+    @InjectRepository(PermissionFlagGrantEntity)
+    private readonly permissionFlagGrantRepository: Repository<PermissionFlagGrantEntity>,
     @InjectRepository(FieldPermissionEntity)
     private readonly fieldPermissionRepository: Repository<FieldPermissionEntity>,
     @InjectRepository(RowLevelPermissionPredicateEntity)
@@ -56,7 +56,7 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
       applications,
       roleTargets,
       objectPermissions,
-      permissionFlags,
+      permissionFlagGrants,
       fieldPermissions,
       rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroups,
@@ -80,7 +80,7 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
         select: ['id', 'universalIdentifier', 'roleId'],
         withDeleted: true,
       }),
-      this.permissionFlagRepository.find({
+      this.permissionFlagGrantRepository.find({
         where: { workspaceId },
         select: ['id', 'universalIdentifier', 'roleId'],
         withDeleted: true,
@@ -105,7 +105,7 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
     const [
       roleTargetsByRoleId,
       objectPermissionsByRoleId,
-      permissionFlagsByRoleId,
+      permissionFlagGrantsByRoleId,
       fieldPermissionsByRoleId,
       rowLevelPermissionPredicatesByRoleId,
       rowLevelPermissionPredicateGroupsByRoleId,
@@ -120,7 +120,7 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
           foreignKey: 'roleId',
         },
         {
-          entities: permissionFlags,
+          entities: permissionFlagGrants,
           foreignKey: 'roleId',
         },
         {
@@ -149,7 +149,7 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
           ...roleEntity,
           roleTargets: roleTargetsByRoleId.get(roleEntity.id) || [],
           objectPermissions: objectPermissionsByRoleId.get(roleEntity.id) || [],
-          permissionFlags: permissionFlagsByRoleId.get(roleEntity.id) || [],
+          permissionFlagGrants: permissionFlagGrantsByRoleId.get(roleEntity.id) || [],
           fieldPermissions: fieldPermissionsByRoleId.get(roleEntity.id) || [],
           rowLevelPermissionPredicates:
             rowLevelPermissionPredicatesByRoleId.get(roleEntity.id) || [],

@@ -5,7 +5,7 @@ import { type UserWorkspacePermissionsDto } from 'src/engine/metadata-modules/ro
 
 export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
   objectsPermissions: rawObjectsPermissions,
-  permissionFlags: rawSettingsPermissions,
+  permissionFlagGrants: rawSettingsPermissions,
 }: UserWorkspacePermissions): UserWorkspacePermissionsDto => {
   const objectPermissions = Object.entries(rawObjectsPermissions).map(
     ([objectMetadataId, permissions]) => ({
@@ -23,13 +23,13 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
 
   const objectsPermissions = objectPermissions;
 
-  const permissionFlags = (
+  const permissionFlagGrants = (
     Object.keys(rawSettingsPermissions) as PermissionFlagType[]
   ).filter((feature) => rawSettingsPermissions[feature] === true);
 
   return {
     objectPermissions,
     objectsPermissions,
-    permissionFlags,
+    permissionFlagGrants,
   };
 };

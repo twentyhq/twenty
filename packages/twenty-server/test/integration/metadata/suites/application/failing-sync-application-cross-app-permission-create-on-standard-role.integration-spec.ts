@@ -10,7 +10,7 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 
 const TEST_APP_ID = 'a1b2c3d4-0010-4000-a000-000000000010';
 const TEST_ROLE_ID = 'a1b2c3d4-0010-4000-a000-000000000011';
-const TEST_PERMISSION_FLAG_ID = 'a1b2c3d4-0010-4000-a000-000000000012';
+const TEST_PERMISSION_FLAG_GRANT_ID = 'a1b2c3d4-0010-4000-a000-000000000012';
 const TEST_OBJECT_PERMISSION_ID = 'a1b2c3d4-0010-4000-a000-000000000013';
 const TEST_FIELD_PERMISSION_ID = 'a1b2c3d4-0010-4000-a000-000000000014';
 const FAKE_OBJECT_ID = 'a1b2c3d4-0010-4000-a000-000000000020';
@@ -48,9 +48,9 @@ describe('Sync application should fail when creating permissions on a standard r
             label: 'Stolen Admin Role',
             description:
               'Attempts to add permissions to the standard admin role',
-            permissionFlags: [
+            permissionFlagGrants: [
               {
-                universalIdentifier: TEST_PERMISSION_FLAG_ID,
+                universalIdentifier: TEST_PERMISSION_FLAG_GRANT_ID,
                 flag: PermissionFlagType.WORKSPACE,
               },
             ],

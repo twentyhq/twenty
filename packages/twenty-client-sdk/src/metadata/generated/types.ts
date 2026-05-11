@@ -351,7 +351,7 @@ export default {
             "deletedAt": [
                 4
             ],
-            "permissionFlags": [
+            "permissionFlagGrants": [
                 18
             ],
             "objectPermissions": [
@@ -500,7 +500,7 @@ export default {
                 1
             ]
         },
-        "PermissionFlag": {
+        "PermissionFlagGrant": {
             "id": [
                 3
             ],
@@ -586,7 +586,7 @@ export default {
             "canDestroyAllObjectRecords": [
                 6
             ],
-            "permissionFlags": [
+            "permissionFlagGrants": [
                 27
             ],
             "objectPermissions": [
@@ -7667,12 +7667,12 @@ export default {
                     ]
                 }
             ],
-            "upsertPermissionFlags": [
+            "upsertPermissionFlagGrants": [
                 27,
                 {
-                    "upsertPermissionFlagsInput": [
+                    "upsertPermissionFlagGrantsInput": [
                         414,
-                        "UpsertPermissionFlagsInput!"
+                        "UpsertPermissionFlagGrantsInput!"
                     ]
                 }
             ],
@@ -10334,11 +10334,11 @@ export default {
                 1
             ]
         },
-        "UpsertPermissionFlagsInput": {
+        "UpsertPermissionFlagGrantsInput": {
             "roleId": [
                 3
             ],
-            "permissionFlagKeys": [
+            "permissionFlagGrantKeys": [
                 18
             ],
             "__typename": [

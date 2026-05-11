@@ -168,7 +168,7 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     application: null,
   },
-  permissionFlag: {
+  permissionFlagGrant: {
     workspace: null,
     application: null,
     role: {

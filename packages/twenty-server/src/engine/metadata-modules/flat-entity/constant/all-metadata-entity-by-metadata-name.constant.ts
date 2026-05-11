@@ -17,7 +17,7 @@ import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { PermissionFlagDefinitionEntity } from 'src/engine/metadata-modules/permission-flag-definition/entities/permission-flag-definition.entity';
-import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
+import { PermissionFlagGrantEntity } from 'src/engine/metadata-modules/permission-flag-grant/permission-flag-grant.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
@@ -57,7 +57,7 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   agent: AgentEntity,
   commandMenuItem: CommandMenuItemEntity,
   navigationMenuItem: NavigationMenuItemEntity,
-  permissionFlag: PermissionFlagEntity,
+  permissionFlagGrant: PermissionFlagGrantEntity,
   permissionFlagDefinition: PermissionFlagDefinitionEntity,
   webhook: WebhookEntity,
   applicationVariable: ApplicationVariableEntity,

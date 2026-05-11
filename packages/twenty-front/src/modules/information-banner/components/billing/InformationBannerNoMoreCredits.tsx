@@ -1,5 +1,5 @@
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { usePermissionFlagGrantMap } from '@/settings/roles/hooks/usePermissionFlagGrantMap';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -9,7 +9,7 @@ export const InformationBannerNoMoreCredits = () => {
   const { t } = useLingui();
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToUpdateCreditPlan } =
-    usePermissionFlagMap();
+    usePermissionFlagGrantMap();
 
   const navigateSettings = useNavigateSettings();
 

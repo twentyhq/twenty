@@ -68,7 +68,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'commandMenuItem':
     case 'frontComponent':
     case 'navigationMenuItem':
-    case 'permissionFlag':
+    case 'permissionFlagGrant':
     case 'permissionFlagDefinition':
     case 'objectPermission':
     case 'fieldPermission':

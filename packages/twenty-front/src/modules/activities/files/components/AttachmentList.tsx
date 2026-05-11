@@ -19,7 +19,7 @@ import {
   filterAttachmentsWithFile,
 } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { getAttachmentUrl } from '@/activities/utils/getAttachmentUrl';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from 'twenty-shared/utils';
@@ -129,11 +129,11 @@ export const AttachmentList = ({
     isAttachmentPreviewEnabledState,
   );
 
-  const hasDownloadPermission = useHasPermissionFlag(
+  const hasDownloadPermission = useHasPermissionFlagGrant(
     PermissionFlagType.DOWNLOAD_FILE,
   );
 
-  const hasUploadPermission = useHasPermissionFlag(
+  const hasUploadPermission = useHasPermissionFlagGrant(
     PermissionFlagType.UPLOAD_FILE,
   );
 

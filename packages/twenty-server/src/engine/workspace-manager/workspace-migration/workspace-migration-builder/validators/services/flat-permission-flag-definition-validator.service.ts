@@ -171,7 +171,7 @@ export class FlatPermissionFlagDefinitionValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPermissionFlagDefinitionMaps:
         optimisticFlatPermissionFlagDefinitionMaps,
-      flatPermissionFlagMaps: optimisticFlatPermissionFlagMaps,
+      flatPermissionFlagGrantMaps: optimisticFlatPermissionFlagGrantMaps,
     },
     buildOptions,
   }: UniversalFlatEntityValidationArgs<
@@ -215,10 +215,10 @@ export class FlatPermissionFlagDefinitionValidatorService {
     }
 
     const isPermissionFlagDefinitionInUse = Object.values(
-      optimisticFlatPermissionFlagMaps.byUniversalIdentifier,
+      optimisticFlatPermissionFlagGrantMaps.byUniversalIdentifier,
     ).some(
-      (permissionFlag) =>
-        isDefined(permissionFlag) && permissionFlag.flag === existing.key,
+      (permissionFlagGrant) =>
+        isDefined(permissionFlagGrant) && permissionFlagGrant.flag === existing.key,
     );
 
     if (isPermissionFlagDefinitionInUse) {

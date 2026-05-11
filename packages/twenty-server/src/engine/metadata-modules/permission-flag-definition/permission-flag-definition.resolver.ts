@@ -33,7 +33,7 @@ export class PermissionFlagDefinitionResolver {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  private async assertCustomPermissionFlagsEnabled(
+  private async assertCustomPermissionFlagGrantsEnabled(
     workspaceId: string,
   ): Promise<void> {
     const isEnabled = await this.featureFlagService.isFeatureEnabled(
@@ -74,7 +74,7 @@ export class PermissionFlagDefinitionResolver {
     @Args('input') input: CreatePermissionFlagDefinitionInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PermissionFlagDefinitionDTO> {
-    await this.assertCustomPermissionFlagsEnabled(workspace.id);
+    await this.assertCustomPermissionFlagGrantsEnabled(workspace.id);
 
     return await this.permissionFlagDefinitionService.create(
       input,
@@ -88,7 +88,7 @@ export class PermissionFlagDefinitionResolver {
     @Args('input') input: UpdatePermissionFlagDefinitionInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PermissionFlagDefinitionDTO> {
-    await this.assertCustomPermissionFlagsEnabled(workspace.id);
+    await this.assertCustomPermissionFlagGrantsEnabled(workspace.id);
 
     return await this.permissionFlagDefinitionService.update(
       input,
@@ -102,7 +102,7 @@ export class PermissionFlagDefinitionResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PermissionFlagDefinitionDTO> {
-    await this.assertCustomPermissionFlagsEnabled(workspace.id);
+    await this.assertCustomPermissionFlagGrantsEnabled(workspace.id);
 
     return await this.permissionFlagDefinitionService.delete(id, workspace.id);
   }

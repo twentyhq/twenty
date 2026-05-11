@@ -167,7 +167,7 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       case 'navigationMenuItem':
       case 'frontComponent':
       case 'viewSort':
-      case 'permissionFlag':
+      case 'permissionFlagGrant':
       case 'permissionFlagDefinition':
       case 'objectPermission':
       case 'fieldPermission':

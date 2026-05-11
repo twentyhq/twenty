@@ -211,7 +211,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       twentyStandardApplicationId,
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps: {
-        flatPermissionFlagMaps: createEmptyFlatEntityMaps(),
+        flatPermissionFlagGrantMaps: createEmptyFlatEntityMaps(),
       },
     });
 

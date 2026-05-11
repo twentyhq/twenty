@@ -24,7 +24,7 @@ const buildContext = (
   },
   selectedRecords: [],
   featureFlags: {},
-  permissionFlags: {},
+  permissionFlagGrants: {},
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
   objectMetadataItem: {},

@@ -15,7 +15,7 @@ import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 
 import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { FileIcon } from '@/file/components/FileIcon';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -83,7 +83,7 @@ export const AttachmentRow = ({
   const { theme } = useContext(ThemeContext);
   const [isEditing, setIsEditing] = useState(false);
 
-  const hasDownloadPermission = useHasPermissionFlag(
+  const hasDownloadPermission = useHasPermissionFlagGrant(
     PermissionFlagType.DOWNLOAD_FILE,
   );
 

@@ -33,7 +33,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   logicFunction: {},
   role: {},
   roleTarget: {},
-  permissionFlag: {},
+  permissionFlagGrant: {},
   permissionFlagDefinition: {},
   objectPermission: {},
   fieldPermission: {},

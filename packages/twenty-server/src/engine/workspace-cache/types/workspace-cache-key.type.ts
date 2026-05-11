@@ -35,7 +35,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatApplicationMaps: 'flat-maps:flatApplicationMaps',
   flatRoleMaps: 'flat-maps:role',
   flatRoleTargetMaps: 'flat-maps:role-target',
-  flatPermissionFlagMaps: 'flat-maps:permission-flag',
+  flatPermissionFlagGrantMaps: 'flat-maps:permission-flag-grant',
   flatPermissionFlagDefinitionMaps: 'flat-maps:permission-flag-definition',
   flatObjectPermissionMaps: 'flat-maps:object-permission',
   flatFieldPermissionMaps: 'flat-maps:field-permission',

@@ -46,9 +46,9 @@ import { UpdatePageLayoutActionHandlerService } from 'src/engine/workspace-manag
 import { CreatePermissionFlagDefinitionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag-definition/services/create-permission-flag-definition-action-handler.service';
 import { DeletePermissionFlagDefinitionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag-definition/services/delete-permission-flag-definition-action-handler.service';
 import { UpdatePermissionFlagDefinitionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag-definition/services/update-permission-flag-definition-action-handler.service';
-import { CreatePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag/services/create-permission-flag-action-handler.service';
-import { DeletePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag/services/delete-permission-flag-action-handler.service';
-import { UpdatePermissionFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag/services/update-permission-flag-action-handler.service';
+import { CreatePermissionFlagGrantActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag-grant/services/create-permission-flag-grant-action-handler.service';
+import { DeletePermissionFlagGrantActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag-grant/services/delete-permission-flag-grant-action-handler.service';
+import { UpdatePermissionFlagGrantActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/permission-flag-grant/services/update-permission-flag-grant-action-handler.service';
 import { CreateRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/role-target/services/create-role-target-action-handler.service';
 import { DeleteRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/role-target/services/delete-role-target-action-handler.service';
 import { UpdateRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/role-target/services/update-role-target-action-handler.service';
@@ -154,9 +154,9 @@ import { UpdateConnectionProviderActionHandlerService } from 'src/engine/workspa
     DeleteRoleTargetActionHandlerService,
     UpdateRoleTargetActionHandlerService,
 
-    CreatePermissionFlagActionHandlerService,
-    UpdatePermissionFlagActionHandlerService,
-    DeletePermissionFlagActionHandlerService,
+    CreatePermissionFlagGrantActionHandlerService,
+    UpdatePermissionFlagGrantActionHandlerService,
+    DeletePermissionFlagGrantActionHandlerService,
 
     CreatePermissionFlagDefinitionActionHandlerService,
     UpdatePermissionFlagDefinitionActionHandlerService,

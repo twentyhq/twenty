@@ -6,7 +6,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -54,7 +54,7 @@ export const SettingsWorkspaceMember = () => {
   const [impersonate] = useMutation(ImpersonateDocument);
   const isImpersonating = useAtomStateValue(isImpersonatingState);
   const canImpersonate =
-    useHasPermissionFlag(PermissionFlagType.IMPERSONATE) && !isImpersonating;
+    useHasPermissionFlagGrant(PermissionFlagType.IMPERSONATE) && !isImpersonating;
 
   const {
     roles,
