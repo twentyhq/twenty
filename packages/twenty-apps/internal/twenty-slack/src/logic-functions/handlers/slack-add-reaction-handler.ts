@@ -1,24 +1,22 @@
-import { WebClient } from '@slack/web-api';
-
 import { type SlackAddReactionInput } from 'src/logic-functions/types/slack-add-reaction-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
-import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 
 export const slackAddReactionHandler = async (
   parameters: SlackAddReactionInput,
 ): Promise<SlackToolResult> => {
-  const connectionResult = await getSlackConnection();
+  const slackClientResult = await getSlackClient();
 
-  if (!connectionResult.success) {
+  if (!slackClientResult.success) {
     return {
       success: false,
       message: 'Slack is not connected',
-      error: connectionResult.error,
+      error: slackClientResult.error,
     };
   }
 
-  const client = new WebClient(connectionResult.accessToken);
+  const { client } = slackClientResult;
 
   try {
     await client.reactions.add({

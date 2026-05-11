@@ -1,25 +1,23 @@
-import { WebClient } from '@slack/web-api';
-
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { type SlackUpdateMessageInput } from 'src/logic-functions/types/slack-update-message-input.type';
 import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
-import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 
 export const slackUpdateMessageHandler = async (
   parameters: SlackUpdateMessageInput,
 ): Promise<SlackToolResult> => {
-  const connectionResult = await getSlackConnection();
+  const slackClientResult = await getSlackClient();
 
-  if (!connectionResult.success) {
+  if (!slackClientResult.success) {
     return {
       success: false,
       message: 'Slack is not connected',
-      error: connectionResult.error,
+      error: slackClientResult.error,
     };
   }
 
-  const client = new WebClient(connectionResult.accessToken);
+  const { client } = slackClientResult;
 
   try {
     const bodyFields = getSlackChatMessageBodyFields(
