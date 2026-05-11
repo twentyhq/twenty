@@ -7,6 +7,8 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ApplyCalendarEventsVisibilityRestrictionsService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 
 @WorkspaceQueryHook({
   key: `calendarEvent.findMany`,
@@ -29,11 +31,13 @@ export class CalendarEventFindManyPostQueryHook
 
     // TODO: this check should be removed, see https://discord.com/channels/1130383047699738754/1503320724704854036 for context
     if (
-      authContext.type !== 'user' &&
-      authContext.type !== 'apiKey' &&
-      authContext.type !== 'application'
+      !isUserAuthContext(authContext) &&
+      !isApiKeyAuthContext(authContext) &&
+      !isApplicationAuthContext(authContext)
     ) {
-      throw new ForbiddenError('Authentication should be user scoped');
+      throw new ForbiddenError(
+        'Authentication error, auth context should be user, apiKey or application',
+      );
     }
 
     const workspace = authContext.workspace;
