@@ -4616,6 +4616,9 @@ export default {
             "isValidated": [
                 6
             ],
+            "applicationId": [
+                3
+            ],
             "createdAt": [
                 4
             ],
@@ -8573,6 +8576,21 @@ export default {
                     "domain": [
                         1,
                         "String!"
+                    ],
+                    "applicationId": [
+                        1
+                    ]
+                }
+            ],
+            "updatePublicDomain": [
+                258,
+                {
+                    "domain": [
+                        1,
+                        "String!"
+                    ],
+                    "applicationId": [
+                        1
                     ]
                 }
             ],
