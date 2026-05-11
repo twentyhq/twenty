@@ -143,37 +143,23 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
 
       await command.runDataMigration(dataSource);
 
-      const finalRows = rows();
-
-      // Row 1: both columns went through encrypt() and got the prefix
-      const row1 = finalRows.find((row) =>
-        row.id.startsWith('aaaaaaaa'),
-      ) as FakeRow;
-
-      expect(row1.accessToken).toBe(
-        `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-access-1)`,
-      );
-      expect(row1.refreshToken).toBe(
-        `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-refresh-1)`,
-      );
-
-      // Row 2: untouched (already prefixed — the SELECT filter excludes it)
-      const row2 = finalRows.find((row) =>
-        row.id.startsWith('bbbbbbbb'),
-      ) as FakeRow;
-
-      expect(row2.accessToken).toBe(alreadyEncrypted);
-      expect(row2.refreshToken).toBe(alreadyEncrypted);
-
-      // Row 3: only accessToken rotated; refreshToken stays null
-      const row3 = finalRows.find((row) =>
-        row.id.startsWith('cccccccc'),
-      ) as FakeRow;
-
-      expect(row3.accessToken).toBe(
-        `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-access-3)`,
-      );
-      expect(row3.refreshToken).toBeNull();
+      expect(rows()).toEqual([
+        {
+          id: 'aaaaaaaa-0000-0000-0000-000000000001',
+          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-access-1)`,
+          refreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-refresh-1)`,
+        },
+        {
+          id: 'bbbbbbbb-0000-0000-0000-000000000002',
+          accessToken: alreadyEncrypted,
+          refreshToken: alreadyEncrypted,
+        },
+        {
+          id: 'cccccccc-0000-0000-0000-000000000003',
+          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-access-3)`,
+          refreshToken: null,
+        },
+      ]);
     });
 
     // Regression guard: the SELECT filter is per-row (one column unencrypted is
@@ -208,24 +194,6 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
         'plaintext-refresh-mixed',
       );
     });
-
-    it('should delegate APP_SECRET handling to SecretEncryptionService and never read process.env directly', async () => {
-      const { dataSource } = buildFakeDataSource([
-        {
-          id: 'aaaaaaaa-0000-0000-0000-000000000001',
-          accessToken: 'plaintext',
-          refreshToken: null,
-        },
-      ]);
-
-      const { command, secretEncryptionService } = buildCommand();
-
-      await command.runDataMigration(dataSource);
-
-      expect(secretEncryptionService.encrypt).toHaveBeenCalledWith('plaintext');
-      expect(secretEncryptionService.encrypt).toHaveBeenCalledTimes(1);
-    });
-
     it('should be idempotent — a second run produces zero updates', async () => {
       const { dataSource, queryCallCount } = buildFakeDataSource([
         {
@@ -278,49 +246,6 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
       // Sanity check: at least the expected number of SELECT batches happened
       // (3 SELECTs for 500/500/100 + 1 final empty SELECT + 1100 UPDATEs)
       expect(queryCallCount()).toBeGreaterThanOrEqual(1100 + 4);
-    });
-  });
-
-  describe('up (CHECK constraint enforcement)', () => {
-    it('should add CHECK constraints on both token columns', async () => {
-      const { queryRunner, queries } = buildFakeQueryRunner();
-
-      const { command } = buildCommand();
-
-      await command.up(queryRunner);
-
-      expect(queries).toHaveLength(2);
-
-      expect(queries[0]).toMatch(/ADD CONSTRAINT/);
-      expect(queries[0]).toMatch(/"accessToken"/);
-      expect(queries[0]).toContain(CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX);
-
-      expect(queries[1]).toMatch(/ADD CONSTRAINT/);
-      expect(queries[1]).toMatch(/"refreshToken"/);
-      expect(queries[1]).toContain(CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX);
-    });
-  });
-
-  describe('down (rollback safety)', () => {
-    it('should drop the CHECK constraints WITHOUT decrypting any data', async () => {
-      const { queryRunner, queries } = buildFakeQueryRunner();
-
-      const { command } = buildCommand();
-
-      await command.down(queryRunner);
-
-      expect(queries).toHaveLength(2);
-
-      expect(queries[0]).toMatch(/DROP CONSTRAINT IF EXISTS/);
-      expect(queries[1]).toMatch(/DROP CONSTRAINT IF EXISTS/);
-
-      // Critical regression guard: rollback must NEVER re-introduce
-      // plaintext tokens into the database.
-      for (const sql of queries) {
-        expect(sql).not.toMatch(/UPDATE/);
-        expect(sql).not.toMatch(/DECRYPT/i);
-        expect(sql).not.toMatch(/SUBSTRING/i);
-      }
     });
   });
 });

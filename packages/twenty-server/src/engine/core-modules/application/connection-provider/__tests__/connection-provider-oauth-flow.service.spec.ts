@@ -120,15 +120,6 @@ describe('ConnectionProviderOAuthFlowService', () => {
           // CIPHER(...) wrapper so assertions can match exact ciphertext.
           provide: ConnectedAccountTokenEncryptionService,
           useValue: {
-            encrypt: jest.fn(
-              (value: string) =>
-                `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${value})`,
-            ),
-            encryptNullable: jest.fn((value: string | null) =>
-              value === null
-                ? null
-                : `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${value})`,
-            ),
             encryptTokenPair: jest.fn(
               ({
                 accessToken,
