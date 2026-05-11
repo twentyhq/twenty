@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
@@ -6,6 +6,10 @@ export const CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX = 'enc:v1:';
 
 @Injectable()
 export class ConnectedAccountTokenEncryptionService {
+  private readonly logger = new Logger(
+    ConnectedAccountTokenEncryptionService.name,
+  );
+
   constructor(
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
@@ -31,12 +35,20 @@ export class ConnectedAccountTokenEncryptionService {
 
   decrypt(ciphertext: string): string {
     if (!ciphertext.startsWith(CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX)) {
-      throw new Error(
-        'ConnectedAccountTokenEncryptionService.decrypt received a value without the ' +
-          `'${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}' prefix. ` +
-          'This indicates the column was written without going through encrypt(), ' +
-          'or the value was read from a source other than core.connectedAccount.',
+      // v2.4.0 deployment-window tolerance. Should be patch to throw after v2.4.1
+      // throw new Error(
+      //   'ConnectedAccountTokenEncryptionService.decrypt received a value without the ' +
+      //     `'${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}' prefix. ` +
+      //     'This indicates the column was written without going through encrypt(), ' +
+      //     'or the value was read from a source other than core.connectedAccount.',
+      // );
+
+      this.logger.warn(
+        'Decrypted a legacy plaintext token. Expected during the 2.4.0 ' +
+          'rollout window until the slow instance command finishes backfilling.',
       );
+
+      return ciphertext;
     }
 
     return this.secretEncryptionService.decrypt(
