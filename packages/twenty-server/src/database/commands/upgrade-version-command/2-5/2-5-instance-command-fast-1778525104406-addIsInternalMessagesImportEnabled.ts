@@ -6,7 +6,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 @RegisteredInstanceCommand('2.5.0', 1778525104406)
 export class AddIsInternalMessagesImportEnabledFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('ALTER TABLE "core"."workspace" ADD "isInternalMessagesImportEnabled" boolean NOT NULL DEFAULT false');
+    await queryRunner.query('ALTER TABLE "core"."workspace" ADD COLUMN IF NOT EXISTS "isInternalMessagesImportEnabled" boolean NOT NULL DEFAULT false');
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
