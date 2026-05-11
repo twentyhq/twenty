@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type DataSource, type Repository } from 'typeorm';
+import { IsNull, type DataSource, type Repository } from 'typeorm';
 
 import { type ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
@@ -786,6 +786,7 @@ describe('UserWorkspaceService', () => {
         where: {
           userId,
           workspaceId,
+          deletedAt: IsNull(),
         },
         relations: ['twoFactorAuthenticationMethods'],
       });
@@ -801,6 +802,26 @@ describe('UserWorkspaceService', () => {
       await expect(
         service.getUserWorkspaceForUserOrThrow({ userId, workspaceId }),
       ).rejects.toThrow('User workspace not found');
+    });
+
+    it('should exclude soft-deleted user workspaces', async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+
+      jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue(null);
+
+      await expect(
+        service.getUserWorkspaceForUserOrThrow({ userId, workspaceId }),
+      ).rejects.toThrow('User workspace not found');
+
+      expect(userWorkspaceRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          userId,
+          workspaceId,
+          deletedAt: IsNull(),
+        },
+        relations: ['twoFactorAuthenticationMethods'],
+      });
     });
   });
 

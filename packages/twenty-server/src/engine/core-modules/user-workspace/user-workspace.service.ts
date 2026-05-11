@@ -400,6 +400,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       where: {
         userId,
         workspaceId,
+        deletedAt: IsNull(),
       },
       relations,
     });
