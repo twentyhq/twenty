@@ -185,8 +185,9 @@ def find_task_by_title_on_target(client: WorkspaceClient, title: str, *, target_
     return None
 
 
-def create_campaign_member(client: WorkspaceClient, *, campaign_id: str, target_person_id: str | None, target_company_id: str | None, assignee_id: str | None, touch_type: str | None, response_status: str, priority: str | None, notes: str | None) -> dict:
+def create_campaign_member(client: WorkspaceClient, *, name: str, campaign_id: str, target_person_id: str | None, target_company_id: str | None, assignee_id: str | None, touch_type: str | None, response_status: str, priority: str | None, notes: str | None) -> dict:
     data_obj = {
+        'name': name,
         'campaignId': campaign_id,
         'responseStatus': response_status,
         'dateAdded': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.000Z'),
@@ -328,6 +329,14 @@ def process_row(client: WorkspaceClient, campaign: dict, row: dict, *, dry_run: 
 
     target_label = person_email or company_name
 
+    # Resolve the human-readable target name once — used for both member.name and task title rendering.
+    if person:
+        pn = person.get('name') or {}
+        target_display_name = ' '.join(filter(None, [pn.get('firstName'), pn.get('lastName')])) or person_email
+    else:
+        target_display_name = company.get('name') or company_name
+    member_name = f'{campaign.get("name", "")} → {target_display_name}'
+
     # Member idempotency
     existing = find_existing_member(
         client, campaign['id'],
@@ -342,10 +351,11 @@ def process_row(client: WorkspaceClient, campaign: dict, row: dict, *, dry_run: 
         touch_type = (row.get('touchType') or '').strip().upper() or None
         priority = (row.get('priority') or '').strip().upper() or None
         notes = (row.get('notes') or '').strip() or None
-        print(f'  [create] member for {target_label} (status={response_status}, touch={touch_type or "-"}, priority={priority or "-"})')
+        print(f'  [create] member "{member_name}" (status={response_status}, touch={touch_type or "-"}, priority={priority or "-"})')
         if not dry_run:
             create_campaign_member(
                 client,
+                name=member_name,
                 campaign_id=campaign['id'],
                 target_person_id=target_person_id,
                 target_company_id=target_company_id,
