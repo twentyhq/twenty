@@ -1,4 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 
 import { SLACK_POST_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
@@ -16,17 +17,7 @@ export default defineLogicFunction({
   workflowActionTriggerSettings: {
     label: 'Send Slack Message',
     icon: 'IconBrandSlack',
-    inputSchema: [
-      {
-        type: 'object',
-        properties: {
-          slackChannelId: { type: 'string' },
-          messageText: { type: 'string' },
-          parentMessageTimestamp: { type: 'string' },
-          messageFormat: { type: 'string', enum: ['plain', 'markdown'] },
-        },
-      },
-    ],
+    inputSchema: jsonSchemaToInputSchema(slackPostMessageInputSchema),
     outputSchema: [
       {
         type: 'object',

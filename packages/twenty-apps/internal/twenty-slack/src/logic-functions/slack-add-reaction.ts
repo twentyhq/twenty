@@ -1,4 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 
 import { SLACK_ADD_REACTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { slackAddReactionHandler } from 'src/logic-functions/handlers/slack-add-reaction-handler';
@@ -16,16 +17,7 @@ export default defineLogicFunction({
   workflowActionTriggerSettings: {
     label: 'Add Slack Reaction',
     icon: 'IconBrandSlack',
-    inputSchema: [
-      {
-        type: 'object',
-        properties: {
-          slackChannelId: { type: 'string' },
-          messageTimestamp: { type: 'string' },
-          emojiName: { type: 'string' },
-        },
-      },
-    ],
+    inputSchema: jsonSchemaToInputSchema(slackAddReactionInputSchema),
     outputSchema: [
       {
         type: 'object',

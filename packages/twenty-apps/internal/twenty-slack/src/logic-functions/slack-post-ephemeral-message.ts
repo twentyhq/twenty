@@ -1,4 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 
 import { SLACK_POST_EPHEMERAL_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { slackPostEphemeralMessageHandler } from 'src/logic-functions/handlers/slack-post-ephemeral-message-handler';
@@ -16,17 +17,7 @@ export default defineLogicFunction({
   workflowActionTriggerSettings: {
     label: 'Send Slack Ephemeral Message',
     icon: 'IconBrandSlack',
-    inputSchema: [
-      {
-        type: 'object',
-        properties: {
-          slackChannelId: { type: 'string' },
-          recipientSlackUserId: { type: 'string' },
-          messageText: { type: 'string' },
-          messageFormat: { type: 'string', enum: ['plain', 'markdown'] },
-        },
-      },
-    ],
+    inputSchema: jsonSchemaToInputSchema(slackPostEphemeralMessageInputSchema),
     outputSchema: [
       {
         type: 'object',

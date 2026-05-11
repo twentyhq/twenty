@@ -1,4 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 
 import { SLACK_DELETE_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { slackDeleteMessageHandler } from 'src/logic-functions/handlers/slack-delete-message-handler';
@@ -16,15 +17,7 @@ export default defineLogicFunction({
   workflowActionTriggerSettings: {
     label: 'Delete Slack Message',
     icon: 'IconBrandSlack',
-    inputSchema: [
-      {
-        type: 'object',
-        properties: {
-          slackChannelId: { type: 'string' },
-          messageTimestamp: { type: 'string' },
-        },
-      },
-    ],
+    inputSchema: jsonSchemaToInputSchema(slackDeleteMessageInputSchema),
     outputSchema: [
       {
         type: 'object',

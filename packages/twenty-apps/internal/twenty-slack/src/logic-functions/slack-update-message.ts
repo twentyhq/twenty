@@ -1,4 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 
 import { SLACK_UPDATE_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { slackUpdateMessageHandler } from 'src/logic-functions/handlers/slack-update-message-handler';
@@ -16,17 +17,7 @@ export default defineLogicFunction({
   workflowActionTriggerSettings: {
     label: 'Update Slack Message',
     icon: 'IconBrandSlack',
-    inputSchema: [
-      {
-        type: 'object',
-        properties: {
-          slackChannelId: { type: 'string' },
-          messageTimestamp: { type: 'string' },
-          newMessageText: { type: 'string' },
-          messageFormat: { type: 'string', enum: ['plain', 'markdown'] },
-        },
-      },
-    ],
+    inputSchema: jsonSchemaToInputSchema(slackUpdateMessageInputSchema),
     outputSchema: [
       {
         type: 'object',
