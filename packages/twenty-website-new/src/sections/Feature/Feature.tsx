@@ -192,14 +192,15 @@ const CardInner = styled.div`
   width: 100%;
 `;
 
-const CardVisual = styled.div`
-  flex: 1;
-  margin: 0 ${theme.spacing(4)} ${theme.spacing(4)};
-  min-height: 220px;
+const CardVisualFrame = styled.div`
+  height: 300px;
+  margin: ${theme.spacing(4)} ${theme.spacing(4)} 0;
   overflow: hidden;
+  position: relative;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    margin: 0 ${theme.spacing(5)} ${theme.spacing(5)};
+    height: 340px;
+    margin: ${theme.spacing(5)} ${theme.spacing(5)} 0;
   }
 `;
 
@@ -237,10 +238,10 @@ function Tiles({ tiles }: TilesProps) {
           <GridCell key={index}>
             <FeatureScrollEntrance index={index}>
               <CardInner>
-                <TileContent counter={counter} spotlight={false} tile={tile} />
-                <CardVisual>
+                <CardVisualFrame>
                   <TileVisual visual={tile.visual} />
-                </CardVisual>
+                </CardVisualFrame>
+                <TileContent counter={counter} spotlight={false} tile={tile} />
               </CardInner>
             </FeatureScrollEntrance>
           </GridCell>

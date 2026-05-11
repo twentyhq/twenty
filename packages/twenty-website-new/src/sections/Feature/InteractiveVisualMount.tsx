@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import type { ComponentType } from 'react';
+import { useEffect, useRef, useState, type ComponentType } from 'react';
 
 type InteractiveVisualMountProps = {
   visual: ComponentType<{ active: boolean }>;

@@ -1,19 +1,91 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useState } from 'react';
 
-import {
-  BG_PANEL,
-  BORDER_COLOR,
-  TEXT_MUTED,
-  TEXT_PRIMARY,
-  TEXT_SECONDARY,
-} from './visual-tokens';
-import { FIELD_MAPPINGS } from './import-visual.data';
-import { WindowChrome } from './WindowChrome';
+const BG = '#1d1d25';
+const BORDER = 'rgba(255, 255, 255, 0.06)';
+const TEXT = 'rgba(255, 255, 255, 0.88)';
+const TEXT_SECONDARY = 'rgba(255, 255, 255, 0.55)';
+const TEXT_TERTIARY = 'rgba(255, 255, 255, 0.35)';
+const ACCENT = '#3e63dd';
+const FONT = "'Inter', sans-serif";
 
-const Content = styled.div`
+const Root = styled.div`
+  background: ${BG};
+  display: flex;
+  flex-direction: column;
+  font-family: ${FONT};
+  height: 100%;
+  overflow: hidden;
+  padding: 16px;
+  width: 100%;
+`;
+
+const PageTitle = styled.h4`
+  color: ${TEXT};
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 6px;
+`;
+
+const PageDescription = styled.p`
+  color: ${TEXT_TERTIARY};
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 0 0 16px;
+`;
+
+const TableFrame = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+`;
+
+const TableHeaderRow = styled.div`
+  display: flex;
+  padding: 8px 12px;
+`;
+
+const NameHeader = styled.span`
+  color: ${TEXT_TERTIARY};
+  flex: 1;
+  font-size: 11px;
+  font-weight: 500;
+`;
+
+const RightsHeader = styled.span`
+  color: ${TEXT_TERTIARY};
+  font-size: 11px;
+  font-weight: 500;
+  text-align: right;
+  width: 130px;
+`;
+
+const SectionRow = styled.div`
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid ${BORDER};
+  border-top: 1px solid ${BORDER};
+  display: flex;
+  gap: 6px;
+  padding: 6px 12px;
+`;
+
+const SectionLabel = styled.span`
+  color: ${TEXT_SECONDARY};
+  font-size: 10px;
+  font-weight: 500;
+`;
+
+const SectionChevron = styled.span`
+  color: ${TEXT_TERTIARY};
+  display: inline-flex;
+  margin-left: auto;
+`;
+
+const TableBody = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -21,135 +93,168 @@ const Content = styled.div`
   overflow-y: auto;
 `;
 
-const HeaderRow = styled.div`
-  border-bottom: 1px solid ${BORDER_COLOR};
-  display: grid;
-  flex-shrink: 0;
-  grid-template-columns: 1fr 40px 1fr 60px;
-  padding: 10px 16px;
-`;
-
-const HeaderCell = styled.span`
-  color: ${TEXT_MUTED};
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-`;
-
-const MappingRow = styled.div`
+const Row = styled.div`
   align-items: center;
-  display: grid;
-  grid-template-columns: 1fr 40px 1fr 60px;
-  padding: 10px 16px;
+  border-bottom: 1px solid ${BORDER};
+  display: flex;
+  padding: 8px 12px;
   transition: background-color 0.1s ease;
 
-  &:not(:last-child) {
-    border-bottom: 1px solid ${BORDER_COLOR};
-  }
-
   &:hover {
-    background-color: ${BG_PANEL};
+    background-color: rgba(255, 255, 255, 0.02);
+  }
+
+  &:last-child {
+    border-bottom: none;
   }
 `;
 
-const FieldTag = styled.span`
-  background-color: ${BG_PANEL};
-  border: 1px solid ${BORDER_COLOR};
-  border-radius: 4px;
-  color: ${TEXT_PRIMARY};
-  display: inline-block;
-  font-family: monospace;
-  font-size: 11px;
-  max-width: 100%;
-  overflow: hidden;
-  padding: 4px 8px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+const RoleIconEl = styled.div`
+  align-items: center;
+  color: ${TEXT_TERTIARY};
+  display: flex;
+  flex-shrink: 0;
+  height: 18px;
+  justify-content: center;
+  margin-right: 8px;
+  width: 18px;
 `;
 
-const Arrow = styled.span`
-  color: ${TEXT_MUTED};
-  font-size: 14px;
-  text-align: center;
-`;
-
-const CrmField = styled.span`
-  color: ${TEXT_SECONDARY};
-  font-size: 11px;
+const RoleName = styled.span`
+  color: ${TEXT};
+  flex: 1;
+  font-size: 12px;
   font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
-const StatusBadge = styled.button`
-  background: none;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 10px;
-  font-weight: 600;
-  justify-self: end;
-  letter-spacing: 0.02em;
-  padding: 3px 8px;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
-
-  &[data-mapped='true'] {
-    background-color: rgba(22, 163, 74, 0.15);
-    color: #16a34a;
-  }
-
-  &[data-mapped='false'] {
-    background-color: rgba(245, 158, 11, 0.15);
-    color: #f59e0b;
-  }
+const RightsGroup = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  width: 130px;
+  justify-content: flex-end;
 `;
+
+const RightIcon = styled.div`
+  align-items: center;
+  border: 1px solid ${ACCENT};
+  border-radius: 4px;
+  color: ${ACCENT};
+  display: flex;
+  height: 18px;
+  justify-content: center;
+  width: 18px;
+`;
+
+const RowChevron = styled.span`
+  color: ${TEXT_TERTIARY};
+  display: inline-flex;
+  margin-left: 8px;
+`;
+
+const ROLES = [
+  { name: 'CMO', icons: 4 },
+  { name: 'Product Marketing Manager', icons: 4 },
+  { name: 'Digital Marketing Manager', icons: 4 },
+  { name: 'Content Marketing Manager', icons: 4 },
+  { name: 'CEO', icons: 4 },
+];
+
+const ICON_PATHS = [
+  'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z',
+  'M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2',
+  'M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13',
+];
 
 type ImportVisualProps = {
   active: boolean;
 };
 
-export function ImportVisual({ active }: ImportVisualProps) {
-  const [mappings, setMappings] = useState(FIELD_MAPPINGS);
-
-  const toggleMapping = (index: number) => {
-    setMappings((prev) =>
-      prev.map((mapping, mapIndex) =>
-        mapIndex === index ? { ...mapping, mapped: !mapping.mapped } : mapping,
-      ),
-    );
-  };
-
+export function ImportVisual({ active: _active }: ImportVisualProps) {
   return (
-    <WindowChrome
-      breadcrumb="Import"
-      breadcrumbBold="Field mapping"
-      title="Apple"
-    >
-      <HeaderRow>
-        <HeaderCell>CSV Column</HeaderCell>
-        <HeaderCell />
-        <HeaderCell>CRM Field</HeaderCell>
-        <HeaderCell style={{ textAlign: 'right' }}>Status</HeaderCell>
-      </HeaderRow>
-      <Content>
-        {mappings.map((mapping, index) => (
-          <MappingRow key={index}>
-            <FieldTag>{mapping.csvColumn}</FieldTag>
-            <Arrow>→</Arrow>
-            <CrmField>{mapping.crmField}</CrmField>
-            <StatusBadge
-              data-mapped={mapping.mapped}
-              onClick={() => toggleMapping(index)}
+    <Root>
+      <PageTitle>Permissions</PageTitle>
+      <PageDescription>
+        Customise the fields available in the company views and their display
+        order in the company detail view.
+      </PageDescription>
+
+      <TableFrame>
+        <TableHeaderRow>
+          <NameHeader>Name</NameHeader>
+          <RightsHeader>Rights</RightsHeader>
+        </TableHeaderRow>
+
+        <SectionRow>
+          <SectionLabel>Have Access</SectionLabel>
+          <SectionChevron>
+            <svg
+              fill="none"
+              height="10"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeWidth="1.5"
+              viewBox="0 0 10 10"
+              width="10"
             >
-              {mapping.mapped ? 'Mapped' : 'Skip'}
-            </StatusBadge>
-          </MappingRow>
-        ))}
-      </Content>
-    </WindowChrome>
+              <path d="M3 4l2 2 2-2" />
+            </svg>
+          </SectionChevron>
+        </SectionRow>
+
+        <TableBody>
+          {ROLES.map((role, index) => (
+            <Row key={index}>
+              <RoleIconEl>
+                <svg
+                  fill="none"
+                  height="14"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeWidth="1.5"
+                  viewBox="0 0 24 24"
+                  width="14"
+                >
+                  <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0-8 0M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+                </svg>
+              </RoleIconEl>
+              <RoleName>{role.name}</RoleName>
+              <RightsGroup>
+                {ICON_PATHS.map((path, iconIdx) => (
+                  <RightIcon key={iconIdx}>
+                    <svg
+                      fill="none"
+                      height="10"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1.8"
+                      viewBox="0 0 24 24"
+                      width="10"
+                    >
+                      <path d={path} />
+                    </svg>
+                  </RightIcon>
+                ))}
+              </RightsGroup>
+              <RowChevron>
+                <svg
+                  fill="none"
+                  height="12"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeWidth="1.5"
+                  viewBox="0 0 10 10"
+                  width="12"
+                >
+                  <path d="M4 2l3 3-3 3" />
+                </svg>
+              </RowChevron>
+            </Row>
+          ))}
+        </TableBody>
+      </TableFrame>
+    </Root>
   );
 }
