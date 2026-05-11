@@ -14,7 +14,7 @@ import { useCountries } from '@/ui/input/components/internal/hooks/useCountries'
 import { Select } from '@/ui/input/components/Select';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent } from 'react';
+import { useEffect, type MouseEvent } from 'react';
 import {
   DEFAULT_VISIBLE_ADDRESS_SUBFIELDS,
   type AllowedAddressSubField,
@@ -52,9 +52,10 @@ export const SettingsDataModelFieldAddressForm = ({
   existingFieldMetadataId,
 }: SettingsDataModelFieldAddressFormProps) => {
   const { t } = useLingui();
-  const { control, watch } =
+  const { control, watch, setValue } =
     useFormContext<SettingsDataModelFieldTextFormValues>();
   const watchedSubFields = watch('settings.subFields');
+  const watchedDefaultSortSubField = watch('settings.defaultSortSubField');
   const countries = [
     {
       label: t`No country`,
@@ -82,6 +83,26 @@ export const SettingsDataModelFieldAddressForm = ({
     resetDefaultValueField();
     closeDropdown('addressSubFieldsId');
   };
+
+  useEffect(() => {
+    const enabledSubFieldSet = new Set<string>(
+      watchedSubFields ?? initialDisplaySubFields,
+    );
+    const resolvedSubField = getDefaultSortSubFieldForAddress({
+      subFields: DEFAULT_VISIBLE_ADDRESS_SUBFIELDS.filter((subField) =>
+        enabledSubFieldSet.has(subField),
+      ),
+      defaultSortSubField: watchedDefaultSortSubField,
+    });
+    if (resolvedSubField !== watchedDefaultSortSubField) {
+      setValue('settings.defaultSortSubField', resolvedSubField);
+    }
+  }, [
+    watchedSubFields,
+    watchedDefaultSortSubField,
+    initialDisplaySubFields,
+    setValue,
+  ]);
 
   const subFieldLabels: Record<AllowedAddressSubField, string> = {
     addressStreet1: t`Address 1`,
@@ -173,18 +194,13 @@ export const SettingsDataModelFieldAddressForm = ({
           const enabledSubFieldSet = new Set<string>(
             watchedSubFields ?? initialDisplaySubFields,
           );
-          const enabledSubFields = DEFAULT_VISIBLE_ADDRESS_SUBFIELDS.filter(
-            (subField) => enabledSubFieldSet.has(subField),
-          );
           const sortOptions: SelectOption<AllowedAddressSubField>[] =
-            enabledSubFields.map((subField) => ({
+            DEFAULT_VISIBLE_ADDRESS_SUBFIELDS.filter((subField) =>
+              enabledSubFieldSet.has(subField),
+            ).map((subField) => ({
               label: subFieldLabels[subField],
               value: subField,
             }));
-          const selectedValue = getDefaultSortSubFieldForAddress({
-            subFields: enabledSubFields,
-            defaultSortSubField: value,
-          });
           return (
             <SettingsOptionCardContentSelect
               Icon={IconArrowsSort}
@@ -194,7 +210,7 @@ export const SettingsDataModelFieldAddressForm = ({
               <Select<AllowedAddressSubField>
                 dropdownId="addressDefaultSortSubFieldId"
                 disabled={disabled || sortOptions.length === 0}
-                value={selectedValue}
+                value={value ?? initialDefaultSortSubField}
                 onChange={onChange}
                 options={sortOptions}
                 selectSizeVariant="small"
