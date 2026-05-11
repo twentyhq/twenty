@@ -10,11 +10,14 @@ import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-me
 const isNullEquivalentTextDefaultValue = (value: unknown): boolean =>
   value === "''" || value === '';
 
-export const normalizeCompositeDefaultValue = (
-  defaultValue: FieldMetadataDefaultValueForAnyType,
-  type: CompositeFieldMetadataType,
-): FieldMetadataDefaultValueForAnyType => {
-  switch (type) {
+export const normalizeCompositeDefaultValue = ({
+  defaultValue,
+  fieldType,
+}: {
+  defaultValue: FieldMetadataDefaultValueForAnyType;
+  fieldType: CompositeFieldMetadataType;
+}): FieldMetadataDefaultValueForAnyType => {
+  switch (fieldType) {
     case FieldMetadataType.PHONES: {
       if (!isDefined(defaultValue)) {
         return null;
@@ -291,6 +294,6 @@ export const normalizeCompositeDefaultValue = (
     }
 
     default:
-      assertUnreachable(type);
+      assertUnreachable(fieldType);
   }
 };

@@ -64,10 +64,10 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
           return false;
         }
 
-        const normalizedDefaultValue = normalizeCompositeDefaultValue(
-          field.defaultValue,
-          field.type as CompositeFieldMetadataType,
-        );
+        const normalizedDefaultValue = normalizeCompositeDefaultValue({
+            defaultValue: field.defaultValue,
+            fieldType: field.type as CompositeFieldMetadataType,
+          });
 
         for (const property of compositeType.properties) {
           if (
@@ -125,10 +125,10 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
         continue;
       }
 
-      const normalizedDefaultValue = normalizeCompositeDefaultValue(
-        field.defaultValue,
-        field.type as CompositeFieldMetadataType,
-      );
+      const normalizedDefaultValue = normalizeCompositeDefaultValue({
+          defaultValue: field.defaultValue,
+          fieldType: field.type as CompositeFieldMetadataType,
+        });
 
       for (const property of compositeType.properties) {
         if (
@@ -149,10 +149,10 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
       await this.fieldMetadataService.updateOneField({
         updateFieldInput: {
           id: field.id,
-          defaultValue: normalizeCompositeDefaultValue(
-            field.defaultValue,
-            field.type as CompositeFieldMetadataType,
-          ),
+          defaultValue: normalizeCompositeDefaultValue({
+              defaultValue: field.defaultValue,
+              fieldType: field.type as CompositeFieldMetadataType,
+            }),
         },
         workspaceId,
         isSystemBuild: true,

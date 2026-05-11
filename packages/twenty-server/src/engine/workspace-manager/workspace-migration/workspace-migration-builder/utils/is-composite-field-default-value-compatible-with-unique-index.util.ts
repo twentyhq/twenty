@@ -19,10 +19,10 @@ export const isCompositeFieldDefaultValueCompatibleWithUniqueIndex = ({
     return true;
   }
 
-  const normalizedDefaultValue = normalizeCompositeDefaultValue(
+  const normalizedDefaultValue = normalizeCompositeDefaultValue({
     defaultValue,
     fieldType,
-  );
+  });
 
   if (!isDefined(normalizedDefaultValue)) {
     return true;

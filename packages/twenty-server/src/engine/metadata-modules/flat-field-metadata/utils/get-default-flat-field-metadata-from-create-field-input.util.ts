@@ -45,10 +45,10 @@ export const getDefaultFlatFieldMetadata = ({
     universalIdentifier: createFieldInput.universalIdentifier ?? v4(),
     options: createFieldInput.options ?? null,
     defaultValue: isCompositeFieldMetadataType(createFieldInput.type)
-      ? normalizeCompositeDefaultValue(
-          defaultValue ?? generateDefaultValue(createFieldInput.type),
-          createFieldInput.type,
-        )
+      ? normalizeCompositeDefaultValue({
+          defaultValue: defaultValue ?? generateDefaultValue(createFieldInput.type),
+          fieldType: createFieldInput.type,
+        })
       : (defaultValue ?? generateDefaultValue(createFieldInput.type)),
     createdAt,
     updatedAt: createdAt,

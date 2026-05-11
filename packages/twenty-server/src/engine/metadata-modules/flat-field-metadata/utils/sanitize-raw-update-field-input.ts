@@ -52,10 +52,10 @@ export const sanitizeRawUpdateFieldInput = ({
     isCompositeFieldMetadataType(existingFlatFieldMetadata.type)
   ) {
     updatedEditableFieldProperties.defaultValue =
-      normalizeCompositeDefaultValue(
-        updatedEditableFieldProperties.defaultValue,
-        existingFlatFieldMetadata.type,
-      );
+      normalizeCompositeDefaultValue({
+        defaultValue: updatedEditableFieldProperties.defaultValue,
+        fieldType: existingFlatFieldMetadata.type,
+      });
   }
 
   if (!isStandardField || isSystemBuild) {
