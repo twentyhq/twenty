@@ -1,5 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CREATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/createWorkflowVersionStep';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
 import {
   type CreateWorkflowVersionStepInput,
@@ -17,6 +18,7 @@ export const useCreateWorkflowVersionStep = () => {
   const { updateWorkflowVersionCache } = useUpdateWorkflowVersionCache();
 
   const setFlow = useSetAtomComponentState(flowComponentState);
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [mutate] = useMutation<
     CreateWorkflowVersionStepMutation,
@@ -30,6 +32,9 @@ export const useCreateWorkflowVersionStep = () => {
   ) => {
     const result = await mutate({
       variables: { input },
+      onError: (error) => {
+        enqueueErrorSnackBar({ apolloError: error });
+      },
     });
 
     const workflowVersionStepChanges = result?.data?.createWorkflowVersionStep;

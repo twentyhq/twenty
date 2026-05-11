@@ -1,0 +1,58 @@
+---
+title: Scaffolding
+description: Generate entity files interactively with yarn twenty add — objects, fields, views, logic functions, and more.
+icon: wand-magic-sparkles
+---
+
+Instead of creating entity files by hand, use the interactive scaffolder:
+
+```bash filename="Terminal"
+yarn twenty add
+```
+
+It prompts you to pick an entity type and walks you through the required fields, then writes a ready-to-use file with a stable `universalIdentifier` and the correct `defineEntity()` call.
+
+You can also pass the entity type directly to skip the first prompt:
+
+```bash filename="Terminal"
+yarn twenty add object
+yarn twenty add logicFunction
+yarn twenty add frontComponent
+```
+
+## Available entity types
+
+| Entity type          | Command                              | Generated file                                          |
+| -------------------- | ------------------------------------ | ------------------------------------------------------- |
+| Object               | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| Field                | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| Logic function       | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| Front component      | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| Role                 | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| Skill                | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| Agent                | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| View                 | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| Navigation menu item | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| Page layout          | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+
+## What the scaffolder generates
+
+Each entity type has its own template. For example, `yarn twenty add object` asks for:
+
+1. **Name (singular)** — e.g., `invoice`
+2. **Name (plural)** — e.g., `invoices`
+3. **Label (singular)** — auto-populated from the name (e.g., `Invoice`)
+4. **Label (plural)** — auto-populated (e.g., `Invoices`)
+5. **Create a view and navigation item?** — if you answer yes, the scaffolder also generates a matching view and sidebar link for the new object.
+
+Other entity types have simpler prompts — most only ask for a name.
+
+The `field` entity type is more detailed: it asks for the field name, label, type (from a list of all available field types like `TEXT`, `NUMBER`, `SELECT`, `RELATION`, etc.), and the target object's `universalIdentifier`.
+
+## Custom output path
+
+Use the `--path` flag to place the generated file in a custom location:
+
+```bash filename="Terminal"
+yarn twenty add logicFunction --path src/custom-folder
+```

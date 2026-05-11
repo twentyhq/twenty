@@ -1,0 +1,48 @@
+---
+title: Extending Objects
+description: Add fields to standard Twenty objects (Person, Company, …) or to objects from other apps using defineField.
+icon: wand-magic-sparkles
+---
+
+Use `defineField()` to add a field to an object you don't own — a standard Twenty object like Person or Company, or an object shipped by another installed app. Unlike inline fields declared inside [`defineObject`](/l/de/developers/extend/apps/data/objects), standalone fields require an `objectUniversalIdentifier` to specify which object they extend.
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+## Key points
+
+* `objectUniversalIdentifier` identifies the target object. For standard Twenty objects, import the constant from `twenty-sdk`:
+
+  ```ts
+  import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier
+  // …
+  ```
+
+* When defining fields **inline inside `defineObject()`**, you do **not** need `objectUniversalIdentifier` — it's inherited from the parent object.
+
+* `defineField()` is the only way to add fields to objects you didn't create with `defineObject()`.
+
+* File location is up to you. The convention is `src/fields/\<name>.field.ts`, but the SDK detects fields anywhere in `src/`.
+
+## Adding a relation to an existing object
+
+To add a relation field (e.g. linking your custom object to a standard `Person`), use `defineField()` with `FieldType.RELATION`. The pattern is the same as for inline relations but with `objectUniversalIdentifier` set explicitly. See [Relations](/l/de/developers/extend/apps/data/relations) for the bidirectional pattern.

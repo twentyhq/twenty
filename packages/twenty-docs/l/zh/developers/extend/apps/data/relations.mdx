@@ -1,0 +1,160 @@
+---
+title: 关系
+description: Connect objects together with bidirectional MANY_TO_ONE / ONE_TO_MANY relations.
+icon: diagram-project
+---
+
+Relations connect two objects together. In Twenty, relations are always **bidirectional** — every relation has two sides, and each side is declared as a field that references the other.
+
+| 关系类型          | 描述                  | 是否有外键？                |
+| ------------- | ------------------- | --------------------- |
+| `MANY_TO_ONE` | 该对象的多条记录指向目标对象的一条记录 | 是（`joinColumnName`）   |
+| `ONE_TO_MANY` | 该对象的一条记录拥有目标对象的多条记录 | No (the inverse side) |
+
+## How relations work
+
+Every relation requires **two fields** that reference each other:
+
+1. The **MANY_TO_ONE** side — lives on the object that holds the foreign key.
+2. The **ONE_TO_MANY** side — lives on the object that owns the collection.
+
+Both fields use `FieldType.RELATION` and cross-reference each other via `relationTargetFieldMetadataUniversalIdentifier`.
+
+## Example: Post Card has many Recipients
+
+A `PostCard` can be sent to many `PostCardRecipient` records. Each recipient belongs to exactly one post card.
+
+**Step 1: Define the ONE_TO_MANY side on PostCard** (the "one" side):
+
+```ts src/fields/post-card-recipients-on-post-card.field.ts
+import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+// Import from the other side
+import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  icon: 'IconUsers',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+});
+```
+
+**Step 2: Define the MANY_TO_ONE side on PostCardRecipient** (the "many" side — holds the foreign key):
+
+```ts src/fields/post-card-on-post-card-recipient.field.ts
+import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_FIELD_ID = 'b2222222-2222-2222-2222-222222222222';
+// Import from the other side
+import { POST_CARD_RECIPIENTS_FIELD_ID } from './post-card-recipients-on-post-card.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCard',
+  label: 'Post Card',
+  icon: 'IconMail',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.CASCADE,
+    joinColumnName: 'postCardId',
+  },
+});
+```
+
+<Note>
+**Circular imports:** both relation fields reference each other's `universalIdentifier`. To avoid circular import issues, export your field IDs as named constants from each file and import them in the other. The build system resolves these at compile time.
+</Note>
+
+## Relating to standard objects
+
+To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+
+```ts src/fields/person-on-self-hosting-user.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+
+export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+
+export default defineField({
+  universalIdentifier: PERSON_FIELD_ID,
+  objectUniversalIdentifier: SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  description: 'Person matching with the self hosting user',
+  isNullable: true,
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.SET_NULL,
+    joinColumnName: 'personId',
+  },
+});
+```
+
+## Relation field properties
+
+| Property                                          | Required         | Description                                                                                           |
+| ------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
+| `type`                                            | Yes              | Must be `FieldType.RELATION`                                                                          |
+| `relationTargetObjectMetadataUniversalIdentifier` | Yes              | The `universalIdentifier` of the target object                                                        |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Yes              | The `universalIdentifier` of the matching field on the target object                                  |
+| `universalSettings.relationType`                  | Yes              | `RelationType.MANY_TO_ONE` or `RelationType.ONE_TO_MANY`                                              |
+| `universalSettings.onDelete`                      | MANY_TO_ONE only | What happens when the referenced record is deleted: `CASCADE`, `SET_NULL`, `RESTRICT`, or `NO_ACTION` |
+| `universalSettings.joinColumnName`                | MANY_TO_ONE only | Database column name for the foreign key (e.g., `postCardId`)                                         |
+
+## Inline relation fields
+
+You can also declare a relation directly inside [`defineObject`](/l/zh/developers/extend/apps/data/objects). When inline, omit `objectUniversalIdentifier` — it's inherited from the parent object:
+
+```ts
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCardRecipient',
+  // ...
+  fields: [
+    {
+      universalIdentifier: POST_CARD_FIELD_ID,
+      type: FieldType.RELATION,
+      name: 'postCard',
+      label: 'Post Card',
+      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.CASCADE,
+        joinColumnName: 'postCardId',
+      },
+    },
+    // … other fields
+  ],
+});
+```

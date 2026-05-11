@@ -1,0 +1,184 @@
+---
+title: Quick Start
+icon: "rocket"
+description: Create your first Twenty app in minutes.
+---
+
+## Prerequisites
+
+- **Node.js 24+** — [Download](https://nodejs.org/)
+- **Yarn 4** — bundled with Node via Corepack. Enable it: `corepack enable`
+- **Docker** — [Download](https://www.docker.com/products/docker-desktop/). Needed to run a local Twenty server. Skip if you already have Twenty running elsewhere.
+
+Building a Twenty app has three phases. The scaffolder collapses them into one happy-path command, but each phase is a separate concept — when something fails, knowing which phase you're in tells you what to fix.
+
+| Phase | What you do | Tool | Result |
+|---|---|---|---|
+| **1. Scaffold** | Generate the app's source code | `npx create-twenty-app` | A TypeScript project on disk |
+| **2. Run a server** | Start a Twenty server to sync into | Docker + `yarn twenty server` | A running Twenty instance |
+| **3. Sync** | Live-sync your code to the server | `yarn twenty dev` | Your changes appear in the UI |
+
+---
+
+## Phase 1 — Scaffold your project
+
+Create a new app from the template:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app
+```
+
+You'll be prompted for a name and description — press **Enter** for the defaults. This generates a TypeScript project in `my-twenty-app/` with a starter `application-config.ts`, a default role, a CI workflow, and an integration test.
+
+**After this phase:** you have an app's source code on your machine. It isn't running yet — that's Phase 2.
+
+---
+
+## Phase 2 — Run a local Twenty server
+
+Your app needs a Twenty server to sync into. The server is a full Twenty instance — UI, GraphQL API, PostgreSQL — running locally in Docker. Your local code uploads its definitions to that server, which makes them appear in the UI.
+
+The scaffolder offers to start one for you:
+
+> **Would you like to set up a local Twenty instance?**
+
+- **Yes (recommended)** — pulls the `twentycrm/twenty-app-dev` Docker image and starts it on port `2020`. Make sure Docker is running first.
+- **No** — choose this if you already have a Twenty server you want to connect to. You can wire it up later with `yarn twenty remote add`.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Should start local instance?" />
+</div>
+
+Once the server is up, a browser opens for sign-in. Use the pre-seeded demo account:
+
+- **Email:** `tim@apple.dev`
+- **Password:** `tim@apple.dev`
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty login screen" />
+</div>
+
+Click **Authorize** on the next screen — this gives the CLI access to your workspace.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI authorization screen" />
+</div>
+
+Your terminal will confirm everything is set up.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="App scaffolded successfully" />
+</div>
+
+**After this phase:** you have a running Twenty server at [http://localhost:2020](http://localhost:2020) with your CLI authorized to sync to it.
+
+<Note>
+If Docker isn't installed or running, the scaffolder will tell you the right start command for your OS. Once Docker is up, you can resume with `yarn twenty server start` — no need to re-scaffold.
+</Note>
+
+---
+
+## Phase 3 — Sync your changes
+
+This is the inner loop you'll spend most of your time in.
+
+```bash filename="Terminal"
+cd my-twenty-app
+yarn twenty dev
+```
+
+This watches `src/`, rebuilds on every change, and syncs the result to the server. Edit a file, save, and within a second the server reflects the change. You'll see a live status panel in your terminal.
+
+For more detailed output (build logs, sync requests, error traces), add `--verbose`.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/dev.png" alt="Dev mode terminal output" />
+</div>
+
+Open [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). You should see your app under **Your Apps**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Your Apps list showing My twenty app" />
+</div>
+
+Click **My twenty app** to see its **application registration** — a server-level record describing your app (name, identifier, OAuth credentials, source). One registration can be installed across multiple workspaces on the same server.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Application registration details" />
+</div>
+
+Click **View installed app** to see the workspace install. The **About** tab shows version and management options.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Installed app" />
+</div>
+
+**After this phase:** you have a live development loop. Edit any file in `src/` and it appears in the UI.
+
+### One-shot sync for CI and scripts
+
+Pass `--once` to run a single build + sync and exit — same pipeline, no watcher:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Command | Behavior | When to use |
+|---------|----------|-------------|
+| `yarn twenty dev` | Watches and re-syncs on every change. Runs until you stop it. | Interactive local development. |
+| `yarn twenty dev --once` | Single build + sync, exits `0` on success, `1` on failure. | CI, pre-commit hooks, AI agents, scripted workflows. |
+
+Both modes need a server in development mode and an authenticated remote.
+
+<Warning>
+Dev mode is only available on Twenty instances running in development (`NODE_ENV=development`). Production instances reject dev sync requests — use `yarn twenty deploy` to deploy to production servers. See [Publishing](/developers/extend/apps/operations/publishing).
+</Warning>
+
+---
+
+## Starting from an example
+
+Use `--example` to start with a more complete project (custom objects, fields, logic functions, front components):
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app --example postcard
+```
+
+Examples live in [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). You can also scaffold individual entities into an existing project with `yarn twenty add` — see [Scaffolding](/developers/extend/apps/getting-started/scaffolding).
+
+---
+
+## What you can build
+
+Apps are composed of **entities** — each defined as a TypeScript file with a single `export default`:
+
+| Entity | What it does |
+|--------|-------------|
+| **Objects & Fields** | Custom data models (Post Card, Invoice, etc.) with typed fields |
+| **Logic functions** | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events |
+| **Front components** | React components that render inside Twenty's UI (side panel, widgets, command menu) |
+| **Skills & Agents** | AI capabilities — reusable instructions and autonomous assistants |
+| **Views & Navigation** | Pre-configured list views and sidebar menu items |
+| **Page layouts** | Custom record detail pages with tabs and widgets |
+
+Full reference: [Concepts](/developers/extend/apps/getting-started/concepts).
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Config" icon="screwdriver-wrench" href="/developers/extend/apps/config/overview">
+    Application identity, default role, install hooks, public assets.
+  </Card>
+  <Card title="Data" icon="database" href="/developers/extend/apps/data/overview">
+    Objects, fields, and bidirectional relations.
+  </Card>
+  <Card title="Logic" icon="bolt" href="/developers/extend/apps/logic/overview">
+    Logic functions, skills, agents, and OAuth connections.
+  </Card>
+  <Card title="Layout" icon="table-columns" href="/developers/extend/apps/layout/overview">
+    Views, navigation, page layouts, front components.
+  </Card>
+  <Card title="Operations" icon="rocket" href="/developers/extend/apps/operations/overview">
+    CLI, testing, remotes, CI, and publishing your app.
+  </Card>
+</CardGroup>

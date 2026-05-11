@@ -30,6 +30,7 @@ describe('useDeleteWorkspaceInvitation', () => {
 
     expect(mutationCallSpy).toHaveBeenCalledWith({
       onCompleted: expect.any(Function),
+      onError: expect.any(Function),
       variables: params,
     });
   });

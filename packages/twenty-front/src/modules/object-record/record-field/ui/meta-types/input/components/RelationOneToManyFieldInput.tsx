@@ -22,7 +22,6 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
@@ -35,7 +34,11 @@ import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelP
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationGqlFieldJoinColumnName,
+  CustomError,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const RelationOneToManyFieldInput = () => {
   const store = useStore();
@@ -218,9 +221,11 @@ export const RelationOneToManyFieldInput = () => {
           sourceObjectMetadata: objectMetadataItem,
         });
 
-        const targetJoinColumnName = getJoinColumnName(targetField.settings);
+        const targetJoinColumnName = computeRelationGqlFieldJoinColumnName({
+          name: targetField.name,
+        });
 
-        if (!sourceJoinColumnName || !targetJoinColumnName) {
+        if (!sourceJoinColumnName) {
           return;
         }
 

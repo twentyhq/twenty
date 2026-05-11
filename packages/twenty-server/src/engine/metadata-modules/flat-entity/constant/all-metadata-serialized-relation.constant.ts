@@ -50,6 +50,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   viewSort: {},
   frontComponent: {},
   webhook: {},
+  applicationVariable: {},
   connectionProvider: {},
 } as const satisfies MetadataSerializedRelationProperties;
 

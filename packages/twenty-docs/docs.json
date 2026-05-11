@@ -5405,6 +5405,58 @@
   },
   "redirects": [
     {
+      "source": "/developers/extend/apps/getting-started",
+      "destination": "/developers/extend/apps/getting-started/quick-start"
+    },
+    {
+      "source": "/developers/extend/apps/building",
+      "destination": "/developers/extend/apps/getting-started/concepts"
+    },
+    {
+      "source": "/developers/extend/apps/data-model",
+      "destination": "/developers/extend/apps/data/overview"
+    },
+    {
+      "source": "/developers/extend/apps/data/data-model",
+      "destination": "/developers/extend/apps/data/overview"
+    },
+    {
+      "source": "/developers/extend/apps/data/application",
+      "destination": "/developers/extend/apps/config/application"
+    },
+    {
+      "source": "/developers/extend/apps/data/roles",
+      "destination": "/developers/extend/apps/config/roles"
+    },
+    {
+      "source": "/developers/extend/apps/cli-and-testing",
+      "destination": "/developers/extend/apps/operations/overview"
+    },
+    {
+      "source": "/developers/extend/apps/publishing",
+      "destination": "/developers/extend/apps/operations/publishing"
+    },
+    {
+      "source": "/developers/extend/apps/logic-functions",
+      "destination": "/developers/extend/apps/logic/logic-functions"
+    },
+    {
+      "source": "/developers/extend/apps/skills-and-agents",
+      "destination": "/developers/extend/apps/logic/skills-and-agents"
+    },
+    {
+      "source": "/developers/extend/apps/front-components",
+      "destination": "/developers/extend/apps/layout/front-components"
+    },
+    {
+      "source": "/developers/extend/apps/layout",
+      "destination": "/developers/extend/apps/layout/overview"
+    },
+    {
+      "source": "/developers/extend/apps/layout/views-and-pages",
+      "destination": "/developers/extend/apps/layout/overview"
+    },
+    {
       "source": "/developers/extend/capabilities/api",
       "destination": "/developers/extend/api"
     },

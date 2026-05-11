@@ -1,0 +1,65 @@
+---
+title: Application Config
+description: Declare your app's identity, default role, variables, and marketplace metadata with defineApplication.
+icon: rocket
+---
+
+Every app must have exactly one `defineApplication` call. It declares:
+
+* **Identity** — universal identifier, display name, description.
+* **Permissions** — which role its logic functions and front components run under.
+* **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
+* **Pre-install / post-install hooks** *(optional)* — see [Logic Functions](/l/pt/developers/extend/apps/logic/logic-functions).
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Notes:
+
+* `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
+* `applicationVariables` become environment variables for your functions and front components (e.g., `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` must reference a role defined with [`defineRole()`](/l/pt/developers/extend/apps/config/roles).
+* Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+
+## Default function role
+
+The `defaultRoleUniversalIdentifier` controls what the app's logic functions and front components can access:
+
+* The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
+* The typed API client is restricted to the permissions granted to that role.
+* Follow least-privilege: declare only the permissions your functions need.
+
+When you scaffold a new app, the CLI creates a starter role file at `src/roles/default-role.ts`. See [Roles & Permissions](/l/pt/developers/extend/apps/config/roles) for the full reference.
+
+## Marketplace metadata
+
+If you plan to [publish your app](/l/pt/developers/extend/apps/operations/publishing), these optional fields control how it appears in the marketplace:
+
+| Field              | Description                                                                                                          |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `author`           | Author or company name                                                                                               |
+| `category`         | App category for marketplace filtering                                                                               |
+| `logoUrl`          | Path to your app logo (e.g., `public/logo.png`)                                                                      |
+| `screenshots`      | Array of screenshot paths (e.g., `public/screenshot-1.png`)                                                          |
+| `aboutDescription` | Longer markdown description for the "About" tab. If omitted, the marketplace uses the package's `README.md` from npm |
+| `websiteUrl`       | Link to your website                                                                                                 |
+| `termsUrl`         | Link to terms of service                                                                                             |
+| `emailSupport`     | Support email address                                                                                                |
+| `issueReportUrl`   | Link to issue tracker                                                                                                |

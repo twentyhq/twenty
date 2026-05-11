@@ -51,6 +51,7 @@ type ApplicationRegistration {
   logoUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
+  isConfigured: Boolean!
 }
 
 enum ApplicationRegistrationSourceType {
@@ -2872,6 +2873,7 @@ enum AllMetadataName {
   fieldPermission
   frontComponent
   webhook
+  applicationVariable
   connectionProvider
 }
 

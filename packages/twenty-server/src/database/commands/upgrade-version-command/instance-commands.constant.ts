@@ -26,6 +26,8 @@ import { AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand } from 'src/
 import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1797000002000-migrate-tool-trigger-settings';
 import { ConnectionProviderSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777896012579-connection-provider-syncable-entity';
 import { RemoveUserDefaultAvatarUrlFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777915958318-remove-user-default-avatar-url';
+import { TransformApplicationVariableToSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777966965587-transform-application-variable-to-syncable-entity';
+import { BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1777966965588-backfill-application-variable-universal-identifier';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -54,4 +56,6 @@ export const INSTANCE_COMMANDS = [
   MigrateToolTriggerSettingsSlowInstanceCommand,
   ConnectionProviderSyncableEntityFastInstanceCommand,
   RemoveUserDefaultAvatarUrlFastInstanceCommand,
+  TransformApplicationVariableToSyncableEntityFastInstanceCommand,
+  BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand,
 ];

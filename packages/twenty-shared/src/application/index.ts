@@ -10,7 +10,10 @@
 export type { AgentManifest } from './agentManifestType';
 export type { AppConnection } from './appConnectionType';
 export type { ApplicationManifest } from './applicationType';
-export type { ApplicationVariables } from './applicationVariablesType';
+export type {
+  ApplicationVariable,
+  ApplicationVariables,
+} from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';

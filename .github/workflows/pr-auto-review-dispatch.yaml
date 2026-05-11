@@ -1,0 +1,34 @@
+name: PR Review Dispatch
+
+on:
+  pull_request_target:
+    types: [ready_for_review, synchronize]
+
+permissions: {}
+
+concurrency:
+  group: pr-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  dispatch:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch to ci-privileged
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_AUTHOR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            -f event_type=pr-review \
+            -f "client_payload[pr_number]=$PR_NUMBER" \
+            -f "client_payload[pr_head_sha]=$PR_HEAD_SHA" \
+            -f "client_payload[pr_author]=$PR_AUTHOR" \
+            -f "client_payload[pr_author_association]=$PR_AUTHOR_ASSOCIATION" \
+            -f "client_payload[repo]=$REPO"

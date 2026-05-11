@@ -1,5 +1,6 @@
 import type { MessageDescriptor } from '@lingui/core';
 
+import type { Article } from '@/lib/articles';
 import type { LocalReleaseNote } from '@/lib/releases/types';
 
 import { getSiteUrl } from './site-url';
@@ -133,5 +134,59 @@ export const buildReleaseListJsonLd = (
         },
       },
     })),
+  };
+};
+
+export const buildArticleListJsonLd = (
+  posts: readonly Article[],
+): JsonLdValue => {
+  const siteUrl = getSiteUrl();
+  const articlesUrl = `${siteUrl}/articles`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'Twenty Articles',
+    url: articlesUrl,
+    blogPost: posts.map((post) => ({
+      '@type': 'BlogPosting',
+      headline: post.title,
+      description: post.description,
+      url: `${articlesUrl}/${post.slug}`,
+      datePublished: post.date,
+      author: {
+        '@type': 'Organization',
+        name: post.author,
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Twenty',
+        url: siteUrl,
+      },
+    })),
+  };
+};
+
+export const buildArticleJsonLd = (post: Article): JsonLdValue => {
+  const siteUrl = getSiteUrl();
+  const postUrl = `${siteUrl}/articles/${post.slug}`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    url: postUrl,
+    mainEntityOfPage: postUrl,
+    datePublished: post.date,
+    author: {
+      '@type': 'Organization',
+      name: post.author,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Twenty',
+      url: siteUrl,
+    },
   };
 };

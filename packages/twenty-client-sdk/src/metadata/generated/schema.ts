@@ -55,6 +55,7 @@ export interface ApplicationRegistration {
     logoUrl?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
+    isConfigured: Scalars['Boolean']
     __typename: 'ApplicationRegistration'
 }
 
@@ -2495,7 +2496,7 @@ export interface CollectionHash {
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'connectionProvider'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -2926,6 +2927,7 @@ export interface ApplicationRegistrationGenqlSelection{
     logoUrl?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    isConfigured?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8854,6 +8856,7 @@ export const enumAllMetadataName = {
    fieldPermission: 'fieldPermission' as const,
    frontComponent: 'frontComponent' as const,
    webhook: 'webhook' as const,
+   applicationVariable: 'applicationVariable' as const,
    connectionProvider: 'connectionProvider' as const
 }
 

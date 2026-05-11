@@ -2167,6 +2167,11 @@ msgstr ""
 msgid "Application upgraded successfully."
 msgstr "应用程序升级成功。"
 
+#. js-lingui-id: Okob8q
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "application variable"
+msgstr ""
+
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
@@ -3567,7 +3572,7 @@ msgid "Compact view"
 msgstr "紧凑视图"
 
 #. js-lingui-id: s2QZS6
-#: src/modules/sign-in-background-mock/components/SignInBackgroundMockPage.tsx
+#: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Companies"
 msgstr "公司"
 
@@ -3647,6 +3652,7 @@ msgid "Configuration of this command menu item"
 msgstr ""
 
 #. js-lingui-id: iAL9tI
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Configure"
 msgstr "配置"
@@ -3727,6 +3733,7 @@ msgid "Configure your emails and calendar settings."
 msgstr "配置电子邮件和日历设置。"
 
 #. js-lingui-id: M1co/O
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Configured"
 msgstr "已配置"
@@ -10087,6 +10094,11 @@ msgstr "新批准访问域"
 msgid "New chat"
 msgstr "新聊天"
 
+#. js-lingui-id: TsXckK
+#: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
+msgid "New Company"
+msgstr ""
+
 #. js-lingui-id: +HY5kX
 #: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
 msgid "New conversation"
@@ -10240,6 +10252,7 @@ msgstr "第九"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "No"
 msgstr "不"
@@ -11412,6 +11425,7 @@ msgstr "整理"
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
+#: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
@@ -13110,7 +13124,7 @@ msgstr "SDK"
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerHeader.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownMenuSearchInput.tsx
-#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -13485,6 +13499,11 @@ msgstr ""
 msgid "See Records on All Objects"
 msgstr "查看所有对象上的记录"
 
+#. js-lingui-id: Hhnssf
+#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
+msgid "Seeded"
+msgstr ""
+
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
@@ -13835,7 +13854,7 @@ msgstr "正在设置您的数据库..."
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -15086,6 +15105,11 @@ msgstr "此操作将删除此文件夹及其中的 {2} 个导航菜单项。是�
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "此操作将删除此文件夹及其中的导航菜单项。是否继续？"
 
+#. js-lingui-id: E5I/qG
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+msgid "This app has required server variables that are not configured. Users won't be able to install it until all required variables are set."
+msgstr ""
+
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
 msgid "This component runs without a UI and renders nothing here."
@@ -15667,6 +15691,7 @@ msgstr "双因素身份验证设置成功完成！"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
@@ -16981,7 +17006,7 @@ msgstr "工作流"
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
-#: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
+#: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -17185,6 +17210,7 @@ msgstr "是"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Yes"
 msgstr "是"
