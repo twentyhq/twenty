@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { JwtModule as NestJwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { JwtPublicKeyEntity } from 'src/engine/core-modules/jwt/entities/jwt-public-key.entity';
+import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-key-manager.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -14,7 +17,7 @@ const InternalJwtModule = NestJwtModule.registerAsync({
         expiresIn: twentyConfigService.get('ACCESS_TOKEN_EXPIRES_IN'),
       },
       verifyOptions: {
-        algorithms: ['HS256'],
+        algorithms: ['HS256', 'ES256'],
       },
     };
   },
@@ -22,9 +25,13 @@ const InternalJwtModule = NestJwtModule.registerAsync({
 });
 
 @Module({
-  imports: [InternalJwtModule, TwentyConfigModule],
+  imports: [
+    InternalJwtModule,
+    TwentyConfigModule,
+    TypeOrmModule.forFeature([JwtPublicKeyEntity]),
+  ],
   controllers: [],
-  providers: [JwtWrapperService],
-  exports: [JwtWrapperService],
+  providers: [JwtWrapperService, JwtKeyManagerService],
+  exports: [JwtWrapperService, JwtKeyManagerService],
 })
 export class JwtModule {}

@@ -19,18 +19,44 @@ import {
   type JwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-key-manager.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const ASYMMETRIC_TOKEN_TYPES: ReadonlySet<JwtTokenTypeEnum> = new Set([
+  JwtTokenTypeEnum.ACCESS,
+  JwtTokenTypeEnum.REFRESH,
+]);
+
+export const isAsymmetricSigningEligible = (type: JwtTokenTypeEnum): boolean =>
+  ASYMMETRIC_TOKEN_TYPES.has(type);
 
 @Injectable()
 export class JwtWrapperService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly jwtKeyManagerService: JwtKeyManagerService,
   ) {}
 
   sign(payload: JwtPayload, options?: JwtSignOptions): string {
-    // Typescript does not handle well the overloads of the sign method, helping it a little bit
     return this.jwtService.sign(payload, options);
+  }
+
+  async signAsymmetric(
+    payload: JwtPayload,
+    options?: Pick<JwtSignOptions, 'expiresIn' | 'jwtid'>,
+  ): Promise<string | null> {
+    const signingKey = await this.jwtKeyManagerService.getCurrentSigningKey();
+
+    if (signingKey === null) {
+      return null;
+    }
+
+    return jwt.sign(payload as object, signingKey.privateKey, {
+      ...options,
+      algorithm: 'ES256',
+      keyid: signingKey.kid,
+    } as jwt.SignOptions);
   }
 
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
@@ -46,13 +72,20 @@ export class JwtWrapperService {
     return this.jwtService.decode(payload, options);
   }
 
-  verifyJwtToken(token: string, options?: JwtVerifyOptions) {
+  async verifyJwtToken(token: string, options?: JwtVerifyOptions) {
     const payload = this.decode<JwtPayload>(token, {
       json: true,
     });
 
     if (!isDefined(payload)) {
       throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
+    }
+
+    const decodedHeader = this.tryDecodeHeader(token);
+    const kid = decodedHeader?.kid;
+
+    if (typeof kid === 'string' && kid.length > 0) {
+      return this.verifyJwtTokenWithKid({ token, kid, options });
     }
 
     const type = payload.type;
@@ -80,11 +113,13 @@ export class JwtWrapperService {
         try {
           return this.jwtService.verify(token, {
             ...options,
+            algorithms: ['HS256'],
             secret: this.generateAppSecret(type, appSecretBody),
           });
         } catch {
           return this.jwtService.verify(token, {
             ...options,
+            algorithms: ['HS256'],
             secret: this.generateAppSecret(
               JwtTokenTypeEnum.ACCESS,
               appSecretBody,
@@ -95,25 +130,11 @@ export class JwtWrapperService {
 
       return this.jwtService.verify(token, {
         ...options,
+        algorithms: ['HS256'],
         secret: this.generateAppSecret(type, appSecretBody),
       });
     } catch (error) {
-      if (error instanceof jwt.TokenExpiredError) {
-        throw new AuthException(
-          'Token has expired.',
-          AuthExceptionCode.UNAUTHENTICATED,
-        );
-      }
-      if (error instanceof jwt.JsonWebTokenError) {
-        throw new AuthException(
-          'Token invalid.',
-          AuthExceptionCode.UNAUTHENTICATED,
-        );
-      }
-      throw new AuthException(
-        'Unknown token error.',
-        AuthExceptionCode.INVALID_INPUT,
-      );
+      throw this.toAuthException(error);
     }
   }
 
@@ -131,5 +152,65 @@ export class JwtWrapperService {
 
   extractJwtFromRequest(): JwtFromRequestFunction {
     return ExtractJwt.fromAuthHeaderAsBearerToken();
+  }
+
+  private async verifyJwtTokenWithKid(args: {
+    token: string;
+    kid: string;
+    options?: JwtVerifyOptions;
+  }) {
+    const publicKey = await this.jwtKeyManagerService.getPublicKeyByKid(
+      args.kid,
+    );
+
+    if (publicKey === null) {
+      throw new AuthException(
+        'Token invalid.',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
+    try {
+      return jwt.verify(args.token, publicKey, {
+        ...args.options,
+        algorithms: ['ES256'],
+      });
+    } catch (error) {
+      throw this.toAuthException(error);
+    }
+  }
+
+  private tryDecodeHeader(token: string): jwt.JwtHeader | undefined {
+    try {
+      const decoded = jwt.decode(token, { complete: true });
+
+      if (decoded === null || typeof decoded === 'string') {
+        return undefined;
+      }
+
+      return decoded.header;
+    } catch {
+      return undefined;
+    }
+  }
+
+  private toAuthException(error: unknown): AuthException {
+    if (error instanceof jwt.TokenExpiredError) {
+      return new AuthException(
+        'Token has expired.',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+    if (error instanceof jwt.JsonWebTokenError) {
+      return new AuthException(
+        'Token invalid.',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
+    return new AuthException(
+      'Unknown token error.',
+      AuthExceptionCode.INVALID_INPUT,
+    );
   }
 }

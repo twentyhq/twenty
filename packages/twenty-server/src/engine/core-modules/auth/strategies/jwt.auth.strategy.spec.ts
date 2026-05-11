@@ -19,6 +19,7 @@ describe('JwtAuthStrategy', () => {
   let userWorkspaceRepository: any;
   let applicationRepository: any;
   let jwtWrapperService: any;
+  let jwtKeyManagerService: any;
   let permissionsService: any;
   let workspaceCacheService: any;
   let coreEntityCacheService: any;
@@ -47,6 +48,11 @@ describe('JwtAuthStrategy', () => {
 
     jwtWrapperService = {
       extractJwtFromRequest: jest.fn(() => () => 'token'),
+    };
+
+    jwtKeyManagerService = {
+      getPublicKeyByKid: jest.fn(async () => null),
+      getCurrentSigningKey: jest.fn(async () => null),
     };
 
     permissionsService = {
@@ -112,6 +118,7 @@ describe('JwtAuthStrategy', () => {
   const createStrategy = () =>
     new JwtAuthStrategy(
       jwtWrapperService,
+      jwtKeyManagerService,
       applicationRepository,
       userWorkspaceRepository,
       permissionsService,

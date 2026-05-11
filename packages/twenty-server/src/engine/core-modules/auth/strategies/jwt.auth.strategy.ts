@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
+import * as jwt from 'jsonwebtoken';
 import { Strategy } from 'passport-jwt';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -27,6 +28,7 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-key-manager.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -36,6 +38,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
+    private readonly jwtKeyManagerService: JwtKeyManagerService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -46,7 +49,26 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   ) {
     const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
     // @ts-expect-error legacy noImplicitAny
-    const secretOrKeyProviderFunction = async (_request, rawJwtToken, done) => {
+    const secretOrKeyProviderFunction = (_request, rawJwtToken, done) => {
+      const kid = extractKidFromTokenHeader(rawJwtToken);
+
+      if (typeof kid === 'string' && kid.length > 0) {
+        jwtKeyManagerService
+          .getPublicKeyByKid(kid)
+          .then((publicKey) => {
+            if (publicKey === null) {
+              done(new Error('Unknown JWT signing key'), null);
+
+              return;
+            }
+
+            done(null, publicKey);
+          })
+          .catch((error) => done(error, null));
+
+        return;
+      }
+
       try {
         const decodedToken = jwtWrapperService.decode<
           | FileTokenJwtPayloadLegacy
@@ -73,6 +95,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
       jwtFromRequest: jwtFromRequestFunction,
       ignoreExpiration: false,
+      algorithms: ['HS256', 'ES256'],
       secretOrKeyProvider: secretOrKeyProviderFunction,
     });
   }
@@ -466,3 +489,19 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     );
   }
 }
+
+const extractKidFromTokenHeader = (rawJwtToken: string): string | undefined => {
+  try {
+    const decoded = jwt.decode(rawJwtToken, { complete: true });
+
+    if (decoded === null || typeof decoded === 'string') {
+      return undefined;
+    }
+
+    const kid = decoded.header.kid;
+
+    return typeof kid === 'string' && kid.length > 0 ? kid : undefined;
+  } catch {
+    return undefined;
+  }
+};

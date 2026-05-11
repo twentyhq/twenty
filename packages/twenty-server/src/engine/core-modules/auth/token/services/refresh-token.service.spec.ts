@@ -32,6 +32,7 @@ describe('RefreshTokenService', () => {
             verifyJwtToken: jest.fn(),
             decode: jest.fn(),
             sign: jest.fn(),
+            signAsymmetric: jest.fn().mockResolvedValue(null),
             generateAppSecret: jest.fn(),
           },
         },

@@ -11,12 +11,17 @@ type HidePasswordConfig = {
 
 type MaskingConfigType = {
   APP_SECRET: LastNCharsConfig;
+  JWT_SIGNING_PRIVATE_KEY: LastNCharsConfig;
   PG_DATABASE_URL: HidePasswordConfig;
   REDIS_URL: HidePasswordConfig;
 };
 
 export const CONFIG_VARIABLES_MASKING_CONFIG: MaskingConfigType = {
   APP_SECRET: {
+    strategy: ConfigVariablesMaskingStrategies.LAST_N_CHARS,
+    chars: 5,
+  },
+  JWT_SIGNING_PRIVATE_KEY: {
     strategy: ConfigVariablesMaskingStrategies.LAST_N_CHARS,
     chars: 5,
   },
