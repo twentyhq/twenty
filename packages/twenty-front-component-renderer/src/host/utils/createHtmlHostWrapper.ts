@@ -220,12 +220,11 @@ const createCaretPreservingElement = (
   forcedProps: Record<string, unknown> | undefined,
 ) => {
   const { value, defaultValue, ...rest } = reactProps;
-  const initialValue =
-    typeof defaultValue === 'string'
-      ? defaultValue
-      : typeof value === 'string'
-        ? value
-        : undefined;
+  const initialValue = isNonEmptyString(defaultValue)
+    ? defaultValue
+    : isNonEmptyString(value)
+      ? value
+      : undefined;
 
   return React.createElement(htmlTag, {
     ...rest,
@@ -233,7 +232,7 @@ const createCaretPreservingElement = (
     defaultValue: initialValue,
     ref: (node: CaretPreservingElement | null) => {
       if (node === null) return;
-      if (typeof value === 'string') {
+      if (isNonEmptyString(value)) {
         syncValuePreservingCaret(node, value);
       }
     },
