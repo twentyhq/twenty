@@ -20,10 +20,10 @@ export default defineLogicFunction({
       {
         type: 'object',
         properties: {
-          slack_channel_id: { type: 'string' },
-          message_text: { type: 'string' },
-          parent_message_timestamp: { type: 'string' },
-          use_slack_markdown: { type: 'boolean' },
+          slackChannelId: { type: 'string' },
+          messageText: { type: 'string' },
+          parentMessageTimestamp: { type: 'string' },
+          useSlackMarkdown: { type: 'boolean' },
         },
       },
     ],

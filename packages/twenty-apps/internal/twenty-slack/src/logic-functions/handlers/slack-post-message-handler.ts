@@ -21,18 +21,18 @@ export const slackPostMessageHandler = async (
 
   const client = createSlackWebClient(connectionResult.accessToken);
 
-  const parentTimestamp = parameters.parent_message_timestamp;
+  const parentTimestamp = parameters.parentMessageTimestamp;
 
   try {
     const data = await client.chat.postMessage({
-      channel: parameters.slack_channel_id,
-      text: parameters.message_text,
+      channel: parameters.slackChannelId,
+      text: parameters.messageText,
       thread_ts:
         isDefined(parentTimestamp) && parentTimestamp.trim().length > 0
           ? parentTimestamp.trim()
           : undefined,
-      ...(isDefined(parameters.use_slack_markdown)
-        ? { mrkdwn: parameters.use_slack_markdown }
+      ...(isDefined(parameters.useSlackMarkdown)
+        ? { mrkdwn: parameters.useSlackMarkdown }
         : {}),
     });
 

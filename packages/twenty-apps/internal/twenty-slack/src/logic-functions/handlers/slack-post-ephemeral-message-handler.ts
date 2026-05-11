@@ -23,11 +23,11 @@ export const slackPostEphemeralMessageHandler = async (
 
   try {
     const postEphemeralPayload = {
-      channel: parameters.slack_channel_id,
-      user: parameters.recipient_slack_user_id,
-      text: parameters.message_text,
-      ...(isDefined(parameters.use_slack_markdown)
-        ? { mrkdwn: parameters.use_slack_markdown }
+      channel: parameters.slackChannelId,
+      user: parameters.recipientSlackUserId,
+      text: parameters.messageText,
+      ...(isDefined(parameters.useSlackMarkdown)
+        ? { mrkdwn: parameters.useSlackMarkdown }
         : {}),
     };
 
@@ -36,7 +36,7 @@ export const slackPostEphemeralMessageHandler = async (
     return {
       success: true,
       message: 'Ephemeral message sent to the user in the channel.',
-      channel: parameters.slack_channel_id,
+      channel: parameters.slackChannelId,
     };
   } catch (error) {
     return slackToolFailure('Failed to post Slack ephemeral message', error);

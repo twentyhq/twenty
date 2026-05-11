@@ -21,15 +21,15 @@ export const slackDeleteMessageHandler = async (
 
   try {
     await client.chat.delete({
-      channel: parameters.slack_channel_id,
-      ts: parameters.message_timestamp,
+      channel: parameters.slackChannelId,
+      ts: parameters.messageTimestamp,
     });
 
     return {
       success: true,
       message: 'Slack message deleted.',
-      slackTs: parameters.message_timestamp,
-      channel: parameters.slack_channel_id,
+      slackTs: parameters.messageTimestamp,
+      channel: parameters.slackChannelId,
     };
   } catch (error) {
     return slackToolFailure('Failed to delete Slack message', error);

@@ -23,11 +23,11 @@ export const slackUpdateMessageHandler = async (
 
   try {
     const updatePayload = {
-      channel: parameters.slack_channel_id,
-      ts: parameters.message_timestamp,
-      text: parameters.new_message_text,
-      ...(isDefined(parameters.use_slack_markdown)
-        ? { mrkdwn: parameters.use_slack_markdown }
+      channel: parameters.slackChannelId,
+      ts: parameters.messageTimestamp,
+      text: parameters.newMessageText,
+      ...(isDefined(parameters.useSlackMarkdown)
+        ? { mrkdwn: parameters.useSlackMarkdown }
         : {}),
     };
 
@@ -37,7 +37,7 @@ export const slackUpdateMessageHandler = async (
       success: true,
       message: 'Slack message updated.',
       slackTs: data.ts,
-      channel: parameters.slack_channel_id,
+      channel: parameters.slackChannelId,
     };
   } catch (error) {
     return slackToolFailure('Failed to update Slack message', error);

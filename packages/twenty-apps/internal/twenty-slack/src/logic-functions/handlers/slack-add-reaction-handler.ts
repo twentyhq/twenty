@@ -21,16 +21,16 @@ export const slackAddReactionHandler = async (
 
   try {
     await client.reactions.add({
-      channel: parameters.slack_channel_id,
-      timestamp: parameters.message_timestamp,
-      name: parameters.emoji_name.trim(),
+      channel: parameters.slackChannelId,
+      timestamp: parameters.messageTimestamp,
+      name: parameters.emojiName.trim(),
     });
 
     return {
       success: true,
-      message: `Reaction "${parameters.emoji_name.trim()}" added to the message.`,
-      slackTs: parameters.message_timestamp,
-      channel: parameters.slack_channel_id,
+      message: `Reaction "${parameters.emojiName.trim()}" added to the message.`,
+      slackTs: parameters.messageTimestamp,
+      channel: parameters.slackChannelId,
     };
   } catch (error) {
     return slackToolFailure('Failed to add Slack reaction', error);

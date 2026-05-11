@@ -17,7 +17,7 @@ messages, update/delete bot messages, and add reactions. Uses the official
 
 ### Workflow field names (for authors)
 
-Fields use plain names in the step UI, for example **`slack_channel_id`** (Slack’s channel / DM ID), **`message_text`**, and **`message_timestamp`** (Slack’s per-message id — same value as tool output **`slackTs`** when chaining steps). Optional **`parent_message_timestamp`** is only for **thread replies**. **`use_slack_markdown`** turns on Slack’s `*bold*`-style formatting.
+Fields use camelCase names in the step UI, for example **`slackChannelId`** (Slack’s channel / DM ID), **`messageText`**, and **`messageTimestamp`** (Slack’s per-message id — same value as tool output **`slackTs`** when chaining steps). Optional **`parentMessageTimestamp`** is only for **thread replies**. **`useSlackMarkdown`** turns on Slack’s `*bold*`-style formatting. Ephemeral steps use **`recipientSlackUserId`**; reactions use **`emojiName`** (Slack shortcode, for example `white_check_mark`). Updating a message uses **`newMessageText`**.
 
 ## Slack app setup
 
