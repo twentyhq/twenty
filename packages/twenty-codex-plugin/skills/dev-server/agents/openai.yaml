@@ -1,4 +1,0 @@
-interface:
-  display_name: "Dev Server"
-  short_description: "Start and repair a local Twenty dev stack."
-  default_prompt: "Use $dev-server to start or troubleshoot my local Twenty dev server."

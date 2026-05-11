@@ -1,7 +1,7 @@
 {
-  "name": "twenty-codex-plugin",
-  "version": "0.1.1",
-  "description": "Codex plugin for Twenty app development, docs search, workspace MCP setup, app listing assets, and readable CRM record retrieval.",
+  "name": "twenty-claude-code-plugin",
+  "version": "0.1.0",
+  "description": "Claude Code plugin for creating Twenty apps, searching Twenty documentation, and connecting to Twenty workspaces with MCP.",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
@@ -9,9 +9,11 @@
     "validate": "node ./scripts/validate.js"
   },
   "files": [
-    ".codex-plugin",
+    ".claude-plugin",
     ".mcp.json",
+    "agents",
     "assets",
+    "commands",
     "scripts",
     "skills",
     "README.md"

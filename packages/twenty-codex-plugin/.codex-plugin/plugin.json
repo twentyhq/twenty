@@ -1,7 +1,7 @@
 {
   "name": "twenty",
   "version": "0.1.1",
-  "description": "Create Twenty apps, search Twenty documentation, prepare app listing assets, and connect to Twenty workspaces with MCP.",
+  "description": "Build Twenty apps, search docs, configure workspace MCP, prepare app listings, and retrieve workspace data in readable form.",
   "author": {
     "name": "Twenty PBC",
     "url": "https://twenty.com/"
@@ -24,8 +24,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Twenty",
-    "shortDescription": "Create apps, search docs, and connect Twenty MCP",
-    "longDescription": "Use Twenty to scaffold a new app with create-twenty-app, search the official Twenty documentation through the bundled docs MCP server, set up the local development instance, authorize the app, run the Twenty app CLI, prepare README and marketplace visuals, configure a workspace-specific Twenty MCP server with OAuth, and troubleshoot generated project issues.",
+    "shortDescription": "Build apps, set up MCP, and retrieve workspace data",
+    "longDescription": "Use Twenty to scaffold and troubleshoot Twenty apps with create-twenty-app, search official Twenty documentation through the bundled docs MCP server, configure workspace-specific Twenty MCP servers with OAuth, retrieve workspace data as readable Markdown, and prepare README, marketplace metadata, logos, and screenshots for Twenty apps.",
     "developerName": "Twenty PBC",
     "category": "Coding",
     "capabilities": [
@@ -39,7 +39,8 @@
     "defaultPrompt": [
       "Create a new Twenty app",
       "Search Twenty documentation",
-      "Set up Twenty MCP"
+      "Set Up Twenty MCP",
+      "Retrieve Workspace Data"
     ],
     "brandColor": "#000000",
     "composerIcon": "./assets/twenty-logo.svg",

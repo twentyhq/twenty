@@ -3,7 +3,7 @@ name: create-an-app
 description: Use when the user wants to create, scaffold, run, extend, test, deploy, or troubleshoot a Twenty app with create-twenty-app and the Twenty Apps developer workflow.
 ---
 
-# Create Twenty App
+# Create An App
 
 Use this skill for Twenty Apps work with the official `create-twenty-app` scaffolder, generated app template, and `yarn twenty` app CLI.
 
@@ -13,8 +13,8 @@ Use this when the user asks to:
 
 - Create or scaffold a new Twenty app.
 - Start from a Twenty app example such as `postcard` or `hello-world`.
-- Prepare app README, npm package copy, marketplace metadata, logo, screenshots, or public visual assets; for the detailed workflow, use the Prepare App Listing (`app-readme-and-visuals`) skill.
-- Connect Codex or another MCP client to a Twenty workspace.
+- Prepare app README, npm package copy, marketplace metadata, logo, screenshots, or public visual assets; for the detailed workflow, use the `app-readme-and-visuals` sub-skill.
+- Connect Claude Code or another MCP client to a Twenty workspace.
 - Set up the local Twenty app development server.
 - Add app entities such as objects, fields, logic functions, front components, roles, skills, agents, views, navigation, page layouts, or OAuth connection providers.
 - Run `yarn twenty dev`, `add`, `build`, `typecheck`, tests, remotes, local server commands, deploys, installs, or npm publishing.
@@ -43,20 +43,20 @@ Twenty Apps are currently documented as alpha, so prefer official docs and local
 
 ## Twenty MCP Server
 
-For MCP setup, prefer the Set Up Twenty MCP (`setup-mcp`) skill. Do not assume a fixed workspace domain.
+For MCP setup, prefer the `setup-mcp` skill. Do not assume a fixed workspace domain.
 
-The fastest Codex setup is:
+The fastest Claude Code setup is:
 
 ```bash
-bash packages/twenty-codex-plugin/scripts/setup-mcp.sh https://<your-workspace-url>
+bash packages/twenty-claude-code-plugin/scripts/setup-mcp.sh https://<your-workspace-url>
 ```
 
 The setup helper accepts Twenty Cloud subdomains, custom domains, and localhost development domains:
 
 ```bash
-bash packages/twenty-codex-plugin/scripts/setup-mcp.sh myworkspace.twenty.com
-bash packages/twenty-codex-plugin/scripts/setup-mcp.sh myworkspace.customdomain.com
-bash packages/twenty-codex-plugin/scripts/setup-mcp.sh myworkspace.localhost:3001
+bash packages/twenty-claude-code-plugin/scripts/setup-mcp.sh myworkspace.twenty.com
+bash packages/twenty-claude-code-plugin/scripts/setup-mcp.sh myworkspace.customdomain.com
+bash packages/twenty-claude-code-plugin/scripts/setup-mcp.sh myworkspace.localhost:3001
 ```
 
 For a local app-dev server created by `create-twenty-app` / `yarn twenty server start`, replace the URL with the local workspace host and port.
@@ -67,7 +67,7 @@ For Twenty Cloud or self-hosted workspaces, replace the URL with the workspace e
 {
   "mcpServers": {
     "twenty": {
-      "type": "streamable-http",
+      "type": "http",
       "url": "https://<your-workspace-url>/mcp"
     }
   }
@@ -80,7 +80,7 @@ OAuth is the recommended MCP auth method. The client discovers metadata through 
 {
   "mcpServers": {
     "twenty": {
-      "type": "streamable-http",
+      "type": "http",
       "url": "https://<your-workspace-url>/mcp",
       "headers": {
         "Authorization": "Bearer YOUR_API_KEY"
@@ -90,7 +90,7 @@ OAuth is the recommended MCP auth method. The client discovers metadata through 
 }
 ```
 
-The MCP endpoint is `POST /mcp`. A 401 response includes a `WWW-Authenticate` header pointing clients to the path-aware protected resource metadata. OAuth dynamic client registrations are public clients using PKCE; the local repo accepts localhost redirects and known MCP client schemes such as Cursor and VS Code.
+The MCP endpoint is `POST /mcp`. A 401 response includes a `WWW-Authenticate` header pointing clients to the path-aware protected resource metadata. OAuth dynamic client registrations are public clients using PKCE; the local repo accepts localhost redirects and known MCP client schemes.
 
 After connection, use the Twenty MCP workflow:
 
@@ -281,7 +281,7 @@ Important files in a scaffolded app:
 
 The template stores `gitignore` and `github/` without leading dots because npm strips dotfiles from published packages; the scaffolder renames them to `.gitignore` and `.github/`.
 
-When the task turns to README content, npm package copy, marketplace metadata, logo, screenshots, or public visual assets, load the Prepare App Listing (`app-readme-and-visuals`) skill.
+When the task turns to README content, npm package copy, marketplace metadata, logo, screenshots, or public visual assets, load the `app-readme-and-visuals` sub-skill.
 
 ## App Configuration Patterns
 
@@ -449,7 +449,7 @@ yarn twenty catalog-sync --remote production
 Before publishing to npm:
 
 - Add the `twenty-app` keyword to `package.json`; the template does not include it by default.
-- Use the Prepare App Listing (`app-readme-and-visuals`) skill to prepare README content, `defineApplication()` marketplace fields, `public/logo.png`, and screenshots.
+- Use the `app-readme-and-visuals` sub-skill to prepare README content, `defineApplication()` marketplace fields, `public/logo.png`, and screenshots.
 - Set `engines.twenty` when the app requires a minimum Twenty server version.
 - Bump `package.json` `version` for each update; servers reject redeploying the same or lower semver version.
 

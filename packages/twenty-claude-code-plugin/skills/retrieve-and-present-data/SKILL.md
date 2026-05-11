@@ -3,7 +3,7 @@ name: retrieve-and-present-data
 description: Use when the user asks to retrieve, list, search, inspect, compare, summarize, or present Twenty MCP, CRM, app, or workspace records in chat, especially "most recent" records, "latest records", requests to make records readable, complaints about technical or unreadable dates, links to original records, avatars, favicons, domain icons, tables, JSON-like tool outputs, ISO/RFC3339 timestamps, UUIDs, raw field names, nested objects, money values, booleans, or nullable fields. Retrieve the relevant data and convert technical output into concise, readable, user-friendly English Markdown with clear labels, record links, visual identifiers, and locale-aware values.
 ---
 
-# Retrieve Workspace Data
+# Retrieve And Present Data
 
 ## Overview
 
@@ -16,7 +16,7 @@ Resolve the intended workspace before selecting a Twenty MCP server:
 - If the user names a workspace, host, MCP server, or URL, use only the matching Twenty MCP namespace or server.
 - If multiple Twenty MCP namespaces or configured servers are available and the intended workspace is ambiguous, ask one concise clarifying question before retrieving data.
 - If exactly one Twenty MCP namespace is available and the user did not specify a workspace, use it and mention which workspace or server was used when reporting results.
-- If a configured server exists but the matching MCP tools are not visible in the current thread, use the Set Up Twenty MCP (`setup-mcp`) skill's troubleshooting workflow instead of falling back to a different workspace.
+- If a configured server exists but the matching MCP tools are not visible in the current session, use the `setup-mcp` skill's troubleshooting workflow instead of falling back to a different workspace.
 - Before querying workspace data, confirm the callable Twenty MCP namespace or server name corresponds to the intended workspace whenever there is any ambiguity.
 
 Use the selected connected Twenty MCP server when it is available:
@@ -30,7 +30,7 @@ get_tool_catalog -> learn_tools -> execute_tool
 - For "latest", "most recent", or "recent" requests, include the relevant timestamp field used for sorting.
 - If the user asks for a broad list, apply a practical limit and state how many records are shown.
 - If required context is missing and cannot be discovered from the tools, ask one concise clarifying question.
-- If no Twenty MCP tools are available, use the Set Up Twenty MCP (`setup-mcp`) skill rather than inventing workspace data.
+- If no Twenty MCP tools are available, use the `setup-mcp` skill rather than inventing workspace data.
 
 ## Response Shape
 
@@ -61,9 +61,7 @@ Link records back to their original Twenty context whenever the workspace origin
 
 Add a small visual identifier next to records when it improves scanning and the source data provides one.
 
-- Twenty AI chat currently renders Markdown with `react-markdown` and `remark-gfm`, without raw HTML rendering. Do not rely on HTML such as `<img width="16" height="16">`.
-- Use standard Markdown image syntax only: `![alt](image-url)`.
-- The current Twenty AI chat image CSS preserves intrinsic image size with `height: auto` and only caps `max-width`. Do not place full-size photos or large avatars in tables unless the image URL is already a small thumbnail.
+- Claude Code renders Markdown in the terminal. Use standard Markdown image syntax `![alt](image-url)`; clients without inline image rendering will fall back to the alt text.
 - Prefer the record's own `avatarUrl`, logo, or image field when present and non-empty.
 - For People, show the person's avatar or profile image only when the URL is known to be a small thumbnail. If there is no suitable image, keep the linked name and do not generate fake headshots.
 - For Companies, Workspaces, domains, or records mainly identified by an email/domain, prefer a small favicon or logo when the record provides a safe public website, domain, or avatar URL.

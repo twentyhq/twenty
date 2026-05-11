@@ -1,4 +1,4 @@
 interface:
-  display_name: "Create A Twenty App"
+  display_name: "Create Twenty App"
   short_description: "Scaffold and develop Twenty apps."
   default_prompt: "Use $create-an-app to scaffold and run a new Twenty app."

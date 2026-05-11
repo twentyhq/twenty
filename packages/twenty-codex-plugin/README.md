@@ -1,14 +1,15 @@
 # Twenty Codex Plugin
 
-This plugin packages the official Twenty app creation workflow, Twenty documentation MCP server, and Twenty workspace MCP connection for Codex.
+This plugin packages the official Twenty app creation workflow, Twenty documentation MCP server, Twenty workspace MCP setup, readable CRM record retrieval, and app listing asset guidance for Codex.
 
 This workspace package is the source of the repo-local Codex plugin. The repo-local marketplace entry points directly to this package.
 
 ## Included Skills
 
-- `create-an-app`: scaffold, run, and troubleshoot a Twenty app with `create-twenty-app`.
-- `setup-mcp`: collect a workspace URL, normalize the MCP endpoint, configure Codex, and guide OAuth login.
-- `app-readme-and-visuals`: prepare a Twenty app README, marketplace metadata, logo, screenshots, and public visual assets.
+- **Create Twenty App** (`create-an-app`): scaffold, run, and troubleshoot a Twenty app with `create-twenty-app`.
+- **Set Up Twenty MCP** (`setup-mcp`): collect a workspace URL, normalize the MCP endpoint, configure Codex, and guide OAuth login.
+- **Prepare App Listing** (`app-readme-and-visuals`): prepare a Twenty app README, marketplace metadata, logo, screenshots, and public visual assets.
+- **Retrieve Workspace Data** (`retrieve-and-present-data`): retrieve Twenty MCP, CRM, app, or workspace records and present them as readable Markdown.
 
 ## Included MCP Servers
 
