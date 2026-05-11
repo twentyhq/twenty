@@ -5,9 +5,9 @@ import {
 } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 describe('ConnectedAccountTokenEncryptionService', () => {
-  // Recognizable, deterministic stub for SecretEncryptionService — keeps the
-  // assertions about prefix handling decoupled from real AES output (those
-  // guarantees live in SecretEncryptionService's own spec).
+  // Real AES output is asserted in SecretEncryptionService's own spec — here
+  // we use a deterministic CIPHER(...) wrapper so the prefix-handling
+  // assertions can match exact strings.
   const buildFakeSecretEncryptionService = (): SecretEncryptionService =>
     ({
       encrypt: jest.fn((value: string): string => `CIPHER(${value})`),
@@ -58,9 +58,6 @@ describe('ConnectedAccountTokenEncryptionService', () => {
           `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}already-encrypted`,
         ),
       ).toThrow(/already-prefixed/);
-
-      // Bonus: the underlying SecretEncryptionService.encrypt was never even
-      // called — the guard runs before any crypto work.
       expect(secretEncryptionService.encrypt).not.toHaveBeenCalled();
     });
   });
@@ -172,9 +169,6 @@ describe('ConnectedAccountTokenEncryptionService', () => {
       });
     });
 
-    // Same safety guard as encrypt(): a caller passing already-prefixed
-    // ciphertext into the pair API would corrupt the column. The throw on the
-    // accessToken side propagates out of the pair call unchanged.
     it('should throw when accessToken is already encrypted', () => {
       const { encryptionService } = buildEncryptionService();
 

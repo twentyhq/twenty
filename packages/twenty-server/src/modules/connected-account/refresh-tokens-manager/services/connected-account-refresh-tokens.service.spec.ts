@@ -32,20 +32,15 @@ describe('ConnectedAccountRefreshTokensService', () => {
   const mockWorkspaceId = 'workspace-123';
   const mockConnectedAccountId = 'account-456';
 
-  // Plaintext that the IDP issues / consumes — what the service must decrypt
-  // to before talking to the provider, and what callers receive back.
   const mockAccessTokenPlaintext = 'valid-access-token';
   const mockRefreshTokenPlaintext = 'valid-refresh-token';
   const mockNewAccessTokenPlaintext = 'new-access-token';
 
-  // Ciphertext as it lives on the entity / in the database after this PR —
-  // the service body must never use these as bearer tokens directly.
   const mockEncryptedAccessToken = `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${mockAccessTokenPlaintext})`;
   const mockEncryptedRefreshToken = `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`;
 
-  // Symmetric, deterministic stub for ConnectedAccountTokenEncryptionService so
-  // assertions can express both directions exactly. The real prefix and
-  // round-trip invariants live in connected-account-token-encryption.service.spec.ts.
+  // Real prefix/round-trip invariants are asserted in
+  // connected-account-token-encryption.service.spec.ts.
   const buildSymmetricEncryptionStub = (): {
     encrypt: jest.Mock;
     decrypt: jest.Mock;
@@ -158,9 +153,6 @@ describe('ConnectedAccountRefreshTokensService', () => {
 
   describe('refreshAndSaveTokens', () => {
     it('should reuse the cached token, decrypt before returning to the caller, and skip the refresh call entirely', async () => {
-      // Entity holds ciphertext (post-PR contract). The service must not
-      // hand this directly back to the caller — that would be the bearer
-      // token used for IDP API calls and would fail with 401.
       const connectedAccount = {
         id: mockConnectedAccountId,
         provider: ConnectedAccountProvider.MICROSOFT,
@@ -174,7 +166,6 @@ describe('ConnectedAccountRefreshTokensService', () => {
         mockWorkspaceId,
       );
 
-      // Caller receives plaintext, ready for use as a bearer.
       expect(result).toEqual({
         accessToken: mockAccessTokenPlaintext,
         refreshToken: mockRefreshTokenPlaintext,
@@ -214,17 +205,10 @@ describe('ConnectedAccountRefreshTokensService', () => {
         mockWorkspaceId,
       );
 
-      // Caller receives plaintext (the bearer it'll immediately use).
       expect(result).toEqual(newTokens);
-
-      // The refresh driver was called with the *plaintext* refresh token —
-      // not the entity ciphertext. This is the load-bearing assertion that
-      // proves the decrypt-just-before-use rule is in place.
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).toHaveBeenCalledWith(mockRefreshTokenPlaintext);
-
-      // The DB was written with ciphertext — the entity never holds plaintext.
       expect(connectedAccountRepository.update).toHaveBeenCalledWith(
         { id: mockConnectedAccountId, workspaceId: mockWorkspaceId },
         expect.objectContaining({

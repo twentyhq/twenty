@@ -87,9 +87,6 @@ export class CreateConnectedAccountService {
 
       const userWorkspaceId = userWorkspace.id;
 
-      // Encrypt at the boundary, before the entity is constructed. The
-      // entity instance, the repository call, any logger that touches it,
-      // and the SQL all see ciphertext from this point on.
       const { encryptedAccessToken, encryptedRefreshToken } =
         this.connectedAccountTokenEncryptionService.encryptTokenPair({
           accessToken,

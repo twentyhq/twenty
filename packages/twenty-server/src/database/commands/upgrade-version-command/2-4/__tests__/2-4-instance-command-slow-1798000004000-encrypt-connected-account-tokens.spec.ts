@@ -10,9 +10,9 @@ type FakeRow = {
   refreshToken: string | null;
 };
 
-// In-memory stand-in for the real `connectedAccount` table so we can drive
-// the cursor loop deterministically without a Postgres dependency. Mimics
-// the slow command's actual SELECT / UPDATE shape (LIKE, cursor, batch).
+// In-memory stand-in that mimics the slow command's exact SELECT / UPDATE
+// shape (LIKE filter, cursor, batch) — anything looser would let regressions
+// in the SQL slip past these tests.
 const buildFakeDataSource = (
   initialRows: FakeRow[],
   { batchSize }: { batchSize: number } = { batchSize: 500 },
@@ -98,9 +98,8 @@ const buildFakeQueryRunner = (): {
 };
 
 describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
-  // Deterministic stub for the injected SecretEncryptionService. Wraps
-  // plaintext in a recognizable envelope so test assertions don't depend on
-  // actual crypto output (those guarantees live in the transformer spec).
+  // Real AES output is asserted in SecretEncryptionService's own spec; here
+  // we use a CIPHER(...) wrapper so assertions match exact strings.
   const buildFakeSecretEncryptionService = (): SecretEncryptionService =>
     ({
       encrypt: jest.fn((plaintext: string): string => `CIPHER(${plaintext})`),

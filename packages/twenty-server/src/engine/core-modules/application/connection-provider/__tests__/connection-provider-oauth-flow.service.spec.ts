@@ -115,11 +115,9 @@ describe('ConnectionProviderOAuthFlowService', () => {
           useValue: connectedAccountRepository,
         },
         {
-          // Recognizable, deterministic stub — wraps plaintext in a CIPHER()
-          // envelope so the assertions below can match the exact shape that
-          // would land in the database (enc:v1:<ciphertext>) without coupling
-          // to real AES output. Real prefix/round-trip behavior is asserted
-          // in connected-account-token-encryption.service.spec.ts.
+          // Real prefix/round-trip behavior is asserted in
+          // connected-account-token-encryption.service.spec.ts; here we use a
+          // CIPHER(...) wrapper so assertions can match exact ciphertext.
           provide: ConnectedAccountTokenEncryptionService,
           useValue: {
             encrypt: jest.fn(
@@ -351,9 +349,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
       expect(result.workspaceId).toBe('workspace-1');
       expect(result.applicationId).toBe('app-1');
 
-      // Tokens are persisted as ciphertext (enc:v1:<...>) — the entity
-      // never holds the plaintext that came back from the IDP. This is the
-      // load-bearing assertion for "encrypt at receipt".
+      // Encrypt-at-receipt: the entity must never hold the IDP plaintext.
       expect(connectedAccountRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           provider: ConnectedAccountProvider.APP,

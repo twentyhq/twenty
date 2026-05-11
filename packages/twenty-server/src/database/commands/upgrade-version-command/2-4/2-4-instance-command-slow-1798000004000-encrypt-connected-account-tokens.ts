@@ -27,10 +27,9 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
   ) {}
 
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    // Cursor-based pagination so we never load the full table into memory.
-    // The loop is resumable: re-running after a partial failure picks up from
-    // wherever the last run left off because the SELECT filter excludes rows
-    // whose tokens are both already prefixed.
+    // Cursor + prefix-filter on the SELECT makes the loop both bounded in
+    // memory and idempotent: re-runs after a partial failure skip rows that
+    // were already encrypted on a prior pass.
     let cursor = '00000000-0000-0000-0000-000000000000';
 
     while (true) {
@@ -110,10 +109,10 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Deliberately do NOT decrypt rows on rollback. Re-introducing plaintext
+    // Deliberately do NOT decrypt rows on rollback — re-introducing plaintext
     // tokens to the database would be a security regression. Dropping the
-    // constraint is enough — the entity transformer reads encrypted values
-    // transparently regardless of whether the constraint exists.
+    // CHECK constraints is enough; ConnectedAccountTokenEncryptionService can
+    // still read the encrypted columns whether or not the constraints exist.
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
        DROP CONSTRAINT IF EXISTS "${REFRESH_TOKEN_CHECK_CONSTRAINT_NAME}"`,

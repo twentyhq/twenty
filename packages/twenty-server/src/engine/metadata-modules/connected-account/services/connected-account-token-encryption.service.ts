@@ -2,24 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
-// `core.connectedAccount.{accessToken,refreshToken}` always hold ciphertext
-// stamped with this prefix. The prefix is enforced by a CHECK constraint on
-// both columns and by this service's invariants:
-//
-// - encrypt() refuses an already-prefixed value (catches double-encryption)
-// - decrypt() refuses a value missing the prefix (catches "I forgot to
-//   encrypt" or "I read raw column data without going through this service"
-//   bugs loudly instead of silently returning garbled bytes — AES-256-CTR is
-//   unauthenticated and would otherwise decrypt plaintext into noise).
-//
-// This service is intentionally connected-account-scoped, not a generic
-// SecretToken pattern. The generic, class-based wrapper with log-redaction
-// is planned as a follow-up PR; for now we localize the concern here so the
-// in-flight encryption window for OAuth tokens shrinks immediately.
-//
-// Naming follows the existing SecretEncryptionService precedent (which this
-// service composes) — same word, same shape, one tier down for the
-// connected-account verticality.
 export const CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX = 'enc:v1:';
 
 @Injectable()
@@ -70,12 +52,6 @@ export class ConnectedAccountTokenEncryptionService {
     return this.decrypt(ciphertext);
   }
 
-  // Convenience wrapper for the canonical OAuth shape (accessToken always
-  // present, refreshToken optional). Every write chokepoint that persists a
-  // freshly-issued token pair should go through this method instead of calling
-  // encrypt() + encryptNullable() side-by-side — a single call removes the
-  // "encrypt one, forget the other" failure mode and centralizes the typing
-  // of the ciphertext-bearing record.
   encryptTokenPair({
     accessToken,
     refreshToken,

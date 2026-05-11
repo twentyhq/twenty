@@ -4,18 +4,12 @@ import { type Client } from '@microsoft/microsoft-graph-client';
 import { type Auth } from 'googleapis';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { GoogleOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client-manager.service';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { OAuth2ClientManagerExceptionCode } from 'src/modules/connected-account/oauth2-client-manager/exceptions/oauth2-client-manager.exceptions';
-import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
-// Sole production chokepoint for constructing IDP OAuth clients from a
-// connected account. Tokens on the entity are ciphertext (enc:v1:...);
-// they are decrypted here, microseconds before being handed to the
-// underlying client constructor (and from there straight into the outgoing
-// HTTPS bearer header). This is the "decrypt just before sending back" rule
-// applied at the boundary the user-facing PR proposal called out.
 @Injectable()
 export class OAuth2ClientManagerService {
   constructor(
