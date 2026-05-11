@@ -5,7 +5,6 @@ import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-resul
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 import { createSlackWebClient } from 'src/utils/create-slack-web-client';
-import { validateSlackMessageText } from 'src/utils/slack-text';
 
 export const slackPostEphemeralMessageHandler = async (
   parameters: SlackPostEphemeralMessageInput,
@@ -17,16 +16,6 @@ export const slackPostEphemeralMessageHandler = async (
       success: false,
       message: 'Slack is not connected',
       error: connectionResult.error,
-    };
-  }
-
-  const textError = validateSlackMessageText(parameters.message_text);
-
-  if (textError) {
-    return {
-      success: false,
-      message: 'Invalid message text',
-      error: textError,
     };
   }
 
