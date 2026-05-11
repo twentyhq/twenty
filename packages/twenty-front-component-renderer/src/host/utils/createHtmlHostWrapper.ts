@@ -187,9 +187,7 @@ const TEXT_LIKE_INPUT_TYPES = new Set([
   '',
 ]);
 
-const shouldPreserveCaret = (htmlTag: string, type: unknown): boolean => {
-  if (htmlTag === 'textarea') return true;
-  if (htmlTag !== 'input') return false;
+const isTextLikeInputType = (type: unknown): boolean => {
   const inputType = typeof type === 'string' ? type.toLowerCase() : '';
   return TEXT_LIKE_INPUT_TYPES.has(inputType);
 };
@@ -215,38 +213,45 @@ const syncValuePreservingCaret = (
   }
 };
 
+const createCaretPreservingElement = (
+  htmlTag: 'input' | 'textarea',
+  reactProps: Record<string, unknown>,
+  forcedProps: Record<string, unknown> | undefined,
+) => {
+  const { value, defaultValue, ...rest } = reactProps;
+  const initialValue =
+    typeof defaultValue === 'string'
+      ? defaultValue
+      : typeof value === 'string'
+        ? value
+        : undefined;
+
+  return React.createElement(htmlTag, {
+    ...rest,
+    ...forcedProps,
+    defaultValue: initialValue,
+    ref: (node: CaretPreservingElement | null) => {
+      if (node === null) return;
+      if (typeof value === 'string') {
+        syncValuePreservingCaret(node, value);
+      }
+    },
+  });
+};
+
 export const createHtmlHostWrapper = (htmlTag: string) => {
-  const isVoid = VOID_ELEMENTS.has(htmlTag);
   const forcedProps = FORCED_PROPS_BY_TAG[htmlTag];
-  const isInput = htmlTag === 'input';
-  const isTextarea = htmlTag === 'textarea';
-  const preservesCaret = isInput || isTextarea;
+  const isVoid = VOID_ELEMENTS.has(htmlTag);
 
   return ({ children, ...props }: WrapperProps) => {
     const reactProps = filterProps(props);
 
-    if (preservesCaret && shouldPreserveCaret(htmlTag, reactProps.type)) {
-      const { value, defaultValue, ...rest } = reactProps as Record<
-        string,
-        unknown
-      >;
-      const initialValue =
-        typeof defaultValue === 'string'
-          ? defaultValue
-          : typeof value === 'string'
-            ? value
-            : undefined;
-      return React.createElement(htmlTag, {
-        ...rest,
-        ...forcedProps,
-        defaultValue: initialValue,
-        ref: (node: CaretPreservingElement | null) => {
-          if (node === null) return;
-          if (typeof value === 'string') {
-            syncValuePreservingCaret(node, value);
-          }
-        },
-      });
+    if (htmlTag === 'textarea') {
+      return createCaretPreservingElement(htmlTag, reactProps, forcedProps);
+    }
+
+    if (htmlTag === 'input' && isTextLikeInputType(reactProps.type)) {
+      return createCaretPreservingElement(htmlTag, reactProps, forcedProps);
     }
 
     return React.createElement(
