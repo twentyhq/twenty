@@ -54,4 +54,22 @@ describe('canObjectBeManagedByWorkflow', () => {
       }),
     ).toBe(false);
   });
+
+  it('should return true for noteTarget when marked system (relation junction)', () => {
+    expect(
+      canObjectBeManagedByWorkflow({
+        nameSingular: 'noteTarget',
+        isSystem: true,
+      }),
+    ).toBe(true);
+  });
+
+  it('should return false for other system objects such as message', () => {
+    expect(
+      canObjectBeManagedByWorkflow({
+        nameSingular: 'message',
+        isSystem: true,
+      }),
+    ).toBe(false);
+  });
 });
