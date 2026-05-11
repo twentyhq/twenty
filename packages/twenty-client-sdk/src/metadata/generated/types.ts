@@ -1835,6 +1835,9 @@ export default {
             "isCustomDomainEnabled": [
                 6
             ],
+            "isInternalMessagesImportEnabled": [
+                6
+            ],
             "editableProfileFields": [
                 1
             ],
@@ -10950,6 +10953,9 @@ export default {
                 1
             ],
             "useRecommendedModels": [
+                6
+            ],
+            "isInternalMessagesImportEnabled": [
                 6
             ],
             "__typename": [

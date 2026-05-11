@@ -19,6 +19,7 @@ import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/comp
 import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
+import { ToggleSyncInternalEmails } from '@/settings/security/components/ToggleSyncInternalEmails';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -316,6 +317,8 @@ export const SettingsSecurity = () => {
                 minValue={0}
                 showButtons={false}
               />
+              <Separator />
+              <ToggleSyncInternalEmails />
             </Card>
           </Section>
         </StyledMainContent>

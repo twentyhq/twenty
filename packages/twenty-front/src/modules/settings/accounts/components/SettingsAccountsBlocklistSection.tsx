@@ -1,4 +1,5 @@
 import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -16,8 +17,12 @@ export const SettingsAccountsBlocklistSection = () => {
   const { t } = useLingui();
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const currentWorkspaceMemberId = currentWorkspaceMember?.id ?? '';
+
+  const isInternalMessagesImportEnabled =
+    currentWorkspace?.isInternalMessagesImportEnabled ?? false;
 
   const { records: blocklist } = useFindManyRecords<BlocklistItem>({
     objectNameSingular: CoreObjectNameSingular.Blocklist,
@@ -53,7 +58,11 @@ export const SettingsAccountsBlocklistSection = () => {
     <Section>
       <H2Title
         title={t`Blocklist`}
-        description={t`Exclude the following people and domains from my email sync. Internal conversations will not be imported`}
+        description={
+          isInternalMessagesImportEnabled
+            ? t`Exclude the following people and domains from my email sync.`
+            : t`Exclude the following people and domains from my email sync. Internal conversations will not be imported`
+        }
       />
       <SettingsAccountsBlocklistInput
         blockedEmailOrDomainList={blocklist.map((item) => item.handle)}

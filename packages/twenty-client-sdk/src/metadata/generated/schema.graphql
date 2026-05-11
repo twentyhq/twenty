@@ -932,6 +932,7 @@ type Workspace {
   isMicrosoftAuthEnabled: Boolean!
   isMicrosoftAuthBypassEnabled: Boolean!
   isCustomDomainEnabled: Boolean!
+  isInternalMessagesImportEnabled: Boolean!
   editableProfileFields: [String!]
   defaultRole: Role
   fastModel: String!
@@ -4318,6 +4319,7 @@ input UpdateWorkspaceInput {
   editableProfileFields: [String!]
   enabledAiModelIds: [String!]
   useRecommendedModels: Boolean
+  isInternalMessagesImportEnabled: Boolean
 }
 
 input WorkspaceMigrationInput {
