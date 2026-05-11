@@ -1,8 +1,8 @@
-import { FULL_NAME_DEFAULT_SORT_SUB_FIELD } from '@/object-metadata/constants/FullNameDefaultSortSubField';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getDefaultSortSubFieldForAddress } from '@/object-metadata/utils/getDefaultSortSubFieldForAddress';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { resolveAddressSortSubField } from '@/object-metadata/utils/resolveAddressSortSubField';
+import { resolveFullNameSortSubField } from '@/object-metadata/utils/resolveFullNameSortSubField';
 
 import {
   type FieldEmailsValue,
@@ -11,23 +11,10 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ALLOWED_FULL_NAME_SUBFIELDS } from 'twenty-shared/constants';
 import {
-  ALLOWED_ADDRESS_SUBFIELDS,
-  type AllowedAddressSubField,
-  type AllowedFullNameSubField,
   type OrderBy,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-const isAllowedFullNameSubField = (
-  value: string | null | undefined,
-): value is AllowedFullNameSubField =>
-  ALLOWED_FULL_NAME_SUBFIELDS.includes(value as AllowedFullNameSubField);
-
-const isAllowedAddressSubField = (
-  value: string | null | undefined,
-): value is AllowedAddressSubField =>
-  ALLOWED_ADDRESS_SUBFIELDS.includes(value as AllowedAddressSubField);
 
 export const getOrderByForFieldMetadataType = (
   field: Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'settings'>,
@@ -36,9 +23,7 @@ export const getOrderByForFieldMetadataType = (
 ): RecordGqlOperationOrderBy => {
   switch (field.type) {
     case FieldMetadataType.FULL_NAME: {
-      const primarySubField = isAllowedFullNameSubField(subFieldName)
-        ? subFieldName
-        : FULL_NAME_DEFAULT_SORT_SUB_FIELD;
+      const primarySubField = resolveFullNameSortSubField(subFieldName);
       const [firstSubField, lastSubField] = ALLOWED_FULL_NAME_SUBFIELDS;
       const secondarySubField =
         primarySubField === firstSubField ? lastSubField : firstSubField;
@@ -52,9 +37,7 @@ export const getOrderByForFieldMetadataType = (
       ];
     }
     case FieldMetadataType.ADDRESS: {
-      const subField = isAllowedAddressSubField(subFieldName)
-        ? subFieldName
-        : getDefaultSortSubFieldForAddress(field.settings);
+      const subField = resolveAddressSortSubField(field.settings, subFieldName);
       return [
         {
           [field.name]: {
