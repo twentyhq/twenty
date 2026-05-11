@@ -317,6 +317,107 @@ export const HostApiProgress: Story = createHostApiStory(
   },
 );
 
+const TYPING_TIMEOUT = 10000;
+
+const expectCaretAt = async (
+  element: HTMLInputElement | HTMLTextAreaElement,
+  position: number,
+): Promise<void> => {
+  await waitFor(
+    () => {
+      expect(element.selectionStart).toBe(position);
+      expect(element.selectionEnd).toBe(position);
+    },
+    { timeout: TYPING_TIMEOUT },
+  );
+};
+
+export const InputCaretPreservedMidString: Story = createComponentStory(
+  'caret-preservation',
+  {
+    play: async ({ canvasElement }) => {
+      const canvas = within(canvasElement);
+
+      await canvas.findByTestId(
+        'caret-preservation-component',
+        {},
+        { timeout: MOUNT_TIMEOUT },
+      );
+
+      const input = (await canvas.findByTestId(
+        'caret-text-input',
+      )) as HTMLInputElement;
+
+      await waitFor(
+        () => {
+          expect(input.value).toBe('Hello world');
+        },
+        { timeout: INTERACTION_TIMEOUT },
+      );
+
+      input.focus();
+      input.setSelectionRange(4, 4);
+
+      await userEvent.keyboard('X');
+
+      await waitFor(
+        () => {
+          expect(input.value).toBe('HellXo world');
+          expect(canvas.getByTestId('caret-text-value').textContent).toBe(
+            'HellXo world',
+          );
+        },
+        { timeout: TYPING_TIMEOUT },
+      );
+
+      await expectCaretAt(input, 5);
+    },
+  },
+);
+
+export const TextareaCaretPreservedMidString: Story = createComponentStory(
+  'caret-preservation',
+  {
+    play: async ({ canvasElement }) => {
+      const canvas = within(canvasElement);
+
+      await canvas.findByTestId(
+        'caret-preservation-component',
+        {},
+        { timeout: MOUNT_TIMEOUT },
+      );
+
+      const textarea = (await canvas.findByTestId(
+        'caret-textarea-input',
+      )) as HTMLTextAreaElement;
+
+      await waitFor(
+        () => {
+          expect(textarea.value).toBe('Hello world');
+        },
+        { timeout: INTERACTION_TIMEOUT },
+      );
+
+      textarea.focus();
+      textarea.setSelectionRange(4, 4);
+
+      await userEvent.keyboard('X');
+
+      await waitFor(
+        () => {
+          expect(textarea.value).toBe('HellXo world');
+          expect(canvas.getByTestId('caret-textarea-value').textContent).toBe(
+            'HellXo world',
+          );
+        },
+        { timeout: TYPING_TIMEOUT },
+      );
+
+      await expectCaretAt(textarea, 5);
+    },
+  },
+);
+
 export const HostApiClosePanel: Story = createHostApiStory(
   async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);

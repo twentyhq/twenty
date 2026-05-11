@@ -4,10 +4,7 @@ import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
-import {
-  FEATURE_MASK,
-  FEATURE_TILES,
-} from '@/app/[locale]/product/feature.data';
+import { FEATURE_TILES } from '@/app/[locale]/product/feature.data';
 import { TABS } from '@/app/[locale]/product/tabs.data';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/product/three-cards.data';
 import {
@@ -189,7 +186,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </HeadingPart>
           </Heading>
         </Feature.Intro>
-        <Feature.Tiles mask={FEATURE_MASK} tiles={FEATURE_TILES} />
+        <Feature.Tiles tiles={FEATURE_TILES} />
       </Feature.Root>
 
       <ThreeCards.Root scheme="light">
