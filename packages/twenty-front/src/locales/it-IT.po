@@ -799,7 +799,6 @@ msgid "About your app"
 msgstr ""
 
 #. js-lingui-id: LuXP9q
-#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Access"
 msgstr ""
@@ -1987,7 +1986,7 @@ msgid "Anyone in this workspace can use this credential."
 msgstr ""
 
 #. js-lingui-id: xJR+Wq
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "Chiunque abbia un indirizzo email presso questi domini è autorizzato a registrarsi per questo spazio di lavoro."
 
@@ -2212,7 +2211,7 @@ msgid "Approved access domain validated"
 msgstr "Dominio di accesso approvato convalidato"
 
 #. js-lingui-id: 9tggYj
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Approved Domains"
 msgstr "Domini approvati"
 
@@ -5002,7 +5001,7 @@ msgid "Default palette"
 msgstr "Tavolozza predefinita"
 
 #. js-lingui-id: v41VX6
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Default role"
 msgstr "Ruolo predefinito"
@@ -5880,7 +5879,7 @@ msgstr "altrimenti se"
 #. js-lingui-id: O3oNi5
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/auth/PasswordReset.tsx
@@ -6447,7 +6446,7 @@ msgid "Error deleting app"
 msgstr "Errore durante l'eliminazione dell'app"
 
 #. js-lingui-id: QnVLjD
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Error deleting invitation"
 msgstr "Errore nell'eliminazione dell'invito"
 
@@ -6512,7 +6511,7 @@ msgid "Error regenerating api key."
 msgstr "Errore nella rigenerazione della chiave API."
 
 #. js-lingui-id: clfpgU
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Error resending invitation"
 msgstr "Errore nel reinvio dell'invito"
 
@@ -6828,7 +6827,7 @@ msgid "Expiration Date"
 msgstr "Data di scadenza"
 
 #. js-lingui-id: M1RnFv
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expired"
 msgstr "Scaduto"
@@ -6839,7 +6838,7 @@ msgid "Expires"
 msgstr "Scade"
 
 #. js-lingui-id: i9qiyR
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Expires in"
 msgstr "Scade tra"
 
@@ -8661,17 +8660,18 @@ msgstr "Inviti"
 
 #. js-lingui-id: MFKlMB
 #: src/utils/title-utils.ts
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
 msgstr "Invita"
 
 #. js-lingui-id: 0M8+El
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Invite by email"
 msgstr "Invita via e-mail"
 
 #. js-lingui-id: PWIq/W
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Invite by link"
 msgstr "Invita tramite link"
 
@@ -13106,7 +13106,7 @@ msgid "role"
 msgstr "ruolo"
 
 #. js-lingui-id: GDvlUT
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -13902,7 +13902,7 @@ msgid "Send"
 msgstr ""
 
 #. js-lingui-id: mjK8F3
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Send an invite email to your team"
 msgstr "Invia un'email di invito al tuo team"
 
@@ -14109,7 +14109,7 @@ msgid "Share"
 msgstr "Condividi"
 
 #. js-lingui-id: Vy9kmk
-#: src/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab.tsx
+#: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Share this link to invite users to join your workspace"
 msgstr "Condividi questo link per invitare gli utenti a unirsi al tuo workspace"
 
