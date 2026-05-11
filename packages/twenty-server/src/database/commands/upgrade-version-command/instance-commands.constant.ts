@@ -31,7 +31,7 @@ import { BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand } fro
 import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1797000002000-migrate-tool-trigger-settings';
 import { AddEmailGroupChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778256809018-add-email-group-channel-type';
 import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1798000003000-add-application-id-to-public-domain';
-import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
+import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

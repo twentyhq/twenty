@@ -20,7 +20,7 @@ type ConnectedAccountTokenRow = {
   refreshToken: string | null;
 };
 
-@RegisteredInstanceCommand('2.4.0', 1798000004000, { type: 'slow' })
+@RegisteredInstanceCommand('2.5.0', 1798000004000, { type: 'slow' })
 export class EncryptConnectedAccountTokensSlowInstanceCommand
   implements SlowInstanceCommand
 {

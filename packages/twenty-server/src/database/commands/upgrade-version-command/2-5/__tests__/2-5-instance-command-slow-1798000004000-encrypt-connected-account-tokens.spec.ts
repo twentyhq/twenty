@@ -1,6 +1,6 @@
 import { type DataSource } from 'typeorm';
 
-import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
+import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
 import {
   CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
   type ConnectedAccountTokenEncryptionService,
