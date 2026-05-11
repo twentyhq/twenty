@@ -34,20 +34,22 @@ export class PermissionFlagSyncableEntityFastInstanceCommand
       `CREATE INDEX "IDX_PERMISSION_FLAG_APPLICATION_ID" ON "core"."permissionFlag" ("applicationId")`,
     );
 
+    // Reuses canonical hash names freed by the rename migration so TypeORM's
+    // schema diff matches without further intervention.
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_d7771c026b81fb7762da3f7512" ON "core"."permissionFlag" ("workspaceId", "universalIdentifier")`,
+      `CREATE UNIQUE INDEX "IDX_da8ffd3c24b4a819430a861067" ON "core"."permissionFlag" ("workspaceId", "universalIdentifier")`,
     );
 
     await queryRunner.query(
       `ALTER TABLE "core"."permissionFlag"
-       ADD CONSTRAINT "FK_5faba4fac7d98e26a02eac5eebc"
+       ADD CONSTRAINT "FK_835bc9f7ef959debfc5cd268049"
        FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
     await queryRunner.query(
       `ALTER TABLE "core"."permissionFlag"
-       ADD CONSTRAINT "FK_90a41ee79a926b30490b7f60c6d"
+       ADD CONSTRAINT "FK_b26a9d39a88d0e72373c677c6c5"
        FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
@@ -55,13 +57,13 @@ export class PermissionFlagSyncableEntityFastInstanceCommand
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."permissionFlag" DROP CONSTRAINT IF EXISTS "FK_90a41ee79a926b30490b7f60c6d"`,
+      `ALTER TABLE "core"."permissionFlag" DROP CONSTRAINT IF EXISTS "FK_b26a9d39a88d0e72373c677c6c5"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."permissionFlag" DROP CONSTRAINT IF EXISTS "FK_5faba4fac7d98e26a02eac5eebc"`,
+      `ALTER TABLE "core"."permissionFlag" DROP CONSTRAINT IF EXISTS "FK_835bc9f7ef959debfc5cd268049"`,
     );
     await queryRunner.query(
-      `DROP INDEX IF EXISTS "core"."IDX_d7771c026b81fb7762da3f7512"`,
+      `DROP INDEX IF EXISTS "core"."IDX_da8ffd3c24b4a819430a861067"`,
     );
     await queryRunner.query(
       `DROP INDEX IF EXISTS "core"."IDX_PERMISSION_FLAG_APPLICATION_ID"`,
