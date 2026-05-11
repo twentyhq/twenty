@@ -5,7 +5,6 @@ import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-r
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { ApplyCalendarEventsVisibilityRestrictionsService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -28,17 +27,13 @@ export class CalendarEventFindOnePostQueryHook
     const isUserContext = isUserAuthContext(authContext);
     const userId = isUserContext ? authContext.user.id : undefined;
 
-    const isTwentyStandardApplication =
-      authContext.type === 'application' &&
-      authContext.application.universalIdentifier ===
-        TWENTY_STANDARD_APPLICATION.universalIdentifier;
-
+    // TODO: this check should be removed, see https://discord.com/channels/1130383047699738754/1503320724704854036 for context
     if (
-      !isUserContext &&
+      authContext.type !== 'user' &&
       authContext.type !== 'apiKey' &&
-      !isTwentyStandardApplication
+      authContext.type !== 'application'
     ) {
-      throw new ForbiddenError('Authentication is required');
+      throw new ForbiddenError('Authentication should be user scoped');
     }
 
     const workspace = authContext.workspace;
