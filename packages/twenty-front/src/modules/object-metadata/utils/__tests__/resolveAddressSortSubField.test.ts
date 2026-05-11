@@ -3,48 +3,53 @@ import { resolveAddressSortSubField } from '@/object-metadata/utils/resolveAddre
 describe('resolveAddressSortSubField', () => {
   it('returns the requested sub-field when it is enabled', () => {
     expect(
-      resolveAddressSortSubField(
-        { subFields: ['addressStreet1', 'addressState'] },
-        'addressState',
-      ),
+      resolveAddressSortSubField({
+        settings: { subFields: ['addressStreet1', 'addressState'] },
+        compositeSubField: 'addressState',
+      }),
     ).toBe('addressState');
   });
 
   it('falls back to addressCity when the requested sub-field is disabled', () => {
     expect(
-      resolveAddressSortSubField(
-        { subFields: ['addressStreet1', 'addressCity'] },
-        'addressState',
-      ),
+      resolveAddressSortSubField({
+        settings: { subFields: ['addressStreet1', 'addressCity'] },
+        compositeSubField: 'addressState',
+      }),
     ).toBe('addressCity');
   });
 
   it('falls back to addressCity when the requested sub-field is not a recognized address sub-field', () => {
-    expect(resolveAddressSortSubField({}, 'notARealSubField')).toBe(
-      'addressCity',
-    );
+    expect(
+      resolveAddressSortSubField({
+        settings: {},
+        compositeSubField: 'notARealSubField',
+      }),
+    ).toBe('addressCity');
   });
 
   it('falls back to addressCity when no request is given', () => {
-    expect(resolveAddressSortSubField(null)).toBe('addressCity');
-    expect(resolveAddressSortSubField(undefined)).toBe('addressCity');
-    expect(resolveAddressSortSubField({})).toBe('addressCity');
+    expect(resolveAddressSortSubField({ settings: null })).toBe('addressCity');
+    expect(resolveAddressSortSubField({ settings: undefined })).toBe(
+      'addressCity',
+    );
+    expect(resolveAddressSortSubField({ settings: {} })).toBe('addressCity');
   });
 
   it('falls back to the first enabled sub-field when addressCity is disabled', () => {
     expect(
       resolveAddressSortSubField({
-        subFields: ['addressStreet1', 'addressState'],
+        settings: { subFields: ['addressStreet1', 'addressState'] },
       }),
     ).toBe('addressStreet1');
   });
 
   it('falls back to first enabled sub-field even when the requested is recognized but disabled and addressCity is also disabled', () => {
     expect(
-      resolveAddressSortSubField(
-        { subFields: ['addressStreet1', 'addressCountry'] },
-        'addressState',
-      ),
+      resolveAddressSortSubField({
+        settings: { subFields: ['addressStreet1', 'addressCountry'] },
+        compositeSubField: 'addressState',
+      }),
     ).toBe('addressStreet1');
   });
 });

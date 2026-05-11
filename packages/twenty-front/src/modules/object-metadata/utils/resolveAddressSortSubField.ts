@@ -12,18 +12,21 @@ const isAllowedAddressSubField = (
 ): value is AllowedAddressSubField =>
   ALLOWED_ADDRESS_SUBFIELDS.includes(value as AllowedAddressSubField);
 
-export const resolveAddressSortSubField = (
-  settings: FieldMetadataItem['settings'] | null | undefined,
-  requestedSubField?: string | null,
-): AllowedAddressSubField => {
+export const resolveAddressSortSubField = ({
+  settings,
+  compositeSubField,
+}: {
+  settings: FieldMetadataItem['settings'] | null | undefined;
+  compositeSubField?: string | null;
+}): AllowedAddressSubField => {
   const enabledSubFields = getEnabledAddressSubFields(settings);
 
   if (
-    isDefined(requestedSubField) &&
-    isAllowedAddressSubField(requestedSubField) &&
-    enabledSubFields.includes(requestedSubField)
+    isDefined(compositeSubField) &&
+    isAllowedAddressSubField(compositeSubField) &&
+    enabledSubFields.includes(compositeSubField)
   ) {
-    return requestedSubField;
+    return compositeSubField;
   }
 
   if (enabledSubFields.includes(ADDRESS_DEFAULT_SORT_SUB_FIELD)) {

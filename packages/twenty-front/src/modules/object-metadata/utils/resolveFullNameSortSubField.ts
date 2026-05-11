@@ -6,16 +6,20 @@ import { isDefined } from 'twenty-shared/utils';
 const isAllowedFullNameSortSubField = (
   value: string | null | undefined,
 ): value is AllowedFullNameSortSubField =>
-  ALLOWED_FULL_NAME_SORT_SUBFIELDS.includes(value as AllowedFullNameSortSubField);
+  ALLOWED_FULL_NAME_SORT_SUBFIELDS.includes(
+    value as AllowedFullNameSortSubField,
+  );
 
-export const resolveFullNameSortSubField = (
-  requestedSubField?: string | null,
-): AllowedFullNameSortSubField => {
+export const resolveFullNameSortSubField = ({
+  compositeSubField,
+}: {
+  compositeSubField?: string | null;
+} = {}): AllowedFullNameSortSubField => {
   if (
-    isDefined(requestedSubField) &&
-    isAllowedFullNameSortSubField(requestedSubField)
+    isDefined(compositeSubField) &&
+    isAllowedFullNameSortSubField(compositeSubField)
   ) {
-    return requestedSubField;
+    return compositeSubField;
   }
   return FULL_NAME_DEFAULT_SORT_SUB_FIELD;
 };

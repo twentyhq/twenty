@@ -71,7 +71,9 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
           value,
           label: labels[value],
         })),
-        resolvedValue: resolveFullNameSortSubField(recordSort.subFieldName),
+        resolvedValue: resolveFullNameSortSubField({
+          compositeSubField: recordSort.subFieldName,
+        }),
       };
     }
     if (fieldMetadataItem.type === FieldMetadataType.ADDRESS) {
@@ -89,10 +91,10 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
         options: getEnabledAddressSubFields(fieldMetadataItem.settings).map(
           (value) => ({ value, label: labels[value] }),
         ),
-        resolvedValue: resolveAddressSortSubField(
-          fieldMetadataItem.settings,
-          recordSort.subFieldName,
-        ),
+        resolvedValue: resolveAddressSortSubField({
+          settings: fieldMetadataItem.settings,
+          compositeSubField: recordSort.subFieldName,
+        }),
       };
     }
     return undefined;

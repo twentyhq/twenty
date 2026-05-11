@@ -18,7 +18,12 @@ describe('getOrderByForFieldMetadataType', () => {
         name: 'name',
       });
 
-      expect(getOrderByForFieldMetadataType(field, 'AscNullsLast')).toEqual([
+      expect(
+        getOrderByForFieldMetadataType({
+          field,
+          orderByDirection: 'AscNullsLast',
+        }),
+      ).toEqual([
         {
           name: {
             firstName: 'AscNullsLast',
@@ -28,17 +33,17 @@ describe('getOrderByForFieldMetadataType', () => {
       ]);
     });
 
-    it('uses the per-sort subFieldName as the primary sort key', () => {
+    it('uses the per-sort compositeSubField as the primary sort key', () => {
       const field = buildField({
         type: FieldMetadataType.FULL_NAME,
         name: 'name',
       });
 
-      const result = getOrderByForFieldMetadataType(
+      const result = getOrderByForFieldMetadataType({
         field,
-        'DescNullsLast',
-        'lastName',
-      );
+        orderByDirection: 'DescNullsLast',
+        compositeSubField: 'lastName',
+      });
       const keys = Object.keys(result[0].name as Record<string, unknown>);
 
       expect(keys[0]).toBe('lastName');
@@ -56,7 +61,12 @@ describe('getOrderByForFieldMetadataType', () => {
         name: 'address',
       });
 
-      expect(getOrderByForFieldMetadataType(field, 'AscNullsLast')).toEqual([
+      expect(
+        getOrderByForFieldMetadataType({
+          field,
+          orderByDirection: 'AscNullsLast',
+        }),
+      ).toEqual([
         {
           address: {
             addressCity: 'AscNullsLast',
@@ -65,18 +75,18 @@ describe('getOrderByForFieldMetadataType', () => {
       ]);
     });
 
-    it('uses the per-sort subFieldName when provided', () => {
+    it('uses the per-sort compositeSubField when provided', () => {
       const field = buildField({
         type: FieldMetadataType.ADDRESS,
         name: 'address',
       });
 
       expect(
-        getOrderByForFieldMetadataType(
+        getOrderByForFieldMetadataType({
           field,
-          'DescNullsLast',
-          'addressCountry',
-        ),
+          orderByDirection: 'DescNullsLast',
+          compositeSubField: 'addressCountry',
+        }),
       ).toEqual([
         {
           address: {

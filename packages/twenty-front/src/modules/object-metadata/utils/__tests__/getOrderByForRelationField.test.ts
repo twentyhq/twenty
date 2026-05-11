@@ -23,11 +23,11 @@ describe('getOrderByForRelationField', () => {
       ],
     };
 
-    const result = getOrderByForRelationField(
+    const result = getOrderByForRelationField({
       field,
       relatedObjectMetadataItem,
-      'AscNullsLast',
-    );
+      orderByDirection: 'AscNullsLast',
+    });
 
     // Should produce nested structure: { company: { name: 'AscNullsLast' } }
     expect(result).toEqual([{ company: { name: 'AscNullsLast' } }]);
@@ -52,11 +52,11 @@ describe('getOrderByForRelationField', () => {
       ],
     };
 
-    const result = getOrderByForRelationField(
+    const result = getOrderByForRelationField({
       field,
       relatedObjectMetadataItem,
-      'DescNullsLast',
-    );
+      orderByDirection: 'DescNullsLast',
+    });
 
     // Should produce nested structure with composite field
     expect(result).toEqual([
@@ -84,11 +84,11 @@ describe('getOrderByForRelationField', () => {
       fields: [],
     };
 
-    const result = getOrderByForRelationField(
+    const result = getOrderByForRelationField({
       field,
       relatedObjectMetadataItem,
-      'AscNullsLast',
-    );
+      orderByDirection: 'AscNullsLast',
+    });
 
     expect(result).toEqual([{ companyId: 'AscNullsLast' }]);
   });
@@ -112,11 +112,11 @@ describe('getOrderByForRelationField', () => {
       ],
     };
 
-    const result = getOrderByForRelationField(
+    const result = getOrderByForRelationField({
       field,
       relatedObjectMetadataItem,
-      'AscNullsLast',
-    );
+      orderByDirection: 'AscNullsLast',
+    });
 
     // When labelIdentifierFieldMetadataId is not set, isLabelIdentifierField
     // falls back to checking for a field named 'name'
@@ -142,11 +142,11 @@ describe('getOrderByForRelationField', () => {
       ],
     };
 
-    const result = getOrderByForRelationField(
+    const result = getOrderByForRelationField({
       field,
       relatedObjectMetadataItem,
-      'DescNullsLast',
-    );
+      orderByDirection: 'DescNullsLast',
+    });
 
     expect(result).toEqual([{ company: { name: 'DescNullsLast' } }]);
   });
