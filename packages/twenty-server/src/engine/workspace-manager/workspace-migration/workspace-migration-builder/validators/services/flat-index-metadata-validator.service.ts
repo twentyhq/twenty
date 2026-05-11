@@ -16,7 +16,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
-import { isCompositeFieldDefaultValueCompatibleWithUniqueIndex } from '../../utils/is-composite-field-default-value-compatible-with-unique-index.ts';
+import { isCompositeFieldDefaultValueCompatibleWithUniqueIndex } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/is-composite-field-default-value-compatible-with-unique-index.util';
 
 @Injectable()
 export class FlatIndexValidatorService {

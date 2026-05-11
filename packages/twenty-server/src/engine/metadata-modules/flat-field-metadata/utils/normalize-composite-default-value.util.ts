@@ -17,7 +17,7 @@ export const normalizeCompositeDefaultValue = (
   switch (type) {
     case FieldMetadataType.PHONES: {
       if (!isDefined(defaultValue)) {
-        return  null;
+        return null;
       }
 
       const v = defaultValue as {
@@ -63,7 +63,7 @@ export const normalizeCompositeDefaultValue = (
 
     case FieldMetadataType.EMAILS: {
       if (!isDefined(defaultValue)) {
-        return  null;
+        return null;
       }
 
       const v = defaultValue as {
@@ -87,7 +87,7 @@ export const normalizeCompositeDefaultValue = (
 
     case FieldMetadataType.LINKS: {
       if (!isDefined(defaultValue)) {
-        return  null;
+        return null;
       }
 
       const v = defaultValue as {
@@ -119,7 +119,7 @@ export const normalizeCompositeDefaultValue = (
 
     case FieldMetadataType.ADDRESS: {
       if (!isDefined(defaultValue)) {
-        return  null;
+        return null;
       }
 
       const v = defaultValue as {
@@ -236,7 +236,7 @@ export const normalizeCompositeDefaultValue = (
 
     case FieldMetadataType.CURRENCY: {
       if (!isDefined(defaultValue)) {
-        return  null;
+        return null;
       }
 
       const v = defaultValue as {
@@ -258,7 +258,7 @@ export const normalizeCompositeDefaultValue = (
 
     case FieldMetadataType.RICH_TEXT: {
       if (!isDefined(defaultValue)) {
-        return  null;
+        return null;
       }
 
       const v = defaultValue as {
