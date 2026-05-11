@@ -18,20 +18,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { normalizeCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/normalize-composite-default-value.util';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 
-const hasEmptyStringSentinel = (defaultValue: unknown): boolean => {
-  if (
-    !isDefined(defaultValue) ||
-    typeof defaultValue !== 'object' ||
-    Array.isArray(defaultValue)
-  ) {
-    return false;
-  }
 
-  return Object.values(defaultValue as Record<string, unknown>).some(
-    (value) =>
-      typeof value === 'string' && (value === "''" || value === ''),
-  );
-};
 
 @RegisteredWorkspaceCommand('2.4.0', 1778000001000)
 @Command({
@@ -70,11 +57,33 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
     )
       .filter(isDefined)
       .filter((field) => isCompositeFieldMetadataType(field.type))
-      .filter((field) => field.defaultValue !== normalizeCompositeDefaultValue(field.defaultValue, field.type as CompositeFieldMetadataType));
+      .filter((field) => field.id === '4a8a25a0-437d-4aab-ad15-d5318c567946')
+      .filter((field) => {
+        const compositeType = compositeTypeDefinitions.get(
+          field.type as FieldMetadataType,
+        );
+
+        if (!isDefined(compositeType)) {
+          return false;
+        }
+
+        const normalizedDefaultValue = normalizeCompositeDefaultValue(
+          field.defaultValue,
+          field.type as CompositeFieldMetadataType,
+        );
+        console.log(normalizedDefaultValue, field.defaultValue);
+
+        for (const property of compositeType.properties) {
+          if(normalizedDefaultValue?.[property.name as keyof typeof normalizedDefaultValue] !== field.defaultValue?.[property.name as keyof typeof field.defaultValue]) {
+            return true;
+          }
+        }
+
+      });
 
     if (affectedFields.length === 0) {
       this.logger.log(
-        `No composite fields with empty-string values found for workspace ${workspaceId}, skipping`,
+        `No composite fields with non-null default values found for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -115,15 +124,18 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
         continue;
       }
 
-      for (const property of compositeType.properties) {
-        if (property.type !== FieldMetadataType.TEXT) {
-          continue;
-        }
+      const normalizedDefaultValue = normalizeCompositeDefaultValue(
+        field.defaultValue,
+        field.type as CompositeFieldMetadataType,
+      );
 
-        backfillTargets.push({
-          tableName,
-          columnName: computeCompositeColumnName(field.name, property),
-        });
+      for (const property of compositeType.properties) {
+        if(normalizedDefaultValue?.[property.name as keyof typeof normalizedDefaultValue] !== field.defaultValue?.[property.name as keyof typeof field.defaultValue]) {
+          backfillTargets.push({
+            tableName,
+            columnName: computeCompositeColumnName(field.name, property),
+          });
+        }
       }
     }
 
@@ -148,6 +160,9 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
         `UPDATE "${schemaName}"."${tableName}"
          SET "${columnName}" = NULL
          WHERE "${columnName}" = ''`,
+        undefined,
+        undefined,
+        { shouldBypassPermissionChecks: true },
       );
 
       this.logger.log(
