@@ -11,7 +11,10 @@ import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EVENT_TO_REACT } from '@/constants/EventToReact';
-import { type SerializedEventData } from '@/constants/SerializedEventData';
+import {
+  type SerializedEventData,
+  type SerializedFileData,
+} from '@/constants/SerializedEventData';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
@@ -50,7 +53,9 @@ const parseCssString = (
 
   for (const declaration of declarations) {
     const colonIndex = declaration.indexOf(':');
-    if (colonIndex === -1) continue;
+    if (colonIndex === -1) {
+      continue;
+    }
 
     const property = declaration.slice(0, colonIndex).trim();
     const value = declaration.slice(colonIndex + 1).trim();
@@ -69,6 +74,43 @@ const parseCssString = (
   return style;
 };
 
+const serializeFileList = (
+  files: unknown,
+): SerializedFileData[] | undefined => {
+  if (!isObject(files)) {
+    return undefined;
+  }
+  const fileListLike = files as { length?: unknown } & Record<number, unknown>;
+  if (!isNumber(fileListLike.length)) {
+    return undefined;
+  }
+
+  const serialized: SerializedFileData[] = [];
+  for (let index = 0; index < fileListLike.length; index++) {
+    const file = fileListLike[index];
+    if (!isObject(file)) {
+      continue;
+    }
+    const fileRecord = file as Record<string, unknown>;
+    if (
+      !isString(fileRecord.name) ||
+      !isNumber(fileRecord.size) ||
+      !isString(fileRecord.type) ||
+      !isNumber(fileRecord.lastModified)
+    ) {
+      continue;
+    }
+    serialized.push({
+      name: fileRecord.name,
+      size: fileRecord.size,
+      type: fileRecord.type,
+      lastModified: fileRecord.lastModified,
+    });
+  }
+
+  return serialized;
+};
+
 const serializeEvent = (event: unknown): SerializedEventData => {
   if (!isObject(event)) {
     return { type: 'unknown' };
@@ -79,53 +121,120 @@ const serializeEvent = (event: unknown): SerializedEventData => {
     type: isString(domEvent.type) ? domEvent.type : 'unknown',
   };
 
-  if (isBoolean(domEvent.altKey)) serialized.altKey = domEvent.altKey;
-  if (isBoolean(domEvent.ctrlKey)) serialized.ctrlKey = domEvent.ctrlKey;
-  if (isBoolean(domEvent.metaKey)) serialized.metaKey = domEvent.metaKey;
-  if (isBoolean(domEvent.shiftKey)) serialized.shiftKey = domEvent.shiftKey;
+  if (isBoolean(domEvent.altKey)) {
+    serialized.altKey = domEvent.altKey;
+  }
+  if (isBoolean(domEvent.ctrlKey)) {
+    serialized.ctrlKey = domEvent.ctrlKey;
+  }
+  if (isBoolean(domEvent.metaKey)) {
+    serialized.metaKey = domEvent.metaKey;
+  }
+  if (isBoolean(domEvent.shiftKey)) {
+    serialized.shiftKey = domEvent.shiftKey;
+  }
 
-  if (isNumber(domEvent.clientX)) serialized.clientX = domEvent.clientX;
-  if (isNumber(domEvent.clientY)) serialized.clientY = domEvent.clientY;
-  if (isNumber(domEvent.pageX)) serialized.pageX = domEvent.pageX;
-  if (isNumber(domEvent.pageY)) serialized.pageY = domEvent.pageY;
-  if (isNumber(domEvent.screenX)) serialized.screenX = domEvent.screenX;
-  if (isNumber(domEvent.screenY)) serialized.screenY = domEvent.screenY;
-  if (isNumber(domEvent.offsetX)) serialized.offsetX = domEvent.offsetX;
-  if (isNumber(domEvent.offsetY)) serialized.offsetY = domEvent.offsetY;
-  if (isNumber(domEvent.movementX)) serialized.movementX = domEvent.movementX;
-  if (isNumber(domEvent.movementY)) serialized.movementY = domEvent.movementY;
-  if (isNumber(domEvent.button)) serialized.button = domEvent.button;
-  if (isNumber(domEvent.buttons)) serialized.buttons = domEvent.buttons;
+  if (isNumber(domEvent.clientX)) {
+    serialized.clientX = domEvent.clientX;
+  }
+  if (isNumber(domEvent.clientY)) {
+    serialized.clientY = domEvent.clientY;
+  }
+  if (isNumber(domEvent.pageX)) {
+    serialized.pageX = domEvent.pageX;
+  }
+  if (isNumber(domEvent.pageY)) {
+    serialized.pageY = domEvent.pageY;
+  }
+  if (isNumber(domEvent.screenX)) {
+    serialized.screenX = domEvent.screenX;
+  }
+  if (isNumber(domEvent.screenY)) {
+    serialized.screenY = domEvent.screenY;
+  }
+  if (isNumber(domEvent.offsetX)) {
+    serialized.offsetX = domEvent.offsetX;
+  }
+  if (isNumber(domEvent.offsetY)) {
+    serialized.offsetY = domEvent.offsetY;
+  }
+  if (isNumber(domEvent.movementX)) {
+    serialized.movementX = domEvent.movementX;
+  }
+  if (isNumber(domEvent.movementY)) {
+    serialized.movementY = domEvent.movementY;
+  }
+  if (isNumber(domEvent.button)) {
+    serialized.button = domEvent.button;
+  }
+  if (isNumber(domEvent.buttons)) {
+    serialized.buttons = domEvent.buttons;
+  }
 
-  if (isString(domEvent.key)) serialized.key = domEvent.key;
-  if (isString(domEvent.code)) serialized.code = domEvent.code;
-  if (isBoolean(domEvent.repeat)) serialized.repeat = domEvent.repeat;
+  if (isString(domEvent.key)) {
+    serialized.key = domEvent.key;
+  }
+  if (isString(domEvent.code)) {
+    serialized.code = domEvent.code;
+  }
+  if (isBoolean(domEvent.repeat)) {
+    serialized.repeat = domEvent.repeat;
+  }
 
-  if (isNumber(domEvent.deltaX)) serialized.deltaX = domEvent.deltaX;
-  if (isNumber(domEvent.deltaY)) serialized.deltaY = domEvent.deltaY;
-  if (isNumber(domEvent.deltaZ)) serialized.deltaZ = domEvent.deltaZ;
-  if (isNumber(domEvent.deltaMode)) serialized.deltaMode = domEvent.deltaMode;
+  if (isNumber(domEvent.deltaX)) {
+    serialized.deltaX = domEvent.deltaX;
+  }
+  if (isNumber(domEvent.deltaY)) {
+    serialized.deltaY = domEvent.deltaY;
+  }
+  if (isNumber(domEvent.deltaZ)) {
+    serialized.deltaZ = domEvent.deltaZ;
+  }
+  if (isNumber(domEvent.deltaMode)) {
+    serialized.deltaMode = domEvent.deltaMode;
+  }
 
   const target = domEvent.target;
   if (isObject(target)) {
     const targetRecord = target as Record<string, unknown>;
-    if (isString(targetRecord.value)) serialized.value = targetRecord.value;
-    if (isBoolean(targetRecord.checked))
+    if (isString(targetRecord.value)) {
+      serialized.value = targetRecord.value;
+    }
+    if (isBoolean(targetRecord.checked)) {
       serialized.checked = targetRecord.checked;
-    if (isNumber(targetRecord.scrollTop))
+    }
+    if (isNumber(targetRecord.scrollTop)) {
       serialized.scrollTop = targetRecord.scrollTop;
-    if (isNumber(targetRecord.scrollLeft))
+    }
+    if (isNumber(targetRecord.scrollLeft)) {
       serialized.scrollLeft = targetRecord.scrollLeft;
-    if (isNumber(targetRecord.currentTime))
+    }
+    if (isNumber(targetRecord.currentTime)) {
       serialized.currentTime = targetRecord.currentTime;
-    if (isNumber(targetRecord.duration))
+    }
+    if (isNumber(targetRecord.duration)) {
       serialized.duration = targetRecord.duration;
-    if (isBoolean(targetRecord.paused)) serialized.paused = targetRecord.paused;
-    if (isBoolean(targetRecord.ended)) serialized.ended = targetRecord.ended;
-    if (isNumber(targetRecord.volume)) serialized.volume = targetRecord.volume;
-    if (isBoolean(targetRecord.muted)) serialized.muted = targetRecord.muted;
-    if (isNumber(targetRecord.playbackRate))
+    }
+    if (isBoolean(targetRecord.paused)) {
+      serialized.paused = targetRecord.paused;
+    }
+    if (isBoolean(targetRecord.ended)) {
+      serialized.ended = targetRecord.ended;
+    }
+    if (isNumber(targetRecord.volume)) {
+      serialized.volume = targetRecord.volume;
+    }
+    if (isBoolean(targetRecord.muted)) {
+      serialized.muted = targetRecord.muted;
+    }
+    if (isNumber(targetRecord.playbackRate)) {
       serialized.playbackRate = targetRecord.playbackRate;
+    }
+
+    const files = serializeFileList(targetRecord.files);
+    if (isDefined(files)) {
+      serialized.files = files;
+    }
   }
 
   return serialized;
@@ -141,7 +250,9 @@ const filterProps = <T extends object>(props: T): T => {
   const filtered: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(props)) {
-    if (INTERNAL_PROPS.has(key) || isUndefined(value)) continue;
+    if (INTERNAL_PROPS.has(key) || isUndefined(value)) {
+      continue;
+    }
 
     if (key === 'style') {
       filtered.style = parseCssString(value as string | undefined);
@@ -189,7 +300,9 @@ const syncValuePreservingCaret = (
   element: CaretPreservingElement,
   nextValue: string,
 ): void => {
-  if (element.value === nextValue) return;
+  if (element.value === nextValue) {
+    return;
+  }
 
   const isFocused = document.activeElement === element;
   const start = isFocused ? element.selectionStart : null;
@@ -221,7 +334,9 @@ const createCaretPreservingElement = (
     ...forcedProps,
     defaultValue: initialValue,
     ref: (node: CaretPreservingElement | null) => {
-      if (!isDefined(node)) return;
+      if (!isDefined(node)) {
+        return;
+      }
       if (isNonEmptyString(value)) {
         syncValuePreservingCaret(node, value);
       }

@@ -138,4 +138,9 @@ export class UpdateWorkspaceInput {
   @IsBoolean()
   @IsOptional()
   useRecommendedModels?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isInternalMessagesImportEnabled?: boolean;
 }

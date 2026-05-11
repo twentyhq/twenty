@@ -143,9 +143,9 @@ jobs:
       - name: Seed Dev Workspace
         run: |
           cd packages/twenty-docker/
-          echo "Seeding full dev workspace..."
-          if ! docker compose exec -T server yarn command:prod -- workspace:seed:dev; then
-            echo "❌ Seeding full dev workspace failed. Dumping server logs..."
+          echo "Seeding light dev workspace (Apple only)..."
+          if ! docker compose exec -T server yarn command:prod -- workspace:seed:dev --light; then
+            echo "❌ Seeding light dev workspace failed. Dumping server logs..."
             docker compose logs server
             exit 1
           fi

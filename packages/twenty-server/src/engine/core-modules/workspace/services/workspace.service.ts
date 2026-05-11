@@ -99,6 +99,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     enabledAiModelIds: PermissionFlagType.AI_SETTINGS,
     useRecommendedModels: PermissionFlagType.AI_SETTINGS,
+    isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
   };
 
   constructor(

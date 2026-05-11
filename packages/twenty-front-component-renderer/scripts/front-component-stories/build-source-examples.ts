@@ -87,6 +87,7 @@ const STORY_COMPONENTS = [
   'keyboard-events.front-component',
   'host-api-calls.front-component',
   'caret-preservation.front-component',
+  'file-input.front-component',
 ];
 
 const resolveEntryPoints = (): Record<string, string> => {
