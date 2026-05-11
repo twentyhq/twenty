@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -25,6 +26,14 @@ export type ConnectedAccountVisibility = 'user' | 'workspace';
 @Entity({ name: 'connectedAccount', schema: 'core' })
 @Index('IDX_CONNECTED_ACCOUNT_CONNECTION_PROVIDER_ID', ['connectionProviderId'])
 @Index('IDX_CONNECTED_ACCOUNT_APPLICATION_ID', ['applicationId'])
+@Check(
+  'CHK_connectedAccount_accessToken_encrypted',
+  `"accessToken" IS NULL OR "accessToken" LIKE 'enc:v1:%'`,
+)
+@Check(
+  'CHK_connectedAccount_refreshToken_encrypted',
+  `"refreshToken" IS NULL OR "refreshToken" LIKE 'enc:v1:%'`,
+)
 export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
