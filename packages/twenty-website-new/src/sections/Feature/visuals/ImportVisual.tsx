@@ -2,19 +2,11 @@
 
 import { styled } from '@linaria/react';
 
-const BG = '#1d1d25';
-const BORDER = 'rgba(255, 255, 255, 0.06)';
-const TEXT = 'rgba(255, 255, 255, 0.88)';
-const TEXT_SECONDARY = 'rgba(255, 255, 255, 0.55)';
-const TEXT_TERTIARY = 'rgba(255, 255, 255, 0.35)';
-const ACCENT = '#3e63dd';
-const FONT = "'Inter', sans-serif";
-
 const Root = styled.div`
-  background: ${BG};
+  background: #1d1d25;
   display: flex;
   flex-direction: column;
-  font-family: ${FONT};
+  font-family: 'Inter', sans-serif;
   height: 100%;
   overflow: hidden;
   padding: 16px;
@@ -22,14 +14,14 @@ const Root = styled.div`
 `;
 
 const PageTitle = styled.h4`
-  color: ${TEXT};
+  color: rgba(255, 255, 255, 0.88);
   font-size: 14px;
   font-weight: 600;
   margin: 0 0 6px;
 `;
 
 const PageDescription = styled.p`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   font-size: 11px;
   line-height: 1.5;
   margin: 0 0 16px;
@@ -49,14 +41,14 @@ const TableHeaderRow = styled.div`
 `;
 
 const NameHeader = styled.span`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   flex: 1;
   font-size: 11px;
   font-weight: 500;
 `;
 
 const RightsHeader = styled.span`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   font-size: 11px;
   font-weight: 500;
   text-align: right;
@@ -66,21 +58,21 @@ const RightsHeader = styled.span`
 const SectionRow = styled.div`
   align-items: center;
   background: rgba(255, 255, 255, 0.02);
-  border-bottom: 1px solid ${BORDER};
-  border-top: 1px solid ${BORDER};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   gap: 6px;
   padding: 6px 12px;
 `;
 
 const SectionLabel = styled.span`
-  color: ${TEXT_SECONDARY};
+  color: rgba(255, 255, 255, 0.55);
   font-size: 10px;
   font-weight: 500;
 `;
 
 const SectionChevron = styled.span`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   display: inline-flex;
   margin-left: auto;
 `;
@@ -95,7 +87,7 @@ const TableBody = styled.div`
 
 const Row = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${BORDER};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   padding: 8px 12px;
   transition: background-color 0.1s ease;
@@ -111,7 +103,7 @@ const Row = styled.div`
 
 const RoleIconEl = styled.div`
   align-items: center;
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   display: flex;
   flex-shrink: 0;
   height: 18px;
@@ -121,7 +113,7 @@ const RoleIconEl = styled.div`
 `;
 
 const RoleName = styled.span`
-  color: ${TEXT};
+  color: rgba(255, 255, 255, 0.88);
   flex: 1;
   font-size: 12px;
   font-weight: 500;
@@ -137,9 +129,9 @@ const RightsGroup = styled.div`
 
 const RightIcon = styled.div`
   align-items: center;
-  border: 1px solid ${ACCENT};
+  border: 1px solid #3e63dd;
   border-radius: 4px;
-  color: ${ACCENT};
+  color: #3e63dd;
   display: flex;
   height: 18px;
   justify-content: center;
@@ -147,7 +139,7 @@ const RightIcon = styled.div`
 `;
 
 const RowChevron = styled.span`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   display: inline-flex;
   margin-left: 8px;
 `;

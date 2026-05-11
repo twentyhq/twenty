@@ -13,15 +13,6 @@ import {
   useState,
 } from 'react';
 
-const BG = '#1d1d25';
-const CARD_BG = '#26262f';
-const CARD_BORDER = 'rgba(255, 255, 255, 0.08)';
-const BORDER = 'rgba(255, 255, 255, 0.06)';
-const TEXT = 'rgba(255, 255, 255, 0.88)';
-const TEXT_SECONDARY = 'rgba(255, 255, 255, 0.55)';
-const TEXT_TERTIARY = 'rgba(255, 255, 255, 0.35)';
-const FONT = "'Inter', sans-serif";
-
 const TONE_MAP: Record<string, { bg: string; color: string }> = {
   gray: { bg: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' },
   purple: { bg: 'rgba(168,85,247,0.12)', color: '#c084fc' },
@@ -190,17 +181,20 @@ const CARDS: Record<CardId, DealData> = {
   },
 };
 
-const INITIAL_LANES: LaneCards = [['github', 'figma'], ['airbnb', 'notion']];
+const INITIAL_LANES: LaneCards = [
+  ['github', 'figma'],
+  ['airbnb', 'notion'],
+];
 const LANES_META = [
   { key: 'pink', label: 'Identified' },
   { key: 'purple', label: 'Qualified' },
 ];
 
 const Root = styled.div`
-  background: ${BG};
+  background: #1d1d25;
   display: flex;
   flex-direction: column;
-  font-family: ${FONT};
+  font-family: 'Inter', sans-serif;
   height: 100%;
   overflow: hidden;
   position: relative;
@@ -209,7 +203,7 @@ const Root = styled.div`
 
 const BoardHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${BORDER};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   gap: 4px;
   height: 34px;
@@ -217,18 +211,18 @@ const BoardHeader = styled.div`
 `;
 
 const BoardTitle = styled.span`
-  color: ${TEXT};
+  color: rgba(255, 255, 255, 0.88);
   font-size: 13px;
   font-weight: 500;
 `;
 
 const BoardCount = styled.span`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   font-size: 13px;
 `;
 
 const ColumnsHeaderGrid = styled.div`
-  border-bottom: 1px solid ${BORDER};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   display: grid;
   grid-template-columns: 1fr 1fr;
 `;
@@ -253,7 +247,7 @@ const LanePill = styled.span<{ $bg: string; $color: string }>`
 `;
 
 const LaneCount = styled.span`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   font-size: 12px;
 `;
 
@@ -266,7 +260,7 @@ const ColumnsGrid = styled.div`
 `;
 
 const LaneBody = styled.div`
-  border-right: 1px solid ${BORDER};
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -280,8 +274,8 @@ const LaneBody = styled.div`
 `;
 
 const CardEl = styled.div<{ $dragging?: boolean }>`
-  background: ${CARD_BG};
-  border: 1px solid ${CARD_BORDER};
+  background: #26262f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   cursor: grab;
   display: flex;
@@ -317,7 +311,7 @@ const FieldRow = styled.div`
 
 const FieldIcon = styled.div`
   align-items: center;
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   display: flex;
   flex: 0 0 14px;
   height: 14px;
@@ -333,7 +327,7 @@ const FieldValue = styled.div`
 `;
 
 const ValueText = styled.span`
-  color: ${TEXT};
+  color: rgba(255, 255, 255, 0.88);
   font-size: 11.5px;
   line-height: 1.4;
   overflow: hidden;
@@ -381,7 +375,7 @@ const TokenImg = styled.img`
 `;
 
 const TokenLabel = styled.span`
-  color: ${TEXT};
+  color: rgba(255, 255, 255, 0.88);
   font-size: 11.5px;
   line-height: 1.4;
   overflow: hidden;
@@ -409,10 +403,9 @@ const RatingRow = styled.div`
   gap: 1px;
 `;
 
-
 const AddCardRow = styled.div`
   align-items: center;
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   display: flex;
   font-size: 11px;
   gap: 4px;
@@ -876,7 +869,7 @@ export function PipelineVisual({ active: _active }: PipelineVisualProps) {
         <svg
           fill="none"
           height="14"
-          stroke={TEXT_TERTIARY}
+          stroke="rgba(255,255,255,0.35)"
           strokeLinecap="round"
           strokeWidth="1.6"
           viewBox="0 0 24 24"

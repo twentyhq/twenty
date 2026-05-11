@@ -4,15 +4,6 @@ import { useHorizontalDragScroll } from '@/lib/dom/use-horizontal-drag-scroll';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
-const BG = '#1d1d25';
-const BG_HOVER = '#25252f';
-const BORDER = 'rgba(255, 255, 255, 0.06)';
-const TEXT = 'rgba(255, 255, 255, 0.88)';
-const TEXT_SECONDARY = 'rgba(255, 255, 255, 0.55)';
-const TEXT_TERTIARY = 'rgba(255, 255, 255, 0.35)';
-const ACCENT = '#3e63dd';
-const FONT = "'Inter', sans-serif";
-
 const PERSON_TONES: Record<string, { background: string; color: string }> = {
   gray: { background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)' },
   purple: { background: 'rgba(168,85,247,0.15)', color: '#c084fc' },
@@ -23,10 +14,10 @@ const PERSON_TONES: Record<string, { background: string; color: string }> = {
 };
 
 const Root = styled.div`
-  background: ${BG};
+  background: #1d1d25;
   display: flex;
   flex-direction: column;
-  font-family: ${FONT};
+  font-family: 'Inter', sans-serif;
   height: 100%;
   overflow: hidden;
   width: 100%;
@@ -34,7 +25,7 @@ const Root = styled.div`
 
 const ViewHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${BORDER};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   gap: 4px;
   height: 34px;
@@ -42,13 +33,13 @@ const ViewHeader = styled.div`
 `;
 
 const ViewTitle = styled.span`
-  color: ${TEXT};
+  color: rgba(255, 255, 255, 0.88);
   font-size: 13px;
   font-weight: 500;
 `;
 
 const ViewCount = styled.span`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   font-size: 13px;
 `;
 
@@ -60,7 +51,7 @@ const TableShell = styled.div`
 `;
 
 const GripRail = styled.div`
-  background: ${BG};
+  background: #1d1d25;
   display: grid;
   flex: 0 0 12px;
   grid-auto-rows: 32px;
@@ -68,7 +59,7 @@ const GripRail = styled.div`
 `;
 
 const GripCell = styled.div`
-  border-bottom: 1px solid ${BORDER};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 `;
 
 const TableViewport = styled.div<{ $dragging: boolean }>`
@@ -134,9 +125,9 @@ const Cell = styled.div<{
 }>`
   align-items: center;
   background: ${({ $header, $hovered }) =>
-    $header ? BG : $hovered ? BG_HOVER : BG};
-  border-bottom: 1px solid ${BORDER};
-  border-right: 1px solid ${BORDER};
+    $header ? '#1d1d25' : $hovered ? '#25252f' : '#1d1d25'};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
   box-sizing: border-box;
   display: flex;
   flex: 0 0 ${({ $width }) => `${$width}px`};
@@ -156,7 +147,7 @@ const HeaderContent = styled.div`
 `;
 
 const HeaderLabel = styled.span`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   font-size: 13px;
   font-weight: 500;
   overflow: hidden;
@@ -166,7 +157,7 @@ const HeaderLabel = styled.span`
 
 const HeaderIcon = styled.span`
   align-items: center;
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   display: inline-flex;
   flex-shrink: 0;
   height: 16px;
@@ -174,7 +165,7 @@ const HeaderIcon = styled.span`
 `;
 
 const EdgePlus = styled.span`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   display: inline-flex;
   margin-left: auto;
 `;
@@ -194,8 +185,8 @@ const ChipEl = styled.div<{ $highlighted?: boolean }>`
 `;
 
 const ChipLabel = styled.span<{ $bold?: boolean }>`
-  color: ${TEXT};
-  font-family: ${FONT};
+  color: rgba(255, 255, 255, 0.88);
+  font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: ${({ $bold }) => ($bold ? 500 : 400)};
   max-width: 100%;
@@ -220,8 +211,8 @@ const LinkChip = styled.div`
 `;
 
 const LinkLabel = styled.span`
-  color: ${TEXT_SECONDARY};
-  font-family: ${FONT};
+  color: rgba(255, 255, 255, 0.55);
+  font-family: 'Inter', sans-serif;
   font-size: 13px;
   max-width: 100%;
   min-width: 0;
@@ -262,7 +253,7 @@ const AvatarEl = styled.div<{ $bg: string; $color: string }>`
   color: ${({ $color }) => $color};
   display: flex;
   flex: 0 0 14px;
-  font-family: ${FONT};
+  font-family: 'Inter', sans-serif;
   font-size: 9px;
   font-weight: 500;
   height: 14px;
@@ -282,9 +273,9 @@ const AvatarImg = styled.img`
 const TagChip = styled.span`
   background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
-  color: ${TEXT_SECONDARY};
+  color: rgba(255, 255, 255, 0.55);
   display: inline-flex;
-  font-family: ${FONT};
+  font-family: 'Inter', sans-serif;
   font-size: 13px;
   height: 20px;
   align-items: center;
@@ -303,7 +294,7 @@ const BooleanRow = styled.span`
 `;
 
 const BooleanText = styled.span`
-  color: ${TEXT_SECONDARY};
+  color: rgba(255, 255, 255, 0.55);
   font-size: 13px;
 `;
 
@@ -562,7 +553,7 @@ export function ContactsVisual({ active: _active }: ContactsVisualProps) {
               stroke="currentColor"
               strokeLinecap="round"
               strokeWidth="2"
-              style={{ color: TEXT_SECONDARY }}
+              style={{ color: 'rgba(255, 255, 255, 0.55)' }}
               viewBox="0 0 24 24"
               width="11"
             >
@@ -681,7 +672,7 @@ export function ContactsVisual({ active: _active }: ContactsVisualProps) {
                                 >
                                   <path
                                     d="M3 6.5L5 8.5L9 4"
-                                    stroke={ACCENT}
+                                    stroke="#3e63dd"
                                     strokeLinecap="round"
                                     strokeWidth="1.5"
                                   />

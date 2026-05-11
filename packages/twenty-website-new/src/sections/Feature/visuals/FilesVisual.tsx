@@ -7,20 +7,13 @@ import {
   useState,
 } from 'react';
 
-const BG = '#1d1d25';
-const BORDER = 'rgba(255, 255, 255, 0.12)';
-const TEXT = 'rgba(255, 255, 255, 0.88)';
-const TEXT_SECONDARY = 'rgba(255, 255, 255, 0.55)';
-const TEXT_TERTIARY = 'rgba(255, 255, 255, 0.35)';
-const FONT = "'Inter', sans-serif";
-
 const Root = styled.div`
-  background: ${BG};
-  border: 1.5px dashed ${BORDER};
+  background: #1d1d25;
+  border: 1.5px dashed rgba(255, 255, 255, 0.12);
   border-radius: 0;
   display: flex;
   flex-direction: column;
-  font-family: ${FONT};
+  font-family: 'Inter', sans-serif;
   height: 100%;
   overflow: hidden;
   width: 100%;
@@ -40,18 +33,18 @@ const HeaderLeft = styled.div`
 `;
 
 const HeaderLabel = styled.span`
-  color: ${TEXT};
+  color: rgba(255, 255, 255, 0.88);
   font-size: 12px;
   font-weight: 500;
 `;
 
 const HeaderCount = styled.span`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   font-size: 12px;
 `;
 
 const AddButton = styled.span`
-  color: ${TEXT_SECONDARY};
+  color: rgba(255, 255, 255, 0.55);
   font-size: 11px;
   font-weight: 500;
 `;
@@ -102,7 +95,7 @@ const FileIcon = styled.div<{ $bg: string; $color: string }>`
 `;
 
 const FileName = styled.span`
-  color: ${TEXT};
+  color: rgba(255, 255, 255, 0.88);
   flex: 1;
   font-size: 12px;
   min-width: 0;
@@ -126,18 +119,18 @@ const UploadArea = styled.div`
 `;
 
 const UploadIcon = styled.div`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   margin-bottom: 4px;
 `;
 
 const UploadTitle = styled.span`
-  color: ${TEXT_SECONDARY};
+  color: rgba(255, 255, 255, 0.55);
   font-size: 11px;
   font-weight: 500;
 `;
 
 const UploadHint = styled.span`
-  color: ${TEXT_TERTIARY};
+  color: rgba(255, 255, 255, 0.35);
   font-size: 10px;
 `;
 
