@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { BackfillStandardPermissionFlagDefinitionsCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-workspace-command-1799000001000-backfill-standard-permission-flag-definitions.command';
+import { BackfillStandardPermissionFlagsCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-workspace-command-1799000001000-backfill-standard-permission-flags.command';
 import { MigrateToBillingV2Command } from 'src/database/commands/upgrade-version-command/2-4/2-4-workspace-command-1797000001000-migrate-to-billing-v2.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -24,7 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
-    BackfillStandardPermissionFlagDefinitionsCommand,
+    BackfillStandardPermissionFlagsCommand,
     MigrateToBillingV2Command,
   ],
 })

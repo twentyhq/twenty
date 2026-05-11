@@ -31,7 +31,7 @@ export const useMetadataErrorHandler = () => {
     index: t`index`,
     logicFunction: t`logic function`,
     permissionFlagGrant: t`permission flag`,
-    permissionFlagDefinition: t`permission flag definition`,
+    permissionFlag: t`permission flag definition`,
     objectPermission: t`object permission`,
     fieldPermission: t`field permission`,
     role: t`role`,

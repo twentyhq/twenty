@@ -2855,7 +2855,7 @@ enum MessageFolderPendingSyncAction {
   NONE
 }
 
-type PermissionFlagDefinition {
+type PermissionFlag {
   id: UUID!
   universalIdentifier: UUID!
   key: String!
@@ -2901,7 +2901,7 @@ enum AllMetadataName {
   commandMenuItem
   navigationMenuItem
   permissionFlagGrant
-  permissionFlagDefinition
+  permissionFlag
   objectPermission
   fieldPermission
   frontComponent
@@ -3038,8 +3038,8 @@ type Query {
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
-  permissionFlagDefinitions: [PermissionFlagDefinition!]!
-  permissionFlagDefinition(id: UUID!): PermissionFlagDefinition
+  permissionFlags: [PermissionFlag!]!
+  permissionFlag(id: UUID!): PermissionFlag
   minimalMetadata: MinimalMetadata!
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
@@ -3281,9 +3281,9 @@ type Mutation {
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
-  createPermissionFlagDefinition(input: CreatePermissionFlagDefinitionInput!): PermissionFlagDefinition!
-  updatePermissionFlagDefinition(input: UpdatePermissionFlagDefinitionInput!): PermissionFlagDefinition!
-  deletePermissionFlagDefinition(id: UUID!): PermissionFlagDefinition!
+  createPermissionFlag(input: CreatePermissionFlagInput!): PermissionFlag!
+  updatePermissionFlag(input: UpdatePermissionFlagInput!): PermissionFlag!
+  deletePermissionFlag(id: UUID!): PermissionFlag!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileIds: [UUID!]): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
@@ -4247,7 +4247,7 @@ input UpdateWebhookInputUpdates {
   secret: String
 }
 
-input CreatePermissionFlagDefinitionInput {
+input CreatePermissionFlagInput {
   id: UUID
   universalIdentifier: UUID
   key: String!
@@ -4260,15 +4260,15 @@ input CreatePermissionFlagDefinitionInput {
   isRelevantForApiKeys: Boolean
 }
 
-input UpdatePermissionFlagDefinitionInput {
+input UpdatePermissionFlagInput {
   """The id of the permission flag definition to update"""
   id: UUID!
 
   """The fields to update"""
-  update: UpdatePermissionFlagDefinitionInputUpdates!
+  update: UpdatePermissionFlagInputUpdates!
 }
 
-input UpdatePermissionFlagDefinitionInputUpdates {
+input UpdatePermissionFlagInputUpdates {
   label: String
   description: String
   iconKey: String

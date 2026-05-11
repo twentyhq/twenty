@@ -135,7 +135,7 @@ const deriveAllMetadataEventsFromUpdateAction = ({
     case 'frontComponent':
     case 'navigationMenuItem':
     case 'permissionFlagGrant':
-    case 'permissionFlagDefinition':
+    case 'permissionFlag':
     case 'objectPermission':
     case 'fieldPermission':
     case 'viewSort':

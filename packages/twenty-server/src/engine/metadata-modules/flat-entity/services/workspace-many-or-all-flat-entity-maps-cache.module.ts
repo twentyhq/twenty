@@ -12,7 +12,7 @@ import { WorkspaceFlatObjectPermissionMapCacheService } from 'src/engine/metadat
 import { WorkspaceFlatPageLayoutTabMapCacheService } from 'src/engine/metadata-modules/flat-page-layout-tab/services/workspace-flat-page-layout-tab-map-cache.service';
 import { WorkspaceFlatPageLayoutWidgetMapCacheService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/workspace-flat-page-layout-widget-map-cache.service';
 import { WorkspaceFlatPageLayoutMapCacheService } from 'src/engine/metadata-modules/flat-page-layout/services/workspace-flat-page-layout-map-cache.service';
-import { WorkspaceFlatPermissionFlagDefinitionMapCacheService } from 'src/engine/metadata-modules/flat-permission-flag-definition/services/workspace-flat-permission-flag-definition-map-cache.service';
+import { WorkspaceFlatPermissionFlagMapCacheService } from 'src/engine/metadata-modules/flat-permission-flag/services/workspace-flat-permission-flag-map-cache.service';
 import { WorkspaceFlatPermissionFlagGrantMapCacheService } from 'src/engine/metadata-modules/flat-permission-flag-grant/services/workspace-flat-permission-flag-grant-map-cache.service';
 import { WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/services/workspace-flat-row-level-permission-predicate-group-map-cache.service';
 import { WorkspaceFlatRowLevelPermissionPredicateMapCacheService } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/services/workspace-flat-row-level-permission-predicate-map-cache.service';
@@ -32,7 +32,7 @@ import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permi
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
-import { PermissionFlagDefinitionEntity } from 'src/engine/metadata-modules/permission-flag-definition/entities/permission-flag-definition.entity';
+import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/entities/permission-flag.entity';
 import { PermissionFlagGrantEntity } from 'src/engine/metadata-modules/permission-flag-grant/permission-flag-grant.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
@@ -67,7 +67,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       PageLayoutTabEntity,
       PageLayoutWidgetEntity,
       PermissionFlagGrantEntity,
-      PermissionFlagDefinitionEntity,
+      PermissionFlagEntity,
       RowLevelPermissionPredicateEntity,
       RowLevelPermissionPredicateGroupEntity,
       ApplicationEntity,
@@ -89,7 +89,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatObjectPermissionMapCacheService,
     WorkspaceFlatFieldPermissionMapCacheService,
     WorkspaceFlatPermissionFlagGrantMapCacheService,
-    WorkspaceFlatPermissionFlagDefinitionMapCacheService,
+    WorkspaceFlatPermissionFlagMapCacheService,
     WorkspaceFlatViewSortMapCacheService,
     WorkspaceFlatPageLayoutMapCacheService,
     WorkspaceFlatPageLayoutTabMapCacheService,
@@ -111,7 +111,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatObjectPermissionMapCacheService,
     WorkspaceFlatFieldPermissionMapCacheService,
     WorkspaceFlatPermissionFlagGrantMapCacheService,
-    WorkspaceFlatPermissionFlagDefinitionMapCacheService,
+    WorkspaceFlatPermissionFlagMapCacheService,
     WorkspaceFlatViewSortMapCacheService,
     WorkspaceFlatPageLayoutMapCacheService,
     WorkspaceFlatPageLayoutTabMapCacheService,

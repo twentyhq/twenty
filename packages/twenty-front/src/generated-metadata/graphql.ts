@@ -200,7 +200,7 @@ export enum AllMetadataName {
   pageLayoutTab = 'pageLayoutTab',
   pageLayoutWidget = 'pageLayoutWidget',
   permissionFlagGrant = 'permissionFlagGrant',
-  permissionFlagDefinition = 'permissionFlagDefinition',
+  permissionFlag = 'permissionFlag',
   role = 'role',
   roleTarget = 'roleTarget',
   rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
@@ -1163,7 +1163,7 @@ export type CreatePageLayoutWidgetInput = {
   type: WidgetType;
 };
 
-export type CreatePermissionFlagDefinitionInput = {
+export type CreatePermissionFlagInput = {
   description?: InputMaybe<Scalars['String']>;
   iconKey?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['UUID']>;
@@ -2407,7 +2407,7 @@ export type Mutation = {
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
-  createPermissionFlagDefinition: PermissionFlagDefinition;
+  createPermissionFlag: PermissionFlag;
   createPublicDomain: PublicDomain;
   createSAMLIdentityProvider: SetupSso;
   createSkill: Skill;
@@ -2437,7 +2437,7 @@ export type Mutation = {
   deleteOneLogicFunction: LogicFunction;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
-  deletePermissionFlagDefinition: PermissionFlagDefinition;
+  deletePermissionFlag: PermissionFlag;
   deletePublicDomain: Scalars['Boolean'];
   deleteQueuedChatMessage: Scalars['Boolean'];
   deleteSSOIdentityProvider: DeleteSso;
@@ -2545,7 +2545,7 @@ export type Mutation = {
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
-  updatePermissionFlagDefinition: PermissionFlagDefinition;
+  updatePermissionFlag: PermissionFlag;
   updatePublicDomain: PublicDomain;
   updateSkill: Skill;
   updateUserEmail: Scalars['Boolean'];
@@ -2768,8 +2768,8 @@ export type MutationCreatePageLayoutWidgetArgs = {
 };
 
 
-export type MutationCreatePermissionFlagDefinitionArgs = {
-  input: CreatePermissionFlagDefinitionInput;
+export type MutationCreatePermissionFlagArgs = {
+  input: CreatePermissionFlagInput;
 };
 
 
@@ -2914,7 +2914,7 @@ export type MutationDeleteOneRoleArgs = {
 };
 
 
-export type MutationDeletePermissionFlagDefinitionArgs = {
+export type MutationDeletePermissionFlagArgs = {
   id: Scalars['UUID'];
 };
 
@@ -3442,8 +3442,8 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 };
 
 
-export type MutationUpdatePermissionFlagDefinitionArgs = {
-  input: UpdatePermissionFlagDefinitionInput;
+export type MutationUpdatePermissionFlagArgs = {
+  input: UpdatePermissionFlagInput;
 };
 
 
@@ -3974,8 +3974,8 @@ export type PermissionFlagGrant = {
   roleId: Scalars['UUID'];
 };
 
-export type PermissionFlagDefinition = {
-  __typename?: 'PermissionFlagDefinition';
+export type PermissionFlag = {
+  __typename?: 'PermissionFlag';
   applicationId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
@@ -4241,8 +4241,8 @@ export type Query = {
   object: Object;
   objectRecordCounts: Array<ObjectRecordCount>;
   objects: ObjectConnection;
-  permissionFlagDefinition?: Maybe<PermissionFlagDefinition>;
-  permissionFlagDefinitions: Array<PermissionFlagDefinition>;
+  permissionFlag?: Maybe<PermissionFlag>;
+  permissionFlags: Array<PermissionFlag>;
   pieChartData: PieChartData;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
@@ -4598,7 +4598,7 @@ export type QueryObjectsArgs = {
 };
 
 
-export type QueryPermissionFlagDefinitionArgs = {
+export type QueryPermissionFlagArgs = {
   id: Scalars['UUID'];
 };
 
@@ -5259,14 +5259,14 @@ export type UpdatePageLayoutWithTabsInput = {
   type: PageLayoutType;
 };
 
-export type UpdatePermissionFlagDefinitionInput = {
+export type UpdatePermissionFlagInput = {
   /** The id of the permission flag definition to update */
   id: Scalars['UUID'];
   /** The fields to update */
-  update: UpdatePermissionFlagDefinitionInputUpdates;
+  update: UpdatePermissionFlagInputUpdates;
 };
 
-export type UpdatePermissionFlagDefinitionInputUpdates = {
+export type UpdatePermissionFlagInputUpdates = {
   description?: InputMaybe<Scalars['String']>;
   iconKey?: InputMaybe<Scalars['String']>;
   isRelevantForAgents?: InputMaybe<Scalars['Boolean']>;

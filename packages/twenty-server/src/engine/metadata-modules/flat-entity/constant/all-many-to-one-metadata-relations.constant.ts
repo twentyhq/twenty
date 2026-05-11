@@ -304,7 +304,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       universalForeignKey: 'roleUniversalIdentifier',
     },
   },
-  permissionFlagDefinition: {
+  permissionFlag: {
     workspace: null,
     application: null,
   },

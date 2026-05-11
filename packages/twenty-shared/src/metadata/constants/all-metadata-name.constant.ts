@@ -22,7 +22,7 @@ export const ALL_METADATA_NAME = {
   commandMenuItem: 'commandMenuItem',
   navigationMenuItem: 'navigationMenuItem',
   permissionFlagGrant: 'permissionFlagGrant',
-  permissionFlagDefinition: 'permissionFlagDefinition',
+  permissionFlag: 'permissionFlag',
   objectPermission: 'objectPermission',
   fieldPermission: 'fieldPermission',
   frontComponent: 'frontComponent',

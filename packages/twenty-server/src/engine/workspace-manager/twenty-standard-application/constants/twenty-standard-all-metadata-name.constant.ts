@@ -17,5 +17,5 @@ export const TWENTY_STANDARD_ALL_METADATA_NAME = [
   'pageLayoutTab',
   'pageLayoutWidget',
   'commandMenuItem',
-  'permissionFlagDefinition',
+  'permissionFlag',
 ] as const satisfies AllMetadataName[];

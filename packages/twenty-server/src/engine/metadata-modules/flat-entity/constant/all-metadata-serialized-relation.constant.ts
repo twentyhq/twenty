@@ -34,7 +34,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   role: {},
   roleTarget: {},
   permissionFlagGrant: {},
-  permissionFlagDefinition: {},
+  permissionFlag: {},
   objectPermission: {},
   fieldPermission: {},
   pageLayout: {},

@@ -5666,7 +5666,7 @@ export default {
             ]
         },
         "MessageFolderPendingSyncAction": {},
-        "PermissionFlagDefinition": {
+        "PermissionFlag": {
             "id": [
                 3
             ],
@@ -6281,10 +6281,10 @@ export default {
                     ]
                 }
             ],
-            "permissionFlagDefinitions": [
+            "permissionFlags": [
                 317
             ],
-            "permissionFlagDefinition": [
+            "permissionFlag": [
                 317,
                 {
                     "id": [
@@ -7887,25 +7887,25 @@ export default {
                     ]
                 }
             ],
-            "createPermissionFlagDefinition": [
+            "createPermissionFlag": [
                 317,
                 {
                     "input": [
                         441,
-                        "CreatePermissionFlagDefinitionInput!"
+                        "CreatePermissionFlagInput!"
                     ]
                 }
             ],
-            "updatePermissionFlagDefinition": [
+            "updatePermissionFlag": [
                 317,
                 {
                     "input": [
                         442,
-                        "UpdatePermissionFlagDefinitionInput!"
+                        "UpdatePermissionFlagInput!"
                     ]
                 }
             ],
-            "deletePermissionFlagDefinition": [
+            "deletePermissionFlag": [
                 317,
                 {
                     "id": [
@@ -10799,7 +10799,7 @@ export default {
                 1
             ]
         },
-        "CreatePermissionFlagDefinitionInput": {
+        "CreatePermissionFlagInput": {
             "id": [
                 3
             ],
@@ -10834,7 +10834,7 @@ export default {
                 1
             ]
         },
-        "UpdatePermissionFlagDefinitionInput": {
+        "UpdatePermissionFlagInput": {
             "id": [
                 3
             ],
@@ -10845,7 +10845,7 @@ export default {
                 1
             ]
         },
-        "UpdatePermissionFlagDefinitionInputUpdates": {
+        "UpdatePermissionFlagInputUpdates": {
             "label": [
                 1
             ],
