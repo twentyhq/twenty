@@ -58,18 +58,18 @@ export class ImapGetMessageListService {
       const results: GetMessageListsResponse = [];
 
       for (const folder of foldersToProcess) {
-        const response = await this.getMessageList(client, folder);
+        try {
+          const response = await this.getMessageList(client, folder);
 
-        results.push({ ...response, folderId: folder.id });
+          results.push({ ...response, folderId: folder.id });
+        } catch (error) {
+          this.logger.error(
+            `Connected account ${connectedAccount.id}: Skipping folder ${folder.name} after error: ${error.message}`,
+          );
+        }
       }
 
       return results;
-    } catch (error) {
-      this.logger.error(
-        `Connected account ${connectedAccount.id}: Error fetching message list: ${error.message}`,
-      );
-      this.errorHandler.handleError(error);
-      throw error;
     } finally {
       await this.imapClientProvider.closeClient(client);
     }
@@ -118,16 +118,17 @@ export class ImapGetMessageListService {
 
       const mailboxState = extractMailboxState(mailbox);
 
-      const { messageUids } = await this.imapSyncService.syncFolder(
-        client,
-        folderPath,
-        previousCursor,
-        mailboxState,
-      );
+      const { messageUids, requiresFullResync } =
+        await this.imapSyncService.syncFolder(
+          client,
+          folderPath,
+          previousCursor,
+          mailboxState,
+        );
 
       const nextCursor = createSyncCursor(
         messageUids,
-        previousCursor,
+        requiresFullResync ? null : previousCursor,
         mailboxState,
       );
 

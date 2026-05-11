@@ -27,6 +27,7 @@ const createMockFolder = (
 });
 
 describe('ImapGetMessageListService', () => {
+  let module: TestingModule;
   let service: ImapGetMessageListService;
   let imapClientProvider: ImapClientProvider;
 
@@ -63,7 +64,7 @@ describe('ImapGetMessageListService', () => {
   };
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       providers: [
         ImapGetMessageListService,
         {
@@ -76,7 +77,10 @@ describe('ImapGetMessageListService', () => {
         {
           provide: ImapSyncService,
           useValue: {
-            syncFolder: jest.fn().mockResolvedValue({ messageUids: [1, 2, 3] }),
+            syncFolder: jest.fn().mockResolvedValue({
+              messageUids: [1, 2, 3],
+              requiresFullResync: false,
+            }),
           },
         },
         {
@@ -224,6 +228,121 @@ describe('ImapGetMessageListService', () => {
       });
 
       expect(imapClientProvider.closeClient).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('per-folder error isolation', () => {
+    it('should continue processing remaining folders when one folder fails', async () => {
+      const goodFolder1 = createMockFolder({
+        name: 'INBOX',
+        externalId: 'INBOX:1',
+        isSynced: true,
+      });
+
+      const badFolder = createMockFolder({
+        name: 'Broken',
+        externalId: 'Broken:1',
+        isSynced: true,
+      });
+
+      const goodFolder2 = createMockFolder({
+        name: 'Sent',
+        externalId: 'Sent:1',
+        isSynced: true,
+      });
+
+      const imapSyncService = module.get<ImapSyncService>(ImapSyncService);
+      let callCount = 0;
+
+      jest.spyOn(imapSyncService, 'syncFolder').mockImplementation(async () => {
+        callCount++;
+        if (callCount === 2) {
+          throw new Error('IMAP connection reset');
+        }
+
+        return { messageUids: [1, 2, 3], requiresFullResync: false };
+      });
+
+      const result = await service.getMessageLists({
+        connectedAccount: mockConnectedAccount,
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
+        messageFolders: [goodFolder1, badFolder, goodFolder2],
+      });
+
+      // Only the two good folders contribute results
+      expect(result).toHaveLength(2);
+      expect(result.map((r) => r.folderId)).toEqual([
+        goodFolder1.id,
+        goodFolder2.id,
+      ]);
+    });
+
+    it('should still close the IMAP client when a folder throws', async () => {
+      const folder = createMockFolder({
+        name: 'INBOX',
+        externalId: 'INBOX:1',
+        isSynced: true,
+      });
+
+      const imapSyncService = module.get<ImapSyncService>(ImapSyncService);
+
+      jest
+        .spyOn(imapSyncService, 'syncFolder')
+        .mockRejectedValue(new Error('Network error'));
+
+      await service.getMessageLists({
+        connectedAccount: mockConnectedAccount,
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
+        messageFolders: [folder],
+      });
+
+      expect(imapClientProvider.closeClient).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('requiresFullResync handling', () => {
+    it('should return a valid response when syncFolder signals requiresFullResync', async () => {
+      const folder = createMockFolder({
+        name: 'INBOX',
+        externalId: 'INBOX:1',
+        isSynced: true,
+        syncCursor: JSON.stringify({
+          highestUid: 50,
+          uidValidity: 99999,
+          modSeq: '500',
+        }),
+      });
+
+      const imapSyncService = module.get<ImapSyncService>(ImapSyncService);
+
+      jest.spyOn(imapSyncService, 'syncFolder').mockResolvedValue({
+        messageUids: [1, 2, 3, 4, 5],
+        requiresFullResync: true,
+      });
+
+      const result = await service.getMessageLists({
+        connectedAccount: mockConnectedAccount,
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
+        messageFolders: [folder],
+      });
+
+      expect(result).toHaveLength(1);
+      // Should have message external IDs for all 5 fetched UIDs
+      expect(result[0].messageExternalIds).toHaveLength(5);
+      // nextSyncCursor must be set (non-empty) so the next sync has a baseline
+      expect(result[0].nextSyncCursor).toBeTruthy();
     });
   });
 });

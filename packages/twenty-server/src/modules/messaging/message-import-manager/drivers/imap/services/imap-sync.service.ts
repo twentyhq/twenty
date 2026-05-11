@@ -2,16 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ImapFlow } from 'imapflow';
 
-import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { canUseQresync } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/can-use-qresync.util';
 import { type MailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
 import { type ImapSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
 
 type SyncResult = {
   messageUids: number[];
+  // True when the server's UID validity has changed and all previously stored
+  // message UIDs for this folder are now invalid. The caller must clear the
+  // folder's sync cursor and re-import all messages from scratch.
+  requiresFullResync: boolean;
 };
 
 @Injectable()
@@ -24,7 +24,18 @@ export class ImapSyncService {
     previousCursor: ImapSyncCursor | null,
     mailboxState: MailboxState,
   ): Promise<SyncResult> {
-    this.validateUidValidity(previousCursor, mailboxState, folderPath);
+    if (this.hasUidValidityChanged(previousCursor, mailboxState, folderPath)) {
+      // UID validity changing means every stored UID is stale. Fetch all
+      // messages from scratch by treating this as a first-time sync.
+      const messageUids = await this.fetchNewMessageUids(
+        client,
+        null,
+        mailboxState,
+        folderPath,
+      );
+
+      return { messageUids, requiresFullResync: true };
+    }
 
     const messageUids = await this.fetchNewMessageUids(
       client,
@@ -33,27 +44,28 @@ export class ImapSyncService {
       folderPath,
     );
 
-    return { messageUids };
+    return { messageUids, requiresFullResync: false };
   }
 
-  private validateUidValidity(
+  // Returns true when the server reports a different UID validity than the one
+  // stored in our cursor, indicating a full folder resync is required.
+  private hasUidValidityChanged(
     previousCursor: ImapSyncCursor | null,
     mailboxState: MailboxState,
     folderPath: string,
-  ): void {
+  ): boolean {
     const previousUidValidity = previousCursor?.uidValidity ?? 0;
     const { uidValidity } = mailboxState;
 
     if (previousUidValidity !== 0 && previousUidValidity !== uidValidity) {
       this.logger.warn(
-        `UID validity changed from ${previousUidValidity} to ${uidValidity} in ${folderPath}. Full resync required.`,
+        `UID validity changed from ${previousUidValidity} to ${uidValidity} in ${folderPath}. Performing full resync.`,
       );
 
-      throw new MessageImportDriverException(
-        `IMAP UID validity changed for folder ${folderPath}`,
-        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-      );
+      return true;
     }
+
+    return false;
   }
 
   private async fetchNewMessageUids(

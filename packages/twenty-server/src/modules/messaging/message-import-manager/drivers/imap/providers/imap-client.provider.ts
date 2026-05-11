@@ -71,20 +71,30 @@ export class ImapClientProvider {
       );
     }
 
+    const imapParams = connectionParameters.IMAP;
+
+    if (!isDefined(imapParams?.password)) {
+      throw new CustomError(
+        'IMAP password is required',
+        MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
+      );
+    }
+
     const validatedImapHost =
       await this.secureHttpClientService.getValidatedHost(
-        connectionParameters.IMAP?.host || '',
+        imapParams?.host || '',
       );
 
     const client = new ImapFlow({
       host: validatedImapHost,
-      port: connectionParameters.IMAP?.port || 993,
-      secure: connectionParameters.IMAP?.secure,
+      port: imapParams?.port || 993,
+      // Default to true so connections are secure unless the user explicitly opts out
+      secure: imapParams?.secure ?? true,
       auth: {
-        user: isDefined(connectionParameters.IMAP?.username)
-          ? connectionParameters.IMAP?.username
+        user: isDefined(imapParams?.username)
+          ? imapParams?.username
           : connectedAccount.handle,
-        pass: connectionParameters.IMAP?.password || '',
+        pass: imapParams.password,
       },
       logger: false,
       tls: {
