@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.4.0', 1778502963794)
+@RegisteredInstanceCommand('2.5.0', 1778502963794)
 export class AddSubFieldNameToViewSortFastInstanceCommand
   implements FastInstanceCommand
 {
