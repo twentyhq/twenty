@@ -1605,125 +1605,6 @@ export interface RotateClientSecret {
     __typename: 'RotateClientSecret'
 }
 
-export interface Relation {
-    type: RelationType
-    sourceObjectMetadata: Object
-    targetObjectMetadata: Object
-    sourceFieldMetadata: Field
-    targetFieldMetadata: Field
-    __typename: 'Relation'
-}
-
-
-/** Relation type */
-export type RelationType = 'ONE_TO_MANY' | 'MANY_TO_ONE'
-
-export interface IndexEdge {
-    /** The node containing the Index */
-    node: Index
-    /** Cursor for this node. */
-    cursor: Scalars['ConnectionCursor']
-    __typename: 'IndexEdge'
-}
-
-export interface PageInfo {
-    /** true if paging forward and there are more records. */
-    hasNextPage?: Scalars['Boolean']
-    /** true if paging backwards and there are more records. */
-    hasPreviousPage?: Scalars['Boolean']
-    /** The cursor of the first returned record. */
-    startCursor?: Scalars['ConnectionCursor']
-    /** The cursor of the last returned record. */
-    endCursor?: Scalars['ConnectionCursor']
-    __typename: 'PageInfo'
-}
-
-export interface IndexConnection {
-    /** Paging information */
-    pageInfo: PageInfo
-    /** Array of edges. */
-    edges: IndexEdge[]
-    __typename: 'IndexConnection'
-}
-
-export interface IndexFieldEdge {
-    /** The node containing the IndexField */
-    node: IndexField
-    /** Cursor for this node. */
-    cursor: Scalars['ConnectionCursor']
-    __typename: 'IndexFieldEdge'
-}
-
-export interface IndexIndexFieldMetadatasConnection {
-    /** Paging information */
-    pageInfo: PageInfo
-    /** Array of edges. */
-    edges: IndexFieldEdge[]
-    __typename: 'IndexIndexFieldMetadatasConnection'
-}
-
-export interface ObjectEdge {
-    /** The node containing the Object */
-    node: Object
-    /** Cursor for this node. */
-    cursor: Scalars['ConnectionCursor']
-    __typename: 'ObjectEdge'
-}
-
-export interface IndexObjectMetadataConnection {
-    /** Paging information */
-    pageInfo: PageInfo
-    /** Array of edges. */
-    edges: ObjectEdge[]
-    __typename: 'IndexObjectMetadataConnection'
-}
-
-export interface ObjectRecordCount {
-    objectNamePlural: Scalars['String']
-    totalCount: Scalars['Int']
-    __typename: 'ObjectRecordCount'
-}
-
-export interface ObjectConnection {
-    /** Paging information */
-    pageInfo: PageInfo
-    /** Array of edges. */
-    edges: ObjectEdge[]
-    __typename: 'ObjectConnection'
-}
-
-export interface ObjectIndexMetadatasConnection {
-    /** Paging information */
-    pageInfo: PageInfo
-    /** Array of edges. */
-    edges: IndexEdge[]
-    __typename: 'ObjectIndexMetadatasConnection'
-}
-
-export interface FieldEdge {
-    /** The node containing the Field */
-    node: Field
-    /** Cursor for this node. */
-    cursor: Scalars['ConnectionCursor']
-    __typename: 'FieldEdge'
-}
-
-export interface ObjectFieldsConnection {
-    /** Paging information */
-    pageInfo: PageInfo
-    /** Array of edges. */
-    edges: FieldEdge[]
-    __typename: 'ObjectFieldsConnection'
-}
-
-export interface FieldConnection {
-    /** Paging information */
-    pageInfo: PageInfo
-    /** Array of edges. */
-    edges: FieldEdge[]
-    __typename: 'FieldConnection'
-}
-
 export interface ResendEmailVerificationToken {
     success: Scalars['Boolean']
     __typename: 'ResendEmailVerificationToken'
@@ -1828,10 +1709,129 @@ export interface DomainValidRecords {
     __typename: 'DomainValidRecords'
 }
 
+export interface IndexEdge {
+    /** The node containing the Index */
+    node: Index
+    /** Cursor for this node. */
+    cursor: Scalars['ConnectionCursor']
+    __typename: 'IndexEdge'
+}
+
+export interface PageInfo {
+    /** true if paging forward and there are more records. */
+    hasNextPage?: Scalars['Boolean']
+    /** true if paging backwards and there are more records. */
+    hasPreviousPage?: Scalars['Boolean']
+    /** The cursor of the first returned record. */
+    startCursor?: Scalars['ConnectionCursor']
+    /** The cursor of the last returned record. */
+    endCursor?: Scalars['ConnectionCursor']
+    __typename: 'PageInfo'
+}
+
+export interface IndexConnection {
+    /** Paging information */
+    pageInfo: PageInfo
+    /** Array of edges. */
+    edges: IndexEdge[]
+    __typename: 'IndexConnection'
+}
+
+export interface IndexFieldEdge {
+    /** The node containing the IndexField */
+    node: IndexField
+    /** Cursor for this node. */
+    cursor: Scalars['ConnectionCursor']
+    __typename: 'IndexFieldEdge'
+}
+
+export interface IndexIndexFieldMetadatasConnection {
+    /** Paging information */
+    pageInfo: PageInfo
+    /** Array of edges. */
+    edges: IndexFieldEdge[]
+    __typename: 'IndexIndexFieldMetadatasConnection'
+}
+
+export interface ObjectEdge {
+    /** The node containing the Object */
+    node: Object
+    /** Cursor for this node. */
+    cursor: Scalars['ConnectionCursor']
+    __typename: 'ObjectEdge'
+}
+
+export interface IndexObjectMetadataConnection {
+    /** Paging information */
+    pageInfo: PageInfo
+    /** Array of edges. */
+    edges: ObjectEdge[]
+    __typename: 'IndexObjectMetadataConnection'
+}
+
+export interface ObjectRecordCount {
+    objectNamePlural: Scalars['String']
+    totalCount: Scalars['Int']
+    __typename: 'ObjectRecordCount'
+}
+
+export interface ObjectConnection {
+    /** Paging information */
+    pageInfo: PageInfo
+    /** Array of edges. */
+    edges: ObjectEdge[]
+    __typename: 'ObjectConnection'
+}
+
+export interface ObjectIndexMetadatasConnection {
+    /** Paging information */
+    pageInfo: PageInfo
+    /** Array of edges. */
+    edges: IndexEdge[]
+    __typename: 'ObjectIndexMetadatasConnection'
+}
+
+export interface FieldEdge {
+    /** The node containing the Field */
+    node: Field
+    /** Cursor for this node. */
+    cursor: Scalars['ConnectionCursor']
+    __typename: 'FieldEdge'
+}
+
+export interface ObjectFieldsConnection {
+    /** Paging information */
+    pageInfo: PageInfo
+    /** Array of edges. */
+    edges: FieldEdge[]
+    __typename: 'ObjectFieldsConnection'
+}
+
 export interface UpsertRowLevelPermissionPredicatesResult {
     predicates: RowLevelPermissionPredicate[]
     predicateGroups: RowLevelPermissionPredicateGroup[]
     __typename: 'UpsertRowLevelPermissionPredicatesResult'
+}
+
+export interface Relation {
+    type: RelationType
+    sourceObjectMetadata: Object
+    targetObjectMetadata: Object
+    sourceFieldMetadata: Field
+    targetFieldMetadata: Field
+    __typename: 'Relation'
+}
+
+
+/** Relation type */
+export type RelationType = 'ONE_TO_MANY' | 'MANY_TO_ONE'
+
+export interface FieldConnection {
+    /** Paging information */
+    pageInfo: PageInfo
+    /** Array of edges. */
+    edges: FieldEdge[]
+    __typename: 'FieldConnection'
 }
 
 export interface LogicFunctionLogs {
@@ -4566,135 +4566,6 @@ export interface RotateClientSecretGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface RelationGenqlSelection{
-    type?: boolean | number
-    sourceObjectMetadata?: ObjectGenqlSelection
-    targetObjectMetadata?: ObjectGenqlSelection
-    sourceFieldMetadata?: FieldGenqlSelection
-    targetFieldMetadata?: FieldGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface IndexEdgeGenqlSelection{
-    /** The node containing the Index */
-    node?: IndexGenqlSelection
-    /** Cursor for this node. */
-    cursor?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface PageInfoGenqlSelection{
-    /** true if paging forward and there are more records. */
-    hasNextPage?: boolean | number
-    /** true if paging backwards and there are more records. */
-    hasPreviousPage?: boolean | number
-    /** The cursor of the first returned record. */
-    startCursor?: boolean | number
-    /** The cursor of the last returned record. */
-    endCursor?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface IndexConnectionGenqlSelection{
-    /** Paging information */
-    pageInfo?: PageInfoGenqlSelection
-    /** Array of edges. */
-    edges?: IndexEdgeGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface IndexFieldEdgeGenqlSelection{
-    /** The node containing the IndexField */
-    node?: IndexFieldGenqlSelection
-    /** Cursor for this node. */
-    cursor?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface IndexIndexFieldMetadatasConnectionGenqlSelection{
-    /** Paging information */
-    pageInfo?: PageInfoGenqlSelection
-    /** Array of edges. */
-    edges?: IndexFieldEdgeGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectEdgeGenqlSelection{
-    /** The node containing the Object */
-    node?: ObjectGenqlSelection
-    /** Cursor for this node. */
-    cursor?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface IndexObjectMetadataConnectionGenqlSelection{
-    /** Paging information */
-    pageInfo?: PageInfoGenqlSelection
-    /** Array of edges. */
-    edges?: ObjectEdgeGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectRecordCountGenqlSelection{
-    objectNamePlural?: boolean | number
-    totalCount?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectConnectionGenqlSelection{
-    /** Paging information */
-    pageInfo?: PageInfoGenqlSelection
-    /** Array of edges. */
-    edges?: ObjectEdgeGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectIndexMetadatasConnectionGenqlSelection{
-    /** Paging information */
-    pageInfo?: PageInfoGenqlSelection
-    /** Array of edges. */
-    edges?: IndexEdgeGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface FieldEdgeGenqlSelection{
-    /** The node containing the Field */
-    node?: FieldGenqlSelection
-    /** Cursor for this node. */
-    cursor?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectFieldsConnectionGenqlSelection{
-    /** Paging information */
-    pageInfo?: PageInfoGenqlSelection
-    /** Array of edges. */
-    edges?: FieldEdgeGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface FieldConnectionGenqlSelection{
-    /** Paging information */
-    pageInfo?: PageInfoGenqlSelection
-    /** Array of edges. */
-    edges?: FieldEdgeGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface ResendEmailVerificationTokenGenqlSelection{
     success?: boolean | number
     __typename?: boolean | number
@@ -4810,9 +4681,138 @@ export interface DomainValidRecordsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface IndexEdgeGenqlSelection{
+    /** The node containing the Index */
+    node?: IndexGenqlSelection
+    /** Cursor for this node. */
+    cursor?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface PageInfoGenqlSelection{
+    /** true if paging forward and there are more records. */
+    hasNextPage?: boolean | number
+    /** true if paging backwards and there are more records. */
+    hasPreviousPage?: boolean | number
+    /** The cursor of the first returned record. */
+    startCursor?: boolean | number
+    /** The cursor of the last returned record. */
+    endCursor?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface IndexConnectionGenqlSelection{
+    /** Paging information */
+    pageInfo?: PageInfoGenqlSelection
+    /** Array of edges. */
+    edges?: IndexEdgeGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface IndexFieldEdgeGenqlSelection{
+    /** The node containing the IndexField */
+    node?: IndexFieldGenqlSelection
+    /** Cursor for this node. */
+    cursor?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface IndexIndexFieldMetadatasConnectionGenqlSelection{
+    /** Paging information */
+    pageInfo?: PageInfoGenqlSelection
+    /** Array of edges. */
+    edges?: IndexFieldEdgeGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectEdgeGenqlSelection{
+    /** The node containing the Object */
+    node?: ObjectGenqlSelection
+    /** Cursor for this node. */
+    cursor?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface IndexObjectMetadataConnectionGenqlSelection{
+    /** Paging information */
+    pageInfo?: PageInfoGenqlSelection
+    /** Array of edges. */
+    edges?: ObjectEdgeGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectRecordCountGenqlSelection{
+    objectNamePlural?: boolean | number
+    totalCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectConnectionGenqlSelection{
+    /** Paging information */
+    pageInfo?: PageInfoGenqlSelection
+    /** Array of edges. */
+    edges?: ObjectEdgeGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectIndexMetadatasConnectionGenqlSelection{
+    /** Paging information */
+    pageInfo?: PageInfoGenqlSelection
+    /** Array of edges. */
+    edges?: IndexEdgeGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface FieldEdgeGenqlSelection{
+    /** The node containing the Field */
+    node?: FieldGenqlSelection
+    /** Cursor for this node. */
+    cursor?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectFieldsConnectionGenqlSelection{
+    /** Paging information */
+    pageInfo?: PageInfoGenqlSelection
+    /** Array of edges. */
+    edges?: FieldEdgeGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
     predicates?: RowLevelPermissionPredicateGenqlSelection
     predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface RelationGenqlSelection{
+    type?: boolean | number
+    sourceObjectMetadata?: ObjectGenqlSelection
+    targetObjectMetadata?: ObjectGenqlSelection
+    sourceFieldMetadata?: FieldGenqlSelection
+    targetFieldMetadata?: FieldGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface FieldConnectionGenqlSelection{
+    /** Paging information */
+    pageInfo?: PageInfoGenqlSelection
+    /** Array of edges. */
+    edges?: FieldEdgeGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7400,118 +7400,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const Relation_possibleTypes: string[] = ['Relation']
-    export const isRelation = (obj?: { __typename?: any } | null): obj is Relation => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRelation"')
-      return Relation_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const IndexEdge_possibleTypes: string[] = ['IndexEdge']
-    export const isIndexEdge = (obj?: { __typename?: any } | null): obj is IndexEdge => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexEdge"')
-      return IndexEdge_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const PageInfo_possibleTypes: string[] = ['PageInfo']
-    export const isPageInfo = (obj?: { __typename?: any } | null): obj is PageInfo => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPageInfo"')
-      return PageInfo_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const IndexConnection_possibleTypes: string[] = ['IndexConnection']
-    export const isIndexConnection = (obj?: { __typename?: any } | null): obj is IndexConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexConnection"')
-      return IndexConnection_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const IndexFieldEdge_possibleTypes: string[] = ['IndexFieldEdge']
-    export const isIndexFieldEdge = (obj?: { __typename?: any } | null): obj is IndexFieldEdge => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexFieldEdge"')
-      return IndexFieldEdge_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const IndexIndexFieldMetadatasConnection_possibleTypes: string[] = ['IndexIndexFieldMetadatasConnection']
-    export const isIndexIndexFieldMetadatasConnection = (obj?: { __typename?: any } | null): obj is IndexIndexFieldMetadatasConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexIndexFieldMetadatasConnection"')
-      return IndexIndexFieldMetadatasConnection_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectEdge_possibleTypes: string[] = ['ObjectEdge']
-    export const isObjectEdge = (obj?: { __typename?: any } | null): obj is ObjectEdge => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectEdge"')
-      return ObjectEdge_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const IndexObjectMetadataConnection_possibleTypes: string[] = ['IndexObjectMetadataConnection']
-    export const isIndexObjectMetadataConnection = (obj?: { __typename?: any } | null): obj is IndexObjectMetadataConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexObjectMetadataConnection"')
-      return IndexObjectMetadataConnection_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectRecordCount_possibleTypes: string[] = ['ObjectRecordCount']
-    export const isObjectRecordCount = (obj?: { __typename?: any } | null): obj is ObjectRecordCount => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordCount"')
-      return ObjectRecordCount_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectConnection_possibleTypes: string[] = ['ObjectConnection']
-    export const isObjectConnection = (obj?: { __typename?: any } | null): obj is ObjectConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectConnection"')
-      return ObjectConnection_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectIndexMetadatasConnection_possibleTypes: string[] = ['ObjectIndexMetadatasConnection']
-    export const isObjectIndexMetadatasConnection = (obj?: { __typename?: any } | null): obj is ObjectIndexMetadatasConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectIndexMetadatasConnection"')
-      return ObjectIndexMetadatasConnection_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const FieldEdge_possibleTypes: string[] = ['FieldEdge']
-    export const isFieldEdge = (obj?: { __typename?: any } | null): obj is FieldEdge => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isFieldEdge"')
-      return FieldEdge_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectFieldsConnection_possibleTypes: string[] = ['ObjectFieldsConnection']
-    export const isObjectFieldsConnection = (obj?: { __typename?: any } | null): obj is ObjectFieldsConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectFieldsConnection"')
-      return ObjectFieldsConnection_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const FieldConnection_possibleTypes: string[] = ['FieldConnection']
-    export const isFieldConnection = (obj?: { __typename?: any } | null): obj is FieldConnection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isFieldConnection"')
-      return FieldConnection_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const ResendEmailVerificationToken_possibleTypes: string[] = ['ResendEmailVerificationToken']
     export const isResendEmailVerificationToken = (obj?: { __typename?: any } | null): obj is ResendEmailVerificationToken => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isResendEmailVerificationToken"')
@@ -7616,10 +7504,122 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const IndexEdge_possibleTypes: string[] = ['IndexEdge']
+    export const isIndexEdge = (obj?: { __typename?: any } | null): obj is IndexEdge => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexEdge"')
+      return IndexEdge_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PageInfo_possibleTypes: string[] = ['PageInfo']
+    export const isPageInfo = (obj?: { __typename?: any } | null): obj is PageInfo => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPageInfo"')
+      return PageInfo_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const IndexConnection_possibleTypes: string[] = ['IndexConnection']
+    export const isIndexConnection = (obj?: { __typename?: any } | null): obj is IndexConnection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexConnection"')
+      return IndexConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const IndexFieldEdge_possibleTypes: string[] = ['IndexFieldEdge']
+    export const isIndexFieldEdge = (obj?: { __typename?: any } | null): obj is IndexFieldEdge => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexFieldEdge"')
+      return IndexFieldEdge_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const IndexIndexFieldMetadatasConnection_possibleTypes: string[] = ['IndexIndexFieldMetadatasConnection']
+    export const isIndexIndexFieldMetadatasConnection = (obj?: { __typename?: any } | null): obj is IndexIndexFieldMetadatasConnection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexIndexFieldMetadatasConnection"')
+      return IndexIndexFieldMetadatasConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectEdge_possibleTypes: string[] = ['ObjectEdge']
+    export const isObjectEdge = (obj?: { __typename?: any } | null): obj is ObjectEdge => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectEdge"')
+      return ObjectEdge_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const IndexObjectMetadataConnection_possibleTypes: string[] = ['IndexObjectMetadataConnection']
+    export const isIndexObjectMetadataConnection = (obj?: { __typename?: any } | null): obj is IndexObjectMetadataConnection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIndexObjectMetadataConnection"')
+      return IndexObjectMetadataConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectRecordCount_possibleTypes: string[] = ['ObjectRecordCount']
+    export const isObjectRecordCount = (obj?: { __typename?: any } | null): obj is ObjectRecordCount => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordCount"')
+      return ObjectRecordCount_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectConnection_possibleTypes: string[] = ['ObjectConnection']
+    export const isObjectConnection = (obj?: { __typename?: any } | null): obj is ObjectConnection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectConnection"')
+      return ObjectConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectIndexMetadatasConnection_possibleTypes: string[] = ['ObjectIndexMetadatasConnection']
+    export const isObjectIndexMetadatasConnection = (obj?: { __typename?: any } | null): obj is ObjectIndexMetadatasConnection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectIndexMetadatasConnection"')
+      return ObjectIndexMetadatasConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const FieldEdge_possibleTypes: string[] = ['FieldEdge']
+    export const isFieldEdge = (obj?: { __typename?: any } | null): obj is FieldEdge => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFieldEdge"')
+      return FieldEdge_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectFieldsConnection_possibleTypes: string[] = ['ObjectFieldsConnection']
+    export const isObjectFieldsConnection = (obj?: { __typename?: any } | null): obj is ObjectFieldsConnection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectFieldsConnection"')
+      return ObjectFieldsConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const UpsertRowLevelPermissionPredicatesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionPredicatesResult']
     export const isUpsertRowLevelPermissionPredicatesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionPredicatesResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionPredicatesResult"')
       return UpsertRowLevelPermissionPredicatesResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Relation_possibleTypes: string[] = ['Relation']
+    export const isRelation = (obj?: { __typename?: any } | null): obj is Relation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRelation"')
+      return Relation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const FieldConnection_possibleTypes: string[] = ['FieldConnection']
+    export const isFieldConnection = (obj?: { __typename?: any } | null): obj is FieldConnection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFieldConnection"')
+      return FieldConnection_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8762,16 +8762,16 @@ export const enumCaptchaDriverType = {
    TURNSTILE: 'TURNSTILE' as const
 }
 
-export const enumRelationType = {
-   ONE_TO_MANY: 'ONE_TO_MANY' as const,
-   MANY_TO_ONE: 'MANY_TO_ONE' as const
-}
-
 export const enumBillingEntitlementKey = {
    SSO: 'SSO' as const,
    CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
    RLS: 'RLS' as const,
    AUDIT_LOGS: 'AUDIT_LOGS' as const
+}
+
+export const enumRelationType = {
+   ONE_TO_MANY: 'ONE_TO_MANY' as const,
+   MANY_TO_ONE: 'MANY_TO_ONE' as const
 }
 
 export const enumEmailingDomainDriver = {

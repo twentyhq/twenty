@@ -1967,18 +1967,100 @@ type RotateClientSecret {
   clientSecret: String!
 }
 
-type Relation {
-  type: RelationType!
-  sourceObjectMetadata: Object!
-  targetObjectMetadata: Object!
-  sourceFieldMetadata: Field!
-  targetFieldMetadata: Field!
+type ResendEmailVerificationToken {
+  success: Boolean!
 }
 
-"""Relation type"""
-enum RelationType {
-  ONE_TO_MANY
-  MANY_TO_ONE
+type DeleteSso {
+  identityProviderId: UUID!
+}
+
+type EditSso {
+  id: UUID!
+  type: IdentityProviderType!
+  issuer: String!
+  name: String!
+  status: SSOIdentityProviderStatus!
+}
+
+type WorkspaceNameAndId {
+  displayName: String
+  id: UUID!
+}
+
+type FindAvailableSSOIDP {
+  type: IdentityProviderType!
+  id: UUID!
+  issuer: String!
+  name: String!
+  status: SSOIdentityProviderStatus!
+  workspace: WorkspaceNameAndId!
+}
+
+type SetupSso {
+  id: UUID!
+  type: IdentityProviderType!
+  issuer: String!
+  name: String!
+  status: SSOIdentityProviderStatus!
+}
+
+type SSOConnection {
+  type: IdentityProviderType!
+  id: UUID!
+  issuer: String!
+  name: String!
+  status: SSOIdentityProviderStatus!
+}
+
+type AvailableWorkspace {
+  id: UUID!
+  displayName: String
+  loginToken: String
+  personalInviteToken: String
+  inviteHash: String
+  workspaceUrls: WorkspaceUrls!
+  logo: String
+  sso: [SSOConnection!]!
+}
+
+type AvailableWorkspaces {
+  availableWorkspacesForSignIn: [AvailableWorkspace!]!
+  availableWorkspacesForSignUp: [AvailableWorkspace!]!
+}
+
+type DeletedWorkspaceMember {
+  id: UUID!
+  name: FullName!
+  userEmail: String!
+  avatarUrl: String
+  userWorkspaceId: UUID
+}
+
+type BillingEntitlement {
+  key: BillingEntitlementKey!
+  value: Boolean!
+}
+
+enum BillingEntitlementKey {
+  SSO
+  CUSTOM_DOMAIN
+  RLS
+  AUDIT_LOGS
+}
+
+type DomainRecord {
+  validationType: String!
+  type: String!
+  status: String!
+  key: String!
+  value: String!
+}
+
+type DomainValidRecords {
+  id: UUID!
+  domain: String!
+  records: [DomainRecord!]!
 }
 
 type IndexEdge {
@@ -2080,113 +2162,31 @@ type ObjectFieldsConnection {
   edges: [FieldEdge!]!
 }
 
+type UpsertRowLevelPermissionPredicatesResult {
+  predicates: [RowLevelPermissionPredicate!]!
+  predicateGroups: [RowLevelPermissionPredicateGroup!]!
+}
+
+type Relation {
+  type: RelationType!
+  sourceObjectMetadata: Object!
+  targetObjectMetadata: Object!
+  sourceFieldMetadata: Field!
+  targetFieldMetadata: Field!
+}
+
+"""Relation type"""
+enum RelationType {
+  ONE_TO_MANY
+  MANY_TO_ONE
+}
+
 type FieldConnection {
   """Paging information"""
   pageInfo: PageInfo!
 
   """Array of edges."""
   edges: [FieldEdge!]!
-}
-
-type ResendEmailVerificationToken {
-  success: Boolean!
-}
-
-type DeleteSso {
-  identityProviderId: UUID!
-}
-
-type EditSso {
-  id: UUID!
-  type: IdentityProviderType!
-  issuer: String!
-  name: String!
-  status: SSOIdentityProviderStatus!
-}
-
-type WorkspaceNameAndId {
-  displayName: String
-  id: UUID!
-}
-
-type FindAvailableSSOIDP {
-  type: IdentityProviderType!
-  id: UUID!
-  issuer: String!
-  name: String!
-  status: SSOIdentityProviderStatus!
-  workspace: WorkspaceNameAndId!
-}
-
-type SetupSso {
-  id: UUID!
-  type: IdentityProviderType!
-  issuer: String!
-  name: String!
-  status: SSOIdentityProviderStatus!
-}
-
-type SSOConnection {
-  type: IdentityProviderType!
-  id: UUID!
-  issuer: String!
-  name: String!
-  status: SSOIdentityProviderStatus!
-}
-
-type AvailableWorkspace {
-  id: UUID!
-  displayName: String
-  loginToken: String
-  personalInviteToken: String
-  inviteHash: String
-  workspaceUrls: WorkspaceUrls!
-  logo: String
-  sso: [SSOConnection!]!
-}
-
-type AvailableWorkspaces {
-  availableWorkspacesForSignIn: [AvailableWorkspace!]!
-  availableWorkspacesForSignUp: [AvailableWorkspace!]!
-}
-
-type DeletedWorkspaceMember {
-  id: UUID!
-  name: FullName!
-  userEmail: String!
-  avatarUrl: String
-  userWorkspaceId: UUID
-}
-
-type BillingEntitlement {
-  key: BillingEntitlementKey!
-  value: Boolean!
-}
-
-enum BillingEntitlementKey {
-  SSO
-  CUSTOM_DOMAIN
-  RLS
-  AUDIT_LOGS
-}
-
-type DomainRecord {
-  validationType: String!
-  type: String!
-  status: String!
-  key: String!
-  value: String!
-}
-
-type DomainValidRecords {
-  id: UUID!
-  domain: String!
-  records: [DomainRecord!]!
-}
-
-type UpsertRowLevelPermissionPredicatesResult {
-  predicates: [RowLevelPermissionPredicate!]!
-  predicateGroups: [RowLevelPermissionPredicateGroup!]!
 }
 
 type LogicFunctionLogs {
