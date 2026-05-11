@@ -1,3 +1,4 @@
+import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { type PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { getMatchingRecordId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util';
 import { CommonQueryRunnerExceptionCode } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
@@ -29,15 +30,23 @@ describe('getMatchingRecordId', () => {
       emailsField: { primaryEmail: 'alpha@example.com' },
     };
 
-    const conflictingFields = [
+    const conflictingFieldGroups: ConflictingFieldGroup[] = [
       {
         baseField: 'emailsField',
-        fullPath: 'emailsField.primaryEmail',
-        column: 'emailsFieldPrimaryEmail',
+        subFields: [
+          {
+            fullPath: 'emailsField.primaryEmail',
+            column: 'emailsFieldPrimaryEmail',
+          },
+        ],
       },
     ];
 
-    const id = getMatchingRecordId(record, conflictingFields, existingRecords);
+    const id = getMatchingRecordId(
+      record,
+      conflictingFieldGroups,
+      existingRecords,
+    );
 
     expect(id).toBe('recordId1');
   });
@@ -50,20 +59,27 @@ describe('getMatchingRecordId', () => {
       },
     };
 
-    const conflictingFields = [
+    const conflictingFieldGroups: ConflictingFieldGroup[] = [
       {
         baseField: 'phonesField',
-        fullPath: 'phonesField.primaryPhoneNumber',
-        column: 'phonesFieldPrimaryPhoneNumber',
-      },
-      {
-        baseField: 'phonesField',
-        fullPath: 'phonesField.primaryPhoneCallingCode',
-        column: 'phonesFieldPrimaryPhoneCallingCode',
+        subFields: [
+          {
+            fullPath: 'phonesField.primaryPhoneNumber',
+            column: 'phonesFieldPrimaryPhoneNumber',
+          },
+          {
+            fullPath: 'phonesField.primaryPhoneCallingCode',
+            column: 'phonesFieldPrimaryPhoneCallingCode',
+          },
+        ],
       },
     ];
 
-    const id = getMatchingRecordId(record, conflictingFields, existingRecords);
+    const id = getMatchingRecordId(
+      record,
+      conflictingFieldGroups,
+      existingRecords,
+    );
 
     expect(id).toBe('recordId2');
   });
@@ -76,20 +92,27 @@ describe('getMatchingRecordId', () => {
       },
     };
 
-    const conflictingFields = [
+    const conflictingFieldGroups: ConflictingFieldGroup[] = [
       {
         baseField: 'phonesField',
-        fullPath: 'phonesField.primaryPhoneNumber',
-        column: 'phonesFieldPrimaryPhoneNumber',
-      },
-      {
-        baseField: 'phonesField',
-        fullPath: 'phonesField.primaryPhoneCallingCode',
-        column: 'phonesFieldPrimaryPhoneCallingCode',
+        subFields: [
+          {
+            fullPath: 'phonesField.primaryPhoneNumber',
+            column: 'phonesFieldPrimaryPhoneNumber',
+          },
+          {
+            fullPath: 'phonesField.primaryPhoneCallingCode',
+            column: 'phonesFieldPrimaryPhoneCallingCode',
+          },
+        ],
       },
     ];
 
-    const id = getMatchingRecordId(record, conflictingFields, existingRecords);
+    const id = getMatchingRecordId(
+      record,
+      conflictingFieldGroups,
+      existingRecords,
+    );
 
     expect(id).toBeUndefined();
   });
@@ -99,15 +122,23 @@ describe('getMatchingRecordId', () => {
       emailsField: { primaryEmail: 'nobody@example.com' },
     };
 
-    const conflictingFields = [
+    const conflictingFieldGroups: ConflictingFieldGroup[] = [
       {
         baseField: 'emailsField',
-        fullPath: 'emailsField.primaryEmail',
-        column: 'emailsFieldPrimaryEmail',
+        subFields: [
+          {
+            fullPath: 'emailsField.primaryEmail',
+            column: 'emailsFieldPrimaryEmail',
+          },
+        ],
       },
     ];
 
-    const id = getMatchingRecordId(record, conflictingFields, existingRecords);
+    const id = getMatchingRecordId(
+      record,
+      conflictingFieldGroups,
+      existingRecords,
+    );
 
     expect(id).toBeUndefined();
   });
@@ -118,12 +149,22 @@ describe('getMatchingRecordId', () => {
       uniqueText: 'alpha',
     };
 
-    const conflictingFields = [
-      { baseField: 'id', fullPath: 'id', column: 'id' },
-      { baseField: 'uniqueText', fullPath: 'uniqueText', column: 'uniqueText' },
+    const conflictingFieldGroups: ConflictingFieldGroup[] = [
+      {
+        baseField: 'id',
+        subFields: [{ fullPath: 'id', column: 'id' }],
+      },
+      {
+        baseField: 'uniqueText',
+        subFields: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
+      },
     ];
 
-    const id = getMatchingRecordId(record, conflictingFields, existingRecords);
+    const id = getMatchingRecordId(
+      record,
+      conflictingFieldGroups,
+      existingRecords,
+    );
 
     expect(id).toBe('recordId1');
   });
@@ -134,21 +175,28 @@ describe('getMatchingRecordId', () => {
       emailsField: { primaryEmail: 'beta@example.com' },
     };
 
-    const conflictingFields = [
-      { baseField: 'uniqueText', fullPath: 'uniqueText', column: 'uniqueText' },
+    const conflictingFieldGroups: ConflictingFieldGroup[] = [
+      {
+        baseField: 'uniqueText',
+        subFields: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
+      },
       {
         baseField: 'emailsField',
-        fullPath: 'emailsField.primaryEmail',
-        column: 'emailsFieldPrimaryEmail',
+        subFields: [
+          {
+            fullPath: 'emailsField.primaryEmail',
+            column: 'emailsFieldPrimaryEmail',
+          },
+        ],
       },
     ];
 
     expect(() =>
-      getMatchingRecordId(record, conflictingFields, existingRecords),
+      getMatchingRecordId(record, conflictingFieldGroups, existingRecords),
     ).toThrow();
 
     try {
-      getMatchingRecordId(record, conflictingFields, existingRecords);
+      getMatchingRecordId(record, conflictingFieldGroups, existingRecords);
     } catch (error) {
       expect(error.code).toBe(
         CommonQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT,

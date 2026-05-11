@@ -1,6 +1,7 @@
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
+import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -9,37 +10,30 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 export const getConflictingFields = (
   flatObjectMetadata: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-): {
-  baseField: string;
-  fullPath: string;
-  column: string;
-}[] => {
+): ConflictingFieldGroup[] => {
   return getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
     flatFieldMetadataMaps,
   )
     .filter((field) => field.isUnique || field.name === 'id')
-    .flatMap((field) => {
+    .map((field) => {
       const compositeType = compositeTypeDefinitions.get(field.type);
 
       if (!compositeType) {
-        return [
-          {
-            baseField: field.name,
-            fullPath: field.name,
-            column: field.name,
-          },
-        ];
+        return {
+          baseField: field.name,
+          subFields: [{ fullPath: field.name, column: field.name }],
+        };
       }
 
-      const properties = compositeType.properties.filter(
-        (prop) => prop.isIncludedInUniqueConstraint,
-      );
+      const subFields = compositeType.properties
+        .filter((prop) => prop.isIncludedInUniqueConstraint)
+        .map((property) => ({
+          fullPath: `${field.name}.${property.name}`,
+          column: `${field.name}${capitalize(property.name)}`,
+        }));
 
-      return properties.map((property) => ({
-        baseField: field.name,
-        fullPath: `${field.name}.${property.name}`,
-        column: `${field.name}${capitalize(property.name)}`,
-      }));
-    });
+      return { baseField: field.name, subFields };
+    })
+    .filter((group) => group.subFields.length > 0);
 };

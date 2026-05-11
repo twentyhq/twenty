@@ -8,6 +8,7 @@ import { FindOptionsRelations, In, InsertResult, ObjectLiteral } from 'typeorm';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
+import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
 import { categorizeRecords } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/categorize-records.util';
 import { getConflictingFields } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-conflicting-fields.util';
@@ -231,7 +232,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CreateManyQueryArgs;
     selectedFieldsResult: CommonSelectedFieldsResult;
   }): Promise<InsertResult> {
-    const conflictingFields = getConflictingFields(
+    const conflictingFieldGroups = getConflictingFields(
       flatObjectMetadata,
       flatFieldMetadataMaps,
     );
@@ -240,12 +241,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata,
       flatFieldMetadataMaps,
       args,
-      conflictingFields,
+      conflictingFieldGroups,
     });
 
     const { recordsToUpdate, recordsToInsert } = categorizeRecords(
       args.data,
-      conflictingFields,
+      conflictingFieldGroups,
       existingRecords,
     );
 
@@ -289,23 +290,22 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadata,
     flatFieldMetadataMaps,
     args,
-    conflictingFields,
+    conflictingFieldGroups,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     args: CreateManyQueryArgs;
-    conflictingFields: {
-      baseField: string;
-      fullPath: string;
-      column: string;
-    }[];
+    conflictingFieldGroups: ConflictingFieldGroup[];
   }): Promise<PartialObjectRecordWithId[]> {
     const queryBuilder = repository.createQueryBuilder(
       flatObjectMetadata.nameSingular,
     );
 
-    const whereConditions = buildWhereConditions(args.data, conflictingFields);
+    const whereConditions = buildWhereConditions(
+      args.data,
+      conflictingFieldGroups,
+    );
 
     if (whereConditions.length === 0) {
       return [];

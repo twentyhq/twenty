@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { type PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { getValueFromPath } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-value-from-path.util';
 import {
@@ -11,58 +12,49 @@ import {
 
 export const getMatchingRecordId = (
   record: Partial<ObjectRecord>,
-  conflictingFields: {
-    baseField: string;
-    fullPath: string;
-    column: string;
-  }[],
+  conflictingFieldGroups: ConflictingFieldGroup[],
   existingRecords: PartialObjectRecordWithId[],
 ): string | undefined => {
-  const conflictingFieldsByBaseField = conflictingFields.reduce(
-    (acc, field) => {
-      acc[field.baseField] = [...(acc[field.baseField] ?? []), field];
+  const matchingRecordIds = conflictingFieldGroups.reduce<string[]>(
+    (acc, fieldGroup) => {
+      const requestFieldValues = fieldGroup.subFields.map((subField) => ({
+        subField,
+        value: getValueFromPath(record, subField.fullPath),
+      }));
+
+      if (requestFieldValues.some(({ value }) => !isDefined(value))) {
+        return acc;
+      }
+
+      const matchingRecord = existingRecords.find((existingRecord) =>
+        requestFieldValues.every(({ subField, value }) => {
+          const existingFieldValue = getValueFromPath(
+            existingRecord,
+            subField.fullPath,
+          );
+
+          return isDefined(existingFieldValue) && existingFieldValue === value;
+        }),
+      );
+
+      if (isDefined(matchingRecord)) {
+        acc.push(matchingRecord.id);
+      }
 
       return acc;
     },
-    {} as Record<string, typeof conflictingFields>,
+    [],
   );
 
-  const matchingRecordIds = Object.values(conflictingFieldsByBaseField).reduce<
-    string[]
-  >((acc, fields) => {
-    const requestFieldValues = fields.map((field) => ({
-      field,
-      value: getValueFromPath(record, field.fullPath),
-    }));
-
-    if (requestFieldValues.some(({ value }) => !isDefined(value))) {
-      return acc;
-    }
-
-    const matchingRecord = existingRecords.find((existingRecord) =>
-      requestFieldValues.every(({ field, value }) => {
-        const existingFieldValue = getValueFromPath(
-          existingRecord,
-          field.fullPath,
-        );
-
-        return isDefined(existingFieldValue) && existingFieldValue === value;
-      }),
-    );
-
-    if (isDefined(matchingRecord)) {
-      acc.push(matchingRecord.id);
-    }
-
-    return acc;
-  }, []);
-
   if ([...new Set(matchingRecordIds)].length > 1) {
-    const conflictingFieldsValues = conflictingFields
-      .map((field) => {
-        const value = getValueFromPath(record, field.fullPath);
+    const conflictingFieldsValues = conflictingFieldGroups
+      .flatMap((group) => group.subFields)
+      .map((subField) => {
+        const value = getValueFromPath(record, subField.fullPath);
 
-        return isDefined(value) ? `${field.fullPath}: ${value}` : undefined;
+        return isDefined(value)
+          ? `${subField.fullPath}: ${value}`
+          : undefined;
       })
       .filter(isDefined)
       .join(', ');

@@ -132,11 +132,13 @@ describe('getConflictingFields', () => {
 
     expect(result).toEqual(
       expect.arrayContaining([
-        { baseField: 'id', fullPath: 'id', column: 'id' },
+        {
+          baseField: 'id',
+          subFields: [{ fullPath: 'id', column: 'id' }],
+        },
         {
           baseField: 'uniqueText',
-          fullPath: 'uniqueText',
-          column: 'uniqueText',
+          subFields: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
         },
       ]),
     );
@@ -154,11 +156,18 @@ describe('getConflictingFields', () => {
 
     expect(result).toEqual(
       expect.arrayContaining([
-        { baseField: 'id', fullPath: 'id', column: 'id' },
+        {
+          baseField: 'id',
+          subFields: [{ fullPath: 'id', column: 'id' }],
+        },
         {
           baseField: 'emailsField',
-          fullPath: 'emailsField.primaryEmail',
-          column: 'emailsFieldPrimaryEmail',
+          subFields: [
+            {
+              fullPath: 'emailsField.primaryEmail',
+              column: 'emailsFieldPrimaryEmail',
+            },
+          ],
         },
       ]),
     );
@@ -175,16 +184,22 @@ describe('getConflictingFields', () => {
     );
 
     expect(result).toEqual([
-      { baseField: 'id', fullPath: 'id', column: 'id' },
       {
-        baseField: 'phonesField',
-        fullPath: 'phonesField.primaryPhoneNumber',
-        column: 'phonesFieldPrimaryPhoneNumber',
+        baseField: 'id',
+        subFields: [{ fullPath: 'id', column: 'id' }],
       },
       {
         baseField: 'phonesField',
-        fullPath: 'phonesField.primaryPhoneCallingCode',
-        column: 'phonesFieldPrimaryPhoneCallingCode',
+        subFields: [
+          {
+            fullPath: 'phonesField.primaryPhoneNumber',
+            column: 'phonesFieldPrimaryPhoneNumber',
+          },
+          {
+            fullPath: 'phonesField.primaryPhoneCallingCode',
+            column: 'phonesFieldPrimaryPhoneCallingCode',
+          },
+        ],
       },
     ]);
   });
@@ -199,7 +214,12 @@ describe('getConflictingFields', () => {
       flatFieldMetadataMaps,
     );
 
-    expect(result).toEqual([{ baseField: 'id', fullPath: 'id', column: 'id' }]);
+    expect(result).toEqual([
+      {
+        baseField: 'id',
+        subFields: [{ fullPath: 'id', column: 'id' }],
+      },
+    ]);
   });
 
   it('ignores non-unique fields', () => {
@@ -212,6 +232,11 @@ describe('getConflictingFields', () => {
       flatFieldMetadataMaps,
     );
 
-    expect(result).toEqual([{ baseField: 'id', fullPath: 'id', column: 'id' }]);
+    expect(result).toEqual([
+      {
+        baseField: 'id',
+        subFields: [{ fullPath: 'id', column: 'id' }],
+      },
+    ]);
   });
 });
