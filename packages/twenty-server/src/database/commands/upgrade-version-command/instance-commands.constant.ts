@@ -30,8 +30,8 @@ import { AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand } from 'src/
 import { BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1777966965588-backfill-application-variable-universal-identifier';
 import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1797000002000-migrate-tool-trigger-settings';
 import { AddEmailGroupChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778256809018-add-email-group-channel-type';
-import { AddIsInternalMessagesImportEnabledFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778513342990-add-is-internal-messages-import-enabled';
 import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1798000003000-add-application-id-to-public-domain';
+import { AddIsInternalMessagesImportEnabledFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778525104406-addIsInternalMessagesImportEnabled';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -64,6 +64,6 @@ export const INSTANCE_COMMANDS = [
   TransformApplicationVariableToSyncableEntityFastInstanceCommand,
   BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand,
   AddEmailGroupChannelTypeFastInstanceCommand,
-  AddIsInternalMessagesImportEnabledFastInstanceCommand,
   AddApplicationIdToPublicDomainFastInstanceCommand,
+  AddIsInternalMessagesImportEnabledFastInstanceCommand,
 ];

@@ -19,8 +19,8 @@ import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/comp
 import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
-import { ToggleSyncInternalEmails } from '@/settings/security/components/ToggleSyncInternalEmails';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -36,6 +36,7 @@ import {
   IconClockHour8,
   IconHistory,
   IconLock,
+  IconMail,
   IconTrash,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -130,6 +131,33 @@ export const SettingsSecurity = () => {
     });
 
     saveTrashRetention(value);
+  };
+
+  const handleSyncInternalEmailsChange = (value: boolean) => {
+    if (!currentWorkspace) {
+      return;
+    }
+
+    if (value === currentWorkspace.isInternalMessagesImportEnabled) {
+      return;
+    }
+
+    setCurrentWorkspace({
+      ...currentWorkspace,
+      isInternalMessagesImportEnabled: value,
+    });
+
+    updateWorkspace({
+      variables: {
+        input: {
+          isInternalMessagesImportEnabled: value,
+        },
+      },
+    }).catch((err) => {
+      enqueueErrorSnackBar({
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
+      });
+    });
   };
 
   const handleEventLogRetentionDaysChange = (value: number) => {
@@ -318,7 +346,16 @@ export const SettingsSecurity = () => {
                 showButtons={false}
               />
               <Separator />
-              <ToggleSyncInternalEmails />
+              <SettingsOptionCardContentToggle
+                Icon={IconMail}
+                title={t`Sync Internal Emails`}
+                description={t`Include emails where all participants share the same domain.`}
+                checked={
+                  currentWorkspace?.isInternalMessagesImportEnabled ?? false
+                }
+                onChange={handleSyncInternalEmailsChange}
+                advancedMode
+              />
             </Card>
           </Section>
         </StyledMainContent>
