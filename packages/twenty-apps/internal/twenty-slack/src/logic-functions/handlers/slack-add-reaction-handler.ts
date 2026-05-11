@@ -1,8 +1,9 @@
+import { WebClient } from '@slack/web-api';
+
 import { type SlackAddReactionInput } from 'src/logic-functions/types/slack-add-reaction-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
-import { createSlackWebClient } from 'src/utils/create-slack-web-client';
 
 export const slackAddReactionHandler = async (
   parameters: SlackAddReactionInput,
@@ -17,7 +18,7 @@ export const slackAddReactionHandler = async (
     };
   }
 
-  const client = createSlackWebClient(connectionResult.accessToken);
+  const client = new WebClient(connectionResult.accessToken);
 
   try {
     await client.reactions.add({

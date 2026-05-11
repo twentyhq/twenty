@@ -1,10 +1,10 @@
+import { WebClient } from '@slack/web-api';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type SlackPostEphemeralMessageInput } from 'src/logic-functions/types/slack-post-ephemeral-message-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
-import { createSlackWebClient } from 'src/utils/create-slack-web-client';
 
 export const slackPostEphemeralMessageHandler = async (
   parameters: SlackPostEphemeralMessageInput,
@@ -19,7 +19,7 @@ export const slackPostEphemeralMessageHandler = async (
     };
   }
 
-  const client = createSlackWebClient(connectionResult.accessToken);
+  const client = new WebClient(connectionResult.accessToken);
 
   try {
     const postEphemeralPayload = {
