@@ -162,15 +162,35 @@ export class UpgradeSequenceReaderService {
       : workspaceCommands.slice(cursorIndex);
   }
 
-  getInitialCursorForNewWorkspace(lastAttemptedInstanceCommand: {
-    name: string;
-    status: UpgradeMigrationStatus;
-  }): {
+  getInitialCursorForNewWorkspace(
+    lastAttemptedInstanceCommand: {
+      name: string;
+      status: UpgradeMigrationStatus;
+    } | null,
+  ): {
     name: string;
     status: UpgradeMigrationStatus;
   } {
-    const { name, status } = lastAttemptedInstanceCommand;
     const sequence = this.getUpgradeSequence();
+
+    // No instance command has ever been attempted (fresh install / reset DB).
+    // A brand-new workspace has nothing pending — anchor the cursor at the
+    // last workspace command of the sequence, marked completed.
+    if (lastAttemptedInstanceCommand === null) {
+      const lastWorkspaceStep = [...sequence]
+        .reverse()
+        .find((step): step is WorkspaceUpgradeStep => step.kind === 'workspace');
+
+      if (!isDefined(lastWorkspaceStep)) {
+        throw new Error(
+          'Upgrade sequence contains no workspace command — cannot derive an initial cursor for a new workspace.',
+        );
+      }
+
+      return { name: lastWorkspaceStep.name, status: 'completed' };
+    }
+
+    const { name, status } = lastAttemptedInstanceCommand;
 
     const instanceCursor = this.locateStepInSequenceOrThrow({
       sequence,

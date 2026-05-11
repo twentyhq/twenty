@@ -276,6 +276,25 @@ describe('UpgradeSequenceReaderService', () => {
       expect(result).toEqual({ name: 'Ic0', status: 'failed' });
     });
 
+    it('should return the last workspace command as completed when no instance command has been attempted', async () => {
+      // Fresh install: upgradeMigration table has no instance-scoped rows.
+      // A brand-new workspace has nothing pending, so the cursor should land
+      // at the last workspace command of the sequence, marked completed.
+      const sequence = [
+        makeFastInstance('Ic0'),
+        makeWorkspace('Wc0'),
+        makeWorkspace('Wc1'),
+        makeFastInstance('Ic1'),
+        makeWorkspace('Wc2'),
+      ];
+
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      const result = service.getInitialCursorForNewWorkspace(null);
+
+      expect(result).toEqual({ name: 'Wc2', status: 'completed' });
+    });
+
     it('should return the failed mid-segment instance command', async () => {
       // Sequence: Ic0 → Ic1 → Ic2 → Wc0
       // Ic1 failed (Ic0 completed but Ic1 is the last attempted) → cursor at Ic1:failed
