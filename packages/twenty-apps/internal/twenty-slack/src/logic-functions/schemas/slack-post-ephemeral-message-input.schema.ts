@@ -18,10 +18,11 @@ export const slackPostEphemeralMessageInputSchema: InputJsonSchema = {
       description:
         'Short note shown only to the recipient above — for example a private hint, validation result, or next step.',
     },
-    useSlackMarkdown: {
-      type: 'boolean',
+    messageFormat: {
+      type: 'string',
+      enum: ['plain', 'markdown'],
       description:
-        'Optional. Use Slack’s simple formatting (*bold*, links, etc.) in the message text.',
+        'Optional. Same as **Send Slack Message**: `markdown` / `plain` / omit — see that action’s `messageFormat` description.',
     },
   },
   required: ['slackChannelId', 'recipientSlackUserId', 'messageText'],

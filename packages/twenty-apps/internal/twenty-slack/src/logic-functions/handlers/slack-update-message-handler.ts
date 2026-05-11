@@ -1,8 +1,8 @@
 import { WebClient } from '@slack/web-api';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { type SlackUpdateMessageInput } from 'src/logic-functions/types/slack-update-message-input.type';
+import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 
@@ -22,13 +22,15 @@ export const slackUpdateMessageHandler = async (
   const client = new WebClient(connectionResult.accessToken);
 
   try {
+    const bodyFields = getSlackChatMessageBodyFields(
+      parameters.newMessageText,
+      parameters.messageFormat,
+    );
+
     const updatePayload = {
       channel: parameters.slackChannelId,
       ts: parameters.messageTimestamp,
-      text: parameters.newMessageText,
-      ...(isDefined(parameters.useSlackMarkdown)
-        ? { mrkdwn: parameters.useSlackMarkdown }
-        : {}),
+      ...bodyFields,
     };
 
     const data = await client.chat.update(updatePayload);

@@ -18,10 +18,11 @@ export const slackPostMessageInputSchema: InputJsonSchema = {
       description:
         'Optional. Only when you want a **thread reply**: paste the **Message timestamp** from an earlier Slack step (the value returned as `slackTs` after posting). Leave empty for a normal new message at the bottom of the channel.',
     },
-    useSlackMarkdown: {
-      type: 'boolean',
+    messageFormat: {
+      type: 'string',
+      enum: ['plain', 'markdown'],
       description:
-        'Optional. Turn on Slack’s lightweight formatting in `messageText` (*bold*, _italic_, <https://…|links>, etc.). Leave off for plain text.',
+        'Optional. `markdown`: send as Slack `markdown_text` so usual Markdown in `messageText` works (**bold**, lists, fenced code). `plain`: send as `text` with `mrkdwn: false` (no markup). Omit: send as `text` and let Slack use its default (legacy mrkdwn may still apply in `text`).',
     },
   },
   required: ['slackChannelId', 'messageText'],

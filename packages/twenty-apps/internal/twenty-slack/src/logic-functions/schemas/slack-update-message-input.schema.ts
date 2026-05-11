@@ -15,12 +15,14 @@ export const slackUpdateMessageInputSchema: InputJsonSchema = {
     },
     newMessageText: {
       type: 'string',
-      description: 'Replacement text shown in Slack instead of the old content.',
-    },
-    useSlackMarkdown: {
-      type: 'boolean',
       description:
-        'Optional. Use Slack’s simple formatting in the new text (*bold*, links, etc.).',
+        'Replacement text shown in Slack instead of the old content.',
+    },
+    messageFormat: {
+      type: 'string',
+      enum: ['plain', 'markdown'],
+      description:
+        'Optional. Same as **Send Slack Message**: `markdown` → `markdown_text`, `plain` → plain `text` without markup, omit → Slack default on `text`.',
     },
   },
   required: ['slackChannelId', 'messageTimestamp', 'newMessageText'],

@@ -1,8 +1,8 @@
 import { WebClient } from '@slack/web-api';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type SlackPostEphemeralMessageInput } from 'src/logic-functions/types/slack-post-ephemeral-message-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
+import { getSlackChatMessageBodyFields } from 'src/logic-functions/utils/get-slack-chat-message-body-fields';
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
 import { slackToolFailure } from 'src/logic-functions/utils/slack-tool-failure';
 
@@ -22,13 +22,15 @@ export const slackPostEphemeralMessageHandler = async (
   const client = new WebClient(connectionResult.accessToken);
 
   try {
+    const bodyFields = getSlackChatMessageBodyFields(
+      parameters.messageText,
+      parameters.messageFormat,
+    );
+
     const postEphemeralPayload = {
       channel: parameters.slackChannelId,
       user: parameters.recipientSlackUserId,
-      text: parameters.messageText,
-      ...(isDefined(parameters.useSlackMarkdown)
-        ? { mrkdwn: parameters.useSlackMarkdown }
-        : {}),
+      ...bodyFields,
     };
 
     await client.chat.postEphemeral(postEphemeralPayload);

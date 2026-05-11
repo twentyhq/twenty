@@ -23,7 +23,7 @@ export default defineLogicFunction({
           slackChannelId: { type: 'string' },
           messageText: { type: 'string' },
           parentMessageTimestamp: { type: 'string' },
-          useSlackMarkdown: { type: 'boolean' },
+          messageFormat: { type: 'string', enum: ['plain', 'markdown'] },
         },
       },
     ],
