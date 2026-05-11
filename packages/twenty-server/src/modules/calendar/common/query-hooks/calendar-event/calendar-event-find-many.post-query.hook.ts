@@ -29,7 +29,7 @@ export class CalendarEventFindManyPostQueryHook
     const isUserContext = isUserAuthContext(authContext);
     const userId = isUserContext ? authContext.user.id : undefined;
 
-    // TODO: this check should be removed, see https://discord.com/channels/1130383047699738754/1503320724704854036 for context
+    // TODO: this check should be removed
     if (
       !isUserAuthContext(authContext) &&
       !isApiKeyAuthContext(authContext) &&

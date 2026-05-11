@@ -26,7 +26,7 @@ export class MessageFindManyPostQueryHook
     _objectName: string,
     payload: MessageWorkspaceEntity[],
   ): Promise<void> {
-    // TODO: this check should be removed, see https://discord.com/channels/1130383047699738754/1503320724704854036 for context
+    // TODO: this check should be removed
     if (
       !isUserAuthContext(authContext) &&
       !isApiKeyAuthContext(authContext) &&

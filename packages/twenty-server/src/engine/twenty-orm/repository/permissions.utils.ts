@@ -119,7 +119,6 @@ export const validateOperationIsPermittedOrThrow = ({
     WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER;
 
   // TODO: this should be improved, we may have more complex permission configuration for is system objects
-  // see https://discord.com/channels/1130383047699738754/1503320724704854036 for context
   if (objectMetadataIsSystem && !isWorkspaceMemberObject) {
     return;
   }
