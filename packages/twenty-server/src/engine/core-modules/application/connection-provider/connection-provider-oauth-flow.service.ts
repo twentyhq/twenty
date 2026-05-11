@@ -27,6 +27,7 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 const STATE_JWT_EXPIRES_IN = '10m';
 
@@ -61,6 +62,7 @@ export class ConnectionProviderOAuthFlowService {
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
@@ -248,9 +250,23 @@ export class ConnectionProviderOAuthFlowService {
     visibility: 'user' | 'workspace';
     reconnectingConnectedAccountId: string | null;
   }): Promise<ConnectedAccountEntity> {
+    // Encrypt at the boundary, before sharedFields is constructed and before
+    // any subsequent code path (logger, ORM hook, ...) sees the entity values.
+    // tokenResponse.refreshToken can be null when the provider doesn't return
+    // one in this exchange (some providers only ship refresh tokens on first
+    // consent), so use the nullable variant.
+    const encryptedAccessToken =
+      this.connectedAccountTokenEncryptionService.encrypt(
+        tokenResponse.accessToken,
+      );
+    const encryptedRefreshToken =
+      this.connectedAccountTokenEncryptionService.encryptNullable(
+        tokenResponse.refreshToken,
+      );
+
     const sharedFields = {
-      accessToken: tokenResponse.accessToken,
-      refreshToken: tokenResponse.refreshToken,
+      accessToken: encryptedAccessToken,
+      refreshToken: encryptedRefreshToken,
       scopes: tokenResponse.scopes ?? provider.oauthConfig.scopes,
       lastCredentialsRefreshedAt: new Date(),
       authFailedAt: null,

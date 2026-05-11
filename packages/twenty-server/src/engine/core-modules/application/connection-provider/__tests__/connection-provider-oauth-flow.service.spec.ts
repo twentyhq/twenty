@@ -22,6 +22,10 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import {
+  CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
+  ConnectedAccountTokenEncryptionService,
+} from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 describe('ConnectionProviderOAuthFlowService', () => {
   let service: ConnectionProviderOAuthFlowService;
@@ -109,6 +113,25 @@ describe('ConnectionProviderOAuthFlowService', () => {
         {
           provide: getRepositoryToken(ConnectedAccountEntity),
           useValue: connectedAccountRepository,
+        },
+        {
+          // Recognizable, deterministic stub — wraps plaintext in a CIPHER()
+          // envelope so the assertions below can match the exact shape that
+          // would land in the database (enc:v1:<ciphertext>) without coupling
+          // to real AES output. Real prefix/round-trip behavior is asserted
+          // in connected-account-token-encryption.service.spec.ts.
+          provide: ConnectedAccountTokenEncryptionService,
+          useValue: {
+            encrypt: jest.fn(
+              (value: string) =>
+                `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${value})`,
+            ),
+            encryptNullable: jest.fn((value: string | null) =>
+              value === null
+                ? null
+                : `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${value})`,
+            ),
+          },
         },
       ],
     }).compile();
@@ -313,11 +336,14 @@ describe('ConnectionProviderOAuthFlowService', () => {
       expect(result.workspaceId).toBe('workspace-1');
       expect(result.applicationId).toBe('app-1');
 
+      // Tokens are persisted as ciphertext (enc:v1:<...>) — the entity
+      // never holds the plaintext that came back from the IDP. This is the
+      // load-bearing assertion for "encrypt at receipt".
       expect(connectedAccountRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           provider: ConnectedAccountProvider.APP,
-          accessToken: 'new_access',
-          refreshToken: 'new_refresh',
+          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(new_access)`,
+          refreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(new_refresh)`,
           connectionProviderId: 'provider-1',
           applicationId: 'app-1',
           workspaceId: 'workspace-1',
@@ -344,8 +370,8 @@ describe('ConnectionProviderOAuthFlowService', () => {
       expect(connectedAccountRepository.update).toHaveBeenCalledWith(
         { id: 'existing-account-id', workspaceId: 'workspace-1' },
         expect.objectContaining({
-          accessToken: 'new_access',
-          refreshToken: 'new_refresh',
+          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(new_access)`,
+          refreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(new_refresh)`,
           authFailedAt: null,
           visibility: 'user',
         }),
