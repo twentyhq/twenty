@@ -9,14 +9,25 @@ import {
   type FieldLinksValue,
   type FieldPhonesValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { ALLOWED_FULL_NAME_SUBFIELDS } from 'twenty-shared/constants';
 import {
+  ALLOWED_ADDRESS_SUBFIELDS,
   type AllowedAddressSubField,
   type AllowedFullNameSubField,
   type OrderBy,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+
+const isAllowedFullNameSubField = (
+  value: string | null | undefined,
+): value is AllowedFullNameSubField =>
+  ALLOWED_FULL_NAME_SUBFIELDS.includes(value as AllowedFullNameSubField);
+
+const isAllowedAddressSubField = (
+  value: string | null | undefined,
+): value is AllowedAddressSubField =>
+  ALLOWED_ADDRESS_SUBFIELDS.includes(value as AllowedAddressSubField);
 
 export const getOrderByForFieldMetadataType = (
   field: Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'settings'>,
@@ -25,11 +36,12 @@ export const getOrderByForFieldMetadataType = (
 ): RecordGqlOperationOrderBy => {
   switch (field.type) {
     case FieldMetadataType.FULL_NAME: {
-      const primarySubField = isDefined(subFieldName)
-        ? (subFieldName as AllowedFullNameSubField)
+      const primarySubField = isAllowedFullNameSubField(subFieldName)
+        ? subFieldName
         : FULL_NAME_DEFAULT_SORT_SUB_FIELD;
+      const [firstSubField, lastSubField] = ALLOWED_FULL_NAME_SUBFIELDS;
       const secondarySubField =
-        primarySubField === 'firstName' ? 'lastName' : 'firstName';
+        primarySubField === firstSubField ? lastSubField : firstSubField;
       return [
         {
           [field.name]: {
@@ -40,8 +52,8 @@ export const getOrderByForFieldMetadataType = (
       ];
     }
     case FieldMetadataType.ADDRESS: {
-      const subField = isDefined(subFieldName)
-        ? (subFieldName as AllowedAddressSubField)
+      const subField = isAllowedAddressSubField(subFieldName)
+        ? subFieldName
         : getDefaultSortSubFieldForAddress(field.settings);
       return [
         {

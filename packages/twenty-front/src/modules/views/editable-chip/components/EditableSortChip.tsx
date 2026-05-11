@@ -1,6 +1,6 @@
+import { FULL_NAME_DEFAULT_SORT_SUB_FIELD } from '@/object-metadata/constants/FullNameDefaultSortSubField';
 import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFieldMetadataItemByIdOrThrow';
 import { getDefaultSortSubFieldForAddress } from '@/object-metadata/utils/getDefaultSortSubFieldForAddress';
-import { getDefaultSortSubFieldForFullName } from '@/object-metadata/utils/getDefaultSortSubFieldForFullName';
 import { getEnabledAddressSubFields } from '@/object-metadata/utils/getEnabledAddressSubFields';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
@@ -18,9 +18,9 @@ import {
   type AllowedAddressSubField,
   type AllowedFullNameSubField,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   FieldMetadataType,
   ViewSortDirection,
@@ -30,7 +30,15 @@ type EditableSortChipProps = {
   recordSort: RecordSort;
 };
 
-type SubFieldOption = { value: string; label: string };
+type SubFieldOption = {
+  value: AllowedFullNameSubField | AllowedAddressSubField;
+  label: string;
+};
+
+type SubFieldState = {
+  options: SubFieldOption[];
+  resolvedValue: string;
+};
 
 const StyledSubFieldTrigger = styled.span`
   cursor: pointer;
@@ -38,10 +46,6 @@ const StyledSubFieldTrigger = styled.span`
   &:hover {
     text-decoration: underline;
   }
-`;
-
-const StyledDropdownContentPadding = styled.div`
-  padding: ${themeCssVariables.spacing[1]} 0;
 `;
 
 export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
@@ -56,16 +60,20 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
 
   const subFieldDropdownId = `sort-subfield-${recordSort.fieldMetadataId}`;
 
-  const subFieldOptions = useMemo<SubFieldOption[] | undefined>(() => {
+  const subFieldState = useMemo<SubFieldState | undefined>(() => {
     if (fieldMetadataItem.type === FieldMetadataType.FULL_NAME) {
       const labels: Record<AllowedFullNameSubField, string> = {
         firstName: t`First name`,
         lastName: t`Last name`,
       };
-      return ALLOWED_FULL_NAME_SUBFIELDS.map((value) => ({
-        value,
-        label: labels[value],
-      }));
+      return {
+        options: ALLOWED_FULL_NAME_SUBFIELDS.map((value) => ({
+          value,
+          label: labels[value],
+        })),
+        resolvedValue:
+          recordSort.subFieldName ?? FULL_NAME_DEFAULT_SORT_SUB_FIELD,
+      };
     }
     if (fieldMetadataItem.type === FieldMetadataType.ADDRESS) {
       const labels: Record<AllowedAddressSubField, string> = {
@@ -78,29 +86,26 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
         addressLat: t`Latitude`,
         addressLng: t`Longitude`,
       };
-      return getEnabledAddressSubFields(fieldMetadataItem.settings).map(
-        (value) => ({ value, label: labels[value] }),
-      );
-    }
-    return undefined;
-  }, [fieldMetadataItem.type, fieldMetadataItem.settings, t]);
-
-  const resolvedSubField = useMemo(() => {
-    if (recordSort.subFieldName != null) {
-      return recordSort.subFieldName;
-    }
-    if (fieldMetadataItem.type === FieldMetadataType.FULL_NAME) {
-      return getDefaultSortSubFieldForFullName();
-    }
-    if (fieldMetadataItem.type === FieldMetadataType.ADDRESS) {
-      return getDefaultSortSubFieldForAddress(fieldMetadataItem.settings);
+      return {
+        options: getEnabledAddressSubFields(fieldMetadataItem.settings).map(
+          (value) => ({ value, label: labels[value] }),
+        ),
+        resolvedValue:
+          recordSort.subFieldName ??
+          getDefaultSortSubFieldForAddress(fieldMetadataItem.settings),
+      };
     }
     return undefined;
   }, [
-    recordSort.subFieldName,
     fieldMetadataItem.type,
     fieldMetadataItem.settings,
+    recordSort.subFieldName,
+    t,
   ]);
+
+  const selectedSubFieldLabel = subFieldState?.options.find(
+    (option) => option.value === subFieldState.resolvedValue,
+  )?.label;
 
   const handleRemoveClick = () => {
     removeRecordSort(recordSort.fieldMetadataId);
@@ -121,12 +126,8 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     closeDropdown(subFieldDropdownId);
   };
 
-  const selectedSubFieldLabel = subFieldOptions?.find(
-    (option) => option.value === resolvedSubField,
-  )?.label;
-
   const subFieldNode =
-    subFieldOptions && selectedSubFieldLabel ? (
+    isDefined(subFieldState) && isDefined(selectedSubFieldLabel) ? (
       <Dropdown
         dropdownId={subFieldDropdownId}
         clickableComponent={
@@ -134,18 +135,16 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
         }
         dropdownComponents={
           <DropdownContent>
-            <StyledDropdownContentPadding>
-              <DropdownMenuItemsContainer>
-                {subFieldOptions.map((option) => (
-                  <MenuItemSelect
-                    key={option.value}
-                    text={option.label}
-                    selected={option.value === resolvedSubField}
-                    onClick={() => handleSubFieldSelect(option.value)}
-                  />
-                ))}
-              </DropdownMenuItemsContainer>
-            </StyledDropdownContentPadding>
+            <DropdownMenuItemsContainer>
+              {subFieldState.options.map((option) => (
+                <MenuItemSelect
+                  key={option.value}
+                  text={option.label}
+                  selected={option.value === subFieldState.resolvedValue}
+                  onClick={() => handleSubFieldSelect(option.value)}
+                />
+              ))}
+            </DropdownMenuItemsContainer>
           </DropdownContent>
         }
         dropdownOffset={{ y: 4, x: 0 }}
