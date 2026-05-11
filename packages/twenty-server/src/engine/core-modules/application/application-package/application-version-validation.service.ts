@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import semver from 'semver';
 import { isDefined } from 'twenty-shared/utils';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 
 export type VersionValidationFailureReason =
   | 'INVALID_REQUIRED_VERSION'
@@ -39,12 +38,8 @@ export class ApplicationVersionValidationService {
       };
     }
 
-    const migration =
-      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
-
-    const inferredServerVersion = isDefined(migration)
-      ? extractVersionFromCommandName(migration.name)
-      : undefined;
+    const inferredServerVersion =
+      await this.upgradeMigrationService.getInferredVersion();
 
     if (
       !isDefined(inferredServerVersion) ||
