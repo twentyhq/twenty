@@ -57,7 +57,7 @@ const GET_ROLES_QUERY = `
         expiresAt
         revokedAt
       }
-      permissionFlags {
+      permissionFlagGrants {
         __typename
         id
         flag

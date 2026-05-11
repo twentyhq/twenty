@@ -229,13 +229,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "permissionFlag": {
     "propertiesToCompare": [
-      "flag",
-      "roleUniversalIdentifier",
-    ],
-    "propertiesToStringify": [],
-  },
-  "permissionFlagDefinition": {
-    "propertiesToCompare": [
       "key",
       "label",
       "description",
@@ -245,6 +238,13 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isRelevantForUsers",
       "isRelevantForApiKeys",
       "isCustom",
+    ],
+    "propertiesToStringify": [],
+  },
+  "permissionFlagGrant": {
+    "propertiesToCompare": [
+      "flag",
+      "roleUniversalIdentifier",
     ],
     "propertiesToStringify": [],
   },
