@@ -137,12 +137,6 @@ export class FlatIndexValidatorService {
               userFriendlyMessage: msg`Field referenced in index does not exist`,
             });
           } else {
-            const compositeType = isCompositeUniversalFlatFieldMetadata(
-              relatedFlatField,
-            )
-              ? compositeTypeDefinitions.get(relatedFlatField.type)
-              : undefined;
-
             if (
               relatedFlatField.objectMetadataUniversalIdentifier !==
               flatIndexToValidate.objectMetadataUniversalIdentifier
@@ -155,6 +149,12 @@ export class FlatIndexValidatorService {
             }
 
             if (flatIndexToValidate.isUnique) {
+              const compositeType = isCompositeUniversalFlatFieldMetadata(
+                relatedFlatField,
+              )
+                ? compositeTypeDefinitions.get(relatedFlatField.type)
+                : undefined;
+
               const canUseDefaultValueInUniqueIndex = isDefined(compositeType)
                 ? isCompositeFieldDefaultValueCompatibleWithUniqueIndex({
                     fieldType:

@@ -18,9 +18,9 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { normalizeCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/normalize-composite-default-value.util';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 
-@RegisteredWorkspaceCommand('2.4.0', 1778000001000)
+@RegisteredWorkspaceCommand('2.5.0', 1778000001000)
 @Command({
-  name: 'upgrade:2-4:normalize-composite-field-defaults',
+  name: 'upgrade:2-5:normalize-composite-field-defaults',
   description:
     'Normalize composite field default values: remove empty-string values from metadata and backfill workspace data with NULL.',
 })

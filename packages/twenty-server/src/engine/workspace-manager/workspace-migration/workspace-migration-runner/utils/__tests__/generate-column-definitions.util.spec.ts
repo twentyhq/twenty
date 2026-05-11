@@ -269,26 +269,24 @@ describe('Generate Column Definitions', () => {
       });
 
       expect(columns).toHaveLength(4);
-      expect(columns).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            name: 'phonePrimaryPhoneNumber',
-            default: 'NULL',
-          }),
-          expect.objectContaining({
-            name: 'phonePrimaryPhoneCountryCode',
-            default: "'US'::text",
-          }),
-          expect.objectContaining({
-            name: 'phonePrimaryPhoneCallingCode',
-            default: "'+1'::text",
-          }),
-          expect.objectContaining({
-            name: 'phoneAdditionalPhones',
-            default: 'NULL',
-          }),
-        ]),
-      );
+      expect(columns).toEqual([
+        expect.objectContaining({
+          name: 'phonePrimaryPhoneNumber',
+          default: 'NULL',
+        }),
+        expect.objectContaining({
+          name: 'phonePrimaryPhoneCountryCode',
+          default: "'US'::text",
+        }),
+        expect.objectContaining({
+          name: 'phonePrimaryPhoneCallingCode',
+          default: "'+1'::text",
+        }),
+        expect.objectContaining({
+          name: 'phoneAdditionalPhones',
+          default: 'NULL',
+        }),
+      ]);
     });
 
     it('should serialize normalized unique phone defaults from metadata input', () => {
@@ -313,26 +311,24 @@ describe('Generate Column Definitions', () => {
       });
 
       expect(columns).toHaveLength(4);
-      expect(columns).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            name: 'phonePrimaryPhoneNumber',
-            default: 'NULL',
-          }),
-          expect.objectContaining({
-            name: 'phonePrimaryPhoneCountryCode',
-            default: "''::text",
-          }),
-          expect.objectContaining({
-            name: 'phonePrimaryPhoneCallingCode',
-            default: 'NULL',
-          }),
-          expect.objectContaining({
-            name: 'phoneAdditionalPhones',
-            default: 'NULL',
-          }),
-        ]),
-      );
+      expect(columns).toEqual([
+        expect.objectContaining({
+          name: 'phonePrimaryPhoneNumber',
+          default: 'NULL',
+        }),
+        expect.objectContaining({
+          name: 'phonePrimaryPhoneCountryCode',
+          default: "''::text",
+        }),
+        expect.objectContaining({
+          name: 'phonePrimaryPhoneCallingCode',
+          default: 'NULL',
+        }),
+        expect.objectContaining({
+          name: 'phoneAdditionalPhones',
+          default: 'NULL',
+        }),
+      ]);
     });
   });
 

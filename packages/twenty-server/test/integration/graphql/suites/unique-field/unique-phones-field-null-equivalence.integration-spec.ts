@@ -9,8 +9,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 const OBJECT_SINGULAR = 'uniquePhonesTestObject';
 const OBJECT_PLURAL = 'uniquePhonesTestObjects';
-// Custom object metadata maps to a physical table prefixed with `_`
-// (see computeTableName in src/engine/utils/compute-table-name.util.ts).
 const OBJECT_TABLE_NAME = `_${OBJECT_SINGULAR}`;
 const FIELD_NAME = 'phone';
 
