@@ -12,7 +12,6 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
-import { useMemo } from 'react';
 import { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from 'twenty-shared/constants';
 import {
   type AllowedAddressSubField,
@@ -61,7 +60,7 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
 
   const subFieldDropdownId = `sort-subfield-${recordSort.fieldMetadataId}`;
 
-  const subFieldState = useMemo<SubFieldState | undefined>(() => {
+  const buildSubFieldState = (): SubFieldState | undefined => {
     if (fieldMetadataItem.type === FieldMetadataType.FULL_NAME) {
       const labels: Record<AllowedFullNameSortSubField, string> = {
         firstName: t`First name`,
@@ -104,12 +103,9 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
       };
     }
     return undefined;
-  }, [
-    fieldMetadataItem.type,
-    fieldMetadataItem.settings,
-    recordSort.subFieldName,
-    t,
-  ]);
+  };
+
+  const subFieldState = buildSubFieldState();
 
   const selectedSubFieldLabel = subFieldState?.options.find(
     (option) => option.value === subFieldState.resolvedValue,
