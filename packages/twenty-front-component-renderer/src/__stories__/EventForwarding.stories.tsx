@@ -418,6 +418,73 @@ export const TextareaCaretPreservedMidString: Story = createComponentStory(
   },
 );
 
+export const FileInputSingle: Story = createComponentStory('file-input', {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId(
+      'file-input-component',
+      {},
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    const input = (await canvas.findByTestId(
+      'single-file-input',
+    )) as HTMLInputElement;
+
+    const file = new File(['hello world'], 'hello.txt', {
+      type: 'text/plain',
+      lastModified: 1700000000000,
+    });
+
+    await userEvent.upload(input, file);
+
+    await waitFor(
+      () => {
+        expect(canvas.getByTestId('single-file-count').textContent).toBe('1');
+        expect(canvas.getByTestId('single-file-name').textContent).toContain(
+          'hello.txt',
+        );
+        expect(canvas.getByTestId('single-file-name').textContent).toContain(
+          'text/plain',
+        );
+      },
+      { timeout: INTERACTION_TIMEOUT },
+    );
+  },
+});
+
+export const FileInputMultiple: Story = createComponentStory('file-input', {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId(
+      'file-input-component',
+      {},
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    const input = (await canvas.findByTestId(
+      'multi-file-input',
+    )) as HTMLInputElement;
+
+    const first = new File(['a'], 'one.png', { type: 'image/png' });
+    const second = new File(['bb'], 'two.png', { type: 'image/png' });
+
+    await userEvent.upload(input, [first, second]);
+
+    await waitFor(
+      () => {
+        expect(canvas.getByTestId('multi-file-count').textContent).toBe('2');
+        const list = canvas.getByTestId('multi-file-list');
+        expect(list.textContent).toContain('one.png');
+        expect(list.textContent).toContain('two.png');
+      },
+      { timeout: INTERACTION_TIMEOUT },
+    );
+  },
+});
+
 export const HostApiClosePanel: Story = createHostApiStory(
   async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);

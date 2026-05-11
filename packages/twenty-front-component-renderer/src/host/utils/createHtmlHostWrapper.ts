@@ -11,7 +11,10 @@ import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EVENT_TO_REACT } from '@/constants/EventToReact';
-import { type SerializedEventData } from '@/constants/SerializedEventData';
+import {
+  type SerializedEventData,
+  type SerializedFileData,
+} from '@/constants/SerializedEventData';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
@@ -67,6 +70,35 @@ const parseCssString = (
   }
 
   return style;
+};
+
+const serializeFileList = (files: unknown): SerializedFileData[] | undefined => {
+  if (!isObject(files)) return undefined;
+  const fileListLike = files as { length?: unknown } & Record<number, unknown>;
+  if (!isNumber(fileListLike.length)) return undefined;
+
+  const serialized: SerializedFileData[] = [];
+  for (let index = 0; index < fileListLike.length; index++) {
+    const file = fileListLike[index];
+    if (!isObject(file)) continue;
+    const fileRecord = file as Record<string, unknown>;
+    if (
+      !isString(fileRecord.name) ||
+      !isNumber(fileRecord.size) ||
+      !isString(fileRecord.type) ||
+      !isNumber(fileRecord.lastModified)
+    ) {
+      continue;
+    }
+    serialized.push({
+      name: fileRecord.name,
+      size: fileRecord.size,
+      type: fileRecord.type,
+      lastModified: fileRecord.lastModified,
+    });
+  }
+
+  return serialized;
 };
 
 const serializeEvent = (event: unknown): SerializedEventData => {
@@ -126,6 +158,9 @@ const serializeEvent = (event: unknown): SerializedEventData => {
     if (isBoolean(targetRecord.muted)) serialized.muted = targetRecord.muted;
     if (isNumber(targetRecord.playbackRate))
       serialized.playbackRate = targetRecord.playbackRate;
+
+    const files = serializeFileList(targetRecord.files);
+    if (isDefined(files)) serialized.files = files;
   }
 
   return serialized;
