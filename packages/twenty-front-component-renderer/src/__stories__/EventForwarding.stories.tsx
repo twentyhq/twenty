@@ -317,11 +317,6 @@ export const HostApiProgress: Story = createHostApiStory(
   },
 );
 
-// Regression coverage for #20409: typing in the middle of a pre-filled
-// <input>/<textarea> used to send the caret to the end on every keystroke
-// because the remote-DOM bridge re-applied the value via `el.value = X`.
-// We assert the visible value updates AND that selectionStart stays at the
-// expected mid-string position after the worker round-trip.
 const TYPING_TIMEOUT = 10000;
 
 const expectCaretAt = async (

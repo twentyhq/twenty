@@ -176,8 +176,6 @@ const FORCED_PROPS_BY_TAG: Record<string, Record<string, unknown>> = {
   iframe: { sandbox: '' },
 };
 
-// input types that have a text selection — others (checkbox, radio, file,
-// color, range...) don't need caret handling.
 const TEXT_LIKE_INPUT_TYPES = new Set([
   'text',
   'search',
@@ -198,9 +196,6 @@ const shouldPreserveCaret = (htmlTag: string, type: unknown): boolean => {
 
 type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;
 
-// The remote-DOM bridge applies value updates via `el.value = X`, which
-// resets the caret to the end. Skip the assignment when the DOM already
-// matches and otherwise restore the prior selection.
 const syncValuePreservingCaret = (
   element: CaretPreservingElement,
   nextValue: string,
@@ -216,9 +211,7 @@ const syncValuePreservingCaret = (
   if (isFocused && start !== null && end !== null) {
     try {
       element.setSelectionRange(start, end);
-    } catch {
-      // setSelectionRange throws on input types that don't support it (e.g. number)
-    }
+    } catch {}
   }
 };
 
@@ -233,8 +226,6 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
     const reactProps = filterProps(props);
 
     if (preservesCaret && shouldPreserveCaret(htmlTag, reactProps.type)) {
-      // Apply `value` imperatively via a ref callback so we can preserve the
-      // caret position on every prop update.
       const { value, defaultValue, ...rest } = reactProps as Record<
         string,
         unknown
