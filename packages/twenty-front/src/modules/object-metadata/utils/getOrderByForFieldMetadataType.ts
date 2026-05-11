@@ -33,11 +33,6 @@ export const getOrderByForFieldMetadataType = ({
       const secondarySubField =
         primarySubField === 'firstName' ? 'lastName' : 'firstName';
       const direction = orderByDirection ?? 'AscNullsLast';
-      // Each sub-field is its own array entry rather than two keys inside
-      // one object: Apollo's variable comparator (@wry/equality) is
-      // key-order-insensitive on objects, so swapping primary/secondary
-      // inside a single object would not trigger a refetch. Array element
-      // order, on the other hand, is compared positionally.
       return [
         { [field.name]: { [primarySubField]: direction } },
         { [field.name]: { [secondarySubField]: direction } },
