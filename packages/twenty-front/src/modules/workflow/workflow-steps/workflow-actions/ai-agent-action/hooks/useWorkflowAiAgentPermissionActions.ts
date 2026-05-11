@@ -60,7 +60,9 @@ export const useWorkflowAiAgentPermissionActions = ({
   const [upsertObjectPermissions] = useMutation(
     UpsertObjectPermissionsDocument,
   );
-  const [upsertPermissionFlagGrants] = useMutation(UpsertPermissionFlagGrantsDocument);
+  const [upsertPermissionFlagGrants] = useMutation(
+    UpsertPermissionFlagGrantsDocument,
+  );
 
   const roleId = workflowAiAgentActionAgent?.roleId;
 
@@ -305,7 +307,10 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     const ensuredRoleId = await ensureRoleId();
 
-    if (!ensuredRoleId || permissionFlagGrantKeys.includes(permissionFlagGrantKey)) {
+    if (
+      !ensuredRoleId ||
+      permissionFlagGrantKeys.includes(permissionFlagGrantKey)
+    ) {
       return;
     }
 
@@ -313,7 +318,10 @@ export const useWorkflowAiAgentPermissionActions = ({
       variables: {
         upsertPermissionFlagGrantsInput: {
           roleId: ensuredRoleId,
-          permissionFlagGrantKeys: [...permissionFlagGrantKeys, permissionFlagGrantKey],
+          permissionFlagGrantKeys: [
+            ...permissionFlagGrantKeys,
+            permissionFlagGrantKey,
+          ],
         },
       },
     });

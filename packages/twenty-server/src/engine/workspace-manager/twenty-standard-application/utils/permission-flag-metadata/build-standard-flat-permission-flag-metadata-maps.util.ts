@@ -8,10 +8,9 @@ import { STANDARD_FLAT_PERMISSION_FLAG_METADATA_BUILDERS_BY_KEY } from 'src/engi
 export const buildStandardFlatPermissionFlagMetadataMaps = (
   args: Omit<CreateStandardPermissionFlagArgs, 'context'>,
 ): FlatEntityMaps<FlatPermissionFlag> => {
-  const allPermissionFlagMetadatas: FlatPermissionFlag[] =
-    Object.values(
-      STANDARD_FLAT_PERMISSION_FLAG_METADATA_BUILDERS_BY_KEY,
-    ).map((builder) => builder(args));
+  const allPermissionFlagMetadatas: FlatPermissionFlag[] = Object.values(
+    STANDARD_FLAT_PERMISSION_FLAG_METADATA_BUILDERS_BY_KEY,
+  ).map((builder) => builder(args));
 
   let flatPermissionFlagMaps = createEmptyFlatEntityMaps();
 

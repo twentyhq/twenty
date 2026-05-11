@@ -38,8 +38,9 @@ const buildFlatDefinition = (
 const buildEmptyMaps = (): FlatEntityMaps<FlatPermissionFlag> =>
   createEmptyFlatEntityMaps() as unknown as FlatEntityMaps<FlatPermissionFlag>;
 
-const buildEmptyPermissionFlagGrantMaps = (): FlatEntityMaps<FlatPermissionFlagGrant> =>
-  createEmptyFlatEntityMaps() as unknown as FlatEntityMaps<FlatPermissionFlagGrant>;
+const buildEmptyPermissionFlagGrantMaps =
+  (): FlatEntityMaps<FlatPermissionFlagGrant> =>
+    createEmptyFlatEntityMaps() as unknown as FlatEntityMaps<FlatPermissionFlagGrant>;
 
 const buildFlatPermissionFlagGrant = (
   overrides: Partial<FlatPermissionFlagGrant> = {},
@@ -377,8 +378,6 @@ describe('FlatPermissionFlagValidatorService', () => {
 
   // ALL_METADATA_NAME is referenced as a sanity check the metadata name exists
   it('uses the registered ALL_METADATA_NAME entry', () => {
-    expect(ALL_METADATA_NAME.permissionFlag).toBe(
-      'permissionFlag',
-    );
+    expect(ALL_METADATA_NAME.permissionFlag).toBe('permissionFlag');
   });
 });

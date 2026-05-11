@@ -8,9 +8,7 @@ import {
 export const STANDARD_FLAT_PERMISSION_FLAG_METADATA_BUILDERS_BY_KEY =
   Object.fromEntries(
     (
-      Object.keys(
-        STANDARD_PERMISSION_FLAG,
-      ) as AllStandardPermissionFlagName[]
+      Object.keys(STANDARD_PERMISSION_FLAG) as AllStandardPermissionFlagName[]
     ).map((permissionFlagName) => [
       permissionFlagName,
       (args: Omit<CreateStandardPermissionFlagArgs, 'context'>) =>

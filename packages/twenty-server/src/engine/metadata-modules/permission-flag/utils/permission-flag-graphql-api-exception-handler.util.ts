@@ -11,9 +11,7 @@ import {
   PermissionFlagExceptionCode,
 } from 'src/engine/metadata-modules/permission-flag/permission-flag.exception';
 
-export const permissionFlagGraphqlApiExceptionHandler = (
-  error: Error,
-) => {
+export const permissionFlagGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof PermissionFlagException) {
     switch (error.code) {
       case PermissionFlagExceptionCode.PERMISSION_FLAG_NOT_FOUND:

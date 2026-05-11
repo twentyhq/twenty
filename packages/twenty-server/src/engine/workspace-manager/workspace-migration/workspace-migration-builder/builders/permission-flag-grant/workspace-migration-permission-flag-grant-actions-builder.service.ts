@@ -78,7 +78,8 @@ export class WorkspaceMigrationPermissionFlagGrantActionsBuilderService extends 
       action: {
         type: 'delete',
         metadataName: 'permissionFlagGrant',
-        universalIdentifier: flatPermissionFlagGrantToValidate.universalIdentifier,
+        universalIdentifier:
+          flatPermissionFlagGrantToValidate.universalIdentifier,
       },
     };
   }
@@ -105,12 +106,13 @@ export class WorkspaceMigrationPermissionFlagGrantActionsBuilderService extends 
 
     const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updatePermissionFlagGrantAction: UniversalUpdatePermissionFlagGrantAction = {
-      type: 'update',
-      metadataName: 'permissionFlagGrant',
-      universalIdentifier,
-      update: flatEntityUpdate,
-    };
+    const updatePermissionFlagGrantAction: UniversalUpdatePermissionFlagGrantAction =
+      {
+        type: 'update',
+        metadataName: 'permissionFlagGrant',
+        universalIdentifier,
+        update: flatEntityUpdate,
+      };
 
     return {
       status: 'success',

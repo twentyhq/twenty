@@ -8,10 +8,7 @@ import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-fla
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      ApplicationEntity,
-      PermissionFlagEntity,
-    ]),
+    TypeOrmModule.forFeature([ApplicationEntity, PermissionFlagEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [WorkspaceFlatPermissionFlagMapCacheService],

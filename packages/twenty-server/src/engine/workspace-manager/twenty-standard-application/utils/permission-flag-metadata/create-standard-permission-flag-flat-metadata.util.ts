@@ -21,8 +21,7 @@ export const createStandardPermissionFlagFlatMetadata = ({
   twentyStandardApplicationId,
   now,
 }: CreateStandardPermissionFlagArgs): FlatPermissionFlag => {
-  const metadata =
-    STANDARD_PERMISSION_FLAG[permissionFlagName];
+  const metadata = STANDARD_PERMISSION_FLAG[permissionFlagName];
 
   return {
     id: v4(),

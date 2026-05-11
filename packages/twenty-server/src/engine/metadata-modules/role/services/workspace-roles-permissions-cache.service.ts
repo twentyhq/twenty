@@ -117,7 +117,8 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     for (const role of roles) {
       const roleObjectPermissions =
         objectPermissionsByRoleId.get(role.id) ?? [];
-      const rolePermissionFlagGrants = permissionFlagGrantsByRoleId.get(role.id) ?? [];
+      const rolePermissionFlagGrants =
+        permissionFlagGrantsByRoleId.get(role.id) ?? [];
       const roleFieldPermissions = fieldPermissionsByRoleId.get(role.id) ?? [];
       const roleRowLevelPermissionPredicates =
         rowLevelPermissionPredicatesByRoleId.get(role.id) ?? [];
@@ -275,7 +276,8 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     const hasPermissionFromRole = role.canUpdateAllSettings;
     const hasPermissionFromSettingPermissions = isDefined(
       permissionFlagGrants.find(
-        (permissionFlagGrant) => permissionFlagGrant.flag === permissionFlagType,
+        (permissionFlagGrant) =>
+          permissionFlagGrant.flag === permissionFlagType,
       ),
     );
 

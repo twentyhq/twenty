@@ -62,10 +62,7 @@ export class PermissionFlagResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PermissionFlagDTO | null> {
-    return await this.permissionFlagService.findById(
-      id,
-      workspace.id,
-    );
+    return await this.permissionFlagService.findById(id, workspace.id);
   }
 
   @Mutation(() => PermissionFlagDTO)
@@ -76,10 +73,7 @@ export class PermissionFlagResolver {
   ): Promise<PermissionFlagDTO> {
     await this.assertCustomPermissionFlagGrantsEnabled(workspace.id);
 
-    return await this.permissionFlagService.create(
-      input,
-      workspace.id,
-    );
+    return await this.permissionFlagService.create(input, workspace.id);
   }
 
   @Mutation(() => PermissionFlagDTO)
@@ -90,10 +84,7 @@ export class PermissionFlagResolver {
   ): Promise<PermissionFlagDTO> {
     await this.assertCustomPermissionFlagGrantsEnabled(workspace.id);
 
-    return await this.permissionFlagService.update(
-      input,
-      workspace.id,
-    );
+    return await this.permissionFlagService.update(input, workspace.id);
   }
 
   @Mutation(() => PermissionFlagDTO)

@@ -25,9 +25,7 @@ export class WorkspaceFlatPermissionFlagMapCacheService extends WorkspaceCachePr
     super();
   }
 
-  async computeForCache(
-    workspaceId: string,
-  ): Promise<FlatPermissionFlagMaps> {
+  async computeForCache(workspaceId: string): Promise<FlatPermissionFlagMaps> {
     const [permissionFlags, applications] = await Promise.all([
       this.permissionFlagRepository.find({
         where: { workspaceId },
@@ -46,11 +44,10 @@ export class WorkspaceFlatPermissionFlagMapCacheService extends WorkspaceCachePr
     const flatPermissionFlagMaps = createEmptyFlatEntityMaps();
 
     for (const definition of permissionFlags) {
-      const flatDefinition =
-        fromPermissionFlagEntityToFlatPermissionFlag({
-          entity: definition,
-          applicationIdToUniversalIdentifierMap,
-        });
+      const flatDefinition = fromPermissionFlagEntityToFlatPermissionFlag({
+        entity: definition,
+        applicationIdToUniversalIdentifierMap,
+      });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatDefinition,

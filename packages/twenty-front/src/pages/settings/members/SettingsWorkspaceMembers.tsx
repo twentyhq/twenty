@@ -23,7 +23,9 @@ const MEMBERS_TAB_ROLES_ID = 'roles';
 export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
 
-  const hasRolesPermission = useHasPermissionFlagGrant(PermissionFlagType.ROLES);
+  const hasRolesPermission = useHasPermissionFlagGrant(
+    PermissionFlagType.ROLES,
+  );
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,

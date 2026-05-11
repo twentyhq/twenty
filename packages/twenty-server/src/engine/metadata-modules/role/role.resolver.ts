@@ -234,7 +234,9 @@ export class RoleResolver {
         workspaceId: workspace.id,
         input: upsertPermissionFlagGrantsInput,
       });
-    return flatPermissionFlagGrants.map(fromFlatPermissionFlagGrantToPermissionFlagGrantDto);
+    return flatPermissionFlagGrants.map(
+      fromFlatPermissionFlagGrantToPermissionFlagGrantDto,
+    );
   }
 
   @Mutation(() => [FieldPermissionDTO])

@@ -7,7 +7,9 @@ import {
 
 export const useCanPersistViewChanges = () => {
   const { currentView } = useGetCurrentViewOnly();
-  const hasViewsPermission = useHasPermissionFlagGrant(PermissionFlagType.VIEWS);
+  const hasViewsPermission = useHasPermissionFlagGrant(
+    PermissionFlagType.VIEWS,
+  );
 
   if (!currentView) {
     return { canPersistChanges: false };

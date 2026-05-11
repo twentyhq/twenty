@@ -60,9 +60,7 @@ export class PermissionFlagService {
       return null;
     }
 
-    return fromFlatPermissionFlagToPermissionFlagDto(
-      flatPermissionFlag,
-    );
+    return fromFlatPermissionFlagToPermissionFlagDto(flatPermissionFlag);
   }
 
   async create(
@@ -75,13 +73,11 @@ export class PermissionFlagService {
       );
 
     const flatToCreate =
-      fromCreatePermissionFlagInputToFlatPermissionFlagToCreate(
-        {
-          createPermissionFlagInput: input,
-          workspaceId,
-          flatApplication: workspaceCustomFlatApplication,
-        },
-      );
+      fromCreatePermissionFlagInputToFlatPermissionFlagToCreate({
+        createPermissionFlagInput: input,
+        workspaceId,
+        flatApplication: workspaceCustomFlatApplication,
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -140,12 +136,10 @@ export class PermissionFlagService {
       );
 
     const flatToUpdate =
-      fromUpdatePermissionFlagInputToFlatPermissionFlagToUpdateOrThrow(
-        {
-          flatPermissionFlagMaps: existingMaps,
-          updatePermissionFlagInput: input,
-        },
-      );
+      fromUpdatePermissionFlagInputToFlatPermissionFlagToUpdateOrThrow({
+        flatPermissionFlagMaps: existingMaps,
+        updatePermissionFlagInput: input,
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -186,10 +180,7 @@ export class PermissionFlagService {
     );
   }
 
-  async delete(
-    id: string,
-    workspaceId: string,
-  ): Promise<PermissionFlagDTO> {
+  async delete(id: string, workspaceId: string): Promise<PermissionFlagDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -204,12 +195,10 @@ export class PermissionFlagService {
       );
 
     const flatToDelete =
-      fromDeletePermissionFlagInputToFlatPermissionFlagOrThrow(
-        {
-          flatPermissionFlagMaps: existingMaps,
-          permissionFlagId: id,
-        },
-      );
+      fromDeletePermissionFlagInputToFlatPermissionFlagOrThrow({
+        flatPermissionFlagMaps: existingMaps,
+        permissionFlagId: id,
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -234,8 +223,6 @@ export class PermissionFlagService {
       );
     }
 
-    return fromFlatPermissionFlagToPermissionFlagDto(
-      flatToDelete,
-    );
+    return fromFlatPermissionFlagToPermissionFlagDto(flatToDelete);
   }
 }

@@ -214,12 +214,13 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
 
     for (const permissionFlagGrant of roleManifest.permissionFlagGrants ?? []) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity: fromPermissionFlagGrantToUniversalFlatPermissionFlagGrant({
-          permissionFlagGrant,
-          roleUniversalIdentifier: roleManifest.universalIdentifier,
-          applicationUniversalIdentifier,
-          now,
-        }),
+        universalFlatEntity:
+          fromPermissionFlagGrantToUniversalFlatPermissionFlagGrant({
+            permissionFlagGrant,
+            roleUniversalIdentifier: roleManifest.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatPermissionFlagGrantMaps,
       });

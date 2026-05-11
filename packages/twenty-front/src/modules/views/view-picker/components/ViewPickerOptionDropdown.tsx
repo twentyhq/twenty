@@ -53,7 +53,9 @@ export const ViewPickerOptionDropdown = ({
   const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,
   );
-  const hasViewsPermission = useHasPermissionFlagGrant(PermissionFlagType.VIEWS);
+  const hasViewsPermission = useHasPermissionFlagGrant(
+    PermissionFlagType.VIEWS,
+  );
 
   const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
   const { navigationMenuItems, currentWorkspaceMemberId } =

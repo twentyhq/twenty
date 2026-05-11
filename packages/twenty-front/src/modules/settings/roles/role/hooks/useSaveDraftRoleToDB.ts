@@ -49,7 +49,9 @@ export const useSaveDraftRoleToDB = ({
 }) => {
   const [createRole] = useMutation(CreateOneRoleDocument);
   const [updateRole] = useMutation(UpdateOneRoleDocument);
-  const [upsertPermissionFlagGrants] = useMutation(UpsertPermissionFlagGrantsDocument);
+  const [upsertPermissionFlagGrants] = useMutation(
+    UpsertPermissionFlagGrantsDocument,
+  );
   const [upsertObjectPermissions] = useMutation(
     UpsertObjectPermissionsDocument,
   );

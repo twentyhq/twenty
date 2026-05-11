@@ -8,25 +8,24 @@ import {
   PermissionFlagExceptionCode,
 } from 'src/engine/metadata-modules/permission-flag/permission-flag.exception';
 
-export const fromDeletePermissionFlagInputToFlatPermissionFlagOrThrow =
-  ({
-    flatPermissionFlagMaps,
-    permissionFlagId,
-  }: {
-    flatPermissionFlagMaps: FlatEntityMaps<FlatPermissionFlag>;
-    permissionFlagId: string;
-  }): FlatPermissionFlag => {
-    const existing = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: permissionFlagId,
-      flatEntityMaps: flatPermissionFlagMaps,
-    });
+export const fromDeletePermissionFlagInputToFlatPermissionFlagOrThrow = ({
+  flatPermissionFlagMaps,
+  permissionFlagId,
+}: {
+  flatPermissionFlagMaps: FlatEntityMaps<FlatPermissionFlag>;
+  permissionFlagId: string;
+}): FlatPermissionFlag => {
+  const existing = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: permissionFlagId,
+    flatEntityMaps: flatPermissionFlagMaps,
+  });
 
-    if (!isDefined(existing)) {
-      throw new PermissionFlagException(
-        'Permission flag definition not found',
-        PermissionFlagExceptionCode.PERMISSION_FLAG_NOT_FOUND,
-      );
-    }
+  if (!isDefined(existing)) {
+    throw new PermissionFlagException(
+      'Permission flag definition not found',
+      PermissionFlagExceptionCode.PERMISSION_FLAG_NOT_FOUND,
+    );
+  }
 
-    return existing;
-  };
+  return existing;
+};

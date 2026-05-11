@@ -29,7 +29,9 @@ export const WorkflowAiAgentPermissionsFlagList = ({
   return (
     <SidePanelGroup heading={title}>
       {permissions.map((permission) => {
-        const isEnabled = enabledPermissionFlagGrantKeys.includes(permission.key);
+        const isEnabled = enabledPermissionFlagGrantKeys.includes(
+          permission.key,
+        );
 
         return (
           <WorkflowAiAgentPermissionsFlagRow

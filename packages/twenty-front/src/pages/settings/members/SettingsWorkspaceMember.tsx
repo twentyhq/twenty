@@ -54,7 +54,8 @@ export const SettingsWorkspaceMember = () => {
   const [impersonate] = useMutation(ImpersonateDocument);
   const isImpersonating = useAtomStateValue(isImpersonatingState);
   const canImpersonate =
-    useHasPermissionFlagGrant(PermissionFlagType.IMPERSONATE) && !isImpersonating;
+    useHasPermissionFlagGrant(PermissionFlagType.IMPERSONATE) &&
+    !isImpersonating;
 
   const {
     roles,

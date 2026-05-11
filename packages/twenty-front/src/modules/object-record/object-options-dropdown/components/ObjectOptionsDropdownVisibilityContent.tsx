@@ -36,7 +36,9 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
   const { currentView } = useGetCurrentViewOnly();
   const { updateCurrentView } = useUpdateCurrentView();
   const { copyToClipboard } = useCopyToClipboard();
-  const hasViewsPermission = useHasPermissionFlagGrant(PermissionFlagType.VIEWS);
+  const hasViewsPermission = useHasPermissionFlagGrant(
+    PermissionFlagType.VIEWS,
+  );
   const { canPersistChanges } = useCanPersistViewChanges();
 
   const selectedItemId = useAtomComponentStateValue(

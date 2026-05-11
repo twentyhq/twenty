@@ -31,7 +31,8 @@ const renderHooks = (
   onboardingStatus: OnboardingStatus,
   withCurrentBillingSubscription: boolean,
   withOneWorkspaceMember = true,
-  permissionFlagGrants = mockedUserData.currentUserWorkspace.permissionFlagGrants,
+  permissionFlagGrants = mockedUserData.currentUserWorkspace
+    .permissionFlagGrants,
 ) => {
   const { result } = renderHook(
     () => {

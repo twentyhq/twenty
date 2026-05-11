@@ -27,7 +27,8 @@ export class FlatPermissionFlagGrantValidatorService {
   >): FailedFlatEntityValidation<'permissionFlagGrant', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        universalIdentifier: flatPermissionFlagGrantToValidate.universalIdentifier,
+        universalIdentifier:
+          flatPermissionFlagGrantToValidate.universalIdentifier,
         roleUniversalIdentifier:
           flatPermissionFlagGrantToValidate.roleUniversalIdentifier,
       },
@@ -36,7 +37,8 @@ export class FlatPermissionFlagGrantValidatorService {
     });
 
     const existingByUniversalId = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: flatPermissionFlagGrantToValidate.universalIdentifier,
+      universalIdentifier:
+        flatPermissionFlagGrantToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatPermissionFlagGrantMaps,
     });
 
@@ -49,7 +51,8 @@ export class FlatPermissionFlagGrantValidatorService {
     }
 
     const referencedRole = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: flatPermissionFlagGrantToValidate.roleUniversalIdentifier,
+      universalIdentifier:
+        flatPermissionFlagGrantToValidate.roleUniversalIdentifier,
       flatEntityMaps: flatRoleMaps,
     });
 
@@ -124,10 +127,12 @@ export class FlatPermissionFlagGrantValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.permissionFlagGrant
   >): FailedFlatEntityValidation<'permissionFlagGrant', 'update'> {
-    const existingFlatPermissionFlagGrant = findFlatEntityByUniversalIdentifier({
-      universalIdentifier,
-      flatEntityMaps: optimisticFlatPermissionFlagGrantMaps,
-    });
+    const existingFlatPermissionFlagGrant = findFlatEntityByUniversalIdentifier(
+      {
+        universalIdentifier,
+        flatEntityMaps: optimisticFlatPermissionFlagGrantMaps,
+      },
+    );
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -153,7 +158,8 @@ export class FlatPermissionFlagGrantValidatorService {
     };
 
     const referencedRole = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: updatedFlatPermissionFlagGrant.roleUniversalIdentifier,
+      universalIdentifier:
+        updatedFlatPermissionFlagGrant.roleUniversalIdentifier,
       flatEntityMaps: flatRoleMaps,
     });
 
@@ -233,10 +239,12 @@ export class FlatPermissionFlagGrantValidatorService {
       type: 'delete',
     });
 
-    const existingFlatPermissionFlagGrant = findFlatEntityByUniversalIdentifier({
-      universalIdentifier,
-      flatEntityMaps: optimisticFlatPermissionFlagGrantMaps,
-    });
+    const existingFlatPermissionFlagGrant = findFlatEntityByUniversalIdentifier(
+      {
+        universalIdentifier,
+        flatEntityMaps: optimisticFlatPermissionFlagGrantMaps,
+      },
+    );
 
     if (!isDefined(existingFlatPermissionFlagGrant)) {
       validationResult.errors.push({
@@ -246,7 +254,8 @@ export class FlatPermissionFlagGrantValidatorService {
       });
     } else {
       const referencedRole = findFlatEntityByUniversalIdentifier({
-        universalIdentifier: existingFlatPermissionFlagGrant.roleUniversalIdentifier,
+        universalIdentifier:
+          existingFlatPermissionFlagGrant.roleUniversalIdentifier,
         flatEntityMaps: flatRoleMaps,
       });
 

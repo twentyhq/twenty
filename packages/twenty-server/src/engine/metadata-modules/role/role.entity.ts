@@ -82,7 +82,8 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
 
   @OneToMany(
     () => PermissionFlagGrantEntity,
-    (permissionFlagGrant: PermissionFlagGrantEntity) => permissionFlagGrant.role,
+    (permissionFlagGrant: PermissionFlagGrantEntity) =>
+      permissionFlagGrant.role,
   )
   permissionFlagGrants: Relation<PermissionFlagGrantEntity[]>;
 

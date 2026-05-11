@@ -264,7 +264,4 @@ export const STANDARD_PERMISSION_FLAG = {
     isRelevantForUsers: false,
     isRelevantForApiKeys: false,
   },
-} as const satisfies Record<
-  PermissionFlagType,
-  StandardPermissionFlagMetadata
->;
+} as const satisfies Record<PermissionFlagType, StandardPermissionFlagMetadata>;

@@ -204,16 +204,15 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     },
   });
 
-  const flatPermissionFlagMaps =
-    buildStandardFlatPermissionFlagMetadataMaps({
-      now,
-      workspaceId,
-      twentyStandardApplicationId,
-      standardObjectMetadataRelatedEntityIds,
-      dependencyFlatEntityMaps: {
-        flatPermissionFlagGrantMaps: createEmptyFlatEntityMaps(),
-      },
-    });
+  const flatPermissionFlagMaps = buildStandardFlatPermissionFlagMetadataMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps: {
+      flatPermissionFlagGrantMaps: createEmptyFlatEntityMaps(),
+    },
+  });
 
   const allFlatEntityMaps: TwentyStandardAllFlatEntityMaps = {
     flatViewFieldMaps,

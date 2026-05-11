@@ -6,34 +6,38 @@ import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-m
 import { type CreatePermissionFlagGrantInput } from 'src/engine/metadata-modules/permission-flag-grant/dtos/create-permission-flag-grant.input';
 import { type UniversalFlatPermissionFlagGrant } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-permission-flag-grant.type';
 
-export const fromCreatePermissionFlagGrantInputToFlatPermissionFlagGrantToCreate = ({
-  createPermissionFlagGrantInput,
-  flatApplication,
-  flatRoleMaps,
-}: {
-  createPermissionFlagGrantInput: CreatePermissionFlagGrantInput;
-  flatApplication: FlatApplication;
-} & Pick<AllFlatEntityMaps, 'flatRoleMaps'>): UniversalFlatPermissionFlagGrant & {
-  id: string;
-} => {
-  const { roleId, flag, universalIdentifier } = createPermissionFlagGrantInput;
-  const now = new Date().toISOString();
+export const fromCreatePermissionFlagGrantInputToFlatPermissionFlagGrantToCreate =
+  ({
+    createPermissionFlagGrantInput,
+    flatApplication,
+    flatRoleMaps,
+  }: {
+    createPermissionFlagGrantInput: CreatePermissionFlagGrantInput;
+    flatApplication: FlatApplication;
+  } & Pick<
+    AllFlatEntityMaps,
+    'flatRoleMaps'
+  >): UniversalFlatPermissionFlagGrant & {
+    id: string;
+  } => {
+    const { roleId, flag, universalIdentifier } =
+      createPermissionFlagGrantInput;
+    const now = new Date().toISOString();
 
-  const { roleUniversalIdentifier } = resolveEntityRelationUniversalIdentifiers(
-    {
-      metadataName: 'permissionFlagGrant',
-      foreignKeyValues: { roleId },
-      flatEntityMaps: { flatRoleMaps },
-    },
-  );
+    const { roleUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'permissionFlagGrant',
+        foreignKeyValues: { roleId },
+        flatEntityMaps: { flatRoleMaps },
+      });
 
-  return {
-    id: v4(),
-    flag,
-    universalIdentifier: universalIdentifier ?? v4(),
-    applicationUniversalIdentifier: flatApplication.universalIdentifier,
-    roleUniversalIdentifier,
-    createdAt: now,
-    updatedAt: now,
+    return {
+      id: v4(),
+      flag,
+      universalIdentifier: universalIdentifier ?? v4(),
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      roleUniversalIdentifier,
+      createdAt: now,
+      updatedAt: now,
+    };
   };
-};

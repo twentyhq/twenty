@@ -54,8 +54,7 @@ export class BackfillStandardPermissionFlagsCommand extends ActiveOrSuspendedWor
       });
 
     const standardDefinitions = Object.values(
-      standardAllFlatEntityMaps.flatPermissionFlagMaps
-        .byUniversalIdentifier,
+      standardAllFlatEntityMaps.flatPermissionFlagMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
     const definitionsToCreate = standardDefinitions.filter(

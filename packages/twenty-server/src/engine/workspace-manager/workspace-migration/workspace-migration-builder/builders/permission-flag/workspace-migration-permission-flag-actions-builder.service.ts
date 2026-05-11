@@ -39,8 +39,7 @@ export class WorkspaceMigrationPermissionFlagActionsBuilderService extends Works
       };
     }
 
-    const { flatEntityToValidate: flatPermissionFlagToValidate } =
-      args;
+    const { flatEntityToValidate: flatPermissionFlagToValidate } = args;
 
     return {
       status: 'success',
@@ -72,16 +71,14 @@ export class WorkspaceMigrationPermissionFlagActionsBuilderService extends Works
       };
     }
 
-    const { flatEntityToValidate: flatPermissionFlagToValidate } =
-      args;
+    const { flatEntityToValidate: flatPermissionFlagToValidate } = args;
 
     return {
       status: 'success',
       action: {
         type: 'delete',
         metadataName: 'permissionFlag',
-        universalIdentifier:
-          flatPermissionFlagToValidate.universalIdentifier,
+        universalIdentifier: flatPermissionFlagToValidate.universalIdentifier,
       },
     };
   }

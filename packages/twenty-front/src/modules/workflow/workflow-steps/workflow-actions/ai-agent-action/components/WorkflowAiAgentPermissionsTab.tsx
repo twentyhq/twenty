@@ -99,7 +99,9 @@ export const WorkflowAiAgentPermissionsTab = ({
   );
   const objectPermissions = role?.objectPermissions || [];
   const permissionFlagGrantKeys =
-    role?.permissionFlagGrants?.map((permissionFlagGrant) => permissionFlagGrant.flag) ?? [];
+    role?.permissionFlagGrants?.map(
+      (permissionFlagGrant) => permissionFlagGrant.flag,
+    ) ?? [];
   const hasRoleWithPermissions =
     isDefined(workflowAiAgentActionAgent?.roleId) &&
     (objectPermissions.length > 0 || permissionFlagGrantKeys.length > 0);

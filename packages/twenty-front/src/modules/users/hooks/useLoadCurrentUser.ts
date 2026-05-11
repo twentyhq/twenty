@@ -74,7 +74,8 @@ export const useLoadCurrentUser = () => {
 
     if (isDefined(user.currentUserWorkspace)) {
       setCurrentUserWorkspace({
-        permissionFlagGrants: user.currentUserWorkspace.permissionFlagGrants ?? [],
+        permissionFlagGrants:
+          user.currentUserWorkspace.permissionFlagGrants ?? [],
         twoFactorAuthenticationMethodSummary:
           user.currentUserWorkspace.twoFactorAuthenticationMethodSummary ?? [],
         objectsPermissions:

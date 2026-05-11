@@ -12,10 +12,7 @@ import { type PermissionFlagPermissionType } from 'src/engine/metadata-modules/p
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('permissionFlag')
-@Unique('IDX_PERMISSION_FLAG_KEY_WORKSPACE_ID_UNIQUE', [
-  'key',
-  'workspaceId',
-])
+@Unique('IDX_PERMISSION_FLAG_KEY_WORKSPACE_ID_UNIQUE', ['key', 'workspaceId'])
 @Index('IDX_PERMISSION_FLAG_APPLICATION_ID', ['applicationId'])
 export class PermissionFlagEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')

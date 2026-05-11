@@ -20,10 +20,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FlatPermissionFlagModule,
     PermissionsModule,
   ],
-  providers: [
-    PermissionFlagService,
-    PermissionFlagResolver,
-  ],
+  providers: [PermissionFlagService, PermissionFlagResolver],
   exports: [PermissionFlagService],
 })
 export class PermissionFlagModule {}

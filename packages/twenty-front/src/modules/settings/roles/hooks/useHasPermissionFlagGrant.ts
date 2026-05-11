@@ -6,7 +6,9 @@ import {
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useHasPermissionFlagGrant = (permissionFlagGrant?: PermissionFlagType) => {
+export const useHasPermissionFlagGrant = (
+  permissionFlagGrant?: PermissionFlagType,
+) => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
 

@@ -66,8 +66,6 @@ export class PermissionFlagSyncableEntityFastInstanceCommand
     await queryRunner.query(
       `DROP INDEX IF EXISTS "core"."IDX_PERMISSION_FLAG_APPLICATION_ID"`,
     );
-    await queryRunner.query(
-      `DROP TABLE IF EXISTS "core"."permissionFlag"`,
-    );
+    await queryRunner.query(`DROP TABLE IF EXISTS "core"."permissionFlag"`);
   }
 }

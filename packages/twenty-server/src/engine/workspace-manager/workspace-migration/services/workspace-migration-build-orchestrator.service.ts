@@ -562,8 +562,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
     }
 
     if (isDefined(flatPermissionFlagGrantMaps)) {
-      const { from: fromFlatPermissionFlagGrantMaps, to: toFlatPermissionFlagGrantMaps } =
-        flatPermissionFlagGrantMaps;
+      const {
+        from: fromFlatPermissionFlagGrantMaps,
+        to: toFlatPermissionFlagGrantMaps,
+      } = flatPermissionFlagGrantMaps;
 
       const permissionFlagGrantResult =
         await this.workspaceMigrationPermissionFlagGrantActionsBuilderService.validateAndBuild(
@@ -582,15 +584,14 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...permissionFlagGrantResult.errors,
         );
       } else {
-        orchestratorActionsReport.permissionFlagGrant = permissionFlagGrantResult.actions;
+        orchestratorActionsReport.permissionFlagGrant =
+          permissionFlagGrantResult.actions;
       }
     }
 
     if (isDefined(flatPermissionFlagMaps)) {
-      const {
-        from: fromFlatPermissionFlagMaps,
-        to: toFlatPermissionFlagMaps,
-      } = flatPermissionFlagMaps;
+      const { from: fromFlatPermissionFlagMaps, to: toFlatPermissionFlagMaps } =
+        flatPermissionFlagMaps;
 
       const permissionFlagResult =
         await this.workspaceMigrationPermissionFlagActionsBuilderService.validateAndBuild(
@@ -609,8 +610,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...permissionFlagResult.errors,
         );
       } else {
-        orchestratorActionsReport.permissionFlag =
-          permissionFlagResult.actions;
+        orchestratorActionsReport.permissionFlag = permissionFlagResult.actions;
       }
     }
 
@@ -1023,12 +1023,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ///
 
           // Permission flag definitions
-          ...aggregatedOrchestratorActionsReport.permissionFlag
-            .delete,
-          ...aggregatedOrchestratorActionsReport.permissionFlag
-            .create,
-          ...aggregatedOrchestratorActionsReport.permissionFlag
-            .update,
+          ...aggregatedOrchestratorActionsReport.permissionFlag.delete,
+          ...aggregatedOrchestratorActionsReport.permissionFlag.create,
+          ...aggregatedOrchestratorActionsReport.permissionFlag.update,
           ///
 
           // Agents

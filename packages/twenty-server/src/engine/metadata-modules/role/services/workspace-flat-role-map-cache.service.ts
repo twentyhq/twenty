@@ -149,7 +149,8 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
           ...roleEntity,
           roleTargets: roleTargetsByRoleId.get(roleEntity.id) || [],
           objectPermissions: objectPermissionsByRoleId.get(roleEntity.id) || [],
-          permissionFlagGrants: permissionFlagGrantsByRoleId.get(roleEntity.id) || [],
+          permissionFlagGrants:
+            permissionFlagGrantsByRoleId.get(roleEntity.id) || [],
           fieldPermissions: fieldPermissionsByRoleId.get(roleEntity.id) || [],
           rowLevelPermissionPredicates:
             rowLevelPermissionPredicatesByRoleId.get(roleEntity.id) || [],

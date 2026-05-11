@@ -71,9 +71,10 @@ export const fromRoleEntityToFlatRole = ({
     objectPermissionUniversalIdentifiers: roleEntity.objectPermissions.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
-    permissionFlagGrantUniversalIdentifiers: roleEntity.permissionFlagGrants.map(
-      ({ universalIdentifier }) => universalIdentifier,
-    ),
+    permissionFlagGrantUniversalIdentifiers:
+      roleEntity.permissionFlagGrants.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
     fieldPermissionUniversalIdentifiers: roleEntity.fieldPermissions.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
