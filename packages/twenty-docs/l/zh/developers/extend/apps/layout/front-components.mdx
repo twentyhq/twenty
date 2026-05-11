@@ -1,26 +1,26 @@
 ---
-title: Front Components
-description: Build React components that render inside Twenty's UI with sandboxed isolation.
+title: 前端组件
+description: 构建可在 Twenty 的 UI 中渲染并具备沙盒隔离的 React 组件。
 icon: window-maximize
 ---
 
-Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code is sandboxed but renders natively in the page, not in an iframe.
+前端组件是直接在 Twenty 的 UI 内渲染的 React 组件。 它们在使用 Remote DOM 的**隔离 Web Worker**中运行——你的代码在沙盒中执行，但会原生渲染到页面中，而非在 iframe 里。
 
-## Where front components can be used
+## 前端组件可用位置
 
-Front components can render in two locations within Twenty:
+在 Twenty 中，前端组件可在两个位置进行渲染：
 
-* **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
-* **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/l/zh/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
+* **侧边栏** — 非无头的前端组件会在右侧侧边栏中打开。 当前端组件从命令菜单触发时，这是默认行为。
+* **小部件（仪表盘和记录页面）** — 前端组件可以作为小部件嵌入到[页面布局](/l/zh/developers/extend/apps/layout/page-layouts)中。 在配置仪表盘或记录页面布局时，用户可以添加前端组件小部件。
 
-A front component on its own isn't reachable from the UI — you need to *surface* it. The two ways to do that are:
+单独存在的前端组件无法从界面中访问 —— 你需要将它*呈现*出来。 实现这一点有两种方式：
 
-* **Pair it with a [command menu item](/l/zh/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
-* **Embed it as a widget in a [page layout](/l/zh/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
+* **将它与[命令菜单项](/l/zh/developers/extend/apps/layout/command-menu-items)配对** —— 将其注册到命令菜单（Cmd+K）中，并可选地将其设为固定快速操作。
+* **将它作为小部件嵌入到[页面布局](/l/zh/developers/extend/apps/layout/page-layouts)中** —— 将其放置在记录详情页面或仪表盘上。
 
-## Basic example
+## 基础示例
 
-The quickest way to see a front component in action is to pair it with a [`defineCommandMenuItem`](/l/zh/developers/extend/apps/layout/command-menu-items), so it appears as a quick-action button in the top-right corner of the page:
+最快看到前端组件实际效果的方式是将它与[`defineCommandMenuItem`](/l/zh/developers/extend/apps/layout/command-menu-items)配对，这样它就会显示为页面右上角的快速操作按钮：
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -56,35 +56,35 @@ export default defineCommandMenuItem({
 });
 ```
 
-After syncing with `yarn twenty dev` (or running a one-shot `yarn twenty dev --once`), the quick action appears in the top-right corner of the page:
+使用 `yarn twenty dev` 同步后（或单次运行 `yarn twenty dev --once`），快速操作会出现在页面右上角：
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="右上角的快速操作按钮" />
 </div>
 
-Click it to render the component inline.
+点击它以内联方式渲染该组件。
 
-## Configuration fields
+## 配置字段
 
-| Field                 | Required | Description                                                  |
-| --------------------- | -------- | ------------------------------------------------------------ |
-| `universalIdentifier` | Yes      | Stable unique ID for this component                          |
-| `component`           | Yes      | A React component function                                   |
-| `name`                | No       | Display name                                                 |
-| `description`         | No       | Description of what the component does                       |
-| `isHeadless`          | No       | Set to `true` if the component has no visible UI (see below) |
+| 字段                    | 必填 | 描述                           |
+| --------------------- | -- | ---------------------------- |
+| `universalIdentifier` | 是  | 该组件的稳定唯一 ID                  |
+| `component`           | 是  | 一个 React 组件函数                |
+| `name`                | 否  | 显示名称                         |
+| `description`         | 否  | 组件的功能描述                      |
+| `isHeadless`          | 否  | 如果组件没有可见的 UI，则设为 `true`（见下文） |
 
-## Placing a front component on a page
+## 在页面上放置前端组件
 
-Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See [Page Layouts](/l/zh/developers/extend/apps/layout/page-layouts) for details.
+除了命令之外，你还可以在**页面布局**中将其添加为小部件，从而将前端组件直接嵌入记录页面。 详情请参见[页面布局](/l/zh/developers/extend/apps/layout/page-layouts)。
 
-## Headless vs non-headless
+## 无头与非无头
 
-Front components come in two rendering modes controlled by the `isHeadless` option:
+前端组件有两种由 `isHeadless` 选项控制的渲染模式：
 
-**Non-headless (default)** — The component renders a visible UI. When triggered from the command menu it opens in the side panel. This is the default behavior when `isHeadless` is `false` or omitted.
+**非无头（默认）** — 该组件会渲染可见的 UI。 从命令菜单触发时，它会在侧边栏中打开。 当 `isHeadless` 为 `false` 或被省略时，这是默认行为。
 
-**Headless (`isHeadless: true`)** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
+**无头 (`isHeadless: true`)** — 该组件会在后台以不可见的方式挂载。 它不会打开侧边栏。 无头组件旨在用于执行逻辑后自行卸载的操作——例如运行异步任务、导航到某个页面或显示确认模态框。 它们与下文介绍的 SDK Command 组件天然契合。
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -110,20 +110,20 @@ export default defineFrontComponent({
 });
 ```
 
-Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
+由于该组件返回 `null`，Twenty 会跳过为其渲染容器——布局中不会出现空白区域。 该组件仍可访问所有 hooks 和宿主通信 API。
 
-## SDK Command components
+## SDK Command 组件
 
-The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
+`twenty-sdk` 包提供了四个为无头前端组件设计的 Command 辅助组件。 每个组件都会在挂载时执行一个操作，通过显示 snackbar 通知来处理错误，并在完成后自动卸载该前端组件。
 
-Import them from `twenty-sdk/command`:
+从 `twenty-sdk/command` 导入它们：
 
-* **`Command`** — Runs an async callback via the `execute` prop.
-* **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Opens a specific side panel page. Props: `page`, `pageTitle`, `pageIcon`.
+* **`Command`** — 通过 `execute` 属性运行异步回调。
+* **`CommandLink`** — 导航到某个应用路径。 属性：`to`、`params`、`queryParams`、`options`。
+* **`CommandModal`** — 打开一个确认模态框。 如果用户确认，则执行 `execute` 回调。 属性：`title`、`subtitle`、`execute`、`confirmButtonText`、`confirmButtonAccent`。
+* **`CommandOpenSidePanelPage`** — 打开特定的侧边栏页面。 属性：`page`、`pageTitle`、`pageIcon`。
 
-Here is a full example of a headless front component using `Command` to run an action from the command menu:
+下面是一个完整示例：无头前端组件使用 `Command` 从命令菜单运行一个操作：
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -165,7 +165,7 @@ export default defineCommandMenuItem({
 });
 ```
 
-And an example using `CommandModal` to ask for confirmation before executing:
+另一个示例：使用 `CommandModal` 在执行前请求确认：
 
 ```tsx src/front-components/delete-draft.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -196,9 +196,9 @@ export default defineFrontComponent({
 });
 ```
 
-## Accessing runtime context
+## 访问运行时上下文
 
-Inside your component, use SDK hooks to access the current user, record, and component instance:
+在组件内部，使用 SDK 的 hooks 获取当前用户、记录和组件实例：
 
 ```tsx src/front-components/record-info.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -229,31 +229,31 @@ export default defineFrontComponent({
 });
 ```
 
-Available hooks:
+可用的 hooks：
 
-| Hook                                          | Returns            | Description                                                |
-| --------------------------------------------- | ------------------ | ---------------------------------------------------------- |
-| `useUserId()`                                 | `string` or `null` | The current user's ID                                      |
-| `useSelectedRecordIds()`                      | `string[]`         | All selected record IDs (empty array if none selected)     |
-| `useRecordId()`                               | `string` or `null` | **Deprecated.** Use `useSelectedRecordIds()` instead       |
-| `useFrontComponentId()`                       | `string`           | This component instance's ID                               |
-| `useFrontComponentExecutionContext(selector)` | varies             | Access the full execution context with a selector function |
+| 钩子                                            | 返回值               | 描述                                    |
+| --------------------------------------------- | ----------------- | ------------------------------------- |
+| `useUserId()`                                 | `string` 或 `null` | 当前用户的 ID                              |
+| `useSelectedRecordIds()`                      | `字符串[]`           | 所有已选择的记录 ID（如果未选择，则为空数组）              |
+| `useRecordId()`                               | `string` 或 `null` | **已弃用。** 请改用 `useSelectedRecordIds()` |
+| `useFrontComponentId()`                       | `string`          | 此组件实例的 ID                             |
+| `useFrontComponentExecutionContext(selector)` | 因情况而异             | 使用选择器函数访问完整的执行上下文                     |
 
-## Host communication API
+## 宿主通信 API
 
-Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:
+前端组件可以使用来自 `twenty-sdk` 的函数触发导航、模态框和通知：
 
-| Function                                        | Description                   |
-| ----------------------------------------------- | ----------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navigate to a page in the app |
-| `openSidePanelPage(params)`                     | Open a side panel             |
-| `closeSidePanel()`                              | Close the side panel          |
-| `openCommandConfirmationModal(params)`          | Show a confirmation dialog    |
-| `enqueueSnackbar(params)`                       | Show a toast notification     |
-| `unmountFrontComponent()`                       | Unmount the component         |
-| `updateProgress(progress)`                      | Update a progress indicator   |
+| 函数                                              | 描述            |
+| ----------------------------------------------- | ------------- |
+| `navigate(to, params?, queryParams?, options?)` | 在应用中导航到某个页面   |
+| `openSidePanelPage(params)`                     | 打开侧边栏         |
+| `closeSidePanel()`                              | 关闭侧边栏         |
+| `openCommandConfirmationModal(params)`          | 显示确认对话框       |
+| `enqueueSnackbar(params)`                       | 显示一条 Toast 通知 |
+| `unmountFrontComponent()`                       | 卸载该组件         |
+| `updateProgress(progress)`                      | 更新进度指示器       |
 
-Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
+下面是一个示例，使用宿主 API 在操作完成后显示一条 snackbar 并关闭侧边栏：
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -298,9 +298,9 @@ export default defineFrontComponent({
 });
 ```
 
-### Working with multiple records
+### 处理多个记录
 
-Use `useSelectedRecordIds()` to handle multiple selected records. This is useful for bulk operations:
+使用 `useSelectedRecordIds()` 来处理多个已选记录。 这对于批量操作很有用：
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -353,9 +353,9 @@ export default defineFrontComponent({
 });
 ```
 
-## Public assets
+## 公共资源
 
-Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
+前端组件可以使用 `getPublicAssetUrl` 访问应用的 `public/` 目录中的文件：
 
 ```tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
@@ -369,18 +369,18 @@ export default defineFrontComponent({
 });
 ```
 
-See the [public assets section](/l/zh/developers/extend/apps/config/public-assets) for details.
+详情请参见[公共资源部分](/l/zh/developers/extend/apps/config/public-assets)。
 
-## Styling
+## 样式
 
-Front components support multiple styling approaches. You can use:
+前端组件支持多种样式方案。 你可以使用：
 
-* **Inline styles** — `style={{ color: 'red' }}`
-* **Twenty UI components** — import from `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar, and more)
-* **Emotion** — CSS-in-JS with `@emotion/react`
-* **Styled-components** — `styled.div` patterns
-* **Tailwind CSS** — utility classes
-* **Any CSS-in-JS library** compatible with React
+* **内联样式** — `style={{ color: 'red' }}`
+* **Twenty UI 组件** — 从 `twenty-sdk/ui` 导入（Button、Tag、Status、Chip、Avatar 等）
+* **Emotion** — 使用 `@emotion/react` 的 CSS-in-JS
+* **Styled-components** — `styled.div` 模式
+* **Tailwind CSS** — 工具类
+* **任何 CSS-in-JS 库**（与 React 兼容）
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

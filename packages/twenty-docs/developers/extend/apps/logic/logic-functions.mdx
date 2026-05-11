@@ -372,5 +372,5 @@ Key points:
   - `TWENTY_API_URL` — Base URL of the Twenty API
   - `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
 
-  You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role referenced in `defaultRoleUniversalIdentifier` in your `application-config.ts`.
+  You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`).
 </Note>

@@ -24,7 +24,7 @@
 
 Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves. Twenty is the CRM you build, ship, and version like the rest of your stack.
 
-<a href="https://twenty.com/why-twenty"><img src="./packages/twenty-website-new/public/images/readme/star-icon.svg" width="14" height="14"/> Learn more about why we built Twenty</a>
+<a href="https://twenty.com/resources/why-twenty"><img src="./packages/twenty-website-new/public/images/readme/star-icon.svg" width="14" height="14"/> Learn more about why we built Twenty</a>
 
 <br />
 

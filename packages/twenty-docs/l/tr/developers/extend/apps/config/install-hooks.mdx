@@ -1,12 +1,12 @@
 ---
-title: Install Hooks
-description: Run logic before or after the install — seed data, back up records, validate the upgrade.
-icon: wrench
+title: Kurulum Kancaları
+description: Kurulumdan önce veya sonra mantığı çalıştırın — veri tohumlayın, kayıtları yedekleyin, yükseltmeyi doğrulayın.
+icon: anahtar
 ---
 
-Install hooks are special logic functions that run during the install or upgrade lifecycle. They share the same handler runtime as regular [logic functions](/l/tr/developers/extend/apps/logic/logic-functions) and receive an `InstallPayload`, but they're declared with their own define functions — `definePostInstallLogicFunction()` and `definePreInstallLogicFunction()` — and live outside the normal trigger model (HTTP, cron, database events).
+Kurulum kancaları, kurulum veya yükseltme yaşam döngüsü sırasında çalışan özel mantık işlevleridir. Bunlar, normal [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) ile aynı işleyici çalışma zamanını paylaşır ve bir `InstallPayload` alırlar, ancak kendi tanımlama işlevleri — `definePostInstallLogicFunction()` ve `definePreInstallLogicFunction()` — ile bildirilirler ve normal tetikleyici modelinin (HTTP, cron, veritabanı olayları) dışında yaşarlar.
 
-Each app may define **at most one pre-install** and **at most one post-install** function. The manifest build will error if more than one of either is detected.
+Her uygulama **en fazla bir kurulum öncesi** ve **en fazla bir kurulum sonrası** işlev tanımlayabilir. Her ikisinden de birden fazla tespit edilirse manifest oluşturma hataya düşer.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -20,9 +20,9 @@ Each app may define **at most one pre-install** and **at most one post-install**
 ```
 
 <AccordionGroup>
-<Accordion title="definePostInstallLogicFunction" description="Runs after the workspace metadata migration is applied">
+<Accordion title="definePostInstallLogicFunction" description="Çalışma alanı üstveri (metadata) geçişi uygulanıp tamamlandıktan sonra çalışır">
 
-A post-install function runs automatically once your app has finished installing on a workspace. The server executes it **after** the app's metadata has been synchronized and the SDK client has been generated, so the workspace is fully ready to use and the new schema is in place. Typical use cases include seeding default data, creating initial records, configuring workspace settings, or provisioning resources on third-party services.
+Kurulum sonrası işlev, uygulamanız bir çalışma alanına kurulmasını tamamladıktan sonra otomatik olarak çalışır. Sunucu, uygulamanın meta verileri senkronize edildikten ve SDK istemcisi oluşturulduktan **sonra** bunu yürütür; böylece çalışma alanı tamamen kullanıma hazırdır ve yeni şema kullanıma alınmıştır. Tipik kullanım örnekleri arasında varsayılan verilerin tohumlanması, başlangıç kayıtlarının oluşturulması, çalışma alanı ayarlarının yapılandırılması veya üçüncü taraf hizmetlerde kaynak sağlanması yer alır.
 
 ```ts src/logic-functions/post-install.ts
 import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
@@ -42,30 +42,30 @@ export default definePostInstallLogicFunction({
 });
 ```
 
-You can also manually execute the post-install function at any time using the CLI:
+Ayrıca kurulum sonrası işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty exec --postInstall
 ```
 
-Key points:
-* Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`).
-* The handler receives an `InstallPayload` with `{ previousVersion?: string; newVersion: string }` — `newVersion` is the version being installed, and `previousVersion` is the version that was previously installed (or `undefined` on a fresh install). Use these values to distinguish fresh installs from upgrades and to run version-specific migration logic.
-* **When the hook runs**: on fresh installs only, by default. Pass `shouldRunOnVersionUpgrade: true` if you also want it to run when the app is upgraded from a previous version. When omitted, the flag defaults to `false` and upgrades skip the hook.
-* **Execution model — async by default, sync opt-in**: the `shouldRunSynchronously` flag controls *how* post-install is executed.
-  * `shouldRunSynchronously: false` *(default)* — the hook is **enqueued on the message queue** with `retryLimit: 3` and runs asynchronously in a worker. The install response returns as soon as the job is enqueued, so a slow or failing handler does not block the caller. The worker will retry up to three times. **Use this for long-running jobs** — seeding large datasets, calling slow third-party APIs, provisioning external resources, anything that might exceed a reasonable HTTP response window.
-  * `shouldRunSynchronously: true` — the hook is executed **inline during the install flow** (same executor as pre-install). The install request blocks until the handler finishes, and if it throws, the install caller receives a `POST_INSTALL_ERROR`. No automatic retries. **Use this for fast, must-complete-before-response work** — for example, emitting a validation error to the user, or quick setup that the client will rely on immediately after the install call returns. Keep in mind the metadata migration has already been applied by the time post-install runs, so a sync-mode failure does **not** roll back the schema changes — it only surfaces the error.
-* Make sure your handler is idempotent. In async mode the queue may retry up to three times; in either mode the hook may run again on upgrades when `shouldRunOnVersionUpgrade: true`.
-* The environment variables `APPLICATION_ID`, `APP_ACCESS_TOKEN`, and `API_URL` are available inside the handler (same as any other logic function), so you can call the Twenty API with an application access token scoped to your app.
-* Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
-* The function's `universalIdentifier`, `shouldRunOnVersionUpgrade`, and `shouldRunSynchronously` are automatically attached to the application manifest under the `postInstallLogicFunction` field during the build — you do not need to reference them in [`defineApplication()`](/l/tr/developers/extend/apps/config/application).
-* The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
-* **Not executed in dev mode**: when an app is registered locally (via `yarn twenty dev`), the server skips the install flow entirely and syncs files directly through the CLI watcher — so post-install never runs in dev mode, regardless of `shouldRunSynchronously`. Use `yarn twenty exec --postInstall` to trigger it manually against a running workspace.
+Önemli noktalar:
+* Kurulum sonrası işlevler `definePostInstallLogicFunction()` kullanır — tetikleyici ayarlarını atlayan (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`) özel bir varyanttır.
+* İşleyici, `{ previousVersion?: string; newVersion: string }` içeren bir `InstallPayload` alır — `newVersion`, yüklenen sürümdür; `previousVersion` ise daha önce yüklü olan sürümdür (veya ilk kurulumda `undefined`). Bu değerleri ilk kurulumları yükseltmelerden ayırt etmek ve sürüme özgü geçiş (migration) mantığını çalıştırmak için kullanın.
+* **Kanca ne zaman çalışır**: varsayılan olarak yalnızca ilk kurulumlarda. Uygulama önceki bir sürümden yükseltildiğinde de çalışmasını istiyorsanız `shouldRunOnVersionUpgrade: true` geçin. Belirtilmediğinde, bayrak varsayılan olarak `false` olur ve yükseltmeler kancayı atlar.
+* **Yürütme modeli — varsayılan olarak eşzamansız, isteğe bağlı senkron**: `shouldRunSynchronously` bayrağı kurulum sonrası işlemin *nasıl* yürütüldüğünü kontrol eder.
+  * `shouldRunSynchronously: false` *(varsayılan)* — kanca, `retryLimit: 3` ile **mesaj kuyruğuna alınır** ve bir worker içinde eşzamansız çalışır. İş kuyruğa alınır alınmaz kurulum yanıtı döner; dolayısıyla yavaşlayan veya hata veren bir işleyici çağıranı engellemez. Worker en fazla üç kez yeniden deneyecektir. **Bunu uzun süre çalışan işler için kullanın** — büyük veri kümelerini tohumlama, yavaş üçüncü taraf API'lerini çağırma, harici kaynakları sağlama; makul bir HTTP yanıt süresini aşabilecek her şey.
+  * `shouldRunSynchronously: true` — kanca **kurulum akışı sırasında satır içi** olarak yürütülür (kurulum öncesi ile aynı yürütücü). İşleyici bitene kadar kurulum isteği engellenir; hata fırlatırsa, kurulum çağıranı bir `POST_INSTALL_ERROR` alır. Otomatik yeniden deneme yok. **Bunu, yanıt dönmeden mutlaka tamamlanması gereken hızlı işler için kullanın** — örneğin, kullanıcıya bir doğrulama hatası iletmek veya kurulum çağrısı döner dönmez istemcinin ihtiyaç duyacağı hızlı bir kurulum yapmak. Kurulum sonrası çalıştığında, üstveri (metadata) geçişinin zaten uygulanmış olduğunu unutmayın; bu nedenle, senkron moddaki bir hata şema değişikliklerini **geri almaz** — yalnızca hatayı görünür kılar.
+* İşleyicinizin idempotent olduğundan emin olun. Eşzamansız modda kuyruk en fazla üç kez yeniden deneyebilir; her iki modda da `shouldRunOnVersionUpgrade: true` iken yükseltmelerde kanca tekrar çalışabilir.
+* Ortam değişkenleri `APPLICATION_ID`, `APP_ACCESS_TOKEN` ve `API_URL` işleyici içinde kullanılabilir (diğer mantık işlevlerinde olduğu gibi), böylece uygulamanıza özel kapsamda bir uygulama erişim belirteciyle Twenty API'sini çağırabilirsiniz.
+* Uygulama başına yalnızca bir kurulum sonrası işlevine izin verilir. Birden fazla tespit edilirse manifest oluşturma hataya düşer.
+* İşlevin `universalIdentifier`, `shouldRunOnVersionUpgrade` ve `shouldRunSynchronously` değerleri, derleme sırasında uygulama manifestine `postInstallLogicFunction` alanı altında otomatik olarak eklenir — bunlara [`defineApplication()`](/l/tr/developers/extend/apps/config/application) içinde atıfta bulunmanıza gerek yoktur.
+* Varsayılan zaman aşımı, veri tohumlama gibi daha uzun kurulum görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
+* **Geliştirme modunda çalıştırılmaz**: bir uygulama yerel olarak kaydedildiğinde (`yarn twenty dev` aracılığıyla), sunucu kurulum akışını tamamen atlar ve dosyaları doğrudan CLI watcher üzerinden eşitler — bu nedenle, `shouldRunSynchronously` ne olursa olsun, kurulum sonrası geliştirme modunda hiç çalışmaz. Çalışan bir çalışma alanında bunu elle tetiklemek için `yarn twenty exec --postInstall` kullanın.
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="Runs before the workspace metadata migration is applied">
+<Accordion title="definePreInstallLogicFunction" description="Çalışma alanı üstveri (metadata) geçişi uygulanmadan önce çalışır">
 
-A pre-install function runs automatically during installation, **before the workspace metadata migration is applied**. It shares the same payload shape as post-install (`InstallPayload`), but it is positioned earlier in the install flow so it can prepare state that the upcoming migration depends on — typical uses include backing up data, validating compatibility with the new schema, or archiving records that are about to be restructured or dropped.
+Kurulum öncesi işlev, kurulum sırasında otomatik olarak çalışır ve **çalışma alanı üstveri (metadata) geçişi uygulanmadan önce** yürütülür. Kurulum sonrası ile (`InstallPayload`) aynı yük (payload) biçimini paylaşır, ancak kurulum akışında daha erken konumlandığından yaklaşan geçişin bağlı olduğu durumu hazırlayabilir — tipik kullanımlar arasında verileri yedeklemek, yeni şemayla uyumluluğu doğrulamak veya yeniden yapılandırılacak ya da kaldırılacak kayıtları arşivlemek yer alır.
 
 ```ts src/logic-functions/pre-install.ts
 import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
@@ -84,35 +84,35 @@ export default definePreInstallLogicFunction({
 });
 ```
 
-You can also manually execute the pre-install function at any time using the CLI:
+Ayrıca kurulum öncesi işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty exec --preInstall
 ```
 
-Key points:
-* Pre-install functions use `definePreInstallLogicFunction()` — same specialized config as post-install, just attached to a different lifecycle slot.
-* Both pre- and post-install handlers receive the same `InstallPayload` type: `{ previousVersion?: string; newVersion: string }`. Import it once and reuse it for both hooks.
-* **When the hook runs**: positioned just before the workspace metadata migration (`synchronizeFromManifest`). Before executing, the server runs a purely additive "pared-down sync" that registers the **new** version's pre-install function in the workspace metadata — nothing else is touched — and then executes it. Because this sync is additive-only, the previous version's objects, fields, and data are still intact when your handler runs: you can safely read and back up pre-migration state.
-* **Execution model**: pre-install is executed **synchronously** and **blocks the install**. If the handler throws, the install is aborted before any schema changes are applied — the workspace stays on the previous version in a consistent state. This is intentional: pre-install is your last chance to refuse a risky upgrade.
-* As with post-install, only one pre-install function is allowed per application. It is attached to the application manifest under `preInstallLogicFunction` automatically during the build.
-* **Not executed in dev mode**: same as post-install — the install flow is skipped entirely for locally-registered apps, so pre-install never runs under `yarn twenty dev`. Use `yarn twenty exec --preInstall` to trigger it manually.
+Önemli noktalar:
+* Kurulum öncesi işlevler `definePreInstallLogicFunction()` kullanır — kurulum sonrasıyla aynı özel yapılandırma, sadece yaşam döngüsünde farklı bir yuvaya eklenir.
+* Hem kurulum öncesi hem de kurulum sonrası işleyiciler aynı `InstallPayload` türünü alır: `{ previousVersion?: string; newVersion: string }`. Bunu bir kez içe aktarın ve her iki kanca için yeniden kullanın.
+* **Kanca ne zaman çalışır**: çalışma alanı üstveri (metadata) geçişinden hemen önce konumlandırılır (`synchronizeFromManifest`). Çalıştırmadan önce, sunucu yalnızca ekleyici bir "indirgenmiş eşitleme" yürütür; bu, çalışma alanı üstverisinde **yeni** sürümün kurulum öncesi işlevini kaydeder — başka hiçbir şeye dokunulmaz — ve ardından bunu yürütür. Bu eşitleme yalnızca ekleyici olduğundan, işleyiciniz çalıştığında önceki sürümün nesneleri, alanları ve verileri hâlâ sağlamdır: geçiş öncesi durumu güvenle okuyabilir ve yedekleyebilirsiniz.
+* **Yürütme modeli**: kurulum öncesi **senkron** olarak yürütülür ve **kurulumu bloklar**. İşleyici bir hata fırlatırsa, herhangi bir şema değişikliği uygulanmadan önce kurulum iptal edilir — çalışma alanı, tutarlı bir durumda önceki sürümde kalır. Bu kasıtlıdır: kurulum öncesi, riskli bir yükseltmeyi reddetmek için son şansınızdır.
+* Kurulum sonrası ile aynı şekilde, uygulama başına yalnızca bir kurulum öncesi işlevine izin verilir. Derleme sırasında uygulama manifestine `preInstallLogicFunction` altında otomatik olarak eklenir.
+* **Geliştirme modunda çalıştırılmaz**: kurulum sonrasında olduğu gibi — yerel olarak kaydedilen uygulamalarda kurulum akışı tamamen atlanır, bu nedenle `yarn twenty dev` altında kurulum öncesi hiç çalışmaz. Bunu elle tetiklemek için `yarn twenty exec --preInstall` kullanın.
 
 </Accordion>
-<Accordion title="Pre-install vs post-install: when to use which" description="Choosing the right install hook">
+<Accordion title="Kurulum öncesi vs kurulum sonrası: hangisini ne zaman kullanmalı" description="Doğru kurulum kancasını seçme">
 
-Both hooks are part of the same install flow and receive the same `InstallPayload`. The difference is **when** they run relative to the workspace metadata migration, and that changes what data they can safely touch.
+Her iki kanca da aynı kurulum akışının parçasıdır ve aynı `InstallPayload`'ı alır. Fark, çalışma alanı üstveri (metadata) geçişine göre **ne zaman** çalıştıklarıdır ve bu, güvenle erişebilecekleri verileri değiştirir.
 
-Pre-install is always **synchronous** (it blocks the install and can abort it). Post-install is **asynchronous by default** — enqueued on a worker with automatic retries — but can opt into synchronous execution with `shouldRunSynchronously: true`. See the `definePostInstallLogicFunction` accordion above for when to use each mode.
+Kurulum öncesi her zaman **senkron**dur (kurulumu bloke eder ve iptal edebilir). Kurulum sonrası **varsayılan olarak asenkron**dur — otomatik yeniden denemelerle bir worker üzerinde kuyruğa alınır — ancak `shouldRunSynchronously: true` ile senkron yürütmeye geçebilir. Her modun ne zaman kullanılacağı için yukarıdaki `definePostInstallLogicFunction` akordeonuna bakın.
 
-**Use `post-install` for anything that needs the new schema to exist.** This is the common case:
+**Yeni şemanın mevcut olmasını gerektiren her şey için `post-install` kullanın.** Bu yaygın durumdur:
 
-* Seeding default data (creating initial records, default views, demo content) against newly-added objects and fields.
-* Registering webhooks with third-party services now that the app has its credentials.
-* Calling your own API to finish setup that depends on the synchronized metadata.
-* Idempotent "ensure this exists" logic that should reconcile state on every upgrade — combine with `shouldRunOnVersionUpgrade: true`.
+* Yeni eklenen nesne ve alanlara karşı varsayılan verileri tohumlama (ilk kayıtları, varsayılan görünümleri, demo içeriği oluşturma).
+* Uygulamanın kimlik bilgileri artık mevcut olduğuna göre, üçüncü taraf hizmetlerle webhook'ları kaydetmek.
+* Eşitlenmiş üstveriye (metadata) bağlı kurulumu tamamlamak için kendi API'nizi çağırmak.
+* Her yükseltmede durumu uzlaştırması gereken idempotent "bu mevcut olsun" mantığı — `shouldRunOnVersionUpgrade: true` ile birleştirin.
 
-Example — seed a default `PostCard` record after install:
+Örnek — kurulumdan sonra varsayılan bir `PostCard` kaydı tohumlama:
 
 ```ts src/logic-functions/post-install.ts
 import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
@@ -137,14 +137,14 @@ export default definePostInstallLogicFunction({
 });
 ```
 
-**Use `pre-install` when a migration would otherwise destroy or corrupt existing data.** Because pre-install runs against the *previous* schema and its failure rolls back the upgrade, it is the right place for anything risky:
+**Bir geçiş mevcut verileri aksi takdirde silecek veya bozacaksa `pre-install` kullanın.** Kurulum öncesi *önceki* şemaya karşı çalıştığı ve hatalandığında yükseltmeyi geri aldığı için, riskli olan her şey için doğru yerdir:
 
-* **Backing up data that is about to be dropped or restructured** — e.g. you are removing a field in v2 and need to copy its values into another field or export them to storage before the migration runs.
-* **Archiving records that a new constraint would invalidate** — e.g. a field is becoming `NOT NULL` and you need to delete or fix rows with null values first.
-* **Validating compatibility and refusing the upgrade if the current data cannot be migrated cleanly** — throw from the handler and the install aborts with no changes applied. This is safer than discovering the incompatibility mid-migration.
-* **Renaming or rekeying data** ahead of a schema change that would lose the association.
+* **Kaldırılmak veya yeniden yapılandırılmak üzere olan verileri yedekleme** — örn. v2'de bir alanı kaldırıyorsunuz ve geçiş çalışmadan önce değerlerini başka bir alana kopyalamanız veya depolamaya aktarmanız gerekiyor.
+* **Yeni bir kısıtın geçersiz kılacağı kayıtları arşivleme** — örn. bir alan `NOT NULL` oluyor ve önce null değerli satırları silmeniz veya düzeltmeniz gerekiyor.
+* **Uyumluluğu doğrulama ve mevcut veriler temiz bir şekilde geçirilemiyorsa yükseltmeyi reddetme** — işleyiciden hata fırlatın ve kurulum, herhangi bir değişiklik uygulanmadan iptal edilir. Bu, uyumsuzluğu geçişin ortasında keşfetmekten daha güvenlidir.
+* İlişkilendirmeyi kaybettirecek bir şema değişikliğinden önce **verileri yeniden adlandırma veya yeniden anahtarlama**.
 
-Example — archive records before a destructive migration:
+Örnek — yıkıcı bir geçişten önce kayıtları arşivleme:
 
 ```ts src/logic-functions/pre-install.ts
 import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
@@ -186,20 +186,20 @@ export default definePreInstallLogicFunction({
 });
 ```
 
-**Rule of thumb:**
+**Kural olarak:**
 
-| You want to...                                                                          | Use                                                                             |
-| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Seed default data, configure the workspace, register external resources                 | `post-install`                                                                  |
-| Run long-running seeding or third-party calls that shouldn't block the install response | `post-install` (default — `shouldRunSynchronously: false`, with worker retries) |
-| Run fast setup that the caller will rely on immediately after the install call returns  | `post-install` with `shouldRunSynchronously: true`                              |
-| Read or back up data that the upcoming migration would lose                             | `pre-install`                                                                   |
-| Reject an upgrade that would corrupt existing data                                      | `pre-install` (throw from the handler)                                          |
-| Run reconciliation on every upgrade                                                     | `post-install` with `shouldRunOnVersionUpgrade: true`                           |
-| Do one-off setup on the first install only                                              | `post-install` with `shouldRunOnVersionUpgrade: false` (default)                |
+| Şunu yapmak istiyorsunuz...                                                                            | Kullan                                                                                      |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Varsayılan verileri tohumlamak, çalışma alanını yapılandırmak, harici kaynakları kaydetmek             | `post-install`                                                                              |
+| Kurulum yanıtını engellememesi gereken uzun süreli tohumlama veya üçüncü taraf çağrılarını çalıştırmak | `post-install` (varsayılan — `shouldRunSynchronously: false`, worker yeniden denemeleriyle) |
+| Kurulum çağrısı döner dönmez çağıranın güveneceği hızlı kurulumu çalıştırmak                           | `post-install` ile `shouldRunSynchronously: true`                                           |
+| Yaklaşan geçişin kaybedeceği verileri okumak veya yedeklemek                                           | `pre-install`                                                                               |
+| Mevcut verileri bozacak bir yükseltmeyi reddetmek                                                      | `pre-install` (işleyiciden hata fırlatmak)                                                  |
+| Her yükseltmede uzlaştırma çalıştırmak                                                                 | `post-install` ile `shouldRunOnVersionUpgrade: true`                                        |
+| Yalnızca ilk kurulumda tek seferlik kurulum yapmak                                                     | `post-install` ile `shouldRunOnVersionUpgrade: false` (varsayılan)                          |
 
 <Note>
-If in doubt, default to **post-install**. Only reach for pre-install when the migration itself is destructive and you need to intercept the previous state before it is gone.
+Emin değilseniz, varsayılan olarak **kurulum sonrası**nı tercih edin. Yalnızca geçişin kendisi yıkıcıysa ve önceki durum yok olmadan önce onu yakalamanız gerekiyorsa kurulum öncesine başvurun.
 </Note>
 
 </Accordion>

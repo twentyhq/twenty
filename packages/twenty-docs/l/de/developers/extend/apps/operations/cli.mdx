@@ -1,14 +1,14 @@
 ---
 title: CLI
-description: yarn twenty commands for executing functions, streaming logs, managing app installations, and switching remotes.
-icon: terminal
+description: yarn twenty Befehle zum Ausführen von Funktionen, Streamen von Logs, Verwalten von App-Installationen und Wechseln von Remotes.
+icon: Terminal
 ---
 
-Beyond `dev`, `build`, `add`, and `typecheck`, the `yarn twenty` CLI provides commands for executing functions, viewing logs, and managing app installations.
+Zusätzlich zu `dev`, `build`, `add` und `typecheck` bietet die `yarn twenty` CLI Befehle zum Ausführen von Funktionen, Anzeigen von Logs und Verwalten von App-Installationen.
 
-## Executing functions (`yarn twenty exec`)
+## Funktionen ausführen (`yarn twenty exec`)
 
-Run a logic function manually without triggering it via HTTP, cron, or database event:
+Eine Logikfunktion manuell ausführen, ohne sie über HTTP, Cron oder ein Datenbankereignis auszulösen:
 
 ```bash filename="Terminal"
 # Execute by function name
@@ -24,9 +24,9 @@ yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
 yarn twenty exec --postInstall
 ```
 
-## Viewing function logs (`yarn twenty logs`)
+## Funktionsprotokolle ansehen (`yarn twenty logs`)
 
-Stream execution logs for your app's logic functions:
+Ausführungsprotokolle für die Logikfunktionen Ihrer App streamen:
 
 ```bash filename="Terminal"
 # Stream all function logs
@@ -40,12 +40,12 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-This is different from `yarn twenty server logs`, which shows the Docker container logs. `yarn twenty logs` shows your app's function execution logs from the Twenty server.
+Dies unterscheidet sich von `yarn twenty server logs`, das die Docker-Container-Logs anzeigt. `yarn twenty logs` zeigt die Funktionsausführungsprotokolle Ihrer App vom Twenty-Server.
 </Note>
 
-## Uninstalling an app (`yarn twenty uninstall`)
+## Eine App deinstallieren (`yarn twenty uninstall`)
 
-Remove your app from the active workspace:
+Entfernen Sie Ihre App aus dem aktiven Arbeitsbereich:
 
 ```bash filename="Terminal"
 yarn twenty uninstall
@@ -54,9 +54,9 @@ yarn twenty uninstall
 yarn twenty uninstall --yes
 ```
 
-## Managing remotes
+## Remotes verwalten
 
-A **remote** is a Twenty server that your app connects to. During setup, the scaffolder creates one for you automatically. You can add more remotes or switch between them at any time.
+Ein **Remote** ist ein Twenty-Server, mit dem sich Ihre App verbindet. Während der Einrichtung erstellt das Scaffolding-Tool automatisch eines für Sie. Sie können jederzeit weitere Remotes hinzufügen oder zwischen ihnen wechseln.
 
 ```bash filename="Terminal"
 # Add a new remote (opens a browser for OAuth login)
@@ -75,4 +75,4 @@ yarn twenty remote list
 yarn twenty remote switch <name>
 ```
 
-Your credentials are stored in `~/.twenty/config.json`.
+Ihre Anmeldedaten werden in `~/.twenty/config.json` gespeichert.

@@ -1,14 +1,14 @@
 ---
 title: CLI
-description: yarn twenty commands for executing functions, streaming logs, managing app installations, and switching remotes.
+description: comandos `yarn twenty` para executar funções, transmitir logs, gerenciar instalações de aplicativos e alternar remotos.
 icon: terminal
 ---
 
-Beyond `dev`, `build`, `add`, and `typecheck`, the `yarn twenty` CLI provides commands for executing functions, viewing logs, and managing app installations.
+Além de `dev`, `build`, `add` e `typecheck`, a CLI `yarn twenty` fornece comandos para executar funções, visualizar logs e gerenciar instalações de aplicativos.
 
-## Executing functions (`yarn twenty exec`)
+## Executando funções (`yarn twenty exec`)
 
-Run a logic function manually without triggering it via HTTP, cron, or database event:
+Execute manualmente uma função de lógica sem acioná-la via HTTP, cron ou evento de banco de dados:
 
 ```bash filename="Terminal"
 # Execute by function name
@@ -24,9 +24,9 @@ yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
 yarn twenty exec --postInstall
 ```
 
-## Viewing function logs (`yarn twenty logs`)
+## Visualizando logs de funções (`yarn twenty logs`)
 
-Stream execution logs for your app's logic functions:
+Transmita os logs de execução das funções de lógica do seu aplicativo:
 
 ```bash filename="Terminal"
 # Stream all function logs
@@ -40,12 +40,12 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-This is different from `yarn twenty server logs`, which shows the Docker container logs. `yarn twenty logs` shows your app's function execution logs from the Twenty server.
+Isso é diferente de `yarn twenty server logs`, que mostra os logs do contêiner Docker. `yarn twenty logs` mostra os logs de execução de funções do seu aplicativo a partir do servidor Twenty.
 </Note>
 
-## Uninstalling an app (`yarn twenty uninstall`)
+## Desinstalando um aplicativo (`yarn twenty uninstall`)
 
-Remove your app from the active workspace:
+Remova seu aplicativo do espaço de trabalho ativo:
 
 ```bash filename="Terminal"
 yarn twenty uninstall
@@ -54,9 +54,9 @@ yarn twenty uninstall
 yarn twenty uninstall --yes
 ```
 
-## Managing remotes
+## Gerenciando remotos
 
-A **remote** is a Twenty server that your app connects to. During setup, the scaffolder creates one for you automatically. You can add more remotes or switch between them at any time.
+Um **remoto** é um servidor Twenty ao qual seu aplicativo se conecta. Durante a configuração, o gerador de scaffold cria um para você automaticamente. Você pode adicionar mais remotos ou alternar entre eles a qualquer momento.
 
 ```bash filename="Terminal"
 # Add a new remote (opens a browser for OAuth login)
@@ -75,4 +75,4 @@ yarn twenty remote list
 yarn twenty remote switch <name>
 ```
 
-Your credentials are stored in `~/.twenty/config.json`.
+Suas credenciais são armazenadas em `~/.twenty/config.json`.

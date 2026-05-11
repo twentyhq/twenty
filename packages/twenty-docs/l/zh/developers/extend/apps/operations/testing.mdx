@@ -1,22 +1,22 @@
 ---
-title: Testing
-description: Vitest setup, integration tests against a real Twenty server, type checking, and CI with GitHub Actions.
+title: 测试
+description: Vitest 设置、针对真实 Twenty 服务器的集成测试、类型检查，以及使用 GitHub Actions 的 CI。
 icon: flask
 ---
 
-The SDK provides programmatic APIs that let you build, deploy, install, and uninstall your app from test code. Combined with [Vitest](https://vitest.dev/) and the typed API clients, you can write integration tests that verify your app works end-to-end against a real Twenty server.
+该 SDK 提供可编程的 API，使你可以在测试代码中构建、部署、安装和卸载你的应用。 结合 [Vitest](https://vitest.dev/) 和类型化 API 客户端，你可以编写集成测试，在真实的 Twenty 服务器上验证你的应用端到端运行是否正常。
 
-## Using npm packages
+## 使用 npm 包
 
-You can install and use any npm package in your app. Both logic functions and front components are bundled with [esbuild](https://esbuild.github.io/), which inlines all dependencies into the output — no `node_modules` are needed at runtime.
+可以在应用中安装并使用任意 npm 包。 逻辑函数和前端组件都通过 [esbuild](https://esbuild.github.io/) 打包，所有依赖都会被内联到输出中——运行时不需要 `node_modules`。
 
-### Installing a package
+### 安装包
 
 ```bash filename="Terminal"
 yarn add axios
 ```
 
-Then import it in your code:
+然后在代码中导入它：
 
 ```ts src/logic-functions/fetch-data.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -37,7 +37,7 @@ export default defineLogicFunction({
 });
 ```
 
-The same works for front components:
+前端组件同样适用：
 
 ```tsx src/front-components/chart.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -54,25 +54,25 @@ export default defineFrontComponent({
 });
 ```
 
-### How bundling works
+### 打包的工作原理
 
-The build step uses esbuild to produce a single self-contained file per logic function and per front component. All imported packages are inlined into the bundle.
+构建步骤使用 esbuild 为每个逻辑函数和每个前端组件生成一个自包含文件。 所有导入的包都会被内联到打包产物中。
 
-**Logic functions** run in a Node.js environment. Node built-in modules (`fs`, `path`, `crypto`, `http`, etc.) are available and do not need to be installed.
+**逻辑函数** 运行在 Node.js 环境中。 Node 内置模块（`fs`、`path`、`crypto`、`http` 等） 可用且无需安装。
 
-**Front components** run in a Web Worker. Node built-in modules are **not** available — only browser APIs and npm packages that work in a browser environment.
+**前端组件** 运行在 Web Worker 中。 Node 内置模块不可用——仅可使用浏览器 API 以及可在浏览器环境中运行的 npm 包。
 
-Both environments have `twenty-client-sdk/core` and `twenty-client-sdk/metadata` available as pre-provided modules — these are not bundled but resolved at runtime by the server.
+两个环境都将 `twenty-client-sdk/core` 和 `twenty-client-sdk/metadata` 作为预置模块提供 — 这些模块不会被打包，而是在运行时由服务器解析。
 
-## Setup
+## 设置
 
-The scaffolded app already includes Vitest. If you set it up manually, install the dependencies:
+脚手架生成的应用已包含 Vitest。 如果你手动进行设置，请安装这些依赖：
 
 ```bash filename="Terminal"
 yarn add -D vitest vite-tsconfig-paths
 ```
 
-Create a `vitest.config.ts` at the root of your app:
+在应用根目录下创建一个 `vitest.config.ts`：
 
 ```ts vitest.config.ts
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -98,7 +98,7 @@ export default defineConfig({
 });
 ```
 
-Create a setup file that verifies the server is reachable before tests run:
+创建一个设置文件，在测试运行前验证服务器可达：
 
 ```ts src/__tests__/setup-test.ts
 import * as fs from 'fs';
@@ -138,22 +138,22 @@ beforeAll(async () => {
 });
 ```
 
-## Programmatic SDK APIs
+## 可编程的 SDK API
 
-The `twenty-sdk/cli` subpath exports functions you can call directly from test code:
+子路径 `twenty-sdk/cli` 导出了可直接在测试代码中调用的函数：
 
-| Function       | Description                                 |
-| -------------- | ------------------------------------------- |
-| `appBuild`     | Build the app and optionally pack a tarball |
-| `appDeploy`    | Upload a tarball to the server              |
-| `appInstall`   | Install the app on the active workspace     |
-| `appUninstall` | Uninstall the app from the active workspace |
+| 函数             | 描述                 |
+| -------------- | ------------------ |
+| `appBuild`     | 构建应用，并可选地打包为 tar 包 |
+| `appDeploy`    | 将 tar 包上传到服务器      |
+| `appInstall`   | 在活动工作区安装该应用        |
+| `appUninstall` | 从活动工作区卸载该应用        |
 
-Each function returns a result object with `success: boolean` and either `data` or `error`.
+每个函数都会返回一个结果对象，包含 `success: boolean`，以及 `data` 或 `error` 之一。
 
-## Writing an integration test
+## 编写集成测试
 
-Here is a full example that builds, deploys, and installs the app, then verifies it appears in the workspace:
+下面是一个完整示例：构建、部署并安装该应用，然后验证它出现在工作区中：
 
 ```ts src/__tests__/app-install.integration-test.ts
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
@@ -216,40 +216,40 @@ describe('App installation', () => {
 });
 ```
 
-## Running tests
+## 运行测试
 
-Make sure your local Twenty server is running, then:
+确保你的本地 Twenty 服务器正在运行，然后：
 
 ```bash filename="Terminal"
 yarn test
 ```
 
-Or in watch mode during development:
+或者在开发期间使用监听模式：
 
 ```bash filename="Terminal"
 yarn test:watch
 ```
 
-## Type checking
+## 类型检查
 
-You can also run type checking on your app without running tests:
+你也可以在不运行测试的情况下对应用进行类型检查：
 
 ```bash filename="Terminal"
 yarn twenty typecheck
 ```
 
-This runs `tsc --noEmit` and reports any type errors.
+这会运行 `tsc --noEmit` 并报告所有类型错误。
 
-## CI with GitHub Actions
+## 使用 GitHub Actions 进行 CI
 
-The scaffolder generates a ready-to-use GitHub Actions workflow at `.github/workflows/ci.yml`. It runs your integration tests automatically on every push to `main` and on pull requests.
+脚手架工具会在 `.github/workflows/ci.yml` 生成一个开箱即用的 GitHub Actions 工作流。 它会在每次向 `main` 推送以及拉取请求上自动运行你的集成测试。
 
-The workflow:
+工作流：
 
-1. Checks out your code
-2. Spins up a temporary Twenty server using the `twentyhq/twenty/.github/actions/spawn-twenty-docker-image` action
-3. Installs dependencies with `yarn install --immutable`
-4. Runs `yarn test` with `TWENTY_API_URL` and `TWENTY_API_KEY` injected from the action outputs
+1. 检出你的代码
+2. 使用 `twentyhq/twenty/.github/actions/spawn-twenty-docker-image` 动作启动一个临时的 Twenty 服务器
+3. 使用 `yarn install --immutable` 安装依赖
+4. 运行 `yarn test`，并从该动作的输出中注入 `TWENTY_API_URL` 和 `TWENTY_API_KEY`
 
 ```yaml .github/workflows/ci.yml
 name: CI
@@ -296,6 +296,6 @@ jobs:
           TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
 ```
 
-You don't need to configure any secrets — the `spawn-twenty-docker-image` action starts an ephemeral Twenty server directly in the runner and outputs the connection details. The `GITHUB_TOKEN` secret is provided automatically by GitHub.
+你无需配置任何机密——`spawn-twenty-docker-image` 动作会在运行器中直接启动一个临时的 Twenty 服务器，并输出连接详情。 GitHub 会自动提供 `GITHUB_TOKEN` 机密。
 
-To pin a specific Twenty version instead of `latest`, change the `TWENTY_VERSION` environment variable at the top of the workflow.
+若要固定为特定的 Twenty 版本而不是 `latest`，请在工作流顶部修改 `TWENTY_VERSION` 环境变量。

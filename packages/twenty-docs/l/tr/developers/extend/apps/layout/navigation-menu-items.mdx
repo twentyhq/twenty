@@ -1,10 +1,10 @@
 ---
-title: Navigation Menu Items
-description: Add custom entries to the workspace sidebar — links to saved views or external URLs.
+title: Gezinme Menüsü Öğeleri
+description: Çalışma alanı kenar çubuğuna özel öğeler ekleyin — kaydedilmiş görünümlere veya harici URL’lere bağlantılar.
 icon: bars
 ---
 
-A **navigation menu item** is an entry in the left sidebar. Use `defineNavigationMenuItem()` to ship custom sidebar links — typically one per [view](/l/tr/developers/extend/apps/layout/views) you ship — or to point at external URLs.
+Bir **gezinme menüsü öğesi**, sol kenar çubuğundaki bir öğedir. Özel kenar çubuğu bağlantıları sunmak için `defineNavigationMenuItem()` kullanın — genellikle sunduğunuz her [görünüm](/l/tr/developers/extend/apps/layout/views) için bir tane — veya harici URL’lere işaret etmek için kullanın.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
 import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
@@ -23,22 +23,22 @@ export default defineNavigationMenuItem({
 
 ## Önemli noktalar
 
-* `type` determines what the menu item links to. Each type pairs with a specific identifier field:
+* `type`, menü öğesinin neye bağlantı verdiğini belirler. Her tür, belirli bir tanımlayıcı alanıyla eşleşir:
 
-  | Tür                                  | Ne yapar                             | Required field                                                                |
-  | ------------------------------------ | ------------------------------------ | ----------------------------------------------------------------------------- |
-  | `NavigationMenuItemType.VIEW`        | Opens a saved view                   | `viewUniversalIdentifier`                                                     |
-  | `NavigationMenuItemType.LINK`        | Opens an external URL                | `link`                                                                        |
-  | `NavigationMenuItemType.FOLDER`      | Groups nested items under a label    | `name` (and child items reference the folder via `folderUniversalIdentifier`) |
-  | `NavigationMenuItemType.OBJECT`      | Opens an object's default index page | `targetObjectUniversalIdentifier`                                             |
-  | `NavigationMenuItemType.PAGE_LAYOUT` | Opens a standalone page layout       | `pageLayoutUniversalIdentifier`                                               |
+  | Tür                                  | Ne yapar                                         | Zorunlu alan                                                                           |
+  | ------------------------------------ | ------------------------------------------------ | -------------------------------------------------------------------------------------- |
+  | `NavigationMenuItemType.VIEW`        | Kaydedilmiş bir görünümü açar                    | `viewUniversalIdentifier`                                                              |
+  | `NavigationMenuItemType.LINK`        | Harici bir URL açar                              | `link`                                                                                 |
+  | `NavigationMenuItemType.FOLDER`      | İç içe geçmiş öğeleri bir etiket altında gruplar | `name` (ve alt öğeler klasöre `folderUniversalIdentifier` aracılığıyla referans verir) |
+  | `NavigationMenuItemType.OBJECT`      | Bir nesnenin varsayılan indeks sayfasını açar    | `targetObjectUniversalIdentifier`                                                      |
+  | `NavigationMenuItemType.PAGE_LAYOUT` | Bağımsız bir sayfa düzeni açar                   | `pageLayoutUniversalIdentifier`                                                        |
 
-* `position` controls ordering in the sidebar.
+* `position`, kenar çubuğundaki sıralamayı kontrol eder.
 
-* `icon` and `color` are optional and customize how the entry looks.
+* `icon` ve `color` isteğe bağlıdır ve öğenin görünümünü özelleştirir.
 
-* `folderUniversalIdentifier` is also available on any item to nest it inside a `FOLDER`-type parent.
+* `folderUniversalIdentifier`, herhangi bir öğede de mevcuttur ve onu bir `FOLDER` türü üst öğenin içine yerleştirmek için kullanılır.
 
 <Note>
-**Common pitfall:** creating an object without an associated view + navigation menu item makes that object invisible to users. Unless it's a technical/internal object, every custom object should have a default view *and* a sidebar entry pointing at it.
+**Yaygın hata:** bir görünüm ve gezinme menüsü öğesiyle ilişkilendirilmemiş bir nesne oluşturmak, o nesneyi kullanıcılar için görünmez yapar. Teknik/içsel bir nesne olmadığı sürece, her özel nesnenin varsayılan bir görünümü *ve* ona işaret eden bir kenar çubuğu öğesi olmalıdır.
 </Note>

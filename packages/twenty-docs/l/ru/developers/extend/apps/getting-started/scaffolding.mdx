@@ -1,18 +1,18 @@
 ---
-title: Scaffolding
-description: Generate entity files interactively with yarn twenty add — objects, fields, views, logic functions, and more.
+title: Создание каркаса
+description: Интерактивно генерируйте файлы сущностей с помощью yarn twenty add — объекты, поля, представления, логические функции и многое другое.
 icon: wand-magic-sparkles
 ---
 
-Instead of creating entity files by hand, use the interactive scaffolder:
+Вместо ручного создания файлов сущностей используйте интерактивный генератор:
 
 ```bash filename="Terminal"
 yarn twenty add
 ```
 
-It prompts you to pick an entity type and walks you through the required fields, then writes a ready-to-use file with a stable `universalIdentifier` and the correct `defineEntity()` call.
+Он предлагает выбрать тип сущности и пошагово проводит через обязательные поля, а затем записывает готовый к использованию файл со стабильным `universalIdentifier` и корректным вызовом `defineEntity()`.
 
-You can also pass the entity type directly to skip the first prompt:
+Вы также можете передать тип сущности напрямую, чтобы пропустить первый запрос:
 
 ```bash filename="Terminal"
 yarn twenty add object
@@ -20,38 +20,38 @@ yarn twenty add logicFunction
 yarn twenty add frontComponent
 ```
 
-## Available entity types
+## Доступные типы сущностей
 
-| Entity type          | Command                              | Generated file                                          |
+| Тип сущности         | Команда                              | Сгенерированный файл                                    |
 | -------------------- | ------------------------------------ | ------------------------------------------------------- |
-| Object               | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
-| Field                | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
-| Logic function       | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
-| Front component      | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
-| Role                 | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
-| Skill                | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
-| Agent                | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
-| View                 | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
-| Navigation menu item | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
-| Page layout          | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+| Объект               | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| Поле                 | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| Логическая функция   | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| Компонент фронтенда  | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| Роль                 | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| Навык                | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| Агент                | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| Представление        | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| Пункт меню навигации | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| Макет страницы       | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
 
-## What the scaffolder generates
+## Что генерирует скэффолдер
 
-Each entity type has its own template. For example, `yarn twenty add object` asks for:
+У каждого типа сущности есть свой шаблон. Например, `yarn twenty add object` запрашивает:
 
-1. **Name (singular)** — e.g., `invoice`
-2. **Name (plural)** — e.g., `invoices`
-3. **Label (singular)** — auto-populated from the name (e.g., `Invoice`)
-4. **Label (plural)** — auto-populated (e.g., `Invoices`)
-5. **Create a view and navigation item?** — if you answer yes, the scaffolder also generates a matching view and sidebar link for the new object.
+1. **Имя (единственное число)** — например, `invoice`
+2. **Имя (множественное число)** — например, `invoices`
+3. **Метка (единственное число)** — заполняется автоматически из имени (например, `Invoice`)
+4. **Метка (множественное число)** — заполняется автоматически (например, `Invoices`)
+5. **Создать представление и пункт навигации?** — если вы ответите «да», скэффолдер также сгенерирует соответствующее представление и ссылку в боковой панели для нового объекта.
 
-Other entity types have simpler prompts — most only ask for a name.
+У других типов сущностей подсказки проще — в большинстве случаев запрашивается только имя.
 
-The `field` entity type is more detailed: it asks for the field name, label, type (from a list of all available field types like `TEXT`, `NUMBER`, `SELECT`, `RELATION`, etc.), and the target object's `universalIdentifier`.
+Тип сущности `field` более детализирован: он запрашивает имя поля, метку, тип (из списка всех доступных типов полей, таких как `TEXT`, `NUMBER`, `SELECT`, `RELATION` и т. д.), а также `universalIdentifier` целевого объекта.
 
-## Custom output path
+## Пользовательский путь вывода
 
-Use the `--path` flag to place the generated file in a custom location:
+Используйте флаг `--path`, чтобы поместить сгенерированный файл в пользовательское расположение:
 
 ```bash filename="Terminal"
 yarn twenty add logicFunction --path src/custom-folder

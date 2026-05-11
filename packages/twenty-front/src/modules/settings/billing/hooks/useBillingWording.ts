@@ -1,6 +1,7 @@
 import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
 import {
   BillingPlanKey,
+  FeatureFlagKey,
   SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
@@ -13,6 +14,7 @@ import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const useBillingWording = () => {
   const { t } = useLingui();
@@ -25,6 +27,8 @@ export const useBillingWording = () => {
     currentWorkspace.currentBillingSubscription;
 
   assertIsDefinedOrThrow(currentBillingSubscription);
+
+  const isV2 = useIsFeatureEnabled(FeatureFlagKey.IS_BILLING_V2_ENABLED);
 
   const { formatPrices } = useFormatPrices();
 
@@ -74,8 +78,10 @@ export const useBillingWording = () => {
 
   const getCurrentIntervalLabel = () =>
     getIntervalLabelAsAdjectiveCapitalize(
-      currentMeteredBillingPrice.recurringInterval ===
-        SubscriptionInterval.Month,
+      isV2
+        ? currentBillingSubscription.interval === SubscriptionInterval.Month
+        : currentMeteredBillingPrice?.recurringInterval ===
+            SubscriptionInterval.Month,
     );
 
   const enterprisePrice =

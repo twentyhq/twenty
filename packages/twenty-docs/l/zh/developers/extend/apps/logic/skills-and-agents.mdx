@@ -1,19 +1,19 @@
 ---
-title: Skills & Agents
-description: Define AI skills and agents for your app.
+title: 技能与智能体
+description: 为你的应用定义 AI 技能和智能体。
 icon: robot
 ---
 
 <Warning>
-  Skills and agents are currently in alpha. The feature works but is still evolving.
+  技能和智能体目前处于 Alpha 阶段。 该功能可用，但仍在演进中。
 </Warning>
 
-Apps can define AI capabilities that live inside the workspace — reusable skill instructions and agents with custom system prompts.
+应用可以定义存在于工作区内的 AI 能力——可复用的技能指令以及具有自定义系统提示词的智能体。
 
 <AccordionGroup>
-<Accordion title="defineSkill" description="Define AI agent skills">
+<Accordion title="defineSkill" description="定义 AI 智能体技能">
 
-Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+技能定义了可复用的指令和能力，AI 智能体可在你的工作区中使用。 使用 `defineSkill()` 定义带内置校验的技能：
 
 ```ts src/skills/example-skill.ts
 import { defineSkill } from 'twenty-sdk/define';
@@ -32,17 +32,17 @@ export default defineSkill({
 });
 ```
 
-Key points:
-* `name` is a unique identifier string for the skill (kebab-case recommended).
-* `label` is the human-readable display name shown in the UI.
-* `content` contains the skill instructions — this is the text the AI agent uses.
-* `icon` (optional) sets the icon displayed in the UI.
-* `description` (optional) provides additional context about the skill's purpose.
+关键点：
+* `name` 是该技能的唯一标识字符串（推荐使用 kebab-case）。
+* `label` 是在 UI 中显示的人类可读名称。
+* `content` 包含技能指令——这是 AI 智能体使用的文本。
+* `icon`（可选）设置在 UI 中显示的图标。
+* `description`（可选）提供有关技能用途的更多上下文。
 
 </Accordion>
-<Accordion title="defineAgent" description="Define AI agents with custom prompts">
+<Accordion title="defineAgent" description="使用自定义提示词定义 AI 智能体">
 
-Agents are AI assistants that live inside your workspace. Use `defineAgent()` to create agents with a custom system prompt:
+智能体是在你的工作区内驻留的 AI 助手。 使用 `defineAgent()` 来创建带有自定义系统提示词的智能体：
 
 ```ts src/agents/example-agent.ts
 import { defineAgent } from 'twenty-sdk/define';
@@ -57,13 +57,13 @@ export default defineAgent({
 });
 ```
 
-Key points:
-* `name` is the unique identifier string for the agent (kebab-case recommended).
-* `label` is the display name shown in the UI.
-* `prompt` is the system prompt that defines the agent's behavior.
-* `description` (optional) provides context about what the agent does.
-* `icon` (optional) sets the icon displayed in the UI.
-* `modelId` (optional) overrides the default AI model used by the agent.
+关键点：
+* `name` 是该智能体的唯一标识字符串（推荐使用 kebab-case）。
+* `label` 是在 UI 中显示的名称。
+* `prompt` 是定义智能体行为的系统提示词。
+* `description`（可选）提供有关智能体功能的上下文。
+* `icon`（可选）设置在 UI 中显示的图标。
+* `modelId`（可选）会覆盖该智能体使用的默认 AI 模型。
 
 </Accordion>
 </AccordionGroup>

@@ -33,6 +33,7 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "createValidationResult",
     "defineAgent",
     "defineApplication",
+    "defineApplicationRole",
     "defineCommandMenuItem",
     "defineConnectionProvider",
     "defineField",
