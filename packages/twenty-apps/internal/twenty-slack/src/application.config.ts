@@ -15,8 +15,8 @@ export default defineApplication({
   serverVariables: {
     SLACK_CLIENT_ID: {
       description:
-        'OAuth client ID from your Slack app (api.slack.com/apps).',
-      isSecret: true,
+        'OAuth client ID from your Slack app (api.slack.com/apps). Public in OAuth flows; only the client secret must stay confidential.',
+      isSecret: false,
       isRequired: true,
     },
     SLACK_CLIENT_SECRET: {
