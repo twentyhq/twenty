@@ -150,6 +150,7 @@ export const WorkflowEditActionCodeFields = ({
             readonly={readonly}
             onChange={(value) => onInputChange?.(value, currentPath)}
             VariablePicker={VariablePicker}
+            multiline={schemaProperty?.multiline === true}
           />
         );
       })}
