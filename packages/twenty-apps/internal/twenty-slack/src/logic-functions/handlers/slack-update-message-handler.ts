@@ -33,13 +33,10 @@ export const slackUpdateMessageHandler = async (
 
     const data = await client.chat.update(updatePayload);
 
-    const slackTs =
-      typeof data.ts === 'string' ? data.ts : parameters.message_timestamp;
-
     return {
       success: true,
       message: 'Slack message updated.',
-      slackTs,
+      slackTs: data.ts,
       channel: parameters.slack_channel_id,
     };
   } catch (error) {
