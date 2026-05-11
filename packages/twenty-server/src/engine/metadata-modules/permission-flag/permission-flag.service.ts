@@ -98,7 +98,7 @@ export class PermissionFlagService {
     if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while creating permission flag definition',
+        'Validation errors occurred while creating permission flag',
       );
     }
 
@@ -160,7 +160,7 @@ export class PermissionFlagService {
     if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while updating permission flag definition',
+        'Validation errors occurred while updating permission flag',
       );
     }
 
@@ -219,7 +219,7 @@ export class PermissionFlagService {
     if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while deleting permission flag definition',
+        'Validation errors occurred while deleting permission flag',
       );
     }
 

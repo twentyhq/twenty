@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/entities/permission-flag.entity';
+import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import {
   type FlatDeletePermissionFlagAction,
   type UniversalDeletePermissionFlagAction,

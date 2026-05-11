@@ -26,7 +26,7 @@ export const fromUpdatePermissionFlagInputToFlatPermissionFlagToUpdateOrThrow =
 
     if (!isDefined(existing)) {
       throw new PermissionFlagException(
-        'Permission flag definition not found',
+        'Permission flag not found',
         PermissionFlagExceptionCode.PERMISSION_FLAG_NOT_FOUND,
       );
     }

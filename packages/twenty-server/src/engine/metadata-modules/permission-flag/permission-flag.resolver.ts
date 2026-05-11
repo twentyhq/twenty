@@ -43,7 +43,7 @@ export class PermissionFlagResolver {
 
     if (!isEnabled) {
       throw new ForbiddenException(
-        'Custom permission flag definitions are not enabled for this workspace',
+        'Custom permission flags are not enabled for this workspace',
       );
     }
   }

@@ -129,7 +129,7 @@ export class PermissionFlagGrantService {
     if (buildAndRunResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         buildAndRunResult,
-        'Validation errors occurred while upserting permission flags',
+        'Validation errors occurred while upserting permission flag grants',
       );
     }
 

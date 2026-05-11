@@ -20,11 +20,9 @@ export const permissionFlagGraphqlApiExceptionHandler = (error: Error) => {
         throw new ConflictError(error);
       case PermissionFlagExceptionCode.PERMISSION_FLAG_IS_STANDARD:
         throw new ForbiddenError(error);
-      case PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_INPUT:
       case PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY:
       case PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_PERMISSION_TYPE:
       case PermissionFlagExceptionCode.PERMISSION_FLAG_KEY_IMMUTABLE:
-      case PermissionFlagExceptionCode.PERMISSION_FLAG_APPLICATION_IMMUTABLE:
       case PermissionFlagExceptionCode.PERMISSION_FLAG_IN_USE:
         throw new UserInputError(error);
       default: {

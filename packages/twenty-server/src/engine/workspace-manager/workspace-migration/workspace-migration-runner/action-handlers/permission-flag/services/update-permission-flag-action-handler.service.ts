@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/entities/permission-flag.entity';
+import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
 import {
   type FlatUpdatePermissionFlagAction,

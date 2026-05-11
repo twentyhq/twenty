@@ -7,17 +7,17 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useHasPermissionFlagGrant = (
-  permissionFlagGrant?: PermissionFlagType,
+  permissionFlagKey?: PermissionFlagType,
 ) => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
 
-  if (!permissionFlagGrant) {
+  if (!permissionFlagKey) {
     return true;
   }
 
   if (
-    permissionFlagGrant === PermissionFlagType.WORKSPACE &&
+    permissionFlagKey === PermissionFlagType.WORKSPACE &&
     currentWorkspace?.activationStatus ===
       WorkspaceActivationStatus.PENDING_CREATION
   ) {
@@ -25,5 +25,5 @@ export const useHasPermissionFlagGrant = (
   }
 
   const userFlags = currentUserWorkspace?.permissionFlagGrants ?? [];
-  return userFlags.includes(permissionFlagGrant);
+  return userFlags.includes(permissionFlagKey);
 };
