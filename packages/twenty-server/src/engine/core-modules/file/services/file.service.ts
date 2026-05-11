@@ -189,39 +189,14 @@ export class FileService {
     };
   }
 
-  /** @deprecated Use FileStorageService.deleteByFileId instead */
-  async deleteFile({
-    folderPath,
-    filename,
-    workspaceId,
-  }: {
-    folderPath: string;
-    filename: string;
-    workspaceId: string;
-  }) {
-    const workspaceFolderPath = `workspace-${workspaceId}/${folderPath}`;
-
-    return await this.fileStorageService.deleteLegacy({
-      folderPath: workspaceFolderPath,
-      filename,
-    });
-  }
-
-  /** @deprecated */
   async deleteWorkspaceFolder(workspaceId: string) {
-    const workspaceFolderPath = `workspace-${workspaceId}`;
-
     const isWorkspaceFolderFound =
-      await this.fileStorageService.checkFolderExistsLegacy({
-        folderPath: workspaceFolderPath,
-      });
+      await this.fileStorageService.checkIfWorkspaceFolderExists(workspaceId);
 
     if (!isWorkspaceFolderFound) {
       return;
     }
 
-    return await this.fileStorageService.deleteLegacy({
-      folderPath: workspaceFolderPath,
-    });
+    return await this.fileStorageService.deleteWorkspaceFolder(workspaceId);
   }
 }

@@ -53726,6 +53726,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"twenty-claude-skills@workspace:packages/twenty-claude-skills":
+  version: 0.0.0-use.local
+  resolution: "twenty-claude-skills@workspace:packages/twenty-claude-skills"
+  languageName: unknown
+  linkType: soft
+
 "twenty-cli@workspace:packages/twenty-cli":
   version: 0.0.0-use.local
   resolution: "twenty-cli@workspace:packages/twenty-cli"
