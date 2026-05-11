@@ -1,9 +1,9 @@
-export type ConflictingSubField = {
+export type ConflictingProperty = {
   fullPath: string;
   column: string;
 };
 
 export type ConflictingFieldGroup = {
   baseField: string;
-  subFields: ConflictingSubField[];
+  conflictingProperties: ConflictingProperty[];
 };

@@ -164,7 +164,10 @@ export class FlatIndexValidatorService {
                   })
                 : !isDefined(relatedFlatField.defaultValue);
 
-              if (!canUseDefaultValueInUniqueIndex && relatedFlatField.isUnique) {
+              if (
+                !canUseDefaultValueInUniqueIndex &&
+                relatedFlatField.isUnique
+              ) {
                 const fieldName = relatedFlatField.name;
                 const fieldType = relatedFlatField.type;
 

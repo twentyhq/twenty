@@ -32,7 +32,9 @@ describe('buildWhereConditions', () => {
     const groups: ConflictingFieldGroup[] = [
       {
         baseField: 'uniqueText',
-        subFields: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
       },
     ];
 
@@ -53,7 +55,9 @@ describe('buildWhereConditions', () => {
     const groups: ConflictingFieldGroup[] = [
       {
         baseField: 'uniqueText',
-        subFields: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
       },
     ];
 
@@ -66,7 +70,7 @@ describe('buildWhereConditions', () => {
     const groups: ConflictingFieldGroup[] = [
       {
         baseField: 'emailsField',
-        subFields: [
+        conflictingProperties: [
           {
             fullPath: 'emailsField.primaryEmail',
             column: 'emailsFieldPrimaryEmail',
@@ -92,11 +96,13 @@ describe('buildWhereConditions', () => {
     const groups: ConflictingFieldGroup[] = [
       {
         baseField: 'uniqueText',
-        subFields: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
       },
       {
         baseField: 'emailsField',
-        subFields: [
+        conflictingProperties: [
           {
             fullPath: 'emailsField.primaryEmail',
             column: 'emailsFieldPrimaryEmail',

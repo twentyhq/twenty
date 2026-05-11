@@ -24,6 +24,10 @@ import { NormalizeCompositeFieldDefaultsCommand } from './2-4-workspace-command-
     WorkspaceSchemaManagerModule,
     FieldMetadataModule,
   ],
-  providers: [RebuildUniquePhoneIndexesCommand, NormalizeCompositeFieldDefaultsCommand, MigrateToBillingV2Command],
+  providers: [
+    RebuildUniquePhoneIndexesCommand,
+    NormalizeCompositeFieldDefaultsCommand,
+    MigrateToBillingV2Command,
+  ],
 })
 export class V2_4_UpgradeVersionCommandModule {}

@@ -19,9 +19,12 @@ export const isCompositeFieldDefaultValueCompatibleWithUniqueIndex = ({
     return true;
   }
 
-  const normalizedDefaultValue = normalizeCompositeDefaultValue(defaultValue, fieldType);
+  const normalizedDefaultValue = normalizeCompositeDefaultValue(
+    defaultValue,
+    fieldType,
+  );
 
-  if(!isDefined(normalizedDefaultValue)) {
+  if (!isDefined(normalizedDefaultValue)) {
     return true;
   }
 
@@ -30,6 +33,10 @@ export const isCompositeFieldDefaultValueCompatibleWithUniqueIndex = ({
   );
 
   return uniqueCompositeProperties.some((compositeProperty) => {
-    return !isDefined(normalizedDefaultValue[compositeProperty.name as keyof typeof normalizedDefaultValue]);
+    return !isDefined(
+      normalizedDefaultValue[
+        compositeProperty.name as keyof typeof normalizedDefaultValue
+      ],
+    );
   });
 };

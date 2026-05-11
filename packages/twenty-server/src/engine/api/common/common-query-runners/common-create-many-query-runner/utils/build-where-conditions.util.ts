@@ -11,15 +11,17 @@ export const buildWhereConditions = (
 ): Record<string, FindOperator<string>>[] => {
   const whereConditions: Record<string, FindOperator<string>>[] = [];
 
-  for (const subField of conflictingFieldGroups.flatMap(
-    (group) => group.subFields,
+  for (const conflictingProperty of conflictingFieldGroups.flatMap(
+    (group) => group.conflictingProperties,
   )) {
     const fieldValues = records
-      .map((record) => getValueFromPath(record, subField.fullPath))
+      .map((record) => getValueFromPath(record, conflictingProperty.fullPath))
       .filter(isDefined);
 
     if (fieldValues.length > 0) {
-      whereConditions.push({ [subField.column]: In(fieldValues) });
+      whereConditions.push({
+        [conflictingProperty.column]: In(fieldValues),
+      });
     }
   }
 

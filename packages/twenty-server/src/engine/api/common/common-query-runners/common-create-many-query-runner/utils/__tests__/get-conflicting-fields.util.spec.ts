@@ -134,11 +134,13 @@ describe('getConflictingFields', () => {
       expect.arrayContaining([
         {
           baseField: 'id',
-          subFields: [{ fullPath: 'id', column: 'id' }],
+          conflictingProperties: [{ fullPath: 'id', column: 'id' }],
         },
         {
           baseField: 'uniqueText',
-          subFields: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
+          conflictingProperties: [
+            { fullPath: 'uniqueText', column: 'uniqueText' },
+          ],
         },
       ]),
     );
@@ -158,11 +160,11 @@ describe('getConflictingFields', () => {
       expect.arrayContaining([
         {
           baseField: 'id',
-          subFields: [{ fullPath: 'id', column: 'id' }],
+          conflictingProperties: [{ fullPath: 'id', column: 'id' }],
         },
         {
           baseField: 'emailsField',
-          subFields: [
+          conflictingProperties: [
             {
               fullPath: 'emailsField.primaryEmail',
               column: 'emailsFieldPrimaryEmail',
@@ -186,11 +188,11 @@ describe('getConflictingFields', () => {
     expect(result).toEqual([
       {
         baseField: 'id',
-        subFields: [{ fullPath: 'id', column: 'id' }],
+        conflictingProperties: [{ fullPath: 'id', column: 'id' }],
       },
       {
         baseField: 'phonesField',
-        subFields: [
+        conflictingProperties: [
           {
             fullPath: 'phonesField.primaryPhoneNumber',
             column: 'phonesFieldPrimaryPhoneNumber',
@@ -217,7 +219,7 @@ describe('getConflictingFields', () => {
     expect(result).toEqual([
       {
         baseField: 'id',
-        subFields: [{ fullPath: 'id', column: 'id' }],
+        conflictingProperties: [{ fullPath: 'id', column: 'id' }],
       },
     ]);
   });
@@ -235,7 +237,7 @@ describe('getConflictingFields', () => {
     expect(result).toEqual([
       {
         baseField: 'id',
-        subFields: [{ fullPath: 'id', column: 'id' }],
+        conflictingProperties: [{ fullPath: 'id', column: 'id' }],
       },
     ]);
   });

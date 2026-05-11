@@ -17,20 +17,22 @@ export const getMatchingRecordId = (
 ): string | undefined => {
   const matchingRecordIds = conflictingFieldGroups.reduce<string[]>(
     (acc, fieldGroup) => {
-      const requestFieldValues = fieldGroup.subFields.map((subField) => ({
-        subField,
-        value: getValueFromPath(record, subField.fullPath),
-      }));
+      const requestFieldValues = fieldGroup.conflictingProperties.map(
+        (conflictingProperty) => ({
+          conflictingProperty,
+          value: getValueFromPath(record, conflictingProperty.fullPath),
+        }),
+      );
 
       if (requestFieldValues.some(({ value }) => !isDefined(value))) {
         return acc;
       }
 
       const matchingRecord = existingRecords.find((existingRecord) =>
-        requestFieldValues.every(({ subField, value }) => {
+        requestFieldValues.every(({ conflictingProperty, value }) => {
           const existingFieldValue = getValueFromPath(
             existingRecord,
-            subField.fullPath,
+            conflictingProperty.fullPath,
           );
 
           return isDefined(existingFieldValue) && existingFieldValue === value;
@@ -48,12 +50,12 @@ export const getMatchingRecordId = (
 
   if ([...new Set(matchingRecordIds)].length > 1) {
     const conflictingFieldsValues = conflictingFieldGroups
-      .flatMap((group) => group.subFields)
-      .map((subField) => {
-        const value = getValueFromPath(record, subField.fullPath);
+      .flatMap((group) => group.conflictingProperties)
+      .map((conflictingProperty) => {
+        const value = getValueFromPath(record, conflictingProperty.fullPath);
 
         return isDefined(value)
-          ? `${subField.fullPath}: ${value}`
+          ? `${conflictingProperty.fullPath}: ${value}`
           : undefined;
       })
       .filter(isDefined)

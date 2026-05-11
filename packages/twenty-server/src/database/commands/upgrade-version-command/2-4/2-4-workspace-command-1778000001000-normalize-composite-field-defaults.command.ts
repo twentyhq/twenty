@@ -18,8 +18,6 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { normalizeCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/normalize-composite-default-value.util';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 
-
-
 @RegisteredWorkspaceCommand('2.4.0', 1778000001000)
 @Command({
   name: 'upgrade:2-4:normalize-composite-field-defaults',
@@ -72,11 +70,17 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
         );
 
         for (const property of compositeType.properties) {
-          if(normalizedDefaultValue?.[property.name as keyof typeof normalizedDefaultValue] !== field.defaultValue?.[property.name as keyof typeof field.defaultValue]) {
+          if (
+            normalizedDefaultValue?.[
+              property.name as keyof typeof normalizedDefaultValue
+            ] !==
+            field.defaultValue?.[
+              property.name as keyof typeof field.defaultValue
+            ]
+          ) {
             return true;
           }
         }
-
       });
 
     if (affectedFields.length === 0) {
@@ -94,7 +98,6 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
 
       return;
     }
-
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const backfillTargets: Array<{ tableName: string; columnName: string }> =
@@ -128,7 +131,12 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
       );
 
       for (const property of compositeType.properties) {
-        if(normalizedDefaultValue?.[property.name as keyof typeof normalizedDefaultValue] !== field.defaultValue?.[property.name as keyof typeof field.defaultValue]) {
+        if (
+          normalizedDefaultValue?.[
+            property.name as keyof typeof normalizedDefaultValue
+          ] !==
+          field.defaultValue?.[property.name as keyof typeof field.defaultValue]
+        ) {
           backfillTargets.push({
             tableName,
             columnName: computeCompositeColumnName(field.name, property),
@@ -137,12 +145,14 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
       }
     }
 
-
     for (const field of affectedFields) {
       await this.fieldMetadataService.updateOneField({
         updateFieldInput: {
           id: field.id,
-          defaultValue: normalizeCompositeDefaultValue(field.defaultValue, field.type as CompositeFieldMetadataType),
+          defaultValue: normalizeCompositeDefaultValue(
+            field.defaultValue,
+            field.type as CompositeFieldMetadataType,
+          ),
         },
         workspaceId,
         isSystemBuild: true,

@@ -22,18 +22,18 @@ export const getConflictingFields = (
       if (!compositeType) {
         return {
           baseField: field.name,
-          subFields: [{ fullPath: field.name, column: field.name }],
+          conflictingProperties: [{ fullPath: field.name, column: field.name }],
         };
       }
 
-      const subFields = compositeType.properties
+      const conflictingProperties = compositeType.properties
         .filter((prop) => prop.isIncludedInUniqueConstraint)
         .map((property) => ({
           fullPath: `${field.name}.${property.name}`,
           column: `${field.name}${capitalize(property.name)}`,
         }));
 
-      return { baseField: field.name, subFields };
+      return { baseField: field.name, conflictingProperties };
     })
-    .filter((group) => group.subFields.length > 0);
+    .filter((group) => group.conflictingProperties.length > 0);
 };

@@ -27,7 +27,9 @@ export const normalizeCompositeDefaultValue = (
         additionalPhones?: object | null;
       };
 
-      const primaryPhoneNumber = isNullEquivalentTextDefaultValue(v.primaryPhoneNumber)
+      const primaryPhoneNumber = isNullEquivalentTextDefaultValue(
+        v.primaryPhoneNumber,
+      )
         ? null
         : (v.primaryPhoneNumber ?? null);
       const primaryPhoneCountryCode = isNullEquivalentTextDefaultValue(
@@ -40,7 +42,9 @@ export const normalizeCompositeDefaultValue = (
       )
         ? null
         : (v.primaryPhoneCallingCode ?? null);
-      const additionalPhones = isNullEquivalentArrayFieldValue(v.additionalPhones)
+      const additionalPhones = isNullEquivalentArrayFieldValue(
+        v.additionalPhones,
+      )
         ? null
         : (v.additionalPhones ?? null);
 
@@ -74,7 +78,9 @@ export const normalizeCompositeDefaultValue = (
       const primaryEmail = isNullEquivalentTextDefaultValue(v.primaryEmail)
         ? null
         : (v.primaryEmail ?? null);
-      const additionalEmails = isNullEquivalentArrayFieldValue(v.additionalEmails)
+      const additionalEmails = isNullEquivalentArrayFieldValue(
+        v.additionalEmails,
+      )
         ? null
         : (v.additionalEmails ?? null);
 
@@ -96,7 +102,9 @@ export const normalizeCompositeDefaultValue = (
         secondaryLinks?: object | null;
       };
 
-      const primaryLinkLabel = isNullEquivalentTextDefaultValue(v.primaryLinkLabel)
+      const primaryLinkLabel = isNullEquivalentTextDefaultValue(
+        v.primaryLinkLabel,
+      )
         ? null
         : (v.primaryLinkLabel ?? null);
       const primaryLinkUrl = isNullEquivalentTextDefaultValue(v.primaryLinkUrl)
@@ -148,7 +156,9 @@ export const normalizeCompositeDefaultValue = (
       const addressCountry = isNullEquivalentTextDefaultValue(v.addressCountry)
         ? null
         : (v.addressCountry ?? null);
-      const addressPostcode = isNullEquivalentTextDefaultValue(v.addressPostcode)
+      const addressPostcode = isNullEquivalentTextDefaultValue(
+        v.addressPostcode,
+      )
         ? null
         : (v.addressPostcode ?? null);
       const addressLat = v.addressLat ?? null;

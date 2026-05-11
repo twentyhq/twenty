@@ -33,7 +33,7 @@ describe('getMatchingRecordId', () => {
     const conflictingFieldGroups: ConflictingFieldGroup[] = [
       {
         baseField: 'emailsField',
-        subFields: [
+        conflictingProperties: [
           {
             fullPath: 'emailsField.primaryEmail',
             column: 'emailsFieldPrimaryEmail',
@@ -62,7 +62,7 @@ describe('getMatchingRecordId', () => {
     const conflictingFieldGroups: ConflictingFieldGroup[] = [
       {
         baseField: 'phonesField',
-        subFields: [
+        conflictingProperties: [
           {
             fullPath: 'phonesField.primaryPhoneNumber',
             column: 'phonesFieldPrimaryPhoneNumber',
@@ -95,7 +95,7 @@ describe('getMatchingRecordId', () => {
     const conflictingFieldGroups: ConflictingFieldGroup[] = [
       {
         baseField: 'phonesField',
-        subFields: [
+        conflictingProperties: [
           {
             fullPath: 'phonesField.primaryPhoneNumber',
             column: 'phonesFieldPrimaryPhoneNumber',
@@ -125,7 +125,7 @@ describe('getMatchingRecordId', () => {
     const conflictingFieldGroups: ConflictingFieldGroup[] = [
       {
         baseField: 'emailsField',
-        subFields: [
+        conflictingProperties: [
           {
             fullPath: 'emailsField.primaryEmail',
             column: 'emailsFieldPrimaryEmail',
@@ -152,11 +152,13 @@ describe('getMatchingRecordId', () => {
     const conflictingFieldGroups: ConflictingFieldGroup[] = [
       {
         baseField: 'id',
-        subFields: [{ fullPath: 'id', column: 'id' }],
+        conflictingProperties: [{ fullPath: 'id', column: 'id' }],
       },
       {
         baseField: 'uniqueText',
-        subFields: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
       },
     ];
 
@@ -178,11 +180,13 @@ describe('getMatchingRecordId', () => {
     const conflictingFieldGroups: ConflictingFieldGroup[] = [
       {
         baseField: 'uniqueText',
-        subFields: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
       },
       {
         baseField: 'emailsField',
-        subFields: [
+        conflictingProperties: [
           {
             fullPath: 'emailsField.primaryEmail',
             column: 'emailsFieldPrimaryEmail',

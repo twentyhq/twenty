@@ -59,9 +59,14 @@ export const generateCompositeColumnDefinition = ({
     parentFlatFieldMetadata.name,
     compositeProperty,
   );
-  const normalizedDefaultValue =
-    normalizeCompositeDefaultValue(parentFlatFieldMetadata.defaultValue, parentFlatFieldMetadata.type as CompositeFieldMetadataType);
-  const defaultValue = normalizedDefaultValue?.[compositeProperty.name as keyof typeof normalizedDefaultValue];
+  const normalizedDefaultValue = normalizeCompositeDefaultValue(
+    parentFlatFieldMetadata.defaultValue,
+    parentFlatFieldMetadata.type as CompositeFieldMetadataType,
+  );
+  const defaultValue =
+    normalizedDefaultValue?.[
+      compositeProperty.name as keyof typeof normalizedDefaultValue
+    ];
   const columnType = fieldMetadataTypeToColumnType(compositeProperty.type);
   const serializedDefaultValue = serializeDefaultValue({
     columnName,
