@@ -153,6 +153,20 @@ describe('useAddressSettingsFormInitialValues', () => {
     ]);
   });
 
+  it('should fall back to addressCity as the initial default sort sub-field when no settings are configured', () => {
+    const { result } = renderHook(
+      () =>
+        useAddressSettingsFormInitialValues({
+          existingFieldMetadataId: 'new-field',
+        }),
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    expect(result.current.initialDefaultSortSubField).toEqual('addressCity');
+  });
+
   it('should call resetField with all address subFields when resetDefaultValueField is called', () => {
     const { result } = renderHook(
       () =>

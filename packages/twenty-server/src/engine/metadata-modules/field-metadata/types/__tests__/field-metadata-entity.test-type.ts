@@ -115,7 +115,6 @@ type NotDefinedSettings = {
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type SettingsAssertions = [
   Expect<HasAllProperties<CurrencyFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<FullNameFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<RatingFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<SelectFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<MultiSelectFieldMetadata, NotDefinedSettings>>,
@@ -201,6 +200,16 @@ type SettingsAssertions = [
       {
         settings: JsonbProperty<
           FieldMetadataSettingsMapping[FieldMetadataType.LINKS]
+        >;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      FullNameFieldMetadata,
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.FULL_NAME]
         >;
       }
     >

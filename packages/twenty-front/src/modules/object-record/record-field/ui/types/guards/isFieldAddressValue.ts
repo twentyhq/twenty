@@ -25,4 +25,5 @@ export const addressSettingsSchema = z.object({
     .min(1)
     .optional()
     .nullable(),
+  defaultSortSubField: z.enum(ALLOWED_ADDRESS_SUBFIELDS).optional().nullable(),
 });

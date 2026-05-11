@@ -1,6 +1,7 @@
 import { type AllowedAddressSubField } from '@/types/AddressFieldsType';
 import { type FieldMetadataMultiItemSettings } from '@/types/FieldMetadataMultiItemSettings';
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
+import { type AllowedFullNameSubField } from '@/types/FullNameFieldsType';
 import { type IsExactly } from '@/types/IsExactly';
 import { type RelationOnDeleteAction } from '@/types/RelationOnDeleteAction.type';
 import { type RelationType } from '@/types/RelationType';
@@ -49,6 +50,11 @@ type FieldMetadataRelationSettings = {
 
 type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
+  defaultSortSubField?: AllowedAddressSubField;
+};
+
+type FieldMetadataFullNameSettings = {
+  defaultSortSubField?: AllowedFullNameSubField;
 };
 
 type FieldMetadataFilesSettings = {
@@ -67,6 +73,7 @@ export type FieldMetadataSettingsMapping = {
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings | null;
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
   [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
+  [FieldMetadataType.FULL_NAME]: FieldMetadataFullNameSettings | null;
   [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
   [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
   [FieldMetadataType.PHONES]: FieldMetadataMultiItemSettings | null;

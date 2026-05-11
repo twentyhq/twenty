@@ -15,6 +15,8 @@ import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
 import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
+import { settingsDataModelFieldFullNameFormSchema } from '@/settings/data-model/fields/forms/full-name/components/SettingsDataModelFieldFullNameForm';
+import { SettingsDataModelFieldFullNameSettingsFormCard } from '@/settings/data-model/fields/forms/full-name/components/SettingsDataModelFieldFullNameSettingsFormCard';
 import { settingsDataModelFieldMorphRelationFormSchema } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm';
 import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
 import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
@@ -93,6 +95,10 @@ const addressFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.ADDRESS) })
   .extend(settingsDataModelFieldAddressFormSchema.shape);
 
+const fullNameFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.FULL_NAME) })
+  .extend(settingsDataModelFieldFullNameFormSchema.shape);
+
 const phonesFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.PHONES) })
   .extend(settingsDataModelFieldPhonesFormSchema.shape)
@@ -142,6 +148,7 @@ const otherFieldsFormSchema = z
           FieldMetadataType.DATE_TIME,
           FieldMetadataType.NUMBER,
           FieldMetadataType.ADDRESS,
+          FieldMetadataType.FULL_NAME,
           FieldMetadataType.PHONES,
           FieldMetadataType.TEXT,
           FieldMetadataType.EMAILS,
@@ -168,6 +175,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     numberFieldFormSchema,
     textFieldFormSchema,
     addressFieldFormSchema,
+    fullNameFieldFormSchema,
     phonesFieldFormSchema,
     emailsFieldFormSchema,
     linksFieldFormSchema,
@@ -290,6 +298,16 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldType === FieldMetadataType.ADDRESS) {
     return (
       <SettingsDataModelFieldAddressSettingsFormCard
+        existingFieldMetadataId={existingFieldMetadataId}
+        objectNameSingular={objectNameSingular}
+        disabled={disabled}
+      />
+    );
+  }
+
+  if (fieldType === FieldMetadataType.FULL_NAME) {
+    return (
+      <SettingsDataModelFieldFullNameSettingsFormCard
         existingFieldMetadataId={existingFieldMetadataId}
         objectNameSingular={objectNameSingular}
         disabled={disabled}

@@ -8,7 +8,10 @@
  */
 
 export type { AllowedAddressSubField } from './AddressFieldsType';
-export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
+export {
+  ALLOWED_ADDRESS_SUBFIELDS,
+  DEFAULT_VISIBLE_ADDRESS_SUBFIELDS,
+} from './AddressFieldsType';
 export { AggregateOperations } from './AggregateOperations';
 export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
@@ -123,6 +126,8 @@ export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties.type';
 export type { FromTo } from './FromToType';
+export type { AllowedFullNameSubField } from './FullNameFieldsType';
+export { ALLOWED_FULL_NAME_SUBFIELDS } from './FullNameFieldsType';
 export { HTTPMethod } from './HttpMethod';
 export type { IndexOf } from './IndexOf.type';
 export type { IsEmptyObject } from './IsEmptyObject.type';

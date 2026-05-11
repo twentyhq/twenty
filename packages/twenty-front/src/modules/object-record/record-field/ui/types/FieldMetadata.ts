@@ -5,6 +5,7 @@ import { type CurrencyCode } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
   type AllowedAddressSubField,
+  type AllowedFullNameSubField,
   type FieldMetadataMultiItemSettings,
   type FileCategory,
 } from 'twenty-shared/types';
@@ -98,7 +99,9 @@ export type FieldCurrencyMetadata = BaseFieldMetadata & {
 
 export type FieldFullNameMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  settings?: null;
+  settings?: {
+    defaultSortSubField?: AllowedFullNameSubField | null;
+  } | null;
 };
 
 export type FieldEmailMetadata = BaseFieldMetadata & {
@@ -123,6 +126,7 @@ export type FieldAddressMetadata = BaseFieldMetadata & {
   placeHolder: string;
   settings?: {
     subFields?: AllowedAddressSubField[] | null;
+    defaultSortSubField?: AllowedAddressSubField | null;
   };
 };
 

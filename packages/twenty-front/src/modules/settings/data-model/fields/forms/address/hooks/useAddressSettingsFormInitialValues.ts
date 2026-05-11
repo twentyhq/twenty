@@ -1,4 +1,5 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { getDefaultSortSubFieldForAddress } from '@/object-metadata/utils/getDefaultSortSubFieldForAddress';
 import { type SettingsDataModelFieldTextFormValues } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm';
 import { DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES } from '@/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages';
 import { useFormContext } from 'react-hook-form';
@@ -22,6 +23,10 @@ export const useAddressSettingsFormInitialValues = ({
     fieldMetadataItem?.settings?.subFields?.length > 0
       ? fieldMetadataItem.settings.subFields
       : allAddressSubFields;
+
+  const initialDefaultSortSubField = getDefaultSortSubFieldForAddress(
+    fieldMetadataItem?.settings,
+  );
 
   const defaultDefaultValue = {
     addressStreet1: "''",
@@ -47,6 +52,7 @@ export const useAddressSettingsFormInitialValues = ({
   return {
     initialDefaultValue,
     initialDisplaySubFields,
+    initialDefaultSortSubField,
     resetDefaultValueField,
   };
 };

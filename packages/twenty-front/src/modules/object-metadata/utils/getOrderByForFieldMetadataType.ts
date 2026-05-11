@@ -1,5 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getDefaultSortSubFieldForAddress } from '@/object-metadata/utils/getDefaultSortSubFieldForAddress';
+import { getDefaultSortSubFieldForFullName } from '@/object-metadata/utils/getDefaultSortSubFieldForFullName';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 
 import {
@@ -14,19 +16,33 @@ import {
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getOrderByForFieldMetadataType = (
-  field: Pick<FieldMetadataItem, 'id' | 'name' | 'type'>,
+  field: Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'settings'>,
   direction: OrderBy | null | undefined,
 ): RecordGqlOperationOrderBy => {
   switch (field.type) {
-    case FieldMetadataType.FULL_NAME:
+    case FieldMetadataType.FULL_NAME: {
+      const primarySubField = getDefaultSortSubFieldForFullName(field.settings);
+      const secondarySubField =
+        primarySubField === 'firstName' ? 'lastName' : 'firstName';
       return [
         {
           [field.name]: {
-            firstName: direction ?? 'AscNullsLast',
-            lastName: direction ?? 'AscNullsLast',
+            [primarySubField]: direction ?? 'AscNullsLast',
+            [secondarySubField]: direction ?? 'AscNullsLast',
           },
         },
       ];
+    }
+    case FieldMetadataType.ADDRESS: {
+      const subField = getDefaultSortSubFieldForAddress(field.settings);
+      return [
+        {
+          [field.name]: {
+            [subField]: direction ?? 'AscNullsLast',
+          },
+        },
+      ];
+    }
     case FieldMetadataType.CURRENCY:
       return [
         {

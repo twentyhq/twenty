@@ -10,3 +10,12 @@ export const ALLOWED_ADDRESS_SUBFIELDS = [
 ] as const;
 
 export type AllowedAddressSubField = (typeof ALLOWED_ADDRESS_SUBFIELDS)[number];
+
+export const DEFAULT_VISIBLE_ADDRESS_SUBFIELDS = [
+  'addressStreet1',
+  'addressStreet2',
+  'addressCity',
+  'addressState',
+  'addressPostcode',
+  'addressCountry',
+] as const satisfies readonly AllowedAddressSubField[];
