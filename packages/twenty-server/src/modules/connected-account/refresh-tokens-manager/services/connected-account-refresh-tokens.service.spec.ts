@@ -25,8 +25,8 @@ describe('ConnectedAccountRefreshTokensService', () => {
   let microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService;
   let connectedAccountRepository: { update: jest.Mock };
   let connectedAccountTokenEncryptionService: {
-    encrypt: jest.Mock;
     decrypt: jest.Mock;
+    encryptTokenPair: jest.Mock;
   };
 
   const mockWorkspaceId = 'workspace-123';
@@ -42,33 +42,28 @@ describe('ConnectedAccountRefreshTokensService', () => {
   // Real prefix/round-trip invariants are asserted in
   // connected-account-token-encryption.service.spec.ts.
   const buildSymmetricEncryptionStub = (): {
-    encrypt: jest.Mock;
     decrypt: jest.Mock;
     encryptTokenPair: jest.Mock;
   } => {
-    const encrypt = jest.fn(
-      (value: string) =>
-        `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${value})`,
-    );
-    const decrypt = jest.fn((value: string) => {
-      const match = value.match(
-        new RegExp(
-          `^${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER\\((.*)\\)$`,
-        ),
-      );
-
-      if (match === null) {
-        throw new Error(
-          `fake encryption stub: decrypt called with a non-CIPHER value: ${value}`,
-        );
-      }
-
-      return match[1];
-    });
+    const wrap = (value: string) =>
+      `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${value})`;
 
     return {
-      encrypt,
-      decrypt,
+      decrypt: jest.fn((value: string) => {
+        const match = value.match(
+          new RegExp(
+            `^${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER\\((.*)\\)$`,
+          ),
+        );
+
+        if (match === null) {
+          throw new Error(
+            `fake encryption stub: decrypt called with a non-CIPHER value: ${value}`,
+          );
+        }
+
+        return match[1];
+      }),
       encryptTokenPair: jest.fn(
         ({
           accessToken,
@@ -77,9 +72,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
           accessToken: string;
           refreshToken: string | null;
         }) => ({
-          encryptedAccessToken: encrypt(accessToken),
+          encryptedAccessToken: wrap(accessToken),
           encryptedRefreshToken:
-            refreshToken === null ? null : encrypt(refreshToken),
+            refreshToken === null ? null : wrap(refreshToken),
         }),
       ),
     };

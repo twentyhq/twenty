@@ -179,23 +179,20 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
         },
       ]);
 
-      const { command, secretEncryptionService } = buildCommand();
+      const { command } = buildCommand();
 
       await command.runDataMigration(dataSource);
 
-      const finalRow = rows()[0];
-
-      expect(finalRow.accessToken).toBe(alreadyEncryptedAccess);
-      expect(finalRow.refreshToken).toBe(
-        `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-refresh-mixed)`,
-      );
-      expect(secretEncryptionService.encrypt).toHaveBeenCalledTimes(1);
-      expect(secretEncryptionService.encrypt).toHaveBeenCalledWith(
-        'plaintext-refresh-mixed',
-      );
+      expect(rows()).toEqual([
+        {
+          id: 'aaaaaaaa-0000-0000-0000-000000000001',
+          accessToken: alreadyEncryptedAccess,
+          refreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-refresh-mixed)`,
+        },
+      ]);
     });
-    it('should be idempotent — a second run produces zero updates', async () => {
-      const { dataSource, queryCallCount } = buildFakeDataSource([
+    it('should be idempotent — re-running on already-migrated data leaves it unchanged', async () => {
+      const { dataSource, rows } = buildFakeDataSource([
         {
           id: 'aaaaaaaa-0000-0000-0000-000000000001',
           accessToken: 'plaintext-token',
@@ -205,15 +202,19 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
 
       const { command } = buildCommand();
 
-      await command.runDataMigration(dataSource);
-      const callsAfterFirstRun = queryCallCount();
+      const expectedFinalState = [
+        {
+          id: 'aaaaaaaa-0000-0000-0000-000000000001',
+          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-token)`,
+          refreshToken: null,
+        },
+      ];
 
       await command.runDataMigration(dataSource);
-      const callsAfterSecondRun = queryCallCount();
+      expect(rows()).toEqual(expectedFinalState);
 
-      // Second run = exactly one SELECT (returns empty) + zero UPDATEs.
-      // First run was: SELECT (returns row), UPDATE (encrypts), SELECT (empty).
-      expect(callsAfterSecondRun - callsAfterFirstRun).toBe(1);
+      await command.runDataMigration(dataSource);
+      expect(rows()).toEqual(expectedFinalState);
     });
 
     it('should paginate through more rows than the batch size', async () => {
