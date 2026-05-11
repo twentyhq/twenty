@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconKey, IconLock, IconUsers } from 'twenty-ui/display';
+import { IconLock, IconUserPlus, IconUsers } from 'twenty-ui/display';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -10,14 +10,14 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { SettingsWorkspaceMembersAccessTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersAccessTab';
+import { SettingsWorkspaceMembersInviteTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab';
 import { SettingsWorkspaceMembersRolesTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersRolesTab';
 import { SettingsWorkspaceMembersTeamTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab';
 
 const MEMBERS_TAB_LIST_ID = 'members-tab-list';
 
 const MEMBERS_TAB_TEAM_ID = 'team';
-const MEMBERS_TAB_ACCESS_ID = 'access';
+const MEMBERS_TAB_INVITE_ID = 'invite';
 const MEMBERS_TAB_ROLES_ID = 'roles';
 
 export const SettingsWorkspaceMembers = () => {
@@ -32,7 +32,7 @@ export const SettingsWorkspaceMembers = () => {
 
   const tabs = [
     { id: MEMBERS_TAB_TEAM_ID, title: t`Team`, Icon: IconUsers },
-    { id: MEMBERS_TAB_ACCESS_ID, title: t`Access`, Icon: IconKey },
+    { id: MEMBERS_TAB_INVITE_ID, title: t`Invite`, Icon: IconUserPlus },
     ...(hasRolesPermission
       ? [{ id: MEMBERS_TAB_ROLES_ID, title: t`Roles`, Icon: IconLock }]
       : []),
@@ -40,8 +40,8 @@ export const SettingsWorkspaceMembers = () => {
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
-      case MEMBERS_TAB_ACCESS_ID:
-        return <SettingsWorkspaceMembersAccessTab />;
+      case MEMBERS_TAB_INVITE_ID:
+        return <SettingsWorkspaceMembersInviteTab />;
       case MEMBERS_TAB_ROLES_ID:
         return hasRolesPermission ? (
           <SettingsWorkspaceMembersRolesTab />

@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { HELPED_CARDS } from '@/app/[locale]/(home)/helped.data';
-import { HERO_DATA } from '@/app/[locale]/(home)/hero.data';
+import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import { Problem, type ProblemPointType } from '@/sections/Problem';
 import { HOME_TESTIMONIALS } from '@/app/[locale]/(home)/testimonials.data';
 import { FEATURE_CARDS } from '@/app/[locale]/(home)/three-cards-feature.data';
@@ -235,7 +235,7 @@ export default async function HomePage({ params }: HomePageProps) {
             />
           </Hero.Cta>
         </HeroIntroGroup>
-        <Hero.HomeVisual visual={HERO_DATA.visual} />
+        <Hero.AppPreview visual={APP_PREVIEW_DATA.visual} />
       </Hero.Root>
 
       <TrustedBy.Root
@@ -336,7 +336,7 @@ export default async function HomePage({ params }: HomePageProps) {
           eyebrow={i18n._(msg`They are the real sales`)}
           testimonials={HOME_TESTIMONIALS}
         >
-          <Testimonials.HomeVisual />
+          <Testimonials.HourglassVisual />
         </Testimonials.Carousel>
       </Testimonials.Root>
 

@@ -13,6 +13,7 @@ import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
@@ -36,6 +37,7 @@ export class ConnectedAccountRefreshTokensService {
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
     private readonly appOAuthRefreshAccessTokenService: AppOAuthRefreshAccessTokenService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
@@ -44,7 +46,10 @@ export class ConnectedAccountRefreshTokensService {
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
   ): Promise<ConnectedAccountTokens> {
-    const { refreshToken, accessToken } = connectedAccount;
+    const {
+      refreshToken: encryptedRefreshToken,
+      accessToken: encryptedAccessToken,
+    } = connectedAccount;
 
     const isAccessTokenValid =
       await this.isAccessTokenStillValid(connectedAccount);
@@ -53,7 +58,7 @@ export class ConnectedAccountRefreshTokensService {
       this.logger.debug(
         `Reusing valid access token for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}`,
       );
-      if (!isDefined(accessToken)) {
+      if (!isDefined(encryptedAccessToken)) {
         throw new ConnectedAccountRefreshAccessTokenException(
           `Access token is required for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
           ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND,
@@ -61,12 +66,19 @@ export class ConnectedAccountRefreshTokensService {
       }
 
       return {
-        accessToken,
-        refreshToken,
+        accessToken:
+          this.connectedAccountTokenEncryptionService.decrypt(
+            encryptedAccessToken,
+          ),
+        refreshToken: isDefined(encryptedRefreshToken)
+          ? this.connectedAccountTokenEncryptionService.decrypt(
+              encryptedRefreshToken,
+            )
+          : null,
       };
     }
 
-    if (!isNonEmptyString(refreshToken)) {
+    if (!isNonEmptyString(encryptedRefreshToken)) {
       throw new ConnectedAccountRefreshAccessTokenException(
         `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
         ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
@@ -77,11 +89,24 @@ export class ConnectedAccountRefreshTokensService {
       `Access token expired for connected account ${connectedAccount.id} in workspace ${workspaceId}, refreshing...`,
     );
 
+    const decryptedRefreshTokenForRefreshCall =
+      this.connectedAccountTokenEncryptionService.decrypt(
+        encryptedRefreshToken,
+      );
+
     const connectedAccountTokens = await this.refreshTokens(
       connectedAccount,
-      refreshToken,
+      decryptedRefreshTokenForRefreshCall,
       workspaceId,
     );
+
+    const {
+      encryptedAccessToken: reEncryptedAccessToken,
+      encryptedRefreshToken: reEncryptedRefreshToken,
+    } = this.connectedAccountTokenEncryptionService.encryptTokenPair({
+      accessToken: connectedAccountTokens.accessToken,
+      refreshToken: connectedAccountTokens.refreshToken,
+    });
 
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -89,7 +114,8 @@ export class ConnectedAccountRefreshTokensService {
       await this.connectedAccountRepository.update(
         { id: connectedAccount.id, workspaceId },
         {
-          ...connectedAccountTokens,
+          accessToken: reEncryptedAccessToken,
+          refreshToken: reEncryptedRefreshToken,
           lastCredentialsRefreshedAt: new Date(),
         },
       );

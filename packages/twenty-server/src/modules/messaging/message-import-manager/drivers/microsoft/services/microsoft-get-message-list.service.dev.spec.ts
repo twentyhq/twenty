@@ -7,12 +7,13 @@ import {
   MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 
@@ -64,6 +65,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
         },
         MicrosoftOAuth2ClientManagerService,
         ConfigService,
+        { provide: ConnectedAccountTokenEncryptionService, useValue: {} },
       ],
     }).compile();
 
@@ -236,6 +238,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
         },
         MicrosoftOAuth2ClientManagerService,
         ConfigService,
+        { provide: ConnectedAccountTokenEncryptionService, useValue: {} },
       ],
     }).compile();
 
