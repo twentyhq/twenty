@@ -1,17 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  createHash,
-  createPrivateKey,
-  createPublicKey,
-  type JsonWebKey,
-  type KeyObject,
-} from 'crypto';
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { createPrivateKey, createPublicKey, type KeyObject } from 'crypto';
 
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+import { IsNull, Repository } from 'typeorm';
+
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { JwtPublicKeyEntity } from 'src/engine/core-modules/jwt/entities/jwt-public-key.entity';
+import {
+  JwtKeyManagerException,
+  JwtKeyManagerExceptionCode,
+} from 'src/engine/core-modules/jwt/jwt-key-manager.exception';
+import { computeJwkThumbprint } from 'src/engine/core-modules/jwt/utils/compute-jwk-thumbprint.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type CurrentSigningKey = {
@@ -20,6 +24,8 @@ export type CurrentSigningKey = {
   kid: string;
 };
 
+const PUBLIC_KEY_CACHE_TTL_MS = 60_000;
+
 @Injectable()
 export class JwtKeyManagerService {
   private readonly logger = new Logger(JwtKeyManagerService.name);
@@ -27,12 +33,12 @@ export class JwtKeyManagerService {
   private currentSigningKeyPromise: Promise<CurrentSigningKey | null> | null =
     null;
 
-  private readonly publicKeyCache = new Map<string, KeyObject>();
-
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(JwtPublicKeyEntity)
     private readonly jwtPublicKeyRepository: Repository<JwtPublicKeyEntity>,
+    @InjectCacheStorage(CacheStorageNamespace.EngineJwtPublicKey)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   async getCurrentSigningKey(): Promise<CurrentSigningKey | null> {
@@ -48,55 +54,64 @@ export class JwtKeyManagerService {
     }
   }
 
-  async getPublicKeyByKid(kid: string): Promise<KeyObject | null> {
-    const cached = this.publicKeyCache.get(kid);
-
-    if (isDefined(cached)) {
-      return cached;
+  async getActivePublicKeyByKid(kid: string): Promise<KeyObject | null> {
+    if (!isNonEmptyString(kid)) {
+      return null;
     }
 
-    const row = await this.jwtPublicKeyRepository.findOne({ where: { kid } });
+    const cachedPem = await this.cacheStorageService.get<string>(kid);
+
+    if (isDefined(cachedPem)) {
+      return this.tryParsePublicKey(cachedPem, kid);
+    }
+
+    const row = await this.jwtPublicKeyRepository.findOne({
+      where: { kid, revokedAt: IsNull() },
+    });
 
     if (!isDefined(row)) {
       return null;
     }
 
-    const publicKey = createPublicKey(row.publicKey);
+    const publicKey = this.tryParsePublicKey(row.publicKey, kid);
 
-    this.publicKeyCache.set(kid, publicKey);
+    if (publicKey === null) {
+      return null;
+    }
+
+    await this.cacheStorageService.set<string>(
+      kid,
+      row.publicKey,
+      PUBLIC_KEY_CACHE_TTL_MS,
+    );
 
     return publicKey;
   }
 
-  computeKidFromPublicKey(publicKey: KeyObject): string {
-    const jwk = publicKey.export({ format: 'jwk' });
+  private tryParsePublicKey(pem: string, kid: string): KeyObject | null {
+    try {
+      return createPublicKey(pem);
+    } catch (error) {
+      this.logger.error(
+        `Failed to parse public key for kid=${kid}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
 
-    return computeJwkThumbprint(jwk);
-  }
-
-  resetForTests(): void {
-    this.currentSigningKeyPromise = null;
-    this.publicKeyCache.clear();
+      return null;
+    }
   }
 
   private async loadAndRegisterSigningKey(): Promise<CurrentSigningKey | null> {
     const pem = this.twentyConfigService.get('JWT_SIGNING_PRIVATE_KEY');
 
-    if (!isDefined(pem) || pem.length === 0) {
+    if (!isNonEmptyString(pem)) {
       return null;
     }
 
-    let privateKey: KeyObject;
+    const privateKey = this.tryParsePrivateKey(pem);
 
-    try {
-      privateKey = createPrivateKey(pem);
-    } catch (error) {
-      this.logger.error(
-        `JWT_SIGNING_PRIVATE_KEY is set but could not be parsed as a PEM private key. Falling back to legacy HS256 signing. Error: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-
+    if (privateKey === null) {
       return null;
     }
 
@@ -126,9 +141,21 @@ export class JwtKeyManagerService {
 
     await this.upsertPublicKey({ kid, publicKeyPem });
 
-    this.publicKeyCache.set(kid, publicKey);
-
     return { privateKey, publicKey, kid };
+  }
+
+  private tryParsePrivateKey(pem: string): KeyObject | null {
+    try {
+      return createPrivateKey(pem);
+    } catch (error) {
+      this.logger.error(
+        `JWT_SIGNING_PRIVATE_KEY is set but could not be parsed as a PEM private key. Falling back to legacy HS256 signing. Error: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      return null;
+    }
   }
 
   private async upsertPublicKey(args: {
@@ -147,8 +174,7 @@ export class JwtKeyManagerService {
       await this.jwtPublicKeyRepository.insert({
         kid: args.kid,
         publicKey: args.publicKeyPem,
-        algorithm: 'ES256',
-        status: 'active',
+        revokedAt: null,
       });
     } catch (error) {
       const stillExists = await this.jwtPublicKeyRepository.findOne({
@@ -156,54 +182,13 @@ export class JwtKeyManagerService {
       });
 
       if (!isDefined(stillExists)) {
-        throw error;
+        throw new JwtKeyManagerException(
+          `Failed to persist JWT public key (kid=${args.kid}): ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+          JwtKeyManagerExceptionCode.PUBLIC_KEY_PERSISTENCE_FAILED,
+        );
       }
     }
   }
 }
-
-const base64UrlEncode = (input: Buffer): string =>
-  input
-    .toString('base64')
-    .replace(/=+$/u, '')
-    .replace(/\+/gu, '-')
-    .replace(/\//gu, '_');
-
-export const computeJwkThumbprint = (jwk: JsonWebKey): string => {
-  const canonical = canonicalizeJwk(jwk);
-  const digest = createHash('sha256').update(canonical).digest();
-
-  return base64UrlEncode(digest);
-};
-
-const canonicalizeJwk = (jwk: JsonWebKey): string => {
-  if (jwk.kty === 'EC') {
-    if (
-      typeof jwk.crv !== 'string' ||
-      typeof jwk.x !== 'string' ||
-      typeof jwk.y !== 'string'
-    ) {
-      throw new Error('Invalid EC JWK: missing crv, x or y');
-    }
-
-    return JSON.stringify({ crv: jwk.crv, kty: 'EC', x: jwk.x, y: jwk.y });
-  }
-
-  if (jwk.kty === 'RSA') {
-    if (typeof jwk.e !== 'string' || typeof jwk.n !== 'string') {
-      throw new Error('Invalid RSA JWK: missing e or n');
-    }
-
-    return JSON.stringify({ e: jwk.e, kty: 'RSA', n: jwk.n });
-  }
-
-  if (jwk.kty === 'OKP') {
-    if (typeof jwk.crv !== 'string' || typeof jwk.x !== 'string') {
-      throw new Error('Invalid OKP JWK: missing crv or x');
-    }
-
-    return JSON.stringify({ crv: jwk.crv, kty: 'OKP', x: jwk.x });
-  }
-
-  throw new Error(`Unsupported JWK kty for thumbprint: ${jwk.kty}`);
-};

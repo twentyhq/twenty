@@ -139,27 +139,11 @@ export class RefreshTokenService {
       type: JwtTokenTypeEnum.REFRESH,
     };
 
-    const asymmetricToken = await this.jwtWrapperService.signAsymmetric(
+    const token = await this.jwtWrapperService.signAccessOrRefreshToken(
       jwtPayload,
       { expiresIn, jwtid: refreshToken.id },
     );
 
-    if (asymmetricToken !== null) {
-      return { token: asymmetricToken, expiresAt };
-    }
-
-    const secret = this.jwtWrapperService.generateAppSecret(
-      JwtTokenTypeEnum.REFRESH,
-      payload.workspaceId ?? payload.userId,
-    );
-
-    return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret,
-        expiresIn,
-        jwtid: refreshToken.id,
-      }),
-      expiresAt,
-    };
+    return { token, expiresAt };
   }
 }

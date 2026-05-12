@@ -3,7 +3,7 @@ import 'tsconfig-paths/register';
 
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
-import { CURRENT_PRIVATE_KEY_PEM } from 'test/integration/graphql/suites/auth/jwt-key-rotation/jwt-key-rotation.fixture';
+import { CURRENT_PRIVATE_KEY_PEM } from 'test/integration/utils/jwt-signing-key.fixture';
 
 import { createApp } from './create-app';
 

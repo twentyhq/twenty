@@ -4,6 +4,7 @@ export enum CacheStorageNamespace {
   ModuleWorkflow = 'module:workflow',
   EngineWorkspace = 'engine:workspace',
   EngineCoreEntity = 'engine:core-entity',
+  EngineJwtPublicKey = 'engine:jwt-public-key',
   EngineLock = 'engine:lock',
   EngineHealth = 'engine:health',
   EngineMetrics = 'engine:metrics',

@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import * as jwt from 'jsonwebtoken';
 import { Strategy } from 'passport-jwt';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -21,7 +22,6 @@ import {
   ApplicationAccessTokenJwtPayload,
   type AuthContext,
   type AuthContextUser,
-  FileTokenJwtPayloadLegacy,
   type JwtPayload,
   JwtTokenTypeEnum,
   type WorkspaceAgnosticTokenJwtPayload,
@@ -50,14 +50,26 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
     // @ts-expect-error legacy noImplicitAny
     const secretOrKeyProviderFunction = (_request, rawJwtToken, done) => {
-      const kid = extractKidFromTokenHeader(rawJwtToken);
+      const decodedHeader = decodeJwtHeader(rawJwtToken);
+      const decodedPayload = decodeJwtPayload<JwtPayload>(rawJwtToken);
 
-      if (typeof kid === 'string' && kid.length > 0) {
+      if (
+        shouldUseAsymmetricKey({
+          header: decodedHeader,
+          payload: decodedPayload,
+        })
+      ) {
         jwtKeyManagerService
-          .getPublicKeyByKid(kid)
+          .getActivePublicKeyByKid(decodedHeader!.kid as string)
           .then((publicKey) => {
-            if (publicKey === null) {
-              done(new Error('Unknown JWT signing key'), null);
+            if (!isDefined(publicKey)) {
+              done(
+                new AuthException(
+                  'Token invalid.',
+                  AuthExceptionCode.UNAUTHENTICATED,
+                ),
+                null,
+              );
 
               return;
             }
@@ -70,19 +82,29 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       }
 
       try {
-        const decodedToken = jwtWrapperService.decode<
-          | FileTokenJwtPayloadLegacy
-          | AccessTokenJwtPayload
-          | WorkspaceAgnosticTokenJwtPayload
-        >(rawJwtToken);
+        if (!isDefined(decodedPayload)) {
+          throw new AuthException(
+            'Token invalid.',
+            AuthExceptionCode.UNAUTHENTICATED,
+          );
+        }
 
         const appSecretBody =
-          decodedToken.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
-            ? decodedToken.userId
-            : decodedToken.workspaceId;
+          decodedPayload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
+            ? decodedPayload.userId
+            : 'workspaceId' in decodedPayload
+              ? decodedPayload.workspaceId
+              : undefined;
+
+        if (!isNonEmptyString(appSecretBody)) {
+          throw new AuthException(
+            'Token invalid.',
+            AuthExceptionCode.UNAUTHENTICATED,
+          );
+        }
 
         const secret = jwtWrapperService.generateAppSecret(
-          decodedToken.type,
+          decodedPayload.type,
           appSecretBody,
         );
 
@@ -490,7 +512,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 }
 
-const extractKidFromTokenHeader = (rawJwtToken: string): string | undefined => {
+const decodeJwtHeader = (rawJwtToken: string): jwt.JwtHeader | undefined => {
   try {
     const decoded = jwt.decode(rawJwtToken, { complete: true });
 
@@ -498,10 +520,49 @@ const extractKidFromTokenHeader = (rawJwtToken: string): string | undefined => {
       return undefined;
     }
 
-    const kid = decoded.header.kid;
-
-    return typeof kid === 'string' && kid.length > 0 ? kid : undefined;
+    return decoded.header;
   } catch {
     return undefined;
   }
+};
+
+const decodeJwtPayload = <T>(rawJwtToken: string): T | undefined => {
+  try {
+    const decoded = jwt.decode(rawJwtToken, { json: true });
+
+    if (decoded === null || typeof decoded === 'string') {
+      return undefined;
+    }
+
+    return decoded as T;
+  } catch {
+    return undefined;
+  }
+};
+
+const ASYMMETRIC_TOKEN_TYPES: ReadonlySet<JwtTokenTypeEnum> = new Set([
+  JwtTokenTypeEnum.ACCESS,
+  JwtTokenTypeEnum.REFRESH,
+]);
+
+const shouldUseAsymmetricKey = (args: {
+  header: jwt.JwtHeader | undefined;
+  payload: JwtPayload | undefined;
+}): boolean => {
+  const kid = args.header?.kid;
+  const alg = args.header?.alg;
+
+  if (!isNonEmptyString(kid)) {
+    return false;
+  }
+
+  if (alg !== 'ES256') {
+    return false;
+  }
+
+  if (!isDefined(args.payload)) {
+    return false;
+  }
+
+  return ASYMMETRIC_TOKEN_TYPES.has(args.payload.type);
 };

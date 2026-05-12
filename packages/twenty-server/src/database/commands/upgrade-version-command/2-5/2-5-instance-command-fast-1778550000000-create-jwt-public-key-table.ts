@@ -11,10 +11,9 @@ export class CreateJwtPublicKeyTableFastInstanceCommand
     await queryRunner.query(
       `CREATE TABLE IF NOT EXISTS "core"."jwtPublicKey" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-        "kid" varchar(128) NOT NULL,
-        "publicKey" text NOT NULL,
-        "algorithm" varchar(32) NOT NULL DEFAULT 'ES256',
-        "status" varchar(16) NOT NULL DEFAULT 'active',
+        "kid" character varying NOT NULL,
+        "publicKey" character varying NOT NULL,
+        "revokedAt" TIMESTAMP WITH TIME ZONE,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_jwtPublicKey_id" PRIMARY KEY ("id")

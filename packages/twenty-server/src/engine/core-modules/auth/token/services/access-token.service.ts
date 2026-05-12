@@ -141,25 +141,12 @@ export class AccessTokenService {
       impersonatedUserWorkspaceId: payloadOriginalUserWorkspaceId,
     };
 
-    const asymmetricToken = await this.jwtWrapperService.signAsymmetric(
+    const token = await this.jwtWrapperService.signAccessOrRefreshToken(
       jwtPayload,
       { expiresIn },
     );
 
-    if (asymmetricToken !== null) {
-      return { token: asymmetricToken, expiresAt };
-    }
-
-    return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret: this.jwtWrapperService.generateAppSecret(
-          JwtTokenTypeEnum.ACCESS,
-          workspaceId,
-        ),
-        expiresIn,
-      }),
-      expiresAt,
-    };
+    return { token, expiresAt };
   }
 
   async validateToken(token: string): Promise<AuthContext> {
