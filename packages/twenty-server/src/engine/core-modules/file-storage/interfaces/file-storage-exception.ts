@@ -8,6 +8,7 @@ export enum FileStorageExceptionCode {
   FILE_NOT_FOUND = 'FILE_NOT_FOUND',
   ACCESS_DENIED = 'ACCESS_DENIED',
   INVALID_EXTENSION = 'INVALID_EXTENSION',
+  SANITIZATION_FAILED = 'SANITIZATION_FAILED',
 }
 
 const getFileStorageExceptionUserFriendlyMessage = (
@@ -20,6 +21,8 @@ const getFileStorageExceptionUserFriendlyMessage = (
       return msg`File not found.`;
     case FileStorageExceptionCode.ACCESS_DENIED:
       return msg`Access denied.`;
+    case FileStorageExceptionCode.SANITIZATION_FAILED:
+      return msg`The image file could not be processed. It may be corrupted or in an unsupported format.`;
     default:
       assertUnreachable(code);
   }

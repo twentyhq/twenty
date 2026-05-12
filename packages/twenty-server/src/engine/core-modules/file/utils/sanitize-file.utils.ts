@@ -1,6 +1,12 @@
+import { msg } from '@lingui/core/macro';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import sharp from 'sharp';
+
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 const SHARP_SUPPORTED_MIME_TYPES = new Set([
   'image/jpeg',
@@ -46,8 +52,14 @@ export const sanitizeFile = async ({
 
       // rotate() applies EXIF orientation before metadata is stripped
       return await sharp(inputBuffer).rotate().toBuffer();
-    } catch {
-      return file;
+    } catch (error) {
+      throw new FileStorageException(
+        `Failed to sanitize image metadata: ${error instanceof Error ? error.message : String(error)}`,
+        FileStorageExceptionCode.SANITIZATION_FAILED,
+        {
+          userFriendlyMessage: msg`The image file could not be processed. It may be corrupted or in an unsupported format.`,
+        },
+      );
     }
   }
 

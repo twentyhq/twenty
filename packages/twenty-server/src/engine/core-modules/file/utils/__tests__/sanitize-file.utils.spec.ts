@@ -1,5 +1,7 @@
 import sharp from 'sharp';
 
+import { FileStorageException } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+
 import { sanitizeFile } from '../sanitize-file.utils';
 
 // Minimal valid 1x1 JPEG with an EXIF block containing a UserComment tag
@@ -63,16 +65,16 @@ describe('sanitizeFile', () => {
       expect(sanitizedMetadata.exif).toBeUndefined();
     });
 
-    it('should return original file when sharp processing fails', async () => {
+    it('should throw a FileStorageException when sharp cannot process a corrupted image', async () => {
       const corruptedBuffer = Buffer.from('not-a-real-image');
 
-      const result = await sanitizeFile({
-        file: corruptedBuffer,
-        ext: 'jpg',
-        mimeType: 'image/jpeg',
-      });
-
-      expect(result).toBe(corruptedBuffer);
+      await expect(
+        sanitizeFile({
+          file: corruptedBuffer,
+          ext: 'jpg',
+          mimeType: 'image/jpeg',
+        }),
+      ).rejects.toThrow(FileStorageException);
     });
   });
 
