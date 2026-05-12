@@ -43,13 +43,13 @@ export class JwtWrapperService {
     return this.jwtService.sign(payload, options);
   }
 
-  async signAccessOrRefreshToken(
+  async signAsync(
     payload: JwtPayload,
     options: { expiresIn: string | number; jwtid?: string },
   ): Promise<string> {
     if (!isAsymmetricSigningEligible(payload.type)) {
       throw new AuthException(
-        `signAccessOrRefreshToken called with non-rotatable token type "${payload.type}"`,
+        `signAsync called with non-rotatable token type "${payload.type}"`,
         AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
       );
     }

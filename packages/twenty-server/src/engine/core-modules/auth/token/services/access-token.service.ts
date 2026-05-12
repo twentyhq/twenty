@@ -141,10 +141,9 @@ export class AccessTokenService {
       impersonatedUserWorkspaceId: payloadOriginalUserWorkspaceId,
     };
 
-    const token = await this.jwtWrapperService.signAccessOrRefreshToken(
-      jwtPayload,
-      { expiresIn },
-    );
+    const token = await this.jwtWrapperService.signAsync(jwtPayload, {
+      expiresIn,
+    });
 
     return { token, expiresAt };
   }

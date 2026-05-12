@@ -139,10 +139,10 @@ export class RefreshTokenService {
       type: JwtTokenTypeEnum.REFRESH,
     };
 
-    const token = await this.jwtWrapperService.signAccessOrRefreshToken(
-      jwtPayload,
-      { expiresIn, jwtid: refreshToken.id },
-    );
+    const token = await this.jwtWrapperService.signAsync(jwtPayload, {
+      expiresIn,
+      jwtid: refreshToken.id,
+    });
 
     return { token, expiresAt };
   }
