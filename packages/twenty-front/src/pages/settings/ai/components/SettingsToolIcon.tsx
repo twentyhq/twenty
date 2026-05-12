@@ -19,10 +19,6 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ApplicationInfo = {
   name: string;
-};
-
-type MarketplaceAppInfo = {
-  icon: string;
   logo?: string | null;
 };
 
@@ -31,7 +27,6 @@ type SettingsToolIconProps = {
   toolName?: string;
   objectName?: string;
   application?: ApplicationInfo;
-  marketplaceApp?: MarketplaceAppInfo;
 };
 
 const getOperationIcon = (toolName: string): IconComponent | null => {
@@ -90,33 +85,15 @@ export const SettingsToolIcon = ({
   toolName,
   objectName,
   application,
-  marketplaceApp,
 }: SettingsToolIconProps) => {
   const { getIcon } = useIcons();
   const { theme } = useContext(ThemeContext);
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  // Custom tools: application/marketplace icons
-  if (isDefined(application) && isDefined(marketplaceApp?.logo)) {
-    return (
-      <Avatar
-        avatarUrl={marketplaceApp?.logo ?? null}
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
-        size="xs"
-      />
-    );
-  }
-
-  if (isDefined(marketplaceApp)) {
-    const MarketplaceIcon = getIcon(marketplaceApp.icon);
-    return <MarketplaceIcon size={16} />;
-  }
-
   if (isDefined(application)) {
     return (
       <Avatar
+        avatarUrl={application.logo ?? null}
         placeholder={application.name}
         placeholderColorSeed={application.name}
         type="squared"
