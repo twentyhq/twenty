@@ -41,6 +41,11 @@ const StyledRecordChipContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
   overflow: hidden;
+
+  & a {
+    max-width: 100%;
+    min-width: 0;
+  }
 `;
 
 export const RecordBoardCardHeader = () => {
