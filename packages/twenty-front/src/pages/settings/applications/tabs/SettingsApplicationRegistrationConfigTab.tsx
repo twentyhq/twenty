@@ -34,11 +34,7 @@ export const SettingsApplicationRegistrationConfigTab = ({
   const configVariables = variables.map((variable) => ({
     name: variable.key,
     description: variable.description,
-    value: variable.isFilled ? (
-      '••••••••••'
-    ) : (
-      <Status color="gray" text={t`Not set`} />
-    ),
+    value: variable.value ?? <Status color="gray" text={t`Not set`} />,
     to: getSettingsPath(
       SettingsPath.ApplicationRegistrationConfigVariableDetails,
       {

@@ -33,6 +33,7 @@ export interface ApplicationRegistrationVariable {
     isSecret: Scalars['Boolean']
     isRequired: Scalars['Boolean']
     isFilled: Scalars['Boolean']
+    value?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'ApplicationRegistrationVariable'
@@ -2918,6 +2919,7 @@ export interface ApplicationRegistrationVariableGenqlSelection{
     isSecret?: boolean | number
     isRequired?: boolean | number
     isFilled?: boolean | number
+    value?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number

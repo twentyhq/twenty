@@ -153,6 +153,9 @@ export default {
             "isFilled": [
                 6
             ],
+            "value": [
+                1
+            ],
             "createdAt": [
                 4
             ],

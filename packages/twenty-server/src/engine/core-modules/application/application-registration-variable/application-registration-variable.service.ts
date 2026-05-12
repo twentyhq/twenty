@@ -34,10 +34,22 @@ export class ApplicationRegistrationVariableService {
       workspaceId,
     );
 
-    return this.variableRepository.find({
+    const variables = await this.variableRepository.find({
       where: { applicationRegistrationId },
       order: { key: 'ASC' },
     });
+
+    for (const variable of variables) {
+      if (!variable.isFilled) {
+        variable.value = null;
+      } else {
+        variable.value = variable.isSecret
+          ? '•••••••••••••'
+          : this.encryptionService.decrypt(variable.encryptedValue);
+      }
+    }
+
+    return variables;
   }
 
   async createVariable(
