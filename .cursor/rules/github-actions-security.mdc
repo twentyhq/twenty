@@ -1,0 +1,36 @@
+---
+description: GitHub Actions security guidelines for supply chain protection
+globs: **/.github/**/*.yml, **/.github/**/*.yaml
+alwaysApply: false
+---
+
+# GitHub Actions Security
+
+## Pin Third-Party Actions to Commit SHAs
+
+Always reference external actions and reusable workflows by their full commit SHA, never by a mutable tag or branch. Tags can be force-pushed by a compromised maintainer account.
+
+```yaml
+# ❌ Mutable tag — vulnerable to supply chain attacks
+uses: actions/checkout@v4
+uses: actions/setup-node@v4
+uses: peter-evans/repository-dispatch@v2
+
+# ✅ Pinned to commit SHA with tag comment for readability
+uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0 # v3.0.0
+```
+
+## Minimal Permissions
+
+Always declare explicit `permissions` at the job level with the least privilege required. Never rely on the default `GITHUB_TOKEN` permissions.
+
+```yaml
+# ✅ Explicit minimal permissions
+permissions:
+  contents: read
+
+# ❌ Overly broad or implicit permissions
+permissions: write-all
+```
