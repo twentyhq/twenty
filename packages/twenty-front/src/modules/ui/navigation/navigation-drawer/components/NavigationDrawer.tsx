@@ -89,6 +89,8 @@ export const NavigationDrawer = ({
   const [navigationDrawerWidth, setNavigationDrawerWidth] = useAtomState(
     navigationDrawerWidthState,
   );
+  const isNavigationDrawerDisplayedExpanded =
+    isNavigationDrawerExpanded || isSettingsDrawer;
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
@@ -120,13 +122,13 @@ export const NavigationDrawer = ({
       <StyledAnimatedContainer
         className={className}
         data-click-outside-id={NAVIGATION_DRAWER_CLICK_OUTSIDE_ID}
-        isExpanded={isNavigationDrawerExpanded}
+        isExpanded={isNavigationDrawerDisplayedExpanded}
         isResizing={isResizing}
       >
         <StyledContainer
           isSettings={isSettingsDrawer}
           isMobile={isMobile}
-          isExpanded={isNavigationDrawerExpanded}
+          isExpanded={isNavigationDrawerDisplayedExpanded}
         >
           {isSettingsDrawer && title ? (
             <NavigationDrawerBackButton title={title} />
