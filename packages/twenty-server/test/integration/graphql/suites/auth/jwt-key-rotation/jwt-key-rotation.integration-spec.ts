@@ -34,7 +34,7 @@ const generateLegacyHs256Secret = (
 const decodeJwtCompleteOrThrow = (token: string) => {
   const decoded = jwt.decode(token, { complete: true });
 
-  if (!isDefined(decoded) || typeof decoded === 'string') {
+  if (!isDefined(decoded)) {
     throw new Error('Failed to decode JWT');
   }
 

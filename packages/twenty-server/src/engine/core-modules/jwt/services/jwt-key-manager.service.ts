@@ -5,11 +5,9 @@ import { createPrivateKey, createPublicKey, type KeyObject } from 'crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { JwtPublicKeyEntity } from 'src/engine/core-modules/jwt/entities/jwt-public-key.entity';
 import {
   JwtKeyManagerException,
@@ -24,11 +22,6 @@ export type CurrentSigningKey = {
   kid: string;
 };
 
-// Bounds revocation propagation: setting `revokedAt` (or deleting a row) takes
-// effect on every running instance within at most this TTL, since the cache is
-// keyed by `kid` and entries are only refreshed on miss after expiry.
-const PUBLIC_KEY_CACHE_TTL_MS = 60_000;
-
 @Injectable()
 export class JwtKeyManagerService {
   private readonly logger = new Logger(JwtKeyManagerService.name);
@@ -40,8 +33,7 @@ export class JwtKeyManagerService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(JwtPublicKeyEntity)
     private readonly jwtPublicKeyRepository: Repository<JwtPublicKeyEntity>,
-    @InjectCacheStorage(CacheStorageNamespace.EngineJwtPublicKey)
-    private readonly cacheStorageService: CacheStorageService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async getCurrentSigningKey(): Promise<CurrentSigningKey | null> {
@@ -62,33 +54,16 @@ export class JwtKeyManagerService {
       return null;
     }
 
-    const cachedPem = await this.cacheStorageService.get<string>(kid);
-
-    if (isDefined(cachedPem)) {
-      return this.tryParsePublicKey(cachedPem, kid);
-    }
-
-    const row = await this.jwtPublicKeyRepository.findOne({
-      where: { kid, revokedAt: IsNull() },
-    });
-
-    if (!isDefined(row)) {
-      return null;
-    }
-
-    const publicKey = this.tryParsePublicKey(row.publicKey, kid);
-
-    if (publicKey === null) {
-      return null;
-    }
-
-    await this.cacheStorageService.set<string>(
+    const cachedPem = await this.coreEntityCacheService.get(
+      'jwtPublicKey',
       kid,
-      row.publicKey,
-      PUBLIC_KEY_CACHE_TTL_MS,
     );
 
-    return publicKey;
+    if (!isDefined(cachedPem)) {
+      return null;
+    }
+
+    return this.tryParsePublicKey(cachedPem, kid);
   }
 
   private tryParsePublicKey(pem: string, kid: string): KeyObject | null {

@@ -3,7 +3,7 @@ import { DiscoveryService, Reflector } from '@nestjs/core';
 
 import crypto from 'crypto';
 
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheProvider } from 'src/engine/core-entity-cache/interfaces/core-entity-cache-provider.service';
 
@@ -84,7 +84,10 @@ export class CoreEntityCacheService implements OnModuleInit {
   ): Promise<CoreEntityCacheDataMap[K] | null> {
     this.evictExpiredLocalEntries();
 
-    if (!isDefined(entityId) || !isValidUuid(entityId)) {
+    if (
+      !isDefined(entityId) ||
+      !CORE_ENTITY_CACHE_KEYS[cacheKeyName].isValidId(entityId)
+    ) {
       return null;
     }
 
@@ -327,6 +330,6 @@ export class CoreEntityCacheService implements OnModuleInit {
     entityId: string,
     keyName: CoreEntityCacheKeyName,
   ): string {
-    return `${CORE_ENTITY_CACHE_KEYS[keyName]}:${entityId}`;
+    return `${CORE_ENTITY_CACHE_KEYS[keyName].prefix}:${entityId}`;
   }
 }

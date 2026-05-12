@@ -516,7 +516,7 @@ const decodeJwtHeader = (rawJwtToken: string): jwt.JwtHeader | undefined => {
   try {
     const decoded = jwt.decode(rawJwtToken, { complete: true });
 
-    if (decoded === null || typeof decoded === 'string') {
+    if (!isDefined(decoded)) {
       return undefined;
     }
 
@@ -530,7 +530,7 @@ const decodeJwtPayload = <T>(rawJwtToken: string): T | undefined => {
   try {
     const decoded = jwt.decode(rawJwtToken, { json: true });
 
-    if (decoded === null || typeof decoded === 'string') {
+    if (!isDefined(decoded)) {
       return undefined;
     }
 

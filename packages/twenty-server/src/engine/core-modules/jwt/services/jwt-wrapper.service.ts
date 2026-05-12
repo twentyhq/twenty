@@ -252,7 +252,7 @@ export class JwtWrapperService {
     try {
       const decoded = jwt.decode(token, { complete: true });
 
-      if (decoded === null || typeof decoded === 'string') {
+      if (!isDefined(decoded)) {
         return undefined;
       }
 
