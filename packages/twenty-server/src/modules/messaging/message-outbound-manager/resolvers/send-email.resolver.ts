@@ -107,7 +107,21 @@ export class SendEmailResolver {
         throw error;
       }
 
-      this.logger.error(`Failed to send email: ${error}`);
+      const errorResponse =
+        error instanceof Error && 'response' in error
+          ? String((error as Error & { response?: unknown }).response)
+          : undefined;
+      const errorResponseStatus =
+        error instanceof Error && 'responseStatus' in error
+          ? String((error as Error & { responseStatus?: unknown }).responseStatus)
+          : undefined;
+
+      this.logger.error(
+        `Failed to send email: ${error}${
+          errorResponse ? `, response=${errorResponse}` : ''
+        }${errorResponseStatus ? `, responseStatus=${errorResponseStatus}` : ''}`,
+        error instanceof Error ? error.stack : undefined,
+      );
 
       return {
         success: false,
