@@ -56,7 +56,7 @@
     }],
     "typescript/no-empty-function": "off",
     "typescript/no-explicit-any": "warn",
-    "typescript/no-floating-promises": "warn",
+    "typescript/no-floating-promises": "error",
     "typescript/no-unused-vars": ["warn", {
       "vars": "all",
       "varsIgnorePattern": "^_",
