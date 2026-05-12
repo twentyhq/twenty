@@ -1,4 +1,3 @@
-import { getWorkflowLogicFunctionDisplayName } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -41,10 +40,7 @@ export const createListLogicFunctionToolsTool = (
       logicFunctions: workflowActionFunctions.map((fn) => ({
         id: fn.id,
         name: fn.name,
-        displayName: getWorkflowLogicFunctionDisplayName({
-          name: fn.name,
-          workflowActionTriggerSettings: fn.workflowActionTriggerSettings,
-        }),
+        displayName: fn.workflowActionTriggerSettings?.label ?? fn.name,
         description: fn.description,
       })),
     };

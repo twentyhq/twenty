@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { getWorkflowLogicFunctionDisplayName } from 'twenty-shared/application';
 import {
   FieldMetadataType,
   StepLogicalOperator,
@@ -224,11 +223,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           builtStep: {
             ...baseStep,
-            name: getWorkflowLogicFunctionDisplayName({
-              name: flatLogicFunction.name,
-              workflowActionTriggerSettings:
-                flatLogicFunction.workflowActionTriggerSettings,
-            }),
+            name:
+              flatLogicFunction.workflowActionTriggerSettings?.label ??
+              flatLogicFunction.name,
             type: WorkflowActionType.LOGIC_FUNCTION,
             settings: {
               ...BASE_STEP_DEFINITION,
