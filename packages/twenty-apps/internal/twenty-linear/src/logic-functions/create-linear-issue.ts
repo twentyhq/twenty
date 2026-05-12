@@ -66,11 +66,6 @@ export default defineLogicFunction({
           type: 'string',
           description: 'Due date in YYYY-MM-DD format.',
         },
-        attachmentUrl: {
-          type: 'string',
-          description:
-            'A URL to attach to the issue after creation.',
-        },
       },
       required: ['teamId', 'title'],
     },
@@ -92,7 +87,6 @@ export default defineLogicFunction({
           labelIds: { type: 'array', items: { type: 'string' } },
           cycleId: { type: 'string' },
           dueDate: { type: 'string' },
-          attachmentUrl: { type: 'string' },
         },
       },
     ],

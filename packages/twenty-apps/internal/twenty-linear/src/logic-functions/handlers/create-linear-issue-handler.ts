@@ -1,16 +1,9 @@
 import { listConnections } from 'twenty-sdk/logic-function';
 
-import {
-  ATTACHMENT_CREATE_MUTATION,
-  ISSUE_CREATE_MUTATION,
-} from 'src/logic-functions/constants/issue-create-mutation.constant';
+import { ISSUE_CREATE_MUTATION } from 'src/logic-functions/constants/issue-create-mutation.constant';
 import { type CreateIssueInput } from 'src/logic-functions/types/create-issue-input.type';
 import { type CreateIssueMutationResult } from 'src/logic-functions/types/create-issue-mutation-result.type';
 import { callLinearGraphQL } from 'src/logic-functions/utils/call-linear-graphql';
-
-type AttachmentCreateResult = {
-  attachmentCreate: { success: boolean };
-};
 
 type HandlerResult =
   | {
@@ -85,19 +78,6 @@ export const createLinearIssueHandler = async (
       success: false,
       error: 'Linear reported the mutation as unsuccessful.',
     };
-  }
-
-  if (input.attachmentUrl) {
-    await callLinearGraphQL<AttachmentCreateResult>({
-      accessToken: connection.accessToken,
-      query: ATTACHMENT_CREATE_MUTATION,
-      variables: {
-        input: {
-          issueId: issue.id,
-          url: input.attachmentUrl,
-        },
-      },
-    });
   }
 
   return { success: true, issue };

@@ -352,7 +352,6 @@ const CreateIssueForm = () => {
   const [selectedLabelIds, setSelectedLabelIds] = useState<string[]>([]);
   const [cycleId, setCycleId] = useState('');
   const [dueDate, setDueDate] = useState('');
-  const [attachmentUrl, setAttachmentUrl] = useState('');
 
   const fetchIssueOptions = useCallback(async (selectedTeamId: string) => {
     if (!selectedTeamId) {
@@ -470,7 +469,6 @@ const CreateIssueForm = () => {
         labelIds: selectedLabelIds.length > 0 ? selectedLabelIds : undefined,
         cycleId: cycleId || undefined,
         dueDate: dueDate || undefined,
-        attachmentUrl: attachmentUrl.trim() || undefined,
       });
 
       if (!result.success) {
@@ -748,27 +746,14 @@ const CreateIssueForm = () => {
         </div>
       )}
 
-      <div style={STYLES.fieldRow}>
-        <div style={STYLES.fieldRowItem}>
-          <label style={STYLES.label}>Due date</label>
-          <input
-            value={dueDate}
-            onChange={onValueChange(setDueDate)}
-            style={STYLES.input}
-            type="date"
-          />
-        </div>
-        <div style={STYLES.fieldRowItem}>
-          <label style={STYLES.label}>Attachment URL</label>
-          <input
-            value={attachmentUrl}
-            onInput={onValueChange(setAttachmentUrl)}
-            onChange={onValueChange(setAttachmentUrl)}
-            style={STYLES.input}
-            type="url"
-            placeholder="https://..."
-          />
-        </div>
+      <div style={STYLES.fieldGroup}>
+        <label style={STYLES.label}>Due date</label>
+        <input
+          value={dueDate}
+          onChange={onValueChange(setDueDate)}
+          style={STYLES.input}
+          type="date"
+        />
       </div>
 
       <div style={STYLES.buttonRow}>

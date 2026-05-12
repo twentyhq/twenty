@@ -19,7 +19,6 @@ const handler = async (event: RoutePayload) => {
     labelIds: body?.labelIds as string[] | undefined,
     cycleId: body?.cycleId as string | undefined,
     dueDate: body?.dueDate as string | undefined,
-    attachmentUrl: body?.attachmentUrl as string | undefined,
   });
 };
 

@@ -6,11 +6,3 @@ export const ISSUE_CREATE_MUTATION = `
     }
   }
 `;
-
-export const ATTACHMENT_CREATE_MUTATION = `
-  mutation AttachmentCreate($input: AttachmentCreateInput!) {
-    attachmentCreate(input: $input) {
-      success
-    }
-  }
-`;

@@ -10,5 +10,4 @@ export type CreateIssueInput = {
   labelIds?: string[];
   cycleId?: string;
   dueDate?: string;
-  attachmentUrl?: string;
 };
