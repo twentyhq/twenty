@@ -2,10 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import {
-  AuditException,
-  AuditExceptionCode,
-} from 'src/engine/core-modules/audit/audit.exception';
-import {
   type TrackEventName,
   type TrackEventProperties,
 } from 'src/engine/core-modules/audit/types/events.type';
@@ -82,16 +78,17 @@ export class AuditService {
     };
   }
 
-  private preventIfDisabled(
+  private async preventIfDisabled(
     sendEventOrPageviewFunction: () => Promise<{ success: boolean }>,
-  ) {
+  ): Promise<{ success: boolean }> {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return { success: true };
     }
+
     try {
-      return sendEventOrPageviewFunction();
-    } catch (err) {
-      return new AuditException(err, AuditExceptionCode.INVALID_INPUT);
+      return await sendEventOrPageviewFunction();
+    } catch {
+      return { success: false };
     }
   }
 }
