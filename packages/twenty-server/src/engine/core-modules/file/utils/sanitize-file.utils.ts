@@ -1,7 +1,16 @@
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
+import sharp from 'sharp';
 
-export const sanitizeFile = ({
+const SHARP_SUPPORTED_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/tiff',
+  'image/avif',
+]);
+
+export const sanitizeFile = async ({
   file,
   ext,
   mimeType,
@@ -9,7 +18,7 @@ export const sanitizeFile = ({
   file: Buffer | Uint8Array | string;
   ext: string;
   mimeType: string | undefined;
-}): Buffer | Uint8Array | string => {
+}): Promise<Buffer | Uint8Array | string> => {
   if (ext === 'svg' || mimeType === 'image/svg+xml') {
     const window = new JSDOM('').window;
     const purify = DOMPurify(window);
@@ -25,6 +34,21 @@ export const sanitizeFile = ({
     }
 
     return purify.sanitize(fileString);
+  }
+
+  if (mimeType && SHARP_SUPPORTED_MIME_TYPES.has(mimeType)) {
+    try {
+      const inputBuffer = Buffer.isBuffer(file)
+        ? file
+        : typeof file === 'string'
+          ? Buffer.from(file, 'binary')
+          : Buffer.from(file);
+
+      // rotate() applies EXIF orientation before metadata is stripped
+      return await sharp(inputBuffer).rotate().toBuffer();
+    } catch {
+      return file;
+    }
   }
 
   return file;
