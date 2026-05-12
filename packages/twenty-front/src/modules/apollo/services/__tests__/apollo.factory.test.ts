@@ -192,6 +192,35 @@ describe('ApolloFactory', () => {
     }
   }, 10000);
 
+  it('should call onError when encountering "GRAPHQL_VALIDATION_FAILED" error', async () => {
+    const errors = [
+      {
+        message: 'Cannot query field "icon" on type "MarketplaceApp".',
+        extensions: {
+          code: 'GRAPHQL_VALIDATION_FAILED',
+        },
+      },
+    ];
+    fetchMock.mockResponse(() =>
+      Promise.resolve({
+        body: JSON.stringify({
+          data: {},
+          errors,
+        }),
+      }),
+    );
+
+    try {
+      await makeRequest();
+    } catch (error) {
+      expect(error).toBeInstanceOf(CombinedGraphQLErrors);
+      expect((error as CombinedGraphQLErrors).message).toBe(
+        'Cannot query field "icon" on type "MarketplaceApp".',
+      );
+      expect(mockOnError).toHaveBeenCalledWith(errors);
+    }
+  }, 10000);
+
   it('should call onNetworkError when encountering a network error', async () => {
     const errors = [
       {
