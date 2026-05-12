@@ -46,7 +46,6 @@ export class WorkspaceMigrationRunnerRestApiExceptionFilter
     return this.httpExceptionHandlerService.handleError(
       exception as unknown as CustomException,
       response,
-      status,
     );
   }
 }
