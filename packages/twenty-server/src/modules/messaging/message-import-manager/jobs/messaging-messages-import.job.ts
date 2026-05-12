@@ -9,6 +9,10 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import {
+  MessageImportExceptionHandlerService,
+  MessageImportSyncStep,
+} from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -29,6 +33,7 @@ export class MessagingMessagesImportJob {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
   ) {}
 
   @Process(MessagingMessagesImportJob.name)
@@ -62,14 +67,32 @@ export class MessagingMessagesImportJob {
         return;
       }
 
-      if (!messageChannel?.isSyncEnabled) {
-        return;
-      }
-
       if (
         messageChannel.syncStage !==
         MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
       ) {
+        return;
+      }
+
+      if (!messageChannel.isSyncEnabled) {
+        await this.messageImportErrorHandlerService.handleDriverException(
+          new Error('Sync is disabled'),
+          MessageImportSyncStep.MESSAGES_IMPORT_ONGOING,
+          messageChannel,
+          workspaceId,
+        );
+
+        return;
+      }
+
+      if (!messageChannel.connectedAccount) {
+        await this.messageImportErrorHandlerService.handleDriverException(
+          new Error('Connected account not found'),
+          MessageImportSyncStep.MESSAGES_IMPORT_ONGOING,
+          messageChannel,
+          workspaceId,
+        );
+
         return;
       }
 

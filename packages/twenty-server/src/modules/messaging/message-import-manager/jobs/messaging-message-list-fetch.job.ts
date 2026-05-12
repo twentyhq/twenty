@@ -67,16 +67,6 @@ export class MessagingMessageListFetchJob {
         return;
       }
 
-      if (!messageChannel.connectedAccount) {
-        await this.messagingMonitoringService.track({
-          eventName: 'message_list_fetch_job.error.connected_account_not_found',
-          messageChannelId,
-          workspaceId,
-        });
-
-        return;
-      }
-
       if (
         messageChannel.syncStage !==
         MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED
@@ -85,6 +75,20 @@ export class MessagingMessageListFetchJob {
       }
 
       try {
+        if (!messageChannel.isSyncEnabled) {
+          throw new Error('Sync is disabled');
+        }
+
+        if (!messageChannel.connectedAccount) {
+          await this.messagingMonitoringService.track({
+            eventName: 'message_list_fetch_job.error.connected_account_not_found',
+            messageChannelId,
+            workspaceId,
+          });
+
+          throw new Error('Connected account not found');
+        }
+
         await this.messagingMonitoringService.track({
           eventName: 'message_list_fetch.started',
           workspaceId,
