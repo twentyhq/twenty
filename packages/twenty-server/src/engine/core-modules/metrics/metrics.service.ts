@@ -99,10 +99,7 @@ export class MetricsService {
 
     if (shouldStoreInCache && eventId) {
       this.metricsCacheService.updateCounter(key, [eventId]).catch((error) => {
-        this.logger.error(
-          `Failed to update metrics cache for ${key}`,
-          error,
-        );
+        this.logger.error(`Failed to update metrics cache for ${key}`, error);
       });
     }
 
