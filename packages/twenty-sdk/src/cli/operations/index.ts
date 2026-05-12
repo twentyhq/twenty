@@ -51,7 +51,6 @@ export { DEV_API_KEY, DEV_API_URL } from '@/cli/constants/dev-api-key';
 export {
   getDockerInstallInstructions,
   isDockerInstalled,
-  openDockerInstallPage,
 } from '@/cli/utilities/server/docker-install';
 
 // Shared types and error codes

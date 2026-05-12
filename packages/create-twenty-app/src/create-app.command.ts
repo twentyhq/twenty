@@ -8,7 +8,7 @@ import * as fs from 'fs-extra';
 import kebabCase from 'lodash.kebabcase';
 import * as path from 'path';
 import { basename } from 'path';
-import { execSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import {
   authLogin,
   checkDockerRunning,
@@ -48,6 +48,12 @@ export class CreateAppCommand {
       await this.validateDirectory(appDirectory);
 
       const totalSteps = skipDocker ? 4 : 6;
+
+      // Start pulling the Docker image in the background while we scaffold
+      const dockerPullPromise =
+        !skipDocker && checkDockerRunning()
+          ? this.pullImageInBackground()
+          : Promise.resolve(false);
 
       this.logPlan({ appName, appDisplayName, appDescription, appDirectory });
 
@@ -104,7 +110,7 @@ export class CreateAppCommand {
 
       if (!skipDocker) {
         this.logStep(5, totalSteps, 'Starting Twenty server');
-        const serverResult = await this.ensureDockerServer();
+        const serverResult = await this.ensureDockerServer(dockerPullPromise);
 
         serverUrl = serverResult.url;
 
@@ -217,7 +223,18 @@ export class CreateAppCommand {
     console.log(chalk.gray(`      → ${message}`));
   }
 
-  private async ensureDockerServer(): Promise<{ url?: string }> {
+  private pullImageInBackground(): Promise<boolean> {
+    return new Promise((resolve) => {
+      const child = spawn('docker', ['pull', IMAGE], { stdio: 'ignore' });
+
+      child.on('close', (code) => resolve(code === 0));
+      child.on('error', () => resolve(false));
+    });
+  }
+
+  private async ensureDockerServer(
+    dockerPullPromise: Promise<boolean>,
+  ): Promise<{ url?: string }> {
     if (!checkDockerRunning()) {
       console.log(
         chalk.yellow(
@@ -229,11 +246,11 @@ export class CreateAppCommand {
       return {};
     }
 
-    this.logDetail('Pulling latest Twenty server image...');
+    this.logDetail('Ensuring latest Twenty server image...');
 
-    try {
-      execSync(`docker pull ${IMAGE}`, { stdio: 'inherit' });
-    } catch {
+    const pullSucceeded = await dockerPullPromise;
+
+    if (!pullSucceeded) {
       this.logDetail(
         'Image pull failed, continuing with cached image if available...',
       );
