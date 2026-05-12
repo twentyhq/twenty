@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.4.0', 1778235340020)
+@RegisteredInstanceCommand('2.5.0', 1778235340020)
 export class RenamePermissionFlagToPermissionFlagGrantFastInstanceCommand
   implements FastInstanceCommand
 {

@@ -10,9 +10,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.4.0', 1799000001000)
+@RegisteredWorkspaceCommand('2.5.0', 1799000001000)
 @Command({
-  name: 'upgrade:2-4:backfill-standard-permission-flags',
+  name: 'upgrade:2-5:backfill-standard-permission-flags',
   description:
     'Backfill standard permission flag definitions for existing workspaces created before flag definitions were syncable',
 })

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Permission flag upsert should fail when permissionFlagGrantKeys contains invalid enum value 1`] = `
 {
@@ -50,7 +50,7 @@ exports[`Permission flag upsert should fail when role is not editable (system ro
     },
     "userFriendlyMessage": "Cannot target a role owned by another application.",
   },
-  "message": "Validation errors occurred while upserting permission flags",
+  "message": "Validation errors occurred while upserting permission flag grants",
   "name": "GraphQLError",
 }
 `;
