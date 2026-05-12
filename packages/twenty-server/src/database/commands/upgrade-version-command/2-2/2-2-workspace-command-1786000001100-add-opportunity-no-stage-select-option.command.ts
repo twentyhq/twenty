@@ -11,8 +11,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const OPPORTUNITY_NO_STAGE_OPTION_ID =
-  '20202020-f3c2-4b8a-9d01-050005050050';
+const OPPORTUNITY_NO_STAGE_OPTION_ID = '20202020-f3c2-4b8a-9d01-050005050050';
 
 const NO_STAGE_OPTION_LABEL = 'No stage';
 
@@ -60,7 +59,9 @@ export class AddOpportunityNoStageSelectOptionCommand extends ActiveOrSuspendedW
     }
 
     if (
-      stageField.options.some((option: { value: string }) => option.value === 'NO_STAGE')
+      stageField.options.some(
+        (option: { value: string }) => option.value === 'NO_STAGE',
+      )
     ) {
       this.logger.log(
         `NO_STAGE opportunity.stage option already present for workspace ${workspaceId}, skipping`,
