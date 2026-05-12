@@ -5,6 +5,7 @@ import { msg } from '@lingui/core/macro';
 import { ImapFlow } from 'imapflow';
 import { createTransport } from 'nodemailer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 import { Repository } from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -51,6 +52,16 @@ export class ImapSmtpCaldavService {
       tls: {
         rejectUnauthorized: false,
       },
+    });
+
+    client.on('error', (error) => {
+      if (this.isExpectedSocketError(error)) {
+        this.logger.warn(`IMAP test client socket error: ${error.message}`);
+
+        return;
+      }
+
+      this.logger.error('IMAP test client emitted an async error', error.stack);
     });
 
     try {
@@ -219,5 +230,18 @@ export class ImapSmtpCaldavService {
       },
       authContext,
     );
+  }
+
+  private isExpectedSocketError(error: Error): boolean {
+    if (!('code' in error)) {
+      return false;
+    }
+
+    return [
+      MessageNetworkExceptionCode.ECONNABORTED,
+      MessageNetworkExceptionCode.ECONNRESET,
+      MessageNetworkExceptionCode.ETIMEDOUT,
+      MessageNetworkExceptionCode.EHOSTUNREACH,
+    ].includes(error.code as MessageNetworkExceptionCode);
   }
 }

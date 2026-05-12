@@ -8,6 +8,7 @@ import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-cal
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 import { parseImapAuthenticationError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-imap-authentication-error.util';
 
 type ConnectedAccountIdentifier = Pick<
@@ -18,6 +19,7 @@ type ConnectedAccountIdentifier = Pick<
 @Injectable()
 export class ImapClientProvider {
   private readonly logger = new Logger(ImapClientProvider.name);
+  private readonly clientsInShutdown = new WeakSet<ImapFlow>();
 
   private static readonly CONNECTION_TIMEOUT_MS = 30000;
   private static readonly GREETING_TIMEOUT_MS = 16000;
@@ -42,11 +44,19 @@ export class ImapClientProvider {
   }
 
   async closeClient(client: ImapFlow): Promise<void> {
+    this.clientsInShutdown.add(client);
+
     try {
       await client.logout();
       this.logger.log('Closed IMAP client');
     } catch (error) {
-      this.logger.error(`Error closing IMAP client: ${error.message}`);
+      if (this.isExpectedSocketError(error)) {
+        this.logger.warn(`IMAP client closed with a socket error: ${error.message}`);
+      } else {
+        this.logger.error(`Error closing IMAP client: ${error.message}`);
+      }
+    } finally {
+      this.clientsInShutdown.delete(client);
     }
   }
 
@@ -94,6 +104,18 @@ export class ImapClientProvider {
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,
     });
 
+    client.on('error', (error) => {
+      const logContext = `IMAP client error for ${connectedAccount.handle}`;
+
+      if (this.clientsInShutdown.has(client)) {
+        this.logger.warn(`${logContext} during client shutdown: ${error.message}`);
+
+        return;
+      }
+
+      this.logger.error(logContext, error.stack);
+    });
+
     try {
       await client.connect();
 
@@ -111,5 +133,18 @@ export class ImapClientProvider {
 
       throw error;
     }
+  }
+
+  private isExpectedSocketError(error: Error): boolean {
+    if (!('code' in error)) {
+      return false;
+    }
+
+    return [
+      MessageNetworkExceptionCode.ECONNABORTED,
+      MessageNetworkExceptionCode.ECONNRESET,
+      MessageNetworkExceptionCode.ETIMEDOUT,
+      MessageNetworkExceptionCode.EHOSTUNREACH,
+    ].includes(error.code as MessageNetworkExceptionCode);
   }
 }
