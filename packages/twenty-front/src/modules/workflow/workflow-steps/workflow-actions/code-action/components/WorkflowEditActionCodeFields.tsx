@@ -10,7 +10,7 @@ import { getWorkflowCodeFieldsEnumSelectOptions } from '@/workflow/workflow-step
 import { getWorkflowCodeFieldsLeafKind } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsLeafKind';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyArray, isObject } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString, isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type FunctionInput, type InputSchema } from 'twenty-shared/workflow';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -51,10 +51,18 @@ export const WorkflowEditActionCodeFields = ({
         const currentPath = [...path, inputKey];
         const pathKey = currentPath.join('.');
 
+        const schemaProperty = getInputSchemaPropertyAtPath(
+          inputSchema,
+          currentPath,
+        );
+        const displayLabel = isNonEmptyString(schemaProperty?.label)
+          ? schemaProperty.label
+          : inputKey;
+
         if (inputValue !== null && isObject(inputValue)) {
           return (
             <div key={pathKey}>
-              <InputLabel>{inputKey}</InputLabel>
+              <InputLabel>{displayLabel}</InputLabel>
               <FormNestedFieldInputContainer>
                 <WorkflowEditActionCodeFields
                   functionInput={inputValue}
@@ -70,17 +78,13 @@ export const WorkflowEditActionCodeFields = ({
           );
         }
 
-        const schemaProperty = getInputSchemaPropertyAtPath(
-          inputSchema,
-          currentPath,
-        );
         const leafKind = getWorkflowCodeFieldsLeafKind(schemaProperty);
 
         if (leafKind === 'boolean') {
           return (
             <FormBooleanFieldInput
               key={pathKey}
-              label={inputKey}
+              label={displayLabel}
               defaultValue={
                 !isDefined(inputValue)
                   ? undefined
@@ -100,7 +104,7 @@ export const WorkflowEditActionCodeFields = ({
           return (
             <FormNumberFieldInput
               key={pathKey}
-              label={inputKey}
+              label={displayLabel}
               defaultValue={
                 !isDefined(inputValue)
                   ? undefined
@@ -124,7 +128,7 @@ export const WorkflowEditActionCodeFields = ({
             return (
               <FormSelectFieldInput
                 key={pathKey}
-                label={inputKey}
+                label={displayLabel}
                 defaultValue={
                   !isDefined(inputValue)
                     ? undefined
@@ -144,7 +148,7 @@ export const WorkflowEditActionCodeFields = ({
         return (
           <FormTextFieldInput
             key={pathKey}
-            label={inputKey}
+            label={displayLabel}
             placeholder={t`Enter value`}
             defaultValue={inputValue ? `${inputValue}` : ''}
             readonly={readonly}

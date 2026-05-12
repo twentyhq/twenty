@@ -9,6 +9,7 @@ export type InputSchemaProperty = {
   items?: InputSchemaProperty;
   properties?: Properties;
   multiline?: boolean;
+  label?: string;
 };
 
 type Properties = {
