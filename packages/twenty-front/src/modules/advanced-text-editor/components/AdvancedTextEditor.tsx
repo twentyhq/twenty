@@ -104,9 +104,9 @@ export const AdvancedTextEditor = ({
       maxWidth={maxWidth}
     >
       <EditorContent className="editor-content" editor={editor} />
-      <ImageBubbleMenu editor={editor} />
-      <TextBubbleMenu editor={editor} />
-      <LinkBubbleMenu editor={editor} />
+      {!readonly && <ImageBubbleMenu editor={editor} />}
+      {!readonly && <TextBubbleMenu editor={editor} />}
+      {!readonly && <LinkBubbleMenu editor={editor} />}
     </StyledEditorContainer>
   );
 };

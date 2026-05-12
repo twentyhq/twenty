@@ -107,7 +107,6 @@ export const SettingsAiMoreTab = () => {
         />
         <StyledFormContainer>
           <FormAdvancedTextFieldInput
-            key={originalInstructions}
             readonly={false}
             defaultValue={workspaceInstructions}
             contentType="markdown"

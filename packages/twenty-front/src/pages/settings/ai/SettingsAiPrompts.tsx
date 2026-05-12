@@ -31,9 +31,7 @@ const StyledTitleContainer = styled.div`
 export const SettingsAiPrompts = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const { data: previewData, loading: previewLoading } = useQuery(
-    GetAiSystemPromptPreviewDocument,
-  );
+  const { data: previewData } = useQuery(GetAiSystemPromptPreviewDocument);
 
   const preview = previewData?.getAiSystemPromptPreview;
   const sections = preview?.sections ?? [];
@@ -111,9 +109,6 @@ export const SettingsAiPrompts = () => {
               />
               <StyledFormContainer>
                 <FormAdvancedTextFieldInput
-                  key={
-                    previewLoading ? `loading-${section.title}` : section.title
-                  }
                   label={section.title}
                   readonly={true}
                   defaultValue={section.content}
