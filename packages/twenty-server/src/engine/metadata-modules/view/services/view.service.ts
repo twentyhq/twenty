@@ -385,10 +385,18 @@ export class ViewService {
     view: {
       visibility: ViewVisibility;
       createdByUserWorkspaceId: string | null;
+      type: ViewType;
     },
     userWorkspaceId?: string,
   ): boolean {
     if (view.visibility === ViewVisibility.WORKSPACE) {
+      return true;
+    }
+
+    if (
+      view.visibility === ViewVisibility.UNLISTED &&
+      view.type === ViewType.TABLE_WIDGET
+    ) {
       return true;
     }
 
