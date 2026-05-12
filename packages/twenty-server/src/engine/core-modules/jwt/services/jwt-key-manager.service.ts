@@ -75,10 +75,14 @@ export class JwtKeyManagerService {
 
   private async loadOrCreateCurrentSigningKey(): Promise<CurrentSigningKey | null> {
     try {
-      const existing = await this.findCurrentRow();
+      const existing = await this.findCurrentSigningKeyRow();
 
       if (isDefined(existing)) {
-        return this.materializeFromRow(existing);
+        return {
+          id: existing.id,
+          privateKey: this.decryptPrivateKey(existing.privateKey, existing.id),
+          publicKey: this.parsePublicKeyOrThrow(existing.publicKey),
+        };
       }
 
       return await this.generateAndPersistCurrent();
@@ -93,7 +97,7 @@ export class JwtKeyManagerService {
     }
   }
 
-  private async findCurrentRow(): Promise<SigningKeyEntity | null> {
+  private async findCurrentSigningKeyRow(): Promise<SigningKeyEntity | null> {
     return this.signingKeyRepository
       .createQueryBuilder('signingKey')
       .where('signingKey.isCurrent = :isCurrent', { isCurrent: true })
@@ -101,10 +105,13 @@ export class JwtKeyManagerService {
       .getOne();
   }
 
-  private materializeFromRow(row: SigningKeyEntity): CurrentSigningKey {
-    if (!isDefined(row.privateKey)) {
+  private decryptPrivateKey(
+    encryptedPrivateKey: string | null,
+    id: string,
+  ): KeyObject {
+    if (!isDefined(encryptedPrivateKey)) {
       throw new JwtKeyManagerException(
-        `Current signing key row (id=${row.id}) has no privateKey`,
+        `Current signing key (id=${id}) has no privateKey`,
         JwtKeyManagerExceptionCode.INVALID_PRIVATE_KEY,
       );
     }
@@ -112,20 +119,17 @@ export class JwtKeyManagerService {
     let privateKeyPem: string;
 
     try {
-      privateKeyPem = this.secretEncryptionService.decrypt(row.privateKey);
+      privateKeyPem = this.secretEncryptionService.decrypt(encryptedPrivateKey);
     } catch (error) {
       throw new JwtKeyManagerException(
-        `Failed to decrypt current signing key (id=${row.id}): ${
+        `Failed to decrypt current signing key (id=${id}): ${
           error instanceof Error ? error.message : String(error)
         }`,
         JwtKeyManagerExceptionCode.SIGNING_KEY_DECRYPTION_FAILED,
       );
     }
 
-    const privateKey = this.parsePrivateKeyOrThrow(privateKeyPem);
-    const publicKey = this.parsePublicKeyOrThrow(row.publicKey);
-
-    return { privateKey, publicKey, id: row.id };
+    return this.parsePrivateKeyOrThrow(privateKeyPem);
   }
 
   private async generateAndPersistCurrent(): Promise<CurrentSigningKey> {
@@ -144,16 +148,23 @@ export class JwtKeyManagerService {
       });
 
       return {
+        id,
         privateKey: generated.privateKey,
         publicKey: generated.publicKey,
-        id,
       };
     } catch (error) {
       if (this.isUniqueViolation(error)) {
-        const existing = await this.findCurrentRow();
+        const existing = await this.findCurrentSigningKeyRow();
 
         if (isDefined(existing)) {
-          return this.materializeFromRow(existing);
+          return {
+            id: existing.id,
+            privateKey: this.decryptPrivateKey(
+              existing.privateKey,
+              existing.id,
+            ),
+            publicKey: this.parsePublicKeyOrThrow(existing.publicKey),
+          };
         }
       }
 
