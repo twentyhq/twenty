@@ -138,7 +138,7 @@ type UserWorkspace {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
-  permissionFlags: [PermissionFlagType!]
+  permissionFlagGrants: [PermissionFlagType!]
   objectPermissions: [ObjectPermission!]
   objectsPermissions: [ObjectPermission!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
@@ -244,7 +244,7 @@ type FieldPermission {
   canUpdateFieldValue: Boolean
 }
 
-type PermissionFlag {
+type PermissionFlagGrant {
   id: UUID!
   roleId: UUID!
   flag: PermissionFlagType!
@@ -276,7 +276,7 @@ type Role {
   canUpdateAllObjectRecords: Boolean!
   canSoftDeleteAllObjectRecords: Boolean!
   canDestroyAllObjectRecords: Boolean!
-  permissionFlags: [PermissionFlag!]
+  permissionFlagGrants: [PermissionFlagGrant!]
   objectPermissions: [ObjectPermission!]
   fieldPermissions: [FieldPermission!]
   rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
@@ -1760,6 +1760,7 @@ enum FeatureFlagKey {
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
   IS_DATASOURCE_MIGRATED
   IS_BILLING_V2_ENABLED
+  IS_CUSTOM_PERMISSION_FLAGS_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2855,6 +2856,23 @@ enum MessageFolderPendingSyncAction {
   NONE
 }
 
+type PermissionFlag {
+  id: UUID!
+  universalIdentifier: UUID!
+  key: String!
+  label: String!
+  description: String
+  iconKey: String
+  permissionType: String!
+  isRelevantForAgents: Boolean!
+  isRelevantForUsers: Boolean!
+  isRelevantForApiKeys: Boolean!
+  isCustom: Boolean!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type CollectionHash {
   collectionName: AllMetadataName!
   hash: String!
@@ -2883,6 +2901,7 @@ enum AllMetadataName {
   pageLayoutTab
   commandMenuItem
   navigationMenuItem
+  permissionFlagGrant
   permissionFlag
   objectPermission
   fieldPermission
@@ -3020,6 +3039,8 @@ type Query {
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
+  permissionFlags: [PermissionFlag!]!
+  permissionFlag(id: UUID!): PermissionFlag
   minimalMetadata: MinimalMetadata!
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
@@ -3237,7 +3258,7 @@ type Mutation {
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
   deleteOneRole(roleId: UUID!): String!
   upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
-  upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [PermissionFlag!]!
+  upsertPermissionFlagGrants(upsertPermissionFlagGrantsInput: UpsertPermissionFlagGrantsInput!): [PermissionFlagGrant!]!
   upsertFieldPermissions(upsertFieldPermissionsInput: UpsertFieldPermissionsInput!): [FieldPermission!]!
   upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
@@ -3261,6 +3282,9 @@ type Mutation {
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
+  createPermissionFlag(input: CreatePermissionFlagInput!): PermissionFlag!
+  updatePermissionFlag(input: UpdatePermissionFlagInput!): PermissionFlag!
+  deletePermissionFlag(id: UUID!): PermissionFlag!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileIds: [UUID!]): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
@@ -4020,9 +4044,9 @@ input ObjectPermissionInput {
   canDestroyObjectRecords: Boolean
 }
 
-input UpsertPermissionFlagsInput {
+input UpsertPermissionFlagGrantsInput {
   roleId: UUID!
-  permissionFlagKeys: [PermissionFlagType!]!
+  permissionFlagGrantKeys: [PermissionFlagType!]!
 }
 
 input UpsertFieldPermissionsInput {
@@ -4222,6 +4246,37 @@ input UpdateWebhookInputUpdates {
   operations: [String!]
   description: String
   secret: String
+}
+
+input CreatePermissionFlagInput {
+  id: UUID
+  universalIdentifier: UUID
+  key: String!
+  label: String!
+  description: String
+  iconKey: String
+  permissionType: String!
+  isRelevantForAgents: Boolean
+  isRelevantForUsers: Boolean
+  isRelevantForApiKeys: Boolean
+}
+
+input UpdatePermissionFlagInput {
+  """The id of the permission flag definition to update"""
+  id: UUID!
+
+  """The fields to update"""
+  update: UpdatePermissionFlagInputUpdates!
+}
+
+input UpdatePermissionFlagInputUpdates {
+  label: String
+  description: String
+  iconKey: String
+  permissionType: String
+  isRelevantForAgents: Boolean
+  isRelevantForUsers: Boolean
+  isRelevantForApiKeys: Boolean
 }
 
 input CreateSkillInput {

@@ -15,8 +15,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
-import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
-import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
+import { PermissionFlagGrantEntity } from 'src/engine/metadata-modules/permission-flag-grant/permission-flag-grant.entity';
+import { PermissionFlagGrantModule } from 'src/engine/metadata-modules/permission-flag-grant/permission-flag-grant.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -39,7 +39,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
       RoleEntity,
       RoleTargetEntity,
       ObjectPermissionEntity,
-      PermissionFlagEntity,
+      PermissionFlagGrantEntity,
       FieldPermissionEntity,
       UserWorkspaceEntity,
       ObjectMetadataEntity,
@@ -52,7 +52,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApiKeyModule,
     PermissionsModule,
     ObjectPermissionModule,
-    PermissionFlagModule,
+    PermissionFlagGrantModule,
     RowLevelPermissionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,

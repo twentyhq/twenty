@@ -117,7 +117,7 @@ export interface UserWorkspace {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    permissionFlags?: PermissionFlagType[]
+    permissionFlagGrants?: PermissionFlagType[]
     objectPermissions?: ObjectPermission[]
     objectsPermissions?: ObjectPermission[]
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummary[]
@@ -190,11 +190,11 @@ export interface FieldPermission {
     __typename: 'FieldPermission'
 }
 
-export interface PermissionFlag {
+export interface PermissionFlagGrant {
     id: Scalars['UUID']
     roleId: Scalars['UUID']
     flag: PermissionFlagType
-    __typename: 'PermissionFlag'
+    __typename: 'PermissionFlagGrant'
 }
 
 export interface ApiKeyForRole {
@@ -224,7 +224,7 @@ export interface Role {
     canUpdateAllObjectRecords: Scalars['Boolean']
     canSoftDeleteAllObjectRecords: Scalars['Boolean']
     canDestroyAllObjectRecords: Scalars['Boolean']
-    permissionFlags?: PermissionFlag[]
+    permissionFlagGrants?: PermissionFlagGrant[]
     objectPermissions?: ObjectPermission[]
     fieldPermissions?: FieldPermission[]
     rowLevelPermissionPredicates?: RowLevelPermissionPredicate[]
@@ -1389,7 +1389,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_MARKETPLACE_SETTING_TAB_VISIBLE' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_CONNECTED_ACCOUNT_MIGRATED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' | 'IS_DATASOURCE_MIGRATED' | 'IS_BILLING_V2_ENABLED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_MARKETPLACE_SETTING_TAB_VISIBLE' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_CONNECTED_ACCOUNT_MIGRATED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' | 'IS_DATASOURCE_MIGRATED' | 'IS_BILLING_V2_ENABLED' | 'IS_CUSTOM_PERMISSION_FLAGS_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -2502,13 +2502,31 @@ export interface MessageFolder {
 
 export type MessageFolderPendingSyncAction = 'FOLDER_DELETION' | 'NONE'
 
+export interface PermissionFlag {
+    id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    key: Scalars['String']
+    label: Scalars['String']
+    description?: Scalars['String']
+    iconKey?: Scalars['String']
+    permissionType: Scalars['String']
+    isRelevantForAgents: Scalars['Boolean']
+    isRelevantForUsers: Scalars['Boolean']
+    isRelevantForApiKeys: Scalars['Boolean']
+    isCustom: Scalars['Boolean']
+    applicationId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'PermissionFlag'
+}
+
 export interface CollectionHash {
     collectionName: AllMetadataName
     hash: Scalars['String']
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlagGrant' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -2615,6 +2633,8 @@ export interface Query {
     myCalendarChannels: CalendarChannel[]
     webhooks: Webhook[]
     webhook?: Webhook
+    permissionFlags: PermissionFlag[]
+    permissionFlag?: PermissionFlag
     minimalMetadata: MinimalMetadata
     chatThreads: AgentChatThread[]
     chatThread: AgentChatThread
@@ -2765,7 +2785,7 @@ export interface Mutation {
     updateOneRole: Role
     deleteOneRole: Scalars['String']
     upsertObjectPermissions: ObjectPermission[]
-    upsertPermissionFlags: PermissionFlag[]
+    upsertPermissionFlagGrants: PermissionFlagGrant[]
     upsertFieldPermissions: FieldPermission[]
     upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
     assignRoleToAgent: Scalars['Boolean']
@@ -2789,6 +2809,9 @@ export interface Mutation {
     createWebhook: Webhook
     updateWebhook: Webhook
     deleteWebhook: Webhook
+    createPermissionFlag: PermissionFlag
+    updatePermissionFlag: PermissionFlag
+    deletePermissionFlag: PermissionFlag
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
     stopAgentChatStream: Scalars['Boolean']
@@ -3003,7 +3026,7 @@ export interface UserWorkspaceGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
-    permissionFlags?: boolean | number
+    permissionFlagGrants?: boolean | number
     objectPermissions?: ObjectPermissionGenqlSelection
     objectsPermissions?: ObjectPermissionGenqlSelection
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryGenqlSelection
@@ -3067,7 +3090,7 @@ export interface FieldPermissionGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface PermissionFlagGenqlSelection{
+export interface PermissionFlagGrantGenqlSelection{
     id?: boolean | number
     roleId?: boolean | number
     flag?: boolean | number
@@ -3103,7 +3126,7 @@ export interface RoleGenqlSelection{
     canUpdateAllObjectRecords?: boolean | number
     canSoftDeleteAllObjectRecords?: boolean | number
     canDestroyAllObjectRecords?: boolean | number
-    permissionFlags?: PermissionFlagGenqlSelection
+    permissionFlagGrants?: PermissionFlagGrantGenqlSelection
     objectPermissions?: ObjectPermissionGenqlSelection
     fieldPermissions?: FieldPermissionGenqlSelection
     rowLevelPermissionPredicates?: RowLevelPermissionPredicateGenqlSelection
@@ -5530,6 +5553,25 @@ export interface MessageFolderGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PermissionFlagGenqlSelection{
+    id?: boolean | number
+    universalIdentifier?: boolean | number
+    key?: boolean | number
+    label?: boolean | number
+    description?: boolean | number
+    iconKey?: boolean | number
+    permissionType?: boolean | number
+    isRelevantForAgents?: boolean | number
+    isRelevantForUsers?: boolean | number
+    isRelevantForApiKeys?: boolean | number
+    isCustom?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CollectionHashGenqlSelection{
     collectionName?: boolean | number
     hash?: boolean | number
@@ -5664,6 +5706,8 @@ export interface QueryGenqlSelection{
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    permissionFlags?: PermissionFlagGenqlSelection
+    permissionFlag?: (PermissionFlagGenqlSelection & { __args: {id: Scalars['UUID']} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     chatThreads?: AgentChatThreadGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -5835,7 +5879,7 @@ export interface MutationGenqlSelection{
     updateOneRole?: (RoleGenqlSelection & { __args: {updateRoleInput: UpdateRoleInput} })
     deleteOneRole?: { __args: {roleId: Scalars['UUID']} }
     upsertObjectPermissions?: (ObjectPermissionGenqlSelection & { __args: {upsertObjectPermissionsInput: UpsertObjectPermissionsInput} })
-    upsertPermissionFlags?: (PermissionFlagGenqlSelection & { __args: {upsertPermissionFlagsInput: UpsertPermissionFlagsInput} })
+    upsertPermissionFlagGrants?: (PermissionFlagGrantGenqlSelection & { __args: {upsertPermissionFlagGrantsInput: UpsertPermissionFlagGrantsInput} })
     upsertFieldPermissions?: (FieldPermissionGenqlSelection & { __args: {upsertFieldPermissionsInput: UpsertFieldPermissionsInput} })
     upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
@@ -5859,6 +5903,9 @@ export interface MutationGenqlSelection{
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createPermissionFlag?: (PermissionFlagGenqlSelection & { __args: {input: CreatePermissionFlagInput} })
+    updatePermissionFlag?: (PermissionFlagGenqlSelection & { __args: {input: UpdatePermissionFlagInput} })
+    deletePermissionFlag?: (PermissionFlagGenqlSelection & { __args: {id: Scalars['UUID']} })
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileIds?: (Scalars['UUID'][] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
@@ -6175,7 +6222,7 @@ export interface UpsertObjectPermissionsInput {roleId: Scalars['UUID'],objectPer
 
 export interface ObjectPermissionInput {objectMetadataId: Scalars['UUID'],canReadObjectRecords?: (Scalars['Boolean'] | null),canUpdateObjectRecords?: (Scalars['Boolean'] | null),canSoftDeleteObjectRecords?: (Scalars['Boolean'] | null),canDestroyObjectRecords?: (Scalars['Boolean'] | null)}
 
-export interface UpsertPermissionFlagsInput {roleId: Scalars['UUID'],permissionFlagKeys: PermissionFlagType[]}
+export interface UpsertPermissionFlagGrantsInput {roleId: Scalars['UUID'],permissionFlagGrantKeys: PermissionFlagType[]}
 
 export interface UpsertFieldPermissionsInput {roleId: Scalars['UUID'],fieldPermissions: FieldPermissionInput[]}
 
@@ -6248,6 +6295,16 @@ id: Scalars['UUID'],
 update: UpdateWebhookInputUpdates}
 
 export interface UpdateWebhookInputUpdates {targetUrl?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
+
+export interface CreatePermissionFlagInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),key: Scalars['String'],label: Scalars['String'],description?: (Scalars['String'] | null),iconKey?: (Scalars['String'] | null),permissionType: Scalars['String'],isRelevantForAgents?: (Scalars['Boolean'] | null),isRelevantForUsers?: (Scalars['Boolean'] | null),isRelevantForApiKeys?: (Scalars['Boolean'] | null)}
+
+export interface UpdatePermissionFlagInput {
+/** The id of the permission flag definition to update */
+id: Scalars['UUID'],
+/** The fields to update */
+update: UpdatePermissionFlagInputUpdates}
+
+export interface UpdatePermissionFlagInputUpdates {label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),iconKey?: (Scalars['String'] | null),permissionType?: (Scalars['String'] | null),isRelevantForAgents?: (Scalars['Boolean'] | null),isRelevantForUsers?: (Scalars['Boolean'] | null),isRelevantForApiKeys?: (Scalars['Boolean'] | null)}
 
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
@@ -6416,10 +6473,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const PermissionFlag_possibleTypes: string[] = ['PermissionFlag']
-    export const isPermissionFlag = (obj?: { __typename?: any } | null): obj is PermissionFlag => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPermissionFlag"')
-      return PermissionFlag_possibleTypes.includes(obj.__typename)
+    const PermissionFlagGrant_possibleTypes: string[] = ['PermissionFlagGrant']
+    export const isPermissionFlagGrant = (obj?: { __typename?: any } | null): obj is PermissionFlagGrant => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPermissionFlagGrant"')
+      return PermissionFlagGrant_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8208,6 +8265,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const PermissionFlag_possibleTypes: string[] = ['PermissionFlag']
+    export const isPermissionFlag = (obj?: { __typename?: any } | null): obj is PermissionFlag => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPermissionFlag"')
+      return PermissionFlag_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const CollectionHash_possibleTypes: string[] = ['CollectionHash']
     export const isCollectionHash = (obj?: { __typename?: any } | null): obj is CollectionHash => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
@@ -8734,7 +8799,8 @@ export const enumFeatureFlagKey = {
    IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const,
    IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' as const,
    IS_DATASOURCE_MIGRATED: 'IS_DATASOURCE_MIGRATED' as const,
-   IS_BILLING_V2_ENABLED: 'IS_BILLING_V2_ENABLED' as const
+   IS_BILLING_V2_ENABLED: 'IS_BILLING_V2_ENABLED' as const,
+   IS_CUSTOM_PERMISSION_FLAGS_ENABLED: 'IS_CUSTOM_PERMISSION_FLAGS_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {
@@ -8896,6 +8962,7 @@ export const enumAllMetadataName = {
    pageLayoutTab: 'pageLayoutTab' as const,
    commandMenuItem: 'commandMenuItem' as const,
    navigationMenuItem: 'navigationMenuItem' as const,
+   permissionFlagGrant: 'permissionFlagGrant' as const,
    permissionFlag: 'permissionFlag' as const,
    objectPermission: 'objectPermission' as const,
    fieldPermission: 'fieldPermission' as const,

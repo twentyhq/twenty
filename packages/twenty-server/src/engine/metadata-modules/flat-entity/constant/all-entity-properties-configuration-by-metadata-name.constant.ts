@@ -1181,7 +1181,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'pageLayoutUniversalIdentifier',
     },
   },
-  permissionFlag: {
+  permissionFlagGrant: {
     flag: {
       toCompare: true,
       toStringify: false,
@@ -1191,6 +1191,63 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'roleUniversalIdentifier',
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  permissionFlag: {
+    key: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    iconKey: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    permissionType: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isRelevantForAgents: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isRelevantForUsers: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isRelevantForApiKeys: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isCustom: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
     },
     createdAt: {
       toCompare: false,

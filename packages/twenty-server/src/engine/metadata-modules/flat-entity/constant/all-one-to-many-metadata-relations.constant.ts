@@ -168,11 +168,11 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'objectPermissionUniversalIdentifiers',
     },
-    permissionFlags: {
-      metadataName: 'permissionFlag',
-      flatEntityForeignKeyAggregator: 'permissionFlagIds',
+    permissionFlagGrants: {
+      metadataName: 'permissionFlagGrant',
+      flatEntityForeignKeyAggregator: 'permissionFlagGrantIds',
       universalFlatEntityForeignKeyAggregator:
-        'permissionFlagUniversalIdentifiers',
+        'permissionFlagGrantUniversalIdentifiers',
     },
     fieldPermissions: {
       metadataName: 'fieldPermission',
@@ -194,6 +194,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
     },
   },
   roleTarget: {},
+  permissionFlagGrant: {},
   permissionFlag: {},
   objectPermission: {},
   fieldPermission: {},

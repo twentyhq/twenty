@@ -24,7 +24,7 @@ import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhas
 import { useNextBillingSeats } from '@/settings/billing/hooks/useNextBillingSeats';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { usePermissionFlagGrantMap } from '@/settings/roles/hooks/usePermissionFlagGrantMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -190,7 +190,7 @@ export const SettingsBillingSubscriptionInfo = ({
     useEndSubscriptionTrialPeriod();
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
-    usePermissionFlagMap();
+    usePermissionFlagGrantMap();
 
   const seats = currentBillingSubscription.billingSubscriptionItems?.find(
     (item) =>

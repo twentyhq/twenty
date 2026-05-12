@@ -1,7 +1,7 @@
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader';
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
-import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
+import { useActionRolePermissionFlagGrantConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagGrantConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -43,7 +43,7 @@ export const SettingsRolePermissionsToolSection = ({
     roleId,
   );
 
-  const toolPermissionsConfig = useActionRolePermissionFlagConfig({
+  const toolPermissionsConfig = useActionRolePermissionFlagGrantConfig({
     assignmentCapabilities: {
       canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
       canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,

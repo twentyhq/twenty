@@ -5,7 +5,7 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -39,7 +39,7 @@ export const MobileNavigationBar = () => {
   const { switchToNewChat } = useSwitchToNewAiChat();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const hasAiSettingsPermission = useHasPermissionFlag(
+  const hasAiSettingsPermission = useHasPermissionFlagGrant(
     PermissionFlagType.AI_SETTINGS,
   );
 

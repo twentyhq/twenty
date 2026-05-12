@@ -9,7 +9,7 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { usePermissionFlagGrantMap } from '@/settings/roles/hooks/usePermissionFlagGrantMap';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useCallback } from 'react';
@@ -67,7 +67,7 @@ export const useSetNextOnboardingStatus = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
-  const permissionMap = usePermissionFlagMap();
+  const permissionMap = usePermissionFlagGrantMap();
   const isAccountSyncEnabled =
     permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS];
 

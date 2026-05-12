@@ -14,9 +14,10 @@ export const useCanChangePassword = () => {
     return { canChangePassword: true };
   }
 
-  const hasBypassPermission = currentUserWorkspace?.permissionFlags?.includes(
-    PermissionFlagType.SSO_BYPASS,
-  );
+  const hasBypassPermission =
+    currentUserWorkspace?.permissionFlagGrants?.includes(
+      PermissionFlagType.SSO_BYPASS,
+    );
 
   if (!hasBypassPermission) {
     return { canChangePassword: false };

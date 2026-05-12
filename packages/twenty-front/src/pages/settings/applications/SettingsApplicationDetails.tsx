@@ -6,7 +6,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -112,7 +112,7 @@ export const SettingsApplicationDetails = () => {
 
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
-  const canInstallMarketplaceApps = useHasPermissionFlag(
+  const canInstallMarketplaceApps = useHasPermissionFlagGrant(
     PermissionFlagType.MARKETPLACE_APPS,
   );
 

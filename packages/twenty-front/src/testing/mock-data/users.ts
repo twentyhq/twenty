@@ -199,7 +199,7 @@ export const mockedUserData: MockedUser = {
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
-    permissionFlags: [
+    permissionFlagGrants: [
       PermissionFlagType.WORKSPACE_MEMBERS,
       PermissionFlagType.CONNECTED_ACCOUNTS,
     ],
@@ -269,7 +269,7 @@ export const mockedOnboardingUserData = (
     workspaceMembers: [],
     currentWorkspace: mockCurrentWorkspace,
     currentUserWorkspace: {
-      permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+      permissionFlagGrants: [PermissionFlagType.WORKSPACE_MEMBERS],
       objectPermissions: getTestEnrichedObjectMetadataItemsMock().map(
         (item) => ({
           objectMetadataId: item.id,

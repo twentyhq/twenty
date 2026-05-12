@@ -2,7 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { MainNavigationDrawerTabsRow } from '@/navigation/components/MainNavigationDrawerTabsRow';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
@@ -16,7 +16,7 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
     navigationDrawerActiveTabState,
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const hasAiSettingsPermission = useHasPermissionFlag(
+  const hasAiSettingsPermission = useHasPermissionFlagGrant(
     PermissionFlagType.AI_SETTINGS,
   );
 

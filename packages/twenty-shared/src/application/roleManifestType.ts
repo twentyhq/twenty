@@ -16,7 +16,7 @@ export type FieldPermissionManifest = SyncableEntityOptions & {
   canUpdateFieldValue?: boolean;
 };
 
-export type PermissionFlagManifest = SyncableEntityOptions & {
+export type PermissionFlagGrantManifest = SyncableEntityOptions & {
   flag: PermissionFlagType;
 };
 
@@ -35,5 +35,5 @@ export type RoleManifest = SyncableEntityOptions & {
   canBeAssignedToApiKeys?: boolean;
   objectPermissions?: ObjectPermissionManifest[];
   fieldPermissions?: FieldPermissionManifest[];
-  permissionFlags?: PermissionFlagManifest[];
+  permissionFlagGrants?: PermissionFlagGrantManifest[];
 };
