@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  closeSidePanel,
-  enqueueSnackbar,
-  unmountFrontComponent,
-} from 'twenty-sdk/front-component';
+import { closeSidePanel, enqueueSnackbar, unmountFrontComponent, } from 'twenty-sdk/front-component';
 
 import { CREATE_ISSUE_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
@@ -245,7 +241,7 @@ const STYLES = {
   body: {
     flex: 1,
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column' as const,
     padding: '24px',
     overflow: 'auto',
     minHeight: 0,
