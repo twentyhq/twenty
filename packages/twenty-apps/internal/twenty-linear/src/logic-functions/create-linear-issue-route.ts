@@ -12,6 +12,7 @@ const handler = async (event: RoutePayload) => {
     title: body?.title as string | undefined,
     description: body?.description as string | undefined,
     priority: body?.priority as number | undefined,
+    stateId: body?.stateId as string | undefined,
   });
 };
 

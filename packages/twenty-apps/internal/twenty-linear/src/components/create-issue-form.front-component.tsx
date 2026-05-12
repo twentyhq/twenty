@@ -14,6 +14,13 @@ type LinearTeam = {
   key: string;
 };
 
+type LinearWorkflowState = {
+  id: string;
+  name: string;
+  type: string;
+  position: number;
+};
+
 type CreatedIssue = {
   id: string;
   identifier: string;
@@ -48,8 +55,7 @@ const readSerializedValue = (
 };
 
 const onValueChange =
-  (fn: (value: string) => void) =>
-  (e: React.SyntheticEvent<HTMLElement>) => {
+  (fn: (value: string) => void) => (e: React.SyntheticEvent<HTMLElement>) => {
     const v = readSerializedValue(e);
 
     if (typeof v === 'string') fn(v);
@@ -215,6 +221,57 @@ const CreateIssueForm = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('0');
+  const [workflowStates, setWorkflowStates] = useState<LinearWorkflowState[]>(
+    [],
+  );
+  const [statesLoading, setStatesLoading] = useState(false);
+  const [stateId, setStateId] = useState('');
+
+  const fetchWorkflowStates = useCallback(async (selectedTeamId: string) => {
+    if (!selectedTeamId) {
+      setWorkflowStates([]);
+      setStateId('');
+
+      return;
+    }
+
+    setStatesLoading(true);
+
+    try {
+      const result = await callAppRoute(
+        `/linear/workflow-states?teamId=${encodeURIComponent(selectedTeamId)}`,
+        'GET',
+      );
+
+      if (!result.success) {
+        setWorkflowStates([]);
+        setStateId('');
+
+        return;
+      }
+
+      const states: LinearWorkflowState[] = result.states ?? [];
+
+      setWorkflowStates(states);
+
+      const todoState = states.find((s) => s.type === 'unstarted');
+
+      setStateId(todoState?.id ?? states[0]?.id ?? '');
+    } catch {
+      setWorkflowStates([]);
+      setStateId('');
+    } finally {
+      setStatesLoading(false);
+    }
+  }, []);
+
+  const handleTeamChange = useCallback(
+    (newTeamId: string) => {
+      setTeamId(newTeamId);
+      fetchWorkflowStates(newTeamId);
+    },
+    [fetchWorkflowStates],
+  );
 
   const fetchTeams = useCallback(async () => {
     try {
@@ -231,6 +288,7 @@ const CreateIssueForm = () => {
 
       if (result.teams?.length === 1) {
         setTeamId(result.teams[0].id);
+        fetchWorkflowStates(result.teams[0].id);
       }
     } catch (error) {
       setTeamsError(
@@ -239,7 +297,7 @@ const CreateIssueForm = () => {
     } finally {
       setTeamsLoading(false);
     }
-  }, []);
+  }, [fetchWorkflowStates]);
 
   useEffect(() => {
     fetchTeams();
@@ -260,6 +318,7 @@ const CreateIssueForm = () => {
         title: trimmedTitle,
         description: description.trim() || undefined,
         priority: Number(priority) || undefined,
+        stateId: stateId || undefined,
       });
 
       if (!result.success) {
@@ -353,7 +412,7 @@ const CreateIssueForm = () => {
         <label style={STYLES.label}>Team</label>
         <select
           value={teamId}
-          onChange={onValueChange(setTeamId)}
+          onChange={onValueChange(handleTeamChange)}
           style={STYLES.select}
         >
           <option value="">Select a team...</option>
@@ -400,6 +459,28 @@ const CreateIssueForm = () => {
               {option.label}
             </option>
           ))}
+        </select>
+      </div>
+
+      <div style={STYLES.fieldGroup}>
+        <label style={STYLES.label}>Status</label>
+        <select
+          value={stateId}
+          onChange={onValueChange(setStateId)}
+          style={STYLES.select}
+          disabled={!teamId || statesLoading}
+        >
+          {statesLoading ? (
+            <option value="">Loading...</option>
+          ) : workflowStates.length === 0 ? (
+            <option value="">Select a team first</option>
+          ) : (
+            workflowStates.map((state) => (
+              <option key={state.id} value={state.id}>
+                {state.name}
+              </option>
+            ))
+          )}
         </select>
       </div>
 

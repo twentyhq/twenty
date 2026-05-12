@@ -34,6 +34,11 @@ export default defineLogicFunction({
           minimum: 0,
           maximum: 4,
         },
+        stateId: {
+          type: 'string',
+          description:
+            'The workflow state ID for the issue status. Use list-linear-workflow-states to discover available states for a team.',
+        },
       },
       required: ['teamId', 'title'],
     },
@@ -48,6 +53,7 @@ export default defineLogicFunction({
           title: { type: 'string' },
           description: { type: 'string' },
           priority: { type: 'number' },
+          stateId: { type: 'string' },
         },
       },
     ],

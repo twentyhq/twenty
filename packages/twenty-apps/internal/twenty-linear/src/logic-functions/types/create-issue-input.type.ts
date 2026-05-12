@@ -3,4 +3,5 @@ export type CreateIssueInput = {
   title?: string;
   description?: string;
   priority?: number;
+  stateId?: string;
 };
