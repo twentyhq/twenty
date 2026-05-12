@@ -6727,6 +6727,11 @@ msgstr "Exclude group emails"
 msgid "Exclude non-professional emails"
 msgstr "Exclude non-professional emails"
 
+#. js-lingui-id: ccv57g
+#: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+msgid "Exclude the following people and domains from my email sync."
+msgstr "Exclude the following people and domains from my email sync."
+
 #. js-lingui-id: yhhfqh
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
@@ -8383,6 +8388,11 @@ msgstr "Inactive Skill Options"
 #: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "Inbox"
 msgstr "Inbox"
+
+#. js-lingui-id: j8Bj7e
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Include emails where all participants share the same domain."
+msgstr "Include emails where all participants share the same domain."
 
 #. js-lingui-id: Wyip/m
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -14866,6 +14876,11 @@ msgstr "Sync email and calendar accounts"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Sync failed"
 msgstr "Sync failed"
+
+#. js-lingui-id: tVKt7G
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Sync Internal Emails"
+msgstr "Sync Internal Emails"
 
 #. js-lingui-id: ZS+BPb
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx

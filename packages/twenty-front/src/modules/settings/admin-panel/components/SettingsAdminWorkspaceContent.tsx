@@ -211,7 +211,14 @@ export const SettingsAdminWorkspaceContent = ({
                     {
                       Icon: IconStatusChange,
                       label: t`Last error`,
-                      value: workspaceUpgradeStatus.latestCommand.errorMessage,
+                      value: (
+                        <OverflowingTextWithTooltip
+                          text={
+                            workspaceUpgradeStatus.latestCommand.errorMessage
+                          }
+                          isTooltipMultiline
+                        />
+                      ),
                     },
                   ]
                 : []),

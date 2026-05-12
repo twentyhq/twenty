@@ -603,6 +603,11 @@ msgstr ""
 msgid "at the core"
 msgstr ""
 
+#. js-lingui-id: fxL/Km
+#: src/app/[locale]/product/feature.data.ts
+msgid "Attachments without the chaos."
+msgstr ""
+
 #. js-lingui-id: y2W2Hg
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Audit logs"
@@ -713,9 +718,9 @@ msgstr ""
 msgid "Build a CRM your competitors"
 msgstr ""
 
-#. js-lingui-id: pF0PoL
+#. js-lingui-id: Utc5RF
 #: src/app/[locale]/product/feature.data.ts
-msgid "Build custom dashboards"
+msgid "Build custom dashboards from live CRM data. Aggregate anything — deals, accounts, activity — into charts your team actually reads."
 msgstr ""
 
 #. js-lingui-id: wWXG44
@@ -890,6 +895,11 @@ msgstr ""
 msgid "Connect Google or Microsoft accounts"
 msgstr ""
 
+#. js-lingui-id: xgrBCK
+#: src/app/[locale]/product/feature.data.ts
+msgid "Connect Google or Microsoft accounts and see emails and events linked to CRM records automatically."
+msgstr ""
+
 #. js-lingui-id: MVrQxI
 #: src/lib/customers/case-study-catalog.ts
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
@@ -915,6 +925,11 @@ msgstr ""
 #. js-lingui-id: vymMOT
 #: src/app/[locale]/partners/three-cards-illustration.data.ts
 msgid "Content & Community Partners"
+msgstr ""
+
+#. js-lingui-id: 24qVhV
+#: src/app/[locale]/product/feature.data.ts
+msgid "Context lives with the record."
 msgstr ""
 
 #. js-lingui-id: mutfS8
@@ -1009,6 +1024,11 @@ msgstr ""
 msgid "Create tasks from records"
 msgstr ""
 
+#. js-lingui-id: D3S5+x
+#: src/app/[locale]/product/feature.data.ts
+msgid "Create tasks, assign owners, and attach rich notes directly from any record. No tab-switching, no lost context."
+msgstr ""
+
 #. js-lingui-id: MSlbwg
 #: src/app/[locale]/customers/9dots/page.tsx
 msgid "CRM"
@@ -1070,6 +1090,11 @@ msgstr ""
 msgid "Custom deal stages for your process"
 msgstr ""
 
+#. js-lingui-id: L+b7SB
+#: src/app/[locale]/product/feature.data.ts
+msgid "Custom deal stages, drag-and-drop boards, and real-time tracking so your pipeline reflects reality."
+msgstr ""
+
 #. js-lingui-id: Vz1Vq2
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Custom domain (crm.yourco.com)"
@@ -1083,6 +1108,11 @@ msgstr ""
 #. js-lingui-id: U1RB/7
 #: src/app/[locale]/product/feature.data.ts
 msgid "Custom fields and relationships"
+msgstr ""
+
+#. js-lingui-id: WGKb6T
+#: src/app/[locale]/product/feature.data.ts
+msgid "Custom fields, relationships, and a unified timeline for every contact and company in your workspace."
 msgstr ""
 
 #. js-lingui-id: prIqWa
@@ -1136,6 +1166,11 @@ msgstr ""
 #. js-lingui-id: 5cNMFz
 #: src/app/[locale]/product/page.tsx
 msgid "Data model"
+msgstr ""
+
+#. js-lingui-id: /TlpVf
+#: src/app/[locale]/product/feature.data.ts
+msgid "Deals that move themselves."
 msgstr ""
 
 #. js-lingui-id: FBZA6a
@@ -1304,6 +1339,11 @@ msgstr ""
 msgid "Every new release of Twenty, the #1 Open Source CRM, with changelogs, demos, and the highlights teams care about most."
 msgstr ""
 
+#. js-lingui-id: rkZTD7
+#: src/app/[locale]/product/feature.data.ts
+msgid "Every thread, on the right record."
+msgstr ""
+
 #. js-lingui-id: kz/8m8
 #: src/sections/Plans/data.ts
 #: src/sections/Plans/data.ts
@@ -1361,9 +1401,9 @@ msgstr ""
 msgid "Files"
 msgstr ""
 
-#. js-lingui-id: UWTNog
+#. js-lingui-id: iabLgo
 #: src/app/[locale]/product/feature.data.ts
-msgid "Filtered metrics from live CRM data"
+msgid "Filtered metrics from any object"
 msgstr ""
 
 #. js-lingui-id: sRUAXp
@@ -1461,6 +1501,11 @@ msgstr ""
 #. js-lingui-id: tUgSXd
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Free for you!"
+msgstr ""
+
+#. js-lingui-id: Iuxc00
+#: src/app/[locale]/product/feature.data.ts
+msgid "From CSV to CRM in minutes."
 msgstr ""
 
 #. js-lingui-id: yDeZSV
@@ -1692,6 +1737,11 @@ msgstr ""
 #. js-lingui-id: yHueLx
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Implementation partners"
+msgstr ""
+
+#. js-lingui-id: ZAKTS6
+#: src/app/[locale]/product/feature.data.ts
+msgid "Import your data with field mapping, including relations. Export anytime — your data is always yours."
 msgstr ""
 
 #. js-lingui-id: InyU0Z
@@ -1977,6 +2027,11 @@ msgstr ""
 #. js-lingui-id: ujYZ+f
 #: src/sections/CaseStudyCatalog/components/Promo.tsx
 msgid "Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks."
+msgstr ""
+
+#. js-lingui-id: briyJf
+#: src/app/[locale]/product/feature.data.ts
+msgid "Metrics you can actually trust."
 msgstr ""
 
 #. js-lingui-id: ZdvtU2
@@ -2426,6 +2481,7 @@ msgstr ""
 
 #. js-lingui-id: 4hc7hc
 #: src/app/[locale]/product/three-cards.data.ts
+#: src/app/[locale]/product/feature.data.ts
 msgid "Real-time data"
 msgstr ""
 
@@ -3342,6 +3398,11 @@ msgstr ""
 msgid "Up to 5M automation credits/month"
 msgstr ""
 
+#. js-lingui-id: 2vanwz
+#: src/app/[locale]/product/feature.data.ts
+msgid "Upload, rename, preview, and manage files directly on records. Everything stays where it belongs."
+msgstr ""
+
 #. js-lingui-id: Roaswv
 #: src/sections/Menu/data.ts
 #: src/sections/Footer/data.ts
@@ -3698,6 +3759,11 @@ msgstr ""
 #. js-lingui-id: pEQiCY
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Your name *"
+msgstr ""
+
+#. js-lingui-id: fQATWn
+#: src/app/[locale]/product/feature.data.ts
+msgid "Your network, fully mapped."
 msgstr ""
 
 #. js-lingui-id: 9Apzz7
