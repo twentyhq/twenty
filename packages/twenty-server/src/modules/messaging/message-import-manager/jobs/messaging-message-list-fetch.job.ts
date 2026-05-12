@@ -82,7 +82,8 @@ export class MessagingMessageListFetchJob {
 
         if (!messageChannel.connectedAccount) {
           await this.messagingMonitoringService.track({
-            eventName: 'message_list_fetch_job.error.connected_account_not_found',
+            eventName:
+              'message_list_fetch_job.error.connected_account_not_found',
             messageChannelId,
             workspaceId,
           });
