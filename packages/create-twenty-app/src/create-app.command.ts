@@ -323,7 +323,7 @@ export class CreateAppCommand {
 
     if (!authSucceeded) {
       console.log(chalk.white(`  ${stepNumber}. Connect to a Twenty instance`));
-      console.log(chalk.cyan('     yarn twenty remote add\n'));
+      console.log(chalk.cyan('     yarn twenty remote add --local\n'));
       stepNumber++;
     }
 

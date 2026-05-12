@@ -6,18 +6,14 @@ const DOCKER_DOWNLOAD_URLS: Record<string, string> = {
   linux: 'https://docs.docker.com/engine/install/',
 };
 
-const DOCKER_COMPATIBLE_COMMANDS = ['docker', 'podman', 'nerdctl'];
-
 export const isDockerInstalled = (): boolean => {
-  return DOCKER_COMPATIBLE_COMMANDS.some((cmd) => {
-    try {
-      execSync(`${cmd} --version`, { stdio: 'ignore' });
+  try {
+    execSync('docker --version', { stdio: 'ignore' });
 
-      return true;
-    } catch {
-      return false;
-    }
-  });
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 export const getDockerInstallInstructions = (): string => {
