@@ -38,33 +38,20 @@ export const parseAndFormatGmailMessage = (
     return null;
   }
 
-  const toParticipants = to ?? deliveredTo;
+  const toParticipants =
+    to.length > 0 ? to : deliveredTo ? [{ address: deliveredTo }] : [];
 
   const participants = [
-    ...(from
-      ? formatAddressObjectAsParticipants(
-          [{ address: from }],
-          MessageParticipantRole.FROM,
-        )
-      : []),
-    ...(toParticipants
-      ? formatAddressObjectAsParticipants(
-          [{ address: toParticipants, name: '' }],
-          MessageParticipantRole.TO,
-        )
-      : []),
-    ...(cc
-      ? formatAddressObjectAsParticipants(
-          [{ address: cc }],
-          MessageParticipantRole.CC,
-        )
-      : []),
-    ...(bcc
-      ? formatAddressObjectAsParticipants(
-          [{ address: bcc }],
-          MessageParticipantRole.BCC,
-        )
-      : []),
+    ...formatAddressObjectAsParticipants(
+      [{ address: from }],
+      MessageParticipantRole.FROM,
+    ),
+    ...formatAddressObjectAsParticipants(
+      toParticipants,
+      MessageParticipantRole.TO,
+    ),
+    ...formatAddressObjectAsParticipants(cc, MessageParticipantRole.CC),
+    ...formatAddressObjectAsParticipants(bcc, MessageParticipantRole.BCC),
   ];
 
   const textWithoutReplyQuotations = text
