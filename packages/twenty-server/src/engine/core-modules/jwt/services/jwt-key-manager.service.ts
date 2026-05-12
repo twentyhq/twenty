@@ -24,6 +24,9 @@ export type CurrentSigningKey = {
   kid: string;
 };
 
+// Bounds revocation propagation: setting `revokedAt` (or deleting a row) takes
+// effect on every running instance within at most this TTL, since the cache is
+// keyed by `kid` and entries are only refreshed on miss after expiry.
 const PUBLIC_KEY_CACHE_TTL_MS = 60_000;
 
 @Injectable()
