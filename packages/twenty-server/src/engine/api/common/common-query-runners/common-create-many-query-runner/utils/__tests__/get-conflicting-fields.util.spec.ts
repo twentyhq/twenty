@@ -198,6 +198,10 @@ describe('getConflictingFields', () => {
             column: 'phonesFieldPrimaryPhoneNumber',
           },
           {
+            fullPath: 'phonesField.primaryPhoneCountryCode',
+            column: 'phonesFieldPrimaryPhoneCountryCode',
+          },
+          {
             fullPath: 'phonesField.primaryPhoneCallingCode',
             column: 'phonesFieldPrimaryPhoneCallingCode',
           },
