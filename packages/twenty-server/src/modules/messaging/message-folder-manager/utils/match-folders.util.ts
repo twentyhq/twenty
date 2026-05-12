@@ -68,7 +68,7 @@ export const matchFolders = ({
       continue;
     }
 
-    const discoveredPath = discoveredFolder.externalId.split(':')[0];
+    const discoveredPath = (discoveredFolder.externalId ?? '').split(':')[0];
 
     if (isDefined(discoveredPath)) {
       const existingFolderMatch = existingFolders.find((existingFolder) => {
@@ -76,7 +76,7 @@ export const matchFolders = ({
           return false;
         }
 
-        const existingPath = existingFolder.externalId.split(':')[0];
+        const existingPath = (existingFolder.externalId ?? '').split(':')[0];
 
         return existingPath === discoveredPath;
       });

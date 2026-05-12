@@ -40,6 +40,7 @@ const createMockMessageChannel = (
 ) => ({
   id: 'channel-123',
   handle: 'test@gmail.com',
+  syncCursor: null,
   type: MessageChannelType.EMAIL,
   messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
   connectedAccount: {
