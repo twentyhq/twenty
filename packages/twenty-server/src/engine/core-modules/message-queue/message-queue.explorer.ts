@@ -43,11 +43,11 @@ export class MessageQueueExplorer implements OnModuleInit {
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
-  onModuleInit() {
-    this.explore();
+  async onModuleInit() {
+    await this.explore();
   }
 
-  explore() {
+  async explore() {
     const processors = this.discoveryService
       .getProviders()
       .filter((wrapper) =>
@@ -66,7 +66,7 @@ export class MessageQueueExplorer implements OnModuleInit {
       const queueToken = getQueueToken(queueName);
       const messageQueueService = this.getQueueService(queueToken);
 
-      void this.handleProcessorGroupCollection(
+      await this.handleProcessorGroupCollection(
         processorGroupCollection,
         messageQueueService,
         QUEUE_WORKER_OPTIONS[queueName as MessageQueue],
