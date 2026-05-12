@@ -141,10 +141,10 @@ export class JwtWrapperService {
     };
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   async verifyJwtToken(
     token: string,
     options?: JwtVerifyOptions,
+    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   ): Promise<any> {
     const payload = this.decode<JwtPayload>(token, { json: true });
 

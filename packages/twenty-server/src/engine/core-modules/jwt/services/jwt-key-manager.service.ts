@@ -44,9 +44,6 @@ export class JwtKeyManagerService {
     try {
       const result = await this.currentSigningKeyPromise;
 
-      // Do not memoize null: a missing key means we fell back to HS256, and
-      // we want every subsequent sign attempt to retry (and re-log) so a
-      // transient DB failure at boot cannot pin the service to HS256 forever.
       if (!isDefined(result)) {
         this.currentSigningKeyPromise = null;
       }
@@ -127,8 +124,6 @@ export class JwtKeyManagerService {
         revokedAt: null,
       });
 
-      // Clear any negative cache entry for this id so verifications that
-      // raced with the insert can pick up the new public key immediately.
       await this.coreEntityCacheService.invalidate('signingKeyPublicKey', id);
 
       return { id, privateKeyPem: generated.privateKeyPem };
