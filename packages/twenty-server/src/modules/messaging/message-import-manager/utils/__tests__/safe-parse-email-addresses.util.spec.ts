@@ -35,4 +35,15 @@ describe('safeParseEmailAddresses', () => {
       { address: 'bob@example.com', name: '' },
     ]);
   });
+
+  it('should not split on commas inside quoted display names', () => {
+    // RFC 5322 allows commas inside quoted strings — splitting on them would
+    // produce a phantom recipient with a garbage address.
+    expect(
+      safeParseEmailAddresses('"Doe, John" <jd@example.com>, bob@example.com'),
+    ).toEqual([
+      { address: 'jd@example.com', name: 'Doe, John' },
+      { address: 'bob@example.com', name: '' },
+    ]);
+  });
 });

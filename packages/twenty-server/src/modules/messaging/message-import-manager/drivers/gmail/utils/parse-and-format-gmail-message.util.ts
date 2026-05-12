@@ -1,6 +1,7 @@
 import { type gmail_v1 as gmailV1 } from 'googleapis';
 import planer from 'planer';
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
@@ -29,17 +30,26 @@ export const parseAndFormatGmailMessage = (
     labelIds,
   } = parseGmailMessage(message);
 
+  const hasRecipients =
+    isNonEmptyArray(to) ||
+    isDefined(deliveredTo) ||
+    isNonEmptyArray(cc) ||
+    isNonEmptyArray(bcc);
+
   if (
-    !from ||
-    (!to && !deliveredTo && !bcc && !cc) ||
-    !headerMessageId ||
-    !threadId
+    !isDefined(from) ||
+    !isDefined(headerMessageId) ||
+    !isDefined(threadId) ||
+    !hasRecipients
   ) {
     return null;
   }
 
-  const toParticipants =
-    to.length > 0 ? to : deliveredTo ? [{ address: deliveredTo }] : [];
+  const toParticipants = isNonEmptyArray(to)
+    ? to
+    : isDefined(deliveredTo)
+      ? [{ address: deliveredTo }]
+      : [];
 
   const participants = [
     ...formatAddressObjectAsParticipants(
