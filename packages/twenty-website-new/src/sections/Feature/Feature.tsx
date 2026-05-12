@@ -1,19 +1,25 @@
 import { Container } from '@/design-system/components';
-import type { ImageType } from '@/design-system/components/Image';
 import type { MessageDescriptor } from '@lingui/core';
 import { type Page, Pages } from '@/lib/pages';
 import { theme, type Scheme } from '@/theme';
 import { styled } from '@linaria/react';
-import type { ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
+import { FeatureScrollEntrance } from './FeatureScrollEntrance';
 import { TileContent } from './TileContent';
 import { TileVisual } from './TileVisual';
 
-export type FeatureTileType = {
-  bullets: MessageDescriptor[];
-  heading: MessageDescriptor;
+export type FeatureBullet = {
   icon: string;
-  image: ImageType;
+  text: MessageDescriptor;
+};
+
+export type FeatureTileType = {
+  bullets: FeatureBullet[];
+  category: MessageDescriptor;
+  description: MessageDescriptor;
+  heading: MessageDescriptor;
+  visual: ComponentType<{ active: boolean }>;
 };
 
 // --- Root ---
@@ -109,68 +115,139 @@ function Intro({ align, children, page }: IntroProps) {
 
 // --- Tiles ---
 
-const TilesGrid = styled.div`
-  display: grid;
-  gap: ${theme.spacing(4)};
-  grid-template-columns: 1fr;
+const BORDER = `1px solid ${theme.colors.primary.border[20]}`;
 
-  @media (min-width: ${theme.breakpoints.md}px) {
-    gap: ${theme.spacing(4)};
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-  }
-`;
-
-const TileCell = styled.div`
-  min-width: 0;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    &[data-index='0'] {
-      grid-column: span 12;
-    }
-    &[data-index='1'],
-    &[data-index='2'],
-    &[data-index='5'],
-    &[data-index='6'] {
-      grid-column: span 6;
-    }
-    &[data-index='3'] {
-      grid-column: span 4;
-    }
-    &[data-index='4'] {
-      grid-column: span 8;
-    }
-  }
-`;
-
-const TileRoot = styled.article`
-  background-color: ${theme.colors.primary.background[100]};
-  border: 1px solid ${theme.colors.primary.border[20]};
+const Grid = styled.div`
+  border: ${BORDER};
   border-radius: ${theme.radius(2)};
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: auto auto;
-  height: 100%;
-  min-width: 0;
   overflow: hidden;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`;
+
+const SpotlightCell = styled.div`
+  border-bottom: ${BORDER};
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    grid-column: span 2;
+  }
+`;
+
+const GridCell = styled.div`
+  border-bottom: ${BORDER};
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    &:nth-child(even) {
+      border-right: ${BORDER};
+    }
+
+    &:nth-last-child(-n + 2) {
+      border-bottom: none;
+    }
+  }
+`;
+
+const SpotlightInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    flex-direction: row;
+    min-height: 420px;
+  }
+`;
+
+const SpotlightContent = styled.div`
+  @media (min-width: ${theme.breakpoints.md}px) {
+    flex: 1;
+    min-width: 0;
+  }
+`;
+
+const SpotlightVisual = styled.div`
+  min-height: 260px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    flex: 1.1;
+    min-width: 0;
+  }
+`;
+
+const CardInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+`;
+
+const CardVisualFrame = styled.div`
+  height: 300px;
+  margin: ${theme.spacing(4)} ${theme.spacing(4)} 0;
+  overflow: hidden;
+  position: relative;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    height: 340px;
+    margin: ${theme.spacing(5)} ${theme.spacing(5)} 0;
+  }
 `;
 
 type TilesProps = {
-  mask: ImageType;
   tiles: FeatureTileType[];
 };
 
-function Tiles({ mask, tiles }: TilesProps) {
+function Tiles({ tiles }: TilesProps) {
+  const totalCount = tiles.length;
+
   return (
-    <TilesGrid>
-      {tiles.map((tile, index) => (
-        <TileCell data-index={index} key={index}>
-          <TileRoot>
-            <TileVisual image={tile.image} index={index} mask={mask} />
-            <TileContent tile={tile} />
-          </TileRoot>
-        </TileCell>
-      ))}
-    </TilesGrid>
+    <Grid>
+      {tiles.map((tile, index) => {
+        const isSpotlight = index === 0;
+        const counter = `${String(index + 1).padStart(2, '0')} / ${String(totalCount).padStart(2, '0')}`;
+
+        if (isSpotlight) {
+          return (
+            <SpotlightCell key={index}>
+              <FeatureScrollEntrance index={index}>
+                <SpotlightInner>
+                  <SpotlightContent>
+                    <TileContent counter={counter} spotlight tile={tile} />
+                  </SpotlightContent>
+                  <SpotlightVisual>
+                    <TileVisual visual={tile.visual} />
+                  </SpotlightVisual>
+                </SpotlightInner>
+              </FeatureScrollEntrance>
+            </SpotlightCell>
+          );
+        }
+
+        return (
+          <GridCell key={index}>
+            <FeatureScrollEntrance index={index}>
+              <CardInner>
+                <CardVisualFrame>
+                  <TileVisual visual={tile.visual} />
+                </CardVisualFrame>
+                <TileContent counter={counter} spotlight={false} tile={tile} />
+              </CardInner>
+            </FeatureScrollEntrance>
+          </GridCell>
+        );
+      })}
+    </Grid>
   );
 }
 

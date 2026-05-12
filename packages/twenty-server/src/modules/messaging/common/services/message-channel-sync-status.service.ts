@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Any, In, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   MessageChannelPendingGroupEmailsAction,
@@ -9,12 +9,13 @@ import {
   MessageChannelSyncStatus,
   MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
+
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
@@ -162,7 +163,7 @@ export class MessageChannelSyncStatusService {
         {
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
           syncStatus: MessageChannelSyncStatus.ACTIVE,
-          syncStageStartedAt: new Date().toISOString(),
+          syncStageStartedAt: new Date(),
         },
       );
     }, authContext);
@@ -184,7 +185,7 @@ export class MessageChannelSyncStatusService {
         {
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
           syncStatus: MessageChannelSyncStatus.ONGOING,
-          syncStageStartedAt: new Date().toISOString(),
+          syncStageStartedAt: new Date(),
         },
       );
     }, authContext);
@@ -209,7 +210,7 @@ export class MessageChannelSyncStatusService {
           throttleFailureCount: 0,
           throttleRetryAfter: null,
           syncStageStartedAt: null,
-          syncedAt: new Date().toISOString(),
+          syncedAt: new Date(),
         },
       );
     }, authContext);
@@ -236,7 +237,7 @@ export class MessageChannelSyncStatusService {
         {
           syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
           syncStatus: MessageChannelSyncStatus.ACTIVE,
-          syncStageStartedAt: new Date().toISOString(),
+          syncStageStartedAt: new Date(),
         },
       );
     }, authContext);
@@ -258,7 +259,7 @@ export class MessageChannelSyncStatusService {
         {
           syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
           syncStatus: MessageChannelSyncStatus.ONGOING,
-          syncStageStartedAt: new Date().toISOString(),
+          syncStageStartedAt: new Date(),
         },
       );
     }, authContext);
@@ -297,19 +298,19 @@ export class MessageChannelSyncStatusService {
         eventIds: messageChannelIds,
       });
 
+      const messageChannels = await this.messageChannelRepository.find({
+        where: { id: In(messageChannelIds), workspaceId },
+      });
+
       if (
         syncStatus === MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS
       ) {
-        const messageChannels = await this.messageChannelRepository.find({
-          where: { id: In(messageChannelIds), workspaceId },
-        });
-
         const connectedAccountIds = messageChannels.map(
           (messageChannel) => messageChannel.connectedAccountId,
         );
 
         await this.connectedAccountRepository.update(
-          { id: Any(connectedAccountIds), workspaceId },
+          { id: In(connectedAccountIds), workspaceId },
           {
             authFailedAt: new Date(),
           },

@@ -9,6 +9,7 @@ import {
   UpgradeMigrationStatus,
 } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
+import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 
 export type WorkspaceLastAttemptedCommand = {
   workspaceId: string;
@@ -26,6 +27,18 @@ export class UpgradeMigrationService {
     @InjectRepository(UpgradeMigrationEntity)
     private readonly upgradeMigrationRepository: Repository<UpgradeMigrationEntity>,
   ) {}
+
+  async getInferredVersion(commandName?: string): Promise<string | null> {
+    if (isDefined(commandName)) {
+      return extractVersionFromCommandName(commandName);
+    }
+
+    const migration = await this.getLastAttemptedInstanceCommand();
+
+    return isDefined(migration)
+      ? extractVersionFromCommandName(migration.name)
+      : null;
+  }
 
   async isLastAttemptCompleted({
     name,

@@ -10,7 +10,7 @@ import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/service
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
-import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
+
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { In, Repository } from 'typeorm';
 
@@ -91,7 +91,10 @@ export class UpgradeStatusService {
           step.kind === 'fast-instance' || step.kind === 'slow-instance',
       );
 
-    return this.buildCursorStatus(migration, lastInstanceStep?.name ?? null);
+    return await this.buildCursorStatus(
+      migration,
+      lastInstanceStep?.name ?? null,
+    );
   }
 
   async getWorkspaceStatuses(
@@ -122,14 +125,16 @@ export class UpgradeStatusService {
     const lastStepName =
       sequence.length > 0 ? sequence[sequence.length - 1].name : null;
 
-    return workspaces.map((workspace) => ({
-      ...this.buildCursorStatus(
-        cursors.get(workspace.id) ?? null,
-        lastStepName,
-      ),
-      workspaceId: workspace.id,
-      displayName: workspace.displayName ?? null,
-    }));
+    return Promise.all(
+      workspaces.map(async (workspace) => ({
+        ...(await this.buildCursorStatus(
+          cursors.get(workspace.id) ?? null,
+          lastStepName,
+        )),
+        workspaceId: workspace.id,
+        displayName: workspace.displayName ?? null,
+      })),
+    );
   }
 
   async getInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {
@@ -209,10 +214,10 @@ export class UpgradeStatusService {
     await this.upgradeStatusCacheService.invalidate();
   }
 
-  private buildCursorStatus(
+  private async buildCursorStatus(
     migration: LatestUpgradeCommand | null,
     lastExpectedCommandName: string | null,
-  ): InstanceUpgradeStatus {
+  ): Promise<InstanceUpgradeStatus> {
     if (!migration) {
       return {
         inferredVersion: null,
@@ -224,7 +229,9 @@ export class UpgradeStatusService {
     const health = deriveHealth(migration, lastExpectedCommandName);
 
     return {
-      inferredVersion: extractVersionFromCommandName(migration.name),
+      inferredVersion: await this.upgradeMigrationService.getInferredVersion(
+        migration.name,
+      ),
       health,
       latestCommand: {
         name: migration.name,

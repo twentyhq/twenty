@@ -81,4 +81,31 @@ describe('jsonSchemaToInputSchema', () => {
       enum: ['a', 'b'],
     });
   });
+
+  it('preserves multiline on string properties when true', () => {
+    const result = jsonSchemaToInputSchema({
+      type: 'object',
+      properties: {
+        body: { type: 'string', multiline: true },
+      },
+    });
+
+    expect(result[0].properties?.body).toEqual({
+      type: 'string',
+      multiline: true,
+    });
+  });
+
+  it('does not set multiline when false or omitted', () => {
+    const result = jsonSchemaToInputSchema({
+      type: 'object',
+      properties: {
+        title: { type: 'string', multiline: false },
+        other: { type: 'string' },
+      },
+    });
+
+    expect(result[0].properties?.title).toEqual({ type: 'string' });
+    expect(result[0].properties?.other).toEqual({ type: 'string' });
+  });
 });

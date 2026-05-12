@@ -1,5 +1,5 @@
 import { Cta } from './Cta';
 import { Root } from './Root';
-import { Screenshot } from './Screenshot';
+import { Preview } from './Preview';
 
-export const Demo = { Cta, Root, Screenshot };
+export const Demo = { Cta, Preview, Root };

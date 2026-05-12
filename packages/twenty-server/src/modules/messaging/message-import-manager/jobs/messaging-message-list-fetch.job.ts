@@ -4,9 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { MessageChannelSyncStage } from 'twenty-shared/types';
+
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -15,7 +17,6 @@ import {
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 export type MessagingMessageListFetchJobData = {
   messageChannelId: string;
@@ -33,7 +34,7 @@ export class MessagingMessageListFetchJob {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
+    private readonly messageImportExceptionHandlerService: MessageImportExceptionHandlerService,
   ) {}
 
   @Process(MessagingMessageListFetchJob.name)
@@ -108,7 +109,7 @@ export class MessagingMessageListFetchJob {
           messageChannelId: messageChannel.id,
         });
       } catch (error) {
-        await this.messageImportErrorHandlerService.handleDriverException(
+        await this.messageImportExceptionHandlerService.handleDriverException(
           error,
           MessageImportSyncStep.MESSAGE_LIST_FETCH,
           messageChannel,
