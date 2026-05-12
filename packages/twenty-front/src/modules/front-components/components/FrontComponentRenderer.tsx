@@ -100,6 +100,9 @@ export const FrontComponentRenderer = ({
 
   const accessToken = applicationTokenPair.applicationAccessToken.token;
 
+  const environmentVariables =
+    data.frontComponent.environmentVariables ?? undefined;
+
   if (usesSdkClient) {
     return (
       <FrontComponentRendererProvider frontComponentId={frontComponentId}>
@@ -112,6 +115,7 @@ export const FrontComponentRenderer = ({
           frontComponentHostCommunicationApi={
             frontComponentHostCommunicationApi
           }
+          environmentVariables={environmentVariables}
           onError={handleError}
         />
       </FrontComponentRendererProvider>
@@ -127,6 +131,7 @@ export const FrontComponentRenderer = ({
         apiUrl={REACT_APP_SERVER_BASE_URL}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+        environmentVariables={environmentVariables}
         onError={handleError}
       />
     </FrontComponentRendererProvider>

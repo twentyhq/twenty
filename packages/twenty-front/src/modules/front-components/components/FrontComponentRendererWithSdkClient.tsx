@@ -16,6 +16,7 @@ type FrontComponentRendererWithSdkClientProps = {
   applicationId: string;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
+  environmentVariables?: Record<string, string>;
   onError: (error?: Error) => void;
 };
 
@@ -26,6 +27,7 @@ export const FrontComponentRendererWithSdkClient = ({
   applicationId,
   executionContext,
   frontComponentHostCommunicationApi,
+  environmentVariables,
   onError,
 }: FrontComponentRendererWithSdkClientProps) => {
   const sdkClientState = useAtomValue(
@@ -50,6 +52,7 @@ export const FrontComponentRendererWithSdkClient = ({
           frontComponentHostCommunicationApi={
             frontComponentHostCommunicationApi
           }
+          environmentVariables={environmentVariables}
           onError={onError}
         />
       )}

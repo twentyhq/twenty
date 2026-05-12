@@ -16,6 +16,7 @@ type SettingsLogicFunctionCodeEditorProps = Omit<EditorProps, 'onChange'> & {
   currentFilePath: string;
   files: File[];
   onChange: (value: string) => void;
+  environmentVariableKeys?: string[];
 };
 
 export const SettingsLogicFunctionCodeEditor = ({
@@ -24,6 +25,7 @@ export const SettingsLogicFunctionCodeEditor = ({
   onChange,
   height = 450,
   options = undefined,
+  environmentVariableKeys,
 }: SettingsLogicFunctionCodeEditorProps) => {
   const { logicFunctionId = '' } = useParams();
   const { availablePackages } = useGetAvailablePackages({
@@ -63,8 +65,9 @@ export const SettingsLogicFunctionCodeEditor = ({
         target: monaco.languages.typescript.ScriptTarget.ESNext,
       });
 
-      // TODO load that with proper env variables
-      const environmentVariables = {};
+      const environmentVariables = Object.fromEntries(
+        (environmentVariableKeys ?? []).map((key) => [key, '']),
+      );
 
       if (isDefined(environmentVariables)) {
         const envTypeDefinitions = Object.keys(environmentVariables)
