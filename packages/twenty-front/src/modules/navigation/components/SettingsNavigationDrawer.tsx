@@ -3,8 +3,11 @@ import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/N
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
+import { useEffect } from 'react';
 import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 
 export const SettingsNavigationDrawer = ({
@@ -16,6 +19,14 @@ export const SettingsNavigationDrawer = ({
   const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useAtomState(
     isAdvancedModeEnabledState,
   );
+  const setIsNavigationDrawerExpanded = useSetAtomState(
+    isNavigationDrawerExpandedState,
+  );
+
+  // Force expand navigation drawer in Settings to prevent collapsed state from main app
+  useEffect(() => {
+    setIsNavigationDrawerExpanded(true);
+  }, [setIsNavigationDrawerExpanded]);
 
   return (
     <NavigationDrawer className={className} title={t`Exit Settings`}>
