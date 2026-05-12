@@ -40,6 +40,8 @@ export class MetadataEventPublisher {
         entityName: event.metadataName,
         recordId: event.recordId,
         properties: event.properties as Record<string, unknown>,
+        recipientUserWorkspaceIds:
+          this.getRecipientUserWorkspaceIdsIfNeeded(event),
       })),
     });
   }
@@ -237,6 +239,30 @@ export class MetadataEventPublisher {
     });
 
     return { ...metadataEventBatch, events: enrichedEvents };
+  }
+
+  private getRecipientUserWorkspaceIdsIfNeeded(
+    event: MetadataEventBatch['events'][number],
+  ): string[] | undefined {
+    if (event.metadataName !== 'navigationMenuItem') {
+      return undefined;
+    }
+
+    const userWorkspaceIds = [
+      'before' in event.properties ? event.properties.before : undefined,
+      'after' in event.properties ? event.properties.after : undefined,
+    ].flatMap((record) => {
+      const userWorkspaceId = (record as { userWorkspaceId?: string | null })
+        ?.userWorkspaceId;
+
+      return isDefined(userWorkspaceId) ? [userWorkspaceId] : [];
+    });
+
+    if (!isNonEmptyArray(userWorkspaceIds)) {
+      return undefined;
+    }
+
+    return Array.from(new Set(userWorkspaceIds));
   }
 
   private applyStandardOverridesToMetadataRecord(
