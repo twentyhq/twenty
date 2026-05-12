@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
+import { type UniversalUpdatePermissionFlagAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/permission-flag/types/workspace-migration-permission-flag-action.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { type UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { UniversalUpdatePermissionFlagAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/permission-flag/types/workspace-migration-permission-flag-action.type';
 import { FlatPermissionFlagValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service';
-import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 
 @Injectable()
 export class WorkspaceMigrationPermissionFlagActionsBuilderService extends WorkspaceEntityMigrationBuilderService<
@@ -105,7 +105,7 @@ export class WorkspaceMigrationPermissionFlagActionsBuilderService extends Works
 
     const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updatePermissionFlagAction: UniversalUpdatePermissionFlagAction = {
+    const updateAction: UniversalUpdatePermissionFlagAction = {
       type: 'update',
       metadataName: 'permissionFlag',
       universalIdentifier,
@@ -114,7 +114,7 @@ export class WorkspaceMigrationPermissionFlagActionsBuilderService extends Works
 
     return {
       status: 'success',
-      action: updatePermissionFlagAction,
+      action: updateAction,
     };
   }
 }

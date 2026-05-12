@@ -7,7 +7,7 @@ import { type RecordGroupAction } from '@/object-record/record-group/types/Recor
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -90,7 +90,7 @@ export const useRecordGroupActions = ({
     recordIndexGroupFieldMetadataItem,
   ]);
 
-  const hasAccessToDataModelSettings = useHasPermissionFlag(
+  const hasAccessToDataModelSettings = useHasPermissionFlagGrant(
     PermissionFlagType.DATA_MODEL,
   );
   const currentIndex = visibleRecordGroupIds.findIndex(

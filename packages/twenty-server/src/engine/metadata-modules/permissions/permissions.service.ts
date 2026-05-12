@@ -65,8 +65,8 @@ export class PermissionsService {
     }
 
     const defaultSettingsPermissions =
-      this.getDefaultUserWorkspacePermissions().permissionFlags;
-    const permissionFlags = Object.keys(PermissionFlagType).reduce(
+      this.getDefaultUserWorkspacePermissions().permissionFlagGrants;
+    const permissionFlagGrants = Object.keys(PermissionFlagType).reduce(
       (acc, feature) => {
         const hasBasePermission = this.isToolPermission(feature)
           ? roleOfUserWorkspace.canAccessAllTools
@@ -76,8 +76,8 @@ export class PermissionsService {
           ...acc,
           [feature]:
             hasBasePermission ||
-            roleOfUserWorkspace.permissionFlags.some(
-              (permissionFlag) => permissionFlag.flag === feature,
+            roleOfUserWorkspace.permissionFlagGrants.some(
+              (permissionFlagGrant) => permissionFlagGrant.flag === feature,
             ),
         };
       },
@@ -92,14 +92,14 @@ export class PermissionsService {
     const objectsPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
 
     return {
-      permissionFlags,
+      permissionFlagGrants,
       objectsPermissions,
     };
   }
 
   public getDefaultUserWorkspacePermissions = () =>
     ({
-      permissionFlags: {
+      permissionFlagGrants: {
         [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
         [PermissionFlagType.WORKSPACE]: false,
         [PermissionFlagType.WORKSPACE_MEMBERS]: false,
@@ -150,7 +150,7 @@ export class PermissionsService {
 
       const role = await this.roleRepository.findOne({
         where: { id: roleId, workspaceId },
-        relations: ['permissionFlags'],
+        relations: ['permissionFlagGrants'],
       });
 
       if (!isDefined(role)) {
@@ -203,7 +203,7 @@ export class PermissionsService {
 
       const role = await this.roleRepository.findOne({
         where: { id: applicationRoleId, workspaceId },
-        relations: ['permissionFlags'],
+        relations: ['permissionFlagGrants'],
       });
 
       if (!isDefined(role)) {
@@ -240,10 +240,10 @@ export class PermissionsService {
       return true;
     }
 
-    const permissionFlags = role.permissionFlags ?? [];
+    const permissionFlagGrants = role.permissionFlagGrants ?? [];
 
-    return permissionFlags.some(
-      (permissionFlag) => permissionFlag.flag === setting,
+    return permissionFlagGrants.some(
+      (permissionFlagGrant) => permissionFlagGrant.flag === setting,
     );
   }
 
@@ -292,7 +292,7 @@ export class PermissionsService {
       const result = await this.getRolesFromPermissionConfig(
         rolePermissionConfig,
         workspaceId,
-        ['permissionFlags'],
+        ['permissionFlagGrants'],
       );
 
       if (result === null) {
@@ -318,7 +318,7 @@ export class PermissionsService {
       const result = await this.getRolesFromPermissionConfig(
         rolePermissionConfig,
         workspaceId,
-        ['permissionFlags'],
+        ['permissionFlagGrants'],
       );
 
       if (result === null) {
@@ -332,10 +332,10 @@ export class PermissionsService {
           return true;
         }
 
-        const permissionFlags = role.permissionFlags ?? [];
+        const permissionFlagGrants = role.permissionFlagGrants ?? [];
 
-        return permissionFlags.some(
-          (permissionFlag) => permissionFlag.flag === flag,
+        return permissionFlagGrants.some(
+          (permissionFlagGrant) => permissionFlagGrant.flag === flag,
         );
       };
 

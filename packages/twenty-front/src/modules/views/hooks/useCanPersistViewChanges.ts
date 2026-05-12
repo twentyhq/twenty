@@ -1,4 +1,4 @@
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import {
   ViewVisibility,
@@ -7,7 +7,9 @@ import {
 
 export const useCanPersistViewChanges = () => {
   const { currentView } = useGetCurrentViewOnly();
-  const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
+  const hasViewsPermission = useHasPermissionFlagGrant(
+    PermissionFlagType.VIEWS,
+  );
 
   if (!currentView) {
     return { canPersistChanges: false };

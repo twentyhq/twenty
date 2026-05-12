@@ -20,7 +20,7 @@ export const settingsDraftRoleFamilyState = createAtomFamilyState<
     canAccessAllTools: false,
     isEditable: false,
     workspaceMembers: [],
-    permissionFlags: [],
+    permissionFlagGrants: [],
     objectPermissions: [],
     fieldPermissions: [],
     rowLevelPermissionPredicates: [],

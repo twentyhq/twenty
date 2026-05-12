@@ -23,8 +23,8 @@ export const useCanEditProfileField = (field: EditableProfileField) => {
   const editableFields = currentWorkspace.editableProfileFields ?? [];
   const workspaceAllowsField = editableFields.includes(field);
 
-  const permissionFlags = currentUserWorkspace.permissionFlags ?? [];
-  const hasProfilePermission = permissionFlags.includes(
+  const permissionFlagGrants = currentUserWorkspace.permissionFlagGrants ?? [];
+  const hasProfilePermission = permissionFlagGrants.includes(
     PermissionFlagType.PROFILE_INFORMATION,
   );
 

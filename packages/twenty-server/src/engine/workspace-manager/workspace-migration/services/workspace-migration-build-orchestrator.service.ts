@@ -29,6 +29,7 @@ import { WorkspaceMigrationPageLayoutTabActionsBuilderService } from 'src/engine
 import { WorkspaceMigrationPageLayoutWidgetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/workspace-migration-page-layout-widget-actions-builder.service';
 import { WorkspaceMigrationPageLayoutActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/workspace-migration-page-layout-actions-builder.service';
 import { WorkspaceMigrationPermissionFlagActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/permission-flag/workspace-migration-permission-flag-actions-builder.service';
+import { WorkspaceMigrationPermissionFlagGrantActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/permission-flag-grant/workspace-migration-permission-flag-grant-actions-builder.service';
 import { WorkspaceMigrationRoleTargetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/workspace-migration-role-target-actions-builder.service';
 import { WorkspaceMigrationRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/workspace-migration-role-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/workspace-migration-row-level-permission-predicate-group-actions-builder.service';
@@ -58,6 +59,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationViewSortActionsBuilderService: WorkspaceMigrationViewSortActionsBuilderService,
     private readonly workspaceMigrationFieldPermissionActionsBuilderService: WorkspaceMigrationFieldPermissionActionsBuilderService,
     private readonly workspaceMigrationObjectPermissionActionsBuilderService: WorkspaceMigrationObjectPermissionActionsBuilderService,
+    private readonly workspaceMigrationPermissionFlagGrantActionsBuilderService: WorkspaceMigrationPermissionFlagGrantActionsBuilderService,
     private readonly workspaceMigrationPermissionFlagActionsBuilderService: WorkspaceMigrationPermissionFlagActionsBuilderService,
     private readonly workspaceMigrationLogicFunctionActionsBuilderService: WorkspaceMigrationLogicFunctionActionsBuilderService,
     private readonly workspaceMigrationRoleTargetActionsBuilderService: WorkspaceMigrationRoleTargetActionsBuilderService,
@@ -158,6 +160,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatRoleMaps,
       flatObjectPermissionMaps,
       flatFieldPermissionMaps,
+      flatPermissionFlagGrantMaps,
       flatPermissionFlagMaps,
       flatRoleTargetMaps,
       flatAgentMaps,
@@ -555,6 +558,34 @@ export class WorkspaceMigrationBuildOrchestratorService {
       } else {
         orchestratorActionsReport.fieldPermission =
           fieldPermissionResult.actions;
+      }
+    }
+
+    if (isDefined(flatPermissionFlagGrantMaps)) {
+      const {
+        from: fromFlatPermissionFlagGrantMaps,
+        to: toFlatPermissionFlagGrantMaps,
+      } = flatPermissionFlagGrantMaps;
+
+      const permissionFlagGrantResult =
+        await this.workspaceMigrationPermissionFlagGrantActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatPermissionFlagGrantMaps,
+            to: toFlatPermissionFlagGrantMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
+            workspaceId,
+          },
+        );
+
+      if (permissionFlagGrantResult.status === 'fail') {
+        orchestratorFailureReport.permissionFlagGrant.push(
+          ...permissionFlagGrantResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.permissionFlagGrant =
+          permissionFlagGrantResult.actions;
       }
     }
 
@@ -986,6 +1017,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ///
 
           // Permission flags
+          ...aggregatedOrchestratorActionsReport.permissionFlagGrant.delete,
+          ...aggregatedOrchestratorActionsReport.permissionFlagGrant.create,
+          ...aggregatedOrchestratorActionsReport.permissionFlagGrant.update,
+          ///
+
+          // Permission flag definitions
           ...aggregatedOrchestratorActionsReport.permissionFlag.delete,
           ...aggregatedOrchestratorActionsReport.permissionFlag.create,
           ...aggregatedOrchestratorActionsReport.permissionFlag.update,

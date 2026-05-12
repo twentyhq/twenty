@@ -12,7 +12,7 @@ import {
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { usePermissionFlagGrantMap } from '@/settings/roles/hooks/usePermissionFlagGrantMap';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import {
   jotaiStore,
@@ -65,8 +65,8 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </MockedProvider>
 );
 
-jest.mock('@/settings/roles/hooks/usePermissionFlagMap', () => ({
-  usePermissionFlagMap: jest.fn(),
+jest.mock('@/settings/roles/hooks/usePermissionFlagGrantMap', () => ({
+  usePermissionFlagGrantMap: jest.fn(),
 }));
 
 jest.mock('@/domain-manager/hooks/useRedirectToWorkspaceDomain', () => ({
@@ -83,7 +83,7 @@ describe('useSettingsNavigationItems', () => {
   });
 
   it('should hide workspace settings when no permissions', () => {
-    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+    (usePermissionFlagGrantMap as jest.Mock).mockImplementation(() => ({
       [PermissionFlagType.WORKSPACE]: false,
       [PermissionFlagType.WORKSPACE_MEMBERS]: false,
       [PermissionFlagType.DATA_MODEL]: false,
@@ -105,7 +105,7 @@ describe('useSettingsNavigationItems', () => {
   });
 
   it('should show workspace settings when has permissions', () => {
-    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+    (usePermissionFlagGrantMap as jest.Mock).mockImplementation(() => ({
       [PermissionFlagType.WORKSPACE]: true,
       [PermissionFlagType.WORKSPACE_MEMBERS]: true,
       [PermissionFlagType.DATA_MODEL]: true,
@@ -127,7 +127,7 @@ describe('useSettingsNavigationItems', () => {
   });
 
   it('should show user section items regardless of permissions', () => {
-    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+    (usePermissionFlagGrantMap as jest.Mock).mockImplementation(() => ({
       [PermissionFlagType.WORKSPACE]: false,
       [PermissionFlagType.WORKSPACE_MEMBERS]: false,
       [PermissionFlagType.DATA_MODEL]: false,

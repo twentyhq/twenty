@@ -1,5 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
+import { useActionRolePermissionFlagGrantConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagGrantConfig';
 import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -98,12 +98,14 @@ export const WorkflowAiAgentPermissionsTab = ({
     (item) => item.id === workflowAiAgentActionAgent?.roleId,
   );
   const objectPermissions = role?.objectPermissions || [];
-  const permissionFlagKeys =
-    role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ?? [];
+  const permissionFlagGrantKeys =
+    role?.permissionFlagGrants?.map(
+      (permissionFlagGrant) => permissionFlagGrant.flag,
+    ) ?? [];
   const hasRoleWithPermissions =
     isDefined(workflowAiAgentActionAgent?.roleId) &&
-    (objectPermissions.length > 0 || permissionFlagKeys.length > 0);
-  const actionPermissionsConfig = useActionRolePermissionFlagConfig({
+    (objectPermissions.length > 0 || permissionFlagGrantKeys.length > 0);
+  const actionPermissionsConfig = useActionRolePermissionFlagGrantConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
   });
 
@@ -119,7 +121,7 @@ export const WorkflowAiAgentPermissionsTab = ({
     filteredEnabledPermissions: filteredEnabledActionPermissions,
   } = getFilteredPermissions({
     permissions: actionPermissionsConfig,
-    permissionFlagKeys,
+    permissionFlagGrantKeys,
     searchQuery,
   });
 
@@ -134,12 +136,12 @@ export const WorkflowAiAgentPermissionsTab = ({
   const {
     handleAddPermission,
     handleDeletePermission,
-    handleAddPermissionFlag,
-    handleDeletePermissionFlag,
+    handleAddPermissionFlagGrant,
+    handleDeletePermissionFlagGrant,
   } = useWorkflowAiAgentPermissionActions({
     readonly,
     objectPermissions,
-    permissionFlagKeys,
+    permissionFlagGrantKeys,
     refetchAgentAndRoles,
   });
 
@@ -237,9 +239,9 @@ export const WorkflowAiAgentPermissionsTab = ({
             <WorkflowAiAgentPermissionsFlagList
               title={t`Actions`}
               permissions={filteredActionPermissions}
-              enabledPermissionFlagKeys={permissionFlagKeys}
+              enabledPermissionFlagGrantKeys={permissionFlagGrantKeys}
               readonly={readonly}
-              onAddPermissionFlag={handleAddPermissionFlag}
+              onAddPermissionFlagGrant={handleAddPermissionFlagGrant}
             />
           </>
         )}
@@ -255,10 +257,10 @@ export const WorkflowAiAgentPermissionsTab = ({
             <WorkflowAiAgentPermissionsFlagList
               title={t`Actions`}
               permissions={filteredEnabledActionPermissions}
-              enabledPermissionFlagKeys={permissionFlagKeys}
+              enabledPermissionFlagGrantKeys={permissionFlagGrantKeys}
               readonly={readonly}
               showDeleteButton={!readonly}
-              onDeletePermissionFlag={handleDeletePermissionFlag}
+              onDeletePermissionFlagGrant={handleDeletePermissionFlagGrant}
             />
           </>
         )}

@@ -24,7 +24,7 @@ const buildContext = (
   },
   selectedRecords: [],
   featureFlags: {},
-  permissionFlags: {},
+  permissionFlagGrants: {},
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
   objectMetadataItem: {},
@@ -458,13 +458,13 @@ describe('evaluateConditionalAvailabilityExpression', () => {
     });
   });
 
-  describe('permissionFlags gating', () => {
+  describe('permissionFlagGrants gating', () => {
     it('should hide exportRecords when EXPORT_CSV permission flag is missing', () => {
-      const context = buildContext({ permissionFlags: {} });
+      const context = buildContext({ permissionFlagGrants: {} });
 
       expect(
         evaluateConditionalAvailabilityExpression(
-          'permissionFlags.EXPORT_CSV',
+          'permissionFlagGrants.EXPORT_CSV',
           context,
         ),
       ).toBe(false);
@@ -472,12 +472,12 @@ describe('evaluateConditionalAvailabilityExpression', () => {
 
     it('should show exportRecords when EXPORT_CSV permission flag is present', () => {
       const context = buildContext({
-        permissionFlags: { EXPORT_CSV: true },
+        permissionFlagGrants: { EXPORT_CSV: true },
       });
 
       expect(
         evaluateConditionalAvailabilityExpression(
-          'permissionFlags.EXPORT_CSV',
+          'permissionFlagGrants.EXPORT_CSV',
           context,
         ),
       ).toBe(true);
@@ -486,12 +486,12 @@ describe('evaluateConditionalAvailabilityExpression', () => {
     it('should hide importRecords when IMPORT_CSV permission flag is missing even if soft-delete filter is off', () => {
       const context = buildContext({
         hasAnySoftDeleteFilterOnView: false,
-        permissionFlags: {},
+        permissionFlagGrants: {},
       });
 
       expect(
         evaluateConditionalAvailabilityExpression(
-          'not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
+          'not hasAnySoftDeleteFilterOnView and permissionFlagGrants.IMPORT_CSV',
           context,
         ),
       ).toBe(false);
@@ -500,12 +500,12 @@ describe('evaluateConditionalAvailabilityExpression', () => {
     it('should show importRecords when IMPORT_CSV permission flag is present and soft-delete filter is off', () => {
       const context = buildContext({
         hasAnySoftDeleteFilterOnView: false,
-        permissionFlags: { IMPORT_CSV: true },
+        permissionFlagGrants: { IMPORT_CSV: true },
       });
 
       expect(
         evaluateConditionalAvailabilityExpression(
-          'not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
+          'not hasAnySoftDeleteFilterOnView and permissionFlagGrants.IMPORT_CSV',
           context,
         ),
       ).toBe(true);

@@ -10,7 +10,7 @@ import { InformationBannerInvalidEnterpriseKey } from '@/information-banner/comp
 import { InformationBannerMaintenance } from '@/information-banner/components/maintenance/InformationBannerMaintenance';
 import { InformationBannerReconnectAccountEmailAliases } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases';
 import { InformationBannerReconnectAccountInsufficientPermissions } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { usePermissionFlagGrantMap } from '@/settings/roles/hooks/usePermissionFlagGrantMap';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
@@ -32,7 +32,7 @@ const StyledInformationBannerWrapper = styled.div`
 
 export const InformationBannerWrapper = () => {
   const subscriptionStatus = useSubscriptionStatus();
-  const permissionMap = usePermissionFlagMap();
+  const permissionMap = usePermissionFlagGrantMap();
   const isAccountSyncEnabled =
     permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS];
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(

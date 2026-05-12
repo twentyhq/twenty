@@ -91,17 +91,19 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
-exports[`getMetadataRelatedMetadataNames should return related metadata names for permissionFlag 1`] = `
+exports[`getMetadataRelatedMetadataNames should return related metadata names for permissionFlagGrant 1`] = `
 [
   "role",
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for permissionFlag 1`] = `[]`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for role 1`] = `
 [
   "roleTarget",
   "objectPermission",
-  "permissionFlag",
+  "permissionFlagGrant",
   "fieldPermission",
   "rowLevelPermissionPredicate",
   "rowLevelPermissionPredicateGroup",

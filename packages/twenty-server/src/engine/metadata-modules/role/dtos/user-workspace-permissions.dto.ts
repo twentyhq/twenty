@@ -2,5 +2,5 @@ import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace
 
 export type UserWorkspacePermissionsDto = Pick<
   UserWorkspaceEntity,
-  'objectPermissions' | 'permissionFlags' | 'objectsPermissions'
+  'objectPermissions' | 'permissionFlagGrants' | 'objectsPermissions'
 >;

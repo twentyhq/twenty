@@ -1,5 +1,5 @@
 import { AiChatBanner } from '@/ai/components/AiChatBanner';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { usePermissionFlagGrantMap } from '@/settings/roles/hooks/usePermissionFlagGrantMap';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -17,7 +17,7 @@ export const AiChatCreditsExhaustedMessage = () => {
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToManageBilling } =
-    usePermissionFlagMap();
+    usePermissionFlagGrantMap();
 
   const handleUpgradeClick = () => {
     navigateSettings(SettingsPath.Billing);

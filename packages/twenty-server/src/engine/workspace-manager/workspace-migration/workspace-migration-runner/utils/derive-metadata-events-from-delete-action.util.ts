@@ -56,6 +56,7 @@ const deriveAllMetadataEventsFromDeleteAction = ({
     case 'commandMenuItem':
     case 'frontComponent':
     case 'navigationMenuItem':
+    case 'permissionFlagGrant':
     case 'permissionFlag':
     case 'objectPermission':
     case 'fieldPermission':
