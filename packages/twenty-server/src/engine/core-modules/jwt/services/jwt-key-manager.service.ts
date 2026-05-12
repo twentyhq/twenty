@@ -70,7 +70,7 @@ export class JwtKeyManagerService {
       return null;
     }
 
-    return this.tryParsePublicKey(cachedPem, id);
+    return createPublicKey(cachedPem);
   }
 
   private async loadOrCreateCurrentSigningKey(): Promise<CurrentSigningKey | null> {
@@ -81,7 +81,7 @@ export class JwtKeyManagerService {
         return {
           id: existing.id,
           privateKey: this.decryptPrivateKey(existing.privateKey, existing.id),
-          publicKey: this.parsePublicKeyOrThrow(existing.publicKey),
+          publicKey: createPublicKey(existing.publicKey),
         };
       }
 
@@ -114,20 +114,19 @@ export class JwtKeyManagerService {
       );
     }
 
-    let privateKeyPem: string;
+    const privateKeyPem =
+      this.secretEncryptionService.decrypt(encryptedPrivateKey);
 
-    try {
-      privateKeyPem = this.secretEncryptionService.decrypt(encryptedPrivateKey);
-    } catch (error) {
+    const key = createPrivateKey(privateKeyPem);
+
+    if (key.asymmetricKeyType !== 'ec') {
       throw new JwtKeyManagerException(
-        `Failed to decrypt current signing key (id=${id}): ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-        JwtKeyManagerExceptionCode.SIGNING_KEY_DECRYPTION_FAILED,
+        `Stored signing private key has unexpected asymmetricKeyType "${key.asymmetricKeyType}" (expected "ec")`,
+        JwtKeyManagerExceptionCode.INVALID_PRIVATE_KEY,
       );
     }
 
-    return this.parsePrivateKeyOrThrow(privateKeyPem);
+    return key;
   }
 
   private async generateAndPersistCurrent(): Promise<CurrentSigningKey> {
@@ -161,17 +160,12 @@ export class JwtKeyManagerService {
               existing.privateKey,
               existing.id,
             ),
-            publicKey: this.parsePublicKeyOrThrow(existing.publicKey),
+            publicKey: createPublicKey(existing.publicKey),
           };
         }
       }
 
-      throw new JwtKeyManagerException(
-        `Failed to persist new signing key (id=${id}): ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-        JwtKeyManagerExceptionCode.SIGNING_KEY_PERSISTENCE_FAILED,
-      );
+      throw error;
     }
   }
 
@@ -181,80 +175,18 @@ export class JwtKeyManagerService {
     privateKeyPem: string;
     publicKeyPem: string;
   } {
-    try {
-      const { privateKey, publicKey } = generateKeyPairSync('ec', {
-        namedCurve: 'P-256',
-      });
+    const { privateKey, publicKey } = generateKeyPairSync('ec', {
+      namedCurve: 'P-256',
+    });
 
-      const privateKeyPem = privateKey
-        .export({ format: 'pem', type: 'pkcs8' })
-        .toString();
-      const publicKeyPem = publicKey
-        .export({ format: 'pem', type: 'spki' })
-        .toString();
+    const privateKeyPem = privateKey
+      .export({ format: 'pem', type: 'pkcs8' })
+      .toString();
+    const publicKeyPem = publicKey
+      .export({ format: 'pem', type: 'spki' })
+      .toString();
 
-      return { privateKey, publicKey, privateKeyPem, publicKeyPem };
-    } catch (error) {
-      throw new JwtKeyManagerException(
-        `Failed to generate EC P-256 signing key: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-        JwtKeyManagerExceptionCode.SIGNING_KEY_GENERATION_FAILED,
-      );
-    }
-  }
-
-  private parsePrivateKeyOrThrow(pem: string): KeyObject {
-    try {
-      const key = createPrivateKey(pem);
-
-      if (key.asymmetricKeyType !== 'ec') {
-        throw new JwtKeyManagerException(
-          `Stored signing private key has unexpected asymmetricKeyType "${key.asymmetricKeyType}" (expected "ec")`,
-          JwtKeyManagerExceptionCode.INVALID_PRIVATE_KEY,
-        );
-      }
-
-      return key;
-    } catch (error) {
-      if (error instanceof JwtKeyManagerException) {
-        throw error;
-      }
-
-      throw new JwtKeyManagerException(
-        `Failed to parse signing private key: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-        JwtKeyManagerExceptionCode.INVALID_PRIVATE_KEY,
-      );
-    }
-  }
-
-  private parsePublicKeyOrThrow(pem: string): KeyObject {
-    try {
-      return createPublicKey(pem);
-    } catch (error) {
-      throw new JwtKeyManagerException(
-        `Failed to parse signing public key: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-        JwtKeyManagerExceptionCode.INVALID_PUBLIC_KEY,
-      );
-    }
-  }
-
-  private tryParsePublicKey(pem: string, id: string): KeyObject | null {
-    try {
-      return createPublicKey(pem);
-    } catch (error) {
-      this.logger.error(
-        `Failed to parse public key for id=${id}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-
-      return null;
-    }
+    return { privateKey, publicKey, privateKeyPem, publicKeyPem };
   }
 
   private isUniqueViolation(error: unknown): boolean {
