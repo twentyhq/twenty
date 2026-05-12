@@ -58,6 +58,7 @@ export class MessageChannelSyncStatusService {
         { id: In(messageChannelIds), workspaceId },
         {
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+          syncStatus: MessageChannelSyncStatus.ACTIVE,
           ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
         },
       );
@@ -80,6 +81,7 @@ export class MessageChannelSyncStatusService {
         { id: In(messageChannelIds), workspaceId },
         {
           syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+          syncStatus: MessageChannelSyncStatus.ACTIVE,
           ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
         },
       );
@@ -159,7 +161,7 @@ export class MessageChannelSyncStatusService {
         { id: In(messageChannelIds), workspaceId },
         {
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-          syncStatus: MessageChannelSyncStatus.ONGOING,
+          syncStatus: MessageChannelSyncStatus.ACTIVE,
           syncStageStartedAt: new Date().toISOString(),
         },
       );
@@ -233,6 +235,8 @@ export class MessageChannelSyncStatusService {
         { id: In(messageChannelIds), workspaceId },
         {
           syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+          syncStatus: MessageChannelSyncStatus.ACTIVE,
+          syncStageStartedAt: new Date().toISOString(),
         },
       );
     }, authContext);
