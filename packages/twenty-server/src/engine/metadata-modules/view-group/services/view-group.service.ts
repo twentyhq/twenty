@@ -179,13 +179,6 @@ export class ViewGroupService {
       return [];
     }
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
     const { flatViewGroupMaps: existingFlatViewGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -202,29 +195,24 @@ export class ViewGroupService {
         }),
     );
 
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+    for (const flatViewGroupToUpdate of flatViewGroupsToUpdate) {
+      await this.viewGroupRepository.update(
         {
-          allFlatEntityOperationByMetadataName: {
-            viewGroup: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: flatViewGroupsToUpdate,
-            },
-          },
+          id: flatViewGroupToUpdate.id,
           workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
+        },
+        {
+          isVisible: flatViewGroupToUpdate.isVisible,
+          fieldValue: flatViewGroupToUpdate.fieldValue,
+          position: flatViewGroupToUpdate.position,
         },
       );
-
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while updating view groups',
-      );
     }
+
+    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: ['flatViewGroupMaps'],
+    });
 
     const { flatViewGroupMaps: recomputedExistingFlatViewGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
