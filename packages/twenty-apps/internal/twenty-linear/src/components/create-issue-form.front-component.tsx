@@ -1,6 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { closeSidePanel, enqueueSnackbar, unmountFrontComponent, } from 'twenty-sdk/front-component';
+import {
+  closeSidePanel,
+  enqueueSnackbar,
+  unmountFrontComponent,
+} from 'twenty-sdk/front-component';
 
 import { CREATE_ISSUE_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
@@ -183,7 +187,7 @@ const COLOR = {
   textSecondary: '#666666',
   textTertiary: '#999999',
   placeholder: '#cccccc',
-  accent: '#141414',
+  accent: '#606acc',
   error: '#e05252',
 };
 
@@ -277,7 +281,20 @@ const STYLES = {
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '6px',
-    'border-bottom': `1px solid ${COLOR.border}`,
+    borderBottom: `1px solid ${COLOR.border}`,
+  },
+  optionsLoadingIndicator: {
+    marginLeft: 'auto',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  spinner: {
+    width: '14px',
+    height: '14px',
+    border: `2px solid ${COLOR.border}`,
+    borderTopColor: COLOR.textSecondary,
+    borderRadius: '50%',
+    animation: 'spin 0.6s linear infinite',
   },
   chipsRow: {
     display: 'flex',
@@ -328,9 +345,17 @@ const STYLES = {
     color: COLOR.textSecondary,
   },
   labelToggleSelected: {
-    borderColor: COLOR.borderStrong,
-    backgroundColor: COLOR.surface,
-    color: COLOR.text,
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '2px 7px',
+    borderRadius: '20px',
+    border: `1px solid ${COLOR.accent}`,
+    fontSize: '11px',
+    fontFamily: 'inherit',
+    cursor: 'pointer',
+    backgroundColor: '#eef0fb',
+    color: COLOR.accent,
   },
   labelDot: {
     width: '6px',
@@ -396,11 +421,9 @@ const STYLES = {
   },
   successContainer: {
     display: 'flex',
-    flexDirection: 'column' as const,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: '12px',
-    padding: '20px',
+    gap: '10px',
+    padding: '10px 14px',
     boxSizing: 'border-box' as const,
     backgroundColor: COLOR.card,
     borderRadius: '8px',
@@ -408,21 +431,38 @@ const STYLES = {
     color: COLOR.text,
   },
   successCheck: {
-    width: '32px',
-    height: '32px',
+    width: '20px',
+    height: '20px',
     borderRadius: '50%',
     backgroundColor: '#2ea043',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '16px',
+    fontSize: '11px',
     color: '#fff',
+    flexShrink: 0,
   },
   issueLink: {
-    color: COLOR.text,
+    color: COLOR.accent,
     fontWeight: 500,
-    textDecoration: 'none',
+    textDecoration: 'underline',
     fontSize: '13px',
+    textUnderlineOffset: '2px',
+    flex: 1,
+    overflow: 'hidden' as const,
+    textOverflow: 'ellipsis' as const,
+    whiteSpace: 'nowrap' as const,
+  },
+  closeButton: {
+    background: 'transparent',
+    border: `1px solid ${COLOR.border}`,
+    color: COLOR.textSecondary,
+    fontSize: '12px',
+    fontFamily: 'inherit',
+    cursor: 'pointer',
+    padding: '5px 14px',
+    borderRadius: '6px',
+    flexShrink: 0,
   },
   loadingOuter: {
     fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
@@ -500,7 +540,7 @@ const CreateIssueForm = () => {
 
   const [teamId, setTeamId] = useState('');
   const [title, setTitle] = useState('');
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('0');
   const [stateId, setStateId] = useState('');
   const [assigneeId, setAssigneeId] = useState('');
@@ -603,7 +643,7 @@ const CreateIssueForm = () => {
   }, []);
 
   const handleSubmit = async () => {
-    const trimmedTitle = title.trim();
+    const trimmedTitle = (title ?? '').trim();
 
     if (!teamId || !trimmedTitle) {
       return;
@@ -615,7 +655,7 @@ const CreateIssueForm = () => {
       const result = await callAppRoute('/linear/issues', 'POST', {
         teamId,
         title: trimmedTitle,
-        description: descriptionRef.current?.value.trim() || undefined,
+        description: (description ?? '').trim() || undefined,
         priority: Number(priority) || undefined,
         stateId: stateId || undefined,
         assigneeId: assigneeId || undefined,
@@ -676,7 +716,7 @@ const CreateIssueForm = () => {
           </a>
           <button
             type="button"
-            style={STYLES.cancelButton}
+            style={STYLES.closeButton}
             onClick={handleCancel}
           >
             Close
@@ -707,7 +747,7 @@ const CreateIssueForm = () => {
     );
   }
 
-  const canSubmit = teamId && title.trim() && !submitting;
+  const canSubmit = teamId && (title ?? '').trim() && !submitting;
   const hasEstimates = options.estimationType !== 'notUsed';
   const baseEstimateOptions = ESTIMATE_SCALES[options.estimationType] ?? [];
   const estimateOptions =
@@ -722,8 +762,11 @@ const CreateIssueForm = () => {
     STATE_TYPE_ICONS[selectedState?.type ?? ''] ?? STATE_TYPE_ICONS.unstarted;
   const labelsCount = selectedLabelIds.length;
 
+  const hasStatuses = options.states.length > 0;
+
   return (
     <div style={STYLES.outer}>
+      <style>{'@keyframes spin{to{transform:rotate(360deg)}}'}</style>
       <div style={STYLES.container}>
         {/* Top bar with team selector */}
         <div style={STYLES.topBar}>
@@ -739,31 +782,34 @@ const CreateIssueForm = () => {
               </option>
             ))}
           </select>
+          {optionsLoading && (
+            <div style={STYLES.optionsLoadingIndicator}>
+              <div style={STYLES.spinner} />
+            </div>
+          )}
         </div>
 
         {/* Property chips & labels */}
         <div style={STYLES.labelPicker}>
           <div style={STYLES.chipsRow}>
             {/* Status */}
-            <label style={STYLES.chip}>
-              <span style={STYLES.chipIcon}>{stateIcon}</span>
-              <select
-                value={stateId}
-                onChange={onValueChange(setStateId)}
-                style={INLINE_SELECT}
-                disabled={!teamId || optionsLoading}
-              >
-                {optionsLoading ? (
-                  <option value="">...</option>
-                ) : (
-                  options.states.map((s) => (
+            {hasStatuses && !optionsLoading && (
+              <label style={STYLES.chip}>
+                <span style={STYLES.chipIcon}>{stateIcon}</span>
+                <select
+                  value={stateId}
+                  onChange={onValueChange(setStateId)}
+                  style={INLINE_SELECT}
+                  disabled={!teamId || optionsLoading}
+                >
+                  {options.states.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.name}
                     </option>
-                  ))
-                )}
-              </select>
-            </label>
+                  ))}
+                </select>
+              </label>
+            )}
 
             {/* Priority */}
             <label style={STYLES.chip}>
@@ -885,7 +931,6 @@ const CreateIssueForm = () => {
                 </select>
               </label>
             )}
-            
           </div>
 
           {showLabels && options.labels.length > 0 && (
@@ -897,10 +942,11 @@ const CreateIssueForm = () => {
                   <button
                     key={label.id}
                     type="button"
-                    style={{
-                      ...STYLES.labelToggle,
-                      ...(isSelected ? STYLES.labelToggleSelected : {}),
-                    }}
+                    style={
+                      isSelected
+                        ? STYLES.labelToggleSelected
+                        : STYLES.labelToggle
+                    }
                     onClick={() => toggleLabel(label.id)}
                   >
                     <span
@@ -927,10 +973,11 @@ const CreateIssueForm = () => {
             placeholder="Issue title"
           />
           <textarea
-            ref={descriptionRef}
-            defaultValue=""
+            value={description}
+            onInput={onValueChange(setDescription)}
+            onChange={onValueChange(setDescription)}
             style={STYLES.descriptionInput}
-            placeholder="Add description..."
+            placeholder="Add description... (markdown supported)"
           />
         </div>
 
