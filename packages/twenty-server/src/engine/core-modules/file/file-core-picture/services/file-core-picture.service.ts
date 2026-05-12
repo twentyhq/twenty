@@ -22,6 +22,7 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
+import { stripJpegExifMetadata } from 'src/engine/core-modules/file/utils/strip-jpeg-exif-metadata.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getImageBufferFromUrl } from 'src/utils/image';
@@ -74,6 +75,11 @@ export class FileCorePictureService {
   }): Promise<FileEntity> {
     const { mimeType, ext } = await extractFileInfo({ file, filename });
     const sanitizedFile = sanitizeFile({ file, ext, mimeType });
+    const sanitizedCorePictureFile =
+      Buffer.isBuffer(sanitizedFile) &&
+      (ext === 'jpg' || ext === 'jpeg' || mimeType === 'image/jpeg')
+        ? stripJpegExifMetadata(sanitizedFile)
+        : sanitizedFile;
 
     const fileId = v4();
     const finalName = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
@@ -83,7 +89,7 @@ export class FileCorePictureService {
       (await this.findCustomApplicationUniversalIdentifier(workspaceId));
 
     const savedFile = await this.fileStorageService.writeFile({
-      sourceFile: sanitizedFile,
+      sourceFile: sanitizedCorePictureFile,
       resourcePath: finalName,
       mimeType,
       fileFolder: FileFolder.CorePicture,
