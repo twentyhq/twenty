@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   closeSidePanel,
@@ -111,6 +111,14 @@ const ESTIMATE_SCALES: Record<string, { value: number; label: string }[]> = {
   ],
 };
 
+const STATE_TYPE_ICONS: Record<string, string> = {
+  backlog: '○',
+  unstarted: '○',
+  started: '◐',
+  completed: '●',
+  cancelled: '✕',
+};
+
 // The front component sandbox dispatches events with a non-standard shape.
 // Values may live on e.detail.value, e.value, or e.target.value.
 const readSerializedValue = (
@@ -130,8 +138,7 @@ const readSerializedValue = (
 };
 
 const onValueChange =
-  (fn: (value: string) => void) =>
-  (e: React.SyntheticEvent<HTMLElement>) => {
+  (fn: (value: string) => void) => (e: React.SyntheticEvent<HTMLElement>) => {
     const v = readSerializedValue(e);
 
     if (typeof v === 'string') fn(v);
@@ -170,154 +177,307 @@ const callAppRoute = async (
   return response.json();
 };
 
+const COLOR = {
+  bg: '#f1f1f1',
+  card: '#ffffff',
+  surface: '#fcfcfc',
+  border: '#ebebeb',
+  borderStrong: '#d6d6d6',
+  text: '#333333',
+  textSecondary: '#666666',
+  textTertiary: '#999999',
+  placeholder: '#cccccc',
+  accent: '#141414',
+  error: '#e05252',
+};
+
+const INLINE_SELECT: React.CSSProperties = {
+  appearance: 'none',
+  WebkitAppearance: 'none' as const,
+  border: 'none',
+  background: 'transparent',
+  color: 'inherit',
+  font: 'inherit',
+  cursor: 'pointer',
+  outline: 'none',
+  padding: 0,
+};
+
 const STYLES = {
-  container: {
-    padding: '20px',
-    fontFamily: 'Inter, system-ui, sans-serif',
+  outer: {
+    fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
     fontSize: '13px',
-    color: '#333',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '16px',
+    backgroundColor: COLOR.bg,
+    padding: '12px',
     height: '100%',
     boxSizing: 'border-box' as const,
   },
-  header: {
-    fontSize: '15px',
-    fontWeight: 600,
-    color: '#141414',
-    margin: 0,
-  },
-  fieldGroup: {
+  container: {
+    backgroundColor: COLOR.card,
+    borderRadius: '8px',
+    border: `1px solid ${COLOR.border}`,
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '4px',
+    height: '100%',
+    boxSizing: 'border-box' as const,
+    color: COLOR.text,
   },
-  fieldRow: {
+  topBar: {
     display: 'flex',
-    gap: '12px',
+    alignItems: 'center',
+    padding: '8px 12px',
+    borderBottom: `1px solid ${COLOR.border}`,
+    flexShrink: 0,
   },
-  fieldRowItem: {
+  teamSelect: {
+    appearance: 'none' as const,
+    WebkitAppearance: 'none' as const,
+    background: COLOR.surface,
+    border: `1px solid ${COLOR.border}`,
+    borderRadius: '6px',
+    padding: '3px 8px',
+    color: COLOR.text,
+    fontSize: '12px',
+    fontFamily: 'inherit',
+    cursor: 'pointer',
+    outline: 'none',
+  },
+  body: {
     flex: 1,
     display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '4px',
+    flexDirection: 'column',
+    padding: '24px',
+    overflow: 'auto',
+    minHeight: 0,
+    gap: '10px',
   },
-  label: {
-    fontSize: '12px',
-    fontWeight: 500,
-    color: '#666',
-  },
-  input: {
-    padding: '8px 10px',
-    borderRadius: '6px',
-    border: '1px solid #ddd',
-    fontSize: '13px',
-    fontFamily: 'Inter, system-ui, sans-serif',
-    outline: 'none',
-    transition: 'border-color 0.15s',
-    backgroundColor: '#fff',
-  },
-  select: {
-    padding: '8px 10px',
-    borderRadius: '6px',
-    border: '1px solid #ddd',
-    fontSize: '13px',
-    fontFamily: 'Inter, system-ui, sans-serif',
-    outline: 'none',
-    backgroundColor: '#fff',
-    cursor: 'pointer',
-  },
-  textarea: {
-    padding: '8px 10px',
-    borderRadius: '6px',
-    border: '1px solid #ddd',
-    fontSize: '13px',
-    fontFamily: 'Inter, system-ui, sans-serif',
-    outline: 'none',
-    resize: 'vertical' as const,
-    minHeight: '80px',
-    backgroundColor: '#fff',
-  },
-  button: {
-    padding: '8px 16px',
-    borderRadius: '6px',
+  titleInput: {
+    background: 'transparent',
     border: 'none',
-    fontSize: '13px',
+    outline: 'none',
+    color: COLOR.text,
+    fontSize: '20px',
     fontWeight: 500,
+    fontFamily: 'inherit',
+    width: '100%',
+    padding: 0,
+    marginBottom: '4px',
+  },
+  descriptionInput: {
+    background: 'transparent',
+    border: 'none',
+    outline: 'none',
+    color: COLOR.text,
+    fontSize: '14px',
+    fontFamily: 'inherit',
+    width: '100%',
+    padding: 0,
+    resize: 'none' as const,
+    flex: 1,
+  },
+  labelPicker: {
+    flexShrink: 0,
+    padding: '12px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '6px',
+    'border-bottom': `1px solid ${COLOR.border}`,
+  },
+  chipsRow: {
+    display: 'flex',
+    flexWrap: 'wrap' as const,
+    gap: '5px',
+    alignItems: 'center',
+  },
+  chip: {
+    appearance: 'none' as const,
+    WebkitAppearance: 'none' as const,
+    background: 'transparent',
+    border: `1px solid ${COLOR.border}`,
+    borderRadius: '20px',
+    padding: '3px 9px',
+    color: COLOR.textSecondary,
+    fontSize: '12px',
+    fontFamily: 'inherit',
     cursor: 'pointer',
-    fontFamily: 'Inter, system-ui, sans-serif',
-    transition: 'background-color 0.15s',
+    outline: 'none',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    whiteSpace: 'nowrap' as const,
+    lineHeight: '16px',
   },
-  primaryButton: {
-    backgroundColor: '#141414',
-    color: '#fff',
+  chipIcon: {
+    fontSize: '10px',
+    lineHeight: 1,
+    flexShrink: 0,
   },
-  disabledButton: {
-    backgroundColor: '#999',
-    color: '#fff',
-    cursor: 'not-allowed',
+  labelsRow: {
+    display: 'flex',
+    flexWrap: 'wrap' as const,
+    gap: '4px',
+    alignItems: 'center',
+  },
+  labelToggle: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '2px 7px',
+    borderRadius: '20px',
+    border: `1px solid ${COLOR.border}`,
+    fontSize: '11px',
+    fontFamily: 'inherit',
+    cursor: 'pointer',
+    background: 'transparent',
+    color: COLOR.textSecondary,
+  },
+  labelToggleSelected: {
+    borderColor: COLOR.borderStrong,
+    backgroundColor: COLOR.surface,
+    color: COLOR.text,
+  },
+  labelDot: {
+    width: '6px',
+    height: '6px',
+    borderRadius: '50%',
+    flexShrink: 0,
+  },
+  dateChip: {
+    appearance: 'none' as const,
+    WebkitAppearance: 'none' as const,
+    background: 'transparent',
+    border: `1px solid ${COLOR.border}`,
+    borderRadius: '20px',
+    padding: '3px 9px',
+    color: COLOR.textSecondary,
+    fontSize: '12px',
+    fontFamily: 'inherit',
+    cursor: 'pointer',
+    outline: 'none',
+    lineHeight: '16px',
+  },
+  actionBar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: '6px',
+    padding: '6px 12px',
+    borderTop: `1px solid ${COLOR.border}`,
+    flexShrink: 0,
   },
   cancelButton: {
-    backgroundColor: 'transparent',
-    color: '#666',
-    border: '1px solid #ddd',
+    background: 'transparent',
+    border: 'none',
+    color: COLOR.textSecondary,
+    fontSize: '12px',
+    fontFamily: 'inherit',
+    cursor: 'pointer',
+    padding: '5px 10px',
+    borderRadius: '6px',
   },
-  buttonRow: {
-    display: 'flex',
-    gap: '8px',
-    justifyContent: 'flex-end',
-    marginTop: '4px',
+  createButton: {
+    background: COLOR.accent,
+    border: 'none',
+    color: '#ffffff',
+    fontSize: '12px',
+    fontWeight: 500,
+    fontFamily: 'inherit',
+    cursor: 'pointer',
+    padding: '5px 14px',
+    borderRadius: '6px',
+  },
+  createButtonDisabled: {
+    background: COLOR.borderStrong,
+    color: COLOR.textTertiary,
+    cursor: 'not-allowed',
+  },
+  successOuter: {
+    fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+    backgroundColor: COLOR.bg,
+    padding: '12px',
+    height: '100%',
+    boxSizing: 'border-box' as const,
   },
   successContainer: {
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
+    justifyContent: 'center',
     gap: '12px',
-    padding: '24px',
-    textAlign: 'center' as const,
+    padding: '20px',
+    boxSizing: 'border-box' as const,
+    backgroundColor: COLOR.card,
+    borderRadius: '8px',
+    border: `1px solid ${COLOR.border}`,
+    color: COLOR.text,
+  },
+  successCheck: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '50%',
+    backgroundColor: '#2ea043',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '16px',
+    color: '#fff',
   },
   issueLink: {
-    color: '#141414',
+    color: COLOR.text,
     fontWeight: 500,
     textDecoration: 'none',
-    fontSize: '14px',
+    fontSize: '13px',
   },
-  errorText: {
-    color: '#e05252',
-    fontSize: '12px',
+  loadingOuter: {
+    fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+    backgroundColor: COLOR.bg,
+    padding: '12px',
+    height: '100%',
+    boxSizing: 'border-box' as const,
   },
-  loadingText: {
-    color: '#999',
+  loadingContainer: {
+    color: COLOR.textSecondary,
     fontSize: '13px',
     textAlign: 'center' as const,
+    backgroundColor: COLOR.card,
+    borderRadius: '8px',
+    border: `1px solid ${COLOR.border}`,
     padding: '24px',
-  },
-  labelsContainer: {
     display: 'flex',
-    flexWrap: 'wrap' as const,
-    gap: '6px',
-  },
-  labelChip: {
-    display: 'inline-flex',
     alignItems: 'center',
-    gap: '4px',
-    padding: '4px 8px',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
+    justifyContent: 'center',
+  },
+  errorOuter: {
+    fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+    backgroundColor: COLOR.bg,
+    padding: '12px',
+    height: '100%',
+    boxSizing: 'border-box' as const,
+  },
+  errorContainer: {
+    backgroundColor: COLOR.card,
+    borderRadius: '8px',
+    border: `1px solid ${COLOR.border}`,
+    padding: '24px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '10px',
+  },
+  errorText: {
+    color: COLOR.error,
     fontSize: '12px',
+  },
+  retryButton: {
+    background: COLOR.surface,
+    border: `1px solid ${COLOR.border}`,
+    color: COLOR.text,
+    fontSize: '12px',
+    fontFamily: 'inherit',
     cursor: 'pointer',
-    backgroundColor: '#fff',
-  },
-  labelChipSelected: {
-    borderColor: '#141414',
-    backgroundColor: '#f5f5f5',
-  },
-  labelDot: {
-    width: '8px',
-    height: '8px',
-    borderRadius: '50%',
-    flexShrink: 0,
+    padding: '5px 12px',
+    borderRadius: '6px',
   },
 };
 
@@ -340,10 +500,11 @@ const CreateIssueForm = () => {
   const [closing, setClosing] = useState(false);
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [options, setOptions] = useState<IssueOptions>(EMPTY_OPTIONS);
+  const [showLabels, setShowLabels] = useState(false);
 
   const [teamId, setTeamId] = useState('');
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [priority, setPriority] = useState('0');
   const [stateId, setStateId] = useState('');
   const [assigneeId, setAssigneeId] = useState('');
@@ -384,9 +545,7 @@ const CreateIssueForm = () => {
 
       setOptions(issueOptions);
 
-      const todoState = issueOptions.states.find(
-        (s) => s.type === 'unstarted',
-      );
+      const todoState = issueOptions.states.find((s) => s.type === 'unstarted');
 
       setStateId(todoState?.id ?? issueOptions.states[0]?.id ?? '');
       setAssigneeId('');
@@ -460,7 +619,7 @@ const CreateIssueForm = () => {
       const result = await callAppRoute('/linear/issues', 'POST', {
         teamId,
         title: trimmedTitle,
-        description: description.trim() || undefined,
+        description: descriptionRef.current?.value.trim() || undefined,
         priority: Number(priority) || undefined,
         stateId: stateId || undefined,
         assigneeId: assigneeId || undefined,
@@ -508,46 +667,46 @@ const CreateIssueForm = () => {
 
   if (createdIssue) {
     return (
-      <div style={STYLES.successContainer}>
-        <span style={{ fontSize: '24px' }}>✓</span>
-        <a
-          href={createdIssue.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={STYLES.issueLink}
-        >
-          {createdIssue.identifier}: {createdIssue.title}
-        </a>
-        <button
-          type="button"
-          style={{ ...STYLES.button, ...STYLES.cancelButton }}
-          onClick={handleCancel}
-        >
-          Close
-        </button>
+      <div style={STYLES.successOuter}>
+        <div style={STYLES.successContainer}>
+          <div style={STYLES.successCheck}>{'✓'}</div>
+          <a
+            href={createdIssue.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={STYLES.issueLink}
+          >
+            {createdIssue.identifier}: {createdIssue.title}
+          </a>
+          <button
+            type="button"
+            style={STYLES.cancelButton}
+            onClick={handleCancel}
+          >
+            Close
+          </button>
+        </div>
       </div>
     );
   }
 
   if (teamsLoading) {
-    return <div style={STYLES.loadingText}>Loading teams...</div>;
+    return (
+      <div style={STYLES.loadingOuter}>
+        <div style={STYLES.loadingContainer}>Loading...</div>
+      </div>
+    );
   }
 
   if (teamsError) {
     return (
-      <div style={{ padding: '20px' }}>
-        <p style={STYLES.errorText}>{teamsError}</p>
-        <button
-          type="button"
-          style={{
-            ...STYLES.button,
-            ...STYLES.cancelButton,
-            marginTop: '8px',
-          }}
-          onClick={fetchTeams}
-        >
-          Retry
-        </button>
+      <div style={STYLES.errorOuter}>
+        <div style={STYLES.errorContainer}>
+          <p style={STYLES.errorText}>{teamsError}</p>
+          <button type="button" style={STYLES.retryButton} onClick={fetchTeams}>
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
@@ -562,219 +721,243 @@ const CreateIssueForm = () => {
       ? [{ value: 0, label: 'None' }, ...baseEstimateOptions]
       : baseEstimateOptions;
 
+  const selectedState = options.states.find((s) => s.id === stateId);
+  const stateIcon =
+    STATE_TYPE_ICONS[selectedState?.type ?? ''] ?? STATE_TYPE_ICONS.unstarted;
+  const labelsCount = selectedLabelIds.length;
+
   return (
-    <div style={STYLES.container}>
-      <h3 style={STYLES.header}>Create Linear Issue</h3>
-
-      <div style={STYLES.fieldGroup}>
-        <label style={STYLES.label}>Team</label>
-        <select
-          value={teamId}
-          onChange={onValueChange(handleTeamChange)}
-          style={STYLES.select}
-        >
-          <option value="">Select a team...</option>
-          {teams.map((team) => (
-            <option key={team.id} value={team.id}>
-              {team.name} ({team.key})
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div style={STYLES.fieldGroup}>
-        <label style={STYLES.label}>Title</label>
-        <input
-          value={title}
-          onInput={onValueChange(setTitle)}
-          onChange={onValueChange(setTitle)}
-          style={STYLES.input}
-          type="text"
-          placeholder="Issue title"
-        />
-      </div>
-
-      <div style={STYLES.fieldGroup}>
-        <label style={STYLES.label}>Description</label>
-        <textarea
-          value={description}
-          onInput={onValueChange(setDescription)}
-          onChange={onValueChange(setDescription)}
-          style={STYLES.textarea}
-          placeholder="Optional description (Markdown supported)"
-        />
-      </div>
-
-      <div style={STYLES.fieldRow}>
-        <div style={STYLES.fieldRowItem}>
-          <label style={STYLES.label}>Status</label>
+    <div style={STYLES.outer}>
+      <div style={STYLES.container}>
+        {/* Top bar with team selector */}
+        <div style={STYLES.topBar}>
           <select
-            value={stateId}
-            onChange={onValueChange(setStateId)}
-            style={STYLES.select}
-            disabled={!teamId || optionsLoading}
+            value={teamId}
+            onChange={onValueChange(handleTeamChange)}
+            style={STYLES.teamSelect}
           >
-            {optionsLoading ? (
-              <option value="">Loading...</option>
-            ) : options.states.length === 0 ? (
-              <option value="">Select a team first</option>
-            ) : (
-              options.states.map((state) => (
-                <option key={state.id} value={state.id}>
-                  {state.name}
-                </option>
-              ))
-            )}
-          </select>
-        </div>
-        <div style={STYLES.fieldRowItem}>
-          <label style={STYLES.label}>Priority</label>
-          <select
-            value={priority}
-            onChange={onValueChange(setPriority)}
-            style={STYLES.select}
-          >
-            {PRIORITY_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+            <option value="">Select team...</option>
+            {teams.map((team) => (
+              <option key={team.id} value={team.id}>
+                {team.key} - {team.name}
               </option>
             ))}
           </select>
         </div>
-      </div>
 
-      <div style={STYLES.fieldRow}>
-        <div style={STYLES.fieldRowItem}>
-          <label style={STYLES.label}>Assignee</label>
-          <select
-            value={assigneeId}
-            onChange={onValueChange(setAssigneeId)}
-            style={STYLES.select}
-            disabled={!teamId || optionsLoading}
-          >
-            <option value="">Unassigned</option>
-            {options.members.map((member) => (
-              <option key={member.id} value={member.id}>
-                {member.displayName}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div style={STYLES.fieldRowItem}>
-          <label style={STYLES.label}>Project</label>
-          <select
-            value={projectId}
-            onChange={onValueChange(setProjectId)}
-            style={STYLES.select}
-            disabled={!teamId || optionsLoading}
-          >
-            <option value="">No project</option>
-            {options.projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+        {/* Property chips & labels */}
+        <div style={STYLES.labelPicker}>
+          <div style={STYLES.chipsRow}>
+            {/* Status */}
+            <label style={STYLES.chip}>
+              <span style={STYLES.chipIcon}>{stateIcon}</span>
+              <select
+                value={stateId}
+                onChange={onValueChange(setStateId)}
+                style={INLINE_SELECT}
+                disabled={!teamId || optionsLoading}
+              >
+                {optionsLoading ? (
+                  <option value="">...</option>
+                ) : (
+                  options.states.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))
+                )}
+              </select>
+            </label>
 
-      <div style={STYLES.fieldRow}>
-        <div style={STYLES.fieldRowItem}>
-          <label style={STYLES.label}>Cycle</label>
-          <select
-            value={cycleId}
-            onChange={onValueChange(setCycleId)}
-            style={STYLES.select}
-            disabled={!teamId || optionsLoading}
-          >
-            <option value="">No cycle</option>
-            {options.cycles.map((cycle) => (
-              <option key={cycle.id} value={cycle.id}>
-                {cycle.name ?? `Cycle ${cycle.number}`}
-              </option>
-            ))}
-          </select>
-        </div>
-        {hasEstimates && (
-          <div style={STYLES.fieldRowItem}>
-            <label style={STYLES.label}>Estimate</label>
-            <select
-              value={estimate}
-              onChange={onValueChange(setEstimate)}
-              style={STYLES.select}
-              disabled={!teamId || optionsLoading}
-            >
-              <option value="">No estimate</option>
-              {estimateOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
+            {/* Priority */}
+            <label style={STYLES.chip}>
+              <span style={STYLES.chipIcon}>{'≡'}</span>
+              <select
+                value={priority}
+                onChange={onValueChange(setPriority)}
+                style={INLINE_SELECT}
+              >
+                {PRIORITY_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-      {options.labels.length > 0 && (
-        <div style={STYLES.fieldGroup}>
-          <label style={STYLES.label}>Labels</label>
-          <div style={STYLES.labelsContainer}>
-            {options.labels.map((label) => {
-              const isSelected = selectedLabelIds.includes(label.id);
+            {/* Assignee */}
+            <label style={STYLES.chip}>
+              <span style={STYLES.chipIcon}>{'⬤'}</span>
+              <select
+                value={assigneeId}
+                onChange={onValueChange(setAssigneeId)}
+                style={INLINE_SELECT}
+                disabled={!teamId || optionsLoading}
+              >
+                <option value="">Assignee</option>
+                {options.members.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.displayName}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-              return (
-                <button
-                  key={label.id}
-                  type="button"
-                  style={{
-                    ...STYLES.labelChip,
-                    ...(isSelected ? STYLES.labelChipSelected : {}),
-                  }}
-                  onClick={() => toggleLabel(label.id)}
+            {/* Estimate */}
+            {hasEstimates && (
+              <label style={STYLES.chip}>
+                <span style={STYLES.chipIcon}>{'△'}</span>
+                <select
+                  value={estimate}
+                  onChange={onValueChange(setEstimate)}
+                  style={INLINE_SELECT}
+                  disabled={!teamId || optionsLoading}
                 >
-                  <span
-                    style={{
-                      ...STYLES.labelDot,
-                      backgroundColor: label.color,
-                    }}
-                  />
-                  {label.name}
-                </button>
-              );
-            })}
+                  <option value="">Estimate</option>
+                  {estimateOptions.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+
+            {/* Labels toggle */}
+            {options.labels.length > 0 && (
+              <button
+                type="button"
+                style={{
+                  ...STYLES.chip,
+                  ...(labelsCount > 0
+                    ? { borderColor: COLOR.borderStrong, color: COLOR.text }
+                    : {}),
+                }}
+                onClick={() => setShowLabels((prev) => !prev)}
+              >
+                <span style={STYLES.chipIcon}>{'■'}</span>
+                {labelsCount > 0
+                  ? `${labelsCount} Label${labelsCount > 1 ? 's' : ''}`
+                  : 'Labels'}
+              </button>
+            )}
+
+            {/* Cycle */}
+            {options.cycles.length > 0 && (
+              <label style={STYLES.chip}>
+                <span style={STYLES.chipIcon}>{'▶'}</span>
+                <select
+                  value={cycleId}
+                  onChange={onValueChange(setCycleId)}
+                  style={INLINE_SELECT}
+                  disabled={!teamId || optionsLoading}
+                >
+                  <option value="">Cycle</option>
+                  {options.cycles.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name ?? `Cycle ${c.number}`}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+
+            {/* Due date */}
+            <input
+              value={dueDate}
+              onChange={onValueChange(setDueDate)}
+              style={STYLES.dateChip}
+              type="date"
+            />
+
+            {/* Project */}
+            {options.projects.length > 0 && (
+              <label style={STYLES.chip}>
+                <span style={STYLES.chipIcon}>{'⬡'}</span>
+                <select
+                  value={projectId}
+                  onChange={onValueChange(setProjectId)}
+                  style={INLINE_SELECT}
+                  disabled={!teamId || optionsLoading}
+                >
+                  <option value="">Project</option>
+                  {options.projects.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+            
           </div>
+
+          {showLabels && options.labels.length > 0 && (
+            <div style={STYLES.labelsRow}>
+              {options.labels.map((label) => {
+                const isSelected = selectedLabelIds.includes(label.id);
+
+                return (
+                  <button
+                    key={label.id}
+                    type="button"
+                    style={{
+                      ...STYLES.labelToggle,
+                      ...(isSelected ? STYLES.labelToggleSelected : {}),
+                    }}
+                    onClick={() => toggleLabel(label.id)}
+                  >
+                    <span
+                      style={{
+                        ...STYLES.labelDot,
+                        backgroundColor: label.color,
+                      }}
+                    />
+                    {label.name}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
-      )}
 
-      <div style={STYLES.fieldGroup}>
-        <label style={STYLES.label}>Due date</label>
-        <input
-          value={dueDate}
-          onChange={onValueChange(setDueDate)}
-          style={STYLES.input}
-          type="date"
-        />
-      </div>
+        <div style={STYLES.body}>
+          <input
+            value={title}
+            onInput={onValueChange(setTitle)}
+            onChange={onValueChange(setTitle)}
+            style={STYLES.titleInput}
+            type="text"
+            placeholder="Issue title"
+          />
+          <textarea
+            ref={descriptionRef}
+            defaultValue=""
+            style={STYLES.descriptionInput}
+            placeholder="Add description..."
+          />
+        </div>
 
-      <div style={STYLES.buttonRow}>
-        <button
-          type="button"
-          style={{ ...STYLES.button, ...STYLES.cancelButton }}
-          onClick={handleCancel}
-        >
-          Cancel
-        </button>
-        <button
-          type="button"
-          style={{
-            ...STYLES.button,
-            ...(canSubmit ? STYLES.primaryButton : STYLES.disabledButton),
-          }}
-          disabled={!canSubmit}
-          onClick={handleSubmit}
-        >
-          {submitting ? 'Creating...' : 'Create Issue'}
-        </button>
+        <div style={STYLES.actionBar}>
+          <button
+            type="button"
+            style={STYLES.cancelButton}
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            style={{
+              ...STYLES.createButton,
+              ...(!canSubmit ? STYLES.createButtonDisabled : {}),
+            }}
+            disabled={!canSubmit}
+            onClick={handleSubmit}
+          >
+            {submitting ? 'Creating...' : 'Create issue'}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -784,6 +967,6 @@ export default defineFrontComponent({
   universalIdentifier: CREATE_ISSUE_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'create-linear-issue-form',
   description:
-    'Form to create a Linear issue with team, title, description, status, priority, assignee, project, cycle, estimate, labels, due date, and attachment.',
+    'Form to create a Linear issue with team, title, description, status, priority, assignee, project, cycle, estimate, labels, and due date.',
   component: CreateIssueForm,
 });
