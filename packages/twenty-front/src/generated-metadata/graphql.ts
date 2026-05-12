@@ -360,6 +360,18 @@ export type ApplicationRegistrationVariable = {
   isSecret: Scalars['Boolean'];
   key: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type ApplicationRegistrationVariableDto = {
+  __typename?: 'ApplicationRegistrationVariableDTO';
+  createdAt: Scalars['DateTime'];
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  isFilled: Scalars['Boolean'];
+  isRequired: Scalars['Boolean'];
+  isSecret: Scalars['Boolean'];
+  key: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
   value?: Maybe<Scalars['String']>;
 };
 
@@ -4124,7 +4136,7 @@ export type Query = {
   findApplicationRegistrationByClientId?: Maybe<PublicApplicationRegistration>;
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
   findApplicationRegistrationStats: ApplicationRegistrationStats;
-  findApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
+  findApplicationRegistrationVariables: Array<ApplicationRegistrationVariableDto>;
   findManyAgents: Array<Agent>;
   findManyApplicationRegistrations: Array<ApplicationRegistration>;
   findManyApplications: Array<Application>;
@@ -7010,7 +7022,7 @@ export type FindApplicationRegistrationVariablesQueryVariables = Exact<{
 }>;
 
 
-export type FindApplicationRegistrationVariablesQuery = { __typename?: 'Query', findApplicationRegistrationVariables: Array<{ __typename?: 'ApplicationRegistrationVariable', id: string, key: string, value?: string | null, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string }> };
+export type FindApplicationRegistrationVariablesQuery = { __typename?: 'Query', findApplicationRegistrationVariables: Array<{ __typename?: 'ApplicationRegistrationVariableDTO', id: string, key: string, value?: string | null, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string }> };
 
 export type FindManyApplicationRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
 

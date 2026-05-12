@@ -53,9 +53,6 @@ export class ApplicationRegistrationVariableEntity {
     return this.encryptedValue !== '';
   }
 
-  @Field(() => String, { nullable: true })
-  value?: string | null;
-
   @Column({ nullable: false, type: 'uuid' })
   applicationRegistrationId: string;
 
