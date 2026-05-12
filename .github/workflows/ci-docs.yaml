@@ -28,11 +28,6 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@b173b6ec0100793626c2d9e6b90435061f4fc3e5 # 0.11.0
-        with:
-          access_token: ${{ github.token }}
-
       - name: Fetch local actions
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
         with:

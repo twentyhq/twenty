@@ -38,10 +38,6 @@ jobs:
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@b173b6ec0100793626c2d9e6b90435061f4fc3e5 # 0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Fetch local actions
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
         with:
@@ -164,10 +160,6 @@ jobs:
       matrix:
         task: [lint, typecheck, test]
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@b173b6ec0100793626c2d9e6b90435061f4fc3e5 # 0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
         with:
@@ -203,10 +195,6 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=10240"
       ANALYZE: "true"
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@b173b6ec0100793626c2d9e6b90435061f4fc3e5 # 0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
         with:
