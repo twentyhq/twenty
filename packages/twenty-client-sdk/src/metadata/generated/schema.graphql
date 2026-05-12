@@ -2852,23 +2852,6 @@ enum MessageFolderPendingSyncAction {
   NONE
 }
 
-type PermissionFlag {
-  id: UUID!
-  universalIdentifier: UUID!
-  key: String!
-  label: String!
-  description: String
-  iconKey: String
-  permissionType: String!
-  isRelevantForAgents: Boolean!
-  isRelevantForUsers: Boolean!
-  isRelevantForApiKeys: Boolean!
-  isCustom: Boolean!
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type CollectionHash {
   collectionName: AllMetadataName!
   hash: String!
@@ -3035,8 +3018,6 @@ type Query {
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
-  permissionFlags: [PermissionFlag!]!
-  permissionFlag(id: UUID!): PermissionFlag
   minimalMetadata: MinimalMetadata!
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
@@ -3278,9 +3259,6 @@ type Mutation {
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
-  createPermissionFlag(input: CreatePermissionFlagInput!): PermissionFlag!
-  updatePermissionFlag(input: UpdatePermissionFlagInput!): PermissionFlag!
-  deletePermissionFlag(id: UUID!): PermissionFlag!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileIds: [UUID!]): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
@@ -4242,37 +4220,6 @@ input UpdateWebhookInputUpdates {
   operations: [String!]
   description: String
   secret: String
-}
-
-input CreatePermissionFlagInput {
-  id: UUID
-  universalIdentifier: UUID
-  key: String!
-  label: String!
-  description: String
-  iconKey: String
-  permissionType: String!
-  isRelevantForAgents: Boolean
-  isRelevantForUsers: Boolean
-  isRelevantForApiKeys: Boolean
-}
-
-input UpdatePermissionFlagInput {
-  """The id of the permission flag definition to update"""
-  id: UUID!
-
-  """The fields to update"""
-  update: UpdatePermissionFlagInputUpdates!
-}
-
-input UpdatePermissionFlagInputUpdates {
-  label: String
-  description: String
-  iconKey: String
-  permissionType: String
-  isRelevantForAgents: Boolean
-  isRelevantForUsers: Boolean
-  isRelevantForApiKeys: Boolean
 }
 
 input CreateSkillInput {
