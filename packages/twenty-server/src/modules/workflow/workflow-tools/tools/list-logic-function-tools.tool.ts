@@ -1,3 +1,4 @@
+import { getWorkflowLogicFunctionDisplayName } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -15,7 +16,7 @@ export const createListLogicFunctionToolsTool = (
 ) => ({
   name: 'list_logic_function_tools' as const,
   description:
-    'List all logic functions exposed as workflow actions, which can be added as LOGIC_FUNCTION steps in workflows. Returns their IDs, names, and descriptions.',
+    'List all logic functions exposed as workflow actions, which can be added as LOGIC_FUNCTION steps in workflows. Returns their IDs, technical names, human-readable display names (label when set, otherwise the technical name), and descriptions.',
   inputSchema: listLogicFunctionToolsSchema,
   execute: async () => {
     const { flatLogicFunctionMaps } =
@@ -40,6 +41,10 @@ export const createListLogicFunctionToolsTool = (
       logicFunctions: workflowActionFunctions.map((fn) => ({
         id: fn.id,
         name: fn.name,
+        displayName: getWorkflowLogicFunctionDisplayName({
+          name: fn.name,
+          workflowActionTriggerSettings: fn.workflowActionTriggerSettings,
+        }),
         description: fn.description,
       })),
     };
