@@ -7,10 +7,10 @@ import {
 
 import { createHash } from 'crypto';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import * as jwt from 'jsonwebtoken';
 import { ExtractJwt, type JwtFromRequestFunction } from 'passport-jwt';
 import { isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import {
   AuthException,
@@ -37,6 +37,14 @@ type ResolvedVerificationKey = {
   key: string;
   algorithm: typeof JWT_LEGACY_ALGORITHM | typeof JWT_ASYMMETRIC_ALGORITHM;
 };
+
+const APP_SECRET_BODY_WORKSPACE_SCHEMA = z.object({
+  workspaceId: z.string().min(1),
+});
+
+const APP_SECRET_BODY_USER_SCHEMA = z.object({
+  userId: z.string().min(1),
+});
 
 @Injectable()
 export class JwtWrapperService {
@@ -201,12 +209,16 @@ export class JwtWrapperService {
   }
 
   private extractAppSecretBody(payload: JwtPayload): string | undefined {
-    if ('workspaceId' in payload && isNonEmptyString(payload.workspaceId)) {
-      return payload.workspaceId;
+    const workspaceParse = APP_SECRET_BODY_WORKSPACE_SCHEMA.safeParse(payload);
+
+    if (workspaceParse.success) {
+      return workspaceParse.data.workspaceId;
     }
 
-    if ('userId' in payload && isNonEmptyString(payload.userId)) {
-      return payload.userId;
+    const userParse = APP_SECRET_BODY_USER_SCHEMA.safeParse(payload);
+
+    if (userParse.success) {
+      return userParse.data.userId;
     }
 
     return undefined;
