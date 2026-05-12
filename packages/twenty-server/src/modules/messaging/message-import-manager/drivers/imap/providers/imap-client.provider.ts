@@ -94,9 +94,7 @@ export class ImapClientProvider {
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,
     });
 
-    // Attach error listener so transient socket errors (idle timeouts,
-    // network blips) don't crash the Node process via an unhandled 'error'
-    // event on the ImapFlow EventEmitter.
+    // ImapFlow is long-lived EventEmitter — missing 'error' listener crashes process on socket timeout.
     client.on('error', (error) => {
       this.logger.error(
         `IMAP client error for ${connectedAccount.handle}: ${error.message}`,
