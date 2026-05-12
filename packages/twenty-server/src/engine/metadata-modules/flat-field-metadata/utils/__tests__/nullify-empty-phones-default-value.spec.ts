@@ -1,7 +1,7 @@
 import { nullifyEmptyPhonesDefaultValue } from '../nullify-empty-phones-default-value.util';
 
 describe('nullifyEmptyPhonesDefaultValue', () => {
-  it('returns null when all sub-fields are empty-string equivalents', () => {
+  it('returns null when all fields are null-equivalent', () => {
     expect(
       nullifyEmptyPhonesDefaultValue({
         primaryPhoneNumber: "''",
