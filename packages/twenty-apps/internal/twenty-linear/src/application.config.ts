@@ -8,9 +8,6 @@ export default defineApplication({
   description:
     'Connect Linear to Twenty. Each workspace member connects their own Linear account; logic functions can then create issues and read team data on their behalf.',
   logoUrl: 'public/linear-logomark.svg',
-  // OAuth client_id/secret live at the registration level (one OAuth app per
-  // Twenty server, configured by the server admin) — not per-workspace —
-  // so they're declared as serverVariables, not applicationVariables.
   serverVariables: {
     LINEAR_CLIENT_ID: {
       description:
