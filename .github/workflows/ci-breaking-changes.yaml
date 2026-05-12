@@ -166,14 +166,11 @@ jobs:
 
           ADMIN_TOKEN=$(jq -r '.APPLE_JANE_ADMIN_ACCESS_TOKEN' packages/twenty-server/test/integration/constants/test-tokens.json)
 
-          # The HTTP listener accepts connections before the workspace schema cache is
-          # populated, so a plain port-open check passes while introspection still errors.
-          # Probe with an authenticated introspection and require a 2xx OpenAPI response.
           while [ $elapsed -lt $timeout ]; do
             GRAPHQL_RESPONSE=$(curl -s -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer ${ADMIN_TOKEN}" \
-              -d '{"query":"{ __schema { queryType { name } } }"}' 2>/dev/null)
+              -d '{"query":"{ __schema { queryType { name } } }"}' 2>/dev/null || echo '{}')
 
             if echo "$GRAPHQL_RESPONSE" | jq -e '.data.__schema' > /dev/null 2>&1 && \
                curl -fsS "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" \
@@ -337,14 +334,11 @@ jobs:
 
           ADMIN_TOKEN=$(jq -r '.APPLE_JANE_ADMIN_ACCESS_TOKEN' packages/twenty-server/test/integration/constants/test-tokens.json)
 
-          # The HTTP listener accepts connections before the workspace schema cache is
-          # populated, so a plain port-open check passes while introspection still errors.
-          # Probe with an authenticated introspection and require a 2xx OpenAPI response.
           while [ $elapsed -lt $timeout ]; do
             GRAPHQL_RESPONSE=$(curl -s -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer ${ADMIN_TOKEN}" \
-              -d '{"query":"{ __schema { queryType { name } } }"}' 2>/dev/null)
+              -d '{"query":"{ __schema { queryType { name } } }"}' 2>/dev/null || echo '{}')
 
             if echo "$GRAPHQL_RESPONSE" | jq -e '.data.__schema' > /dev/null 2>&1 && \
                curl -fsS "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" \
@@ -428,9 +422,6 @@ jobs:
         run: |
           valid=true
 
-          # GraphQL introspection error responses are syntactically valid JSON, so the
-          # check must confirm the file actually contains a schema (.data.__schema) and
-          # OpenAPI files have the expected top-level "openapi"/"swagger" field.
           for file in main-schema-introspection.json current-schema-introspection.json \
                       main-metadata-schema-introspection.json current-metadata-schema-introspection.json; do
             if [ ! -f "$file" ]; then
