@@ -278,6 +278,10 @@ export class WorkspaceEntity {
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
 
+  @Field()
+  @Column({ default: false })
+  isInternalMessagesImportEnabled: boolean;
+
   @Field(() => [String], { nullable: true })
   @Column({
     type: 'varchar',
