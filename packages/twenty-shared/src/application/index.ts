@@ -36,7 +36,6 @@ export type {
   CommandMenuItemManifest,
   FrontComponentManifest,
 } from './frontComponentManifestType';
-export { getWorkflowLogicFunctionDisplayName } from './getWorkflowLogicFunctionDisplayName';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
