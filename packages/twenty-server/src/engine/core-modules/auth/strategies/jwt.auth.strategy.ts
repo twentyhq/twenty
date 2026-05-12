@@ -60,7 +60,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         })
       ) {
         jwtKeyManagerService
-          .getActivePublicKeyByKid(decodedHeader!.kid as string)
+          .getValidPublicKeyById(decodedHeader!.kid as string)
           .then((publicKey) => {
             if (!isDefined(publicKey)) {
               done(
@@ -549,10 +549,10 @@ const shouldUseAsymmetricKey = (args: {
   header: jwt.JwtHeader | undefined;
   payload: JwtPayload | undefined;
 }): boolean => {
-  const kid = args.header?.kid;
+  const signingKeyId = args.header?.kid;
   const alg = args.header?.alg;
 
-  if (!isNonEmptyString(kid)) {
+  if (!isNonEmptyString(signingKeyId)) {
     return false;
   }
 

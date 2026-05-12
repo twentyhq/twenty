@@ -51,7 +51,7 @@ describe('JwtAuthStrategy', () => {
     };
 
     jwtKeyManagerService = {
-      getActivePublicKeyByKid: jest.fn(async () => null),
+      getValidPublicKeyById: jest.fn(async () => null),
       getCurrentSigningKey: jest.fn(async () => null),
     };
 

@@ -24,7 +24,7 @@ import { SecretEncryptionService } from 'src/engine/core-modules/secret-encrypti
 export type CurrentSigningKey = {
   privateKey: KeyObject;
   publicKey: KeyObject;
-  kid: string;
+  id: string;
 };
 
 const UNIQUE_VIOLATION_PG_CODE = '23505';
@@ -56,21 +56,21 @@ export class JwtKeyManagerService {
     }
   }
 
-  async getActivePublicKeyByKid(kid: string): Promise<KeyObject | null> {
-    if (!isNonEmptyString(kid) || !isValidUuid(kid)) {
+  async getValidPublicKeyById(id: string): Promise<KeyObject | null> {
+    if (!isNonEmptyString(id) || !isValidUuid(id)) {
       return null;
     }
 
     const cachedPem = await this.coreEntityCacheService.get(
       'signingKeyPublicKey',
-      kid,
+      id,
     );
 
     if (!isDefined(cachedPem)) {
       return null;
     }
 
-    return this.tryParsePublicKey(cachedPem, kid);
+    return this.tryParsePublicKey(cachedPem, id);
   }
 
   private async loadOrCreateCurrentSigningKey(): Promise<CurrentSigningKey | null> {
@@ -125,7 +125,7 @@ export class JwtKeyManagerService {
     const privateKey = this.parsePrivateKeyOrThrow(privateKeyPem);
     const publicKey = this.parsePublicKeyOrThrow(row.publicKey);
 
-    return { privateKey, publicKey, kid: row.id };
+    return { privateKey, publicKey, id: row.id };
   }
 
   private async generateAndPersistCurrent(): Promise<CurrentSigningKey> {
@@ -146,7 +146,7 @@ export class JwtKeyManagerService {
       return {
         privateKey: generated.privateKey,
         publicKey: generated.publicKey,
-        kid: id,
+        id,
       };
     } catch (error) {
       if (this.isUniqueViolation(error)) {
@@ -234,12 +234,12 @@ export class JwtKeyManagerService {
     }
   }
 
-  private tryParsePublicKey(pem: string, kid: string): KeyObject | null {
+  private tryParsePublicKey(pem: string, id: string): KeyObject | null {
     try {
       return createPublicKey(pem);
     } catch (error) {
       this.logger.error(
-        `Failed to parse public key for kid=${kid}: ${
+        `Failed to parse public key for id=${id}: ${
           error instanceof Error ? error.message : String(error)
         }`,
       );

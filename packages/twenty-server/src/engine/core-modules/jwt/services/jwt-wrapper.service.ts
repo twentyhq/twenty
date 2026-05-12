@@ -88,9 +88,9 @@ export class JwtWrapperService {
     const decodedHeader = this.tryDecodeHeader(token);
 
     if (this.shouldVerifyAsymmetric({ header: decodedHeader, payload })) {
-      return this.verifyJwtTokenWithKid({
+      return this.verifyJwtTokenWithSigningKeyId({
         token,
-        kid: decodedHeader!.kid as string,
+        signingKeyId: decodedHeader!.kid as string,
         options,
       });
     }
@@ -169,7 +169,7 @@ export class JwtWrapperService {
     return jwt.sign(payload as object, signingKey.privateKey, {
       ...options,
       algorithm: 'ES256',
-      keyid: signingKey.kid,
+      keyid: signingKey.id,
     } as jwt.SignOptions);
   }
 
@@ -208,10 +208,10 @@ export class JwtWrapperService {
     header: jwt.JwtHeader | undefined;
     payload: JwtPayload;
   }): boolean {
-    const kid = args.header?.kid;
+    const signingKeyId = args.header?.kid;
     const alg = args.header?.alg;
 
-    if (!isNonEmptyString(kid)) {
+    if (!isNonEmptyString(signingKeyId)) {
       return false;
     }
 
@@ -222,13 +222,13 @@ export class JwtWrapperService {
     return isAsymmetricSigningEligible(args.payload.type);
   }
 
-  private async verifyJwtTokenWithKid(args: {
+  private async verifyJwtTokenWithSigningKeyId(args: {
     token: string;
-    kid: string;
+    signingKeyId: string;
     options?: JwtVerifyOptions;
   }) {
-    const publicKey = await this.jwtKeyManagerService.getActivePublicKeyByKid(
-      args.kid,
+    const publicKey = await this.jwtKeyManagerService.getValidPublicKeyById(
+      args.signingKeyId,
     );
 
     if (!isDefined(publicKey)) {
