@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Get PR number from workflow run
         id: pr-info
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.0.1
         with:
           script: |
             const runId = context.payload.workflow_run.id;
@@ -63,7 +63,7 @@ jobs:
 
       - name: Dispatch to ci-privileged
         if: steps.pr-info.outputs.has_pr == 'true'
-        uses: peter-evans/repository-dispatch@v2
+        uses: peter-evans/repository-dispatch@bf47d102fdb849e755b0b0023ea3e81a44b6f570 # v2
         with:
           token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
           repository: twentyhq/ci-privileged

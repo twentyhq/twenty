@@ -1,0 +1,6 @@
+/.github/                                @prastoin @charlesBochet @FelixMalfait
+/.github/CODEOWNERS                       @prastoin @charlesBochet @FelixMalfait
+/.github/workflows/                       @prastoin @charlesBochet @FelixMalfait
+/.github/actions/                         @prastoin @charlesBochet @FelixMalfait
+/.github/dependabot.yml                   @prastoin @charlesBochet @FelixMalfait
+/.yarnrc.yml                              @prastoin @charlesBochet @FelixMalfait
