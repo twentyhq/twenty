@@ -53,6 +53,15 @@ export class ImapSmtpCaldavService {
       },
     });
 
+    // Attach error listener so transient socket errors don't crash the Node
+    // process via an unhandled 'error' event on the ImapFlow EventEmitter.
+    client.on('error', (error) => {
+      this.logger.error(
+        `IMAP test connection error for ${handle}: ${error.message}`,
+        error.stack,
+      );
+    });
+
     try {
       await client.connect();
 
