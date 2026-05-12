@@ -318,7 +318,7 @@ describe('Generate Column Definitions', () => {
         }),
         expect.objectContaining({
           name: 'phonePrimaryPhoneCountryCode',
-          default: "''::text",
+          default: 'NULL',
         }),
         expect.objectContaining({
           name: 'phonePrimaryPhoneCallingCode',
