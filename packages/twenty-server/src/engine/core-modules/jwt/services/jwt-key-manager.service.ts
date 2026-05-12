@@ -127,6 +127,10 @@ export class JwtKeyManagerService {
         revokedAt: null,
       });
 
+      // Clear any negative cache entry for this id so verifications that
+      // raced with the insert can pick up the new public key immediately.
+      await this.coreEntityCacheService.invalidate('signingKeyPublicKey', id);
+
       return { id, privateKeyPem: generated.privateKeyPem };
     } catch (error) {
       if (this.isUniqueViolation(error)) {

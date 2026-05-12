@@ -3,6 +3,7 @@ import { createHash, randomUUID } from 'crypto';
 import { isNonEmptyString } from '@sniptt/guards';
 import * as jwt from 'jsonwebtoken';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
@@ -18,6 +19,7 @@ import {
   PREVIOUS_KID,
   PREVIOUS_PRIVATE_KEY_PEM,
   PREVIOUS_PUBLIC_KEY_PEM,
+  REVOKED_KID,
 } from './jwt-key-rotation.fixture';
 
 const HS256_APP_SECRET = 'replace_me_with_a_random_string';
@@ -108,8 +110,8 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     }
 
     await global.testDataSource.query(
-      `DELETE FROM core."signingKey" WHERE "id" = $1`,
-      [PREVIOUS_KID],
+      `DELETE FROM core."signingKey" WHERE "id" = ANY($1::uuid[])`,
+      [[PREVIOUS_KID, REVOKED_KID]],
     );
   });
 
@@ -130,7 +132,9 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     expect(rows[0].revokedAt).toBeNull();
     expect(isNonEmptyString(rows[0].publicKey)).toBe(true);
     expect(isNonEmptyString(rows[0].privateKey)).toBe(true);
-    expect(rows[0].publicKey).toContain('-----BEGIN PUBLIC KEY-----');
+    expect(rows[0].publicKey).toMatch(
+      /^-----BEGIN PUBLIC KEY-----[\s\S]+-----END PUBLIC KEY-----\s*$/,
+    );
 
     const { data, errors } = await getCurrentUser({
       accessToken: sharedAccessToken,
@@ -194,6 +198,30 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     expect(data?.currentUser?.id).toBe(sharedPayload.userId);
   });
 
+  it('rejects a token signed by a revoked kid (publicKey present, revokedAt set)', async () => {
+    await global.testDataSource.query(
+      `INSERT INTO core."signingKey" ("id", "publicKey", "privateKey", "isCurrent", "revokedAt")
+       VALUES ($1, $2, NULL, false, NOW())
+       ON CONFLICT ("id") DO UPDATE SET "revokedAt" = NOW(), "isCurrent" = false`,
+      [REVOKED_KID, PREVIOUS_PUBLIC_KEY_PEM],
+    );
+
+    const tokenSignedByRevokedKey = jwt.sign(
+      buildAccessTokenPayload(sharedPayload),
+      PREVIOUS_PRIVATE_KEY_PEM,
+      { algorithm: 'ES256', keyid: REVOKED_KID, expiresIn: '5m' },
+    );
+
+    const { data, errors } = await getCurrentUser({
+      accessToken: tokenSignedByRevokedKey,
+      expectToFail: true,
+    });
+
+    expect(data?.currentUser).toBeFalsy();
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
   it('rejects a token whose kid was never registered without leaking a 500', async () => {
     const unknownKid = '00000000-0000-4000-8000-000000000099';
 
@@ -209,15 +237,7 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     });
 
     expect(data?.currentUser).toBeFalsy();
-    expect(errors).toBeDefined();
-    expect(errors?.length ?? 0).toBeGreaterThan(0);
 
-    const internalServerError = errors?.find((error) =>
-      (error as { message?: string }).message
-        ?.toLowerCase?.()
-        .includes('internal'),
-    );
-
-    expect(internalServerError).toBeUndefined();
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });

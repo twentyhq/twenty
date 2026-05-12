@@ -20,16 +20,23 @@ import {
   type JwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  JWT_ASYMMETRIC_ALGORITHM,
+  JWT_LEGACY_ALGORITHM,
+} from 'src/engine/core-modules/jwt/constants/jwt-algorithm.constant';
 import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-key-manager.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
+import { decodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
+import {
+  isAsymmetricJwtHeader,
+  isAsymmetricSigningEligible,
+} from 'src/engine/core-modules/jwt/utils/is-asymmetric-jwt-header.util';
 
-const ASYMMETRIC_TOKEN_TYPES: ReadonlySet<JwtTokenTypeEnum> = new Set([
-  JwtTokenTypeEnum.ACCESS,
-  JwtTokenTypeEnum.REFRESH,
-]);
-
-const isAsymmetricSigningEligible = (type: JwtTokenTypeEnum): boolean =>
-  ASYMMETRIC_TOKEN_TYPES.has(type);
+type ResolvedVerificationKey = {
+  key: string;
+  algorithm: typeof JWT_LEGACY_ALGORITHM | typeof JWT_ASYMMETRIC_ALGORITHM;
+};
 
 @Injectable()
 export class JwtWrapperService {
@@ -39,6 +46,12 @@ export class JwtWrapperService {
     private readonly jwtKeyManagerService: JwtKeyManagerService,
   ) {}
 
+  /**
+   * @deprecated Use {@link signAsync} for ACCESS / REFRESH tokens (ES256, with
+   * rotatable signing keys). Synchronous HS256 signing remains in place for
+   * token types not yet migrated to asymmetric signing, but new call sites
+   * should not be introduced.
+   */
   sign(payload: JwtPayload, options?: JwtSignOptions): string {
     return this.jwtService.sign(payload, options);
   }
@@ -54,13 +67,23 @@ export class JwtWrapperService {
       );
     }
 
-    const asymmetric = await this.signAsymmetric(payload, options);
+    const signingKey = await this.jwtKeyManagerService.getCurrentSigningKey();
 
-    if (isDefined(asymmetric)) {
-      return asymmetric;
+    if (!isDefined(signingKey)) {
+      throw new AuthException(
+        'No active signing key available to sign ACCESS / REFRESH token',
+        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+      );
     }
 
-    return this.signWithAppSecret(payload, options);
+    const signOptions: jwt.SignOptions = {
+      expiresIn: options.expiresIn as jwt.SignOptions['expiresIn'],
+      jwtid: options.jwtid,
+      algorithm: JWT_ASYMMETRIC_ALGORITHM,
+      keyid: signingKey.id,
+    };
+
+    return jwt.sign(payload as object, signingKey.privateKeyPem, signOptions);
   }
 
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
@@ -76,26 +99,32 @@ export class JwtWrapperService {
     return this.jwtService.decode(payload, options);
   }
 
-  async verifyJwtToken(token: string, options?: JwtVerifyOptions) {
-    const payload = this.decode<JwtPayload>(token, {
-      json: true,
-    });
+  async resolveVerificationKey(
+    rawToken: string,
+  ): Promise<ResolvedVerificationKey> {
+    const header = decodeJwtHeader(rawToken);
+    const payload = decodeJwtPayload<JwtPayload>(rawToken);
+
+    if (isAsymmetricJwtHeader(header, payload)) {
+      const publicKeyPem =
+        await this.jwtKeyManagerService.getValidPublicKeyPemById(header.kid);
+
+      if (!isDefined(publicKeyPem)) {
+        throw new AuthException(
+          'Token invalid.',
+          AuthExceptionCode.UNAUTHENTICATED,
+        );
+      }
+
+      return { key: publicKeyPem, algorithm: JWT_ASYMMETRIC_ALGORITHM };
+    }
 
     if (!isDefined(payload)) {
-      throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
+      throw new AuthException(
+        'Token invalid.',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
     }
-
-    const decodedHeader = this.tryDecodeHeader(token);
-
-    if (this.shouldVerifyAsymmetric({ header: decodedHeader, payload })) {
-      return this.verifyJwtTokenWithSigningKeyId({
-        token,
-        signingKeyId: decodedHeader!.kid as string,
-        options,
-      });
-    }
-
-    const type = payload.type;
 
     const appSecretBody = this.extractAppSecretBody(payload);
 
@@ -106,36 +135,48 @@ export class JwtWrapperService {
       );
     }
 
+    return {
+      key: this.generateAppSecret(payload.type, appSecretBody),
+      algorithm: JWT_LEGACY_ALGORITHM,
+    };
+  }
+
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  async verifyJwtToken(token: string, options?: JwtVerifyOptions): Promise<any> {
+    const payload = this.decode<JwtPayload>(token, { json: true });
+
+    if (!isDefined(payload)) {
+      throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
+    }
+
+    const { key, algorithm } = await this.resolveVerificationKey(token);
+
     try {
+      return jwt.verify(token, key, { ...options, algorithms: [algorithm] });
+    } catch (error) {
       // API_KEY tokens created before 12/12/2025 were accidentally signed
-      // with ACCESS type instead of API_KEY. Try the correct secret first,
-      // fall back to the old one for backward compatibility.
+      // with ACCESS type instead of API_KEY. Fall back to the legacy ACCESS
+      // secret for backward compatibility.
       // See https://github.com/twentyhq/twenty/pull/16504
-      if (type === JwtTokenTypeEnum.API_KEY) {
-        try {
-          return this.jwtService.verify(token, {
-            ...options,
-            algorithms: ['HS256'],
-            secret: this.generateAppSecret(type, appSecretBody),
-          });
-        } catch {
-          return this.jwtService.verify(token, {
-            ...options,
-            algorithms: ['HS256'],
-            secret: this.generateAppSecret(
-              JwtTokenTypeEnum.ACCESS,
-              appSecretBody,
-            ),
-          });
+      if (
+        payload.type === JwtTokenTypeEnum.API_KEY &&
+        algorithm === JWT_LEGACY_ALGORITHM
+      ) {
+        const appSecretBody = this.extractAppSecretBody(payload);
+
+        if (isDefined(appSecretBody)) {
+          try {
+            return jwt.verify(
+              token,
+              this.generateAppSecret(JwtTokenTypeEnum.ACCESS, appSecretBody),
+              { ...options, algorithms: [JWT_LEGACY_ALGORITHM] },
+            );
+          } catch {
+            throw this.toAuthException(error);
+          }
         }
       }
 
-      return this.jwtService.verify(token, {
-        ...options,
-        algorithms: ['HS256'],
-        secret: this.generateAppSecret(type, appSecretBody),
-      });
-    } catch (error) {
       throw this.toAuthException(error);
     }
   }
@@ -156,42 +197,6 @@ export class JwtWrapperService {
     return ExtractJwt.fromAuthHeaderAsBearerToken();
   }
 
-  private async signAsymmetric(
-    payload: JwtPayload,
-    options: { expiresIn: string | number; jwtid?: string },
-  ): Promise<string | null> {
-    const signingKey = await this.jwtKeyManagerService.getCurrentSigningKey();
-
-    if (!isDefined(signingKey)) {
-      return null;
-    }
-
-    return jwt.sign(payload as object, signingKey.privateKeyPem, {
-      ...options,
-      algorithm: 'ES256',
-      keyid: signingKey.id,
-    } as jwt.SignOptions);
-  }
-
-  private signWithAppSecret(
-    payload: JwtPayload,
-    options: { expiresIn: string | number; jwtid?: string },
-  ): string {
-    const appSecretBody = this.extractAppSecretBody(payload);
-
-    if (!isDefined(appSecretBody)) {
-      throw new AuthException(
-        'Cannot derive HS256 secret: payload missing workspaceId or userId',
-        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
-      );
-    }
-
-    return this.jwtService.sign(payload, {
-      ...options,
-      secret: this.generateAppSecret(payload.type, appSecretBody),
-    });
-  }
-
   private extractAppSecretBody(payload: JwtPayload): string | undefined {
     if ('workspaceId' in payload && isNonEmptyString(payload.workspaceId)) {
       return payload.workspaceId;
@@ -202,65 +207,6 @@ export class JwtWrapperService {
     }
 
     return undefined;
-  }
-
-  private shouldVerifyAsymmetric(args: {
-    header: jwt.JwtHeader | undefined;
-    payload: JwtPayload;
-  }): boolean {
-    const signingKeyId = args.header?.kid;
-    const alg = args.header?.alg;
-
-    if (!isNonEmptyString(signingKeyId)) {
-      return false;
-    }
-
-    if (alg !== 'ES256') {
-      return false;
-    }
-
-    return isAsymmetricSigningEligible(args.payload.type);
-  }
-
-  private async verifyJwtTokenWithSigningKeyId(args: {
-    token: string;
-    signingKeyId: string;
-    options?: JwtVerifyOptions;
-  }) {
-    const publicKeyPem =
-      await this.jwtKeyManagerService.getValidPublicKeyPemById(
-        args.signingKeyId,
-      );
-
-    if (!isDefined(publicKeyPem)) {
-      throw new AuthException(
-        'Token invalid.',
-        AuthExceptionCode.UNAUTHENTICATED,
-      );
-    }
-
-    try {
-      return jwt.verify(args.token, publicKeyPem, {
-        ...args.options,
-        algorithms: ['ES256'],
-      });
-    } catch (error) {
-      throw this.toAuthException(error);
-    }
-  }
-
-  private tryDecodeHeader(token: string): jwt.JwtHeader | undefined {
-    try {
-      const decoded = jwt.decode(token, { complete: true });
-
-      if (!isDefined(decoded)) {
-        return undefined;
-      }
-
-      return decoded.header;
-    } catch {
-      return undefined;
-    }
   }
 
   private toAuthException(error: unknown): AuthException {

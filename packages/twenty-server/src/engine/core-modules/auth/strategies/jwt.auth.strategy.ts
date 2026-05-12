@@ -3,9 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import * as jwt from 'jsonwebtoken';
-import { Strategy } from 'passport-jwt';
+import { Strategy, type SecretOrKeyProvider } from 'passport-jwt';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -28,7 +26,7 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-key-manager.service';
+import { JWT_SUPPORTED_VERIFY_ALGORITHMS } from 'src/engine/core-modules/jwt/constants/jwt-algorithm.constant';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -38,7 +36,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly jwtKeyManagerService: JwtKeyManagerService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -47,78 +44,22 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {
-    const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
-    // @ts-expect-error legacy noImplicitAny
-    const secretOrKeyProviderFunction = (_request, rawJwtToken, done) => {
-      const decodedHeader = decodeJwtHeader(rawJwtToken);
-      const decodedPayload = decodeJwtPayload<JwtPayload>(rawJwtToken);
-
-      if (
-        shouldUseAsymmetricKey({
-          header: decodedHeader,
-          payload: decodedPayload,
-        })
-      ) {
-        jwtKeyManagerService
-          .getValidPublicKeyPemById(decodedHeader!.kid as string)
-          .then((publicKeyPem) => {
-            if (!isDefined(publicKeyPem)) {
-              done(
-                new AuthException(
-                  'Token invalid.',
-                  AuthExceptionCode.UNAUTHENTICATED,
-                ),
-                null,
-              );
-
-              return;
-            }
-
-            done(null, publicKeyPem);
-          })
-          .catch((error) => done(error, null));
-
-        return;
-      }
-
-      try {
-        if (!isDefined(decodedPayload)) {
-          throw new AuthException(
-            'Token invalid.',
-            AuthExceptionCode.UNAUTHENTICATED,
-          );
-        }
-
-        const appSecretBody =
-          decodedPayload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
-            ? decodedPayload.userId
-            : 'workspaceId' in decodedPayload
-              ? decodedPayload.workspaceId
-              : undefined;
-
-        if (!isNonEmptyString(appSecretBody)) {
-          throw new AuthException(
-            'Token invalid.',
-            AuthExceptionCode.UNAUTHENTICATED,
-          );
-        }
-
-        const secret = jwtWrapperService.generateAppSecret(
-          decodedPayload.type,
-          appSecretBody,
-        );
-
-        done(null, secret);
-      } catch (error) {
-        done(error, null);
-      }
+    const secretOrKeyProvider: SecretOrKeyProvider = (
+      _request,
+      rawJwtToken,
+      done,
+    ) => {
+      jwtWrapperService.resolveVerificationKey(rawJwtToken).then(
+        ({ key }) => done(null, key),
+        (error) => done(error, undefined),
+      );
     };
 
     super({
-      jwtFromRequest: jwtFromRequestFunction,
+      jwtFromRequest: jwtWrapperService.extractJwtFromRequest(),
       ignoreExpiration: false,
-      algorithms: ['HS256', 'ES256'],
-      secretOrKeyProvider: secretOrKeyProviderFunction,
+      algorithms: [...JWT_SUPPORTED_VERIFY_ALGORITHMS],
+      secretOrKeyProvider,
     });
   }
 
@@ -511,58 +452,3 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     );
   }
 }
-
-const decodeJwtHeader = (rawJwtToken: string): jwt.JwtHeader | undefined => {
-  try {
-    const decoded = jwt.decode(rawJwtToken, { complete: true });
-
-    if (!isDefined(decoded)) {
-      return undefined;
-    }
-
-    return decoded.header;
-  } catch {
-    return undefined;
-  }
-};
-
-const decodeJwtPayload = <T>(rawJwtToken: string): T | undefined => {
-  try {
-    const decoded = jwt.decode(rawJwtToken, { json: true });
-
-    if (!isDefined(decoded)) {
-      return undefined;
-    }
-
-    return decoded as T;
-  } catch {
-    return undefined;
-  }
-};
-
-const ASYMMETRIC_TOKEN_TYPES: ReadonlySet<JwtTokenTypeEnum> = new Set([
-  JwtTokenTypeEnum.ACCESS,
-  JwtTokenTypeEnum.REFRESH,
-]);
-
-const shouldUseAsymmetricKey = (args: {
-  header: jwt.JwtHeader | undefined;
-  payload: JwtPayload | undefined;
-}): boolean => {
-  const signingKeyId = args.header?.kid;
-  const alg = args.header?.alg;
-
-  if (!isNonEmptyString(signingKeyId)) {
-    return false;
-  }
-
-  if (alg !== 'ES256') {
-    return false;
-  }
-
-  if (!isDefined(args.payload)) {
-    return false;
-  }
-
-  return ASYMMETRIC_TOKEN_TYPES.has(args.payload.type);
-};
