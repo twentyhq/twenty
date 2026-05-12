@@ -294,7 +294,8 @@ export class ApolloFactory implements ApolloManager {
               case 'BAD_USER_INPUT':
               case 'FORBIDDEN':
               case 'CONFLICT':
-              case 'METADATA_VALIDATION_FAILED': {
+              case 'METADATA_VALIDATION_FAILED':
+              case 'GRAPHQL_VALIDATION_FAILED': {
                 return;
               }
               case 'USER_INPUT_ERROR': {

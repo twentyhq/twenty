@@ -12,6 +12,20 @@ import { WorkspaceActivationStatus } from '~/generated-metadata/graphql';
 
 enableFetchMocks();
 
+const mockCaptureException = jest.fn();
+
+jest.mock('@sentry/react', () => ({
+  captureException: (...args: unknown[]) => mockCaptureException(...args),
+  withScope: (
+    callback: (scope: { setExtra: jest.Mock; setFingerprint: jest.Mock }) => void,
+  ) => {
+    callback({
+      setExtra: jest.fn(),
+      setFingerprint: jest.fn(),
+    });
+  },
+}));
+
 jest.mock('@/auth/services/AuthService', () => {
   const initialAuthService = jest.requireActual('@/auth/services/AuthService');
   return {
@@ -262,4 +276,29 @@ describe('ApolloFactory', () => {
       );
     }
   }, 10000);
+
+  it('should not send GRAPHQL_VALIDATION_FAILED errors to Sentry', async () => {
+    mockCaptureException.mockClear();
+
+    const errors = [
+      {
+        message: 'Cannot query field "licensedProducts" on type "BillingPlan".',
+        extensions: {
+          code: 'GRAPHQL_VALIDATION_FAILED',
+        },
+      },
+    ];
+
+    fetchMock.mockResponse(() =>
+      Promise.resolve({
+        body: JSON.stringify({
+          data: {},
+          errors,
+        }),
+      }),
+    );
+
+    await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+    expect(mockCaptureException).not.toHaveBeenCalled();
+  });
 });
