@@ -17,9 +17,9 @@ const NO_STAGE_OPTION_LABEL = 'No stage';
 
 const NO_STAGE_OPTION_POSITION = 5;
 
-@RegisteredWorkspaceCommand('2.2.0', 1786000001100)
+@RegisteredWorkspaceCommand('2.5.0', 1798000005500)
 @Command({
-  name: 'upgrade:2-2:add-opportunity-no-stage-select-option',
+  name: 'upgrade:2-5:add-opportunity-no-stage-select-option',
   description:
     'Add NO_STAGE value to opportunity.stage select options for workspaces missing it',
 })
