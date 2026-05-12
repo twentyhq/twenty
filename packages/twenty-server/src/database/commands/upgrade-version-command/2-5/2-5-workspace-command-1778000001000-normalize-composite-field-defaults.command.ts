@@ -167,7 +167,7 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
       await dataSource.query(
         `UPDATE "${schemaName}"."${tableName}"
          SET "${columnName}" = NULL
-         WHERE "${columnName}" = ''`,
+         WHERE "${columnName}"::text IN ('', '""')`,
         undefined,
         undefined,
         { shouldBypassPermissionChecks: true },
