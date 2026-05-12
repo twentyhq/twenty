@@ -16,7 +16,18 @@ jobs:
       - name: Repository Dispatch
         env:
           GH_TOKEN: ${{ secrets.TWENTY_INFRA_TOKEN }}
+          SHA: ${{ github.sha }}
+          REF: ${{ github.ref }}
+          REF_NAME: ${{ github.ref_name }}
+          ACTOR: ${{ github.actor }}
+          RUN_ID: ${{ github.run_id }}
+          REPOSITORY: ${{ github.repository }}
         run: |
           gh api repos/twentyhq/twenty-infra/dispatches \
-            --raw-field event_type=auto-deploy-tag \
-            --raw-field 'client_payload={"github": {"sha": "${{ github.sha }}", "ref": "${{ github.ref }}", "ref_name": "${{ github.ref_name }}", "actor": "${{ github.actor }}", "run_id": "${{ github.run_id }}", "repository": "${{ github.repository }}"}}'
+            -f event_type=auto-deploy-tag \
+            -f "client_payload[github][sha]=$SHA" \
+            -f "client_payload[github][ref]=$REF" \
+            -f "client_payload[github][ref_name]=$REF_NAME" \
+            -f "client_payload[github][actor]=$ACTOR" \
+            -f "client_payload[github][run_id]=$RUN_ID" \
+            -f "client_payload[github][repository]=$REPOSITORY"

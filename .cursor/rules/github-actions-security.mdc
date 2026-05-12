@@ -25,14 +25,24 @@ uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
 For repository dispatch calls, use `gh api` directly instead of third-party actions like `peter-evans/repository-dispatch`. This eliminates a supply-chain dependency entirely.
 
 ```yaml
-# ✅ Direct gh api call — no third-party action needed
+# ✅ Use env vars + bracket notation to prevent injection
 - name: Dispatch to target repo
   env:
     GH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
+    PR_NUMBER: ${{ github.event.pull_request.number }}
+    BRANCH: ${{ github.event.workflow_run.head_branch }}
   run: |
     gh api repos/org/repo/dispatches \
-      --raw-field event_type=my-event \
-      --raw-field 'client_payload={"key": "value"}'
+      -f event_type=my-event \
+      -f "client_payload[pr_number]=$PR_NUMBER" \
+      -f "client_payload[branch]=$BRANCH"
+
+# ✅ Simple dispatch without payload
+- name: Trigger workflow
+  env:
+    GH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
+  run: |
+    gh api repos/org/repo/dispatches -f event_type=my-event
 
 # ❌ Third-party action dependency
 - uses: peter-evans/repository-dispatch@v2
@@ -40,6 +50,12 @@ For repository dispatch calls, use `gh api` directly instead of third-party acti
     token: ${{ secrets.DISPATCH_TOKEN }}
     repository: org/repo
     event-type: my-event
+
+# ❌ Inline ${{ }} in shell — vulnerable to injection
+- run: |
+    gh api repos/org/repo/dispatches --input - <<EOF
+    {"event_type": "x", "client_payload": {"branch": "${{ github.head_ref }}"}}
+    EOF
 ```
 
 ## Minimal Permissions

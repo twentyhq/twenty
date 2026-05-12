@@ -38,15 +38,25 @@ jobs:
       - name: Trigger preview environment workflow
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPOSITORY: ${{ github.repository }}
         run: |
-          gh api repos/${{ github.repository }}/dispatches \
-            --raw-field event_type=preview-environment \
-            --raw-field 'client_payload={"pr_number": "${{ github.event.pull_request.number }}", "pr_head_sha": "${{ github.event.pull_request.head.sha }}", "repo_full_name": "${{ github.repository }}"}'
+          gh api repos/"$REPOSITORY"/dispatches \
+            -f event_type=preview-environment \
+            -f "client_payload[pr_number]=$PR_NUMBER" \
+            -f "client_payload[pr_head_sha]=$PR_HEAD_SHA" \
+            -f "client_payload[repo_full_name]=$REPOSITORY"
 
       - name: Dispatch to ci-privileged for PR comment
         env:
           GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          KEEPALIVE_DISPATCH_TIME: ${{ github.event.pull_request.updated_at }}
+          REPOSITORY: ${{ github.repository }}
         run: |
           gh api repos/twentyhq/ci-privileged/dispatches \
-            --raw-field event_type=preview-env-url \
-            --raw-field 'client_payload={"pr_number": "${{ github.event.pull_request.number }}", "keepalive_dispatch_time": "${{ github.event.pull_request.updated_at }}", "repo": "${{ github.repository }}"}'
+            -f event_type=preview-env-url \
+            -f "client_payload[pr_number]=$PR_NUMBER" \
+            -f "client_payload[keepalive_dispatch_time]=$KEEPALIVE_DISPATCH_TIME" \
+            -f "client_payload[repo]=$REPOSITORY"

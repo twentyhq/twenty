@@ -188,7 +188,14 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          REPO: ${{ steps.prompt.outputs.repo }}
+          ISSUE_NUMBER: ${{ steps.prompt.outputs.issue_number }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           gh api repos/twentyhq/ci-privileged/dispatches \
-            --raw-field event_type=claude-cross-repo-response \
-            --raw-field "client_payload={\"repo\": \"${{ steps.prompt.outputs.repo }}\", \"issue_number\": \"${{ steps.prompt.outputs.issue_number }}\", \"run_id\": \"${{ github.run_id }}\", \"run_url\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
+            -f event_type=claude-cross-repo-response \
+            -f "client_payload[repo]=$REPO" \
+            -f "client_payload[issue_number]=$ISSUE_NUMBER" \
+            -f "client_payload[run_id]=$RUN_ID" \
+            -f "client_payload[run_url]=$RUN_URL"

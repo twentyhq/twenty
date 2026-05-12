@@ -107,6 +107,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.TWENTY_INFRA_TOKEN }}
         run: |
-          gh api repos/twentyhq/twenty-infra/dispatches \
-            --raw-field event_type=i18n-pr-ready \
-            --raw-field 'client_payload={}'
+          gh api repos/twentyhq/twenty-infra/dispatches -f event_type=i18n-pr-ready

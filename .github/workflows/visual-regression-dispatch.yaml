@@ -130,7 +130,18 @@ jobs:
         if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
         env:
           GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          PR_NUMBER: ${{ steps.pr-info.outputs.pr_number }}
+          RUN_ID: ${{ github.run_id }}
+          REPOSITORY: ${{ github.repository }}
+          PROJECT: ${{ steps.project.outputs.project }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          COMMIT: ${{ github.event.workflow_run.head_sha }}
         run: |
           gh api repos/twentyhq/ci-privileged/dispatches \
-            --raw-field event_type=visual-regression \
-            --raw-field 'client_payload={"pr_number": "${{ steps.pr-info.outputs.pr_number }}", "run_id": "${{ github.run_id }}", "repo": "${{ github.repository }}", "project": "${{ steps.project.outputs.project }}", "branch": "${{ github.event.workflow_run.head_branch }}", "commit": "${{ github.event.workflow_run.head_sha }}"}'
+            -f event_type=visual-regression \
+            -f "client_payload[pr_number]=$PR_NUMBER" \
+            -f "client_payload[run_id]=$RUN_ID" \
+            -f "client_payload[repo]=$REPOSITORY" \
+            -f "client_payload[project]=$PROJECT" \
+            -f "client_payload[branch]=$BRANCH" \
+            -f "client_payload[commit]=$COMMIT"
