@@ -8,6 +8,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
 import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
@@ -17,9 +18,14 @@ import { DeleteViewFilterGroupPermissionGuard } from 'src/engine/metadata-module
 import { DestroyViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-filter-group-permission.guard';
 import { UpdateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-group-permission.guard';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
+import { WorkspaceMigrationRunnerGraphqlApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-graphql-api-exception.filter';
 
 @MetadataResolver(() => ViewFilterGroupDTO)
-@UseFilters(ViewGraphqlApiExceptionFilter)
+@UseFilters(
+  ViewGraphqlApiExceptionFilter,
+  FlatEntityMapsGraphqlApiExceptionFilter,
+  WorkspaceMigrationRunnerGraphqlApiExceptionFilter,
+)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewFilterGroupResolver {
   constructor(

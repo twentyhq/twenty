@@ -43,9 +43,15 @@ import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.
 import { ViewWidgetUpsertService } from 'src/engine/metadata-modules/view/services/view-widget-upsert.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
+import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
+import { WorkspaceMigrationRunnerGraphqlApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-graphql-api-exception.filter';
 
 @MetadataResolver(() => ViewDTO)
-@UseFilters(ViewGraphqlApiExceptionFilter)
+@UseFilters(
+  ViewGraphqlApiExceptionFilter,
+  FlatEntityMapsGraphqlApiExceptionFilter,
+  WorkspaceMigrationRunnerGraphqlApiExceptionFilter,
+)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewResolver {
   constructor(

@@ -31,6 +31,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
+import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
@@ -79,6 +80,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   RowLevelPermissionPredicateGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
+  FlatEntityMapsGraphqlApiExceptionFilter,
 )
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 export class RoleResolver {

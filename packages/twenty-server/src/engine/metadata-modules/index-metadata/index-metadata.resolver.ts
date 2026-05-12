@@ -8,10 +8,12 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { WorkspaceMigrationRunnerGraphqlApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => IndexMetadataDTO)
@@ -19,6 +21,8 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,
   PermissionsGraphqlApiExceptionFilter,
+  FlatEntityMapsGraphqlApiExceptionFilter,
+  WorkspaceMigrationRunnerGraphqlApiExceptionFilter,
 )
 export class IndexMetadataResolver {
   @ResolveField(() => [IndexFieldMetadataDTO], { nullable: false })

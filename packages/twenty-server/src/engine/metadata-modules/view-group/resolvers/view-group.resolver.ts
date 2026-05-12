@@ -6,6 +6,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
 import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
 import { DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/delete-view-group.input';
 import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/destroy-view-group.input';
@@ -13,13 +14,18 @@ import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dto
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
 import { ViewGroupGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view-group/utils/view-group-graphql-api-exception.filter';
+import { WorkspaceMigrationRunnerGraphqlApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-graphql-api-exception.filter';
 import { CreateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-group-permission.guard';
 import { DeleteViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-group-permission.guard';
 import { DestroyViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-group-permission.guard';
 import { UpdateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-group-permission.guard';
 
 @MetadataResolver(() => ViewGroupDTO)
-@UseFilters(ViewGroupGraphqlApiExceptionFilter)
+@UseFilters(
+  ViewGroupGraphqlApiExceptionFilter,
+  FlatEntityMapsGraphqlApiExceptionFilter,
+  WorkspaceMigrationRunnerGraphqlApiExceptionFilter,
+)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewGroupResolver {
   constructor(private readonly viewGroupService: ViewGroupService) {}

@@ -15,6 +15,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
 import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
 import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
@@ -30,7 +31,10 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 
 @MetadataResolver(() => PageLayoutDTO)
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
-@UseFilters(PageLayoutGraphqlApiExceptionFilter)
+@UseFilters(
+  PageLayoutGraphqlApiExceptionFilter,
+  FlatEntityMapsGraphqlApiExceptionFilter,
+)
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
 export class PageLayoutResolver {

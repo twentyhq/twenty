@@ -40,10 +40,16 @@ import {
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-rest-api-exception.filter';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
+import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
 @Controller('rest/metadata/views')
 @UseGuards(WorkspaceAuthGuard)
-@UseFilters(ViewRestApiExceptionFilter)
+@UseFilters(
+  ViewRestApiExceptionFilter,
+  FlatEntityMapsRestApiExceptionFilter,
+  WorkspaceMigrationRunnerRestApiExceptionFilter,
+)
 export class ViewController {
   constructor(
     private readonly viewService: ViewService,

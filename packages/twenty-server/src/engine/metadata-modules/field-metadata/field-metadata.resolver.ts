@@ -23,8 +23,10 @@ import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-m
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
+import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { WorkspaceMigrationRunnerGraphqlApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-graphql-api-exception.filter';
 
 // Keep @Parent() structurally typed so ResolverValidationPipe does not validate
 // FieldMetadataDTO date decorators on already-loaded parent records.
@@ -38,6 +40,8 @@ type FieldMetadataStandardOverrideParent = Parameters<
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
+  FlatEntityMapsGraphqlApiExceptionFilter,
+  WorkspaceMigrationRunnerGraphqlApiExceptionFilter,
 )
 export class FieldMetadataResolver {
   constructor(

@@ -32,7 +32,9 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
+import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { WorkspaceMigrationRunnerGraphqlApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-graphql-api-exception.filter';
 
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -40,6 +42,8 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,
   PermissionsGraphqlApiExceptionFilter,
+  FlatEntityMapsGraphqlApiExceptionFilter,
+  WorkspaceMigrationRunnerGraphqlApiExceptionFilter,
 )
 export class ObjectMetadataResolver {
   constructor(
