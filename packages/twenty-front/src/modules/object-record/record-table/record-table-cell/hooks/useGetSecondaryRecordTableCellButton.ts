@@ -9,10 +9,11 @@ import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { captureInvalidLinksFieldUrlOpenAttempt } from '@/object-record/record-table/record-table-cell/utils/captureInvalidLinksFieldUrlOpenAttempt';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { FieldMetadataSettingsOnClickAction } from 'twenty-shared/types';
-import { ensureAbsoluteUrl, isDefined } from 'twenty-shared/utils';
+import { ensureAbsoluteUrl, isDefined, isValidUrl } from 'twenty-shared/utils';
 import { IconArrowUpRight, IconCopy, IconMail } from 'twenty-ui/display';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -85,7 +86,19 @@ export const useGetSecondaryRecordTableCellButton = () => {
   if (isFieldLinks(fieldDefinition)) {
     const url = (fieldValue as FieldLinksValue).primaryLinkUrl ?? '';
     openLinkOnClick = () => {
-      window.open(ensureAbsoluteUrl(url), '_blank');
+      const absoluteUrl = ensureAbsoluteUrl(url);
+
+      if (!isValidUrl(absoluteUrl)) {
+        void captureInvalidLinksFieldUrlOpenAttempt({
+          fieldName: fieldDefinition.metadata.fieldName,
+          recordId,
+          url: absoluteUrl,
+        });
+
+        return;
+      }
+
+      window.open(absoluteUrl, '_blank');
     };
     copyOnClick = () => {
       copyToClipboard(url, t`Link copied to clipboard`);
