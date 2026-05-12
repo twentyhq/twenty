@@ -16,6 +16,10 @@ const SHARP_SUPPORTED_MIME_TYPES = new Set([
   'image/avif',
 ]);
 
+const isBufferLike = (
+  file: Buffer | Uint8Array | string,
+): file is Buffer | Uint8Array => typeof file !== 'string';
+
 export const sanitizeFile = async ({
   file,
   ext,
@@ -42,13 +46,9 @@ export const sanitizeFile = async ({
     return purify.sanitize(fileString);
   }
 
-  if (mimeType && SHARP_SUPPORTED_MIME_TYPES.has(mimeType)) {
+  if (mimeType && SHARP_SUPPORTED_MIME_TYPES.has(mimeType) && isBufferLike(file)) {
     try {
-      const inputBuffer = Buffer.isBuffer(file)
-        ? file
-        : typeof file === 'string'
-          ? Buffer.from(file, 'binary')
-          : Buffer.from(file);
+      const inputBuffer = Buffer.isBuffer(file) ? file : Buffer.from(file);
 
       // rotate() applies EXIF orientation before metadata is stripped
       return await sharp(inputBuffer).rotate().toBuffer();
