@@ -1,5 +1,5 @@
-import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
@@ -103,7 +103,7 @@ export const SidePanelWorkflowSelectAction = ({
                   size={16}
                 />
               )}
-              text={fn.name}
+              text={fn.workflowActionTriggerSettings?.label ?? fn.name}
               onClick={() => handleFunctionClick(fn.id)}
             />
           ))}

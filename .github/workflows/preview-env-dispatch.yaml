@@ -36,17 +36,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger preview environment workflow
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          event-type: preview-environment
-          client-payload: '{"pr_number": "${{ github.event.pull_request.number }}", "pr_head_sha": "${{ github.event.pull_request.head.sha }}", "repo_full_name": "${{ github.repository }}"}'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          gh api repos/"$REPOSITORY"/dispatches \
+            -f event_type=preview-environment \
+            -f "client_payload[pr_number]=$PR_NUMBER" \
+            -f "client_payload[pr_head_sha]=$PR_HEAD_SHA" \
+            -f "client_payload[repo_full_name]=$REPOSITORY"
 
       - name: Dispatch to ci-privileged for PR comment
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          repository: twentyhq/ci-privileged
-          event-type: preview-env-url
-          client-payload: '{"pr_number": ${{ toJSON(github.event.pull_request.number) }}, "keepalive_dispatch_time": ${{ toJSON(github.event.pull_request.updated_at) }}, "repo": ${{ toJSON(github.repository) }}}'
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          KEEPALIVE_DISPATCH_TIME: ${{ github.event.pull_request.updated_at }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            -f event_type=preview-env-url \
+            -f "client_payload[pr_number]=$PR_NUMBER" \
+            -f "client_payload[keepalive_dispatch_time]=$KEEPALIVE_DISPATCH_TIME" \
+            -f "client_payload[repo]=$REPOSITORY"
