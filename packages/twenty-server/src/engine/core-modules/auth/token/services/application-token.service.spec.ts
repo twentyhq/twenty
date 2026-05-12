@@ -29,10 +29,9 @@ describe('ApplicationTokenService', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            sign: jest.fn(),
+            signAsync: jest.fn(),
             verifyJwtToken: jest.fn(),
             decode: jest.fn(),
-            generateAppSecret: jest.fn(),
             extractJwtFromRequest: jest.fn(),
           },
         },
@@ -81,7 +80,7 @@ describe('ApplicationTokenService', () => {
       jest
         .spyOn(applicationRepository, 'findOne')
         .mockResolvedValue(mockApplication as ApplicationEntity);
-      jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      jest.spyOn(jwtWrapperService, 'signAsync').mockResolvedValue(mockToken);
 
       const result = await service.generateApplicationAccessToken({
         workspaceId,
@@ -92,7 +91,7 @@ describe('ApplicationTokenService', () => {
         token: mockToken,
         expiresAt: expect.any(Date),
       });
-      expect(jwtWrapperService.sign).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           sub: applicationId,
           applicationId,
@@ -116,7 +115,7 @@ describe('ApplicationTokenService', () => {
       jest
         .spyOn(applicationRepository, 'findOne')
         .mockResolvedValue(mockApplication as ApplicationEntity);
-      jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      jest.spyOn(jwtWrapperService, 'signAsync').mockResolvedValue(mockToken);
 
       const result = await service.generateApplicationAccessToken({
         workspaceId,
@@ -129,7 +128,7 @@ describe('ApplicationTokenService', () => {
         token: mockToken,
         expiresAt: expect.any(Date),
       });
-      expect(jwtWrapperService.sign).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           sub: applicationId,
           applicationId,
@@ -271,7 +270,7 @@ describe('ApplicationTokenService', () => {
       jest
         .spyOn(applicationRepository, 'findOne')
         .mockResolvedValue(mockApplication as ApplicationEntity);
-      jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      jest.spyOn(jwtWrapperService, 'signAsync').mockResolvedValue(mockToken);
 
       const result = await service.generateApplicationTokenPair({
         workspaceId,
@@ -286,7 +285,7 @@ describe('ApplicationTokenService', () => {
         token: mockToken,
         expiresAt: expect.any(Date),
       });
-      expect(jwtWrapperService.sign).toHaveBeenCalledTimes(2);
+      expect(jwtWrapperService.signAsync).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -304,7 +303,7 @@ describe('ApplicationTokenService', () => {
       jest
         .spyOn(applicationRepository, 'findOne')
         .mockResolvedValue(mockApplication as ApplicationEntity);
-      jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      jest.spyOn(jwtWrapperService, 'signAsync').mockResolvedValue(mockToken);
 
       const result = await service.renewApplicationTokens({
         workspaceId,

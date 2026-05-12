@@ -11,6 +11,13 @@ import { JWT_ASYMMETRIC_ALGORITHM } from 'src/engine/core-modules/jwt/constants/
 const ASYMMETRIC_TOKEN_TYPES: ReadonlySet<JwtTokenTypeEnum> = new Set([
   JwtTokenTypeEnum.ACCESS,
   JwtTokenTypeEnum.REFRESH,
+  JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
+  JwtTokenTypeEnum.LOGIN,
+  JwtTokenTypeEnum.FILE,
+  JwtTokenTypeEnum.API_KEY,
+  JwtTokenTypeEnum.APPLICATION_ACCESS,
+  JwtTokenTypeEnum.APPLICATION_REFRESH,
+  JwtTokenTypeEnum.APP_OAUTH_STATE,
 ]);
 
 export const isAsymmetricSigningEligible = (type: JwtTokenTypeEnum): boolean =>

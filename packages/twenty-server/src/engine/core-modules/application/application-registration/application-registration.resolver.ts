@@ -293,7 +293,7 @@ export class ApplicationRegistrationResolver {
       return null;
     }
 
-    return this.fileUrlService.signFileByIdUrl({
+    return await this.fileUrlService.signFileByIdUrl({
       fileId: registration.tarballFileId,
       workspaceId,
       fileFolder: FileFolder.AppTarball,

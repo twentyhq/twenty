@@ -54,6 +54,9 @@ const buildAccessTokenPayload = (payload: AccessTokenJwtPayload) => ({
 });
 
 let sharedAccessToken: string;
+let sharedRefreshToken: string;
+let sharedLoginToken: string;
+let sharedWorkspaceAgnosticToken: string;
 let sharedPayload: AccessTokenJwtPayload;
 let currentKid: string;
 
@@ -66,7 +69,7 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
       expectToFail: false,
     });
 
-    const workspaceAgnosticToken =
+    sharedWorkspaceAgnosticToken =
       signUpData.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
 
     await global.testDataSource.query(
@@ -75,16 +78,17 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     );
 
     const { data: workspaceData } = await signUpInNewWorkspace({
-      accessToken: workspaceAgnosticToken,
+      accessToken: sharedWorkspaceAgnosticToken,
       expectToFail: false,
     });
 
     const subdomainUrl =
       workspaceData.signUpInNewWorkspace.workspace.workspaceUrls.subdomainUrl;
-    const loginToken = workspaceData.signUpInNewWorkspace.loginToken.token;
+
+    sharedLoginToken = workspaceData.signUpInNewWorkspace.loginToken.token;
 
     const { data: tokensData } = await getAuthTokensFromLoginToken({
-      loginToken,
+      loginToken: sharedLoginToken,
       origin: subdomainUrl,
       expectToFail: false,
     });
@@ -92,6 +96,8 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     sharedAccessToken =
       tokensData.getAuthTokensFromLoginToken.tokens
         .accessOrWorkspaceAgnosticToken.token;
+    sharedRefreshToken =
+      tokensData.getAuthTokensFromLoginToken.tokens.refreshToken.token;
     sharedPayload = jwt.decode(sharedAccessToken) as AccessTokenJwtPayload;
     currentKid = decodeJwtCompleteOrThrow(sharedAccessToken).header
       .kid as string;
@@ -240,4 +246,18 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
 
     expectOneNotInternalServerErrorSnapshot({ errors });
   });
+
+  it.each([
+    ['REFRESH', () => sharedRefreshToken],
+    ['WORKSPACE_AGNOSTIC', () => sharedWorkspaceAgnosticToken],
+    ['LOGIN', () => sharedLoginToken],
+  ])(
+    'signs %s tokens with ES256 + kid pointing at the current signing key',
+    (_label, getToken) => {
+      const decoded = decodeJwtCompleteOrThrow(getToken());
+
+      expect(decoded.header.alg).toBe('ES256');
+      expect(decoded.header.kid).toBe(currentKid);
+    },
+  );
 });

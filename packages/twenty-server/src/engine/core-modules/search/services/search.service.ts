@@ -543,11 +543,11 @@ export class SearchService {
     return imageIdentifierField.name;
   }
 
-  private getImageUrlWithToken(
+  private async getImageUrlWithToken(
     avatarFileId: string,
     fileFolder: FileFolder,
     workspaceId: string,
-  ): string {
+  ): Promise<string> {
     return this.fileUrlService.signFileByIdUrl({
       fileId: avatarFileId,
       workspaceId,
@@ -555,12 +555,12 @@ export class SearchService {
     });
   }
 
-  getImageIdentifierValue(
+  async getImageIdentifierValue(
     record: ObjectRecord,
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     workspaceId: string,
-  ): string {
+  ): Promise<string> {
     const imageIdentifierField = this.getImageIdentifierColumn(
       flatObjectMetadata,
       flatFieldMetadataMaps,
@@ -648,7 +648,7 @@ export class SearchService {
     return recordEdges;
   }
 
-  computeSearchObjectResults({
+  async computeSearchObjectResults({
     recordsWithObjectMetadataItems,
     flatFieldMetadataMaps,
     workspaceId,
@@ -660,10 +660,10 @@ export class SearchService {
     workspaceId: string;
     limit: number;
     after?: string;
-  }): SearchResultConnectionDTO {
-    const searchRecords = recordsWithObjectMetadataItems.flatMap(
+  }): Promise<SearchResultConnectionDTO> {
+    const recordPromises = recordsWithObjectMetadataItems.flatMap(
       ({ objectMetadataItem, records }) => {
-        return records.map((record) => {
+        return records.map(async (record) => {
           return {
             recordId: record.id,
             objectNameSingular: objectMetadataItem.nameSingular,
@@ -675,7 +675,7 @@ export class SearchService {
               objectMetadataItem,
               flatFieldMetadataMaps,
             ),
-            imageUrl: this.getImageIdentifierValue(
+            imageUrl: await this.getImageIdentifierValue(
               record,
               objectMetadataItem,
               flatFieldMetadataMaps,
@@ -687,6 +687,7 @@ export class SearchService {
         });
       },
     );
+    const searchRecords = await Promise.all(recordPromises);
 
     const sortedRecords = this.sortSearchObjectResults(searchRecords).slice(
       0,

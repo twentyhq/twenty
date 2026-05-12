@@ -536,13 +536,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     });
   }
 
-  castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {
+  async castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {
     return {
       id: workspace.id,
       displayName: workspace.displayName,
       workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       logo: isDefined(workspace.logoFileId)
-        ? this.fileUrlService.signFileByIdUrl({
+        ? await this.fileUrlService.signFileByIdUrl({
             fileId: workspace.logoFileId,
             workspaceId: workspace.id,
             fileFolder: FileFolder.CorePicture,
@@ -584,20 +584,21 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     authProvider: AuthProviderEnum,
   ) {
     return {
-      availableWorkspacesForSignUp:
+      availableWorkspacesForSignUp: await Promise.all(
         availableWorkspaces.availableWorkspacesForSignUp.map(
-          ({ workspace, appToken }) => {
+          async ({ workspace, appToken }) => {
             return {
-              ...this.castWorkspaceToAvailableWorkspace(workspace),
+              ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
               ...(appToken ? { personalInviteToken: appToken.value } : {}),
             };
           },
         ),
+      ),
       availableWorkspacesForSignIn: await Promise.all(
         availableWorkspaces.availableWorkspacesForSignIn.map(
           async ({ workspace }) => {
             return {
-              ...this.castWorkspaceToAvailableWorkspace(workspace),
+              ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
               loginToken: workspaceValidator.isAuthEnabled(
                 authProvider,
                 workspace,

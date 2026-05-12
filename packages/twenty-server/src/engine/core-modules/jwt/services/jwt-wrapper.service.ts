@@ -55,10 +55,10 @@ export class JwtWrapperService {
   ) {}
 
   /**
-   * @deprecated Use {@link signAsync} for ACCESS / REFRESH tokens (ES256, with
-   * rotatable signing keys). Synchronous HS256 signing remains in place for
-   * token types not yet migrated to asymmetric signing, but new call sites
-   * should not be introduced.
+   * @deprecated All production sign paths route through {@link signAsync}
+   * (ES256, rotatable signing keys). Legacy HS256 tokens are still accepted
+   * during verification indefinitely, but new sign call sites must not be
+   * introduced.
    */
   sign(payload: JwtPayload, options?: JwtSignOptions): string {
     return this.jwtService.sign(payload, options);
@@ -79,7 +79,7 @@ export class JwtWrapperService {
 
     if (!isDefined(signingKey)) {
       throw new AuthException(
-        'No active signing key available to sign ACCESS / REFRESH token',
+        'No active signing key available to sign asymmetric token',
         AuthExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }

@@ -18,10 +18,9 @@ describe('TransientTokenService', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            sign: jest.fn(),
+            signAsync: jest.fn(),
             verifyJwtToken: jest.fn(),
             decode: jest.fn(),
-            generateAppSecret: jest.fn().mockReturnValue('mocked-secret'),
           },
         },
         {
@@ -55,7 +54,7 @@ describe('TransientTokenService', () => {
 
         return undefined;
       });
-      jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      jest.spyOn(jwtWrapperService, 'signAsync').mockResolvedValue(mockToken);
 
       const result = await service.generateTransientToken({
         workspaceMemberId,
@@ -70,7 +69,7 @@ describe('TransientTokenService', () => {
       expect(twentyConfigService.get).toHaveBeenCalledWith(
         'SHORT_TERM_TOKEN_EXPIRES_IN',
       );
-      expect(jwtWrapperService.sign).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsync).toHaveBeenCalledWith(
         {
           sub: workspaceMemberId,
           type: JwtTokenTypeEnum.LOGIN,
@@ -78,10 +77,7 @@ describe('TransientTokenService', () => {
           workspaceId,
           workspaceMemberId,
         },
-        expect.objectContaining({
-          secret: 'mocked-secret',
-          expiresIn: mockExpiresIn,
-        }),
+        { expiresIn: mockExpiresIn },
       );
     });
   });
