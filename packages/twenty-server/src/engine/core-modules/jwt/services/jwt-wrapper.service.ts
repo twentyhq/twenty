@@ -166,7 +166,7 @@ export class JwtWrapperService {
       return null;
     }
 
-    return jwt.sign(payload as object, signingKey.privateKey, {
+    return jwt.sign(payload as object, signingKey.privateKeyPem, {
       ...options,
       algorithm: 'ES256',
       keyid: signingKey.id,
@@ -227,11 +227,12 @@ export class JwtWrapperService {
     signingKeyId: string;
     options?: JwtVerifyOptions;
   }) {
-    const publicKey = await this.jwtKeyManagerService.getValidPublicKeyById(
-      args.signingKeyId,
-    );
+    const publicKeyPem =
+      await this.jwtKeyManagerService.getValidPublicKeyPemById(
+        args.signingKeyId,
+      );
 
-    if (!isDefined(publicKey)) {
+    if (!isDefined(publicKeyPem)) {
       throw new AuthException(
         'Token invalid.',
         AuthExceptionCode.UNAUTHENTICATED,
@@ -239,7 +240,7 @@ export class JwtWrapperService {
     }
 
     try {
-      return jwt.verify(args.token, publicKey, {
+      return jwt.verify(args.token, publicKeyPem, {
         ...args.options,
         algorithms: ['ES256'],
       });

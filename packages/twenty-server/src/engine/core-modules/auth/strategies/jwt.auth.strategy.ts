@@ -60,9 +60,9 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         })
       ) {
         jwtKeyManagerService
-          .getValidPublicKeyById(decodedHeader!.kid as string)
-          .then((publicKey) => {
-            if (!isDefined(publicKey)) {
+          .getValidPublicKeyPemById(decodedHeader!.kid as string)
+          .then((publicKeyPem) => {
+            if (!isDefined(publicKeyPem)) {
               done(
                 new AuthException(
                   'Token invalid.',
@@ -74,7 +74,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
               return;
             }
 
-            done(null, publicKey);
+            done(null, publicKeyPem);
           })
           .catch((error) => done(error, null));
 

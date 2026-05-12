@@ -1,13 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  createPrivateKey,
-  createPublicKey,
-  generateKeyPairSync,
-  type KeyObject,
-  randomUUID,
-} from 'crypto';
+import { generateKeyPairSync, randomUUID } from 'crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -22,9 +16,8 @@ import {
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 export type CurrentSigningKey = {
-  privateKey: KeyObject;
-  publicKey: KeyObject;
   id: string;
+  privateKeyPem: string;
 };
 
 const UNIQUE_VIOLATION_PG_CODE = '23505';
@@ -56,21 +49,12 @@ export class JwtKeyManagerService {
     }
   }
 
-  async getValidPublicKeyById(id: string): Promise<KeyObject | null> {
+  async getValidPublicKeyPemById(id: string): Promise<string | null> {
     if (!isNonEmptyString(id) || !isValidUuid(id)) {
       return null;
     }
 
-    const cachedPem = await this.coreEntityCacheService.get(
-      'signingKeyPublicKey',
-      id,
-    );
-
-    if (!isDefined(cachedPem)) {
-      return null;
-    }
-
-    return createPublicKey(cachedPem);
+    return this.coreEntityCacheService.get('signingKeyPublicKey', id);
   }
 
   private async loadOrCreateCurrentSigningKey(): Promise<CurrentSigningKey | null> {
@@ -80,8 +64,10 @@ export class JwtKeyManagerService {
       if (isDefined(existing)) {
         return {
           id: existing.id,
-          privateKey: this.decryptPrivateKey(existing.privateKey, existing.id),
-          publicKey: createPublicKey(existing.publicKey),
+          privateKeyPem: this.decryptPrivateKey(
+            existing.privateKey,
+            existing.id,
+          ),
         };
       }
 
@@ -106,7 +92,7 @@ export class JwtKeyManagerService {
   private decryptPrivateKey(
     encryptedPrivateKey: string | null,
     id: string,
-  ): KeyObject {
+  ): string {
     if (!isDefined(encryptedPrivateKey)) {
       throw new JwtKeyManagerException(
         `Current signing key (id=${id}) has no privateKey`,
@@ -114,19 +100,7 @@ export class JwtKeyManagerService {
       );
     }
 
-    const privateKeyPem =
-      this.secretEncryptionService.decrypt(encryptedPrivateKey);
-
-    const key = createPrivateKey(privateKeyPem);
-
-    if (key.asymmetricKeyType !== 'ec') {
-      throw new JwtKeyManagerException(
-        `Stored signing private key has unexpected asymmetricKeyType "${key.asymmetricKeyType}" (expected "ec")`,
-        JwtKeyManagerExceptionCode.INVALID_PRIVATE_KEY,
-      );
-    }
-
-    return key;
+    return this.secretEncryptionService.decrypt(encryptedPrivateKey);
   }
 
   private async generateAndPersistCurrent(): Promise<CurrentSigningKey> {
@@ -144,11 +118,7 @@ export class JwtKeyManagerService {
         revokedAt: null,
       });
 
-      return {
-        id,
-        privateKey: generated.privateKey,
-        publicKey: generated.publicKey,
-      };
+      return { id, privateKeyPem: generated.privateKeyPem };
     } catch (error) {
       if (this.isUniqueViolation(error)) {
         const existing = await this.findCurrentSigningKeyRow();
@@ -156,11 +126,10 @@ export class JwtKeyManagerService {
         if (isDefined(existing)) {
           return {
             id: existing.id,
-            privateKey: this.decryptPrivateKey(
+            privateKeyPem: this.decryptPrivateKey(
               existing.privateKey,
               existing.id,
             ),
-            publicKey: createPublicKey(existing.publicKey),
           };
         }
       }
@@ -170,8 +139,6 @@ export class JwtKeyManagerService {
   }
 
   private generateEcP256KeyPair(): {
-    privateKey: KeyObject;
-    publicKey: KeyObject;
     privateKeyPem: string;
     publicKeyPem: string;
   } {
@@ -186,7 +153,7 @@ export class JwtKeyManagerService {
       .export({ format: 'pem', type: 'spki' })
       .toString();
 
-    return { privateKey, publicKey, privateKeyPem, publicKeyPem };
+    return { privateKeyPem, publicKeyPem };
   }
 
   private isUniqueViolation(error: unknown): boolean {
