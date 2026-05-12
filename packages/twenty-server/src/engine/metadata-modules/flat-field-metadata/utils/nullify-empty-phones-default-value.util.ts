@@ -27,8 +27,8 @@ export const nullifyEmptyPhonesDefaultValue = (
   const primaryPhoneCountryCode = isNullEquivalentTextDefaultValue(
     v.primaryPhoneCountryCode,
   )
-    ? null
-    : (v.primaryPhoneCountryCode ?? null);
+      ? null
+        : (v.primaryPhoneCountryCode ?? null);
   const primaryPhoneCallingCode = isNullEquivalentTextDefaultValue(
     v.primaryPhoneCallingCode,
   )

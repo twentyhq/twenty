@@ -5,7 +5,7 @@ describe('nullifyEmptyPhonesDefaultValue', () => {
     expect(
       nullifyEmptyPhonesDefaultValue({
         primaryPhoneNumber: "''",
-        primaryPhoneCountryCode: '',
+        primaryPhoneCountryCode: "''",
         primaryPhoneCallingCode: null,
         additionalPhones: null,
       }),
