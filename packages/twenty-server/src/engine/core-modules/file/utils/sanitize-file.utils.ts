@@ -46,7 +46,11 @@ export const sanitizeFile = async ({
     return purify.sanitize(fileString);
   }
 
-  if (mimeType && SHARP_SUPPORTED_MIME_TYPES.has(mimeType) && isBufferLike(file)) {
+  if (
+    mimeType &&
+    SHARP_SUPPORTED_MIME_TYPES.has(mimeType) &&
+    isBufferLike(file)
+  ) {
     try {
       const inputBuffer = Buffer.isBuffer(file) ? file : Buffer.from(file);
 
