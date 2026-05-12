@@ -7,8 +7,6 @@ import {
 } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job-constants';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 
-export { GENERATE_SDK_CLIENT_JOB_NAME, GenerateSdkClientJobData };
-
 @Processor(MessageQueue.workspaceQueue)
 export class GenerateSdkClientJob {
   constructor(
