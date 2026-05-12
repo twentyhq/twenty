@@ -17,9 +17,9 @@ export class SigningKeyEntityCacheProviderService extends CoreEntityCacheProvide
     super();
   }
 
-  async computeForCache(kid: string): Promise<string | null> {
+  async computeForCache(entityId: string): Promise<string | null> {
     const row = await this.signingKeyRepository.findOne({
-      where: { kid, revokedAt: IsNull() },
+      where: { id: entityId, revokedAt: IsNull() },
     });
 
     if (row === null) {

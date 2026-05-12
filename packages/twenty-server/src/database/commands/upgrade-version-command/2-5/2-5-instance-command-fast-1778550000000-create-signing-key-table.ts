@@ -11,7 +11,6 @@ export class CreateSigningKeyTableFastInstanceCommand
     await queryRunner.query(
       `CREATE TABLE IF NOT EXISTS "core"."signingKey" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-        "kid" character varying NOT NULL,
         "publicKey" character varying NOT NULL,
         "privateKey" character varying,
         "isCurrent" boolean NOT NULL DEFAULT false,
@@ -22,9 +21,6 @@ export class CreateSigningKeyTableFastInstanceCommand
       )`,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_SIGNING_KEY_KID_UNIQUE" ON "core"."signingKey" ("kid")`,
-    );
-    await queryRunner.query(
       `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_SIGNING_KEY_IS_CURRENT_UNIQUE" ON "core"."signingKey" ("isCurrent") WHERE "isCurrent" = true`,
     );
   }
@@ -32,9 +28,6 @@ export class CreateSigningKeyTableFastInstanceCommand
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `DROP INDEX IF EXISTS "core"."IDX_SIGNING_KEY_IS_CURRENT_UNIQUE"`,
-    );
-    await queryRunner.query(
-      `DROP INDEX IF EXISTS "core"."IDX_SIGNING_KEY_KID_UNIQUE"`,
     );
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."signingKey"`);
   }

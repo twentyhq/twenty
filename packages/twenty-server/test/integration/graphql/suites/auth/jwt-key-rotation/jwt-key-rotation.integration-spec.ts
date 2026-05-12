@@ -108,7 +108,7 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     }
 
     await global.testDataSource.query(
-      `DELETE FROM core."signingKey" WHERE "kid" = $1`,
+      `DELETE FROM core."signingKey" WHERE "id" = $1`,
       [PREVIOUS_KID],
     );
   });
@@ -120,8 +120,8 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     expect(isNonEmptyString(decoded.header.kid)).toBe(true);
 
     const rows = await global.testDataSource.query(
-      `SELECT "kid", "publicKey", "privateKey", "isCurrent", "revokedAt"
-       FROM core."signingKey" WHERE "kid" = $1`,
+      `SELECT "id", "publicKey", "privateKey", "isCurrent", "revokedAt"
+       FROM core."signingKey" WHERE "id" = $1`,
       [currentKid],
     );
 
@@ -167,9 +167,9 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
 
   it('verifies a token signed by a previously rotated-out kid (privateKey null, public key still present)', async () => {
     await global.testDataSource.query(
-      `INSERT INTO core."signingKey" ("kid", "publicKey", "privateKey", "isCurrent")
+      `INSERT INTO core."signingKey" ("id", "publicKey", "privateKey", "isCurrent")
        VALUES ($1, $2, NULL, false)
-       ON CONFLICT ("kid") DO NOTHING`,
+       ON CONFLICT ("id") DO NOTHING`,
       [PREVIOUS_KID, PREVIOUS_PUBLIC_KEY_PEM],
     );
 
@@ -195,7 +195,7 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
   });
 
   it('rejects a token whose kid was never registered without leaking a 500', async () => {
-    const unknownKid = `unknown-kid-${Date.now()}`;
+    const unknownKid = '00000000-0000-4000-8000-000000000099';
 
     const tokenSignedByOrphanKey = jwt.sign(
       buildAccessTokenPayload(sharedPayload),

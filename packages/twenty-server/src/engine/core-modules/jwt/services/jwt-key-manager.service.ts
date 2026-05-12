@@ -6,9 +6,11 @@ import {
   createPublicKey,
   generateKeyPairSync,
   type KeyObject,
+  randomUUID,
 } from 'crypto';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { QueryFailedError, Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -17,8 +19,6 @@ import {
   JwtKeyManagerException,
   JwtKeyManagerExceptionCode,
 } from 'src/engine/core-modules/jwt/jwt-key-manager.exception';
-import { computeJwkThumbprint } from 'src/engine/core-modules/jwt/utils/compute-jwk-thumbprint.util';
-import { isJwkThumbprint } from 'src/engine/core-modules/jwt/utils/is-jwk-thumbprint.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 export type CurrentSigningKey = {
@@ -57,7 +57,7 @@ export class JwtKeyManagerService {
   }
 
   async getActivePublicKeyByKid(kid: string): Promise<KeyObject | null> {
-    if (!isJwkThumbprint(kid)) {
+    if (!isNonEmptyString(kid) || !isValidUuid(kid)) {
       return null;
     }
 
@@ -104,7 +104,7 @@ export class JwtKeyManagerService {
   private materializeFromRow(row: SigningKeyEntity): CurrentSigningKey {
     if (!isDefined(row.privateKey)) {
       throw new JwtKeyManagerException(
-        `Current signing key row (kid=${row.kid}) has no privateKey`,
+        `Current signing key row (id=${row.id}) has no privateKey`,
         JwtKeyManagerExceptionCode.INVALID_PRIVATE_KEY,
       );
     }
@@ -115,7 +115,7 @@ export class JwtKeyManagerService {
       privateKeyPem = this.secretEncryptionService.decrypt(row.privateKey);
     } catch (error) {
       throw new JwtKeyManagerException(
-        `Failed to decrypt current signing key (kid=${row.kid}): ${
+        `Failed to decrypt current signing key (id=${row.id}): ${
           error instanceof Error ? error.message : String(error)
         }`,
         JwtKeyManagerExceptionCode.SIGNING_KEY_DECRYPTION_FAILED,
@@ -125,15 +125,16 @@ export class JwtKeyManagerService {
     const privateKey = this.parsePrivateKeyOrThrow(privateKeyPem);
     const publicKey = this.parsePublicKeyOrThrow(row.publicKey);
 
-    return { privateKey, publicKey, kid: row.kid };
+    return { privateKey, publicKey, kid: row.id };
   }
 
   private async generateAndPersistCurrent(): Promise<CurrentSigningKey> {
     const generated = this.generateEcP256KeyPair();
+    const id = randomUUID();
 
     try {
       await this.signingKeyRepository.insert({
-        kid: generated.kid,
+        id,
         publicKey: generated.publicKeyPem,
         privateKey: this.secretEncryptionService.encrypt(
           generated.privateKeyPem,
@@ -145,7 +146,7 @@ export class JwtKeyManagerService {
       return {
         privateKey: generated.privateKey,
         publicKey: generated.publicKey,
-        kid: generated.kid,
+        kid: id,
       };
     } catch (error) {
       if (this.isUniqueViolation(error)) {
@@ -157,7 +158,7 @@ export class JwtKeyManagerService {
       }
 
       throw new JwtKeyManagerException(
-        `Failed to persist new signing key (kid=${generated.kid}): ${
+        `Failed to persist new signing key (id=${id}): ${
           error instanceof Error ? error.message : String(error)
         }`,
         JwtKeyManagerExceptionCode.SIGNING_KEY_PERSISTENCE_FAILED,
@@ -170,15 +171,11 @@ export class JwtKeyManagerService {
     publicKey: KeyObject;
     privateKeyPem: string;
     publicKeyPem: string;
-    kid: string;
   } {
     try {
       const { privateKey, publicKey } = generateKeyPairSync('ec', {
         namedCurve: 'P-256',
       });
-
-      const jwk = publicKey.export({ format: 'jwk' });
-      const kid = computeJwkThumbprint(jwk);
 
       const privateKeyPem = privateKey
         .export({ format: 'pem', type: 'pkcs8' })
@@ -187,7 +184,7 @@ export class JwtKeyManagerService {
         .export({ format: 'pem', type: 'spki' })
         .toString();
 
-      return { privateKey, publicKey, privateKeyPem, publicKeyPem, kid };
+      return { privateKey, publicKey, privateKeyPem, publicKeyPem };
     } catch (error) {
       throw new JwtKeyManagerException(
         `Failed to generate EC P-256 signing key: ${

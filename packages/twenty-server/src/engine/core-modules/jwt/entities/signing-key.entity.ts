@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'signingKey', schema: 'core' })
-@Index('IDX_SIGNING_KEY_KID_UNIQUE', ['kid'], { unique: true })
 @Index('IDX_SIGNING_KEY_IS_CURRENT_UNIQUE', ['isCurrent'], {
   unique: true,
   where: '"isCurrent" = true',
@@ -16,9 +15,6 @@ import {
 export class SigningKeyEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ type: 'varchar' })
-  kid: string;
 
   @Column({ type: 'varchar' })
   publicKey: string;
