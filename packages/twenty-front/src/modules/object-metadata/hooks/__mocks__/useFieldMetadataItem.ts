@@ -151,7 +151,7 @@ export const responseData = {
       },
       workspaceMembers: [],
       currentUserWorkspace: {
-        permissionFlagGrants: ['DATA_MODEL'],
+        permissionFlags: ['DATA_MODEL'],
       },
       currentWorkspace: {
         id: 'test-workspace-id',

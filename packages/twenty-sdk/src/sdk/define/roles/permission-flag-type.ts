@@ -1,1 +1,1 @@
-export { PermissionFlagType as PermissionFlagGrant } from 'twenty-shared/constants';
+export { PermissionFlagType as PermissionFlag } from 'twenty-shared/constants';

@@ -19,7 +19,7 @@ import {
   UpdateOneRoleDocument,
   UpsertFieldPermissionsDocument,
   UpsertObjectPermissionsDocument,
-  UpsertPermissionFlagGrantsDocument,
+  UpsertPermissionFlagsDocument,
 } from '~/generated-metadata/graphql';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 
@@ -49,9 +49,7 @@ export const useSaveDraftRoleToDB = ({
 }) => {
   const [createRole] = useMutation(CreateOneRoleDocument);
   const [updateRole] = useMutation(UpdateOneRoleDocument);
-  const [upsertPermissionFlagGrants] = useMutation(
-    UpsertPermissionFlagGrantsDocument,
-  );
+  const [upsertPermissionFlags] = useMutation(UpsertPermissionFlagsDocument);
   const [upsertObjectPermissions] = useMutation(
     UpsertObjectPermissionsDocument,
   );
@@ -166,14 +164,14 @@ export const useSaveDraftRoleToDB = ({
   };
 
   const updateExistingRole = async () => {
-    if (isDefined(dirtyFields.permissionFlagGrants)) {
-      await upsertPermissionFlagGrants({
+    if (isDefined(dirtyFields.permissionFlags)) {
+      await upsertPermissionFlags({
         variables: {
-          upsertPermissionFlagGrantsInput: {
+          upsertPermissionFlagsInput: {
             roleId: roleId,
-            permissionFlagGrantKeys:
-              settingsDraftRole.permissionFlagGrants?.map(
-                (permissionFlagGrant) => permissionFlagGrant.flag,
+            permissionFlagKeys:
+              settingsDraftRole.permissionFlags?.map(
+                (permissionFlag) => permissionFlag.flag,
               ) ?? [],
           },
         },
@@ -363,14 +361,14 @@ export const useSaveDraftRoleToDB = ({
   };
 
   const upsertRolePermissions = async (targetRoleId: string) => {
-    if (isDefined(dirtyFields.permissionFlagGrants)) {
-      await upsertPermissionFlagGrants({
+    if (isDefined(dirtyFields.permissionFlags)) {
+      await upsertPermissionFlags({
         variables: {
-          upsertPermissionFlagGrantsInput: {
+          upsertPermissionFlagsInput: {
             roleId: targetRoleId,
-            permissionFlagGrantKeys:
-              settingsDraftRole.permissionFlagGrants?.map(
-                (permissionFlagGrant) => permissionFlagGrant.flag,
+            permissionFlagKeys:
+              settingsDraftRole.permissionFlags?.map(
+                (permissionFlag) => permissionFlag.flag,
               ) ?? [],
           },
         },

@@ -7,7 +7,7 @@ export type FlatRole = Omit<
   | 'workspaceMembers'
   | 'fieldPermissions'
   | 'objectPermissions'
-  | 'permissionFlagGrants'
+  | 'permissionFlags'
   | 'rowLevelPermissionPredicateGroups'
   | 'rowLevelPermissionPredicates'
 >;

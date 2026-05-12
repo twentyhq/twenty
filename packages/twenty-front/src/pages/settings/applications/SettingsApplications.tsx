@@ -1,4 +1,4 @@
-import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -22,7 +22,7 @@ const APPLICATIONS_TAB_LIST_ID = 'applications-tab-list';
 export const SettingsApplications = () => {
   const { t } = useLingui();
 
-  const hasDeveloperAccess = useHasPermissionFlagGrant(
+  const hasDeveloperAccess = useHasPermissionFlag(
     PermissionFlagType.API_KEYS_AND_WEBHOOKS,
   );
 

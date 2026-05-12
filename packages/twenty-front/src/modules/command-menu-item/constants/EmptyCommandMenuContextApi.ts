@@ -24,7 +24,7 @@ export const EMPTY_COMMAND_MENU_CONTEXT_API: CommandMenuContextApi = {
   },
   selectedRecords: [],
   featureFlags: {},
-  permissionFlagGrants: {},
+  permissionFlags: {},
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
   objectMetadataItem: {},

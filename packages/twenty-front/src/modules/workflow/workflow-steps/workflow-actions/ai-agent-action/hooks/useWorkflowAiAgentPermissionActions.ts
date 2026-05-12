@@ -1,7 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
-import { useActionRolePermissionFlagGrantConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagGrantConfig';
-import { useSettingsRolePermissionFlagGrantConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagGrantConfig';
+import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
+import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -20,20 +20,20 @@ import {
   AssignRoleToAgentDocument,
   CreateOneRoleDocument,
   UpsertObjectPermissionsDocument,
-  UpsertPermissionFlagGrantsDocument,
+  UpsertPermissionFlagsDocument,
 } from '~/generated-metadata/graphql';
 
 type UseWorkflowAiAgentPermissionActionsParams = {
   readonly: boolean;
   objectPermissions: ObjectPermission[];
-  permissionFlagGrantKeys: PermissionFlagType[];
+  permissionFlagKeys: PermissionFlagType[];
   refetchAgentAndRoles: () => Promise<{ refetchedAgent?: Agent }>;
 };
 
 export const useWorkflowAiAgentPermissionActions = ({
   readonly,
   objectPermissions,
-  permissionFlagGrantKeys,
+  permissionFlagKeys,
   refetchAgentAndRoles,
 }: UseWorkflowAiAgentPermissionActionsParams) => {
   const { enqueueSuccessSnackBar } = useSnackBar();
@@ -41,10 +41,10 @@ export const useWorkflowAiAgentPermissionActions = ({
     useAtomState(workflowAiAgentActionAgentState);
   const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const settingsPermissionsConfig = useSettingsRolePermissionFlagGrantConfig({
+  const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
   });
-  const actionPermissionsConfig = useActionRolePermissionFlagGrantConfig({
+  const actionPermissionsConfig = useActionRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
   });
 
@@ -60,13 +60,11 @@ export const useWorkflowAiAgentPermissionActions = ({
   const [upsertObjectPermissions] = useMutation(
     UpsertObjectPermissionsDocument,
   );
-  const [upsertPermissionFlagGrants] = useMutation(
-    UpsertPermissionFlagGrantsDocument,
-  );
+  const [upsertPermissionFlags] = useMutation(UpsertPermissionFlagsDocument);
 
   const roleId = workflowAiAgentActionAgent?.roleId;
 
-  const permissionFlagGrantLabelMap = useMemo(
+  const permissionFlagLabelMap = useMemo(
     () =>
       [...settingsPermissionsConfig, ...actionPermissionsConfig].reduce<
         Partial<Record<PermissionFlagType, string>>
@@ -298,8 +296,8 @@ export const useWorkflowAiAgentPermissionActions = ({
     }
   };
 
-  const handleAddPermissionFlagGrant = async (
-    permissionFlagGrantKey: PermissionFlagType,
+  const handleAddPermissionFlag = async (
+    permissionFlagKey: PermissionFlagType,
   ) => {
     if (readonly) {
       return;
@@ -307,21 +305,15 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     const ensuredRoleId = await ensureRoleId();
 
-    if (
-      !ensuredRoleId ||
-      permissionFlagGrantKeys.includes(permissionFlagGrantKey)
-    ) {
+    if (!ensuredRoleId || permissionFlagKeys.includes(permissionFlagKey)) {
       return;
     }
 
-    await upsertPermissionFlagGrants({
+    await upsertPermissionFlags({
       variables: {
-        upsertPermissionFlagGrantsInput: {
+        upsertPermissionFlagsInput: {
           roleId: ensuredRoleId,
-          permissionFlagGrantKeys: [
-            ...permissionFlagGrantKeys,
-            permissionFlagGrantKey,
-          ],
+          permissionFlagKeys: [...permissionFlagKeys, permissionFlagKey],
         },
       },
     });
@@ -331,33 +323,33 @@ export const useWorkflowAiAgentPermissionActions = ({
     setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
   };
 
-  const handleDeletePermissionFlagGrant = async (
-    permissionFlagGrantKey: PermissionFlagType,
+  const handleDeletePermissionFlag = async (
+    permissionFlagKey: PermissionFlagType,
   ) => {
     if (!isDefined(roleId) || readonly) {
       return;
     }
 
-    if (!permissionFlagGrantKeys.includes(permissionFlagGrantKey)) {
+    if (!permissionFlagKeys.includes(permissionFlagKey)) {
       return;
     }
 
-    const permissionFlagGrantKeysAfterRemoval = permissionFlagGrantKeys.filter(
-      (flag) => flag !== permissionFlagGrantKey,
+    const permissionFlagKeysAfterRemoval = permissionFlagKeys.filter(
+      (flag) => flag !== permissionFlagKey,
     );
 
-    await upsertPermissionFlagGrants({
+    await upsertPermissionFlags({
       variables: {
-        upsertPermissionFlagGrantsInput: {
+        upsertPermissionFlagsInput: {
           roleId,
-          permissionFlagGrantKeys: permissionFlagGrantKeysAfterRemoval,
+          permissionFlagKeys: permissionFlagKeysAfterRemoval,
         },
       },
     });
 
     await refetchAgentAndRoles();
 
-    const permissionLabel = permissionFlagGrantLabelMap[permissionFlagGrantKey];
+    const permissionLabel = permissionFlagLabelMap[permissionFlagKey];
 
     if (isDefined(permissionLabel)) {
       enqueueSuccessSnackBar({
@@ -369,7 +361,7 @@ export const useWorkflowAiAgentPermissionActions = ({
   return {
     handleAddPermission,
     handleDeletePermission,
-    handleAddPermissionFlagGrant,
-    handleDeletePermissionFlagGrant,
+    handleAddPermissionFlag,
+    handleDeletePermissionFlag,
   };
 };

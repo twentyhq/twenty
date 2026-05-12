@@ -40,7 +40,7 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = ({
     case 'commandMenuItem':
     case 'frontComponent':
     case 'navigationMenuItem':
-    case 'permissionFlagGrant':
+    case 'rolePermissionFlag':
     case 'permissionFlag':
     case 'objectPermission':
     case 'fieldPermission':

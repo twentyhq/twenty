@@ -142,9 +142,7 @@ export class ViewAccessService {
           workspaceId,
         });
 
-      return (
-        permissions.permissionFlagGrants[PermissionFlagType.VIEWS] ?? false
-      );
+      return permissions.permissionFlags[PermissionFlagType.VIEWS] ?? false;
     }
 
     if (isDefined(apiKeyId)) {

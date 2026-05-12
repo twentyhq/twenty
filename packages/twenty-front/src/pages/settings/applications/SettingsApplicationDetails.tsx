@@ -6,7 +6,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -92,11 +92,6 @@ export const SettingsApplicationDetails = () => {
   const displayName =
     app?.displayName ?? application?.name ?? t`Application details`;
   const description = app?.description ?? resolvedDescription;
-  const logoUrl =
-    app?.logoUrl ??
-    application?.logo ??
-    application?.applicationRegistration?.logoUrl ??
-    undefined;
 
   const getScreenshots = () => {
     if (app?.screenshots?.length) return app.screenshots;
@@ -112,7 +107,7 @@ export const SettingsApplicationDetails = () => {
 
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
-  const canInstallMarketplaceApps = useHasPermissionFlagGrant(
+  const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
   );
 

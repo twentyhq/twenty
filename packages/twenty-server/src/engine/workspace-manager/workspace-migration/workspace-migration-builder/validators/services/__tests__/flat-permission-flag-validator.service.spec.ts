@@ -5,7 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatPermissionFlagGrant } from 'src/engine/metadata-modules/flat-permission-flag-grant/types/flat-permission-flag-grant.type';
+import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { type PermissionFlagPermissionType } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
 import { PermissionFlagExceptionCode } from 'src/engine/metadata-modules/permission-flag/permission-flag.exception';
@@ -38,13 +38,13 @@ const buildFlatDefinition = (
 const buildEmptyMaps = (): FlatEntityMaps<FlatPermissionFlag> =>
   createEmptyFlatEntityMaps() as unknown as FlatEntityMaps<FlatPermissionFlag>;
 
-const buildEmptyPermissionFlagGrantMaps =
-  (): FlatEntityMaps<FlatPermissionFlagGrant> =>
-    createEmptyFlatEntityMaps() as unknown as FlatEntityMaps<FlatPermissionFlagGrant>;
+const buildEmptyRolePermissionFlagMaps =
+  (): FlatEntityMaps<FlatRolePermissionFlag> =>
+    createEmptyFlatEntityMaps() as unknown as FlatEntityMaps<FlatRolePermissionFlag>;
 
-const buildFlatPermissionFlagGrant = (
-  overrides: Partial<FlatPermissionFlagGrant> = {},
-): FlatPermissionFlagGrant =>
+const buildFlatRolePermissionFlag = (
+  overrides: Partial<FlatRolePermissionFlag> = {},
+): FlatRolePermissionFlag =>
   ({
     id: '00000000-0000-0000-0000-000000000101',
     universalIdentifier: '00000000-0000-0000-0000-000000000101',
@@ -56,7 +56,7 @@ const buildFlatPermissionFlagGrant = (
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     ...overrides,
-  }) as unknown as FlatPermissionFlagGrant;
+  }) as unknown as FlatRolePermissionFlag;
 
 const buildArgs = (
   flatEntityToValidate: FlatPermissionFlag,
@@ -281,7 +281,7 @@ describe('FlatPermissionFlagValidatorService', () => {
         flatEntityToValidate: existing,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatPermissionFlagMaps: optimisticMaps,
-          flatPermissionFlagGrantMaps: buildEmptyPermissionFlagGrantMaps(),
+          flatRolePermissionFlagMaps: buildEmptyRolePermissionFlagMaps(),
         },
         buildOptions: {} as never,
       } as unknown as Parameters<
@@ -298,7 +298,7 @@ describe('FlatPermissionFlagValidatorService', () => {
         }),
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatPermissionFlagMaps: buildEmptyMaps(),
-          flatPermissionFlagGrantMaps: buildEmptyPermissionFlagGrantMaps(),
+          flatRolePermissionFlagMaps: buildEmptyRolePermissionFlagMaps(),
         },
         buildOptions: {} as never,
       } as unknown as Parameters<
@@ -323,7 +323,7 @@ describe('FlatPermissionFlagValidatorService', () => {
         flatEntityToValidate: existing,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatPermissionFlagMaps: optimisticMaps,
-          flatPermissionFlagGrantMaps: buildEmptyPermissionFlagGrantMaps(),
+          flatRolePermissionFlagMaps: buildEmptyRolePermissionFlagMaps(),
         },
         buildOptions: {
           isSystemBuild: false,
@@ -347,19 +347,19 @@ describe('FlatPermissionFlagValidatorService', () => {
       optimisticMaps.byUniversalIdentifier[existing.universalIdentifier] =
         existing;
 
-      const permissionFlagGrantMaps = buildEmptyPermissionFlagGrantMaps();
-      const permissionFlagGrant = buildFlatPermissionFlagGrant({
+      const rolePermissionFlagMaps = buildEmptyRolePermissionFlagMaps();
+      const rolePermissionFlag = buildFlatRolePermissionFlag({
         flag: PermissionFlagType.WORKSPACE,
       });
-      permissionFlagGrantMaps.byUniversalIdentifier[
-        permissionFlagGrant.universalIdentifier
-      ] = permissionFlagGrant;
+      rolePermissionFlagMaps.byUniversalIdentifier[
+        rolePermissionFlag.universalIdentifier
+      ] = rolePermissionFlag;
 
       const result = service.validateFlatPermissionFlagDeletion({
         flatEntityToValidate: existing,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatPermissionFlagMaps: optimisticMaps,
-          flatPermissionFlagGrantMaps: permissionFlagGrantMaps,
+          flatRolePermissionFlagMaps: rolePermissionFlagMaps,
         },
         buildOptions: {
           isSystemBuild: false,

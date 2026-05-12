@@ -4,7 +4,7 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { useGetNextResourceCreditPrice } from '@/settings/billing/hooks/useGetNextResourceCreditPrice';
 import { useGetNextMeteredBillingPrice } from '@/settings/billing/hooks/useGetNextMeteredBillingPrice';
-import { usePermissionFlagGrantMap } from '@/settings/roles/hooks/usePermissionFlagGrantMap';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -52,7 +52,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   );
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToManageBilling } =
-    usePermissionFlagGrantMap();
+    usePermissionFlagMap();
 
   if (!hasPermissionToManageBilling) {
     return null;

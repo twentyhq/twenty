@@ -121,12 +121,12 @@ const buildSyntheticRole = (
     canReadFieldValue: permission.canReadFieldValue,
     canUpdateFieldValue: permission.canUpdateFieldValue,
   })),
-  permissionFlagGrants: (defaultRole.permissionFlagGrants ?? []).map(
-    (permissionFlagGrant) => ({
-      __typename: 'PermissionFlagGrant' as const,
+  permissionFlags: (defaultRole.permissionFlags ?? []).map(
+    (permissionFlag) => ({
+      __typename: 'PermissionFlag' as const,
       id: uuidv4(),
       roleId: defaultRole.universalIdentifier,
-      flag: permissionFlagGrant.flag,
+      flag: permissionFlag.flag,
     }),
   ),
 });

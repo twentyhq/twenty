@@ -1,7 +1,7 @@
 ---
 title: Roles & Permissions
 description: Declare what objects and fields your app's logic functions and front components can read and write.
-icon: "shield-halved"
+icon: 'shield-halved'
 ---
 
 A **role** is a permission set: which objects an app can read or write, which fields it can see, and which platform-level capabilities it can use. Every app's logic functions and front components inherit the permissions of the role marked with `defineApplicationRole()` (see [The default function role](#the-default-function-role) below).
@@ -9,7 +9,7 @@ A **role** is a permission set: which objects an app can read or write, which fi
 ```ts src/roles/restricted-company-role.ts
 import {
   defineRole,
-  PermissionFlagGrant,
+  PermissionFlag,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
@@ -40,12 +40,13 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlagGrants: [PermissionFlagGrant.APPLICATIONS],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
 });
 ```
 
@@ -54,7 +55,7 @@ export default defineRole({
 When you scaffold a new app, the CLI creates a default role file declared with `defineApplicationRole()`:
 
 ```ts src/roles/default-role.ts
-import { defineApplicationRole, PermissionFlagGrant } from 'twenty-sdk/define';
+import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -73,13 +74,14 @@ export default defineApplicationRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [],
   fieldPermissions: [],
-  permissionFlagGrants: [],
+  permissionFlags: [],
 });
 ```
 
 `defineApplicationRole()` is a thin wrapper around `defineRole()` that flags **the** role used as your application's default at install time. Validation is identical to `defineRole`, but the build pipeline auto-wires its `universalIdentifier` into the application manifest's `defaultRoleUniversalIdentifier` — so you do not need to reference it from [`defineApplication`](/developers/extend/apps/config/application) yourself.
 
 Notes:
+
 - Exactly **one** `defineApplicationRole(...)` is allowed per app — the manifest build will fail if it finds more than one.
 - Use `defineRole()` (not `defineApplicationRole()`) for any **additional** roles your app ships.
 - Setting `defaultRoleUniversalIdentifier` explicitly on `defineApplication()` is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`.
@@ -88,5 +90,5 @@ Notes:
 
 - Start from the scaffolded role, then progressively restrict it — the default grants broad read access, which is rarely what you want in production.
 - Replace `objectPermissions` and `fieldPermissions` with the exact objects and fields your functions actually need.
-- `permissionFlagGrants` control access to platform-level capabilities. Keep them minimal.
+- `permissionFlags` control access to platform-level capabilities. Keep them minimal.
 - See a working example: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

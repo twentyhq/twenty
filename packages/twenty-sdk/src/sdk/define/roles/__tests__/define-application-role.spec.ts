@@ -32,16 +32,16 @@ describe('defineApplicationRole', () => {
     expect(result.config?.canReadAllObjectRecords).toBe(true);
   });
 
-  it('should accept permissionFlagGrants', () => {
+  it('should accept permissionFlags', () => {
     const config = {
       ...validConfig,
-      permissionFlagGrants: ['UPLOAD_FILE'],
+      permissionFlags: ['UPLOAD_FILE'],
     };
 
     const result = defineApplicationRole(config as any);
 
     expect(result.success).toBe(true);
-    expect(result.config?.permissionFlagGrants).toHaveLength(1);
+    expect(result.config?.permissionFlags).toHaveLength(1);
   });
 
   it('should return error when universalIdentifier is missing', () => {

@@ -8,7 +8,7 @@ import { type Repository } from 'typeorm';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { PermissionFlagGrantEntity } from 'src/engine/metadata-modules/permission-flag-grant/permission-flag-grant.entity';
+import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
@@ -23,7 +23,7 @@ const PERSON_OBJECT_METADATA_ID = '44444444-4444-4444-8444-444444444444';
 
 const createBaseRole = (
   overrides: Partial<RoleEntity> &
-    Pick<RoleEntity, 'permissionFlagGrants' | 'objectPermissions'>,
+    Pick<RoleEntity, 'rolePermissionFlags' | 'objectPermissions'>,
 ): RoleEntity =>
   ({
     id: ROLE_ID,
@@ -56,8 +56,8 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
   let objectPermissionRepository: jest.Mocked<
     Pick<Repository<ObjectPermissionEntity>, 'find'>
   >;
-  let permissionFlagGrantRepository: jest.Mocked<
-    Pick<Repository<PermissionFlagGrantEntity>, 'find'>
+  let rolePermissionFlagRepository: jest.Mocked<
+    Pick<Repository<RolePermissionFlagEntity>, 'find'>
   >;
 
   const workspaceObjectMetadataFixture: ObjectMetadataEntity[] = [
@@ -94,7 +94,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       find: jest.fn().mockResolvedValue([]),
     };
 
-    permissionFlagGrantRepository = {
+    rolePermissionFlagRepository = {
       find: jest.fn().mockResolvedValue([]),
     };
     const fieldPermissionRepository = {
@@ -123,8 +123,8 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
           useValue: objectPermissionRepository,
         },
         {
-          provide: getRepositoryToken(PermissionFlagGrantEntity),
-          useValue: permissionFlagGrantRepository,
+          provide: getRepositoryToken(RolePermissionFlagEntity),
+          useValue: rolePermissionFlagRepository,
         },
         {
           provide: getRepositoryToken(FieldPermissionEntity),
@@ -148,7 +148,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
     it('should deny all record permissions when role has neither workspace members access nor update-all-settings', async () => {
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -164,16 +164,16 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
     });
 
     it('should grant all record permissions when role has WORKSPACE_MEMBERS permission flag', async () => {
-      permissionFlagGrantRepository.find.mockResolvedValue([
+      rolePermissionFlagRepository.find.mockResolvedValue([
         {
           roleId: ROLE_ID,
           flag: PermissionFlagType.WORKSPACE_MEMBERS,
-        } as PermissionFlagGrantEntity,
+        } as RolePermissionFlagEntity,
       ]);
 
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -192,7 +192,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       roleRepository.find.mockResolvedValue([
         createBaseRole({
           canUpdateAllSettings: true,
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -210,7 +210,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
     it('should deny all record permissions when role has neither workflows access nor update-all-settings', async () => {
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -225,16 +225,16 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
     });
 
     it('should grant all record permissions when role has WORKFLOWS permission flag', async () => {
-      permissionFlagGrantRepository.find.mockResolvedValue([
+      rolePermissionFlagRepository.find.mockResolvedValue([
         {
           roleId: ROLE_ID,
           flag: PermissionFlagType.WORKFLOWS,
-        } as PermissionFlagGrantEntity,
+        } as RolePermissionFlagEntity,
       ]);
 
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -264,7 +264,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
 
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -285,7 +285,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
           canUpdateAllObjectRecords: true,
           canSoftDeleteAllObjectRecords: true,
           canDestroyAllObjectRecords: true,
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);

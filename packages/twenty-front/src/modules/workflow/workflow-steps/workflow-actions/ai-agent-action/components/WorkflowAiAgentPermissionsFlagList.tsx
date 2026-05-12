@@ -6,21 +6,21 @@ import { WorkflowAiAgentPermissionsFlagRow } from './WorkflowAiAgentPermissionsF
 type WorkflowAiAgentPermissionsFlagListProps = {
   title: string;
   permissions: SettingsRolePermissionsSettingPermission[];
-  enabledPermissionFlagGrantKeys: PermissionFlagType[];
+  enabledPermissionFlagKeys: PermissionFlagType[];
   readonly: boolean;
   showDeleteButton?: boolean;
-  onAddPermissionFlagGrant?: (permissionKey: PermissionFlagType) => void;
-  onDeletePermissionFlagGrant?: (permissionKey: PermissionFlagType) => void;
+  onAddPermissionFlag?: (permissionKey: PermissionFlagType) => void;
+  onDeletePermissionFlag?: (permissionKey: PermissionFlagType) => void;
 };
 
 export const WorkflowAiAgentPermissionsFlagList = ({
   title,
   permissions,
-  enabledPermissionFlagGrantKeys,
+  enabledPermissionFlagKeys,
   readonly,
   showDeleteButton = false,
-  onAddPermissionFlagGrant,
-  onDeletePermissionFlagGrant,
+  onAddPermissionFlag,
+  onDeletePermissionFlag,
 }: WorkflowAiAgentPermissionsFlagListProps) => {
   if (permissions.length === 0) {
     return null;
@@ -29,9 +29,7 @@ export const WorkflowAiAgentPermissionsFlagList = ({
   return (
     <SidePanelGroup heading={title}>
       {permissions.map((permission) => {
-        const isEnabled = enabledPermissionFlagGrantKeys.includes(
-          permission.key,
-        );
+        const isEnabled = enabledPermissionFlagKeys.includes(permission.key);
 
         return (
           <WorkflowAiAgentPermissionsFlagRow
@@ -40,8 +38,8 @@ export const WorkflowAiAgentPermissionsFlagList = ({
             isEnabled={isEnabled}
             readonly={readonly}
             showDeleteButton={showDeleteButton}
-            onAdd={() => onAddPermissionFlagGrant?.(permission.key)}
-            onDelete={() => onDeletePermissionFlagGrant?.(permission.key)}
+            onAdd={() => onAddPermissionFlag?.(permission.key)}
+            onDelete={() => onDeletePermissionFlag?.(permission.key)}
           />
         );
       })}

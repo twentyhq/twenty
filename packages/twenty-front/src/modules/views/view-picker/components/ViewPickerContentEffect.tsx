@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -77,7 +77,7 @@ export const ViewPickerContentEffect = () => {
   const { availableFieldsForGrouping } =
     useGetAvailableFieldsToGroupRecordsBy();
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
-  const hasViewPermission = useHasPermissionFlagGrant(PermissionFlagType.VIEWS);
+  const hasViewPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   useEffect(() => {
     if (

@@ -3,7 +3,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconLock, IconUserPlus, IconUsers } from 'twenty-ui/display';
 
-import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -23,9 +23,7 @@ const MEMBERS_TAB_ROLES_ID = 'roles';
 export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
 
-  const hasRolesPermission = useHasPermissionFlagGrant(
-    PermissionFlagType.ROLES,
-  );
+  const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,

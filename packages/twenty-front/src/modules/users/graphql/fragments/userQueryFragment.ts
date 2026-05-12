@@ -34,7 +34,7 @@ export const USER_QUERY_FRAGMENT = gql`
     }
     currentUserWorkspace {
       id
-      permissionFlagGrants
+      permissionFlags
       objectsPermissions {
         ...ObjectPermissionFragment
       }

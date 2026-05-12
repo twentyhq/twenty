@@ -166,7 +166,7 @@ export class FlatPermissionFlagValidatorService {
     flatEntityToValidate: { universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPermissionFlagMaps: optimisticFlatPermissionFlagMaps,
-      flatPermissionFlagGrantMaps: optimisticFlatPermissionFlagGrantMaps,
+      flatRolePermissionFlagMaps: optimisticFlatRolePermissionFlagMaps,
     },
     buildOptions,
   }: UniversalFlatEntityValidationArgs<
@@ -210,11 +210,11 @@ export class FlatPermissionFlagValidatorService {
     }
 
     const isPermissionFlagInUse = Object.values(
-      optimisticFlatPermissionFlagGrantMaps.byUniversalIdentifier,
+      optimisticFlatRolePermissionFlagMaps.byUniversalIdentifier,
     ).some(
-      (permissionFlagGrant) =>
-        isDefined(permissionFlagGrant) &&
-        permissionFlagGrant.flag === existing.key,
+      (rolePermissionFlag) =>
+        isDefined(rolePermissionFlag) &&
+        rolePermissionFlag.flag === existing.key,
     );
 
     if (isPermissionFlagInUse) {

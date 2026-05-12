@@ -60,7 +60,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           workspaceId: 'test-workspace-id',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -133,7 +133,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           workspaceId: 'test-workspace-id',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -184,7 +184,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           roleTargets: [],
           objectPermissions: [],
           fieldPermissions: [],
@@ -254,7 +254,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           roleTargets: [],
           objectPermissions: [],
           fieldPermissions: [],
@@ -292,8 +292,8 @@ describe('PermissionsService', () => {
       });
     });
 
-    describe('Granular permissions with permissionFlagGrants', () => {
-      it('should grant specific tool permission when included in permissionFlagGrants even if canAccessAllTools is false', () => {
+    describe('Granular permissions with rolePermissionFlags', () => {
+      it('should grant specific tool permission when included in rolePermissionFlags even if canAccessAllTools is false', () => {
         const roleWithSpecificPermission: Partial<RoleEntity> = {
           id: 'test-role-id',
           label: 'Test Role',
@@ -308,7 +308,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlagGrants: [
+          rolePermissionFlags: [
             {
               id: 'permission-1',
               flag: PermissionFlagType.UPLOAD_FILE,
@@ -338,7 +338,7 @@ describe('PermissionsService', () => {
         ).toBe(false);
       });
 
-      it('should grant specific settings permission when included in permissionFlagGrants even if canUpdateAllSettings is false', () => {
+      it('should grant specific settings permission when included in rolePermissionFlags even if canUpdateAllSettings is false', () => {
         const roleWithSpecificPermission: Partial<RoleEntity> = {
           id: 'test-role-id',
           label: 'Test Role',
@@ -353,7 +353,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlagGrants: [
+          rolePermissionFlags: [
             {
               id: 'permission-1',
               flag: PermissionFlagType.ROLES,
@@ -400,7 +400,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlagGrants: [],
+          rolePermissionFlags: [],
           roleTargets: [],
           objectPermissions: [],
           fieldPermissions: [],

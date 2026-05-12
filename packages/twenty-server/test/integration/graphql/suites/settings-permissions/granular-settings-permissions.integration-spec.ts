@@ -59,10 +59,10 @@ describe('Granular settings permissions', () => {
     // Assign specific setting permissions to the custom role
     const upsertSettingPermissionsQuery = {
       query: `
-        mutation UpsertPermissionFlagGrants {
-          upsertPermissionFlagGrants(upsertPermissionFlagGrantsInput: {
+        mutation UpsertPermissionFlags {
+          upsertPermissionFlags(upsertPermissionFlagsInput: {
             roleId: "${customRoleId}"
-            permissionFlagGrantKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.WORKFLOWS}]
+            permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.WORKFLOWS}]
           }) {
             id
             flag
@@ -335,7 +335,7 @@ describe('Granular settings permissions', () => {
           id
           label
           canUpdateAllSettings
-          permissionFlagGrants {
+          permissionFlags {
             flag
           }
         `,
@@ -349,12 +349,12 @@ describe('Granular settings permissions', () => {
 
       jestExpectToBeDefined(customRole);
       expect(customRole.canUpdateAllSettings).toBe(false);
-      expect(customRole.permissionFlagGrants).toHaveLength(3);
-      jestExpectToBeDefined(customRole.permissionFlagGrants);
-      expect(customRole.permissionFlagGrants.map((p) => p.flag)).toContain(
+      expect(customRole.permissionFlags).toHaveLength(3);
+      jestExpectToBeDefined(customRole.permissionFlags);
+      expect(customRole.permissionFlags.map((p) => p.flag)).toContain(
         PermissionFlagType.DATA_MODEL,
       );
-      expect(customRole.permissionFlagGrants.map((p) => p.flag)).toContain(
+      expect(customRole.permissionFlags.map((p) => p.flag)).toContain(
         PermissionFlagType.WORKSPACE,
       );
     });
@@ -365,10 +365,10 @@ describe('Granular settings permissions', () => {
       // Add SECURITY permission to the custom role
       const upsertSecurityPermissionQuery = {
         query: `
-          mutation UpsertPermissionFlagGrants {
-            upsertPermissionFlagGrants(upsertPermissionFlagGrantsInput: {
+          mutation UpsertPermissionFlags {
+            upsertPermissionFlags(upsertPermissionFlagsInput: {
               roleId: "${customRoleId}"
-              permissionFlagGrantKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.SECURITY}]
+              permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}, ${PermissionFlagType.SECURITY}]
             }) {
               id
               flag
@@ -385,13 +385,13 @@ describe('Granular settings permissions', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.upsertPermissionFlagGrants).toHaveLength(3);
+      expect(response.body.data.upsertPermissionFlags).toHaveLength(3);
 
       // Verify the permission was added using the new integration test utilities
       const { data, errors } = await findRoles({
         gqlFields: `
           id
-          permissionFlagGrants {
+          permissionFlags {
             flag
           }
         `,
@@ -406,9 +406,9 @@ describe('Granular settings permissions', () => {
       );
 
       jestExpectToBeDefined(updatedRole);
-      expect(updatedRole.permissionFlagGrants).toHaveLength(3);
-      jestExpectToBeDefined(updatedRole.permissionFlagGrants);
-      expect(updatedRole.permissionFlagGrants.map((p) => p.flag)).toContain(
+      expect(updatedRole.permissionFlags).toHaveLength(3);
+      jestExpectToBeDefined(updatedRole.permissionFlags);
+      expect(updatedRole.permissionFlags.map((p) => p.flag)).toContain(
         PermissionFlagType.SECURITY,
       );
     });
@@ -417,10 +417,10 @@ describe('Granular settings permissions', () => {
       // Remove SECURITY permission, keep only DATA_MODEL and WORKSPACE
       const upsertReducedPermissionsQuery = {
         query: `
-          mutation UpsertPermissionFlagGrants {
-            upsertPermissionFlagGrants(upsertPermissionFlagGrantsInput: {
+          mutation UpsertPermissionFlags {
+            upsertPermissionFlags(upsertPermissionFlagsInput: {
               roleId: "${customRoleId}"
-              permissionFlagGrantKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}]
+              permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}, ${PermissionFlagType.WORKSPACE}]
             }) {
               id
               flag
@@ -437,13 +437,13 @@ describe('Granular settings permissions', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.upsertPermissionFlagGrants).toHaveLength(2);
+      expect(response.body.data.upsertPermissionFlags).toHaveLength(2);
 
       // Verify SECURITY permission was removed using the new integration test utilities
       const { data, errors } = await findRoles({
         gqlFields: `
           id
-          permissionFlagGrants {
+          permissionFlags {
             flag
           }
         `,
@@ -458,9 +458,9 @@ describe('Granular settings permissions', () => {
       );
 
       jestExpectToBeDefined(updatedRole);
-      jestExpectToBeDefined(updatedRole.permissionFlagGrants);
-      expect(updatedRole.permissionFlagGrants).toHaveLength(2);
-      expect(updatedRole.permissionFlagGrants.map((p) => p.flag)).not.toContain(
+      jestExpectToBeDefined(updatedRole.permissionFlags);
+      expect(updatedRole.permissionFlags).toHaveLength(2);
+      expect(updatedRole.permissionFlags.map((p) => p.flag)).not.toContain(
         PermissionFlagType.SECURITY,
       );
     });

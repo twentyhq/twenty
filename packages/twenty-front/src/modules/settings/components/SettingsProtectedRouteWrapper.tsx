@@ -1,5 +1,5 @@
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
-import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type ReactNode } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
@@ -22,7 +22,7 @@ export const SettingsProtectedRouteWrapper = ({
   requiredFeatureFlag,
 }: SettingsProtectedRouteWrapperProps) => {
   const hasAccessTokenPair = useHasAccessTokenPair();
-  const hasPermission = useHasPermissionFlagGrant(settingsPermission);
+  const hasPermission = useHasPermissionFlag(settingsPermission);
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
     requiredFeatureFlag || null,
   );

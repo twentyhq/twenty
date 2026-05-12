@@ -558,14 +558,14 @@ describe('roles permissions', () => {
       });
     });
 
-    describe('upsertPermissionFlagGrants', () => {
+    describe('upsertPermissionFlags', () => {
       const upsertSettingPermissionsMutation = ({
         roleId,
       }: {
         roleId: string;
       }) => `
-      mutation UpsertPermissionFlagGrants {
-          upsertPermissionFlagGrants(upsertPermissionFlagGrantsInput: {roleId: "${roleId}", permissionFlagGrantKeys: [${PermissionFlagType.DATA_MODEL}]}) {
+      mutation UpsertPermissionFlags {
+          upsertPermissionFlags(upsertPermissionFlagsInput: {roleId: "${roleId}", permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}]}) {
               id
               roleId
               flag
@@ -601,9 +601,9 @@ describe('roles permissions', () => {
             expect(res.body.errors[0].extensions.code).toBe(
               ErrorCode.METADATA_VALIDATION_FAILED,
             );
-            const permissionFlagGrantErrors =
-              res.body.errors[0].extensions.errors?.permissionFlagGrant ?? [];
-            const hasRoleNotEditable = permissionFlagGrantErrors.some(
+            const rolePermissionFlagErrors =
+              res.body.errors[0].extensions.errors?.rolePermissionFlag ?? [];
+            const hasRoleNotEditable = rolePermissionFlagErrors.some(
               (failure: { errors?: Array<{ code?: string }> }) =>
                 failure.errors?.some(
                   (err) =>
@@ -629,7 +629,7 @@ describe('roles permissions', () => {
           .expect((res) => {
             expect(res.body.data).toBeDefined();
             expect(res.body.errors).toBeUndefined();
-            expect(res.body.data.upsertPermissionFlagGrants).toEqual(
+            expect(res.body.data.upsertPermissionFlags).toEqual(
               expect.arrayContaining([
                 expect.objectContaining({
                   roleId: createdEditableRoleId,

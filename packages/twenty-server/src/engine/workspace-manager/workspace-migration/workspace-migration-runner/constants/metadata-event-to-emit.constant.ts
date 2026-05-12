@@ -19,7 +19,7 @@ export const METADATA_EVENTS_TO_EMIT = {
   pageLayoutTab: true,
   commandMenuItem: true,
   navigationMenuItem: true,
-  permissionFlagGrant: true,
+  rolePermissionFlag: true,
   permissionFlag: true,
   objectPermission: true,
   fieldPermission: true,

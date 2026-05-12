@@ -12,7 +12,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useContext } from 'react';
 
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
@@ -144,7 +144,7 @@ export const MainNavigationDrawerTabsRow = () => {
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
   );
-  const hasAiSettingsPermission = useHasPermissionFlagGrant(
+  const hasAiSettingsPermission = useHasPermissionFlag(
     PermissionFlagType.AI_SETTINGS,
   );
 

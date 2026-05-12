@@ -2,7 +2,7 @@ import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplic
 import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useHasPermissionFlagGrant } from '@/settings/roles/hooks/useHasPermissionFlagGrant';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -46,7 +46,7 @@ export const SettingsAvailableApplicationDetails = () => {
   const { install, isInstalling } = useInstallMarketplaceApp();
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
-  const canInstallMarketplaceApps = useHasPermissionFlagGrant(
+  const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
   );
 

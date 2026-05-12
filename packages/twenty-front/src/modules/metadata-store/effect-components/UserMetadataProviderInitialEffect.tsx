@@ -104,9 +104,8 @@ export const UserMetadataProviderInitialEffect = () => {
 
     if (isDefined(userQueryData.currentUser.currentUserWorkspace)) {
       setCurrentUserWorkspace({
-        permissionFlagGrants:
-          userQueryData.currentUser.currentUserWorkspace.permissionFlagGrants ??
-          [],
+        permissionFlags:
+          userQueryData.currentUser.currentUserWorkspace.permissionFlags ?? [],
         twoFactorAuthenticationMethodSummary:
           userQueryData.currentUser.currentUserWorkspace
             .twoFactorAuthenticationMethodSummary ?? [],

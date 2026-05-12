@@ -76,11 +76,11 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     view: true,
     pageLayout: true,
   },
-  permissionFlagGrant: {
+  rolePermissionFlag: {
     role: true,
   },
   permissionFlag: {
-    permissionFlagGrant: true,
+    rolePermissionFlag: true,
   },
   objectPermission: {
     role: true,

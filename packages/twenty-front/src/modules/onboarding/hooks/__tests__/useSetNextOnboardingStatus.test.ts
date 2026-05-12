@@ -31,8 +31,7 @@ const renderHooks = (
   onboardingStatus: OnboardingStatus,
   withCurrentBillingSubscription: boolean,
   withOneWorkspaceMember = true,
-  permissionFlagGrants = mockedUserData.currentUserWorkspace
-    .permissionFlagGrants,
+  permissionFlags = mockedUserData.currentUserWorkspace.permissionFlags,
 ) => {
   const { result } = renderHook(
     () => {
@@ -58,7 +57,7 @@ const renderHooks = (
     result.current.setCurrentUser({ ...mockedUserData, onboardingStatus });
     result.current.setCurrentUserWorkspace({
       ...mockedUserData.currentUserWorkspace,
-      permissionFlagGrants,
+      permissionFlags,
     });
     result.current.setCurrentWorkspace({
       ...mockCurrentWorkspace,

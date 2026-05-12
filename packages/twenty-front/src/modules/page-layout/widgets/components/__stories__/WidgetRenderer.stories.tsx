@@ -1708,7 +1708,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
     // currentUserWorkspaceState is now a Jotai state, set it directly
     if (isRestricted === true) {
       jotaiStore.set(currentUserWorkspaceState.atom, {
-        permissionFlagGrants: [],
+        permissionFlags: [],
         twoFactorAuthenticationMethodSummary: null,
         objectsPermissions: [
           {
@@ -1725,7 +1725,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       });
     } else {
       jotaiStore.set(currentUserWorkspaceState.atom, {
-        permissionFlagGrants: [],
+        permissionFlags: [],
         twoFactorAuthenticationMethodSummary: null,
         objectsPermissions: [
           {

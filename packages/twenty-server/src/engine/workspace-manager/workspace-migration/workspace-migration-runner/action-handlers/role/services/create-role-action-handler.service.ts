@@ -44,7 +44,7 @@ export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
         rowLevelPermissionPredicateIds: [],
         rowLevelPermissionPredicateGroupIds: [],
         objectPermissionIds: [],
-        permissionFlagGrantIds: [],
+        rolePermissionFlagIds: [],
         fieldPermissionIds: [],
         ...emptyUniversalForeignKeyAggregators,
       },

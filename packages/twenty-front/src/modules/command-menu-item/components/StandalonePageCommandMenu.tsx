@@ -40,10 +40,10 @@ export const StandalonePageCommandMenu = () => {
       featureFlags[flag.key] = flag.value === true;
     }
 
-    const permissionFlagGrants: Record<string, boolean> = {};
+    const permissionFlags: Record<string, boolean> = {};
 
-    for (const flag of currentUserWorkspace?.permissionFlagGrants ?? []) {
-      permissionFlagGrants[flag] = true;
+    for (const flag of currentUserWorkspace?.permissionFlags ?? []) {
+      permissionFlags[flag] = true;
     }
 
     const targetObjectReadPermissions: Record<string, boolean> = {};
@@ -82,7 +82,7 @@ export const StandalonePageCommandMenu = () => {
       },
       selectedRecords: [],
       featureFlags,
-      permissionFlagGrants,
+      permissionFlags,
       targetObjectReadPermissions,
       targetObjectWritePermissions,
       objectMetadataItem: {},
@@ -90,7 +90,7 @@ export const StandalonePageCommandMenu = () => {
     };
   }, [
     currentWorkspace?.featureFlags,
-    currentUserWorkspace?.permissionFlagGrants,
+    currentUserWorkspace?.permissionFlags,
     isLayoutCustomizationModeEnabled,
     objectMetadataItems,
     store,

@@ -17,7 +17,7 @@ import { FlatPageLayoutTabValidatorService } from 'src/engine/workspace-manager/
 import { FlatPageLayoutValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service';
 import { FlatPageLayoutWidgetValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service';
 import { FlatPermissionFlagValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service';
-import { FlatPermissionFlagGrantValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-grant-validator.service';
+import { FlatRolePermissionFlagValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service';
 import { FlatRoleTargetValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service';
 import { FlatRoleValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service';
 import { FlatRowLevelPermissionPredicateGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service';
@@ -46,7 +46,7 @@ import { FlatConnectionProviderValidatorService } from 'src/engine/workspace-man
     FlatViewSortValidatorService,
     FlatFieldPermissionValidatorService,
     FlatObjectPermissionValidatorService,
-    FlatPermissionFlagGrantValidatorService,
+    FlatRolePermissionFlagValidatorService,
     FlatPermissionFlagValidatorService,
     FlatIndexValidatorService,
     FlatFieldMetadataValidatorService,
@@ -80,7 +80,7 @@ import { FlatConnectionProviderValidatorService } from 'src/engine/workspace-man
     FlatViewSortValidatorService,
     FlatFieldPermissionValidatorService,
     FlatObjectPermissionValidatorService,
-    FlatPermissionFlagGrantValidatorService,
+    FlatRolePermissionFlagValidatorService,
     FlatPermissionFlagValidatorService,
     FlatIndexValidatorService,
     FlatFieldMetadataValidatorService,

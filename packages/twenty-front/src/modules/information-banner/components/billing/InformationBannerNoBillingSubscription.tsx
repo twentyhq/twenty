@@ -1,7 +1,7 @@
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
-import { usePermissionFlagGrantMap } from '@/settings/roles/hooks/usePermissionFlagGrantMap';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -16,7 +16,7 @@ export const InformationBannerNoBillingSubscription = () => {
   });
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToSubscribe } =
-    usePermissionFlagGrantMap();
+    usePermissionFlagMap();
 
   return (
     <InformationBanner

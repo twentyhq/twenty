@@ -93,7 +93,7 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   >;
 
   @Field(() => [PermissionFlagType], { nullable: true })
-  permissionFlagGrants?: PermissionFlagType[];
+  permissionFlags?: PermissionFlagType[];
 
   @Field(() => [ObjectPermissionDTO], { nullable: true })
   objectPermissions?: ObjectPermissionDTO[];

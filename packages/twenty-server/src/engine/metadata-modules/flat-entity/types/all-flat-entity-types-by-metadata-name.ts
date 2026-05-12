@@ -26,8 +26,8 @@ import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-l
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type FlatPermissionFlagMaps } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag-maps.type';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
-import { type FlatPermissionFlagGrantMaps } from 'src/engine/metadata-modules/flat-permission-flag-grant/types/flat-permission-flag-grant-maps.type';
-import { type FlatPermissionFlagGrant } from 'src/engine/metadata-modules/flat-permission-flag-grant/types/flat-permission-flag-grant.type';
+import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
+import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
 import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
@@ -72,7 +72,7 @@ import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
 import { type UniversalFlatPermissionFlag } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-permission-flag.type';
-import { type UniversalFlatPermissionFlagGrant } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-permission-flag-grant.type';
+import { type UniversalFlatRolePermissionFlag } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role-permission-flag.type';
 import { type UniversalFlatRoleTarget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role-target.type';
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
@@ -208,13 +208,13 @@ import {
   type UniversalUpdatePermissionFlagAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/permission-flag/types/workspace-migration-permission-flag-action.type';
 import {
-  type FlatCreatePermissionFlagGrantAction,
-  type FlatDeletePermissionFlagGrantAction,
-  type FlatUpdatePermissionFlagGrantAction,
-  type UniversalCreatePermissionFlagGrantAction,
-  type UniversalDeletePermissionFlagGrantAction,
-  type UniversalUpdatePermissionFlagGrantAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/permission-flag-grant/types/workspace-migration-permission-flag-grant-action.type';
+  type FlatCreateRolePermissionFlagAction,
+  type FlatDeleteRolePermissionFlagAction,
+  type FlatUpdateRolePermissionFlagAction,
+  type UniversalCreateRolePermissionFlagAction,
+  type UniversalDeleteRolePermissionFlagAction,
+  type UniversalUpdateRolePermissionFlagAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-permission-flag/types/workspace-migration-role-permission-flag-action.type';
 import {
   type FlatCreateRoleTargetAction,
   type FlatDeleteRoleTargetAction,
@@ -636,21 +636,21 @@ export type AllFlatEntityTypesByMetadataName = {
     universalFlatEntity: UniversalFlatNavigationMenuItem;
     entity: NavigationMenuItemEntity;
   };
-  permissionFlagGrant: {
-    flatEntityMaps: FlatPermissionFlagGrantMaps;
+  rolePermissionFlag: {
+    flatEntityMaps: FlatRolePermissionFlagMaps;
     universalActions: {
-      create: UniversalCreatePermissionFlagGrantAction;
-      update: UniversalUpdatePermissionFlagGrantAction;
-      delete: UniversalDeletePermissionFlagGrantAction;
+      create: UniversalCreateRolePermissionFlagAction;
+      update: UniversalUpdateRolePermissionFlagAction;
+      delete: UniversalDeleteRolePermissionFlagAction;
     };
     flatActions: {
-      create: FlatCreatePermissionFlagGrantAction;
-      update: FlatUpdatePermissionFlagGrantAction;
-      delete: FlatDeletePermissionFlagGrantAction;
+      create: FlatCreateRolePermissionFlagAction;
+      update: FlatUpdateRolePermissionFlagAction;
+      delete: FlatDeleteRolePermissionFlagAction;
     };
-    flatEntity: FlatPermissionFlagGrant;
-    universalFlatEntity: UniversalFlatPermissionFlagGrant;
-    entity: MetadataEntity<'permissionFlagGrant'>;
+    flatEntity: FlatRolePermissionFlag;
+    universalFlatEntity: UniversalFlatRolePermissionFlag;
+    entity: MetadataEntity<'rolePermissionFlag'>;
   };
   permissionFlag: {
     flatEntityMaps: FlatPermissionFlagMaps;

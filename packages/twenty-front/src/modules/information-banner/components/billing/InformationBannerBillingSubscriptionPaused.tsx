@@ -1,7 +1,7 @@
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
-import { usePermissionFlagGrantMap } from '@/settings/roles/hooks/usePermissionFlagGrantMap';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -24,7 +24,7 @@ export const InformationBannerBillingSubscriptionPaused = () => {
 
   const {
     [PermissionFlagType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
-  } = usePermissionFlagGrantMap();
+  } = usePermissionFlagMap();
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {

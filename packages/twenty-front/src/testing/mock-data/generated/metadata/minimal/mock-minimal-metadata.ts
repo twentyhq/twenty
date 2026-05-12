@@ -743,7 +743,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "hash": "b022456a-bd5b-4314-9fb5-0111c80a8649"
     },
     {
-      "collectionName": "permissionFlagGrant",
+      "collectionName": "permissionFlag",
       "hash": "2de6c5b6-3b5c-4f61-8426-92c3d4c5daac"
     },
     {

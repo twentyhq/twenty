@@ -68,7 +68,7 @@ exports[`Sync application should fail when retargeting existing permissions to a
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
-      "permissionFlagGrant": [
+      "rolePermissionFlag": [
         {
           "errors": [
             {
@@ -85,7 +85,7 @@ exports[`Sync application should fail when retargeting existing permissions to a
           "flatEntityMinimalInformation": {
             "universalIdentifier": Any<String>,
           },
-          "metadataName": "permissionFlagGrant",
+          "metadataName": "rolePermissionFlag",
           "status": "fail",
           "type": "update",
         },
@@ -113,9 +113,9 @@ exports[`Sync application should fail when retargeting existing permissions to a
         },
       ],
     },
-    "message": "Validation failed for 1 role, 1 permissionFlagGrant",
+    "message": "Validation failed for 1 role, 1 rolePermissionFlag",
     "summary": {
-      "permissionFlagGrant": 1,
+      "rolePermissionFlag": 1,
       "role": 1,
       "totalErrors": 2,
     },

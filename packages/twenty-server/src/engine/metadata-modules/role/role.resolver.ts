@@ -39,10 +39,10 @@ import { FieldPermissionService } from 'src/engine/metadata-modules/object-permi
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { fromFlatFieldPermissionToFieldPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-field-permission-to-field-permission-dto.util';
 import { fromFlatObjectPermissionToObjectPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-object-permission-to-object-permission-dto.util';
-import { PermissionFlagGrantDTO } from 'src/engine/metadata-modules/permission-flag-grant/dtos/permission-flag-grant.dto';
-import { UpsertPermissionFlagGrantsInput } from 'src/engine/metadata-modules/permission-flag-grant/dtos/upsert-permission-flag-grant-input';
-import { PermissionFlagGrantService } from 'src/engine/metadata-modules/permission-flag-grant/permission-flag-grant.service';
-import { fromFlatPermissionFlagGrantToPermissionFlagGrantDto } from 'src/engine/metadata-modules/permission-flag-grant/utils/from-flat-permission-flag-grant-to-permission-flag-grant-dto.util';
+import { RolePermissionFlagDTO } from 'src/engine/metadata-modules/role-permission-flag/dtos/role-permission-flag.dto';
+import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/role-permission-flag/dtos/upsert-permission-flags.input';
+import { RolePermissionFlagService } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.service';
+import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -87,7 +87,7 @@ export class RoleResolver {
     private readonly roleService: RoleService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly objectPermissionService: ObjectPermissionService,
-    private readonly permissionFlagGrantService: PermissionFlagGrantService,
+    private readonly rolePermissionFlagService: RolePermissionFlagService,
     private readonly agentRoleService: AiAgentRoleService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly fieldPermissionService: FieldPermissionService,
@@ -223,19 +223,19 @@ export class RoleResolver {
     );
   }
 
-  @Mutation(() => [PermissionFlagGrantDTO])
-  async upsertPermissionFlagGrants(
+  @Mutation(() => [RolePermissionFlagDTO])
+  async upsertPermissionFlags(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args('upsertPermissionFlagGrantsInput')
-    upsertPermissionFlagGrantsInput: UpsertPermissionFlagGrantsInput,
-  ): Promise<PermissionFlagGrantDTO[]> {
-    const flatPermissionFlagGrants =
-      await this.permissionFlagGrantService.upsertPermissionFlagGrants({
+    @Args('upsertPermissionFlagsInput')
+    upsertPermissionFlagsInput: UpsertPermissionFlagsInput,
+  ): Promise<RolePermissionFlagDTO[]> {
+    const flatRolePermissionFlags =
+      await this.rolePermissionFlagService.upsertPermissionFlags({
         workspaceId: workspace.id,
-        input: upsertPermissionFlagGrantsInput,
+        input: upsertPermissionFlagsInput,
       });
-    return flatPermissionFlagGrants.map(
-      fromFlatPermissionFlagGrantToPermissionFlagGrantDto,
+    return flatRolePermissionFlags.map(
+      fromFlatRolePermissionFlagToRolePermissionFlagDto,
     );
   }
 

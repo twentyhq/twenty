@@ -58,7 +58,7 @@ export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLog
 export type {
   ObjectPermissionManifest,
   FieldPermissionManifest,
-  PermissionFlagGrantManifest,
+  PermissionFlagManifest,
   RoleManifest,
 } from './roleManifestType';
 export type { ServerVariables } from './server-variables.type';

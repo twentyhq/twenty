@@ -145,10 +145,10 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
 
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
 
-  const permissionFlagGrants: Record<string, boolean> = {};
+  const permissionFlags: Record<string, boolean> = {};
 
-  for (const flag of currentUserWorkspace?.permissionFlagGrants ?? []) {
-    permissionFlagGrants[flag] = true;
+  for (const flag of currentUserWorkspace?.permissionFlags ?? []) {
+    permissionFlags[flag] = true;
   }
 
   const targetObjectReadPermissions: Record<string, boolean> = {};
@@ -185,7 +185,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     objectPermissions,
     selectedRecords,
     featureFlags,
-    permissionFlagGrants,
+    permissionFlags,
     targetObjectReadPermissions,
     targetObjectWritePermissions,
     objectMetadataItem: objectMetadataItem ?? {},

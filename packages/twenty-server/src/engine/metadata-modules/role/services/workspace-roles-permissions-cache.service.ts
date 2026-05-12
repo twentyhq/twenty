@@ -16,7 +16,7 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { PermissionFlagGrantEntity } from 'src/engine/metadata-modules/permission-flag-grant/permission-flag-grant.entity';
+import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
@@ -41,8 +41,8 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(ObjectPermissionEntity)
     private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
-    @InjectRepository(PermissionFlagGrantEntity)
-    private readonly permissionFlagGrantRepository: Repository<PermissionFlagGrantEntity>,
+    @InjectRepository(RolePermissionFlagEntity)
+    private readonly rolePermissionFlagRepository: Repository<RolePermissionFlagEntity>,
     @InjectRepository(FieldPermissionEntity)
     private readonly fieldPermissionRepository: Repository<FieldPermissionEntity>,
     @InjectRepository(RowLevelPermissionPredicateEntity)
@@ -59,7 +59,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     const [
       roles,
       objectPermissions,
-      permissionFlagGrants,
+      rolePermissionFlags,
       fieldPermissions,
       rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroups,
@@ -71,7 +71,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       this.objectPermissionRepository.find({
         where: { workspaceId },
       }),
-      this.permissionFlagGrantRepository.find({
+      this.rolePermissionFlagRepository.find({
         where: { workspaceId },
       }),
       this.fieldPermissionRepository.find({
@@ -91,9 +91,9 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
         entities: objectPermissions,
         foreignKey: 'roleId',
       });
-    const permissionFlagGrantsByRoleId =
-      regroupEntitiesByRelatedEntityId<'permissionFlagGrant'>({
-        entities: permissionFlagGrants,
+    const rolePermissionFlagsByRoleId =
+      regroupEntitiesByRelatedEntityId<'rolePermissionFlag'>({
+        entities: rolePermissionFlags,
         foreignKey: 'roleId',
       });
     const fieldPermissionsByRoleId =
@@ -117,8 +117,8 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     for (const role of roles) {
       const roleObjectPermissions =
         objectPermissionsByRoleId.get(role.id) ?? [];
-      const rolePermissionFlagGrants =
-        permissionFlagGrantsByRoleId.get(role.id) ?? [];
+      const roleRolePermissionFlags =
+        rolePermissionFlagsByRoleId.get(role.id) ?? [];
       const roleFieldPermissions = fieldPermissionsByRoleId.get(role.id) ?? [];
       const roleRowLevelPermissionPredicates =
         rowLevelPermissionPredicatesByRoleId.get(role.id) ?? [];
@@ -151,7 +151,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           const hasWorkflowsPermissions =
             this.hasSettingsGatedObjectPermissions(
               role,
-              rolePermissionFlagGrants,
+              roleRolePermissionFlags,
               PermissionFlagType.WORKFLOWS,
             );
 
@@ -164,7 +164,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
             const hasWorkspaceMembersPermissions =
               this.hasSettingsGatedObjectPermissions(
                 role,
-                rolePermissionFlagGrants,
+                roleRolePermissionFlags,
                 PermissionFlagType.WORKSPACE_MEMBERS,
               );
 
@@ -270,14 +270,13 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
 
   private hasSettingsGatedObjectPermissions(
     role: RoleEntity,
-    permissionFlagGrants: PermissionFlagGrantEntity[],
+    rolePermissionFlags: RolePermissionFlagEntity[],
     permissionFlagType: PermissionFlagType,
   ): boolean {
     const hasPermissionFromRole = role.canUpdateAllSettings;
     const hasPermissionFromSettingPermissions = isDefined(
-      permissionFlagGrants.find(
-        (permissionFlagGrant) =>
-          permissionFlagGrant.flag === permissionFlagType,
+      rolePermissionFlags.find(
+        (rolePermissionFlag) => rolePermissionFlag.flag === permissionFlagType,
       ),
     );
 

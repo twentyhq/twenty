@@ -28,13 +28,13 @@ export const fromRoleConfigToRoleManifest = (
         ),
       }),
     ),
-    permissionFlagGrants: (roleConfig.permissionFlagGrants ?? []).map(
-      (permissionFlagGrant) => ({
+    permissionFlags: (roleConfig.permissionFlags ?? []).map(
+      (permissionFlag) => ({
         universalIdentifier: uuidv5(
-          `${roleConfig.universalIdentifier}:${permissionFlagGrant}`,
+          `${roleConfig.universalIdentifier}:${permissionFlag}`,
           ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
         ),
-        flag: permissionFlagGrant,
+        flag: permissionFlag,
       }),
     ),
   };

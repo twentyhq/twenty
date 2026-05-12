@@ -4,7 +4,7 @@ export const USER_WORKSPACE_ENTITY_NON_CACHED_PROPERTIES = [
   'workspace',
   'user',
   'twoFactorAuthenticationMethods',
-  'permissionFlagGrants',
+  'permissionFlags',
   'objectPermissions',
   'objectsPermissions',
   'twoFactorAuthenticationMethodSummary',

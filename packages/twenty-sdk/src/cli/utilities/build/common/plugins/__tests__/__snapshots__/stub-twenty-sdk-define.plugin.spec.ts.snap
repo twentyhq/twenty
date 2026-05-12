@@ -13,7 +13,7 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "ObjectRecordGroupByDateGranularity",
     "OnDeleteAction",
     "PageLayoutTabLayoutMode",
-    "PermissionFlagGrant",
+    "PermissionFlag",
     "RelationType",
     "STANDARD_OBJECT",
     "STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS",

@@ -36,7 +36,7 @@ const buildMockCommandMenuContextApi = (
   },
   selectedRecords: [],
   featureFlags: {},
-  permissionFlagGrants: {},
+  permissionFlags: {},
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
   objectMetadataItem: {},

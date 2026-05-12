@@ -13,10 +13,10 @@ import { type RegroupedEntity } from 'src/engine/workspace-cache/utils/regroup-e
 type FromRoleEntityToFlatRoleArgs = {
   entity: Omit<
     EntityWithRegroupedOneToManyRelations<MetadataEntity<'role'>>,
-    'objectPermissions' | 'permissionFlagGrants' | 'fieldPermissions'
+    'objectPermissions' | 'rolePermissionFlags' | 'fieldPermissions'
   > & {
     objectPermissions: RegroupedEntity[];
-    permissionFlagGrants: RegroupedEntity[];
+    rolePermissionFlags: RegroupedEntity[];
     fieldPermissions: RegroupedEntity[];
   };
 } & EntityManyToOneIdByUniversalIdentifierMaps<'role'>;
@@ -57,7 +57,7 @@ export const fromRoleEntityToFlatRole = ({
     applicationId: roleEntity.applicationId,
     roleTargetIds: roleEntity.roleTargets.map(({ id }) => id),
     objectPermissionIds: roleEntity.objectPermissions.map(({ id }) => id),
-    permissionFlagGrantIds: roleEntity.permissionFlagGrants.map(({ id }) => id),
+    rolePermissionFlagIds: roleEntity.rolePermissionFlags.map(({ id }) => id),
     fieldPermissionIds: roleEntity.fieldPermissions.map(({ id }) => id),
     rowLevelPermissionPredicateIds: roleEntity.rowLevelPermissionPredicates.map(
       ({ id }) => id,
@@ -71,10 +71,9 @@ export const fromRoleEntityToFlatRole = ({
     objectPermissionUniversalIdentifiers: roleEntity.objectPermissions.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
-    permissionFlagGrantUniversalIdentifiers:
-      roleEntity.permissionFlagGrants.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
+    rolePermissionFlagUniversalIdentifiers: roleEntity.rolePermissionFlags.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
     fieldPermissionUniversalIdentifiers: roleEntity.fieldPermissions.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),

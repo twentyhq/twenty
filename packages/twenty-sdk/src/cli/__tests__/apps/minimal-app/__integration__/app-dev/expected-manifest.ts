@@ -330,7 +330,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       canBeAssignedToApiKeys: false,
       fieldPermissions: [],
       objectPermissions: [],
-      permissionFlagGrants: [],
+      permissionFlags: [],
     },
   ],
 };

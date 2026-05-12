@@ -10,11 +10,11 @@ export const getFilteredPermissions = <
   T extends { key: PermissionFlagType; name: string },
 >({
   permissions,
-  permissionFlagGrantKeys,
+  permissionFlagKeys,
   searchQuery,
 }: {
   permissions: T[];
-  permissionFlagGrantKeys: PermissionFlagType[];
+  permissionFlagKeys: PermissionFlagType[];
   searchQuery: string;
 }): FilteredPermissionsResult<T> => {
   const filteredPermissions = filterBySearchQuery<T>({
@@ -24,7 +24,7 @@ export const getFilteredPermissions = <
   });
 
   const enabledPermissions = permissions.filter((permission) =>
-    permissionFlagGrantKeys.includes(permission.key),
+    permissionFlagKeys.includes(permission.key),
   );
 
   const filteredEnabledPermissions = filterBySearchQuery<T>({
