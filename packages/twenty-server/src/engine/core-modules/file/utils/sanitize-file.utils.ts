@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import sharp from 'sharp';
@@ -14,6 +13,8 @@ const SHARP_SUPPORTED_MIME_TYPES = new Set([
   'image/webp',
   'image/tiff',
   'image/avif',
+  'image/heif',
+  'image/heic',
 ]);
 
 const isBufferLike = (
@@ -60,9 +61,6 @@ export const sanitizeFile = async ({
       throw new FileStorageException(
         `Failed to sanitize image metadata: ${error instanceof Error ? error.message : String(error)}`,
         FileStorageExceptionCode.SANITIZATION_FAILED,
-        {
-          userFriendlyMessage: msg`The image file could not be processed. It may be corrupted or in an unsupported format.`,
-        },
       );
     }
   }

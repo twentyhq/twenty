@@ -4,7 +4,7 @@ import { FileStorageException } from 'src/engine/core-modules/file-storage/inter
 
 import { sanitizeFile } from '../sanitize-file.utils';
 
-// Minimal valid 1x1 JPEG with an EXIF block containing a UserComment tag
+// Minimal valid 1x1 JPEG with an EXIF block containing an ImageDescription tag
 const createJpegWithExif = async (): Promise<Buffer> => {
   return sharp({
     create: { width: 1, height: 1, channels: 3, background: '#ff0000' },
@@ -62,6 +62,46 @@ describe('sanitizeFile', () => {
 
       const sanitizedMetadata = await sharp(sanitized as Buffer).metadata();
 
+      expect(sanitizedMetadata.exif).toBeUndefined();
+    });
+
+    it('should strip EXIF metadata when file is a Uint8Array', async () => {
+      const jpegWithExif = await createJpegWithExif();
+      const uint8Array = new Uint8Array(jpegWithExif);
+
+      const sanitized = await sanitizeFile({
+        file: uint8Array,
+        ext: 'jpg',
+        mimeType: 'image/jpeg',
+      });
+
+      expect(Buffer.isBuffer(sanitized)).toBe(true);
+
+      const sanitizedMetadata = await sharp(sanitized as Buffer).metadata();
+
+      expect(sanitizedMetadata.exif).toBeUndefined();
+    });
+
+    it('should apply EXIF orientation before stripping metadata', async () => {
+      // Create a 2x1 image then tag it with orientation 6 (90° CW rotation)
+      const landscape = await sharp({
+        create: { width: 2, height: 1, channels: 3, background: '#0000ff' },
+      })
+        .jpeg()
+        .withMetadata({ orientation: 6 })
+        .toBuffer();
+
+      const sanitized = await sanitizeFile({
+        file: landscape,
+        ext: 'jpg',
+        mimeType: 'image/jpeg',
+      });
+
+      const sanitizedMetadata = await sharp(sanitized as Buffer).metadata();
+
+      // After applying orientation 6 (90° CW), a 2x1 image becomes 1x2
+      expect(sanitizedMetadata.width).toBe(1);
+      expect(sanitizedMetadata.height).toBe(2);
       expect(sanitizedMetadata.exif).toBeUndefined();
     });
 
