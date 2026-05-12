@@ -2279,6 +2279,11 @@ msgstr "Organization"
 msgid "our partner"
 msgstr "our partner"
 
+#. js-lingui-id: U46+HD
+#: src/sections/Menu/data.ts
+msgid "Our story and vision"
+msgstr "Our story and vision"
+
 #. js-lingui-id: uB6QTq
 #: src/sections/Menu/data.ts
 msgid "Our story: building a CRM teams can truly own."
@@ -3119,11 +3124,6 @@ msgstr "The In-house Burden"
 #: src/app/[locale]/customers/w3villa/page.tsx
 msgid "The key decision was not to build everything from scratch. Twenty covers the data model, permissions, authentication, and workflow engine, the parts that would have taken months to rebuild, so the team could focus on product-specific logic."
 msgstr "The key decision was not to build everything from scratch. Twenty covers the data model, permissions, authentication, and workflow engine, the parts that would have taken months to rebuild, so the team could focus on product-specific logic."
-
-#. js-lingui-id: 5Q2762
-#: src/sections/Menu/data.ts
-msgid "The open source CRM built to be customised"
-msgstr "The open source CRM built to be customised"
 
 #. js-lingui-id: q1kKLq
 #: src/app/[locale]/why-twenty/page.tsx

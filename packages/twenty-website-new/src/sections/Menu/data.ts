@@ -57,11 +57,12 @@ function buildNavItems(): MenuNavItemType[] {
         },
         {
           label: msg`Why Twenty`,
-          description: msg`The open source CRM built to be customised`,
+          description: msg`Our story and vision`,
           href: '/why-twenty',
+          icon: 'lightbulb',
           preview: {
-            image: '/images/why-twenty/hero/background.webp',
-            imageAlt: 'Why Twenty',
+            image: '/images/product/demo/kanban.webp',
+            imageAlt: 'Twenty CRM pipeline view',
             title: msg`Why Twenty`,
             description: msg`Our story: building a CRM teams can truly own.`,
           },

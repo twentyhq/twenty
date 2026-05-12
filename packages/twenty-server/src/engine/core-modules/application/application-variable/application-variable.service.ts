@@ -12,6 +12,7 @@ import {
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { isNonEmptyString } from '@sniptt/guards';
 
 @Injectable()
 export class ApplicationVariableEntityService {
@@ -25,6 +26,10 @@ export class ApplicationVariableEntityService {
   getDisplayValue(applicationVariable: ApplicationVariableEntity): string {
     if (!applicationVariable.isSecret) {
       return applicationVariable.value;
+    }
+
+    if (!isNonEmptyString(applicationVariable.value)) {
+      return '';
     }
 
     return this.secretEncryptionService.decryptAndMask({

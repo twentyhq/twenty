@@ -321,7 +321,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
     };
 
     beforeEach(() => {
-      jwtWrapperService.verifyJwtToken.mockReturnValue(stateClaims);
+      jwtWrapperService.verifyJwtToken.mockResolvedValue(stateClaims);
       connectionProviderService.findOneByIdOrThrow.mockResolvedValue(
         baseProvider,
       );
@@ -358,7 +358,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
     });
 
     it('updates the existing ConnectedAccount when reconnectingConnectedAccountId is supplied', async () => {
-      jwtWrapperService.verifyJwtToken.mockReturnValue({
+      jwtWrapperService.verifyJwtToken.mockResolvedValue({
         ...stateClaims,
         reconnectingConnectedAccountId: 'existing-account-id',
       });
@@ -389,7 +389,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
     });
 
     it('updates visibility on an existing ConnectedAccount when reconnecting', async () => {
-      jwtWrapperService.verifyJwtToken.mockReturnValue({
+      jwtWrapperService.verifyJwtToken.mockResolvedValue({
         ...stateClaims,
         visibility: 'workspace',
         reconnectingConnectedAccountId: 'existing-account-id',
@@ -409,7 +409,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
     });
 
     it('persists the workspace visibility when state asks for it', async () => {
-      jwtWrapperService.verifyJwtToken.mockReturnValue({
+      jwtWrapperService.verifyJwtToken.mockResolvedValue({
         ...stateClaims,
         visibility: 'workspace',
       });
@@ -425,9 +425,9 @@ describe('ConnectionProviderOAuthFlowService', () => {
     });
 
     it('rejects an invalid state', async () => {
-      jwtWrapperService.verifyJwtToken.mockImplementation(() => {
-        throw new Error('JWT expired');
-      });
+      jwtWrapperService.verifyJwtToken.mockRejectedValue(
+        new Error('JWT expired'),
+      );
 
       await expect(
         service.completeAuthorizationFlow({

@@ -54,6 +54,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => ApplicationRegistrationEntity)
@@ -186,12 +187,12 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @Query(() => [ApplicationRegistrationVariableEntity])
+  @Query(() => [ApplicationRegistrationVariableDTO])
   async findApplicationRegistrationVariables(
     @Args('applicationRegistrationId') applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationVariableEntity[]> {
-    return this.applicationRegistrationVariableService.findVariables(
+  ): Promise<ApplicationRegistrationVariableDTO[]> {
+    return this.applicationRegistrationVariableService.findVariablesWithObfuscatedValues(
       applicationRegistrationId,
       workspaceId,
     );

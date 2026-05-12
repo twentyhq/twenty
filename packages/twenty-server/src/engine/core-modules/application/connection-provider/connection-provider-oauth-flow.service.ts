@@ -141,7 +141,7 @@ export class ConnectionProviderOAuthFlowService {
   }
 
   async completeAuthorizationFlow(args: CallbackArgs): Promise<CallbackResult> {
-    const statePayload = this.verifyState(args.state);
+    const statePayload = await this.verifyState(args.state);
 
     const provider = await this.oauthProviderService.findOneByIdOrThrow(
       statePayload.connectionProviderId,
@@ -208,11 +208,11 @@ export class ConnectionProviderOAuthFlowService {
     });
   }
 
-  private verifyState(state: string): AppOAuthStateJwtPayload {
+  private async verifyState(state: string): Promise<AppOAuthStateJwtPayload> {
     try {
-      const verified = this.jwtWrapperService.verifyJwtToken(
+      const verified = (await this.jwtWrapperService.verifyJwtToken(
         state,
-      ) as AppOAuthStateJwtPayload;
+      )) as AppOAuthStateJwtPayload;
 
       if (verified.type !== JwtTokenTypeEnum.APP_OAUTH_STATE) {
         throw new Error('Wrong JWT type for OAuth state');
