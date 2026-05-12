@@ -11,8 +11,9 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
@@ -28,7 +29,7 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly fieldMetadataService: FieldMetadataService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
     super(workspaceIteratorService);
   }
@@ -145,23 +146,63 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
       }
     }
 
-    for (const field of affectedFields) {
-      await this.fieldMetadataService.updateOneField({
-        updateFieldInput: {
-          id: field.id,
-          defaultValue: nullifyEmptyCompositeDefaultValue({
-            defaultValue: field.defaultValue,
-            fieldType: field.type as CompositeFieldMetadataType,
-          }),
-        },
-        workspaceId,
-        isSystemBuild: true,
-      });
+    const fieldsByApplication = affectedFields.reduce<
+      Map<string, typeof affectedFields>
+    >((acc, field) => {
+      const key = field.applicationUniversalIdentifier;
+      const group = acc.get(key) ?? [];
 
-      this.logger.log(
-        `Normalized defaultValue for composite field "${field.name}" (${field.id}) in workspace ${workspaceId}`,
-      );
+      group.push(field);
+      acc.set(key, group);
+
+      return acc;
+    }, new Map());
+
+    for (const [
+      applicationUniversalIdentifier,
+      fields,
+    ] of fieldsByApplication) {
+      const flatFieldMetadatasToUpdate = fields.map((field) => ({
+        ...field,
+        defaultValue: nullifyEmptyCompositeDefaultValue({
+          defaultValue: field.defaultValue,
+          fieldType: field.type as CompositeFieldMetadataType,
+        }),
+      }));
+
+      const validateAndBuildResult =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+          {
+            allFlatEntityOperationByMetadataName: {
+              fieldMetadata: {
+                flatEntityToCreate: [],
+                flatEntityToDelete: [],
+                flatEntityToUpdate: flatFieldMetadatasToUpdate,
+              },
+            },
+            workspaceId,
+            isSystemBuild: true,
+            applicationUniversalIdentifier,
+          },
+        );
+
+      if (validateAndBuildResult.status === 'fail') {
+        throw new WorkspaceMigrationBuilderException(
+          validateAndBuildResult,
+          'Multiple validation errors occurred while normalizing composite field defaults',
+        );
+      }
+
+      for (const field of fields) {
+        this.logger.log(
+          `Normalized defaultValue for composite field "${field.name}" (${field.id}) in workspace ${workspaceId}`,
+        );
+      }
     }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatFieldMetadataMaps',
+    ]);
 
     for (const { tableName, columnName } of backfillTargets) {
       await dataSource.query(
