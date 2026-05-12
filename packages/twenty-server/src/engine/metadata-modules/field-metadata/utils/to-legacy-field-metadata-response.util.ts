@@ -15,14 +15,18 @@ export const toLegacyFieldMetadataListResponse = ({
   totalCount,
 });
 
-export const toLegacyFieldMetadataFindOneResponse = (field: FieldMetadataDTO) =>
-  ({ data: { field } });
+export const toLegacyFieldMetadataFindOneResponse = (
+  field: FieldMetadataDTO,
+) => ({ data: { field } });
 
-export const toLegacyFieldMetadataCreateResponse = (field: FieldMetadataDTO) =>
-  ({ data: { createOneField: field } });
+export const toLegacyFieldMetadataCreateResponse = (
+  field: FieldMetadataDTO,
+) => ({ data: { createOneField: field } });
 
-export const toLegacyFieldMetadataUpdateResponse = (field: FieldMetadataDTO) =>
-  ({ data: { updateOneField: field } });
+export const toLegacyFieldMetadataUpdateResponse = (
+  field: FieldMetadataDTO,
+) => ({ data: { updateOneField: field } });
 
-export const toLegacyFieldMetadataDeleteResponse = (field: FieldMetadataDTO) =>
-  ({ data: { deleteOneField: field } });
+export const toLegacyFieldMetadataDeleteResponse = (
+  field: FieldMetadataDTO,
+) => ({ data: { deleteOneField: field } });
