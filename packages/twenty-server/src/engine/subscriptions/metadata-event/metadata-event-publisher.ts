@@ -79,13 +79,10 @@ export class MetadataEventPublisher {
       return undefined;
     }
 
-    const userWorkspaceId = (
-      navigationMenuItem as Record<string, unknown>
-    ).userWorkspaceId;
+    const userWorkspaceId = (navigationMenuItem as Record<string, unknown>)
+      .userWorkspaceId;
 
-    return typeof userWorkspaceId === 'string'
-      ? [userWorkspaceId]
-      : undefined;
+    return typeof userWorkspaceId === 'string' ? [userWorkspaceId] : undefined;
   }
 
   private async enrichMetadataEventBatch(
