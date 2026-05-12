@@ -315,7 +315,7 @@ export class ChatExecutionService {
 
       // billNativeWebSearchUsage short-circuits when count <= 0, so calling
       // unconditionally is safe regardless of whether native search fired.
-      this.aiBillingService.billNativeWebSearchUsage(
+      await this.aiBillingService.billNativeWebSearchUsage(
         countNativeWebSearchCallsFromSteps(steps),
         workspace.id,
         userWorkspaceId,

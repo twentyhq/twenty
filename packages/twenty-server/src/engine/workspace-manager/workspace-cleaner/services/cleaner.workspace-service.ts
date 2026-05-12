@@ -134,7 +134,7 @@ export class CleanerWorkspaceService {
       throw new Error('Workspace member email is missing');
     }
 
-    this.emailService.send({
+    await this.emailService.send({
       to: workspaceMember.userEmail,
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
@@ -212,7 +212,7 @@ export class CleanerWorkspaceService {
       throw new Error('Workspace member email is missing');
     }
 
-    this.emailService.send({
+    await this.emailService.send({
       to: workspaceMember.userEmail,
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
