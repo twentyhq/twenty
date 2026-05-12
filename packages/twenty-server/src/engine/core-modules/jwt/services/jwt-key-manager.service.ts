@@ -42,7 +42,16 @@ export class JwtKeyManagerService {
     }
 
     try {
-      return await this.currentSigningKeyPromise;
+      const result = await this.currentSigningKeyPromise;
+
+      // Do not memoize null: a missing key means we fell back to HS256, and
+      // we want every subsequent sign attempt to retry (and re-log) so a
+      // transient DB failure at boot cannot pin the service to HS256 forever.
+      if (!isDefined(result)) {
+        this.currentSigningKeyPromise = null;
+      }
+
+      return result;
     } catch (error) {
       this.currentSigningKeyPromise = null;
       throw error;
