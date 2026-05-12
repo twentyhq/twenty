@@ -114,19 +114,26 @@ export const NavigationDrawer = ({
     setTableWidthResizeIsActive(false);
   };
 
+  // Settings drawer must never appear collapsed regardless of persisted state.
+  // The global expansion state is saved to local storage, so navigating directly
+  // to settings (refresh / new tab / direct URL) can produce a broken collapsed
+  // layout.  Inner components already do `isExpanded || isSettingsPage`; this
+  // brings the outer animated container width into line.
+  const isExpanded = isSettingsDrawer || isNavigationDrawerExpanded;
+
   return (
     <>
       <NavigationDrawerWidthEffect />
       <StyledAnimatedContainer
         className={className}
         data-click-outside-id={NAVIGATION_DRAWER_CLICK_OUTSIDE_ID}
-        isExpanded={isNavigationDrawerExpanded}
+        isExpanded={isExpanded}
         isResizing={isResizing}
       >
         <StyledContainer
           isSettings={isSettingsDrawer}
           isMobile={isMobile}
-          isExpanded={isNavigationDrawerExpanded}
+          isExpanded={isExpanded}
         >
           {isSettingsDrawer && title ? (
             <NavigationDrawerBackButton title={title} />
