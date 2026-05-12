@@ -45,8 +45,6 @@ jobs:
 
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-        with:
-          ignore-scripts: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
 
       - name: Setup i18n-docs branch
         if: github.event_name != 'pull_request'
