@@ -58,6 +58,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
 import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-dashboards.util';
@@ -136,6 +137,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
+    private readonly sdkClientGenerationService: SdkClientGenerationService,
   ) {
     super(workspaceRepository);
   }
@@ -368,6 +370,18 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       workspaceId: workspace.id,
       displayName: data.displayName,
     });
+
+    try {
+      await this.sdkClientGenerationService.enqueueSdkClientGenerationForWorkspace(
+        workspace.id,
+      );
+    } catch (error) {
+      this.logger.error(
+        `failed to enqueue SDK client generation jobs for workspace ${workspace.id}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
+    }
 
     await this.coreEntityCacheService.invalidate(
       'workspaceEntity',
