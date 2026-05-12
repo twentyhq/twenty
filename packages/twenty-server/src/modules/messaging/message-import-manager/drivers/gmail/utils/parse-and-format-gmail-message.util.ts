@@ -1,6 +1,7 @@
 import { type gmail_v1 as gmailV1 } from 'googleapis';
 import planer from 'planer';
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -32,7 +33,7 @@ export const parseAndFormatGmailMessage = (
 
   const hasRecipients =
     isNonEmptyArray(to) ||
-    isDefined(deliveredTo) ||
+    isNonEmptyString(deliveredTo) ||
     isNonEmptyArray(cc) ||
     isNonEmptyArray(bcc);
 
@@ -47,7 +48,7 @@ export const parseAndFormatGmailMessage = (
 
   const toParticipants = isNonEmptyArray(to)
     ? to
-    : isDefined(deliveredTo)
+    : isNonEmptyString(deliveredTo)
       ? [{ address: deliveredTo }]
       : [];
 
