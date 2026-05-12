@@ -1,17 +1,17 @@
 'use client';
 
 import { ButtonShape } from '@/design-system/components/Button/ButtonShape';
-import { Body, Heading } from '@/design-system/components';
+import { Body, Heading, HeadingPart } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import { INFORMATIVE_ICONS } from '@/icons/informative';
 import { LocalizedLink } from '@/lib/i18n';
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
-import { usePartnerApplicationModal } from '@/lib/partner-application';
+import { usePartnerApplicationModal } from '@/sections/PartnerApplication';
 import { WebGlMount } from '@/lib/visual-runtime';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { THREE_CARDS_VISUALS } from '@/sections/ThreeCards/visuals';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { ThreeCardsCardShape } from './CardShape';
@@ -113,13 +113,12 @@ const BenefitIconSlot = styled.span`
 const benefitLabelClassName = css`
   display: block;
   overflow-wrap: anywhere;
-  --body-sm-color: ${theme.colors.primary.text[80]};
+  --color-text-muted: ${theme.colors.primary.text[80]};
 `;
 
 const simpleCardBodyClassName = css`
   && {
-    color: ${theme.colors.primary.text[80]};
-    --body-sm-color: ${theme.colors.primary.text[80]};
+    --color-text-muted: ${theme.colors.primary.text[80]};
   }
 `;
 
@@ -326,9 +325,9 @@ function PartnerProgramAction({
   label: MessageDescriptor;
   programId: 'technology' | 'content' | 'solutions';
 }) {
-  const renderText = useRenderMessage();
+  const { i18n } = useLingui();
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
-  const translatedLabel = renderText(label);
+  const translatedLabel = i18n._(label);
 
   const openModal = () => {
     openPartnerApplicationModal(programId);
@@ -371,7 +370,7 @@ export function IllustrationCard({
   illustrationCard,
   variant = 'shaped',
 }: IllustrationCardProps) {
-  const renderText = useRenderMessage();
+  const { i18n } = useLingui();
   const Visual = THREE_CARDS_VISUALS[illustrationCard.illustration];
 
   return (
@@ -382,13 +381,11 @@ export function IllustrationCard({
           strokeColor={CARD_OUTLINE_COLOR}
         />
       )}
-      <Heading
-        as="h3"
-        renderText={renderText}
-        segments={illustrationCard.heading}
-        size="xs"
-        weight="medium"
-      />
+      <Heading as="h3" size="xs" weight="medium">
+        <HeadingPart fontFamily="sans">
+          {i18n._(illustrationCard.heading)}
+        </HeadingPart>
+      </Heading>
       <CardRule />
       <CardEmbed>
         <WebGlMount>
@@ -399,14 +396,14 @@ export function IllustrationCard({
       <CardLowerSection>
         <CardBodyCell>
           <Body
-            body={illustrationCard.body}
             className={
               variant === 'simple' ? simpleCardBodyClassName : undefined
             }
-            renderText={renderText}
             size="sm"
             weight="regular"
-          />
+          >
+            {i18n._(illustrationCard.body)}
+          </Body>
         </CardBodyCell>
 
         {variant === 'simple' && illustrationCard.benefits?.length ? (
@@ -425,12 +422,12 @@ export function IllustrationCard({
                   </BenefitIconSlot>
                   <Body
                     as="span"
-                    body={benefit}
                     className={benefitLabelClassName}
-                    renderText={renderText}
                     size="sm"
                     weight="regular"
-                  />
+                  >
+                    {i18n._(benefit.text)}
+                  </Body>
                 </BenefitItem>
               );
             })}
@@ -447,19 +444,13 @@ export function IllustrationCard({
 
         {illustrationCard.attribution && (
           <CardFooter>
-            <Body
-              body={illustrationCard.attribution.role}
-              renderText={renderText}
-              size="xs"
-              weight="medium"
-            />
+            <Body size="xs" weight="medium">
+              {i18n._(illustrationCard.attribution.role)}
+            </Body>
             <AttributionPipe aria-hidden />
-            <Body
-              body={illustrationCard.attribution.company}
-              renderText={renderText}
-              size="xs"
-              weight="regular"
-            />
+            <Body size="xs" weight="regular">
+              {i18n._(illustrationCard.attribution.company)}
+            </Body>
             {illustrationCard.caseStudySlug !== undefined ? (
               <FooterTrailingAction>
                 <PartnerActionIconLinkButton

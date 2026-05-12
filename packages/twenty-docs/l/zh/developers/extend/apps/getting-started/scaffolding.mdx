@@ -1,0 +1,58 @@
+---
+title: 脚手架
+description: 通过 yarn twenty add 以交互方式生成实体文件——对象、字段、视图、逻辑函数等。
+icon: wand-magic-sparkles
+---
+
+无需手动创建实体文件，使用交互式脚手架：
+
+```bash filename="Terminal"
+yarn twenty add
+```
+
+它会提示你选择一个实体类型，引导你填写所需字段，然后生成一个可直接使用的文件，其中包含稳定的 `universalIdentifier` 和正确的 `defineEntity()` 调用。
+
+你也可以直接传入实体类型以跳过第一个提示：
+
+```bash filename="Terminal"
+yarn twenty add object
+yarn twenty add logicFunction
+yarn twenty add frontComponent
+```
+
+## 可用的实体类型
+
+| 实体类型  | 命令                                   | 生成的文件                                                   |
+| ----- | ------------------------------------ | ------------------------------------------------------- |
+| 对象    | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| 字段    | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| 逻辑函数  | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| 前端组件  | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| 角色    | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| 技能    | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| 代理    | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| 视图    | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| 导航菜单项 | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| 页面布局  | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+
+## 脚手架生成的内容
+
+每种实体类型都有其自己的模板。 例如，`yarn twenty add object` 会询问：
+
+1. **名称（单数）**——例如，`invoice`
+2. **名称（复数）**——例如，`invoices`
+3. **标签（单数）**——根据名称自动填充（例如，`Invoice`）
+4. **标签（复数）**——自动填充（例如，`Invoices`）
+5. **创建视图和导航项？**——如果你选择是，脚手架还会为新对象生成相应的视图和侧边栏链接。
+
+其他实体类型的提示更简单——大多只会询问名称。
+
+`field` 实体类型更为详细：它会询问字段名称、标签、类型（从所有可用字段类型列表中选择，如 `TEXT`、`NUMBER`、`SELECT`、`RELATION` 等），以及目标对象的 `universalIdentifier`。
+
+## 自定义输出路径
+
+使用 `--path` 标志将生成的文件放置在自定义位置：
+
+```bash filename="Terminal"
+yarn twenty add logicFunction --path src/custom-folder
+```

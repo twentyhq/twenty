@@ -3,12 +3,10 @@
 import { useCallback, useRef } from 'react';
 
 import { useScheduledOnScroll } from '@/lib/scroll';
-import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
-import {
-  applyHelpedSceneLayout,
-  createHelpedSceneLayoutState,
-  type HelpedSceneLayoutRefs,
-} from '@/sections/Helped/utils/helped-scene-layout';
+import { applyHelpedSceneLayout } from '../utils/apply-helped-scene-layout';
+import { createHelpedSceneLayoutState } from '../utils/create-helped-scene-layout-state';
+import type { HeadingCardType } from '../types/heading-card-type';
+import type { HelpedSceneLayoutRefs } from '../types/helped-scene-layout-refs';
 
 type HelpedSceneScrollLayoutEffectProps = HelpedSceneLayoutRefs & {
   cards: HeadingCardType[];

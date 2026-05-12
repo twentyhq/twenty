@@ -1,6 +1,6 @@
 'use client';
 
-import type { HomeStepperStepType } from '@/sections/HomeStepper/types/HomeStepperStep';
+import type { HomeStepperStepType } from '@/sections/HomeStepper/types/home-stepper-step';
 import { useRef } from 'react';
 import { Flow } from './Flow';
 import { Root } from './Root';

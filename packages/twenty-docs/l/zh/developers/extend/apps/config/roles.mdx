@@ -1,0 +1,93 @@
+---
+title: 角色和权限
+description: 声明你的应用的逻辑函数和前端组件可以读取和写入哪些对象和字段。
+icon: shield-halved
+---
+
+**角色（role）** 是一组权限：应用可以读取或写入哪些对象，可以查看哪些字段，以及可以使用哪些平台级能力。 每个应用的逻辑函数和前端组件都会继承使用 `defineApplicationRole()` 标记的角色的权限（参见下文的 [默认函数角色](#the-default-function-role)）。
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  PermissionFlag,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+## 默认函数角色
+
+当你使用脚手架创建新应用时，CLI 会创建一个使用 `defineApplicationRole()` 声明的默认角色文件：
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlags: [],
+});
+```
+
+`defineApplicationRole()` 是 `defineRole()` 的一个轻量包装，它会标记在应用安装时用作应用默认角色的**该**角色。 验证与 `defineRole` 完全相同，但构建流水线会自动将其 `universalIdentifier` 注入到应用清单的 `defaultRoleUniversalIdentifier` 中——因此你无需在 [`defineApplication`](/l/zh/developers/extend/apps/config/application) 中自行引用它。
+
+备注：
+
+* 每个应用只允许有且仅有 **一个** `defineApplicationRole(...)`——如果发现多于一个，清单构建将失败。
+* 对于你的应用随附的任何**额外**角色，请使用 `defineRole()`（而不是 `defineApplicationRole()`）。
+* 在 `defineApplication()` 上显式设置 `defaultRoleUniversalIdentifier` 仍然受支持以保持向后兼容性，但已经弃用，推荐使用 `defineApplicationRole()`。
+
+## 最佳实践
+
+* 从脚手架生成的角色开始，然后逐步收紧它的权限——默认角色授予广泛的读取访问权限，而这在生产环境中很少是你想要的。
+* 将 `objectPermissions` 和 `fieldPermissions` 替换为你的函数实际需要的精确对象和字段。
+* `permissionFlags` 控制对平台级能力的访问。 尽量保持最小化。
+* 查看一个可运行示例：[`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。

@@ -310,7 +310,7 @@ describe('ApprovedAccessDomainService', () => {
 
       expect(workspaceDomainsService.buildWorkspaceURL).toHaveBeenCalledWith({
         workspace: workspace,
-        pathname: getSettingsPath(SettingsPath.Domains),
+        pathname: getSettingsPath(SettingsPath.WorkspaceMembersPage),
         searchParams: { validationToken: expect.any(String) },
       });
 

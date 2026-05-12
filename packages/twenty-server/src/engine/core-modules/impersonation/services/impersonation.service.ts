@@ -127,6 +127,21 @@ export class ImpersonationService {
       );
     }
 
+    const targetHasAdminPrivileges =
+      toImpersonateUserWorkspace.user.canImpersonate === true ||
+      toImpersonateUserWorkspace.user.canAccessFullAdminPanel === true;
+
+    const impersonatorHasAdminPrivileges =
+      impersonatorUserWorkspace.user.canImpersonate === true ||
+      impersonatorUserWorkspace.user.canAccessFullAdminPanel === true;
+
+    if (targetHasAdminPrivileges && !impersonatorHasAdminPrivileges) {
+      throw new AuthException(
+        'Cannot impersonate a user with admin privileges. Only administrators can impersonate other administrators.',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     return this.generateImpersonationLoginToken(
       impersonatorUserWorkspace,
       toImpersonateUserWorkspace,

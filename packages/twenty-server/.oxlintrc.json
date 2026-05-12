@@ -14,7 +14,10 @@
     "src/utils/email-providers.ts",
     "src/engine/core-modules/i18n/locales/generated/**",
     "src/engine/core-modules/logic-function/logic-function-resource/constants/seed-project/src/index.ts",
-    "src/engine/metadata-modules/front-component/constants/seed-project/**"
+    "src/engine/metadata-modules/front-component/constants/seed-project/**",
+    "src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts",
+    "src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant.ts",
+    "src/engine/core-modules/upgrade/constants/twenty-next-versions.constant.ts"
   ],
   "rules": {
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],

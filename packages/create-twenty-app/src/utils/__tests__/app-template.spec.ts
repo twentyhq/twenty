@@ -76,10 +76,15 @@ describe('copyBaseApplicationProject', () => {
       appDirectory: testAppDirectory,
     });
 
-    expect(fs.copy).toHaveBeenCalledTimes(1);
+    // Two fs.copy calls: (1) the template directory, (2) AGENTS.md → CLAUDE.md
+    expect(fs.copy).toHaveBeenCalledTimes(2);
     expect(fs.copy).toHaveBeenCalledWith(
       expect.stringContaining('template'),
       testAppDirectory,
+    );
+    expect(fs.copy).toHaveBeenCalledWith(
+      join(testAppDirectory, 'AGENTS.md'),
+      join(testAppDirectory, 'CLAUDE.md'),
     );
   });
 

@@ -1,0 +1,184 @@
+---
+title: Hızlı Başlangıç
+icon: rocket
+description: İlk Twenty uygulamanızı dakikalar içinde oluşturun.
+---
+
+## Ön Gereksinimler
+
+* **Node.js 24+** — [Buradan indirin](https://nodejs.org/)
+* **Yarn 4** — Corepack aracılığıyla Node ile birlikte gelir. Etkinleştirin: `corepack enable`
+* **Docker** — [Buradan indirin](https://www.docker.com/products/docker-desktop/). Yerel bir Twenty sunucusunu çalıştırmak için gereklidir. Zaten başka bir yerde Twenty çalıştırıyorsanız atlayın.
+
+Bir Twenty uygulaması oluşturmanın üç aşaması vardır. İskelet oluşturucu bunları tek bir sorunsuz akış komutuna indirger, ancak her aşama ayrı bir kavramdır — bir şeyler başarısız olduğunda hangi aşamada olduğunuzu bilmek neyi düzeltmeniz gerektiğini söyler.
+
+| Aşama                        | Ne yaparsınız                                     | Araç                          | Sonuç                              |
+| ---------------------------- | ------------------------------------------------- | ----------------------------- | ---------------------------------- |
+| **1. İskelet Oluşturma**     | Uygulamanın kaynak kodunu oluşturun               | `npx create-twenty-app`       | Diskte bir TypeScript projesi      |
+| **2. Bir sunucu çalıştırma** | Eşitleme yapacağınız bir Twenty sunucusu başlatın | Docker + `yarn twenty server` | Çalışan bir Twenty örneği          |
+| **3. Eşitleme**              | Kodunuzu sunucuya canlı olarak eşitleyin          | `yarn twenty dev`             | Değişiklikleriniz arayüzde görünür |
+
+---
+
+## Aşama 1 — Projenizin iskeletini oluşturun
+
+Şablondan yeni bir uygulama oluşturun:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app
+```
+
+Sizden bir ad ve açıklama istenir — varsayılanlar için **Enter** tuşuna basın. Bu, `my-twenty-app/` içinde bir başlangıç `application-config.ts`, varsayılan bir rol, bir CI iş akışı ve bir entegrasyon testi ile bir TypeScript projesi oluşturur.
+
+**Bu aşamadan sonra:** makinenizde uygulamanın kaynak kodu bulunur. Henüz çalışmıyor — bu, 2. Aşama.
+
+---
+
+## Aşama 2 — Yerel bir Twenty sunucusu çalıştırın
+
+Uygulamanızın eşitleme yapacağı bir Twenty sunucusuna ihtiyacı vardır. Sunucu, Docker içinde yerel olarak çalışan tam bir Twenty örneğidir — UI, GraphQL API, PostgreSQL. Yerel kodunuz tanımlarını bu sunucuya yükler; bu da onların arayüzde görünmesini sağlar.
+
+İskelet oluşturucu sizin için bir tane başlatmayı teklif eder:
+
+> **Yerel bir Twenty örneği kurmak ister misiniz?**
+
+* **Evet (önerilir)** — `twentycrm/twenty-app-dev` Docker imajını çeker ve `2020` portunda başlatır. Önce Docker'ın çalıştığından emin olun.
+* **Hayır** — Zaten bağlanmak istediğiniz bir Twenty sunucunuz varsa bunu seçin. Bunu daha sonra `yarn twenty remote add` ile bağlayabilirsiniz.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Yerel örnek başlatılsın mı?" />
+</div>
+
+Sunucu çalışır duruma geldiğinde, oturum açmak için bir tarayıcı açılır. Önceden eklenmiş demo hesabını kullanın:
+
+* **E-posta:** `tim@apple.dev`
+* **Parola:** `tim@apple.dev`
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty oturum açma ekranı" />
+</div>
+
+Sonraki ekranda **Authorize**'a tıklayın — bu işlem CLI'nin çalışma alanınıza erişmesine izin verir.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI yetkilendirme ekranı" />
+</div>
+
+Terminaliniz her şeyin kurulduğunu onaylayacaktır.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Uygulama iskeleti başarıyla oluşturuldu" />
+</div>
+
+**Bu aşamadan sonra:** [http://localhost:2020](http://localhost:2020) adresinde çalışan bir Twenty sunucunuz ve ona eşitleme yapmak için yetkilendirilmiş bir CLI'ınız olur.
+
+<Note>
+Docker yüklü değilse veya çalışmıyorsa, iskelet oluşturucu işletim sisteminiz için doğru başlatma komutunu söyleyecektir. Docker çalışır duruma geldiğinde, `yarn twenty server start` ile devam edebilirsiniz — yeniden iskelet oluşturmaya gerek yok.
+</Note>
+
+---
+
+## Aşama 3 — Değişikliklerinizi eşitleyin
+
+Zamanınızın çoğunu geçireceğiniz iç döngü budur.
+
+```bash filename="Terminal"
+cd my-twenty-app
+yarn twenty dev
+```
+
+Bu, `src/` dizinini izler, her değişiklikte yeniden oluşturur ve sonucu sunucuya eşitler. Bir dosyayı düzenleyin, kaydedin; bir saniye içinde sunucu değişikliği yansıtır. Terminalinizde canlı bir durum paneli göreceksiniz.
+
+Daha ayrıntılı çıktı (derleme günlükleri, eşitleme istekleri, hata izleri) için `--verbose` ekleyin.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/dev.png" alt="Geliştirme modu terminal çıktısı" />
+</div>
+
+[http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) adresini açın. Uygulamanızı **Your Apps** altında görmelisiniz.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Your Apps listesinde My twenty app gösteriliyor" />
+</div>
+
+**My twenty app**'e tıklayarak **uygulama kaydını** görüntüleyin — uygulamanızı tanımlayan (ad, tanımlayıcı, OAuth kimlik bilgileri, kaynak) sunucu düzeyinde bir kayıttır. Tek bir kayıt, aynı sunucudaki birden çok çalışma alanına kurulabilir.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Uygulama kaydı ayrıntıları" />
+</div>
+
+Çalışma alanındaki kurulumu görmek için **View installed app**'e tıklayın. **About** sekmesi sürümü ve yönetim seçeneklerini gösterir.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Yüklü uygulama" />
+</div>
+
+**Bu aşamadan sonra:** canlı bir geliştirme döngünüz olur. `src/` içindeki herhangi bir dosyayı düzenleyin; arayüzde görünür.
+
+### CI ve betikler için tek seferlik eşitleme
+
+Tek bir derleme + eşitleme çalıştırıp çıkmak için `--once` parametresini geçin — aynı ardışık düzen, izleyici yok:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Komut                    | Davranış                                                                | Ne zaman kullanılmalı                                           |
+| ------------------------ | ----------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `yarn twenty dev`        | Her değişiklikte izler ve yeniden eşitler. Siz durdurana kadar çalışır. | Etkileşimli yerel geliştirme.                                   |
+| `yarn twenty dev --once` | Tek derleme + eşitleme; başarıda `0`, başarısızlıkta `1` ile çıkar.     | CI, pre-commit kancaları, AI ajanları, betiklenmiş iş akışları. |
+
+Her iki mod da geliştirme modunda bir sunucuya ve kimliği doğrulanmış bir uzak uca ihtiyaç duyar.
+
+<Warning>
+Geliştirme modu yalnızca geliştirme ortamında (`NODE_ENV=development`) çalışan Twenty örneklerinde kullanılabilir. Üretim örnekleri, geliştirme eşitleme isteklerini reddeder — üretim sunucularına dağıtmak için `yarn twenty deploy` kullanın. Bkz. [Yayımlama](/l/tr/developers/extend/apps/operations/publishing).
+</Warning>
+
+---
+
+## Bir örnekten başlayın
+
+Daha kapsamlı bir projeyle başlamak için `--example` kullanın (özel nesneler, alanlar, mantık işlevleri, ön uç bileşenleri):
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app --example postcard
+```
+
+Örnekler [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) dizininde yer alır. Ayrıca `yarn twenty add` ile mevcut bir projeye tek tek varlıklar için iskelet oluşturabilirsiniz — bkz. [İskelet Oluşturma](/l/tr/developers/extend/apps/getting-started/scaffolding).
+
+---
+
+## Oluşturabilecekleriniz
+
+Uygulamalar **varlıklardan** oluşur — her biri tek bir `export default` içeren bir TypeScript dosyası olarak tanımlanır:
+
+| Varlık                    | Ne yapar                                                                                                  |
+| ------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Nesneler ve Alanlar**   | Özel veri modelleri (Post Card, Invoice vb.) tiplendirilmiş alanlarla                                     |
+| **Mantıksal işlevler**    | HTTP rotaları, cron zamanlamaları veya veritabanı olayları tarafından tetiklenen sunucu tarafı TypeScript |
+| **Ön uç bileşenleri**     | Twenty'nin arayüzünde görüntülenen React bileşenleri (yan panel, widget'lar, komut menüsü)                |
+| **Beceriler ve Aracılar** | Yapay zeka yetenekleri — yeniden kullanılabilir yönergeler ve otonom asistanlar                           |
+| **Görünümler ve Gezinme** | Önceden yapılandırılmış liste görünümleri ve kenar çubuğu menü öğeleri                                    |
+| **Sayfa düzenleri**       | Sekmeler ve widget'lar içeren özel kayıt ayrıntı sayfaları                                                |
+
+Tam başvuru: [Kavramlar](/l/tr/developers/extend/apps/getting-started/concepts).
+
+## Sonraki adımlar
+
+<CardGroup cols={2}>
+  <Card title="Yapılandırma" icon="screwdriver-wrench" href="/l/tr/developers/extend/apps/config/overview">
+    Uygulama kimliği, varsayılan rol, kurulum kancaları, genel varlıklar.
+  </Card>
+  <Card title="Veri" icon="database" href="/l/tr/developers/extend/apps/data/overview">
+    Nesneler, alanlar ve çift yönlü ilişkiler.
+  </Card>
+  <Card title="Mantık" icon="bolt" href="/l/tr/developers/extend/apps/logic/overview">
+    Mantık işlevleri, beceriler, aracılar ve OAuth bağlantıları.
+  </Card>
+  <Card title="Düzen" icon="table-columns" href="/l/tr/developers/extend/apps/layout/overview">
+    Görünümler, gezinme, sayfa düzenleri, ön uç bileşenleri.
+  </Card>
+  <Card title="İşlemler" icon="rocket" href="/l/tr/developers/extend/apps/operations/overview">
+    CLI, test, uzak uçlar, CI ve uygulamanızı yayımlama.
+  </Card>
+</CardGroup>

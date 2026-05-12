@@ -172,7 +172,7 @@ describe('ApplicationTokenService', () => {
   });
 
   describe('validateApplicationRefreshToken', () => {
-    it('should validate and return payload for a valid refresh token', () => {
+    it('should validate and return payload for a valid refresh token', async () => {
       const mockToken = 'valid-refresh-token';
       const mockPayload = {
         sub: 'application-id',
@@ -183,10 +183,10 @@ describe('ApplicationTokenService', () => {
 
       jest
         .spyOn(jwtWrapperService, 'verifyJwtToken')
-        .mockReturnValue(undefined);
+        .mockResolvedValue(undefined);
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockPayload);
 
-      const result = service.validateApplicationRefreshToken(mockToken);
+      const result = await service.validateApplicationRefreshToken(mockToken);
 
       expect(result).toEqual(mockPayload);
       expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(mockToken);
@@ -195,12 +195,12 @@ describe('ApplicationTokenService', () => {
       });
     });
 
-    it('should throw when token type is not APPLICATION_REFRESH', () => {
+    it('should throw when token type is not APPLICATION_REFRESH', async () => {
       const mockToken = 'access-token';
 
       jest
         .spyOn(jwtWrapperService, 'verifyJwtToken')
-        .mockReturnValue(undefined);
+        .mockResolvedValue(undefined);
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue({
         sub: 'application-id',
         applicationId: 'application-id',
@@ -208,12 +208,12 @@ describe('ApplicationTokenService', () => {
         type: JwtTokenTypeEnum.APPLICATION_ACCESS,
       });
 
-      expect(() => service.validateApplicationRefreshToken(mockToken)).toThrow(
-        AuthException,
-      );
+      await expect(
+        service.validateApplicationRefreshToken(mockToken),
+      ).rejects.toThrow(AuthException);
 
       try {
-        service.validateApplicationRefreshToken(mockToken);
+        await service.validateApplicationRefreshToken(mockToken);
       } catch (error) {
         expect((error as AuthException).code).toBe(
           AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
@@ -221,7 +221,7 @@ describe('ApplicationTokenService', () => {
       }
     });
 
-    it('should throw dedicated code when token verification fails', () => {
+    it('should throw dedicated code when token verification fails', async () => {
       const mockToken = 'invalid-token';
 
       jest.spyOn(jwtWrapperService, 'verifyJwtToken').mockImplementation(() => {
@@ -231,12 +231,12 @@ describe('ApplicationTokenService', () => {
         );
       });
 
-      expect(() => service.validateApplicationRefreshToken(mockToken)).toThrow(
-        AuthException,
-      );
+      await expect(
+        service.validateApplicationRefreshToken(mockToken),
+      ).rejects.toThrow(AuthException);
 
       try {
-        service.validateApplicationRefreshToken(mockToken);
+        await service.validateApplicationRefreshToken(mockToken);
       } catch (error) {
         expect((error as AuthException).code).toBe(
           AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
@@ -244,16 +244,16 @@ describe('ApplicationTokenService', () => {
       }
     });
 
-    it('should rethrow unexpected token verification errors', () => {
+    it('should rethrow unexpected token verification errors', async () => {
       const mockToken = 'invalid-token';
 
       jest.spyOn(jwtWrapperService, 'verifyJwtToken').mockImplementation(() => {
         throw new Error('Unexpected verification error');
       });
 
-      expect(() => service.validateApplicationRefreshToken(mockToken)).toThrow(
-        'Unexpected verification error',
-      );
+      await expect(
+        service.validateApplicationRefreshToken(mockToken),
+      ).rejects.toThrow('Unexpected verification error');
     });
   });
 

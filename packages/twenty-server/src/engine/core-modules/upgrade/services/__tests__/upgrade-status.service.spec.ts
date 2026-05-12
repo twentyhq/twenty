@@ -50,6 +50,7 @@ const buildWorkspaceCacheGetMock = (
 describe('UpgradeStatusService', () => {
   let service: UpgradeStatusService;
   let getLastAttemptedInstanceCommand: jest.Mock;
+  let getInferredVersion: jest.Mock;
   let getWorkspaceLastAttemptedCommandName: jest.Mock;
   let workspaceFind: jest.Mock;
   let coreEntityCacheGet: jest.Mock;
@@ -68,6 +69,12 @@ describe('UpgradeStatusService', () => {
 
   beforeEach(async () => {
     getLastAttemptedInstanceCommand = jest.fn();
+    getInferredVersion = jest.fn(async (name?: string) => {
+      if (!name) return null;
+      const idx = name.indexOf('_');
+
+      return idx === -1 ? null : name.substring(0, idx);
+    });
     getWorkspaceLastAttemptedCommandName = jest.fn();
     workspaceFind = jest.fn().mockResolvedValue([]);
     coreEntityCacheGet = jest.fn().mockResolvedValue(null);
@@ -84,6 +91,7 @@ describe('UpgradeStatusService', () => {
           provide: UpgradeMigrationService,
           useValue: {
             getLastAttemptedInstanceCommand,
+            getInferredVersion,
             getWorkspaceLastAttemptedCommandName,
           },
         },

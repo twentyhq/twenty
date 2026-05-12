@@ -96,7 +96,7 @@ export class ApplicationTarballService {
       const requiredServerVersion = packageJson?.engines?.twenty;
 
       const versionValidation =
-        this.applicationVersionValidationService.validateServerCompatibility(
+        await this.applicationVersionValidationService.validateServerCompatibility(
           requiredServerVersion,
         );
 

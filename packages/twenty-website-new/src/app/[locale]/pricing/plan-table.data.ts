@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import type { PlanTableDataType } from '@/sections/PlanTable/types';
+import type { PlanTableDataType } from '@/sections/PlanTable';
 
 export const PLAN_TABLE_DATA: PlanTableDataType = {
   featureColumnLabel: msg`Name`,

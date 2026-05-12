@@ -1,0 +1,12 @@
+---
+title: 故障排除
+description: 常见的首次运行问题 — Docker、Node 版本、Yarn、依赖项。
+icon: wrench
+---
+
+* **Docker 错误** — 在运行 `yarn twenty server start` 之前，请确保 Docker Desktop（或守护进程）已在运行。 错误消息会显示适用于你的操作系统的正确启动命令。
+* **Node 版本不正确** — 需要 24+。 使用 `node -v` 检查。
+* **缺少 Yarn 4** — 运行 `corepack enable`。
+* **依赖损坏** — `rm -rf node_modules && yarn install`。
+
+卡住了吗？ 在 [Twenty 的 Discord](https://discord.com/channels/1130383047699738754/1130386664812982322) 上提问。

@@ -1,10 +1,19 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
@@ -45,9 +54,10 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 
 @UsePipes(ResolverValidationPipe)
-@MetadataResolver()
+@MetadataResolver(() => ApplicationRegistrationEntity)
 @UseFilters(
   ApplicationRegistrationExceptionFilter,
   AuthGraphqlApiExceptionFilter,
@@ -177,12 +187,12 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @Query(() => [ApplicationRegistrationVariableEntity])
+  @Query(() => [ApplicationRegistrationVariableDTO])
   async findApplicationRegistrationVariables(
     @Args('applicationRegistrationId') applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationVariableEntity[]> {
-    return this.applicationRegistrationVariableService.findVariables(
+  ): Promise<ApplicationRegistrationVariableDTO[]> {
+    return this.applicationRegistrationVariableService.findVariablesWithObfuscatedValues(
       applicationRegistrationId,
       workspaceId,
     );
@@ -307,6 +317,16 @@ export class ApplicationRegistrationResolver {
       applicationRegistrationId,
       targetWorkspaceSubdomain,
       currentOwnerWorkspaceId: workspaceId,
+    });
+  }
+
+  @ResolveField(() => Boolean)
+  async isConfigured(
+    @Parent() registration: ApplicationRegistrationEntity,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<boolean> {
+    return context.loaders.isConfiguredLoader.load({
+      applicationRegistrationId: registration.id,
     });
   }
 }

@@ -112,11 +112,11 @@ export class ApplicationTokenService {
     return { applicationAccessToken, applicationRefreshToken };
   }
 
-  validateApplicationRefreshToken(
+  async validateApplicationRefreshToken(
     refreshToken: string,
-  ): ApplicationRefreshTokenJwtPayload {
+  ): Promise<ApplicationRefreshTokenJwtPayload> {
     try {
-      this.jwtWrapperService.verifyJwtToken(refreshToken);
+      await this.jwtWrapperService.verifyJwtToken(refreshToken);
 
       const payload =
         this.jwtWrapperService.decode<ApplicationRefreshTokenJwtPayload>(
@@ -148,11 +148,11 @@ export class ApplicationTokenService {
     }
   }
 
-  validateApplicationAccessToken(
+  async validateApplicationAccessToken(
     token: string,
-  ): ApplicationAccessTokenJwtPayload {
+  ): Promise<ApplicationAccessTokenJwtPayload> {
     try {
-      this.jwtWrapperService.verifyJwtToken(token);
+      await this.jwtWrapperService.verifyJwtToken(token);
 
       const payload =
         this.jwtWrapperService.decode<ApplicationAccessTokenJwtPayload>(token, {

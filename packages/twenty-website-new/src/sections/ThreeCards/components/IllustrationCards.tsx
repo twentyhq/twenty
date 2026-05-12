@@ -2,7 +2,7 @@
 
 import { ThreeCardsScrollLayoutEffect } from '@/sections/ThreeCards/effect-components/ThreeCardsScrollLayoutEffect';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
-import type { ThreeCardsScrollLayoutOptions } from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
+import type { ThreeCardsScrollLayoutOptions } from '@/sections/ThreeCards/utils/three-cards-scroll-layout-options';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useRef } from 'react';

@@ -1,0 +1,93 @@
+---
+title: Funções e Permissões
+description: Declare quais objetos e campos as funções de lógica e os componentes de front-end do seu app podem ler e gravar.
+icon: shield-halved
+---
+
+Um **papel** é um conjunto de permissões: quais objetos um app pode ler ou gravar, quais campos ele pode ver e quais recursos em nível de plataforma ele pode usar. Todas as funções de lógica e os componentes de front-end de cada app herdam as permissões do papel marcado com `defineApplicationRole()` (consulte [O papel padrão da função](#the-default-function-role) abaixo).
+
+```ts src/roles/restricted-company-role.ts
+import {
+  defineRole,
+  PermissionFlag,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+## Papel de função padrão
+
+Ao criar um novo app com o scaffold, a CLI cria um arquivo de papel padrão declarado com `defineApplicationRole()`:
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlags: [],
+});
+```
+
+`defineApplicationRole()` é um wrapper leve em torno de `defineRole()` que sinaliza **o** papel usado como padrão do seu app no momento da instalação. A validação é idêntica à de `defineRole`, mas o pipeline de build conecta automaticamente seu `universalIdentifier` ao `defaultRoleUniversalIdentifier` do manifesto do app — assim, você não precisa referenciá-lo em [`defineApplication`](/l/pt/developers/extend/apps/config/application).
+
+Notas:
+
+* Exatamente **um** `defineApplicationRole(...)` é permitido por app — o build do manifesto falhará se encontrar mais de um.
+* Use `defineRole()` (não `defineApplicationRole()`) para quaisquer papéis **adicionais** que o seu app forneça.
+* Definir `defaultRoleUniversalIdentifier` explicitamente em `defineApplication()` ainda é compatível para retrocompatibilidade, mas foi preterido em favor de `defineApplicationRole()`.
+
+## Melhores Práticas
+
+* Comece a partir do papel gerado pelo scaffold e, em seguida, restrinja-o progressivamente — o padrão concede amplo acesso de leitura, o que raramente é o que você quer em produção.
+* Substitua `objectPermissions` e `fieldPermissions` pelos objetos e campos de que suas funções realmente precisam.
+* `permissionFlags` controlam o acesso a recursos em nível de plataforma. Mantenha-os no mínimo necessário.
+* Veja um exemplo funcional: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

@@ -1,0 +1,52 @@
+---
+title: Genel Bakış
+description: Uygulamanızın bir çalışma alanına eklediği verileri şekillendirin — nesneler, alanlar ve ilişkiler.
+icon: database
+---
+
+Bir Twenty uygulamasının **veri katmanı**, uygulamanızın bir çalışma alanına *eklediği* veridir — bildirdiği yeni kayıt türleri, mevcut nesnelere eklediği sütunlar ve bu kayıtların birbirine nasıl bağlandığı.
+
+```text
+┌──────────────────────────────────────────────────┐
+│ Object — a record type, e.g. PostCard            │
+│    ├─ Field     (name, type, label)              │
+│    ├─ Field                                      │
+│    └─ Relation  (link to another object)         │
+└──────────────────────────────────────────────────┘
+            │
+            ├── lives in your app, OR
+            │
+            ▼
+┌──────────────────────────────────────────────────┐
+│ Standard / other apps' objects                   │
+│    └─ Field added by your app via defineField    │
+└──────────────────────────────────────────────────┘
+```
+
+## Bu bölümde
+
+<CardGroup cols={2}>
+  <Card title="Nesneler" icon="table" href="/l/tr/developers/extend/apps/data/objects">
+    `defineObject` — kendi alanlarına sahip yeni kayıt türleri bildirin.
+  </Card>
+  <Card title="Nesneleri Genişletme" icon="wand-magic-sparkles" href="/l/tr/developers/extend/apps/data/extending-objects">
+    `defineField` — standart nesnelere veya diğer uygulamaların nesnelerine alanlar ekleyin.
+  </Card>
+  <Card title="İlişkiler" icon="diagram-project" href="/l/tr/developers/extend/apps/data/relations">
+    Nesneler arasında çift yönlü `MANY_TO_ONE` / `ONE_TO_MANY` bağlantıları.
+  </Card>
+</CardGroup>
+
+## Varlıklara genel bakış
+
+| Varlık     | Amaç                                                                                                                                  | Şununla tanımlanır                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| **Nesne**  | Kendi alanlarına sahip yeni bir özel kayıt türü (ör. PostCard, Invoice)                                                               | `defineObject()`                         |
+| **Alan**   | Bir nesne üzerindeki sütun. Bağımsız alanlar, oluşturmadığınız nesneleri genişletebilir (ör. Company nesnesine `loyaltyTier` ekleyin) | `defineField()`                          |
+| **İlişki** | İki nesne arasında, her iki tarafı da alan olarak bildirilmiş çift yönlü bir bağlantı                                                 | `defineField()` ile `FieldType.RELATION` |
+
+SDK bunları derleme zamanında AST analiziyle algılar, bu yüzden dosya organizasyonu size kalmıştır — kullanılan gelenek `src/objects/` ve `src/fields/` dizinleridir. Kararlı `universalIdentifier` UUID’leri, dağıtımlar arasında her şeyi birbirine bağlar.
+
+<Note>
+**Application Config** veya **Roles & Permissions** mı arıyorsunuz? Bunlar, ekledikleri verilerden çok uygulamanın kendisini tanımlar — [Config](/l/tr/developers/extend/apps/config/overview) altında bulunurlar. **Connections** (Linear, GitHub, Slack OAuth) mı arıyorsunuz? Bunlar, mantık fonksiyonları *içinden* çağrılmak için vardır ve [Logic](/l/tr/developers/extend/apps/logic/connections) altında bulunurlar.
+</Note>

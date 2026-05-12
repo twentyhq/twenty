@@ -1,15 +1,14 @@
 import type { CaseStudyData } from '@/lib/customers';
-import { Container, Heading } from '@/design-system/components';
+import { Container } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
+import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
 import { LocalizedLink } from '@/lib/i18n';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
 import { theme } from '@/theme';
-import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { IconArrowLeft, IconClock } from '@tabler/icons-react';
 import Image from 'next/image';
-
 const CATALOG_LOGO_WIDTHS: Record<string, number> = {
   'nine-dots': 72,
   'alternative-partners': 220,
@@ -230,15 +229,10 @@ type HeroProps = {
   hero: CaseStudyData['hero'];
   dashColor?: string;
   hoverDashColor?: string;
-  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Hero({
-  hero,
-  dashColor,
-  hoverDashColor,
-  renderText,
-}: HeroProps) {
+export function Hero({ hero, dashColor, hoverDashColor }: HeroProps) {
+  const i18n = getServerI18n();
   const ClientIcon = CLIENT_ICONS[hero.clientIcon];
   const authorInitials = hero.author
     .split(' ')
@@ -262,15 +256,7 @@ export function Hero({
             </Badge>
           </MetaRow>
 
-          <TitleWrap>
-            <Heading
-              as="h1"
-              renderText={renderText}
-              segments={hero.title}
-              size="lg"
-              weight="light"
-            />
-          </TitleWrap>
+          <TitleWrap>{hero.title}</TitleWrap>
 
           <AuthorAvatar>
             {hero.authorAvatarSrc ? (
@@ -289,13 +275,13 @@ export function Hero({
           <AuthorRow>
             <BackLink href="/customers">
               <IconArrowLeft size={16} stroke={1.5} />
-              {renderText(msg`Back`)}
+              {i18n._(msg`Back`)}
             </BackLink>
             <AuthorDivider aria-hidden />
             <AuthorInfo>
               <AuthorName>{hero.author}</AuthorName>
               {hero.authorRole ? (
-                <AuthorRole>{renderText(hero.authorRole)}</AuthorRole>
+                <AuthorRole>{i18n._(hero.authorRole)}</AuthorRole>
               ) : null}
             </AuthorInfo>
           </AuthorRow>

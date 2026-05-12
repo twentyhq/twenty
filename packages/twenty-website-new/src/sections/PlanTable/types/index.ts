@@ -8,4 +8,4 @@ export type {
   PlanTableDataType,
   PlanTableFeatureRowDataType,
   PlanTableTierColumnType,
-} from './PlanTableData';
+} from './plan-table-data';

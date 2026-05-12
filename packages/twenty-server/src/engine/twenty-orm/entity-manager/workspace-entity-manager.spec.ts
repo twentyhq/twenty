@@ -1,4 +1,5 @@
 import {
+  FeatureFlagKey,
   type FieldMetadataType,
   type ObjectsPermissions,
 } from 'twenty-shared/types';
@@ -236,13 +237,11 @@ describe('WorkspaceEntityManager', () => {
         IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: false,
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
+        IS_EMAIL_GROUP_ENABLED: false,
         IS_JUNCTION_RELATIONS_ENABLED: false,
-        IS_CONNECTED_ACCOUNT_MIGRATED: false,
-        IS_RICH_TEXT_V1_MIGRATED: false,
         IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: false,
         IS_REST_METADATA_API_NEW_FORMAT_DIRECT: false,
-        IS_DATASOURCE_MIGRATED: false,
-        IS_COMMAND_MENU_ITEM_ENABLED: false,
+        [FeatureFlagKey.IS_BILLING_V2_ENABLED]: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {

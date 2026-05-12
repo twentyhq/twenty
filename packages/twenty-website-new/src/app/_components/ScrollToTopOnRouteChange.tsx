@@ -1,13 +1,13 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
 export function ScrollToTopOnRouteChange() {
   const pathname = usePathname();
   const isInitialRenderRef = useRef(true);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isInitialRenderRef.current) {
       isInitialRenderRef.current = false;
       return;

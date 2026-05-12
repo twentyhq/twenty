@@ -67,6 +67,16 @@ export const STATIC_WEBSITE_ROUTES = [
     indexed: true,
   },
   {
+    id: 'articles',
+    path: '/articles',
+    title: msg`Twenty Articles — Open Source CRM Insights`,
+    description: msg`Ideas from the team building Twenty on open source CRM, customer data, GTM systems, and building software that lasts.`,
+    changeFrequency: 'daily',
+    priority: 0.8,
+    indexed: true,
+    localeMode: 'source',
+  },
+  {
     id: 'privacyPolicy',
     path: '/privacy-policy',
     title: msg`Privacy Policy | Twenty`,

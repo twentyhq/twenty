@@ -1,0 +1,48 @@
+---
+title: Objekte erweitern
+description: Fügen Sie Standard-Twenty-Objekten Felder hinzu (Person, Company, …) oder zu Objekten aus anderen Apps mit `defineField`.
+icon: wand-magic-sparkles
+---
+
+Verwenden Sie `defineField()`, um einem Objekt, das Ihnen nicht gehört, ein Feld hinzuzufügen – ein Standard-Twenty-Objekt wie Person oder Company oder ein Objekt, das von einer anderen installierten App bereitgestellt wird. Im Gegensatz zu Inline-Feldern, die innerhalb von [`defineObject`](/l/de/developers/extend/apps/data/objects) deklariert werden, benötigen eigenständige Felder einen `objectUniversalIdentifier`, um anzugeben, welches Objekt sie erweitern.
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+## Hauptpunkte
+
+* Der `objectUniversalIdentifier` identifiziert das Zielobjekt. Für Standard-Twenty-Objekte importieren Sie die Konstante aus `twenty-sdk`:
+
+  ```ts
+  import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier
+  // …
+  ```
+
+* Wenn Sie Felder **inline innerhalb von `defineObject()`** definieren, benötigen Sie `objectUniversalIdentifier` **nicht** – es wird vom übergeordneten Objekt geerbt.
+
+* `defineField()` ist die einzige Möglichkeit, Felder zu Objekten hinzuzufügen, die Sie nicht mit `defineObject()` erstellt haben.
+
+* Der Speicherort der Datei liegt bei Ihnen. Die Konvention ist `src/fields/\<name>.field.ts`, aber das SDK erkennt Felder überall in `src/`.
+
+## Hinzufügen einer Relation zu einem bestehenden Objekt
+
+Um ein Relationsfeld hinzuzufügen (z. B. zur Verknüpfung Ihres benutzerdefinierten Objekts mit einer Standard-`Person`), verwenden Sie `defineField()` mit `FieldType.RELATION`. Das Muster ist dasselbe wie bei Inline-Relationen, jedoch mit explizit gesetztem `objectUniversalIdentifier`. Siehe [Relations](/l/de/developers/extend/apps/data/relations) für das bidirektionale Muster.

@@ -1,25 +1,17 @@
 import { msg } from '@lingui/core/macro';
-import { MENU_DATA } from '@/sections/Menu/data';
-import { EDITORIAL_FOUR } from '@/app/[locale]/why-twenty/editorial-four.data';
-import { EDITORIAL_ONE } from '@/app/[locale]/why-twenty/editorial-one.data';
-import { EDITORIAL_THREE } from '@/app/[locale]/why-twenty/editorial-three.data';
-import { HERO_COPY } from '@/app/[locale]/why-twenty/hero.data';
-import { MARQUEE_DATA } from '@/app/[locale]/why-twenty/marquee.data';
-import { SIGNOFF_COPY } from '@/app/[locale]/why-twenty/signoff.data';
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
 import {
   getRouteI18n,
   type LocaleRouteParams,
-} from '@/lib/i18n/get-route-i18n';
+} from '@/lib/i18n/utils/get-route-i18n';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Editorial } from '@/sections/Editorial/components';
-import { Hero } from '@/sections/Hero/components';
-import { Marquee } from '@/sections/Marquee/components';
-import { Menu } from '@/sections/Menu/components';
-import { Signoff } from '@/sections/Signoff/components';
+import { Editorial } from '@/sections/Editorial';
+import { Hero } from '@/sections/Hero';
+import { Marquee } from '@/sections/Marquee';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import { Signoff } from '@/sections/Signoff';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
 import { css } from '@linaria/core';
@@ -74,7 +66,6 @@ export default async function WhyTwentyPage({ params }: WhyTwentyPageProps) {
     getRouteI18n(params),
     fetchCommunityStats(),
   ]);
-  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
@@ -101,155 +92,119 @@ export default async function WhyTwentyPage({ params }: WhyTwentyPageProps) {
         <Menu.Cta scheme="secondary" />
       </Menu.Root>
 
-      <Hero.Root
-        backgroundColor={theme.colors.secondary.background[100]}
-        colorScheme="secondary"
-      >
+      <Hero.Root scheme="dark">
         <Hero.Heading page={Pages.WhyTwenty} size="xl">
           <HeadingPart fontFamily="serif">
-            {renderText(msg`The future of CRM is built,`)}
+            {i18n._(msg`The future of CRM is built,`)}
           </HeadingPart>{' '}
           <HeadingPart fontFamily="sans">
-            {renderText(msg`not bought.`)}
+            {i18n._(msg`not bought.`)}
           </HeadingPart>
         </Hero.Heading>
-        <Hero.Body
-          body={{ text: HERO_COPY.body }}
-          page={Pages.WhyTwenty}
-          renderText={renderText}
-        />
+        <Hero.Body page={Pages.WhyTwenty}>
+          {i18n._(
+            msg`CRM was a database you filled on Fridays. AI turned it into the system that runs your go-to-market. To differentiate, you have to build what your competitors can't buy.`,
+          )}
+        </Hero.Body>
         <Hero.WhyTwentyVisual />
       </Hero.Root>
 
-      <Editorial.Root
-        backgroundColor={theme.colors.secondary.background[100]}
-        color={theme.colors.secondary.text[100]}
-        crosshair={sectionCrosshairRight}
-      >
+      <Editorial.Root scheme="dark" crosshair={sectionCrosshairRight}>
         <Editorial.Intro className={editorialOneIntroClass}>
-          <Editorial.Eyebrow
-            colorScheme="secondary"
-            eyebrow={EDITORIAL_ONE.eyebrow!}
-            renderText={renderText}
-          />
+          <Editorial.Eyebrow colorScheme="secondary">
+            {i18n._(msg`The shift`)}
+          </Editorial.Eyebrow>
           <Editorial.Heading>
             <HeadingPart fontFamily="serif">
-              {renderText(msg`CRM was a ledger.`)}
+              {i18n._(msg`CRM was a ledger.`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderText(msg`AI turned it into an operating system.`)}
+              {i18n._(msg`AI turned it into an operating system.`)}
             </HeadingPart>
           </Editorial.Heading>
         </Editorial.Intro>
-        <Editorial.Body
-          body={EDITORIAL_ONE.body}
-          color={theme.colors.secondary.text[60]}
-          layout="two-column-left"
-          renderText={renderText}
-        />
+        <Editorial.Body layout="two-column-left">
+          {i18n._(
+            msg`For twenty years, CRM meant the same thing: a place to log calls, track deals, and pull reports on Friday. The real work happened in people's heads, in Slack threads, in hallway conversations. The CRM kept score. Nobody expected more from it.`,
+          )}
+          {i18n._(
+            msg`AI agents are starting to draft outreach, score leads, research accounts, write follow-ups, update deal stages. Every one of these actions reads from and writes to the CRM. The scoreboard became the playbook. The database became the brain.`,
+          )}
+        </Editorial.Body>
       </Editorial.Root>
 
-      {/*
-      <Editorial.Root
-        backgroundColor={theme.colors.secondary.background[100]}
-        color={theme.colors.secondary.text[100]}
-      >
-        <Editorial.Body
-          body={EDITORIAL_TWO.body}
-          color={theme.colors.secondary.text[60]}
-          layout="centered"
-          renderText={renderText}
-        />
-      </Editorial.Root>
-      */}
-
-      <Editorial.Root
-        backgroundColor={theme.colors.secondary.background[100]}
-        color={theme.colors.secondary.text[100]}
-        crosshair={sectionCrosshairLeft}
-      >
+      <Editorial.Root scheme="dark" crosshair={sectionCrosshairLeft}>
         <Editorial.Intro className={editorialRightIntroClass}>
-          <Editorial.Eyebrow
-            colorScheme="secondary"
-            eyebrow={EDITORIAL_FOUR.eyebrow!}
-            renderText={renderText}
-          />
+          <Editorial.Eyebrow colorScheme="secondary">
+            {i18n._(msg`What this means`)}
+          </Editorial.Eyebrow>
           <Editorial.Heading>
             <HeadingPart fontFamily="serif">
-              {renderText(msg`Differentiation now`)}
+              {i18n._(msg`Differentiation now`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderText(msg`lives in the code you own.`)}
+              {i18n._(msg`lives in the code you own.`)}
             </HeadingPart>
           </Editorial.Heading>
         </Editorial.Intro>
-        <Editorial.Body
-          body={EDITORIAL_FOUR.body}
-          color={theme.colors.secondary.text[60]}
-          layout="two-column-right"
-          renderText={renderText}
-        />
+        <Editorial.Body layout="two-column-right">
+          {i18n._(
+            msg`You don't buy your deployment pipeline off the shelf. You don't rent your data warehouse from a vendor who decides the schema. You build it, you own it, you iterate on it every week. CRM is going the same way. The teams that treat it as infrastructure they own will compound an advantage every quarter.`,
+          )}
+          {i18n._(
+            msg`Tuesday your team learns that deals with a technical champion close 3x faster. Wednesday you add the field, wire up the scoring, adjust the workflow. By Thursday your agents are acting on it. That feedback loop is the edge. And it only works if the CRM is yours.`,
+          )}
+        </Editorial.Body>
       </Editorial.Root>
 
-      <Editorial.Root
-        backgroundColor={theme.colors.secondary.background[100]}
-        color={theme.colors.secondary.text[100]}
-        crosshair={sectionCrosshairRight}
-      >
+      <Editorial.Root scheme="dark" crosshair={sectionCrosshairRight}>
         <Editorial.Intro className={editorialOneIntroClass}>
-          <Editorial.Eyebrow
-            colorScheme="secondary"
-            eyebrow={EDITORIAL_THREE.eyebrow!}
-            renderText={renderText}
-          />
+          <Editorial.Eyebrow colorScheme="secondary">
+            {i18n._(msg`The opportunity`)}
+          </Editorial.Eyebrow>
           <Editorial.Heading>
             <HeadingPart fontFamily="serif">
-              {renderText(msg`Build it in an afternoon.`)}
+              {i18n._(msg`Build it in an afternoon.`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderText(msg`AI made the gap that small.`)}
+              {i18n._(msg`AI made the gap that small.`)}
             </HeadingPart>
           </Editorial.Heading>
         </Editorial.Intro>
-        <Editorial.Body
-          body={EDITORIAL_THREE.body}
-          color={theme.colors.secondary.text[60]}
-          layout="two-column-left"
-          renderText={renderText}
-        />
+        <Editorial.Body layout="two-column-left">
+          {i18n._(
+            msg`A year ago, customizing your CRM meant hiring a Salesforce consultant, learning Apex, waiting months. The gap between "I want this" and "it's live" was measured in quarters and invoices. So people settled. They bent their process to fit the tool and called it adoption.`,
+          )}
+          {i18n._(
+            msg`Now a developer can describe what they want to Claude Code and have a working app in an afternoon. A custom object, a scoring workflow, a new view, an integration. The bottleneck isn't building anymore. It's whether your platform lets you.`,
+          )}
+        </Editorial.Body>
       </Editorial.Root>
 
       <Marquee.Root
-        backgroundColor={theme.colors.secondary.background[100]}
-        color={theme.colors.secondary.text[100]}
-        renderText={renderText}
-      >
-        <Marquee.Heading segments={MARQUEE_DATA.heading} />
-      </Marquee.Root>
+        scheme="dark"
+        segments={[
+          { fontFamily: 'serif', text: i18n._(msg`Same CRM`) },
+          { fontFamily: 'sans', text: i18n._(msg`Same output`) },
+          { fontFamily: 'serif', text: i18n._(msg`Same results`) },
+        ]}
+      />
 
-      <Signoff.Root
-        backgroundColor={theme.colors.secondary.background[100]}
-        color={theme.colors.secondary.text[100]}
-        page={Pages.WhyTwenty}
-      >
+      <Signoff.Root scheme="dark" page={Pages.WhyTwenty}>
         <Signoff.Heading page={Pages.WhyTwenty}>
           <HeadingPart fontFamily="serif">
-            {renderText(msg`Build a CRM your competitors`)}
+            {i18n._(msg`Build a CRM your competitors`)}
           </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">
-            {renderText(msg`can't buy.`)}
-          </HeadingPart>
+          <HeadingPart fontFamily="sans">{i18n._(msg`can't buy.`)}</HeadingPart>
         </Signoff.Heading>
-        <Signoff.Body
-          body={{ text: SIGNOFF_COPY.body }}
-          page={Pages.WhyTwenty}
-          renderText={renderText}
-        />
+        <Signoff.Body page={Pages.WhyTwenty}>
+          {i18n._(msg`Open-source, AI-ready, and yours to shape.`)}
+        </Signoff.Body>
         <Signoff.Cta>
           <LinkButton
             color="primary"
             href="https://app.twenty.com/welcome"
-            label={renderText(msg`Get started`)}
+            label={i18n._(msg`Get started`)}
             variant="contained"
           />
         </Signoff.Cta>
