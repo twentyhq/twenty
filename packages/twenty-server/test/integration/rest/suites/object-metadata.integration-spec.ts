@@ -1,7 +1,10 @@
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   cleanupTestObject,
   createTestObjectViaGraphql,
+  extractMetadataItemPayload,
+  extractMetadataListPayload,
   NON_EXISTENT_UUID,
   uniqueSuffix,
 } from 'test/integration/rest/utils/metadata-rest-api.util';
@@ -10,8 +13,30 @@ import {
   assertRestApiErrorResponse,
   assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
-describe('Object Metadata REST API', () => {
+type ObjectShape = { id: string; fields: unknown[]; labelSingular?: string };
+
+describe.each([
+  ['new format', true],
+  ['legacy format', false],
+] as const)('Object Metadata REST API (%s)', (_shapeLabel, isNewFormat) => {
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
+      value: isNewFormat,
+      expectToFail: false,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
+      value: false,
+      expectToFail: false,
+    });
+  });
+
   describe('GET /metadata/objects', () => {
     const seededIds: string[] = [];
 
@@ -28,7 +53,7 @@ describe('Object Metadata REST API', () => {
       seededIds.length = 0;
     });
 
-    it('returns the clean REST shape: { data, pageInfo, totalCount }', async () => {
+    it('returns the expected envelope shape', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
         path: '/metadata/objects',
@@ -36,8 +61,12 @@ describe('Object Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(response);
-      expect(response.body).not.toHaveProperty('data.objects');
-      expect(Array.isArray(response.body.data)).toBe(true);
+      if (isNewFormat) {
+        expect(response.body).not.toHaveProperty('data.objects');
+        expect(Array.isArray(response.body.data)).toBe(true);
+      } else {
+        expect(Array.isArray(response.body.data?.objects)).toBe(true);
+      }
       expect(response.body).toHaveProperty('pageInfo.hasNextPage');
       expect(response.body).toHaveProperty('pageInfo.startCursor');
       expect(response.body).toHaveProperty('pageInfo.endCursor');
@@ -53,7 +82,12 @@ describe('Object Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(response);
-      for (const object of response.body.data) {
+      const { items } = extractMetadataListPayload<ObjectShape>(
+        response.body,
+        'objects',
+      );
+
+      for (const object of items) {
         expect(Array.isArray(object.fields)).toBe(true);
       }
     });
@@ -66,10 +100,15 @@ describe('Object Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(response);
-      expect(response.body.data.length).toBe(1);
-      expect(response.body.pageInfo.hasNextPage).toBe(true);
-      expect(response.body.pageInfo.startCursor).toBe(response.body.data[0].id);
-      expect(response.body.pageInfo.endCursor).toBe(response.body.data[0].id);
+      const { items, pageInfo } = extractMetadataListPayload<ObjectShape>(
+        response.body,
+        'objects',
+      );
+
+      expect(items.length).toBe(1);
+      expect(pageInfo.hasNextPage).toBe(true);
+      expect(pageInfo.startCursor).toBe(items[0].id);
+      expect(pageInfo.endCursor).toBe(items[0].id);
     });
 
     it('paginates forward with starting_after without overlap', async () => {
@@ -80,22 +119,27 @@ describe('Object Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(firstPage);
+      const firstPayload = extractMetadataListPayload<ObjectShape>(
+        firstPage.body,
+        'objects',
+      );
 
       const secondPage = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/objects?limit=2&starting_after=${firstPage.body.pageInfo.endCursor}`,
+        path: `/metadata/objects?limit=2&starting_after=${firstPayload.pageInfo.endCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
       assertRestApiSuccessfulResponse(secondPage);
-      const firstPageIds = firstPage.body.data.map((o: { id: string }) => o.id);
-      const secondPageIds = secondPage.body.data.map(
-        (o: { id: string }) => o.id,
+      const secondPayload = extractMetadataListPayload<ObjectShape>(
+        secondPage.body,
+        'objects',
       );
 
-      expect(
-        firstPageIds.some((id: string) => secondPageIds.includes(id)),
-      ).toBe(false);
+      const firstIds = firstPayload.items.map((o) => o.id);
+      const secondIds = secondPayload.items.map((o) => o.id);
+
+      expect(firstIds.some((id) => secondIds.includes(id))).toBe(false);
     });
 
     it('paginates backward with ending_before', async () => {
@@ -105,25 +149,38 @@ describe('Object Metadata REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
+      const firstPayload = extractMetadataListPayload<ObjectShape>(
+        firstPage.body,
+        'objects',
+      );
+
       const secondPage = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/objects?limit=2&starting_after=${firstPage.body.pageInfo.endCursor}`,
+        path: `/metadata/objects?limit=2&starting_after=${firstPayload.pageInfo.endCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
+      const secondPayload = extractMetadataListPayload<ObjectShape>(
+        secondPage.body,
+        'objects',
+      );
+
       const backPage = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/objects?limit=2&ending_before=${secondPage.body.pageInfo.startCursor}`,
+        path: `/metadata/objects?limit=2&ending_before=${secondPayload.pageInfo.startCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
       assertRestApiSuccessfulResponse(backPage);
-      const firstPageIds = firstPage.body.data.map((o: { id: string }) => o.id);
-      const backPageIds = backPage.body.data.map((o: { id: string }) => o.id);
-
-      expect(backPageIds.every((id: string) => firstPageIds.includes(id))).toBe(
-        true,
+      const backPayload = extractMetadataListPayload<ObjectShape>(
+        backPage.body,
+        'objects',
       );
+
+      const firstIds = firstPayload.items.map((o) => o.id);
+      const backIds = backPayload.items.map((o) => o.id);
+
+      expect(backIds.every((id) => firstIds.includes(id))).toBe(true);
     });
 
     it('rejects combining starting_after and ending_before with 400', async () => {
@@ -143,9 +200,14 @@ describe('Object Metadata REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
+      const firstPayload = extractMetadataListPayload<ObjectShape>(
+        firstPage.body,
+        'objects',
+      );
+
       const secondPage = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/objects?limit=2&starting_after=${firstPage.body.pageInfo.endCursor}`,
+        path: `/metadata/objects?limit=2&starting_after=${firstPayload.pageInfo.endCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
@@ -162,8 +224,13 @@ describe('Object Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(response);
-      expect(response.body.data.length).toBe(response.body.totalCount);
-      expect(response.body.pageInfo.hasNextPage).toBe(false);
+      const { items, pageInfo } = extractMetadataListPayload<ObjectShape>(
+        response.body,
+        'objects',
+      );
+
+      expect(items.length).toBe(response.body.totalCount);
+      expect(pageInfo.hasNextPage).toBe(false);
     });
   });
 
@@ -180,7 +247,7 @@ describe('Object Metadata REST API', () => {
       await cleanupTestObject(testObjectId);
     });
 
-    it('returns the object directly with fields[] populated', async () => {
+    it('returns the object with fields[] populated', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
         path: `/metadata/objects/${testObjectId}`,
@@ -188,10 +255,19 @@ describe('Object Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(response);
-      expect(response.body.id).toBe(testObjectId);
-      expect(response.body).not.toHaveProperty('object');
-      expect(Array.isArray(response.body.fields)).toBe(true);
-      expect(response.body.fields.length).toBeGreaterThan(0);
+      const object = extractMetadataItemPayload<ObjectShape>(
+        response.body,
+        'object',
+      );
+
+      expect(object.id).toBe(testObjectId);
+      expect(Array.isArray(object.fields)).toBe(true);
+      expect(object.fields.length).toBeGreaterThan(0);
+      if (isNewFormat) {
+        expect(response.body).not.toHaveProperty('data.object');
+      } else {
+        expect(response.body).toHaveProperty('data.object');
+      }
     });
 
     it('returns 400 on a malformed UUID', async () => {
@@ -234,16 +310,27 @@ describe('Object Metadata REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
+      const object = extractMetadataItemPayload<ObjectShape>(
+        response.body,
+        'createOneObject',
+      );
+
       try {
         assertRestApiSuccessfulResponse(response, 201);
-        expect(response.body.id).toBeDefined();
-        expect(response.body.nameSingular).toBe(input.nameSingular);
-        expect(response.body).not.toHaveProperty('createOneObject');
-        expect(Array.isArray(response.body.fields)).toBe(true);
-        expect(response.body.fields.length).toBeGreaterThan(0);
+        expect(object.id).toBeDefined();
+        expect(
+          (object as ObjectShape & { nameSingular: string }).nameSingular,
+        ).toBe(input.nameSingular);
+        expect(Array.isArray(object.fields)).toBe(true);
+        expect(object.fields.length).toBeGreaterThan(0);
+        if (isNewFormat) {
+          expect(response.body).not.toHaveProperty('data.createOneObject');
+        } else {
+          expect(response.body).toHaveProperty('data.createOneObject');
+        }
       } finally {
-        if (response.body.id) {
-          await cleanupTestObject(response.body.id);
+        if (object.id) {
+          await cleanupTestObject(object.id);
         }
       }
     });
@@ -290,7 +377,7 @@ describe('Object Metadata REST API', () => {
       await cleanupTestObject(testObjectId);
     });
 
-    it('updates and returns the object directly with fields[]', async () => {
+    it('updates and returns the object with fields[]', async () => {
       const newLabel = `Updated ${uniqueSuffix()}`;
 
       const response = await makeRestAPIRequest({
@@ -301,10 +388,19 @@ describe('Object Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(response);
-      expect(response.body.id).toBe(testObjectId);
-      expect(response.body).not.toHaveProperty('updateOneObject');
-      expect(response.body.labelSingular).toBe(newLabel);
-      expect(Array.isArray(response.body.fields)).toBe(true);
+      const object = extractMetadataItemPayload<ObjectShape>(
+        response.body,
+        'updateOneObject',
+      );
+
+      expect(object.id).toBe(testObjectId);
+      expect(object.labelSingular).toBe(newLabel);
+      expect(Array.isArray(object.fields)).toBe(true);
+      if (isNewFormat) {
+        expect(response.body).not.toHaveProperty('data.updateOneObject');
+      } else {
+        expect(response.body).toHaveProperty('data.updateOneObject');
+      }
     });
 
     it('returns 404 for an unknown id', async () => {
@@ -334,9 +430,14 @@ describe('Object Metadata REST API', () => {
         });
 
         assertRestApiSuccessfulResponse(response);
-        expect(response.body.id).toBe(id);
-        expect(response.body.labelSingular).toBe(newLabel);
-        expect(Array.isArray(response.body.fields)).toBe(true);
+        const object = extractMetadataItemPayload<ObjectShape>(
+          response.body,
+          'updateOneObject',
+        );
+
+        expect(object.id).toBe(id);
+        expect(object.labelSingular).toBe(newLabel);
+        expect(Array.isArray(object.fields)).toBe(true);
       } finally {
         await cleanupTestObject(id);
       }
@@ -363,8 +464,17 @@ describe('Object Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(deleteResponse);
-      expect(deleteResponse.body.id).toBe(id);
-      expect(deleteResponse.body).not.toHaveProperty('deleteOneObject');
+      const deleted = extractMetadataItemPayload<{ id: string }>(
+        deleteResponse.body,
+        'deleteOneObject',
+      );
+
+      expect(deleted.id).toBe(id);
+      if (isNewFormat) {
+        expect(deleteResponse.body).not.toHaveProperty('data.deleteOneObject');
+      } else {
+        expect(deleteResponse.body).toHaveProperty('data.deleteOneObject');
+      }
 
       const getResponse = await makeRestAPIRequest({
         method: 'get',

@@ -108,3 +108,42 @@ export const cleanupTestField = async (id: string): Promise<void> => {
     // best-effort cleanup
   }
 };
+
+export type MetadataListPageInfo = {
+  hasNextPage: boolean;
+  startCursor: string | null;
+  endCursor: string | null;
+};
+
+export const extractMetadataListPayload = <T>(
+  body: Record<string, unknown>,
+  pluralKey: 'objects' | 'fields',
+): { items: T[]; pageInfo: MetadataListPageInfo; totalCount: number } => {
+  if (Array.isArray(body.data)) {
+    return {
+      items: body.data as T[],
+      pageInfo: body.pageInfo as MetadataListPageInfo,
+      totalCount: body.totalCount as number,
+    };
+  }
+  const data = body.data as Record<string, unknown>;
+
+  return {
+    items: (data[pluralKey] ?? []) as T[],
+    pageInfo: body.pageInfo as MetadataListPageInfo,
+    totalCount: body.totalCount as number,
+  };
+};
+
+export const extractMetadataItemPayload = <T>(
+  body: Record<string, unknown>,
+  legacyKey: string,
+): T => {
+  const data = body.data as Record<string, unknown> | undefined;
+
+  if (data && legacyKey in data) {
+    return data[legacyKey] as T;
+  }
+
+  return body as T;
+};

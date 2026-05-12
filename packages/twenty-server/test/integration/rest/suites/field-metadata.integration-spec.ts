@@ -1,9 +1,12 @@
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   cleanupTestField,
   cleanupTestObject,
   createTestFieldViaGraphql,
   createTestObjectViaGraphql,
+  extractMetadataItemPayload,
+  extractMetadataListPayload,
   NON_EXISTENT_UUID,
   uniqueSuffix,
 } from 'test/integration/rest/utils/metadata-rest-api.util';
@@ -12,12 +15,28 @@ import {
   assertRestApiErrorResponse,
   assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 
-describe('Field Metadata REST API', () => {
+type FieldShape = {
+  id: string;
+  name?: string;
+  label?: string;
+  objectMetadataId?: string;
+};
+
+describe.each([
+  ['new format', true],
+  ['legacy format', false],
+] as const)('Field Metadata REST API (%s)', (_shapeLabel, isNewFormat) => {
   let parentObjectId: string;
 
   beforeAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
+      value: isNewFormat,
+      expectToFail: false,
+    });
+
     const { id } = await createTestObjectViaGraphql();
 
     parentObjectId = id;
@@ -25,6 +44,11 @@ describe('Field Metadata REST API', () => {
 
   afterAll(async () => {
     await cleanupTestObject(parentObjectId);
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
+      value: false,
+      expectToFail: false,
+    });
   });
 
   describe('GET /metadata/fields', () => {
@@ -43,7 +67,7 @@ describe('Field Metadata REST API', () => {
       seededIds.length = 0;
     });
 
-    it('returns the clean REST shape: { data, pageInfo, totalCount }', async () => {
+    it('returns the expected envelope shape', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
         path: '/metadata/fields',
@@ -51,8 +75,12 @@ describe('Field Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(response);
-      expect(response.body).not.toHaveProperty('data.fields');
-      expect(Array.isArray(response.body.data)).toBe(true);
+      if (isNewFormat) {
+        expect(response.body).not.toHaveProperty('data.fields');
+        expect(Array.isArray(response.body.data)).toBe(true);
+      } else {
+        expect(Array.isArray(response.body.data?.fields)).toBe(true);
+      }
       expect(response.body).toHaveProperty('pageInfo.hasNextPage');
       expect(response.body).toHaveProperty('pageInfo.startCursor');
       expect(response.body).toHaveProperty('pageInfo.endCursor');
@@ -68,8 +96,13 @@ describe('Field Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(response);
-      expect(response.body.data.length).toBe(1);
-      expect(response.body.pageInfo.hasNextPage).toBe(true);
+      const { items, pageInfo } = extractMetadataListPayload<FieldShape>(
+        response.body,
+        'fields',
+      );
+
+      expect(items.length).toBe(1);
+      expect(pageInfo.hasNextPage).toBe(true);
     });
 
     it('paginates forward with starting_after without overlap', async () => {
@@ -79,17 +112,27 @@ describe('Field Metadata REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
+      const firstPayload = extractMetadataListPayload<FieldShape>(
+        firstPage.body,
+        'fields',
+      );
+
       const secondPage = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/fields?limit=2&starting_after=${firstPage.body.pageInfo.endCursor}`,
+        path: `/metadata/fields?limit=2&starting_after=${firstPayload.pageInfo.endCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
       assertRestApiSuccessfulResponse(secondPage);
-      const firstIds = firstPage.body.data.map((f: { id: string }) => f.id);
-      const secondIds = secondPage.body.data.map((f: { id: string }) => f.id);
+      const secondPayload = extractMetadataListPayload<FieldShape>(
+        secondPage.body,
+        'fields',
+      );
 
-      expect(firstIds.some((id: string) => secondIds.includes(id))).toBe(false);
+      const firstIds = firstPayload.items.map((f) => f.id);
+      const secondIds = secondPayload.items.map((f) => f.id);
+
+      expect(firstIds.some((id) => secondIds.includes(id))).toBe(false);
     });
 
     it('paginates backward with ending_before', async () => {
@@ -99,23 +142,38 @@ describe('Field Metadata REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
+      const firstPayload = extractMetadataListPayload<FieldShape>(
+        firstPage.body,
+        'fields',
+      );
+
       const secondPage = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/fields?limit=2&starting_after=${firstPage.body.pageInfo.endCursor}`,
+        path: `/metadata/fields?limit=2&starting_after=${firstPayload.pageInfo.endCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
+      const secondPayload = extractMetadataListPayload<FieldShape>(
+        secondPage.body,
+        'fields',
+      );
+
       const backPage = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/fields?limit=2&ending_before=${secondPage.body.pageInfo.startCursor}`,
+        path: `/metadata/fields?limit=2&ending_before=${secondPayload.pageInfo.startCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
       assertRestApiSuccessfulResponse(backPage);
-      const firstIds = firstPage.body.data.map((f: { id: string }) => f.id);
-      const backIds = backPage.body.data.map((f: { id: string }) => f.id);
+      const backPayload = extractMetadataListPayload<FieldShape>(
+        backPage.body,
+        'fields',
+      );
 
-      expect(backIds.every((id: string) => firstIds.includes(id))).toBe(true);
+      const firstIds = firstPayload.items.map((f) => f.id);
+      const backIds = backPayload.items.map((f) => f.id);
+
+      expect(backIds.every((id) => firstIds.includes(id))).toBe(true);
     });
 
     it('rejects combining starting_after and ending_before with 400', async () => {
@@ -135,9 +193,14 @@ describe('Field Metadata REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
+      const firstPayload = extractMetadataListPayload<FieldShape>(
+        firstPage.body,
+        'fields',
+      );
+
       const secondPage = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/fields?limit=2&starting_after=${firstPage.body.pageInfo.endCursor}`,
+        path: `/metadata/fields?limit=2&starting_after=${firstPayload.pageInfo.endCursor}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
@@ -158,7 +221,7 @@ describe('Field Metadata REST API', () => {
       await cleanupTestField(testFieldId);
     });
 
-    it('returns the field directly without an envelope', async () => {
+    it('returns the field with expected envelope', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
         path: `/metadata/fields/${testFieldId}`,
@@ -166,9 +229,18 @@ describe('Field Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(response);
-      expect(response.body.id).toBe(testFieldId);
-      expect(response.body).not.toHaveProperty('field');
-      expect(response.body.objectMetadataId).toBe(parentObjectId);
+      const field = extractMetadataItemPayload<FieldShape>(
+        response.body,
+        'field',
+      );
+
+      expect(field.id).toBe(testFieldId);
+      expect(field.objectMetadataId).toBe(parentObjectId);
+      if (isNewFormat) {
+        expect(response.body).not.toHaveProperty('data.field');
+      } else {
+        expect(response.body).toHaveProperty('data.field');
+      }
     });
 
     it('returns 400 on a malformed UUID', async () => {
@@ -210,15 +282,24 @@ describe('Field Metadata REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
+      const field = extractMetadataItemPayload<FieldShape>(
+        response.body,
+        'createOneField',
+      );
+
       try {
         assertRestApiSuccessfulResponse(response, 201);
-        expect(response.body.id).toBeDefined();
-        expect(response.body).not.toHaveProperty('createOneField');
-        expect(response.body.name).toBe(input.name);
-        expect(response.body.objectMetadataId).toBe(parentObjectId);
+        expect(field.id).toBeDefined();
+        expect(field.name).toBe(input.name);
+        expect(field.objectMetadataId).toBe(parentObjectId);
+        if (isNewFormat) {
+          expect(response.body).not.toHaveProperty('data.createOneField');
+        } else {
+          expect(response.body).toHaveProperty('data.createOneField');
+        }
       } finally {
-        if (response.body.id) {
-          await cleanupTestField(response.body.id);
+        if (field.id) {
+          await cleanupTestField(field.id);
         }
       }
     });
@@ -265,7 +346,7 @@ describe('Field Metadata REST API', () => {
       await cleanupTestField(testFieldId);
     });
 
-    it('updates and returns the field directly', async () => {
+    it('updates and returns the field', async () => {
       const newLabel = `Updated Field ${uniqueSuffix()}`;
 
       const response = await makeRestAPIRequest({
@@ -276,9 +357,18 @@ describe('Field Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(response);
-      expect(response.body.id).toBe(testFieldId);
-      expect(response.body).not.toHaveProperty('updateOneField');
-      expect(response.body.label).toBe(newLabel);
+      const field = extractMetadataItemPayload<FieldShape>(
+        response.body,
+        'updateOneField',
+      );
+
+      expect(field.id).toBe(testFieldId);
+      expect(field.label).toBe(newLabel);
+      if (isNewFormat) {
+        expect(response.body).not.toHaveProperty('data.updateOneField');
+      } else {
+        expect(response.body).toHaveProperty('data.updateOneField');
+      }
     });
 
     it('returns 400 for an unknown id', async () => {
@@ -308,8 +398,13 @@ describe('Field Metadata REST API', () => {
         });
 
         assertRestApiSuccessfulResponse(response);
-        expect(response.body.id).toBe(id);
-        expect(response.body.label).toBe(newLabel);
+        const field = extractMetadataItemPayload<FieldShape>(
+          response.body,
+          'updateOneField',
+        );
+
+        expect(field.id).toBe(id);
+        expect(field.label).toBe(newLabel);
       } finally {
         await cleanupTestField(id);
       }
@@ -327,8 +422,17 @@ describe('Field Metadata REST API', () => {
       });
 
       assertRestApiSuccessfulResponse(response);
-      expect(response.body.id).toBe(id);
-      expect(response.body).not.toHaveProperty('deleteOneField');
+      const deleted = extractMetadataItemPayload<FieldShape>(
+        response.body,
+        'deleteOneField',
+      );
+
+      expect(deleted.id).toBe(id);
+      if (isNewFormat) {
+        expect(response.body).not.toHaveProperty('data.deleteOneField');
+      } else {
+        expect(response.body).toHaveProperty('data.deleteOneField');
+      }
 
       const getResponse = await makeRestAPIRequest({
         method: 'get',

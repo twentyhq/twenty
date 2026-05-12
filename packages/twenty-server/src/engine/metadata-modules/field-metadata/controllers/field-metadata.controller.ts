@@ -18,6 +18,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
 import { parseLimitRestRequest } from 'src/engine/api/rest/input-request-parsers/limit-parser-utils/parse-limit-rest-request.util';
@@ -27,6 +28,7 @@ import {
   type RestCursorPageInfo,
 } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -43,6 +45,13 @@ import {
 import { FieldMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules/field-metadata/filters/field-metadata-rest-api-exception.filter';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
+import {
+  toLegacyFieldMetadataCreateResponse,
+  toLegacyFieldMetadataDeleteResponse,
+  toLegacyFieldMetadataFindOneResponse,
+  toLegacyFieldMetadataListResponse,
+  toLegacyFieldMetadataUpdateResponse,
+} from 'src/engine/metadata-modules/field-metadata/utils/to-legacy-field-metadata-response.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 
 @Controller('rest/metadata/fields')
@@ -58,17 +67,14 @@ export class FieldMetadataController {
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly fieldMetadataService: FieldMetadataService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Get()
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<{
-    data: FieldMetadataDTO[];
-    pageInfo: RestCursorPageInfo;
-    totalCount: number;
-  }> {
+  ) {
     const { items, pageInfo, totalCount } = await paginateByIdCursor({
       repository: this.fieldMetadataRepository,
       workspaceId,
@@ -77,18 +83,26 @@ export class FieldMetadataController {
       endingBefore: parseEndingBeforeRestRequest(request),
     });
 
-    return {
+    const result: {
+      data: FieldMetadataDTO[];
+      pageInfo: RestCursorPageInfo;
+      totalCount: number;
+    } = {
       data: items.map(fromFieldMetadataEntityToFieldMetadataDto),
       pageInfo,
       totalCount,
     };
+
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyFieldMetadataListResponse(result);
   }
 
   @Get(':id')
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<FieldMetadataDTO> {
+  ) {
     const field = await this.fieldMetadataRepository.findOne({
       where: { id, workspaceId },
     });
@@ -100,20 +114,28 @@ export class FieldMetadataController {
       );
     }
 
-    return fromFieldMetadataEntityToFieldMetadataDto(field);
+    const result = fromFieldMetadataEntityToFieldMetadataDto(field);
+
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyFieldMetadataFindOneResponse(result);
   }
 
   @Post()
   async createOne(
     @Body() input: CreateFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<FieldMetadataDTO> {
+  ) {
     const flatField = await this.fieldMetadataService.createOneField({
       createFieldInput: input,
       workspaceId,
     });
 
-    return fromFlatFieldMetadataToFieldMetadataDto(flatField);
+    const result = fromFlatFieldMetadataToFieldMetadataDto(flatField);
+
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyFieldMetadataCreateResponse(result);
   }
 
   @Patch(':id')
@@ -121,7 +143,7 @@ export class FieldMetadataController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() update: UpdateFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<FieldMetadataDTO> {
+  ) {
     return this.handleUpdate({ id, update, workspaceId });
   }
 
@@ -130,7 +152,7 @@ export class FieldMetadataController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() update: UpdateFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<FieldMetadataDTO> {
+  ) {
     return this.handleUpdate({ id, update, workspaceId });
   }
 
@@ -138,13 +160,17 @@ export class FieldMetadataController {
   async deleteOne(
     @Param('id', new ParseUUIDPipe()) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<FieldMetadataDTO> {
+  ) {
     const flatField = await this.fieldMetadataService.deleteOneField({
       deleteOneFieldInput: { id },
       workspaceId,
     });
 
-    return fromFlatFieldMetadataToFieldMetadataDto(flatField);
+    const result = fromFlatFieldMetadataToFieldMetadataDto(flatField);
+
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyFieldMetadataDeleteResponse(result);
   }
 
   private async handleUpdate({
@@ -155,12 +181,23 @@ export class FieldMetadataController {
     id: string;
     update: UpdateFieldInput;
     workspaceId: string;
-  }): Promise<FieldMetadataDTO> {
+  }) {
     const flatField = await this.fieldMetadataService.updateOneField({
       updateFieldInput: { ...update, id },
       workspaceId,
     });
 
-    return fromFlatFieldMetadataToFieldMetadataDto(flatField);
+    const result = fromFlatFieldMetadataToFieldMetadataDto(flatField);
+
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyFieldMetadataUpdateResponse(result);
+  }
+
+  private async isNewMetadataFormat(workspaceId: string): Promise<boolean> {
+    return this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
+      workspaceId,
+    );
   }
 }

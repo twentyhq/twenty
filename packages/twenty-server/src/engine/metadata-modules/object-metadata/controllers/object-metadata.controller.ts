@@ -18,6 +18,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, Repository } from 'typeorm';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
 import { parseLimitRestRequest } from 'src/engine/api/rest/input-request-parsers/limit-parser-utils/parse-limit-rest-request.util';
@@ -27,6 +28,7 @@ import {
   type RestCursorPageInfo,
 } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -37,7 +39,6 @@ import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-m
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { type ObjectMetadataWithFieldsDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata-with-fields.dto';
-import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules/object-metadata/filters/object-metadata-rest-api-exception.filter';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -47,6 +48,13 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
+import {
+  toLegacyObjectMetadataCreateResponse,
+  toLegacyObjectMetadataDeleteResponse,
+  toLegacyObjectMetadataFindOneResponse,
+  toLegacyObjectMetadataListResponse,
+  toLegacyObjectMetadataUpdateResponse,
+} from 'src/engine/metadata-modules/object-metadata/utils/to-legacy-object-metadata-response.util';
 
 @Controller('rest/metadata/objects')
 @UseGuards(
@@ -63,17 +71,14 @@ export class ObjectMetadataController {
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Get()
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<{
-    data: ObjectMetadataWithFieldsDTO[];
-    pageInfo: RestCursorPageInfo;
-    totalCount: number;
-  }> {
+  ) {
     const { items, pageInfo, totalCount } = await paginateByIdCursor({
       repository: this.objectMetadataRepository,
       workspaceId,
@@ -91,14 +96,22 @@ export class ObjectMetadataController {
       this.toObjectWithFieldsDto(object, fields.get(object.id) ?? []),
     );
 
-    return { data, pageInfo, totalCount };
+    const result: {
+      data: ObjectMetadataWithFieldsDTO[];
+      pageInfo: RestCursorPageInfo;
+      totalCount: number;
+    } = { data, pageInfo, totalCount };
+
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyObjectMetadataListResponse(result);
   }
 
   @Get(':id')
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ObjectMetadataWithFieldsDTO> {
+  ) {
     const object = await this.objectMetadataRepository.findOne({
       where: { id, workspaceId },
     });
@@ -114,14 +127,18 @@ export class ObjectMetadataController {
       where: { objectMetadataId: object.id, workspaceId },
     });
 
-    return this.toObjectWithFieldsDto(object, fields);
+    const result = this.toObjectWithFieldsDto(object, fields);
+
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyObjectMetadataFindOneResponse(result);
   }
 
   @Post()
   async createOne(
     @Body() input: CreateObjectInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ObjectMetadataWithFieldsDTO> {
+  ) {
     const flatObject = await this.objectMetadataService.createOneObject({
       createObjectInput: input,
       workspaceId,
@@ -131,10 +148,14 @@ export class ObjectMetadataController {
       where: { objectMetadataId: flatObject.id, workspaceId },
     });
 
-    return {
+    const result: ObjectMetadataWithFieldsDTO = {
       ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
       fields: fields.map(fromFieldMetadataEntityToFieldMetadataDto),
     };
+
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyObjectMetadataCreateResponse(result);
   }
 
   @Patch(':id')
@@ -142,7 +163,7 @@ export class ObjectMetadataController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() update: UpdateObjectPayload,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ObjectMetadataWithFieldsDTO> {
+  ) {
     return this.handleUpdate({ id, update, workspaceId });
   }
 
@@ -151,7 +172,7 @@ export class ObjectMetadataController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() update: UpdateObjectPayload,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ObjectMetadataWithFieldsDTO> {
+  ) {
     return this.handleUpdate({ id, update, workspaceId });
   }
 
@@ -159,13 +180,17 @@ export class ObjectMetadataController {
   async deleteOne(
     @Param('id', new ParseUUIDPipe()) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ObjectMetadataDTO> {
+  ) {
     const flatObject = await this.objectMetadataService.deleteOneObject({
       deleteObjectInput: { id },
       workspaceId,
     });
 
-    return fromFlatObjectMetadataToObjectMetadataDto(flatObject);
+    const result = fromFlatObjectMetadataToObjectMetadataDto(flatObject);
+
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyObjectMetadataDeleteResponse(result);
   }
 
   private async handleUpdate({
@@ -176,7 +201,7 @@ export class ObjectMetadataController {
     id: string;
     update: UpdateObjectPayload;
     workspaceId: string;
-  }): Promise<ObjectMetadataWithFieldsDTO> {
+  }) {
     const flatObject = await this.objectMetadataService.updateOneObject({
       updateObjectInput: { id, update },
       workspaceId,
@@ -186,10 +211,21 @@ export class ObjectMetadataController {
       where: { objectMetadataId: flatObject.id, workspaceId },
     });
 
-    return {
+    const result: ObjectMetadataWithFieldsDTO = {
       ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
       fields: fields.map(fromFieldMetadataEntityToFieldMetadataDto),
     };
+
+    return (await this.isNewMetadataFormat(workspaceId))
+      ? result
+      : toLegacyObjectMetadataUpdateResponse(result);
+  }
+
+  private async isNewMetadataFormat(workspaceId: string): Promise<boolean> {
+    return this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
+      workspaceId,
+    );
   }
 
   private async findFieldsForObjectIds(

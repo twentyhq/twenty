@@ -4,39 +4,10 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export const getFindManyResponse200 = (
   item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
-  fromMetadata = false,
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(
     item.nameSingular,
   )}ForResponse`;
-
-  if (fromMetadata) {
-    return {
-      description: 'Successful operation',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              data: {
-                type: 'array',
-                items: { $ref: schemaRef },
-              },
-              pageInfo: {
-                type: 'object',
-                properties: {
-                  hasNextPage: { type: 'boolean' },
-                  startCursor: { type: 'string', format: 'uuid' },
-                  endCursor: { type: 'string', format: 'uuid' },
-                },
-              },
-              totalCount: { type: 'integer' },
-            },
-          },
-        },
-      },
-    };
-  }
 
   return {
     description: 'Successful operation',
@@ -82,20 +53,8 @@ export const getFindManyResponse200 = (
 
 export const getFindOneResponse200 = (
   item: Pick<FlatObjectMetadata, 'nameSingular'>,
-  fromMetadata = false,
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
-
-  if (fromMetadata) {
-    return {
-      description: 'Successful operation',
-      content: {
-        'application/json': {
-          schema: { $ref: schemaRef },
-        },
-      },
-    };
-  }
 
   return {
     description: 'Successful operation',
@@ -182,20 +141,11 @@ export const getCreateOneResponse201 = (
   item: Pick<FlatObjectMetadata, 'nameSingular'>,
   fromMetadata = false,
 ) => {
+  const one = fromMetadata ? 'One' : '';
+
   const schemaRef = `#/components/schemas/${capitalize(
     item.nameSingular,
   )}ForResponse`;
-
-  if (fromMetadata) {
-    return {
-      description: 'Successful operation',
-      content: {
-        'application/json': {
-          schema: { $ref: schemaRef },
-        },
-      },
-    };
-  }
 
   return {
     description: 'Successful operation',
@@ -207,7 +157,7 @@ export const getCreateOneResponse201 = (
             data: {
               type: 'object',
               properties: {
-                [`create${capitalize(item.nameSingular)}`]: {
+                [`create${one}${capitalize(item.nameSingular)}`]: {
                   $ref: schemaRef,
                 },
               },
@@ -255,18 +205,8 @@ export const getUpdateOneResponse200 = (
   item: Pick<FlatObjectMetadata, 'nameSingular'>,
   fromMetadata = false,
 ) => {
+  const one = fromMetadata ? 'One' : '';
   const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
-
-  if (fromMetadata) {
-    return {
-      description: 'Successful operation',
-      content: {
-        'application/json': {
-          schema: { $ref: schemaRef },
-        },
-      },
-    };
-  }
 
   return {
     description: 'Successful operation',
@@ -278,7 +218,7 @@ export const getUpdateOneResponse200 = (
             data: {
               type: 'object',
               properties: {
-                [`update${capitalize(item.nameSingular)}`]: {
+                [`update${one}${capitalize(item.nameSingular)}`]: {
                   $ref: schemaRef,
                 },
               },
@@ -358,20 +298,7 @@ export const getDeleteResponse200 = (
   item: Pick<FlatObjectMetadata, 'nameSingular'>,
   fromMetadata = false,
 ) => {
-  const schemaRef = `#/components/schemas/${capitalize(
-    item.nameSingular,
-  )}ForResponse`;
-
-  if (fromMetadata) {
-    return {
-      description: 'Successful operation',
-      content: {
-        'application/json': {
-          schema: { $ref: schemaRef },
-        },
-      },
-    };
-  }
+  const one = fromMetadata ? 'One' : '';
 
   return {
     description: 'Successful operation',
@@ -383,7 +310,7 @@ export const getDeleteResponse200 = (
             data: {
               type: 'object',
               properties: {
-                [`delete${capitalize(item.nameSingular)}`]: {
+                [`delete${one}${capitalize(item.nameSingular)}`]: {
                   type: 'object',
                   properties: {
                     id: {
