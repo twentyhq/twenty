@@ -39,7 +39,7 @@ const StyledBoardCard = styled.div<{
   .checkbox-container {
     max-width: 0;
     opacity: 0;
-    overflow: hidden;
+    pointer-events: none;
     transition: all ease-in-out 160ms;
   }
 
@@ -47,6 +47,7 @@ const StyledBoardCard = styled.div<{
   &:hover .checkbox-container {
     max-width: ${themeCssVariables.spacing[6]};
     opacity: 1;
+    pointer-events: auto;
   }
 
   .compact-icon-container {
