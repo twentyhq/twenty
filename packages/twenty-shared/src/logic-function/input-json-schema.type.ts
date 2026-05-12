@@ -16,4 +16,5 @@ export type InputJsonSchema = {
   minimum?: number;
   maximum?: number;
   multiline?: boolean;
+  label?: string;
 };
