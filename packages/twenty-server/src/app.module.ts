@@ -13,16 +13,17 @@ import { join } from 'path';
 import { YogaDriver, type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { SentryModule } from '@sentry/nestjs/setup';
 
+import { AdminPanelGraphQLApiModule } from 'src/engine/api/graphql/admin-panel-graphql-api.module';
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
+import { McpMethodGuardMiddleware } from 'src/engine/api/mcp/middlewares/mcp-method-guard.middleware';
 import { McpModule } from 'src/engine/api/mcp/mcp.module';
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { WorkspaceAuthContextMiddleware } from 'src/engine/core-modules/auth/middlewares/workspace-auth-context.middleware';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
@@ -65,9 +66,9 @@ const MIGRATED_REST_METHODS = [
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
+    AdminPanelGraphQLApiModule,
     RestApiModule,
     McpModule,
-    DataSourceModule,
     MiddlewareModule,
     WorkspaceMetadataVersionModule,
     // I18n module for translations
@@ -124,6 +125,17 @@ export class AppModule {
         WorkspaceAuthContextMiddleware,
       )
       .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
+
+    consumer
+      .apply(
+        GraphQLHydrateRequestFromTokenMiddleware,
+        WorkspaceAuthContextMiddleware,
+      )
+      .forRoutes({ path: 'admin-panel', method: RequestMethod.ALL });
+
+    consumer
+      .apply(McpMethodGuardMiddleware)
+      .forRoutes({ path: 'mcp', method: RequestMethod.ALL });
 
     for (const method of MIGRATED_REST_METHODS) {
       consumer

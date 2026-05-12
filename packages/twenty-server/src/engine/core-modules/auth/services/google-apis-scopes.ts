@@ -30,7 +30,6 @@ export class GoogleAPIScopesService {
 
   public async getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent(
     accessToken: string,
-    isDraftEmailEnabled = false,
   ): Promise<{ scopes: string[]; isValid: boolean }> {
     try {
       const httpClient = this.secureHttpClientService.getHttpClient();
@@ -41,7 +40,7 @@ export class GoogleAPIScopesService {
       );
 
       const scopes = response.data.scope.split(' ');
-      const expectedScopes = getGoogleApisOauthScopes(isDraftEmailEnabled);
+      const expectedScopes = getGoogleApisOauthScopes();
 
       return {
         scopes,

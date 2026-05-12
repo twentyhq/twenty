@@ -85,7 +85,7 @@ export const WorkflowStepFooter = ({
   const handleViewAgent = () => {
     closeDropdown(dropdownId);
     if (isDefined(agentId)) {
-      navigateSettings(SettingsPath.AIAgentDetail, { agentId });
+      navigateSettings(SettingsPath.AiAgentDetail, { agentId });
     }
   };
 

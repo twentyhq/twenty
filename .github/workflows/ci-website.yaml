@@ -1,11 +1,11 @@
 name: CI Website
 
-permissions:
-  contents: read
-
 on:
   pull_request:
   merge_group:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,53 +18,36 @@ jobs:
     with:
       files: |
         package.json
-        packages/twenty-website/**
-  website-build:
+        yarn.lock
+        packages/twenty-website-new/**
+        packages/twenty-shared/**
+  website-task:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
-    timeout-minutes: 10
+    timeout-minutes: 30
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:18
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    env:
+      NODE_OPTIONS: '--max-old-space-size=6144'
+    strategy:
+      matrix:
+        task: [lint, typecheck, test]
     steps:
-      - uses: actions/checkout@v4
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
-
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-
-      - name: Server / Create DB
-        run: PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
-
-      - name: Website / Run migrations
-        run: npx nx database:migrate twenty-website
-        env:
-          DATABASE_PG_URL: postgres://postgres:postgres@localhost:5432/default
-      - name: Website / Build Website
-        run: npx nx build twenty-website
-        env:
-          DATABASE_PG_URL: postgres://postgres:postgres@localhost:5432/default
-          KEYSTATIC_GITHUB_CLIENT_ID: xxx
-          KEYSTATIC_GITHUB_CLIENT_SECRET: xxx
-          KEYSTATIC_SECRET: xxx
-          NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: xxx
+      - name: Run ${{ matrix.task }} task
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:website
+          tasks: ${{ matrix.task }}
   ci-website-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [changed-files-check, website-build]
+    needs: [changed-files-check, website-task]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')

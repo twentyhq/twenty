@@ -7,6 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledColumnContainer = styled.div`
   display: flex;
+  flex: 1;
 
   & > *:not(:first-of-type) {
     border-left: 1px solid ${themeCssVariables.border.color.light};

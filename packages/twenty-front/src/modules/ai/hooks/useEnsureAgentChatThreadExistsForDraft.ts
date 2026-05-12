@@ -5,7 +5,7 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
 import { pendingCreateFromDraftPromiseState } from '@/ai/states/pendingCreateFromDraftPromiseState';
@@ -21,7 +21,7 @@ export const useEnsureAgentChatThreadExistsForDraft = (
   const store = useStore();
 
   const ensureThreadExistsForDraft = useCallback(() => {
-    const currentThreadId = store.get(currentAIChatThreadState.atom);
+    const currentThreadId = store.get(currentAiChatThreadState.atom);
 
     if (currentThreadId !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
       return;

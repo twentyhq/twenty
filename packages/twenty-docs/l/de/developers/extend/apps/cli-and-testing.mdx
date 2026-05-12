@@ -1,0 +1,434 @@
+---
+title: CLI & Tests
+description: CLI-Befehle, Test-Setup, öffentliche Assets, npm-Pakete, Remotes und CI-Konfiguration.
+icon: terminal
+---
+
+## Öffentliche Assets (Ordner `public/`)
+
+Der Ordner `public/` im Stammverzeichnis Ihrer App enthält statische Dateien — Bilder, Icons, Schriftarten oder sonstige Assets, die Ihre App zur Laufzeit benötigt. Diese Dateien werden automatisch in Builds aufgenommen, während des Dev-Modus synchronisiert und auf den Server hochgeladen.
+
+Für Dateien im Verzeichnis `public/` gilt:
+
+* **Öffentlich zugänglich** — nach der Synchronisierung mit dem Server werden Assets unter einer öffentlichen URL bereitgestellt. Zum Zugriff ist keine Authentifizierung erforderlich.
+* **In Frontend-Komponenten verfügbar** — verwenden Sie Asset-URLs, um Bilder, Icons oder andere Medien in Ihren React-Komponenten anzuzeigen.
+* **In Logikfunktionen verfügbar** — referenzieren Sie Asset-URLs in E-Mails, API-Antworten oder in beliebiger serverseitiger Logik.
+* **Für Marketplace-Metadaten verwendet** — die Felder `logoUrl` und `screenshots` in `defineApplication()` referenzieren Dateien aus diesem Ordner (z. B. `public/logo.png`). Diese werden im Marketplace angezeigt, wenn Ihre App veröffentlicht wird.
+* **Im Dev-Modus automatisch synchronisiert** — wenn Sie in `public/` eine Datei hinzufügen, aktualisieren oder löschen, wird sie automatisch mit dem Server synchronisiert. Kein Neustart erforderlich.
+* **In Builds enthalten** — `yarn twenty build` bündelt alle öffentlichen Assets in der Distributionsausgabe.
+
+### Zugriff auf öffentliche Assets mit `getPublicAssetUrl`
+
+Verwenden Sie den Helper `getPublicAssetUrl` aus `twenty-sdk`, um die vollständige URL einer Datei in Ihrem `public/`-Verzeichnis zu erhalten. Dies funktioniert sowohl in Logikfunktionen als auch in Frontend-Komponenten.
+
+**In einer Logikfunktion:**
+
+```ts src/logic-functions/send-invoice.ts
+import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const handler = async (): Promise<any> => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+  const invoiceUrl = getPublicAssetUrl('templates/invoice.png');
+
+  // Fetch the file content (no auth required — public endpoint)
+  const response = await fetch(invoiceUrl);
+  const buffer = await response.arrayBuffer();
+
+  return { logoUrl, size: buffer.byteLength };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'a1b2c3d4-...',
+  name: 'send-invoice',
+  description: 'Sends an invoice with the app logo',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+**In einer Frontend-Komponente:**
+
+```tsx src/front-components/company-card.tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+export default defineFrontComponent(() => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+
+  return <img src={logoUrl} alt="App logo" />;
+});
+```
+
+Das Argument `path` ist relativ zum `public/`-Ordner Ihrer App. Sowohl `getPublicAssetUrl('logo.png')` als auch `getPublicAssetUrl('public/logo.png')` ergeben dieselbe URL — das Präfix `public/` wird, falls vorhanden, automatisch entfernt.
+
+## Verwendung von npm-Paketen
+
+Sie können in Ihrer App beliebige npm-Pakete installieren und verwenden. Sowohl Logikfunktionen als auch Frontend-Komponenten werden mit [esbuild](https://esbuild.github.io/) gebündelt, das alle Abhängigkeiten in die Ausgabe einbettet — zur Laufzeit sind keine `node_modules` erforderlich.
+
+### Ein Paket installieren
+
+```bash filename="Terminal"
+yarn add axios
+```
+
+Importieren Sie es anschließend in Ihrem Code:
+
+```ts src/logic-functions/fetch-data.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import axios from 'axios';
+
+const handler = async (): Promise<any> => {
+  const { data } = await axios.get('https://api.example.com/data');
+
+  return { data };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-data',
+  description: 'Fetches data from an external API',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+Dasselbe funktioniert für Frontend-Komponenten:
+
+```tsx src/front-components/chart.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { format } from 'date-fns';
+
+const DateWidget = () => {
+  return <p>Today is {format(new Date(), 'MMMM do, yyyy')}</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'date-widget',
+  component: DateWidget,
+});
+```
+
+### Wie das Bundling funktioniert
+
+Der Build-Schritt verwendet esbuild, um pro Logikfunktion und pro Frontend-Komponente eine einzelne, in sich geschlossene Datei zu erzeugen. Alle importierten Pakete werden in das Bundle eingebettet.
+
+**Logikfunktionen** laufen in einer Node.js-Umgebung. Eingebaute Node.js-Module (`fs`, `path`, `crypto`, `http` usw.) stehen zur Verfügung und müssen nicht installiert werden.
+
+**Frontend-Komponenten** laufen in einem Web Worker. Eingebaute Node.js-Module sind **nicht** verfügbar — nur Browser-APIs und npm-Pakete, die in einer Browserumgebung funktionieren.
+
+In beiden Umgebungen stehen `twenty-client-sdk/core` und `twenty-client-sdk/metadata` als vorab bereitgestellte Module zur Verfügung — sie werden nicht gebündelt, sondern zur Laufzeit vom Server aufgelöst.
+
+## Ihre App testen
+
+Das SDK stellt programmgesteuerte APIs bereit, mit denen Sie Ihre App aus Testcode heraus bauen, bereitstellen, installieren und deinstallieren können. In Kombination mit [Vitest](https://vitest.dev/) und den typisierten API-Clients können Sie Integrationstests schreiben, die prüfen, dass Ihre App End-to-End gegen einen echten Twenty-Server funktioniert.
+
+### Einrichtung
+
+Die erzeugte App enthält bereits Vitest. Wenn Sie es manuell einrichten, installieren Sie die Abhängigkeiten:
+
+```bash filename="Terminal"
+yarn add -D vitest vite-tsconfig-paths
+```
+
+Erstellen Sie eine `vitest.config.ts` im Stammverzeichnis Ihrer App:
+
+```ts vitest.config.ts
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  plugins: [
+    tsconfigPaths({
+      projects: ['tsconfig.spec.json'],
+      ignoreConfigErrors: true,
+    }),
+  ],
+  test: {
+    testTimeout: 120_000,
+    hookTimeout: 120_000,
+    include: ['src/**/*.integration-test.ts'],
+    setupFiles: ['src/__tests__/setup-test.ts'],
+    env: {
+      TWENTY_API_URL: 'http://localhost:2020',
+      TWENTY_API_KEY: 'your-api-key',
+    },
+  },
+});
+```
+
+Erstellen Sie eine Setup-Datei, die vor dem Testlauf überprüft, dass der Server erreichbar ist:
+
+```ts src/__tests__/setup-test.ts
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import { beforeAll } from 'vitest';
+
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+
+beforeAll(async () => {
+  // Verify the server is running
+  const response = await fetch(`${TWENTY_API_URL}/healthz`);
+
+  if (!response.ok) {
+    throw new Error(
+      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
+        'Start the server before running integration tests.',
+    );
+  }
+
+  // Write a temporary config for the SDK
+  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
+
+  fs.writeFileSync(
+    path.join(TEST_CONFIG_DIR, 'config.json'),
+    JSON.stringify({
+      remotes: {
+        local: {
+          apiUrl: process.env.TWENTY_API_URL,
+          apiKey: process.env.TWENTY_API_KEY,
+        },
+      },
+      defaultRemote: 'local',
+    }, null, 2),
+  );
+});
+```
+
+### Programmgesteuerte SDK-APIs
+
+Der Subpfad `twenty-sdk/cli` exportiert Funktionen, die Sie direkt aus Testcode aufrufen können:
+
+| Funktion       | Beschreibung                                          |
+| -------------- | ----------------------------------------------------- |
+| `appBuild`     | Die App bauen und optional ein Tarball packen         |
+| `appDeploy`    | Ein Tarball auf den Server hochladen                  |
+| `appInstall`   | Die App im aktiven Arbeitsbereich installieren        |
+| `appUninstall` | Die App aus dem aktiven Arbeitsbereich deinstallieren |
+
+Jede Funktion gibt ein Ergebnisobjekt mit `success: boolean` und entweder `data` oder `error` zurück.
+
+### Einen Integrationstest schreiben
+
+Hier ist ein vollständiges Beispiel, das die App baut, bereitstellt und installiert und anschließend prüft, dass sie im Arbeitsbereich erscheint:
+
+```ts src/__tests__/app-install.integration-test.ts
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
+import { appBuild, appDeploy, appInstall, appUninstall } from 'twenty-sdk/cli';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+const APP_PATH = process.cwd();
+
+describe('App installation', () => {
+  beforeAll(async () => {
+    const buildResult = await appBuild({
+      appPath: APP_PATH,
+      tarball: true,
+      onProgress: (message: string) => console.log(`[build] ${message}`),
+    });
+
+    if (!buildResult.success) {
+      throw new Error(`Build failed: ${buildResult.error?.message}`);
+    }
+
+    const deployResult = await appDeploy({
+      tarballPath: buildResult.data.tarballPath!,
+      onProgress: (message: string) => console.log(`[deploy] ${message}`),
+    });
+
+    if (!deployResult.success) {
+      throw new Error(`Deploy failed: ${deployResult.error?.message}`);
+    }
+
+    const installResult = await appInstall({ appPath: APP_PATH });
+
+    if (!installResult.success) {
+      throw new Error(`Install failed: ${installResult.error?.message}`);
+    }
+  });
+
+  afterAll(async () => {
+    await appUninstall({ appPath: APP_PATH });
+  });
+
+  it('should find the installed app in the workspace', async () => {
+    const metadataClient = new MetadataApiClient();
+
+    const result = await metadataClient.query({
+      findManyApplications: {
+        id: true,
+        name: true,
+        universalIdentifier: true,
+      },
+    });
+
+    const installedApp = result.findManyApplications.find(
+      (app: { universalIdentifier: string }) =>
+        app.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(installedApp).toBeDefined();
+  });
+});
+```
+
+### Tests ausführen
+
+Stellen Sie sicher, dass Ihr lokaler Twenty-Server läuft, und führen Sie dann Folgendes aus:
+
+```bash filename="Terminal"
+yarn test
+```
+
+Oder im Watch-Modus während der Entwicklung:
+
+```bash filename="Terminal"
+yarn test:watch
+```
+
+### Typprüfung
+
+Sie können die Typprüfung Ihrer App auch ohne Tests ausführen:
+
+```bash filename="Terminal"
+yarn twenty typecheck
+```
+
+Dies führt `tsc --noEmit` aus und meldet etwaige Typfehler.
+
+## CLI-Referenz
+
+Zusätzlich zu `dev`, `build`, `add` und `typecheck` bietet die CLI Befehle zum Ausführen von Funktionen, Anzeigen von Logs und Verwalten von App-Installationen.
+
+### Funktionen ausführen (`yarn twenty exec`)
+
+Eine Logikfunktion manuell ausführen, ohne sie über HTTP, Cron oder ein Datenbankereignis auszulösen:
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty exec --postInstall
+```
+
+### Funktionsprotokolle ansehen (`yarn twenty logs`)
+
+Ausführungsprotokolle für die Logikfunktionen Ihrer App streamen:
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty logs
+
+# Filter by function name
+yarn twenty logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+Dies unterscheidet sich von `yarn twenty server logs`, das die Docker-Container-Logs anzeigt. `yarn twenty logs` zeigt die Funktionsausführungsprotokolle Ihrer App vom Twenty-Server.
+</Note>
+
+### Eine App deinstallieren (`yarn twenty uninstall`)
+
+Entfernen Sie Ihre App aus dem aktiven Arbeitsbereich:
+
+```bash filename="Terminal"
+yarn twenty uninstall
+
+# Skip the confirmation prompt
+yarn twenty uninstall --yes
+```
+
+## Remotes verwalten
+
+Ein **Remote** ist ein Twenty-Server, mit dem sich Ihre App verbindet. Während der Einrichtung erstellt das Scaffolding-Tool automatisch eines für Sie. Sie können jederzeit weitere Remotes hinzufügen oder zwischen ihnen wechseln.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+Ihre Anmeldedaten werden in `~/.twenty/config.json` gespeichert.
+
+## CI mit GitHub Actions
+
+Das Scaffolding-Tool erzeugt einen einsatzbereiten GitHub-Actions-Workflow in `.github/workflows/ci.yml`. Er führt Ihre Integrationstests automatisch bei jedem Push auf `main` und bei Pull Requests aus.
+
+Der Workflow:
+
+1. Checkt Ihren Code aus
+2. Startet einen temporären Twenty-Server mit der Aktion `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
+3. Installiert Abhängigkeiten mit `yarn install --immutable`
+4. Führt `yarn test` aus, wobei `TWENTY_API_URL` und `TWENTY_API_KEY` aus den Aktionsausgaben injiziert werden.
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+Sie müssen keine Secrets konfigurieren — die Aktion `spawn-twenty-docker-image` startet einen flüchtigen Twenty-Server direkt im Runner und gibt die Verbindungsdetails aus. Das Secret `GITHUB_TOKEN` wird automatisch von GitHub bereitgestellt.
+
+Um eine bestimmte Twenty-Version statt `latest` festzulegen, ändern Sie die Umgebungsvariable `TWENTY_VERSION` oben im Workflow.

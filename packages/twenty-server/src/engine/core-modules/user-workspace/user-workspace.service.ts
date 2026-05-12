@@ -7,6 +7,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -62,8 +63,35 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly fileUrlService: FileUrlService,
     private readonly onboardingService: OnboardingService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {
     super(userWorkspaceRepository);
+  }
+
+  async updateUserWorkspaceLocaleForUserWorkspace({
+    locale,
+    userWorkspaceId,
+  }: {
+    locale: UserWorkspaceEntity['locale'];
+    userWorkspaceId: string;
+  }): Promise<void> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        id: userWorkspaceId,
+      },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      return;
+    }
+
+    userWorkspace.locale = locale;
+    await this.userWorkspaceRepository.save(userWorkspace);
+
+    await this.coreEntityCacheService.invalidate(
+      'userWorkspaceEntity',
+      userWorkspaceId,
+    );
   }
 
   async create(
@@ -134,7 +162,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         colorScheme: 'System',
         userId: user.id,
         userEmail: user.email,
-        avatarUrl: userWorkspace.defaultAvatarUrl ?? '',
+        avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
         locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
       });
 
@@ -474,7 +502,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
             queryRunner,
           });
 
-        return savedFile.url;
+        return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
+          fileId: savedFile.id,
+          fileFolder: FileFolder.CorePicture,
+        });
       } catch (error) {
         if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
           return;
@@ -495,7 +526,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         },
       );
 
-    return savedFile?.url;
+    if (!isDefined(savedFile)) {
+      return;
+    }
+
+    return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
+      fileId: savedFile.id,
+      fileFolder: FileFolder.CorePicture,
+    });
   }
 
   castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {

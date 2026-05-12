@@ -1,12 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
-import { IconCube, useIcons } from 'twenty-ui/display';
+import { IconCube, TintedIconTile } from 'twenty-ui/display';
 import { MenuItemSelectAvatar, MenuItemToggle } from 'twenty-ui/navigation';
 
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/side-panel/components/SidePanelObjectFilterDropdown';
 import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -33,7 +32,6 @@ export const SidePanelObjectFilterDropdownContent = ({
   onSelectObject,
 }: SidePanelObjectFilterDropdownContentProps) => {
   const { t } = useLingui();
-  const { getIcon } = useIcons();
   const [filterSearch, setFilterSearch] = useState('');
   const [sidePanelShowHiddenObjects, setSidePanelShowHiddenObjects] =
     useAtomState(sidePanelShowHiddenObjectsState);
@@ -93,9 +91,7 @@ export const SidePanelObjectFilterDropdownContent = ({
             onEnter={() => handleSelect(null)}
           >
             <MenuItemSelectAvatar
-              avatar={
-                <NavigationMenuItemStyleIcon Icon={IconCube} color="gray" />
-              }
+              avatar={<TintedIconTile Icon={IconCube} />}
               text={t`All objects`}
               selected={selectedObjectNameSingular === null}
               onClick={() => handleSelect(null)}
@@ -103,9 +99,6 @@ export const SidePanelObjectFilterDropdownContent = ({
             />
           </SelectableListItem>
           {displayedObjects.map((objectMetadataItem) => {
-            const ObjectIcon = getIcon(objectMetadataItem.icon);
-            const iconColor = getObjectColorWithFallback(objectMetadataItem);
-
             return (
               <SelectableListItem
                 key={objectMetadataItem.id}
@@ -114,9 +107,8 @@ export const SidePanelObjectFilterDropdownContent = ({
               >
                 <MenuItemSelectAvatar
                   avatar={
-                    <NavigationMenuItemStyleIcon
-                      Icon={ObjectIcon}
-                      color={iconColor}
+                    <ObjectMetadataIcon
+                      objectMetadataItem={objectMetadataItem}
                     />
                   }
                   text={objectMetadataItem.labelPlural}

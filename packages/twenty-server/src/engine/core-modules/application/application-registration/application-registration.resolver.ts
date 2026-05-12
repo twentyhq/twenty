@@ -1,10 +1,19 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
@@ -32,7 +41,6 @@ import { RotateClientSecretDTO } from 'src/engine/core-modules/application/appli
 import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/transfer-application-registration-ownership.input';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -46,9 +54,10 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 
 @UsePipes(ResolverValidationPipe)
-@MetadataResolver()
+@MetadataResolver(() => ApplicationRegistrationEntity)
 @UseFilters(
   ApplicationRegistrationExceptionFilter,
   AuthGraphqlApiExceptionFilter,
@@ -60,7 +69,6 @@ export class ApplicationRegistrationResolver {
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
     private readonly fileUrlService: FileUrlService,
-    private readonly domainServerConfigService: DomainServerConfigService,
   ) {}
 
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -179,12 +187,12 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @Query(() => [ApplicationRegistrationVariableEntity])
+  @Query(() => [ApplicationRegistrationVariableDTO])
   async findApplicationRegistrationVariables(
     @Args('applicationRegistrationId') applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationVariableEntity[]> {
-    return this.applicationRegistrationVariableService.findVariables(
+  ): Promise<ApplicationRegistrationVariableDTO[]> {
+    return this.applicationRegistrationVariableService.findVariablesWithObfuscatedValues(
       applicationRegistrationId,
       workspaceId,
     );
@@ -294,25 +302,6 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
-  )
-  @Query(() => String)
-  async getApplicationShareLink(
-    @Args('id') id: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<string> {
-    const registration = await this.applicationRegistrationService.findOneById(
-      id,
-      workspaceId,
-    );
-
-    const frontUrl = this.domainServerConfigService.getFrontUrl();
-
-    return `${frontUrl.origin}/settings/applications/available/${registration.universalIdentifier}`;
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   @Mutation(() => ApplicationRegistrationEntity)
@@ -328,6 +317,16 @@ export class ApplicationRegistrationResolver {
       applicationRegistrationId,
       targetWorkspaceSubdomain,
       currentOwnerWorkspaceId: workspaceId,
+    });
+  }
+
+  @ResolveField(() => Boolean)
+  async isConfigured(
+    @Parent() registration: ApplicationRegistrationEntity,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<boolean> {
+    return context.loaders.isConfiguredLoader.load({
+      applicationRegistrationId: registration.id,
     });
   }
 }

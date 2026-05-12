@@ -318,7 +318,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
   protected override computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
-    args: CommonInput<FindManyQueryArgs>,
+    args: CommonExtendedInput<FindManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): number {
     const baseComplexity = super.computeQueryComplexity(

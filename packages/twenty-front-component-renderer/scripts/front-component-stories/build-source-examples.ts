@@ -26,9 +26,14 @@ const twentyUiIndividualIndex = path.resolve(
   '../../../twenty-ui/dist/individual/individual-entry.js',
 );
 
-const sdkIndividualIndex = path.resolve(
+const sdkDefineIndex = path.resolve(
   dirname,
-  '../../../twenty-sdk/dist/sdk/index.js',
+  '../../../twenty-sdk/dist/define/index.mjs',
+);
+
+const sdkFrontComponentIndex = path.resolve(
+  dirname,
+  '../../../twenty-sdk/dist/front-component/index.mjs',
 );
 
 const twentySharedIndividualDir = path.resolve(
@@ -60,7 +65,8 @@ const twentySharedAliases = Object.fromEntries(
 const storyAlias = {
   react: path.join(rootNodeModules, 'react'),
   'react-dom': path.join(rootNodeModules, 'react-dom'),
-  '@/sdk': sdkIndividualIndex,
+  'twenty-sdk/define': sdkDefineIndex,
+  'twenty-sdk/front-component': sdkFrontComponentIndex,
   'twenty-sdk/ui': twentyUiIndividualIndex,
   ...twentySharedAliases,
 };
@@ -77,6 +83,11 @@ const STORY_COMPONENTS = [
   'mui-example.front-component',
   'twenty-ui-example.front-component',
   'sdk-context-example.front-component',
+  'form-events.front-component',
+  'keyboard-events.front-component',
+  'host-api-calls.front-component',
+  'caret-preservation.front-component',
+  'file-input.front-component',
 ];
 
 const resolveEntryPoints = (): Record<string, string> => {

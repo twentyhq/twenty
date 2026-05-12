@@ -1,11 +1,8 @@
 ---
 title: Pubblicazione
+icon: carica
 description: Distribuisci la tua app Twenty nel marketplace oppure distribuiscila internamente.
 ---
-
-<Warning>
-  Le app sono attualmente in fase alfa. La funzionalità funziona ma è ancora in evoluzione.
-</Warning>
 
 ## Panoramica
 
@@ -52,7 +49,11 @@ yarn twenty deploy
 
 ### Condivisione di un'app distribuita
 
-Le app in formato tarball non sono elencate nel marketplace pubblico, quindi altri spazi di lavoro sullo stesso server non le troveranno navigando. Per condividere un'app distribuita:
+<Warning>
+La condivisione di app private (tarball) tra spazi di lavoro è una funzionalità **Enterprise**. La scheda **Distribution** mostrerà un invito all'aggiornamento al posto dei controlli di condivisione finché il tuo spazio di lavoro non dispone di una chiave Enterprise valida. Vedi [Impostazioni > Pannello di amministrazione > Enterprise](/settings/admin-panel#enterprise) per attivarla.
+</Warning>
+
+Le app in formato tarball non sono elencate nel marketplace pubblico, quindi altri spazi di lavoro sullo stesso server non le troveranno navigando. Una volta che il tuo spazio di lavoro è sul piano Enterprise, puoi condividere un'app distribuita in questo modo:
 
 1. Vai su **Impostazioni > Applicazioni > Registrazioni** e apri la tua app
 2. Nella scheda **Distribuzione**, fai clic su **Copia link di condivisione**
@@ -60,19 +61,72 @@ Le app in formato tarball non sono elencate nel marketplace pubblico, quindi alt
 
 Il link di condivisione utilizza l'URL di base del server (senza alcun sottodominio dello spazio di lavoro) così funziona per qualsiasi spazio di lavoro sul server.
 
-<Warning>
-La condivisione delle app private è una funzionalità Enterprise. Vai a [Impostazioni > Pannello di amministrazione > Enterprise](/settings/admin-panel#enterprise) per abilitarla.
-</Warning>
-
 ### Gestione delle versioni
+
+Quando si aggiorna un'app in formato tarball già distribuita, il server richiede che la `version` in `package.json` sia **strettamente superiore** (per l'ordinamento [semver](https://semver.org)) rispetto alla versione attualmente distribuita. Eseguire nuovamente il deploy della stessa versione, o pubblicarne una inferiore, viene rifiutato prima che il tarball venga archiviato — vedrai un errore `VERSION_ALREADY_EXISTS` nella CLI.
 
 Per rilasciare un aggiornamento:
 
-1. Incrementa il campo `version` nel tuo `package.json`
+1. Incrementa il campo `version` nel tuo `package.json` (ad es. `1.2.3` → `1.2.4`, `1.3.0` o `2.0.0`).
 2. Esegui `yarn twenty deploy` (oppure `yarn twenty deploy --remote production`)
 3. Gli spazi di lavoro che hanno l'app installata vedranno l'aggiornamento disponibile nelle proprie impostazioni
 
+<Note>
+I tag di pre-release funzionano come previsto: incrementare `1.0.0-rc.1` → `1.0.0-rc.2` è consentito e una release finale come `1.0.0` viene correttamente riconosciuta come superiore a `1.0.0-rc.5`. La versione in `package.json` deve essere essa stessa una stringa semver valida.
+</Note>
+
 {/* TODO: add screenshot of the Upgrade button */}
+
+## CI/CD automatizzati (workflow preconfigurati)
+
+Le app generate con `create-twenty-app` includono due workflow di GitHub Actions pronti all'uso, nella cartella `.github/workflows/`. Sono pronti all'esecuzione non appena esegui il push del repository su GitHub — non è necessaria alcuna configurazione aggiuntiva per la CI e la CD richiede solo un singolo secret.
+
+### CI — `ci.yml`
+
+Esegue automaticamente i test di integrazione a ogni push su `main` e sulle pull request.
+
+**Cosa fa:**
+
+1. Esegue il checkout del codice sorgente della tua app.
+2. Avvia un'istanza di test isolata di Twenty utilizzando l'azione composita `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (l'equivalente per la CI di `yarn twenty server start --test`).
+3. Abilita Corepack, configura Node.js dal tuo `.nvmrc` e installa le dipendenze con `yarn install --immutable`.
+4. Esegue `yarn test`, passando `TWENTY_API_URL` e `TWENTY_API_KEY` dall'istanza avviata affinché i tuoi test possano comunicare con un server reale.
+
+**Opzioni di configurazione:**
+
+* `TWENTY_VERSION` (variabile di ambiente, predefinito `latest`) — fissa la versione del server Twenty usata nella CI modificando questo valore in `ci.yml`.
+* La concorrenza è raggruppata per `github.ref` e annulla le esecuzioni in corso in caso di nuovi push.
+
+Non sono necessari Secrets — l'istanza di test è effimera ed esiste solo per la durata del job.
+
+### CD — `cd.yml`
+
+Esegue il deploy della tua app su un server Twenty configurato a ogni push su `main` e, facoltativamente, da una pull request quando viene applicata l'etichetta `deploy`.
+
+**Cosa fa:**
+
+1. Esegue il checkout della testa della PR (per le PR etichettate) oppure del commit inviato.
+2. Esegue `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — l'equivalente per la CI di `yarn twenty deploy`.
+3. Esegue `twentyhq/twenty/.github/actions/install-twenty-app@main` in modo che la versione appena distribuita venga installata nello spazio di lavoro di destinazione.
+
+**Configurazione richiesta:**
+
+| Impostazione            | Dove                                                             | Scopo                                                                                                             |
+| ----------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (predefinito `http://localhost:3000`)          | Il server Twenty su cui effettuare il deploy. Modificalo con l'URL reale del tuo server prima del primo utilizzo. |
+| `TWENTY_DEPLOY_API_KEY` | Repository GitHub **Settings → Secrets and variables → Actions** | Chiave API con autorizzazione di deploy sul server di destinazione.                                               |
+
+<Note>
+Il valore predefinito di `TWENTY_DEPLOY_URL`, `http://localhost:3000`, è un segnaposto — non raggiungerà alcuna risorsa da un runner ospitato su GitHub. Aggiornalo all'URL pubblico del tuo server (oppure usa un runner self-hosted con accesso di rete) prima di abilitare il CD.
+</Note>
+
+**Attivare un deploy di anteprima da una PR:**
+
+Aggiungi l'etichetta `deploy` a una pull request. La condizione `if:` in `cd.yml` eseguirà il job per quella PR utilizzando il commit di testa della PR, permettendoti di convalidare una modifica sul server di destinazione prima del merge.
+
+### Bloccare le azioni riutilizzabili
+
+Entrambi i workflow fanno riferimento ad azioni riutilizzabili a `@main`, quindi gli aggiornamenti delle azioni nel repository `twentyhq/twenty` vengono recepiti automaticamente. Se desideri build deterministiche, sostituisci `@main` con uno SHA di commit o un tag di release in ciascuna riga `uses:`.
 
 ## Pubblicazione su npm
 
@@ -81,7 +135,7 @@ La pubblicazione su npm rende la tua app scopribile nel marketplace di Twenty. Q
 ### Requisiti
 
 * Un account [npm](https://www.npmjs.com)
-* La parola chiave `twenty-app` nell'array `keywords` del tuo `package.json` (già inclusa quando inizializzi con `create-twenty-app`)
+* La parola chiave `twenty-app` nell'array `keywords` del tuo `package.json` (aggiungila manualmente — non è inclusa per impostazione predefinita nel template `create-twenty-app`)
 
 ```json filename="package.json"
 {
@@ -189,3 +243,12 @@ Puoi anche installare le app dalla riga di comando:
 ```bash filename="Terminal"
 yarn twenty install
 ```
+
+<Note>
+Il server applica il versioning semver durante l’installazione, rispecchiando le regole del deploy:
+
+* L’installazione della stessa versione già installata nel tuo spazio di lavoro viene rifiutata con un errore `APP_ALREADY_INSTALLED`.
+* L’installazione di una versione inferiore rispetto a quella attualmente installata viene rifiutata con un errore `CANNOT_DOWNGRADE_APPLICATION`.
+
+Per installare una versione più recente, effettua prima il deploy o la pubblicazione, quindi riesegui `yarn twenty install`.
+</Note>

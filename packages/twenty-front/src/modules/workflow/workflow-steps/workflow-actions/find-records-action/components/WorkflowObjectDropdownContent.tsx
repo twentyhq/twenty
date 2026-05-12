@@ -1,3 +1,4 @@
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -9,7 +10,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type WorkflowObjectDropdownContentProps = {
@@ -21,7 +22,6 @@ export const WorkflowObjectDropdownContent = ({
   onOptionClick,
   showAdvancedOption = true,
 }: WorkflowObjectDropdownContentProps) => {
-  const { getIcon } = useIcons();
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
 
@@ -74,12 +74,6 @@ export const WorkflowObjectDropdownContent = ({
     ? filteredSystemObjects
     : filteredNonSystemObjects;
 
-  const filteredOptions = filteredObjects.map((objectMetadataItem) => ({
-    Icon: getIcon(objectMetadataItem.icon),
-    label: objectMetadataItem.labelPlural,
-    value: objectMetadataItem.nameSingular,
-  }));
-
   const handleSystemObjectsClick = () => {
     setIsSystemObjectsOpen(true);
     setSearchInputValue('');
@@ -123,12 +117,14 @@ export const WorkflowObjectDropdownContent = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {filteredOptions.map((option) => (
+        {filteredObjects.map((objectMetadataItem) => (
           <MenuItem
-            key={option.value}
-            LeftIcon={option.Icon}
-            text={option.label}
-            onClick={() => onOptionClick(option.value)}
+            key={objectMetadataItem.nameSingular}
+            LeftIcon={() => (
+              <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+            )}
+            text={objectMetadataItem.labelPlural}
+            onClick={() => onOptionClick(objectMetadataItem.nameSingular)}
           />
         ))}
         {shouldShowAdvanced && (

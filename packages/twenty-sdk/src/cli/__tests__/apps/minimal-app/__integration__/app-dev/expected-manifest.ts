@@ -1,4 +1,4 @@
-import { FieldType } from '@/sdk';
+import { FieldType } from '@/sdk/define';
 import type { Manifest } from 'twenty-shared/application';
 import {
   FieldMetadataType,
@@ -7,11 +7,11 @@ import {
 } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
+  commandMenuItems: [],
   application: {
     universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000001',
     displayName: 'Root App',
     description: 'An app with all entities at root level',
-    icon: 'IconFolder',
     defaultRoleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
     packageJsonChecksum: '[checksum]',
     yarnLockChecksum: '[checksum]',
@@ -39,25 +39,6 @@ export const EXPECTED_MANIFEST: Manifest = {
         'e1e2e3e4-e5e6-4000-8000-000000000030',
       type: FieldMetadataType.MORPH_RELATION,
       morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
-    },
-    {
-      name: 'targetMyNote',
-      label: 'MyNote',
-      description: 'MyNote My note',
-      icon: 'IconHeart',
-      isNullable: true,
-      universalSettings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'targetMyNoteId',
-      },
-      universalIdentifier: '698f12fe-3feb-55e3-b6cc-73375f1a8ae6',
-      objectUniversalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
-      relationTargetFieldMetadataUniversalIdentifier:
-        'ed80c73b-25ff-5a3c-99c7-e27fa2f2611e',
-      relationTargetObjectMetadataUniversalIdentifier:
-        'e1e2e3e4-e5e6-4000-8000-000000000030',
-      type: FieldType.RELATION,
     },
     {
       name: 'targetMyNote',
@@ -251,22 +232,6 @@ export const EXPECTED_MANIFEST: Manifest = {
             '20202020-6736-4337-b5c4-8b39fae325a5',
         },
         {
-          name: 'favorites',
-          label: 'Favorites',
-          description: 'My notes tied to the MyNote',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
-          type: FieldType.RELATION,
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-          universalIdentifier: 'ed80c73b-25ff-5a3c-99c7-e27fa2f2611e',
-          relationTargetFieldMetadataUniversalIdentifier:
-            '698f12fe-3feb-55e3-b6cc-73375f1a8ae6',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-ab56-4e05-92a3-e2414a499860',
-        },
-        {
           name: 'attachments',
           label: 'Attachments',
           description: 'My notes tied to the MyNote',
@@ -331,7 +296,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceHandlerPath: 'my.function.ts',
       builtHandlerPath: 'my.function.mjs',
       builtHandlerChecksum: '[checksum]',
-      toolInputSchema: { type: 'object', properties: {} },
     },
   ],
   frontComponents: [
@@ -350,6 +314,7 @@ export const EXPECTED_MANIFEST: Manifest = {
   views: [],
   navigationMenuItems: [],
   pageLayouts: [],
+  pageLayoutTabs: [],
   roles: [
     {
       universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000040',
@@ -363,6 +328,9 @@ export const EXPECTED_MANIFEST: Manifest = {
       canBeAssignedToAgents: false,
       canBeAssignedToUsers: true,
       canBeAssignedToApiKeys: false,
+      fieldPermissions: [],
+      objectPermissions: [],
+      permissionFlags: [],
     },
   ],
 };

@@ -17,6 +17,7 @@ import {
   DevUiEntitySection,
   ENTITY_ORDER,
 } from '@/cli/utilities/dev/ui/components/dev-ui-entity-section';
+import { DevUiVersionRow } from '@/cli/utilities/dev/ui/components/dev-ui-version-row';
 import React from 'react';
 
 export const DevUiSyncStatusIndicator = ({
@@ -96,6 +97,7 @@ export const DevUiApplicationPanel = ({
             </Text>
           </Box>
         )}
+        <DevUiVersionRow versionInfo={state.versionInfo} />
       </Box>
 
       <Box marginLeft={2} flexDirection="column" marginTop={1}>

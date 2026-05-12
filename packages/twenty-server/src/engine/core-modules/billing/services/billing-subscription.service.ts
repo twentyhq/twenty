@@ -4,11 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { differenceInDays } from 'date-fns';
-import {
-  assertIsDefinedOrThrow,
-  findOrThrow,
-  isDefined,
-} from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Not, type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
@@ -29,7 +25,6 @@ import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entiti
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
@@ -267,36 +262,6 @@ export class BillingSubscriptionService {
     };
   }
 
-  async setBillingThresholdsAndTrialPeriodWorkflowCredits(
-    billingSubscriptionId: string,
-  ) {
-    const billingSubscription =
-      await this.billingSubscriptionRepository.findOneOrFail({
-        where: { id: billingSubscriptionId },
-        relations: [
-          'billingSubscriptionItems',
-          'billingSubscriptionItems.billingProduct',
-        ],
-      });
-
-    const { stripePriceId: meterStripePriceId } = findOrThrow(
-      billingSubscription.billingSubscriptionItems,
-      (billingSubscriptionItem) =>
-        billingSubscriptionItem.billingProduct.metadata.productKey ===
-        BillingProductKey.WORKFLOW_NODE_EXECUTION,
-    );
-
-    await this.stripeSubscriptionService.updateSubscription(
-      billingSubscription.stripeSubscriptionId,
-      {
-        billing_thresholds:
-          await this.billingPriceService.getBillingThresholdsByMeterPriceId(
-            meterStripePriceId,
-          ),
-      },
-    );
-  }
-
   async syncSubscriptionToDatabase(
     workspaceId: string,
     stripeSubscriptionId: string,
@@ -348,29 +313,32 @@ export class BillingSubscriptionService {
         {
           object: subscription,
         },
+        workspaceId,
       );
 
-    const meterBillingSubscriptionItem = findOrThrow(
-      billingSubscriptionItems,
+    // V2 subscriptions have no quantityless metered item; skip the stale-item cleanup in that case
+    const meterBillingSubscriptionItem = billingSubscriptionItems.find(
       (item) => !isDefined(item.quantity),
     );
 
-    const existingBillingSubscriptionItem =
-      await this.billingSubscriptionItemRepository.findOne({
-        where: {
+    if (isDefined(meterBillingSubscriptionItem)) {
+      const existingBillingSubscriptionItem =
+        await this.billingSubscriptionItemRepository.findOne({
+          where: {
+            billingSubscriptionId: currentBillingSubscription.id,
+            stripeProductId: meterBillingSubscriptionItem.stripeProductId,
+          },
+        });
+
+      if (
+        existingBillingSubscriptionItem?.stripeSubscriptionItemId !==
+        meterBillingSubscriptionItem.stripeSubscriptionItemId
+      ) {
+        await this.billingSubscriptionItemRepository.delete({
           billingSubscriptionId: currentBillingSubscription.id,
           stripeProductId: meterBillingSubscriptionItem.stripeProductId,
-        },
-      });
-
-    if (
-      existingBillingSubscriptionItem?.stripeSubscriptionItemId !==
-      meterBillingSubscriptionItem.stripeSubscriptionItemId
-    ) {
-      await this.billingSubscriptionItemRepository.delete({
-        billingSubscriptionId: currentBillingSubscription.id,
-        stripeProductId: meterBillingSubscriptionItem.stripeProductId,
-      });
+        });
+      }
     }
 
     await this.billingSubscriptionItemRepository.upsert(

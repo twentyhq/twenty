@@ -1,7 +1,8 @@
 **/**/.env
 .DS_Store
 /.idea
-.claude/settings.json
+.claude/
+.cursor/debug-*.log
 **/**/node_modules/
 .cache
 
@@ -52,3 +53,5 @@ mcp.json
 /.junie/
 TRANSLATION_QA_REPORT.md
 .playwright-mcp/
+.playwright-cli/
+output/playwright/

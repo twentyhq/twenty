@@ -1,5 +1,6 @@
 ---
 title: Příkazy backendu
+icon: terminal
 ---
 
 ## Užitečné příkazy
@@ -47,24 +48,8 @@ npx nx run twenty-server:database:reset
 #### Pro objekty ve schématech Core/Metadata (TypeORM)
 
 ```bash
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+npx nx run twenty-server:database:migrate:generate
 ```
-
-#### Pro objekty Pracovní plochy
-
-Nejsou žádné soubory migrací, migrace jsou generovány automaticky pro každou pracovní plochu, uloženy v databázi a aplikovány tímto příkazem
-
-```bash
-npx nx run twenty-server:command workspace:sync-metadata -f
-```
-
-<Warning>
-
-Tímto se databáze smaže a znovu se spustí migrace a seedování.
-
-Před spuštěním tohoto příkazu si nezapomeňte zálohovat všechna data, která chcete zachovat.
-
-</Warning>
 
 ## Technologický stack
 

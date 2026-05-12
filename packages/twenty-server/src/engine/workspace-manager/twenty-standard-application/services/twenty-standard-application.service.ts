@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
@@ -18,7 +17,6 @@ import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/w
 export class TwentyStandardApplicationService {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -41,10 +39,6 @@ export class TwentyStandardApplicationService {
         'featureFlagsMap',
       ]);
 
-    const shouldIncludeRecordPageLayouts = this.twentyConfigService.get(
-      'SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS',
-    );
-
     const {
       allFlatEntityMaps: toTwentyStandardAllFlatEntityMaps,
       idByUniversalIdentifierByMetadataName,
@@ -52,7 +46,6 @@ export class TwentyStandardApplicationService {
       now: new Date().toISOString(),
       workspaceId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      shouldIncludeRecordPageLayouts,
     });
 
     const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};

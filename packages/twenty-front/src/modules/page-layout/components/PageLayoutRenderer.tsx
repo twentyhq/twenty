@@ -10,7 +10,7 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
 
 type PageLayoutRendererProps = {
   pageLayoutId: string;
@@ -48,9 +48,12 @@ export const PageLayoutRenderer = ({
         >
           <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
           <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
-          {!isRecordPageLayoutEditingEnabled && (
-            <PageLayoutRelationWidgetsSyncEffect pageLayoutId={pageLayoutId} />
-          )}
+          {!isRecordPageLayoutEditingEnabled &&
+            layoutType === PageLayoutType.RECORD_PAGE && (
+              <PageLayoutRelationWidgetsSyncEffect
+                pageLayoutId={pageLayoutId}
+              />
+            )}
           <PageLayoutRendererContent />
         </PageLayoutEditModeProvider>
       </TabListComponentInstanceContext.Provider>

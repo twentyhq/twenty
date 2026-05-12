@@ -34,6 +34,7 @@ export const ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME = {
   pageLayoutTab: {},
   pageLayoutWidget: {
     configuration: 'configuration',
+    overrides: 'overrides',
   },
   commandMenuItem: {},
   navigationMenuItem: {},
@@ -41,6 +42,8 @@ export const ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME = {
   objectPermission: {},
   fieldPermission: {},
   frontComponent: {},
+  applicationVariable: {},
+  connectionProvider: {},
 } as const satisfies {
   [P in AllMetadataName]: Partial<{
     // TODO prastoin: improve strict typing to recursively serach for nested SerializedRelation

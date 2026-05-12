@@ -1,5 +1,6 @@
 ---
 title: Команды бекэнда
+icon: terminal
 ---
 
 ## Полезные команды
@@ -47,25 +48,8 @@ npx nx run twenty-server:database:reset
 #### Для объектов в схемах Core/Metadata (TypeORM)
 
 ```bash
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+npx nx run twenty-server:database:migrate:generate
 ```
-
-#### Для объектов Рабочего пространства
-
-Файлов миграций нет, миграции создаются автоматически для каждого рабочего пространства,
-хранятся в базе данных и применяются этой командой
-
-```bash
-npx nx run twenty-server:command workspace:sync-metadata -f
-```
-
-<Warning>
-
-Это удалит базу данных, переустановит миграции и семена.
-
-Убедитесь, что создали резервную копию данных, которые хотите сохранить, прежде чем выполнять эту команду.
-
-</Warning>
 
 ## Технологический стек
 

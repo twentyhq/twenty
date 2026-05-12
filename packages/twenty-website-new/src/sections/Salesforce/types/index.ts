@@ -2,9 +2,6 @@ export type {
   SalesforceAddonRowType,
   SalesforceDataType,
   SalesforcePricingPanelType,
-} from './SalesforceData';
-
-export type {
-  SalesforcePopupKey,
+  SalesforceRichTextPartType,
   SalesforceWrongChoicePopupType,
-} from '../constants';
+} from './salesforce-data';

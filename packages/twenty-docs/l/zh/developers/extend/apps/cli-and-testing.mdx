@@ -1,0 +1,434 @@
+---
+title: CLI 与测试
+description: CLI 命令、测试设置、公共资源、npm 包、远程以及 CI 配置。
+icon: terminal
+---
+
+## 公共资源（`public/` 文件夹）
+
+应用根目录中的 `public/` 文件夹包含静态文件——图像、图标、字体，或应用在运行时所需的任何其他资源。 这些文件会在构建时自动包含、在开发模式下同步，并上传到服务器。
+
+放置在 `public/` 中的文件：
+
+* **公开可访问**——同步到服务器后，资源将通过公共 URL 提供服务。 访问它们无需身份验证。
+* **在前端组件中可用**——使用资源 URL 在 React 组件中显示图像、图标或任何媒体。
+* **在逻辑函数中可用**——在电子邮件、API 响应或任何服务端逻辑中引用资源 URL。
+* **用于市场元数据**——`defineApplication()` 中的 `logoUrl` 和 `screenshots` 字段引用此文件夹中的文件（例如，`public/logo.png`）。 应用发布后，这些内容会显示在市场中。
+* **在开发模式下自动同步**——当在 `public/` 中添加、更新或删除文件时，会自动同步到服务器。 无需重启。
+* **包含在构建中**——`yarn twenty build` 会将所有公共资源打包到分发产物中。
+
+### 使用 `getPublicAssetUrl` 访问公共资源
+
+使用来自 `twenty-sdk` 的 `getPublicAssetUrl` 辅助函数获取 `public/` 目录中文件的完整 URL。 它可在 **逻辑函数** 和 **前端组件** 中使用。
+
+**在逻辑函数中：**
+
+```ts src/logic-functions/send-invoice.ts
+import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const handler = async (): Promise<any> => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+  const invoiceUrl = getPublicAssetUrl('templates/invoice.png');
+
+  // Fetch the file content (no auth required — public endpoint)
+  const response = await fetch(invoiceUrl);
+  const buffer = await response.arrayBuffer();
+
+  return { logoUrl, size: buffer.byteLength };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'a1b2c3d4-...',
+  name: 'send-invoice',
+  description: 'Sends an invoice with the app logo',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+**在前端组件中：**
+
+```tsx src/front-components/company-card.tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+export default defineFrontComponent(() => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+
+  return <img src={logoUrl} alt="App logo" />;
+});
+```
+
+`path` 参数是相对于应用的 `public/` 文件夹的。 `getPublicAssetUrl('logo.png')` 和 `getPublicAssetUrl('public/logo.png')` 均解析为相同的 URL——如果存在，`public/` 前缀会被自动移除。
+
+## 使用 npm 包
+
+可以在应用中安装并使用任意 npm 包。 逻辑函数和前端组件都通过 [esbuild](https://esbuild.github.io/) 打包，所有依赖都会被内联到输出中——运行时不需要 `node_modules`。
+
+### 安装包
+
+```bash filename="Terminal"
+yarn add axios
+```
+
+然后在代码中导入它：
+
+```ts src/logic-functions/fetch-data.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import axios from 'axios';
+
+const handler = async (): Promise<any> => {
+  const { data } = await axios.get('https://api.example.com/data');
+
+  return { data };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-data',
+  description: 'Fetches data from an external API',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+前端组件同样适用：
+
+```tsx src/front-components/chart.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { format } from 'date-fns';
+
+const DateWidget = () => {
+  return <p>Today is {format(new Date(), 'MMMM do, yyyy')}</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'date-widget',
+  component: DateWidget,
+});
+```
+
+### 打包的工作原理
+
+构建步骤使用 esbuild 为每个逻辑函数和每个前端组件生成一个自包含文件。 所有导入的包都会被内联到打包产物中。
+
+**逻辑函数** 运行在 Node.js 环境中。 Node 内置模块（`fs`、`path`、`crypto`、`http` 等） 可用且无需安装。
+
+**前端组件** 运行在 Web Worker 中。 Node 内置模块不可用——仅可使用浏览器 API 以及可在浏览器环境中运行的 npm 包。
+
+两个环境都将 `twenty-client-sdk/core` 和 `twenty-client-sdk/metadata` 作为预置模块提供 — 这些模块不会被打包，而是在运行时由服务器解析。
+
+## 测试你的应用
+
+该 SDK 提供可编程的 API，使你可以在测试代码中构建、部署、安装和卸载你的应用。 结合 [Vitest](https://vitest.dev/) 和类型化 API 客户端，你可以编写集成测试，在真实的 Twenty 服务器上验证你的应用端到端运行是否正常。
+
+### 设置
+
+脚手架生成的应用已包含 Vitest。 如果你手动进行设置，请安装这些依赖：
+
+```bash filename="Terminal"
+yarn add -D vitest vite-tsconfig-paths
+```
+
+在应用根目录下创建一个 `vitest.config.ts`：
+
+```ts vitest.config.ts
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  plugins: [
+    tsconfigPaths({
+      projects: ['tsconfig.spec.json'],
+      ignoreConfigErrors: true,
+    }),
+  ],
+  test: {
+    testTimeout: 120_000,
+    hookTimeout: 120_000,
+    include: ['src/**/*.integration-test.ts'],
+    setupFiles: ['src/__tests__/setup-test.ts'],
+    env: {
+      TWENTY_API_URL: 'http://localhost:2020',
+      TWENTY_API_KEY: 'your-api-key',
+    },
+  },
+});
+```
+
+创建一个设置文件，在测试运行前验证服务器可达：
+
+```ts src/__tests__/setup-test.ts
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import { beforeAll } from 'vitest';
+
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+
+beforeAll(async () => {
+  // Verify the server is running
+  const response = await fetch(`${TWENTY_API_URL}/healthz`);
+
+  if (!response.ok) {
+    throw new Error(
+      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
+        'Start the server before running integration tests.',
+    );
+  }
+
+  // Write a temporary config for the SDK
+  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
+
+  fs.writeFileSync(
+    path.join(TEST_CONFIG_DIR, 'config.json'),
+    JSON.stringify({
+      remotes: {
+        local: {
+          apiUrl: process.env.TWENTY_API_URL,
+          apiKey: process.env.TWENTY_API_KEY,
+        },
+      },
+      defaultRemote: 'local',
+    }, null, 2),
+  );
+});
+```
+
+### 可编程的 SDK API
+
+子路径 `twenty-sdk/cli` 导出了可直接在测试代码中调用的函数：
+
+| 函数             | 描述                 |
+| -------------- | ------------------ |
+| `appBuild`     | 构建应用，并可选地打包为 tar 包 |
+| `appDeploy`    | 将 tar 包上传到服务器      |
+| `appInstall`   | 在活动工作区安装该应用        |
+| `appUninstall` | 从活动工作区卸载该应用        |
+
+每个函数都会返回一个结果对象，包含 `success: boolean`，以及 `data` 或 `error` 之一。
+
+### 编写集成测试
+
+下面是一个完整示例：构建、部署并安装该应用，然后验证它出现在工作区中：
+
+```ts src/__tests__/app-install.integration-test.ts
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
+import { appBuild, appDeploy, appInstall, appUninstall } from 'twenty-sdk/cli';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+const APP_PATH = process.cwd();
+
+describe('App installation', () => {
+  beforeAll(async () => {
+    const buildResult = await appBuild({
+      appPath: APP_PATH,
+      tarball: true,
+      onProgress: (message: string) => console.log(`[build] ${message}`),
+    });
+
+    if (!buildResult.success) {
+      throw new Error(`Build failed: ${buildResult.error?.message}`);
+    }
+
+    const deployResult = await appDeploy({
+      tarballPath: buildResult.data.tarballPath!,
+      onProgress: (message: string) => console.log(`[deploy] ${message}`),
+    });
+
+    if (!deployResult.success) {
+      throw new Error(`Deploy failed: ${deployResult.error?.message}`);
+    }
+
+    const installResult = await appInstall({ appPath: APP_PATH });
+
+    if (!installResult.success) {
+      throw new Error(`Install failed: ${installResult.error?.message}`);
+    }
+  });
+
+  afterAll(async () => {
+    await appUninstall({ appPath: APP_PATH });
+  });
+
+  it('should find the installed app in the workspace', async () => {
+    const metadataClient = new MetadataApiClient();
+
+    const result = await metadataClient.query({
+      findManyApplications: {
+        id: true,
+        name: true,
+        universalIdentifier: true,
+      },
+    });
+
+    const installedApp = result.findManyApplications.find(
+      (app: { universalIdentifier: string }) =>
+        app.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(installedApp).toBeDefined();
+  });
+});
+```
+
+### 运行测试
+
+确保你的本地 Twenty 服务器正在运行，然后：
+
+```bash filename="Terminal"
+yarn test
+```
+
+或者在开发期间使用监听模式：
+
+```bash filename="Terminal"
+yarn test:watch
+```
+
+### 类型检查
+
+你也可以在不运行测试的情况下对应用进行类型检查：
+
+```bash filename="Terminal"
+yarn twenty typecheck
+```
+
+这会运行 `tsc --noEmit` 并报告所有类型错误。
+
+## CLI 参考
+
+除了 `dev`、`build`、`add` 和 `typecheck` 外，CLI 还提供了用于执行函数、查看日志和管理应用安装的命令。
+
+### 执行函数（`yarn twenty exec`）
+
+手动运行逻辑函数，而无需通过 HTTP、定时任务或数据库事件来触发：
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty exec --postInstall
+```
+
+### 查看函数日志（`yarn twenty logs`）
+
+实时流式查看你的应用逻辑函数的执行日志：
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty logs
+
+# Filter by function name
+yarn twenty logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+这与 `yarn twenty server logs` 不同，后者显示的是 Docker 容器日志。 `yarn twenty logs` 会显示来自 Twenty 服务器的应用函数执行日志。
+</Note>
+
+### 卸载应用（`yarn twenty uninstall`）
+
+将你的应用从活动工作区中移除：
+
+```bash filename="Terminal"
+yarn twenty uninstall
+
+# Skip the confirmation prompt
+yarn twenty uninstall --yes
+```
+
+## 管理远程
+
+“远程”是指你的应用连接到的 Twenty 服务器。 在设置期间，脚手架工具会为你自动创建一个。 你可以随时添加更多远程或在它们之间切换。
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+你的凭据存储在 `~/.twenty/config.json` 中。
+
+## 使用 GitHub Actions 进行 CI
+
+脚手架工具会在 `.github/workflows/ci.yml` 生成一个开箱即用的 GitHub Actions 工作流。 它会在每次向 `main` 推送以及拉取请求上自动运行你的集成测试。
+
+工作流：
+
+1. 检出你的代码
+2. 使用 `twentyhq/twenty/.github/actions/spawn-twenty-docker-image` 动作启动一个临时的 Twenty 服务器
+3. 使用 `yarn install --immutable` 安装依赖
+4. 运行 `yarn test`，并从该动作的输出中注入 `TWENTY_API_URL` 和 `TWENTY_API_KEY`
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+你无需配置任何机密——`spawn-twenty-docker-image` 动作会在运行器中直接启动一个临时的 Twenty 服务器，并输出连接详情。 GitHub 会自动提供 `GITHUB_TOKEN` 机密。
+
+若要固定为特定的 Twenty 版本而不是 `latest`，请在工作流顶部修改 `TWENTY_VERSION` 环境变量。

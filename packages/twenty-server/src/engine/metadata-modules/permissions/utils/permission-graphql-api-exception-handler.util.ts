@@ -71,6 +71,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.COMPOSITE_TYPE_NOT_FOUND:
     case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
+    case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
       throw error;
     default: {
       return assertUnreachable(error.code);

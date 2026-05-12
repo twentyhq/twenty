@@ -1,381 +1,90 @@
 ---
 title: Руководство по обновлению
+icon: arrow-up-right-dots
 ---
 
 ## Общие рекомендации
 
-**Всегда убедитесь, что сделали резервную копию вашей базы данных перед началом процесса обновления**, запустив `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
-
-Чтобы восстановить резервную копию, выполните команду `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
-
-Если вы использовали Docker Compose, выполните следующие шаги:
-
-1. В терминале на хосте, где работает Twenty, отключите Twenty: `docker compose down`.
-
-2. Обновите версию, изменив значение `TAG` в файле .env рядом с вашим docker-compose. ( Мы рекомендуем использовать версии `major.minor`, такие как `v0.53`. )
-
-3. Верните Twenty в сеть с `docker compose up -d`.
-
-Если вы хотите обновить свою инстанцию на несколько версий, например с v0.33.0 до v0.35.0, вам потребуется сделать это поэтапно, сначала с v0.33.0 до v0.34.0, затем с v0.34.0 до v0.35.0.
-
-**Убедитесь, что после каждой обновленной версии у вас есть не поврежденная резервная копия.**
-
-## Специфические для версии шаги обновления
-
-## v1.0
-
-Привет, Twenty v1.0! 🎉
-
-## v0.60
-
-### Улучшение производительности
-
-Все взаимодействия с метаданными API оптимизированы для повышения производительности, особенно для манипуляции метаданными объектов и операций создания рабочих пространств.
-
-Мы обновили стратегию кэширования, чтобы приоритетом были попадания кэша перед запросами к базе данных, что значительно улучшило производительность операций с метаданными API.
-
-Если после обновления у вас возникнут проблемы с запуском, возможно, потребуется очистить ваш кэш, чтобы синхронизировать его с последними изменениями. Запустите эту команду в вашем контейнере twenty-server:
+**Всегда создавайте резервную копию базы данных перед началом процесса обновления**, выполнив:
 
 ```bash
-yarn command:prod cache:flush
+docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql
 ```
 
-### v0.55
-
-Обновите вашу инстанцию Twenty для использования изображения v0.55
-
-Вам больше не нужно запускать никакие команды, новое изображение автоматически выполнит все необходимые миграции.
-
-### Ошибка `User does not have permission`
-
-Если после обновления вы столкнетесь с ошибками авторизации в большинстве запросов, возможно, потребуется очистить кэш для пересчета последних прав доступа.
-
-В вашем контейнере `twenty-server`, запустите:
+Восстановление из резервной копии:
 
 ```bash
-yarn command:prod cache:flush
+cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}
 ```
 
-Эта проблема специфична для данной версии Twenty и не должна требоваться для будущих обновлений.
+Если вы используете Docker Compose, выполните следующие шаги:
 
-### v0.54
+1. Остановите Twenty: `docker compose down`
+2. Измените значение `TAG` в файле `.env` рядом с вашим `docker-compose.yml`
+3. Запустите Twenty: `docker compose up -d`
 
-Начиная с версии `0.53`, ручные действия не требуются.
+Сервер автоматически выполняет все необходимые миграции обновления при запуске. Ручных команд не требуется.
 
-#### Отказ от схемы метаданных
+## Межверсионные обновления (v1.22+)
 
-Мы объединили схему `metadata` в `core`, чтобы упростить извлечение данных из `TypeORM`.
-Мы объединили этап команды `migrate` в команду `upgrade`. Мы не рекомендуем запускать `migrate` вручную в ваших контейнерах серверов/рабочих.
+Начиная с **v1.22**, Twenty поддерживает межверсионные обновления. Вы можете перейти напрямую с любой поддерживаемой версии на последний релиз, не проходя каждую промежуточную версию.
 
-### Начиная с v0.53
+Например, полностью поддерживается обновление с v1.22 сразу до v2.0.
 
-Начиная с `0.53`, обновление программно выполняется внутри `DockerFile`, это означает, что отныне вам больше не нужно запускать команды вручную.
+## Проверка статуса обновления
 
-Убедитесь, что вы обновляете свою инстанцию последовательно, без пропуска основной версии (например, `0.43.3` на `0.44.0` допускается, но `0.43.1` на `0.45.0` нет), иначе это может привести к десинхронизации версии рабочего пространства, что может вызвать ошибку во время выполнения и отсутствовать функциональность.
+Команда `upgrade:status` позволяет просмотреть текущее состояние вашего экземпляра и миграций рабочих пространств. Это полезно для отладки проблем с обновлением или при обращении в поддержку.
 
-Чтобы проверить, правильно ли было мигрировано рабочее пространство, вы можете просмотреть его версию в базе данных в таблице `core.workspace`.
+Запустите её из контейнера сервера:
 
-Она всегда должна находиться в диапазоне текущей версии вашего инстанции Twenty `major.minor`, вы можете просмотреть версию инстанции в админ-панели (на `/settings/admin-panel`, доступна, если свойство `canAccessFullAdminPanel` вашего пользователя установлено на true в базе данных) или запустив `echo $APP_VERSION` в вашем контейнере `twenty-server`.
-
-Чтобы исправить десинхронизированную версию рабочего пространства, вам потребуется обновить его с соответствующей версии Twenty, следуя последовательному руководству по обновлению и так далее, пока он не достигнет желаемой версии.
-
-#### Удаление `auditLog`
-
-Мы удалили стандартный объект auditLog, что означает, что размер вашей резервной копии может значительно уменьшиться после этой миграции.
-
-### v0.51 до v0.52
-
-Обновите вашу инстанцию Twenty для использования изображения v0.52
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
+```bash
+docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status
 ```
 
-#### У меня рабочее пространство заблокировано на версии между `0.52.0` и `0.52.6`.
+Пример результата:
 
-К сожалению, `0.52.0` и `0.52.6` были полностью удалены из dockerHub.
-Вам потребуется вручную обновить версию рабочего пространства до `0.51.0` в базе данных и обновить с использованием версии twenty `0.52.11`, следуя её руководству по обновлению.
+```sh
+APP_VERSION: v1.23.0
 
-### v0.50 до v0.51
+Instance
+    Inferred version: 1.23.0
+    Latest command:   1.23.0_DropWorkspaceVersionColumnFastInstanceCommand_1785000000000
+    Status:           Up to date
+    Executed by:      v1.23.0
+    At:               2026-04-16T11:43:58.823Z
 
-Обновите вашу инстанцию Twenty для использования изображения v0.51
+Workspace
+  Apple (20202020-1c25-4d02-bf25-6aeccf7ea419)
+      Inferred version: 1.23.0
+      Latest command:   1.23.0_UpdateGlobalObjectContextCommandMenuItemsCommand_1780000005000
+      Status:           Up to date
+      Executed by:      v1.23.0
+      At:               2026-04-16T11:44:09.361Z
 
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
-```
-
-### v0.44.0 до v0.50.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.50.0
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
-```
-
-#### Модификация в docker-compose.yml
-
-Эта версия включает модификацию `docker-compose.yml`, чтобы предоставить сервису `worker` доступ к тому `server-local-data`.
-Обновите ваш локальный `docker-compose.yml` с [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)
-
-### v0.43.0 до v0.44.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.44.0
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
+Summary
+    Instance: Up to date
+    Workspaces: 1 up to date, 0 behind, 0 failed (1 total)
 ```
 
-### v0.42.0 до v0.43.0
+### Настройки
 
-Обновите вашу инстанцию Twenty для использования изображения v0.43.0
+| Флаг                      | Описание                                                                            |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| `-w, --workspace-id <id>` | Фильтрует по конкретному рабочему пространству. Можно передавать несколько раз.     |
+| `-f, --failed-only`       | Скрывает актуальные рабочие пространства, показывает только отстающие и с ошибками. |
 
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
-```
+## Устранение неполадок
 
-В этой версии мы также переключились на изображение postgres:16 в docker-compose.yml.
+Если обновление завершается ошибкой в некоторых рабочих пространствах, сервер не перейдёт дальше проблемного шага. Перезапуск сервера (`docker compose up -d`) повторит обновление с того места, где оно остановилось.
 
-#### (Вариант 1) Миграция базы данных
+Чтобы быстро выявить проблемы, выполните:
 
-Сохранение существующего изображения postgres-spilo приемлемо, но вам потребуется зафиксировать версию в вашем docker-compose.yml на 0.43.0.
-
-#### (Вариант 2) Миграция базы данных
-
-Если вы хотите мигрировать вашу базу данных на новое изображение postgres:16, следуйте этим шагам:
-
-1. Сделайте дамп вашей базы данных из старого контейнера postgres-spilo
-
-```
-docker exec -it twenty-db-1 sh
-pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
-exit
-docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```bash
+docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
 ```
 
-Убедитесь, что ваш файл дампа не пустой.
+Будут показаны только рабочие пространства, которые отстают или завершились с ошибкой, вместе с сообщением об ошибке для каждого сбоя.
 
-2. Обновите ваш файл docker-compose.yml с использованием изображения postgres:16, как в файле [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml).
+## До v1.22
 
-3. Восстановите базу данных в новый контейнер postgres:16.
-
-```
-docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
-docker exec -it twenty-db-1 sh
-psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
-exit
-```
-
-### v0.41.0 до v0.42.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.42.0
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.42
-```
-
-**Переменные окружения**
-
-* Удалено: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
-* Добавлено: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
-
-### v0.40.0 до v0.41.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.41.0
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.41
-```
-
-**Переменные окружения**
-
-* Удалено: `AUTH_MICROSOFT_TENANT_ID`
-
-### v0.35.0 до v0.40.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.40.0
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.40
-```
-
-**Переменные окружения**
-
-* Добавлено: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
-
-### v0.34.0 до v0.35.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.35.0
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.35
-```
-
-Команда `yarn database:migrate:prod` применяет миграции к структуре базы данных (схемы core и metadata)
-Команда `yarn command:prod upgrade-0.35` заботится о миграции данных всех рабочих пространств.
-
-**Переменные окружения**
-
-* Мы заменили `ENABLE_DB_MIGRATIONS` на `DISABLE_DB_MIGRATIONS` (значение по умолчанию теперь `false`, вероятно, вам не потребуется ничего устанавливать)
-
-### v0.33.0 до v0.34.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.34.0
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.34
-```
-
-Команда `yarn database:migrate:prod` применяет миграции к структуре базы данных (схемы core и metadata)
-Команда `yarn command:prod upgrade-0.34` заботится о миграции данных всех рабочих пространств.
-
-**Переменные окружения**
-
-* Удалено: `FRONT_BASE_URL`
-* Добавлено: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
-
-Мы обновили способ обработки URL frontend.
-Теперь вы можете установить URL frontend, используя переменные `FRONT_DOMAIN`, `FRONT_PROTOCOL` и `FRONT_PORT`.
-Если FRONT_DOMAIN не установлен, URL frontend будет зависеть от `SERVER_URL`.
-
-### v0.32.0 до v0.33.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.33.0
-
-```
-yarn command:prod cache:flush
-yarn database:migrate:prod
-yarn command:prod upgrade-0.33
-```
-
-Команда `yarn command:prod cache:flush` очистит кэш Redis.
-Команда `yarn database:migrate:prod` применяет миграции к структуре базы данных (схемы core и metadata)
-Команда `yarn command:prod upgrade-0.33` заботится о миграции данных всех рабочих пространств.
-
-Начиная с этой версии, образ twenty-postgres для DB становится устаревшим, и вместо него используется twenty-postgres-spilo.
-Если вы хотите продолжать использовать изображение twenty-postgres, просто замените `twentycrm/twenty-postgres:${TAG}` на `twentycrm/twenty-postgres` в файле docker-compose.yml.
-
-### v0.31.0 до v0.32.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.32.0
-
-**Миграция схемы и данных**
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.32
-```
-
-Команда `yarn database:migrate:prod` применяет миграции к структуре базы данных (схемы core и metadata)
-Команда `yarn command:prod upgrade-0.32` заботится о миграции данных всех рабочих пространств.
-
-**Переменные окружения**
-
-Мы обновили способ обработки соединения с Redis.
-
-* Удалено: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
-* Добавлено: `REDIS_URL`
-
-Обновите ваш файл `.env` для использования новой переменной `REDIS_URL` вместо индивидуальных параметров подключения Redis.
-
-Мы также упростили способ обработки JWT токенов.
-
-* Удалено: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
-* Добавлено: `APP_SECRET`
-
-Обновите ваш файл `.env` для использования новой переменной `APP_SECRET` вместо индивидуальных секрета токенов (вы можете использовать прежний секрет или сгенерировать новую случайную строку).
-
-**Подключенный Аккаунт**
-
-Если вы используете подключенный аккаунт для синхронизации ваших электронных писем и календарей Google, вам потребуется активировать [API людей](https://developers.google.com/people) на вашей консоли администратора Google.
-
-### v0.30.0 до v0.31.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.31.0
-
-**Миграция схемы и данных:**
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.31
-```
-
-Команда `yarn database:migrate:prod` применяет миграции к структуре базы данных (схемы core и metadata)
-Команда `yarn command:prod upgrade-0.31` заботится о миграции данных всех рабочих пространств.
-
-### v0.24.0 до v0.30.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.30.0
-
-**Критически важное изменение**:
-Чтобы повысить производительность, Twenty теперь требует настроить кэш Redis. Мы обновили [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) для этого.
-Убедитесь, что вы обновили свою конфигурацию и обновили переменные окружения соответственно:
-
-```
-REDIS_HOST={your-redis-host}
-REDIS_PORT={your-redis-port}
-CACHE_STORAGE_TYPE=redis
-```
-
-**Миграция схемы и данных:**
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.30
-```
-
-Команда `yarn database:migrate:prod` применяет миграции к структуре базы данных (схемы core и metadata)
-Команда `yarn command:prod upgrade-0.30` заботится о миграции данных всех рабочих пространств.
-
-### v0.23.0 до v0.24.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.24.0
-
-Выполните следующие команды:
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.24
-```
-
-Команда `yarn database:migrate:prod` применяет миграции к структуре базы данных (схемы core и metadata)
-Команда `yarn command:prod upgrade-0.24` заботится о миграции данных всех рабочих пространств.
-
-### v0.22.0 до v0.23.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.23.0
-
-Выполните следующие команды:
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.23
-```
-
-Команда `yarn database:migrate:prod` применяет миграции к Базе данных.
-Команда `yarn command:prod upgrade-0.23` заботится о миграции данных, включая перенос активностей в задачи/заметки.
-
-### v0.21.0 до v0.22.0
-
-Обновите вашу инстанцию Twenty для использования изображения v0.22.0
-
-Выполните следующие команды:
-
-```
-yarn database:migrate:prod
-yarn command:prod workspace:sync-metadata -f
-yarn command:prod upgrade-0.22
-```
-
-Команда `yarn database:migrate:prod` применяет миграции к Базе данных.
-Команда `yarn command:prod workspace:sync-metadata -f` синхронизирует определение стандартных объектов с таблицами метаданных и применит необходимые миграции к существующим рабочим пространствам.
-Команда `yarn command:prod upgrade-0.22` выполнит преобразование данных для адаптации к новым параметрам по умолчанию объекта defaultRequestInstrumentationOptions.
+Если ваш экземпляр старее v1.22, необходимо поэтапно обновляться через каждую основную помеченную версию (с v1.6 до v1.7, затем с v1.7 до v1.8 и так далее) до v1.22. После этого можно перейти сразу на последнюю версию.

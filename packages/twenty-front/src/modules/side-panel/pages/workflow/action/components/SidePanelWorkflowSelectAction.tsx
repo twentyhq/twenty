@@ -1,5 +1,5 @@
-import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
@@ -10,11 +10,10 @@ import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constan
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconFunction } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export type WorkflowActionSelection = {
   type: WorkflowActionType;
@@ -26,20 +25,13 @@ export const SidePanelWorkflowSelectAction = ({
 }: {
   onActionSelected: (selection: WorkflowActionSelection) => void;
 }) => {
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-  const isDraftEmailEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_DRAFT_EMAIL_ENABLED,
-  );
-
   const { t } = useLingui();
 
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
 
-  const toolFunctions = logicFunctions.filter((fn) => fn.isTool === true);
-
-  const coreActions = isDraftEmailEnabled
-    ? CORE_ACTIONS
-    : CORE_ACTIONS.filter((action) => action.type !== 'DRAFT_EMAIL');
+  const toolFunctions = logicFunctions.filter((fn) =>
+    isDefined(fn.workflowActionTriggerSettings),
+  );
 
   const handleActionClick = (actionType: WorkflowActionType) => {
     onActionSelected({ type: actionType });
@@ -64,17 +56,13 @@ export const SidePanelWorkflowSelectAction = ({
         onClick={handleActionClick}
       />
 
-      {isAiEnabled && (
-        <>
-          <SidePanelWorkflowSelectStepTitle>
-            {t`AI`}
-          </SidePanelWorkflowSelectStepTitle>
-          <WorkflowActionMenuItems
-            actions={AI_ACTIONS}
-            onClick={handleActionClick}
-          />
-        </>
-      )}
+      <SidePanelWorkflowSelectStepTitle>
+        {t`AI`}
+      </SidePanelWorkflowSelectStepTitle>
+      <WorkflowActionMenuItems
+        actions={AI_ACTIONS}
+        onClick={handleActionClick}
+      />
 
       <SidePanelWorkflowSelectStepTitle>
         {t`Flow`}
@@ -88,7 +76,7 @@ export const SidePanelWorkflowSelectAction = ({
         {t`Core`}
       </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={coreActions}
+        actions={CORE_ACTIONS}
         onClick={handleActionClick}
       />
 
@@ -115,7 +103,7 @@ export const SidePanelWorkflowSelectAction = ({
                   size={16}
                 />
               )}
-              text={fn.name}
+              text={fn.workflowActionTriggerSettings?.label ?? fn.name}
               onClick={() => handleFunctionClick(fn.id)}
             />
           ))}

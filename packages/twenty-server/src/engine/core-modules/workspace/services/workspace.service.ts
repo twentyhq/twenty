@@ -10,7 +10,11 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -27,9 +31,10 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -38,7 +43,6 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -54,17 +58,17 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
 import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-dashboards.util';
 import { prefillOpportunities } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-opportunities.util';
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-people.util';
-import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util';
 import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
+import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
-import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
-import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -95,6 +99,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     enabledAiModelIds: PermissionFlagType.AI_SETTINGS,
     useRecommendedModels: PermissionFlagType.AI_SETTINGS,
+    isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
   };
 
   constructor(
@@ -115,6 +120,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
+    private readonly applicationService: ApplicationService,
+    private readonly preInstalledAppsService: PreInstalledAppsService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -126,6 +134,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly upgradeMigrationService: UpgradeMigrationService,
+    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
   ) {
     super(workspaceRepository);
   }
@@ -354,12 +364,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       schemaName: getWorkspaceSchemaName(workspace.id),
     });
 
-    const appVersion = this.twentyConfigService.get('APP_VERSION');
-
-    await this.workspaceRepository.update(workspace.id, {
+    await this.activateAndInitializeUpgradeState({
+      workspaceId: workspace.id,
       displayName: data.displayName,
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
-      version: extractVersionMajorMinorPatch(appVersion),
     });
 
     await this.coreEntityCacheService.invalidate(
@@ -370,6 +377,52 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     return await this.workspaceRepository.findOneBy({
       id: workspace.id,
     });
+  }
+
+  private async activateAndInitializeUpgradeState({
+    displayName,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    displayName: string;
+  }): Promise<void> {
+    const lastAttemptedInstanceCommand =
+      await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
+
+    const initialCursor =
+      this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(
+        lastAttemptedInstanceCommand,
+      );
+
+    const executedByVersion =
+      this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
+
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.update(WorkspaceEntity, workspaceId, {
+        displayName,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      });
+
+      await this.upgradeMigrationService.markAsWorkspaceInitial({
+        name: initialCursor.name,
+        workspaceId,
+        executedByVersion,
+        status: initialCursor.status,
+        queryRunner,
+      });
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async deleteWorkspace(id: string, softDelete = false) {
@@ -735,8 +788,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         flatFieldMetadataMaps,
       );
 
-      await prefillWorkflowCommandMenuItems(queryRunner.manager, workspaceId);
-
       await prefillOpportunities(queryRunner.manager, schemaName);
 
       await prefillDashboards(
@@ -748,18 +799,44 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       await queryRunner.commitTransaction();
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        try {
-          await queryRunner.rollbackTransaction();
-        } catch (rollbackError) {
-          this.logger.error(
-            `Failed to rollback prefill transaction: ${rollbackError.message}`,
-          );
-        }
+        await queryRunner.rollbackTransaction();
       }
 
       throw error;
     } finally {
       await queryRunner.release();
     }
+
+    try {
+      await prefillWorkflowCommandMenuItems({
+        workspaceId,
+        applicationService: this.applicationService,
+        flatEntityMapsCacheService: this.flatEntityMapsCacheService,
+        workspaceMigrationValidateBuildAndRunService:
+          this.workspaceMigrationValidateBuildAndRunService,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Non-critical: failed to prefill workflow command menu items for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
+    }
+
+    try {
+      await this.preInstalledAppsService.installOnWorkspace(workspaceId);
+    } catch (error) {
+      this.logger.error(
+        `Non-critical: failed to install pre-installed apps for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
+    }
+  }
+
+  async findOneWorkspaceById(id: string) {
+    return await this.workspaceRepository.findOneBy({
+      id,
+    });
   }
 }

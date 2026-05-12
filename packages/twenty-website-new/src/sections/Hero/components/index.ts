@@ -1,17 +1,21 @@
-import { Body } from './Body/Body';
-import { Cta } from './Cta/Cta';
-import { Heading } from './Heading/Heading';
-import { HomeVisual } from './HomeVisual/HomeVisual';
-import { Illustration } from './Illustration/Illustration';
-import { Root } from './Root/Root';
-import { WhyTwentyVisual } from './WhyTwentyVisual/WhyTwentyVisual';
+import { Body } from './Body';
+import { Cta } from './Cta';
+import { Heading } from './Heading';
+import { AppPreview } from '@/sections/AppPreview';
+import { PartnerVisual } from './PartnerVisual/PartnerVisual';
+import { ProductVisual } from './ProductVisual';
+import { ReleaseNotesVisual } from './ReleaseNotesVisual';
+import { Root } from './Root';
+import { WhyTwentyVisual } from './WhyTwentyVisual';
 
 export const Hero = {
   Root,
   Heading,
   Body,
   Cta,
-  Illustration,
-  HomeVisual,
+  AppPreview,
+  ProductVisual,
+  ReleaseNotesVisual,
+  PartnerVisual,
   WhyTwentyVisual,
 };

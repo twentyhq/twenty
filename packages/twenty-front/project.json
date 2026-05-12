@@ -87,6 +87,7 @@
     },
     "lint:diff-with-main": {
       "executor": "nx:run-commands",
+      "dependsOn": ["twenty-oxlint-rules:build"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware -c .oxlintrc.json $FILES && (prettier --check $FILES || (echo 'ERROR: Prettier formatting check failed! Fix with: npx nx lint:diff-with-main twenty-front --configuration=fix' && false)))"
@@ -275,6 +276,9 @@
         },
         "metadata": {
           "config": "codegen-metadata.cjs"
+        },
+        "admin": {
+          "config": "codegen-admin.cjs"
         }
       }
     },

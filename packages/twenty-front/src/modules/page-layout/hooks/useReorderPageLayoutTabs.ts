@@ -2,6 +2,7 @@ import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/Pag
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type DropResult } from '@hello-pangea/dnd';
 import { useCallback } from 'react';
@@ -31,8 +32,8 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
         return false;
       }
 
-      const sortedTabs = [...currentPageLayout.tabs].sort(
-        (a, b) => a.position - b.position,
+      const sortedTabs = sortTabsByPosition(
+        currentPageLayout.tabs.filter((tab) => tab.isActive),
       );
 
       const draggedTab = sortedTabs.find((tab) => tab.id === draggableId);

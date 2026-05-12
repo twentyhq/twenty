@@ -1,61 +1,55 @@
 ---
 title: Начало работы
+icon: rocket
 description: Создайте своё первое приложение Twenty за считанные минуты.
 ---
 
-<Warning>
-Приложения сейчас проходят альфа-тестирование. Функция работает, но продолжает развиваться.
-</Warning>
-
-Приложения позволяют расширять Twenty с помощью пользовательских объектов, полей, логических функций, навыков ИИ и UI-компонентов — всё это управляется как код.
-
 ## Требования
 
-Прежде чем начать, убедитесь, что на вашем компьютере установлено следующее:
-
 * **Node.js 24+** — [Скачать здесь](https://nodejs.org/)
-* **Yarn 4** — Поставляется вместе с Node.js через Corepack. Включите его, выполнив `corepack enable`
-* **Docker** — [Скачать здесь](https://www.docker.com/products/docker-desktop/). Требуется для запуска локального экземпляра Twenty. Не требуется, если у вас уже запущен сервер Twenty.
+* **Yarn 4** — поставляется вместе с Node.js через Corepack. Включите его, выполнив `corepack enable`
+* **Docker** — [Скачать здесь](https://www.docker.com/products/docker-desktop/). Требуется для запуска локального экземпляра Twenty. Пропустите, если у вас уже запущен Twenty в другом месте.
 
-## Шаг 1: Сгенерируйте каркас приложения
+Создание приложения Twenty включает три фазы. Генератор каркаса объединяет их в одну команду для идеального сценария (happy path), но каждая фаза — отдельная концепция: когда что-то идёт не так, понимание того, на какой фазе вы находитесь, подскажет, что исправить.
 
-Откройте терминал и выполните:
+| Фаза                    | Что вы делаете                                    | Инструмент                    | Результат                              |
+| ----------------------- | ------------------------------------------------- | ----------------------------- | -------------------------------------- |
+| **1. Создание каркаса** | Сгенерировать исходный код приложения             | `npx create-twenty-app`       | Проект TypeScript на диске             |
+| **2. Запустить сервер** | Запустить сервер Twenty для синхронизации         | Docker + `yarn twenty server` | Запущенный экземпляр Twenty            |
+| **3. Синхронизация**    | Синхронизируйте код с сервером в реальном времени | `yarn twenty dev`             | Ваши изменения появляются в интерфейсе |
+
+---
+
+## Фаза 1 — Сгенерируйте каркас проекта
+
+Создайте новое приложение из шаблона:
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app
 ```
 
-Вам будет предложено ввести имя и описание вашего приложения. Нажмите **Enter**, чтобы принять значения по умолчанию.
+Вам будет предложено ввести имя и описание — нажмите **Enter**, чтобы принять значения по умолчанию. Это создаст проект TypeScript в `my-twenty-app/` с начальным файлом `application-config.ts`, ролью по умолчанию, рабочим процессом CI и интеграционным тестом.
 
-Будет создана новая папка `my-twenty-app` со всем необходимым.
+**После этой фазы:** у вас есть исходный код приложения на вашем компьютере. Он ещё не запущен — это фаза 2.
 
-<Note>
-Генератор поддерживает следующие флаги:
+---
 
-* `--minimal` — сгенерировать только основные файлы, без примеров (по умолчанию)
-* `--exhaustive` — сгенерировать все примеры сущностей
-* `--name <name>` — задать имя приложения (пропускает запрос)
-* `--display-name <displayName>` — задать отображаемое имя (пропускает запрос)
-* `--description <description>` — задать описание (пропускает запрос)
-* `--skip-local-instance` — пропустить запрос на настройку локального сервера
-</Note>
+## Фаза 2 — Запустите локальный сервер Twenty
 
-## Шаг 2: Настройте локальный экземпляр Twenty
+Вашему приложению нужен сервер Twenty для синхронизации. Сервер — это полноценный экземпляр Twenty — UI, GraphQL API, PostgreSQL — работающий локально в Docker. Ваш локальный код загружает свои определения на этот сервер, благодаря чему они появляются в интерфейсе.
 
-Скэффолдер спросит:
+Генератор каркаса предложит запустить его за вас:
 
 > **Хотите настроить локальный экземпляр Twenty?**
 
-* **Введите `yes`** (рекомендуется) — это скачает Docker-образ `twenty-app-dev` и запустит локальный сервер Twenty на порту `2020`. Перед продолжением убедитесь, что Docker запущен.
-* **Введите `no`** — выберите это, если у вас уже запущен локальный сервер Twenty.
+* **Да (рекомендуется)** — скачивает Docker-образ `twentycrm/twenty-app-dev` и запускает его на порту `2020`. Сначала убедитесь, что Docker запущен.
+* **Нет** — выберите это, если у вас уже есть сервер Twenty, к которому вы хотите подключиться. Позже вы можете подключить его с помощью `yarn twenty remote add`.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Запустить локальный экземпляр?" />
 </div>
 
-## Шаг 3: Войдите в своё рабочее пространство
-
-Затем откроется окно браузера со страницей входа в Twenty. Войдите, используя предварительно созданную демонстрационную учётную запись:
+Когда сервер будет запущен, откроется браузер для входа. Используйте предварительно созданную демонстрационную учётную запись:
 
 * **Электронная почта:** `tim@apple.dev`
 * **Пароль:** `tim@apple.dev`
@@ -64,326 +58,194 @@ npx create-twenty-app@latest my-twenty-app
   <img src="/images/docs/developers/extends/apps/login.png" alt="Экран входа в Twenty" />
 </div>
 
-## Шаг 4: Авторизуйте приложение
-
-После входа вы увидите экран авторизации. Это позволит вашему приложению взаимодействовать с вашим рабочим пространством.
-
-Нажмите **Authorize**, чтобы продолжить.
+На следующем экране нажмите **Authorize** — это даст CLI доступ к вашему рабочему пространству.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/authorize.png" alt="Экран авторизации Twenty CLI" />
 </div>
 
-После авторизации в терминале появится подтверждение, что всё настроено.
+В вашем терминале появится подтверждение, что всё настроено.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Каркас приложения успешно создан" />
 </div>
 
-## Шаг 5: Начните разработку
+**После этой фазы:** у вас запущен сервер Twenty на [http://localhost:2020](http://localhost:2020), а ваш CLI авторизован для синхронизации с ним.
 
-Перейдите в папку вашего нового приложения и запустите сервер разработки:
+<Note>
+Если Docker не установлен или не запущен, генератор каркаса подскажет правильную команду запуска для вашей ОС. Когда Docker будет запущен, вы можете продолжить с `yarn twenty server start` — заново генерировать каркас не нужно.
+</Note>
+
+---
+
+## Фаза 3 — Синхронизируйте свои изменения
+
+Это внутренний цикл, в котором вы проведёте большую часть времени.
 
 ```bash filename="Terminal"
 cd my-twenty-app
 yarn twenty dev
 ```
 
-Он отслеживает исходные файлы, пересобирает при каждом изменении и автоматически синхронизирует ваше приложение с локальным сервером Twenty. В терминале должна появиться панель текущего статуса.
+Эта команда отслеживает `src/`, пересобирает при каждом изменении и синхронизирует результат с сервером. Отредактируйте файл, сохраните — и через секунду сервер отразит изменения. В терминале появится панель текущего статуса.
 
-Для более подробного вывода (журналы сборки, запросы синхронизации, трассировки ошибок) используйте флаг `--verbose`:
-
-```bash filename="Terminal"
-yarn twenty dev --verbose
-```
-
-<Warning>
-Режим разработки доступен только на экземплярах Twenty, запущенных в режиме разработки (`NODE_ENV=development`). Экземпляры в продакшене отклоняют запросы синхронизации из режима разработки. Используйте `yarn twenty deploy` для развёртывания на продакшен-серверах — подробности см. в разделе [Публикация приложений](/l/ru/developers/extend/apps/publishing).
-</Warning>
+Для более подробного вывода (журналы сборки, запросы синхронизации, трассировки ошибок) добавьте `--verbose`.
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Вывод терминала в режиме разработки" />
+  <img src="/images/docs/developers/extends/apps/dev.png" alt="Вывод терминала в режиме разработки" />
 </div>
 
-## Шаг 6: Посмотрите своё приложение в Twenty
-
-Откройте [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) в браузере. Перейдите в **Settings > Apps** и выберите вкладку **Developer**. Вы должны увидеть своё приложение в разделе **Your Apps**:
+Откройте [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Вы должны увидеть своё приложение в разделе **Your Apps**.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Список Your Apps с приложением My twenty app" />
 </div>
 
-Нажмите **My twenty app**, чтобы открыть его **регистрацию приложения**. Регистрация — это запись на уровне сервера, описывающая ваше приложение: его имя, уникальный идентификатор, учётные данные OAuth и источник (локальный, npm или tarball). Она хранится на сервере, а не внутри какого-либо конкретного рабочего пространства. Когда вы устанавливаете приложение в рабочее пространство, Twenty создаёт привязанное к рабочему пространству **приложение**, которое ссылается на эту регистрацию. Одну и ту же регистрацию можно установить в нескольких рабочих пространствах на одном сервере.
+Нажмите **My twenty app**, чтобы открыть его регистрацию приложения — запись на уровне сервера, описывающую ваше приложение (имя, идентификатор, учётные данные OAuth, источник). Одну и ту же регистрацию можно установить в нескольких рабочих пространствах на одном сервере.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Сведения о регистрации приложения" />
 </div>
 
-Нажмите **View installed app**, чтобы посмотреть установленное приложение. Вкладка **About** показывает текущую версию и параметры управления:
+Нажмите **View installed app**, чтобы посмотреть установку в рабочем пространстве. Вкладка **About** показывает версию и параметры управления.
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Установленное приложение — вкладка About" />
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Установленное приложение" />
 </div>
 
-Переключитесь на вкладку **Content**, чтобы увидеть всё, что предоставляет ваше приложение: объекты, поля, логические функции и агенты:
+**После этой фазы:** у вас есть интерактивный цикл разработки. Отредактируйте любой файл в `src/`, и он появится в интерфейсе.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-4.png" alt="Установленное приложение — вкладка Content" />
-</div>
+### Разовая синхронизация для CI и скриптов
 
-Готово! Отредактируйте любой файл в `src/`, и изменения будут подхвачены автоматически.
+Передайте `--once`, чтобы выполнить одну сборку и синхронизацию и завершить работу — тот же конвейер, без наблюдателя:
 
-Перейдите к разделу [Создание приложений](/l/ru/developers/extend/apps/building) за подробным руководством по созданию объектов, логических функций, фронтенд-компонентов, навыков и многого другого.
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Команда                  | Поведение                                                                                                   | Когда использовать                                           |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `yarn twenty dev`        | Отслеживает и повторно синхронизирует при каждом изменении. Продолжает работать, пока вы его не остановите. | Интерактивная локальная разработка.                          |
+| `yarn twenty dev --once` | Одна сборка и синхронизация, завершает работу с кодом `0` при успехе и `1` при ошибке.                      | CI, хуки pre-commit, AI-агенты, скриптовые рабочие процессы. |
+
+Оба режима требуют сервер в режиме разработки и аутентифицированный удалённый сервер.
+
+<Warning>
+Режим разработки доступен только на экземплярах Twenty, запущенных в режиме разработки (`NODE_ENV=development`). Экземпляры в продакшене отклоняют запросы синхронизации из режима разработки — используйте `yarn twenty deploy` для развёртывания на производственные серверы. См. [Публикация приложений](/l/ru/developers/extend/apps/publishing).
+</Warning>
 
 ---
 
-## Структура проекта
+## Что вы можете создать
 
-Скэффолдер генерирует следующую структуру файлов (показано в режиме `--exhaustive`, который включает примеры для каждого типа сущностей):
+Приложения состоят из **сущностей** — каждая определена как файл TypeScript с одним `export default`:
+
+| Сущность                      | Что делает                                                                                                |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Объекты и поля**            | Пользовательские модели данных (почтовая открытка, счёт и т. д.) с типизированными полями                 |
+| **Логические функции**        | Серверный TypeScript, запускаемый HTTP-маршрутами, расписаниями cron или событиями базы данных            |
+| **Фронтенд-компоненты**       | React-компоненты, которые отображаются внутри интерфейса Twenty (боковая панель, виджеты, командное меню) |
+| **Навыки и агенты**           | Возможности ИИ — многократно используемые инструкции и автономные помощники                               |
+| **Представления и навигация** | Предварительно настроенные представления списков и элементы бокового меню                                 |
+| **Макеты страниц**            | Пользовательские страницы сведений о записи с вкладками и виджетами                                       |
+
+Полная справка: [Создание приложений](/l/ru/developers/extend/apps/building).
+
+## Структура проекта
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
   package.json
-  yarn.lock
-  .gitignore
-  .nvmrc
-  .yarnrc.yml
-  .yarn/
-    install-state.gz
-  .oxlintrc.json
-  tsconfig.json
-  tsconfig.spec.json                  # TypeScript config for tests
-  vitest.config.ts                    # Vitest test runner configuration
-  LLMS.md
-  README.md
-  .github/
-    └── workflows/
-        └── ci.yml                      # GitHub Actions CI workflow
-  public/                             # Public assets (images, fonts, etc.)
   src/
-  ├── application-config.ts             # Required — main application configuration
-  ├── __tests__/
-  │   ├── setup-test.ts                   # Test setup (server health check, config)
-  │   └── app-install.integration-test.ts # Example integration test
-  ├── roles/
-  │   └── default-role.ts                 # Default role for logic functions
-  ├── objects/
-  │   └── example-object.ts               # Example custom object definition
-  ├── fields/
-  │   └── example-field.ts                # Example standalone field definition
-  ├── logic-functions/
-  │   ├── hello-world.ts                  # Example logic function
-  │   ├── create-hello-world-company.ts   # Example logic function using CoreApiClient
-  │   ├── pre-install.ts                  # Runs before installation
-  │   └── post-install.ts                 # Runs after installation
-  ├── front-components/
-  │   └── hello-world.tsx                 # Example front component
-  ├── page-layouts/
-  │   └── example-record-page-layout.ts   # Example page layout with front component
-  ├── views/
-  │   └── example-view.ts                 # Example saved view definition
-  ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
-  ├── skills/
-  │   └── example-skill.ts                # Example AI agent skill definition
-  └── agents/
-      └── example-agent.ts                # Example AI agent definition
+    application-config.ts                   # Required — your app's entry point
+    default-role.ts                         # Permissions for logic functions
+    constants/
+      universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    __tests__/
+      setup-test.ts
+      app-install.integration-test.ts
+  .github/workflows/ci.yml                  # GitHub Actions
+  public/                                   # Static assets
+  vitest.config.ts                          # Test runner config
+  tsconfig.json, tsconfig.spec.json
+  .nvmrc, .yarnrc.yml, .oxlintrc.json
+  README.md, LLMS.md
 ```
 
-По умолчанию (`--minimal`) создаются только основные файлы: `application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` и `logic-functions/post-install.ts`. Используйте `--exhaustive`, чтобы включить все показанные выше файлы-примеры.
+| Файл / Папка                             | Назначение                                                                           |
+| ---------------------------------------- | ------------------------------------------------------------------------------------ |
+| `src/application-config.ts`              | **Обязательно.** Основной файл конфигурации для вашего приложения.                   |
+| `src/default-role.ts`                    | Роль по умолчанию, контролирующая, к чему имеют доступ ваши логические функции.      |
+| `src/constants/universal-identifiers.ts` | Автоматически генерируемые UUID и метаданные (отображаемое имя, описание).           |
+| `src/__tests__/`                         | Интеграционные тесты (настройка + пример теста).                                     |
+| `public/`                                | Статические ресурсы (изображения, шрифты), обслуживаемые вместе с вашим приложением. |
 
-### Ключевые файлы
+### Начните с примера
 
-| Файл / Папка                 | Назначение                                                                                                                                         |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `package.json`               | Содержит имя, версию и зависимости вашего приложения. Содержит скрипт `twenty`, чтобы вы могли выполнить `yarn twenty help` и увидеть все команды. |
-| `src/application-config.ts`  | **Обязательно.** Основной файл конфигурации для вашего приложения.                                                                                 |
-| `src/roles/`                 | Определяет роли, которые контролируют доступ логических функций.                                                                                   |
-| `src/logic-functions/`       | Серверные функции, запускаемые маршрутами, расписаниями cron или событиями базы данных.                                                            |
-| `src/front-components/`      | Компоненты React, которые отображаются внутри интерфейса Twenty.                                                                                   |
-| `src/objects/`               | Пользовательские определения объектов для расширения вашей модели данных.                                                                          |
-| `src/fields/`                | Пользовательские поля, добавляемые к существующим объектам.                                                                                        |
-| `src/views/`                 | Конфигурации сохранённых представлений.                                                                                                            |
-| `src/navigation-menu-items/` | Пользовательские ссылки в боковой навигации.                                                                                                       |
-| `src/skills/`                | Навыки, расширяющие возможности ИИ-агентов Twenty.                                                                                                 |
-| `src/agents/`                | ИИ-агенты с пользовательскими промптами.                                                                                                           |
-| `src/page-layouts/`          | Пользовательские макеты страниц для представлений записей.                                                                                         |
-| `src/__tests__/`             | Интеграционные тесты (настройка + пример теста).                                                                                                   |
-| `public/`                    | Статические ресурсы (изображения, шрифты), обслуживаемые вместе с вашим приложением.                                                               |
-
-## Управление удалёнными серверами
-
-Remote — это сервер Twenty, к которому подключается ваше приложение. Во время настройки скэффолдер автоматически создаст его для вас. Вы можете в любой момент добавлять новые remotes или переключаться между ними.
+Используйте `--example`, чтобы начать с более полного проекта (пользовательские объекты, поля, логические функции, фронтенд-компоненты):
 
 ```bash filename="Terminal"
-# Add a new remote (opens a browser for OAuth login)
-yarn twenty remote add
-
-# Connect to a local Twenty server (auto-detects port 2020 or 3000)
-yarn twenty remote add --local
-
-# Add a remote non-interactively (useful for CI)
-yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
-
-# List all configured remotes
-yarn twenty remote list
-
-# Switch the active remote
-yarn twenty remote switch <name>
+npx create-twenty-app@latest my-twenty-app --example postcard
 ```
 
-Ваши учётные данные хранятся в `~/.twenty/config.json`.
+Примеры берутся из каталога [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) на GitHub. Вы также можете сгенерировать каркас отдельных сущностей в существующем проекте с помощью `yarn twenty add` — см. [Создание приложений](/l/ru/developers/extend/apps/building#scaffolding-entities-with-yarn-twenty-add).
 
-## Локальный сервер разработки (`yarn twenty server`)
+---
 
-CLI может управлять локальным сервером Twenty, запущенным в Docker. Это тот же сервер, который автоматически запускается при создании каркаса приложения с помощью `create-twenty-app`, но им можно управлять и вручную.
+## Управление локальным сервером
 
-### Запуск сервера
+Используйте `yarn twenty server` для управления локальным контейнером Twenty:
+
+| Команда                                | Что делает                                           |
+| -------------------------------------- | ---------------------------------------------------- |
+| `yarn twenty server start`             | Запустить сервер (при необходимости скачивает образ) |
+| `yarn twenty server start --port 3030` | Запустить на пользовательском порту                  |
+| `yarn twenty server stop`              | Остановить сервер (данные сохраняются)               |
+| `yarn twenty server status`            | Показать URL, версию и учётные данные для входа      |
+| `yarn twenty server logs`              | Потоковый вывод журналов сервера                     |
+| `yarn twenty server reset`             | Стереть данные и начать заново                       |
+| `yarn twenty server upgrade`           | Скачать последний образ `twenty-app-dev`             |
+| `yarn twenty server upgrade 2.2.0`     | Обновить до конкретной версии                        |
+
+Данные сохраняются между перезапусками в двух томах Docker (`twenty-app-dev-data` для PostgreSQL, `twenty-app-dev-storage` для файлов). Используйте `reset`, чтобы стереть всё.
+
+### Обновление образа сервера
+
+`yarn twenty server upgrade` скачивает последний образ, сравнивает дайджесты и пересоздаёт контейнер только если действительно что-то изменилось. Ваши тома данных сохраняются — заменяется только контейнер. Если был скачан новый образ и контейнер работал, при обновлении автоматически запускается новый контейнер; затем выполните `yarn twenty server start`, чтобы дождаться его готовности.
 
 ```bash filename="Terminal"
-yarn twenty server start
+yarn twenty server upgrade            # Latest
+yarn twenty server upgrade 2.2.0      # Specific version
 ```
 
-Эта команда скачивает Docker-образ `twentycrm/twenty-app-dev:latest` (если его ещё нет), создаёт контейнер с именем `twenty-app-dev` и запускает его на порту **2020**. CLI ждёт, пока сервер пройдёт проверку работоспособности, прежде чем вернуть управление.
+Проверьте запущенную версию с помощью `yarn twenty server status` (эта команда показывает `APP_VERSION`, встроенную в контейнер).
 
-Создаются два тома Docker для сохранения данных между перезапусками:
+### Запуск параллельного тестового экземпляра
 
-* `twenty-app-dev-data` — база данных PostgreSQL
-* `twenty-app-dev-storage` — файловое хранилище
+Передайте `--test` любой команде `server`, чтобы управлять вторым, полностью изолированным экземпляром — это полезно для запуска интеграционных тестов или экспериментов, не затрагивая ваши основные данные разработки.
 
-Если порт 2020 уже используется, вы можете запустить на другом порту:
+| Команда                             | Что делает                                              |
+| ----------------------------------- | ------------------------------------------------------- |
+| `yarn twenty server start --test`   | Запустить тестовый экземпляр (по умолчанию — порт 2021) |
+| `yarn twenty server stop --test`    | Остановить его                                          |
+| `yarn twenty server status --test`  | Показать его статус                                     |
+| `yarn twenty server logs --test`    | Транслировать его журналы                               |
+| `yarn twenty server reset --test`   | Стереть его данные                                      |
+| `yarn twenty server upgrade --test` | Обновить его образ                                      |
 
-```bash filename="Terminal"
-yarn twenty server start --port 3030
-```
+Тестовый экземпляр запускается в собственном контейнере Docker (`twenty-app-dev-test`) с выделенными томами (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) и собственной конфигурацией, поэтому он может работать параллельно с вашим основным экземпляром без конфликтов. Совместите `--test` с `--port`, чтобы переопределить значение по умолчанию (2021).
 
-CLI автоматически настраивает внутренние `NODE_PORT` и `SERVER_URL` контейнера в соответствии с выбранным портом, чтобы логические функции, OAuth и прочие внутренние сетевые взаимодействия работали корректно.
-
-После запуска сервер автоматически регистрируется как remote `local` в конфигурации вашего CLI.
-
-### Проверка состояния сервера
-
-```bash filename="Terminal"
-yarn twenty server status
-```
-
-Показывает, запущен ли сервер, его URL и учётные данные по умолчанию (`tim@apple.dev` / `tim@apple.dev`).
-
-### Просмотр журналов сервера
-
-```bash filename="Terminal"
-yarn twenty server logs
-```
-
-Выводит журналы контейнера в потоковом режиме. Используйте `--lines`, чтобы задать, сколько последних строк показывать:
-
-```bash filename="Terminal"
-yarn twenty server logs --lines 100
-```
-
-### Остановка сервера
-
-```bash filename="Terminal"
-yarn twenty server stop
-```
-
-Останавливает контейнер. Ваши данные сохраняются в томах Docker — следующий `start` продолжит с того места, где вы остановились.
-
-### Сброс сервера
-
-```bash filename="Terminal"
-yarn twenty server reset
-```
-
-Удаляет контейнер и оба тома Docker, полностью стирая все данные. Следующий `start` создаст новый чистый экземпляр.
-
-<Note>
-  Для работы сервера необходимо, чтобы **Docker** был запущен. Если вы видите ошибку "Docker not running", убедитесь, что запущен Docker Desktop (или демон Docker).
-</Note>
-
-### Справочник команд
-
-| Команда                                | Описание                                                       |
-| -------------------------------------- | -------------------------------------------------------------- |
-| `yarn twenty server start`             | Запустить локальный сервер (при необходимости скачивает образ) |
-| `yarn twenty server start --port 3030` | Запустить на пользовательском порту                            |
-| `yarn twenty server stop`              | Остановить сервер (данные сохраняются)                         |
-| `yarn twenty server status`            | Показать состояние сервера, URL и учётные данные               |
-| `yarn twenty server logs`              | Потоковый вывод журналов сервера                               |
-| `yarn twenty server logs --lines 100`  | Показать последние 100 строк журнала                           |
-| `yarn twenty server reset`             | Удалить все данные и начать с чистого листа                    |
-
-## CI с GitHub Actions
-
-Скэффолдер генерирует готовый к использованию workflow GitHub Actions в `.github/workflows/ci.yml`. Он автоматически запускает ваши интеграционные тесты при каждом пуше в `main` и в pull request'ах.
-
-Рабочий процесс:
-
-1. Извлекает ваш код
-2. Поднимает временный сервер Twenty с помощью экшена `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
-3. Устанавливает зависимости с помощью `yarn install --immutable`
-4. Запускает `yarn test` с `TWENTY_API_URL` и `TWENTY_API_KEY`, переданными из выходных данных экшена
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-Вам не нужно настраивать секреты — экшен `spawn-twenty-docker-image` запускает эфемерный сервер Twenty прямо в раннере и выводит данные для подключения. Секрет `GITHUB_TOKEN` предоставляется GitHub автоматически.
-
-Чтобы закрепить конкретную версию Twenty вместо `latest`, измените переменную окружения `TWENTY_VERSION` в начале workflow.
+---
 
 ## Ручная настройка (без генератора)
 
-Если вы предпочитаете настроить всё самостоятельно, не используя `create-twenty-app`, это можно сделать в два шага.
-
-**1. Добавьте `twenty-sdk` и `twenty-client-sdk` в зависимости:**
+Пропустите генератор каркаса, если вы добавляете SDK в существующий проект:
 
 ```bash filename="Terminal"
 yarn add twenty-sdk twenty-client-sdk
 ```
 
-**2. Добавьте скрипт `twenty` в ваш `package.json`:**
+Добавьте скрипт в `package.json`:
 
 ```json filename="package.json"
 {
@@ -393,19 +255,19 @@ yarn add twenty-sdk twenty-client-sdk
 }
 ```
 
-Теперь вы можете запускать `yarn twenty dev`, `yarn twenty help` и все остальные команды.
+Теперь вы можете запускать `yarn twenty dev`, `yarn twenty server start` и остальные команды.
 
 <Note>
-Не устанавливайте `twenty-sdk` глобально. Всегда используйте его как локальную зависимость проекта, чтобы каждый проект мог закреплять свою версию.
+Не устанавливайте `twenty-sdk` глобально — фиксируйте версию в каждом проекте, чтобы каждое приложение использовало свою собственную версию.
 </Note>
+
+---
 
 ## Устранение неполадок
 
-Если столкнётесь с проблемами:
+* **Ошибки Docker** — убедитесь, что Docker Desktop (или демон) запущен перед выполнением `yarn twenty server start`. Сообщение об ошибке укажет правильную команду запуска для вашей ОС.
+* **Неподходящая версия Node** — нужна 24+. Проверьте с помощью `node -v`.
+* **Отсутствует Yarn 4** — выполните `corepack enable`.
+* **Зависимости повреждены** — `rm -rf node_modules && yarn install`.
 
-* Перед запуском генератора с локальным экземпляром убедитесь, что **Docker запущен**.
-* Убедитесь, что используете **Node.js 24+** (`node -v` для проверки).
-* Убедитесь, что **Corepack включён** (`corepack enable`), чтобы Yarn 4 был доступен.
-* Если зависимости, похоже, повреждены, попробуйте удалить `node_modules` и снова выполнить `yarn install`.
-
-Все ещё не получается? Попросите помощи на [Discord-сервере Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).
+Застряли? Попросите помощи на [Discord-сервере Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

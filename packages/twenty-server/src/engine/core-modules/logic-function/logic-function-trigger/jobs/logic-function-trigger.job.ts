@@ -9,6 +9,8 @@ export type LogicFunctionTriggerJobData = {
   logicFunctionId: string;
   workspaceId: string;
   payload?: object;
+  userId?: string;
+  userWorkspaceId?: string;
 };
 
 @Processor({
@@ -29,6 +31,8 @@ export class LogicFunctionTriggerJob {
             logicFunctionId: logicFunctionPayload.logicFunctionId,
             workspaceId: logicFunctionPayload.workspaceId,
             payload: logicFunctionPayload.payload ?? {},
+            userId: logicFunctionPayload.userId,
+            userWorkspaceId: logicFunctionPayload.userWorkspaceId,
           }),
       ),
     );

@@ -23,7 +23,7 @@ import { marked } from 'marked';
 import { type DependencyList, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export type AdvancedTextEditorContentType = 'json' | 'markdown';
+export type AdvancedTextEditorContentType = 'json' | 'html' | 'markdown';
 
 type UseAdvancedTextEditorProps = {
   placeholder: string | undefined;

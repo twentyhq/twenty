@@ -14,6 +14,8 @@ import { QueryFailedError } from 'typeorm';
 import { type ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { type ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
+import { CustomError } from 'twenty-shared/utils';
+
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
@@ -21,7 +23,6 @@ import {
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
-import { CustomException } from 'src/utils/custom-exception';
 
 interface RequestAndParams {
   request: Request | null;
@@ -121,7 +122,7 @@ export class HttpExceptionHandlerService {
       statusCode,
       error: exception.name ?? getErrorNameFromStatusCode(statusCode),
       messages: [exception?.message],
-      code: exception instanceof CustomException ? exception.code : undefined,
+      code: exception instanceof CustomError ? exception.code : undefined,
     });
   };
 }

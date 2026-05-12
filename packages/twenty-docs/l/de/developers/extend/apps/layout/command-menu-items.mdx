@@ -1,0 +1,144 @@
+---
+title: Befehlsmenü-Einträge
+description: Stellen Sie Front-Komponenten als Schnellaktionen und Einträge im Befehlsmenü (Cmd+K) mit defineCommandMenuItem bereit.
+icon: Terminal
+---
+
+Ein **Befehlsmenü-Eintrag** ist die Brücke zwischen dem Benutzer und einer [Front-Komponente](/l/de/developers/extend/apps/layout/front-components). Er registriert die Komponente im Twenty-Befehlsmenü (Cmd+K) und zeigt sie optional als angeheftete Schnellaktionsschaltfläche oben rechts auf der Seite an.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+## Konfigurationsfelder
+
+| Feld                                    | Erforderlich | Beschreibung                                                                                                                                                                               |
+| --------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | Ja           | Stabile eindeutige ID für den Befehl                                                                                                                                                       |
+| `label`                                 | Ja           | Vollständiges Label, das im Befehlsmenü (Cmd+K) angezeigt wird                                                                                                                             |
+| `frontComponentUniversalIdentifier`     | Ja           | Der `universalIdentifier` der Front-Komponente, die dieser Befehl öffnet                                                                                                                   |
+| `shortLabel`                            | Nein         | Kürzeres Label, das auf der angehefteten Schnellaktionsschaltfläche angezeigt wird                                                                                                         |
+| `icon`                                  | Nein         | Neben dem Label angezeigter Icon-Name (z. B. 'IconBolt', 'IconSend')                                                                                                                       |
+| `isPinned`                              | Nein         | Bei `true` wird der Befehl als Schnellaktionsschaltfläche oben rechts auf der Seite angezeigt                                                                                              |
+| `availabilityType`                      | Nein         | Steuert, wo der Befehl erscheint: 'GLOBAL' (immer verfügbar), 'RECORD_SELECTION' (nur wenn Datensätze ausgewählt sind) oder 'FALLBACK' (wird angezeigt, wenn keine anderen Befehle passen) |
+| `availabilityObjectUniversalIdentifier` | Nein         | Beschränken Sie den Befehl auf Seiten eines bestimmten Objekttyps (z. B. nur bei Company-Datensätzen)                                                                                      |
+| `conditionalAvailabilityExpression`     | Nein         | Ein boolescher Ausdruck, der die Sichtbarkeit dynamisch steuert (siehe unten)                                                                                                              |
+
+## Headless-Befehle
+
+Ein Befehlsmenü-Eintrag, der mit einer [Headless-Front-Komponente](/l/de/developers/extend/apps/layout/front-components#headless-vs-non-headless) gekoppelt ist, ist die idiomatische Art, eine One-Click-Aktion bereitzustellen – Code ausführen, navigieren oder bestätigen und ausführen. Die Seite „Front Components“ behandelt die [SDK Command-Komponenten](/l/de/developers/extend/apps/layout/front-components#sdk-command-components) (`Command`, `CommandLink`, `CommandModal`, `CommandOpenSidePanelPage`), die das Action-and-Unmount-Muster handhaben.
+
+Ein typischer Ablauf:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+## Bedingte Verfügbarkeitsausdrücke
+
+Mit dem Feld `conditionalAvailabilityExpression` können Sie basierend auf dem aktuellen Seitenkontext steuern, wann ein Befehl sichtbar ist. Importieren Sie typisierte Variablen und Operatoren aus `twenty-sdk`, um Ausdrücke zu erstellen:
+
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  objectPermissions,
+  everyEquals,
+} from 'twenty-sdk/front-component';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
+});
+```
+
+### Kontextvariablen
+
+Diese repräsentieren den aktuellen Zustand der Seite:
+
+| Variable                       | Typ       | Beschreibung                                                    |
+| ------------------------------ | --------- | --------------------------------------------------------------- |
+| `pageType`                     | `string`  | Aktueller Seitentyp (z. B. 'RecordIndexPage', 'RecordShowPage') |
+| `isInSidePanel`                | `boolean` | Ob die Komponente in einem Seitenpanel gerendert wird           |
+| `numberOfSelectedRecords`      | `number`  | Anzahl der aktuell ausgewählten Datensätze                      |
+| `isSelectAll`                  | `boolean` | Ob „Alle auswählen“ aktiv ist                                   |
+| `selectedRecords`              | `array`   | Die ausgewählten Datensatzobjekte                               |
+| `favoriteRecordIds`            | `array`   | IDs der favorisierten Datensätze                                |
+| `objectPermissions`            | `object`  | Berechtigungen für den aktuellen Objekttyp                      |
+| `targetObjectReadPermissions`  | `object`  | Leseberechtigungen für das Zielobjekt                           |
+| `targetObjectWritePermissions` | `object`  | Schreibberechtigungen für das Zielobjekt                        |
+| `featureFlags`                 | `object`  | Aktive Feature-Flags                                            |
+| `objectMetadataItem`           | `object`  | Metadaten des aktuellen Objekttyps                              |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Ob die aktuelle Ansicht einen Soft-Delete-Filter hat            |
+
+### Operatoren
+
+Kombinieren Sie Variablen zu booleschen Ausdrücken:
+
+| Operator                            | Beschreibung                                                                                |
+| ----------------------------------- | ------------------------------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true`, wenn der Wert nicht null/undefined ist                                              |
+| `isNonEmptyString(value)`           | `true`, wenn der Wert eine nicht leere Zeichenfolge ist                                     |
+| `includes(array, value)`            | `true`, wenn das Array den Wert enthält                                                     |
+| `includesEvery(array, prop, value)` | `true`, wenn die Eigenschaft jedes Elements den Wert enthält                                |
+| `every(array, prop)`                | `true`, wenn die Eigenschaft bei jedem Element truthy ist                                   |
+| `everyDefined(array, prop)`         | `true`, wenn die Eigenschaft bei jedem Element definiert ist                                |
+| `everyEquals(array, prop, value)`   | `true`, wenn die Eigenschaft bei jedem Element dem Wert entspricht                          |
+| `some(array, prop)`                 | `true`, wenn die Eigenschaft bei mindestens einem Element truthy ist                        |
+| `someDefined(array, prop)`          | `true`, wenn die Eigenschaft bei mindestens einem Element definiert ist                     |
+| `someEquals(array, prop, value)`    | `true`, wenn die Eigenschaft bei mindestens einem Element dem Wert entspricht               |
+| `someNonEmptyString(array, prop)`   | `true`, wenn die Eigenschaft bei mindestens einem Element eine nicht leere Zeichenfolge ist |
+| `none(array, prop)`                 | `true`, wenn die Eigenschaft bei jedem Element falsy ist                                    |
+| `noneDefined(array, prop)`          | `true`, wenn die Eigenschaft bei jedem Element undefined ist                                |
+| `noneEquals(array, prop, value)`    | `true`, wenn die Eigenschaft bei keinem Element dem Wert entspricht                         |

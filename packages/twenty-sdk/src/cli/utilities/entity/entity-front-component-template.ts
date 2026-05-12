@@ -10,7 +10,7 @@ export const getFrontComponentBaseFile = ({
 }) => {
   const kebabCaseName = kebabCase(name);
 
-  return `import { defineFrontComponent } from 'twenty-sdk';
+  return `import { defineFrontComponent } from 'twenty-sdk/define';
 
 // React component - implement your UI here
 const Component = () => {

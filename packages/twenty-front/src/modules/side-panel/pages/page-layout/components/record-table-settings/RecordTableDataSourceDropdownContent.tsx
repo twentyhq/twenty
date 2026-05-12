@@ -1,8 +1,10 @@
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
-import { useCreateViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useCreateViewForRecordTableWidget';
-import { useDeleteViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget';
+import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
+import { useRemoveDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useRemoveDraftViewForRecordTableWidget';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -16,11 +18,9 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -47,16 +47,15 @@ export const RecordTableDataSourceDropdownContent = () => {
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const { createViewForRecordTableWidget } =
-    useCreateViewForRecordTableWidget(pageLayoutId);
+  const { addDraftViewForRecordTableWidget } =
+    useAddDraftViewForRecordTableWidget(pageLayoutId);
 
-  const { deleteViewForRecordTableWidget } =
-    useDeleteViewForRecordTableWidget();
+  const { removeDraftViewForRecordTableWidget } =
+    useRemoveDraftViewForRecordTableWidget(pageLayoutId);
 
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
   const { closeDropdown } = useCloseDropdown();
-  const { getIcon } = useIcons();
 
   const readableActiveObjectMetadataItems =
     filterReadableActiveObjectMetadataItems(
@@ -78,20 +77,14 @@ export const RecordTableDataSourceDropdownContent = () => {
     getSearchableValues: (item) => [item.labelPlural, item.namePlural],
   });
 
-  const currentViewId =
-    widgetInEditMode?.configuration &&
-    'viewId' in widgetInEditMode.configuration
-      ? (widgetInEditMode.configuration.viewId as string | undefined)
-      : undefined;
-
-  const handleSelectSource = async (newObjectMetadataItemId: string) => {
+  const handleSelectSource = (newObjectMetadataItemId: string) => {
     if (currentObjectMetadataItemId === newObjectMetadataItemId) {
       closeDropdown();
       return;
     }
 
-    if (isDefined(currentViewId)) {
-      await deleteViewForRecordTableWidget(currentViewId);
+    if (isDefined(widgetInEditMode)) {
+      removeDraftViewForRecordTableWidget(widgetInEditMode.id);
     }
 
     updateCurrentWidgetConfig({
@@ -105,14 +98,15 @@ export const RecordTableDataSourceDropdownContent = () => {
       (item) => item.id === newObjectMetadataItemId,
     );
 
-    if (isDefined(selectedObjectMetadataItem)) {
-      await createViewForRecordTableWidget(selectedObjectMetadataItem);
+    if (isDefined(selectedObjectMetadataItem) && isDefined(widgetInEditMode)) {
+      addDraftViewForRecordTableWidget(
+        widgetInEditMode.id,
+        selectedObjectMetadataItem,
+      );
 
-      if (isDefined(widgetInEditMode)) {
-        updatePageLayoutWidget(widgetInEditMode.id, {
-          title: selectedObjectMetadataItem.labelPlural,
-        });
-      }
+      updatePageLayoutWidget(widgetInEditMode.id, {
+        title: selectedObjectMetadataItem.labelPlural,
+      });
     }
 
     closeDropdown();
@@ -148,7 +142,9 @@ export const RecordTableDataSourceDropdownContent = () => {
                 text={objectMetadataItem.labelPlural}
                 selected={currentObjectMetadataItemId === objectMetadataItem.id}
                 focused={selectedItemId === objectMetadataItem.id}
-                LeftIcon={getIcon(objectMetadataItem.icon)}
+                LeftIcon={() => (
+                  <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+                )}
                 onClick={() => {
                   handleSelectSource(objectMetadataItem.id);
                 }}

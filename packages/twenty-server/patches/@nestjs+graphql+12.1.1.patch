@@ -9,7 +9,7 @@ index 72bab49dcc2b411408c75adf64c3f250cdeaa195..068dc04966e3f7ac7c7093f9ed8f29f2
 +    /**
 +     * When set, only resolvers decorated with a matching scope will be included in this schema.
 +     */
-+    resolverSchemaScope?: 'core' | 'metadata';
++    resolverSchemaScope?: 'core' | 'metadata' | 'admin';
  }
  export interface GqlOptionsFactory<T extends Record<string, any> = GqlModuleOptions> {
      createGqlOptions(): Promise<Omit<T, 'driver'>> | Omit<T, 'driver'>;

@@ -1,6 +1,9 @@
 import { type HeadlessCommandContextApi } from '@/command-menu-item/engine-command/types/HeadlessCommandContextApi';
 import { isHeadlessTriggerWorkflowVersionCommandContextApi } from '@/command-menu-item/engine-command/utils/isHeadlessTriggerWorkflowVersionCommandContextApi';
-import { EngineComponentKey } from '~/generated-metadata/graphql';
+import {
+  CommandMenuItemAvailabilityType,
+  EngineComponentKey,
+} from '~/generated-metadata/graphql';
 
 const baseContextApi: HeadlessCommandContextApi = {
   engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
@@ -11,6 +14,7 @@ const baseContextApi: HeadlessCommandContextApi = {
   targetedRecordsRule: { mode: 'selection', selectedRecordIds: [] },
   selectedRecords: [],
   graphqlFilter: null,
+  payload: null,
 };
 
 describe('isHeadlessTriggerWorkflowVersionCommandContextApi', () => {
@@ -19,7 +23,8 @@ describe('isHeadlessTriggerWorkflowVersionCommandContextApi', () => {
       ...baseContextApi,
       workflowId: 'wf-1',
       workflowVersionId: 'wfv-1',
-      payloads: [],
+      trigger: null,
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     };
 
     expect(

@@ -1,4 +1,3 @@
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -21,6 +20,7 @@ import {
   Label,
   OverflowingTextWithTooltip,
   type TablerIconsProps,
+  TintedIconTile,
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/display';
@@ -92,14 +92,14 @@ const StyledItem = styled.button<StyledItemProps>`
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   color: ${({ active, isSoon, variant }) => {
+    if (variant === 'tertiary') {
+      return themeCssVariables.font.color.tertiary;
+    }
     if (active === true) {
       return themeCssVariables.font.color.primary;
     }
     if (isSoon) {
       return themeCssVariables.font.color.light;
-    }
-    if (variant === 'tertiary') {
-      return themeCssVariables.font.color.tertiary;
     }
     return themeCssVariables.font.color.secondary;
   }};
@@ -129,7 +129,10 @@ const StyledItem = styled.button<StyledItemProps>`
 
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
-    color: ${themeCssVariables.font.color.primary};
+    color: ${({ variant }) =>
+      variant === 'tertiary'
+        ? themeCssVariables.font.color.tertiary
+        : themeCssVariables.font.color.primary};
   }
 
   &:hover .keyboard-shortcuts {
@@ -355,7 +358,7 @@ export const NavigationDrawerItem = ({
           {Icon &&
             (isNonEmptyString(iconColor) ? (
               <StyledIcon>
-                <NavigationMenuItemStyleIcon Icon={Icon} color={iconColor} />
+                <TintedIconTile Icon={Icon} color={iconColor} />
               </StyledIcon>
             ) : (
               <StyledIcon>

@@ -100,6 +100,8 @@ export const FieldWidgetDisplay = ({
                     isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
                     isCustom: fieldMetadataItem.isCustom ?? false,
                   },
+                  fieldDefinition,
+                  objectPermissionsByObjectMetadataId,
                 }),
                 onMouseEnter: handleMouseEnter,
                 anchorId: getRecordFieldInputInstanceId({

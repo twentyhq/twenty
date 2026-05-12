@@ -29,8 +29,8 @@ export type {
 } from './types/DataMessagePart';
 export { isExtendedFileUIPart } from './types/DataMessagePart';
 export type {
-  AIChatUsageMetadata,
-  AIChatModelMetadata,
+  AiChatUsageMetadata,
+  AiChatModelMetadata,
   ExtendedUIMessage,
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';

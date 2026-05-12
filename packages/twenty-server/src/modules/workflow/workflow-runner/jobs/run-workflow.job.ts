@@ -1,4 +1,4 @@
-import { Scope } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,6 +24,8 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class RunWorkflowJob {
+  private readonly logger = new Logger(RunWorkflowJob.name);
+
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly codeStepBuildService: CodeStepBuildService,
@@ -39,6 +41,9 @@ export class RunWorkflowJob {
     lastExecutedStepId,
     workspaceId,
   }: RunWorkflowJobData): Promise<void> {
+    this.logger.log(
+      `Running workflow run ${workflowRunId} in workspace ${workspaceId}`,
+    );
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {

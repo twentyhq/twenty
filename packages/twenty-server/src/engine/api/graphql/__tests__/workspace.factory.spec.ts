@@ -4,7 +4,6 @@ import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-
 import { WorkspaceGraphqlSchemaSDLService } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service';
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
 describe('WorkspaceSchemaFactory', () => {
   let service: WorkspaceSchemaFactory;
@@ -23,10 +22,6 @@ describe('WorkspaceSchemaFactory', () => {
         },
         {
           provide: WorkspaceGraphqlSchemaSDLService,
-          useValue: {},
-        },
-        {
-          provide: MetricsService,
           useValue: {},
         },
       ],

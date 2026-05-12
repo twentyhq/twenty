@@ -43,27 +43,6 @@ npx nx run twenty-server:database:reset
 ```
 
 ### 마이그레이션
-
-#### Core/Metadata 스키마의 객체용 (TypeORM)
-
-```bash
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
-```
-
-#### 워크스페이스 객체용
-
-마이그레이션 파일이 없으며, 각 작업 공간에 대해 자동 생성되고 데이터베이스에 저장되어 이 명령으로 적용됩니다.
-
-```bash
-npx nx run twenty-server:command workspace:sync-metadata -f
-```
-
-<Warning>
-  이 작업은 데이터베이스를 삭제하고 마이그레이션과 시드를 다시 실행합니다.
-
-  이 명령을 실행하기 전에 유지하고 싶은 데이터를 백업하십시오.
-</Warning>
-
 ## 기술 스택
 
 Twenty는 주로 NestJS를 백엔드에 사용합니다.

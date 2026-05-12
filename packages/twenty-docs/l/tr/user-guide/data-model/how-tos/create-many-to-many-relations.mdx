@@ -53,38 +53,45 @@ Bağlantı ilişkisi anahtarını etkinleştirdiğinizde, Twenty aradaki bağlan
 1. **Ayarlar → Veri Modeli** bölümüne gidin
 2. **+ Yeni nesne**'ye tıklayın
 3. Açıklayıcı bir ad verin (örn. "Project Assignment", "Team Member", "Product Order")
-4. **Kaydet**'e tıklayın
+4. "Ad alanı oluşturmayı atla" seçeneğini açın
+
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="Yeni pivot nesnesi" />
+
+5. **Kaydet**'e tıklayın
 
 <Tip>
 **Adlandırma kuralı**: "Project Assignment" veya "Team Membership" gibi ilişkiyi tanımlayan bir ad kullanın. Bu, veri modelinin anlaşılmasını kolaylaştırır.
 </Tip>
 
-## Adım 2: Bağlantı Nesnesinden İlişkiler Oluşturun
+## Adım 2: Nesneler ile Bağlantı nesnesi arasında ilişkiler oluşturun
 
-Bağlamak istediğiniz her iki nesneye de bağlantı nesnesinden ilişki alanları ekleyin.
+İki nesnenizin her birinden bağlantı nesnesine ilişki alanları ekleyin.
 
-### İlk İlişki (Bağlantı → Nesne A)
+### İlk İlişki (Nesne A → Bağlantı)
 
-1. **Ayarlar → Veri Modeli**'nde bağlantı nesnenizi seçin
-2. **+ Alan Ekle**'ye tıklayın
-3. Alan türü olarak **İlişki**'yi seçin
-4. İlk nesneyi seçin (örn. "People")
-5. İlişki türünü **Çoktan-Bire** olarak ayarlayın (birçok atama bir kişiye bağlanabilir)
-6. Alanları adlandırın:
-   * Bağlantı üzerindeki alan: örn. "Person"
-   * People üzerindeki alan: örn. "Project Assignments"
-7. **Kaydet**'e tıklayın
-
-### İkinci İlişki (Bağlantı → Nesne B)
-
-1. Hâlâ bağlantı nesnesindeyken, **+ Add Field**'e tıklayın
-2. Alan türü olarak **İlişki**'yi seçin
-3. İkinci nesneyi seçin (örn. "Projects")
-4. İlişki türünü **Çoktan-Bire** olarak ayarlayın
+1. İlk nesnenizi **Ayarlar → Veri Modeli**'nde seçin
+2. **+ İlişki Ekle**'ye tıklayın
+3. Bağlantı nesnesini seçin (örn. "Project Assignments")
+4. İlişki türünü **Birden-Çoğa** olarak ayarlayın (bir kişi birçok atamaya bağlanabilir)
 5. Alanları adlandırın:
+   * People üzerindeki alan: örn. "Project Assignments"
+   * Bağlantı üzerindeki alan: örn. "Person"
+6. **Kaydet**'e tıklayın
+
+### İkinci İlişki (Nesne B → Bağlantı)
+
+1. İkinci nesnenizi **Ayarlar → Veri Modeli**'nde seçin
+2. **+ İlişki Ekle**'ye tıklayın
+3. Bağlantı nesnesini seçin (örn. "Project Assignments")
+4. İlişki türünü **Birden-Çoğa** olarak ayarlayın (bir proje birçok atamaya bağlanabilir)
+5. **"Bu, bir bağlantı nesnesine kurulan bir ilişkidir"** seçeneğini etkinleştirin
+
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
+
+6. Alanları adlandırın:
    * Bağlantı üzerindeki alan: örn. "Project"
    * Projects üzerindeki alan: örn. "Team Members"
-6. **Kaydet**'e tıklayın
+7. **Kaydet**'e tıklayın
 
 ## Adım 3: Bağlantı İlişkisi Görüntüsünü Yapılandırın
 
@@ -97,18 +104,6 @@ Bağlamak istediğiniz her iki nesneye de bağlantı nesnesinden ilişki alanlar
 5. **"Bu, bir bağlantı nesnesine kurulan bir ilişkidir"** seçeneğini etkinleştirin
 6. **Hedef ilişki**yi seçin (örn. "Project" — bağlantı üzerindeki, diğer tarafı işaret eden alan)
 7. **Kaydet**'e tıklayın
-
-{/* TODO: Add image
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
-*/}
-
-Diğer nesne için tekrarlayın:
-
-1. Veri Modeli'nde "Projects"i seçin
-2. "Team Members" ilişki alanını düzenleyin
-3. Bağlantı anahtarını etkinleştirin
-4. Hedef ilişki olarak "Person"ı seçin
-5. Kaydet
 
 ## Sonuç
 
@@ -130,15 +125,15 @@ Bağlantı nesnesi hâlâ mevcuttur ve bağlantıları saklar, ancak kullanıcı
 
 ### İlişkiler Ekleyin
 
-1. **Project Assignment → People**
-   * Tür: Çoktan-Bire
-   * Assignment üzerindeki alan: "Person"
+1. **People → Project Assignment**
+   * Tür: Birden-Çoğa
    * People üzerindeki alan: "Project Assignments"
+   * Assignment üzerindeki alan: "Person"
 
-2. **Project Assignment → Projects**
-   * Tür: Çoktan-Bire
-   * Assignment üzerindeki alan: "Project"
+2. **Projects → Project Assignment**
+   * Tür: Birden-Çoğa
    * Projects üzerindeki alan: "Team Members"
+   * Assignment üzerindeki alan: "Project"
 
 ### Bağlantı Görüntüsünü Yapılandırın
 

@@ -33,15 +33,83 @@
         "command": "npx next start"
       }
     },
-    "lint": {},
-    "lint:diff-with-main": {},
+    "check-boundaries": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/scripts/check-boundaries.mjs"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node scripts/check-boundaries.mjs"
+      }
+    },
+    "check-section-shape": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/sections/**/*",
+        "{projectRoot}/scripts/check-section-shape.mjs"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node scripts/check-section-shape.mjs"
+      }
+    },
+    "check-lottie-frames": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/public/lottie/stepper/stepper.lottie",
+        "{projectRoot}/src/sections/HomeStepper/utils/home-stepper-lottie-frame-map.ts",
+        "{projectRoot}/scripts/check-lottie-frames.mjs"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node scripts/check-lottie-frames.mjs"
+      }
+    },
+    "lint": {
+      "dependsOn": [
+        "check-boundaries",
+        "check-section-shape",
+        "check-lottie-frames",
+        "^build",
+        "twenty-oxlint-rules:build"
+      ]
+    },
+    "lint:diff-with-main": {
+      "dependsOn": [
+        "check-boundaries",
+        "check-section-shape",
+        "check-lottie-frames"
+      ]
+    },
     "typecheck": {},
+    "test": {},
     "fmt": {
       "options": {
         "files": "."
       },
       "configurations": {
         "fix": {}
+      }
+    },
+    "lingui:extract": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "lingui extract --overwrite --clean"
+      }
+    },
+    "lingui:compile": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "lingui compile --typescript"
       }
     }
   }

@@ -127,9 +127,6 @@ export class FlatViewFieldValidatorService {
     flatEntityToValidate: { universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewFieldMaps: optimisticFlatViewFieldMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-      flatViewMaps,
     },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewField
@@ -155,43 +152,6 @@ export class FlatViewFieldValidatorService {
       });
 
       return validationResult;
-    }
-
-    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier:
-        existingFlatViewField.fieldMetadataUniversalIdentifier,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-    if (!isDefined(flatFieldMetadata)) {
-      return validationResult;
-    }
-
-    const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: flatFieldMetadata.objectMetadataUniversalIdentifier,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    if (!isDefined(flatObjectMetadata)) {
-      return validationResult;
-    }
-
-    if (
-      flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
-      existingFlatViewField.fieldMetadataUniversalIdentifier
-    ) {
-      const flatView = findFlatEntityByUniversalIdentifier({
-        universalIdentifier: existingFlatViewField.viewUniversalIdentifier,
-        flatEntityMaps: flatViewMaps,
-      });
-
-      if (!isDefined(flatView) || flatView.type !== ViewType.FIELDS_WIDGET) {
-        validationResult.errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`Label identifier view field cannot be deleted`,
-          userFriendlyMessage: msg`Label identifier view field cannot be deleted`,
-        });
-      }
     }
 
     return validationResult;

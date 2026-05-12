@@ -98,6 +98,7 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   CDF: { label: CURRENCY_CODE_LABELS.CDF.label, Icon: IconCoins },
   CHF: { label: CURRENCY_CODE_LABELS.CHF.label, Icon: IconCurrencyFrank },
   CLP: { label: CURRENCY_CODE_LABELS.CLP.label, Icon: IconCoins },
+  CLF: { label: CURRENCY_CODE_LABELS.CLF.label, Icon: IconCoins },
   CNY: { label: CURRENCY_CODE_LABELS.CNY.label, Icon: IconCurrencyYuan },
   COP: { label: CURRENCY_CODE_LABELS.COP.label, Icon: IconCoins },
   CRC: { label: CURRENCY_CODE_LABELS.CRC.label, Icon: IconCoins },

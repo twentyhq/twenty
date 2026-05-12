@@ -38,12 +38,8 @@ jobs:
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Fetch local actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -55,7 +51,7 @@ jobs:
       - name: Front / Build storybook
         run: npx nx storybook:build twenty-front
       - name: Upload storybook build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: storybook-static
           path: packages/twenty-front/storybook-static
@@ -79,7 +75,7 @@ jobs:
       STORYBOOK_URL: http://localhost:6006
     steps:
       - name: Fetch local actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -96,7 +92,7 @@ jobs:
           npx nx build twenty-ui
           npx nx build twenty-front-component-renderer
       - name: Download storybook build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: storybook-static
           path: packages/twenty-front/storybook-static
@@ -121,7 +117,7 @@ jobs:
       #       exit 1
       #     fi
       # - name: Upload coverage artifact
-      #   uses: actions/upload-artifact@v4
+      #   uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       #   with:
       #     retention-days: 1
       #     name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-${{ matrix.shard }}
@@ -136,12 +132,12 @@ jobs:
   #     matrix:
   #       storybook_scope: [modules, pages, performance]
   #   steps:
-  #     - uses: actions/checkout@v4
+  #     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
   #       with:
   #         fetch-depth: 10
   #     - name: Install dependencies
   #       uses: ./.github/actions/yarn-install
-  #     - uses: actions/download-artifact@v4
+  #     - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
   #       with:
   #         pattern: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-*
   #         merge-multiple: true
@@ -158,18 +154,14 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     env:
-      NODE_OPTIONS: '--max-old-space-size=4096'
+      NODE_OPTIONS: '--max-old-space-size=6144'
       TASK_CACHE_KEY: front-task-${{ matrix.task }}
     strategy:
       matrix:
         task: [lint, typecheck, test]
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -203,12 +195,8 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=10240"
       ANALYZE: "true"
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -218,7 +206,7 @@ jobs:
       - name: Build frontend
         run: npx nx build twenty-front
       # - name: Upload frontend build artifact
-      #   uses: actions/upload-artifact@v4
+      #   uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       #   with:
       #     name: frontend-build
       #     path: packages/twenty-front/build

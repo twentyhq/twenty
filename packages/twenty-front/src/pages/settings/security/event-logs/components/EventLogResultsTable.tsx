@@ -1,5 +1,5 @@
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
-import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -14,14 +14,16 @@ import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScro
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
-import { type MessageDescriptor } from '@lingui/core';
-
 import {
   type EventLogRecord,
   EventLogTable,
 } from '~/generated-metadata/graphql';
 
-import { EventLogJsonCell } from './EventLogJsonCell';
+import {
+  type ColumnConfig,
+  getColumnsForEventLogTable,
+} from '~/pages/settings/security/event-logs/utils/getColumnsForEventLogTable';
+import { EventLogJsonCell } from '~/pages/settings/security/event-logs/components/EventLogJsonCell';
 
 type EventLogResultsTableProps = {
   records: EventLogRecord[];
@@ -30,76 +32,6 @@ type EventLogResultsTableProps = {
   onLoadMore: () => void;
   selectedTable: EventLogTable;
 };
-
-type ColumnConfig = {
-  id: string;
-  label: MessageDescriptor;
-  minWidth: number;
-  defaultWidth: number;
-};
-
-const DEFAULT_COLUMNS: ColumnConfig[] = [
-  { id: 'event', label: msg`Event`, minWidth: 100, defaultWidth: 200 },
-  { id: 'timestamp', label: msg`Timestamp`, minWidth: 100, defaultWidth: 150 },
-  {
-    id: 'userId',
-    label: msg`User`,
-    minWidth: 100,
-    defaultWidth: 150,
-  },
-  {
-    id: 'properties',
-    label: msg`Properties`,
-    minWidth: 200,
-    defaultWidth: 400,
-  },
-];
-
-const OBJECT_EVENT_COLUMNS: ColumnConfig[] = [
-  { id: 'event', label: msg`Event`, minWidth: 100, defaultWidth: 180 },
-  { id: 'timestamp', label: msg`Timestamp`, minWidth: 100, defaultWidth: 130 },
-  {
-    id: 'userId',
-    label: msg`User`,
-    minWidth: 100,
-    defaultWidth: 130,
-  },
-  { id: 'recordId', label: msg`Record ID`, minWidth: 100, defaultWidth: 130 },
-  {
-    id: 'objectMetadataId',
-    label: msg`Object ID`,
-    minWidth: 100,
-    defaultWidth: 130,
-  },
-  {
-    id: 'properties',
-    label: msg`Properties`,
-    minWidth: 150,
-    defaultWidth: 300,
-  },
-];
-
-const USAGE_EVENT_COLUMNS: ColumnConfig[] = [
-  {
-    id: 'event',
-    label: msg`Resource Type`,
-    minWidth: 100,
-    defaultWidth: 130,
-  },
-  {
-    id: 'timestamp',
-    label: msg`Timestamp`,
-    minWidth: 100,
-    defaultWidth: 140,
-  },
-  { id: 'userId', label: msg`User`, minWidth: 100, defaultWidth: 130 },
-  {
-    id: 'properties',
-    label: msg`Details`,
-    minWidth: 200,
-    defaultWidth: 400,
-  },
-];
 
 const StyledScrollWrapperContainer = styled.div`
   height: 100%;
@@ -130,12 +62,6 @@ const StyledResizeHandle = styled.div<{ isResizing: boolean }>`
   &:hover {
     background: ${themeCssVariables.color.blue};
   }
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[8]};
-  text-align: center;
 `;
 
 const StyledLoadingMore = styled.div`
@@ -181,12 +107,9 @@ export const EventLogResultsTable = ({
   const { t } = useLingui();
 
   const showObjectEventColumns = selectedTable === EventLogTable.OBJECT_EVENT;
-  const baseColumns =
-    selectedTable === EventLogTable.OBJECT_EVENT
-      ? OBJECT_EVENT_COLUMNS
-      : selectedTable === EventLogTable.USAGE_EVENT
-        ? USAGE_EVENT_COLUMNS
-        : DEFAULT_COLUMNS;
+  const showApplicationLogColumns =
+    selectedTable === EventLogTable.APPLICATION_LOG;
+  const baseColumns = getColumnsForEventLogTable(selectedTable);
 
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() =>
     Object.fromEntries(baseColumns.map((col) => [col.id, col.defaultWidth])),
@@ -292,9 +215,9 @@ export const EventLogResultsTable = ({
 
   if (!loading && records.length === 0) {
     return (
-      <StyledEmptyState>
+      <SettingsEmptyPlaceholder>
         <Trans>No event logs found</Trans>
-      </StyledEmptyState>
+      </SettingsEmptyPlaceholder>
     );
   }
 
@@ -338,38 +261,66 @@ export const EventLogResultsTable = ({
                 >
                   {beautifyPastDateRelativeToNow(record.timestamp)}
                 </TableCell>
-                <TableCell
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                >
-                  {record.userId ?? '-'}
-                </TableCell>
-                {showObjectEventColumns && (
+                {showApplicationLogColumns ? (
                   <>
                     <TableCell
                       overflow="hidden"
                       textOverflow="ellipsis"
                       whiteSpace="nowrap"
                     >
-                      {record.recordId ?? '-'}
+                      {record.properties?.level ?? '-'}
                     </TableCell>
                     <TableCell
                       overflow="hidden"
                       textOverflow="ellipsis"
                       whiteSpace="nowrap"
                     >
-                      {record.objectMetadataId ?? '-'}
+                      {record.properties?.message ?? '-'}
+                    </TableCell>
+                    <TableCell
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                    >
+                      {record.properties?.executionId ?? '-'}
+                    </TableCell>
+                  </>
+                ) : (
+                  <>
+                    <TableCell
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                    >
+                      {record.userId ?? '-'}
+                    </TableCell>
+                    {showObjectEventColumns && (
+                      <>
+                        <TableCell
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                          whiteSpace="nowrap"
+                        >
+                          {record.recordId ?? '-'}
+                        </TableCell>
+                        <TableCell
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                          whiteSpace="nowrap"
+                        >
+                          {record.objectMetadataId ?? '-'}
+                        </TableCell>
+                      </>
+                    )}
+                    <TableCell
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                    >
+                      <EventLogJsonCell value={record.properties} />
                     </TableCell>
                   </>
                 )}
-                <TableCell
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                >
-                  <EventLogJsonCell value={record.properties} />
-                </TableCell>
               </TableRow>
             ))}
           </Table>

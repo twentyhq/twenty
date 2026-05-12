@@ -1,5 +1,7 @@
+import { WebGlMount } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import Monolith from './Monolith';
 
 const DESKTOP_PATH =
   'M672 395.498V701a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4h664a4 4 0 0 1 4 4v65.155c0 2.363-.837 4.65-2.361 6.454l-23.603 27.936a10 10 0 0 0-2.362 6.453v242.614c0 2.245.756 4.424 2.145 6.188l24.036 30.51a10 10 0 0 1 2.145 6.188';
@@ -21,34 +23,41 @@ const StyledVisual = styled.div`
 `;
 
 const StyledMasked = styled.div`
-  background-color: ${theme.colors.secondary.background[100]};
+  background-color: #1c1c1c;
   height: 100%;
+  isolation: isolate;
+  -webkit-mask-image: ${mobileMask};
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
   mask-image: ${mobileMask};
+  mask-position: center;
   mask-repeat: no-repeat;
   mask-size: 100% 100%;
+  overflow: hidden;
+  position: relative;
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    -webkit-mask-image: ${desktopMask};
     mask-image: ${desktopMask};
   }
 `;
 
-const StyledImage = styled.img`
-  display: block;
-  height: 100%;
-  object-fit: cover;
-  width: 100%;
+const StyledHalftoneLayer = styled.div`
+  inset: 0;
+  position: absolute;
 `;
 
 export function Visual() {
   return (
     <StyledVisual>
       <StyledMasked>
-        <StyledImage
-          src="/images/home/problem/problem-visual.svg"
-          alt="Abstract black-and-white image of a tall pillar with mountains in the background."
-          aria-hidden="true"
-        />
+        <StyledHalftoneLayer>
+          <WebGlMount>
+            <Monolith />
+          </WebGlMount>
+        </StyledHalftoneLayer>
       </StyledMasked>
     </StyledVisual>
   );

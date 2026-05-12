@@ -33,7 +33,6 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
     "additionalEmails": [],
     "primaryEmail": "jeffery.griffin@example.com",
   },
-  "favorites": [],
   "id": "20202020-b000-4485-94de-70c2a98daef2",
   "intro": "",
   "jobTitle": "Embryologist, clinical",
@@ -137,7 +136,6 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
     "secondaryLinks": [],
   },
   "employees": 894,
-  "favorites": [],
   "id": "20202020-a000-4485-94de-70c2a98daef2",
   "idealCustomerProfile": false,
   "introVideo": {
@@ -218,7 +216,6 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
     "additionalEmails": [],
     "primaryEmail": "jeffery.griffin@example.com",
   },
-  "favorites": [],
   "id": "20202020-b000-4485-94de-70c2a98daef2",
   "intro": "",
   "jobTitle": "Embryologist, clinical",
@@ -322,7 +319,6 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
     "secondaryLinks": [],
   },
   "employees": 894,
-  "favorites": [],
   "id": "20202020-a000-4485-94de-70c2a98daef2",
   "idealCustomerProfile": false,
   "introVideo": {
@@ -403,7 +399,6 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
     "additionalEmails": [],
     "primaryEmail": "jeffery.griffin@example.com",
   },
-  "favorites": [],
   "id": "20202020-b000-4485-94de-70c2a98daef2",
   "intro": "",
   "jobTitle": "Embryologist, clinical",
@@ -507,7 +502,6 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
     "secondaryLinks": [],
   },
   "employees": 894,
-  "favorites": [],
   "id": "20202020-a000-4485-94de-70c2a98daef2",
   "idealCustomerProfile": false,
   "introVideo": {

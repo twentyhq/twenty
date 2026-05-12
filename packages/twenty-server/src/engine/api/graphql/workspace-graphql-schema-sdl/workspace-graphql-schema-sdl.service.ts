@@ -2,14 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { printSchema } from 'graphql';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
 import { WorkspaceGraphQLSchemaGenerator } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -37,28 +34,13 @@ export class WorkspaceGraphqlSchemaSDLService {
     private readonly workspaceGraphQLSchemaGenerator: WorkspaceGraphQLSchemaGenerator,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly dataSourceService: DataSourceService,
   ) {}
 
   async getOrComputeSchemaSDL(
     workspace: FlatWorkspace,
     applicationId?: string,
   ): Promise<WorkspaceGraphqlSchemaSDLResult | null> {
-    const isDataSourceMigrated = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_DATASOURCE_MIGRATED,
-      workspace.id,
-    );
-
-    const hasSchema = isDataSourceMigrated
-      ? isNonEmptyString(workspace.databaseSchema)
-      : (
-          await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-            workspace.id,
-          )
-        ).length > 0;
-
-    if (!hasSchema) {
+    if (!isNonEmptyString(workspace.databaseSchema)) {
       return null;
     }
 

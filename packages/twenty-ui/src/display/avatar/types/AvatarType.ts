@@ -1,1 +1,1 @@
-export type AvatarType = 'squared' | 'rounded' | 'icon';
+export type AvatarType = 'squared' | 'rounded' | 'icon' | 'app';

@@ -43,20 +43,21 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const { records, aggregatedValues, pageInfo } =
-        await this.commonFindManyQueryRunnerService.execute(
-          {
-            ...parsedArgs,
-            selectedFields: { ...selectedFields, totalCount: true },
-          },
-          {
-            authContext,
-            flatObjectMetadata,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-            objectIdByNameSingular,
-          },
-        );
+      const {
+        results: { records, aggregatedValues, pageInfo },
+      } = await this.commonFindManyQueryRunnerService.execute(
+        {
+          ...parsedArgs,
+          selectedFields: { ...selectedFields, totalCount: true },
+        },
+        {
+          authContext,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          objectIdByNameSingular,
+        },
+      );
 
       return this.formatRestResponse(
         records,

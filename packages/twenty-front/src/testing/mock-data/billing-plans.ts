@@ -5,7 +5,7 @@ export const mockBillingPlans = {
     {
       __typename: 'BillingPlan',
       planKey: 'PRO',
-      licensedProducts: [
+      baseProducts: [
         {
           __typename: 'BillingLicensedProduct',
           name: 'Pro Plan',
@@ -24,6 +24,7 @@ export const mockBillingPlans = {
               unitAmount: 1200,
               recurringInterval: 'Month',
               priceUsageType: 'LICENSED',
+              creditAmount: null,
             },
             {
               __typename: 'BillingPriceLicensed',
@@ -31,10 +32,12 @@ export const mockBillingPlans = {
               unitAmount: 10800,
               recurringInterval: 'Year',
               priceUsageType: 'LICENSED',
+              creditAmount: null,
             },
           ],
         },
       ],
+      resourceCreditProducts: [],
       meteredProducts: [
         {
           __typename: 'BillingMeteredProduct',
@@ -295,7 +298,7 @@ export const mockBillingPlans = {
     {
       __typename: 'BillingPlan',
       planKey: 'ENTERPRISE',
-      licensedProducts: [
+      baseProducts: [
         {
           __typename: 'BillingLicensedProduct',
           name: 'Organization Plan',
@@ -314,6 +317,7 @@ export const mockBillingPlans = {
               unitAmount: 2500,
               recurringInterval: 'Month',
               priceUsageType: 'LICENSED',
+              creditAmount: null,
             },
             {
               __typename: 'BillingPriceLicensed',
@@ -321,10 +325,12 @@ export const mockBillingPlans = {
               unitAmount: 22800,
               recurringInterval: 'Year',
               priceUsageType: 'LICENSED',
+              creditAmount: null,
             },
           ],
         },
       ],
+      resourceCreditProducts: [],
       meteredProducts: [
         {
           __typename: 'BillingMeteredProduct',

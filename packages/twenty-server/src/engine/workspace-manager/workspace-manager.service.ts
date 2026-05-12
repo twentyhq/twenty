@@ -5,10 +5,15 @@ import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import {
+  GenerateSdkClientJob,
+  GenerateSdkClientJobData,
+} from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -22,7 +27,6 @@ export class WorkspaceManagerService {
 
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly dataSourceService: DataSourceService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly roleService: RoleService,
@@ -33,7 +37,8 @@ export class WorkspaceManagerService {
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly applicationService: ApplicationService,
-    private readonly sdkClientGenerationService: SdkClientGenerationService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   public async init({
@@ -58,10 +63,9 @@ export class WorkspaceManagerService {
 
     const dataSourceMetadataCreationStart = performance.now();
 
-    await this.dataSourceService.createDataSourceMetadata(
-      workspaceId,
-      schemaName,
-    );
+    await this.workspaceRepository.update(workspaceId, {
+      databaseSchema: schemaName,
+    });
 
     await this.applicationService.createTwentyStandardApplication({
       workspaceId,
@@ -86,19 +90,26 @@ export class WorkspaceManagerService {
         },
       );
 
-    await this.sdkClientGenerationService.generateSdkClientForApplication({
-      workspaceId,
-      applicationId: twentyStandardFlatApplication.id,
-      applicationUniversalIdentifier:
-        twentyStandardFlatApplication.universalIdentifier,
-    });
-
-    await this.sdkClientGenerationService.generateSdkClientForApplication({
-      workspaceId,
-      applicationId: workspaceCustomFlatApplication.id,
-      applicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
-    });
+    await Promise.all([
+      this.messageQueueService.add<GenerateSdkClientJobData>(
+        GenerateSdkClientJob.name,
+        {
+          workspaceId,
+          applicationId: twentyStandardFlatApplication.id,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+        },
+      ),
+      this.messageQueueService.add<GenerateSdkClientJobData>(
+        GenerateSdkClientJob.name,
+        {
+          workspaceId,
+          applicationId: workspaceCustomFlatApplication.id,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      ),
+    ]);
 
     await this.setupDefaultRoles({
       workspaceId,

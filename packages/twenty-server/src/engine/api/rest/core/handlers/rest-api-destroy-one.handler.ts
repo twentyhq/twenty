@@ -29,16 +29,17 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
-      const record = await this.commonDestroyOneQueryRunnerService.execute(
-        { id, selectedFields: { id: true } },
-        {
-          authContext,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          objectIdByNameSingular,
-        },
-      );
+      const { results: record } =
+        await this.commonDestroyOneQueryRunnerService.execute(
+          { id, selectedFields: { id: true } },
+          {
+            authContext,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
+          },
+        );
 
       return this.formatRestResponse(record, flatObjectMetadata.nameSingular);
     } catch (error) {

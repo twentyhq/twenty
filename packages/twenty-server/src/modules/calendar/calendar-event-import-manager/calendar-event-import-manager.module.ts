@@ -6,9 +6,9 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { CalendarChannelDataAccessModule } from 'src/engine/metadata-modules/calendar-channel/data-access/calendar-channel-data-access.module';
-import { ConnectedAccountDataAccessModule } from 'src/engine/metadata-modules/connected-account/data-access/connected-account-data-access.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -39,6 +39,7 @@ import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/cale
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 
 @Module({
@@ -48,7 +49,9 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     TypeOrmModule.forFeature([
       FeatureFlagEntity,
       WorkspaceEntity,
-      DataSourceEntity,
+      CalendarChannelEntity,
+      ConnectedAccountEntity,
+      UserWorkspaceEntity,
     ]),
     WorkspaceDataSourceModule,
     CalendarEventCleanerModule,
@@ -58,10 +61,9 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     BillingModule,
     RefreshTokensManagerModule,
     ConnectedAccountModule,
+    EmailAliasManagerModule,
     CalendarCommonModule,
     MetricsModule,
-    CalendarChannelDataAccessModule,
-    ConnectedAccountDataAccessModule,
     FeatureFlagModule,
   ],
   providers: [

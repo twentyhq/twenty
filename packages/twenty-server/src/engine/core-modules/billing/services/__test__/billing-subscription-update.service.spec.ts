@@ -17,9 +17,11 @@ import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billin
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
+import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { SubscriptionUpdateType } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 import {
   arrangeBillingPriceRepositoryFindOneOrFail,
@@ -67,6 +69,20 @@ describe('BillingSubscriptionUpdateService', () => {
       providers: [
         BillingSubscriptionUpdateService,
         {
+          provide: FeatureFlagService,
+          useValue: {
+            isFeatureEnabled: jest.fn().mockResolvedValue(false),
+          },
+        },
+        {
+          provide: StripeInvoiceService,
+          useValue: {
+            createImmediateUpgradeInvoice: jest
+              .fn()
+              .mockResolvedValue(undefined),
+          },
+        },
+        {
           provide: BillingSubscriptionService,
           useValue: {
             syncSubscriptionToDatabase: jest
@@ -100,29 +116,59 @@ describe('BillingSubscriptionUpdateService', () => {
           provide: BillingSubscriptionPhaseService,
           useValue: {
             toPhaseUpdateParams: jest.fn(),
-            buildPhaseUpdateParams: jest
-              .fn()
-              .mockImplementation(
-                async ({
-                  licensedStripePriceId,
-                  seats,
-                  meteredStripePriceId,
-                  startDate,
-                  endDate,
-                }) => ({
+            buildPhaseUpdateParams: jest.fn().mockImplementation(
+              async ({
+                toUpdatePrices,
+                startDate,
+                endDate,
+                isV2,
+              }: {
+                toUpdatePrices: {
+                  licensedPriceId: string;
+                  seats: number;
+                  meteredPriceId?: string;
+                  resourceCreditPriceId?: string;
+                };
+                startDate: Stripe.SubscriptionScheduleUpdateParams.Phase['start_date'];
+                endDate: number | undefined;
+                isV2: boolean;
+              }) => {
+                if (isV2) {
+                  return {
+                    start_date: startDate,
+                    ...(endDate ? { end_date: endDate } : {}),
+                    proration_behavior: 'none',
+                    items: [
+                      {
+                        price: toUpdatePrices.licensedPriceId,
+                        quantity: toUpdatePrices.seats,
+                      },
+                      {
+                        price: toUpdatePrices.resourceCreditPriceId,
+                        quantity: 1,
+                      },
+                    ],
+                  };
+                }
+
+                return {
                   start_date: startDate,
                   ...(endDate ? { end_date: endDate } : {}),
                   proration_behavior: 'none',
                   items: [
-                    { price: licensedStripePriceId, quantity: seats },
-                    { price: meteredStripePriceId },
+                    {
+                      price: toUpdatePrices.licensedPriceId,
+                      quantity: toUpdatePrices.seats,
+                    },
+                    { price: toUpdatePrices.meteredPriceId },
                   ],
                   billing_thresholds: {
                     amount_gte: 1000,
                     reset_billing_cycle_anchor: false,
                   },
-                }),
-              ),
+                };
+              },
+            ),
             isSamePhaseSignature: jest.fn().mockResolvedValue(false),
           },
         },
@@ -251,7 +297,7 @@ describe('BillingSubscriptionUpdateService', () => {
             },
             { id: 'si_metered', price: METER_PRICE_ENTERPRISE_MONTH_ID },
           ],
-          proration_behavior: 'create_prorations',
+          proration_behavior: 'always_invoice',
           metadata: { plan: BillingPlanKey.ENTERPRISE },
           billing_thresholds: {
             amount_gte: 1000,
@@ -377,7 +423,7 @@ describe('BillingSubscriptionUpdateService', () => {
             },
             { id: 'si_metered', price: METER_PRICE_ENTERPRISE_MONTH_ID },
           ],
-          proration_behavior: 'create_prorations',
+          proration_behavior: 'always_invoice',
           metadata: { plan: BillingPlanKey.ENTERPRISE },
           billing_thresholds: {
             amount_gte: 1000,

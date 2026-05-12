@@ -39,6 +39,7 @@ import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/a
 import {
   type AuthProvidersDTO,
   PublicWorkspaceDataDTO,
+  PublicWorkspaceDataSummaryDTO,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
@@ -69,6 +70,7 @@ import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 const OriginHeader = createParamDecorator(
   (_: unknown, ctx: ExecutionContext) => {
     const request = getRequest(ctx);
@@ -256,6 +258,18 @@ export class WorkspaceResolver {
     }
   }
 
+  @ResolveField(() => [ApplicationDTO])
+  async installedApplications(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<ApplicationDTO[]> {
+    const flatApplications =
+      await this.applicationService.findManyInstalledFlatApplications(
+        workspace.id,
+      );
+
+    return flatApplications.map(fromFlatApplicationToApplicationDto);
+  }
+
   @ResolveField(() => BillingSubscriptionEntity, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: WorkspaceEntity,
@@ -412,6 +426,39 @@ export class WorkspaceResolver {
           workspace,
           systemEnabledProviders,
         }),
+      };
+    } catch (err) {
+      workspaceGraphqlApiExceptionHandler(err);
+    }
+  }
+
+  @Query(() => PublicWorkspaceDataSummaryDTO)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  async getPublicWorkspaceDataById(
+    @Args({
+      name: 'id',
+      type: () => UUIDScalarType,
+      nullable: false,
+    })
+    id: string,
+  ): Promise<PublicWorkspaceDataSummaryDTO | undefined> {
+    try {
+      const workspace = await this.workspaceService.findOneWorkspaceById(id);
+
+      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+      const logo = isDefined(workspace.logoFileId)
+        ? this.fileUrlService.signFileByIdUrl({
+            fileId: workspace.logoFileId,
+            workspaceId: workspace.id,
+            fileFolder: FileFolder.CorePicture,
+          })
+        : (workspace.logo ?? '');
+
+      return {
+        id: workspace.id,
+        logo,
+        displayName: workspace.displayName,
       };
     } catch (err) {
       workspaceGraphqlApiExceptionHandler(err);

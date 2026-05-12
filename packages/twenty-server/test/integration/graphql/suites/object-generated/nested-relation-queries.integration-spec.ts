@@ -420,7 +420,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
-      'Field "name" is not defined by type "CompanyWhereUniqueInput".',
+      "Missing required fields: at least one unique constraint have to be fully populated for 'company'.",
     );
     expect(response.body.errors[0].extensions.code).toBe(
       ErrorCode.BAD_USER_INPUT,

@@ -85,8 +85,10 @@ const mockWorkspace = {
   routerModel: 'auto',
   enabledAiModelIds: [],
   useRecommendedModels: true,
+  isInternalMessagesImportEnabled: false,
   workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
   workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
+  installedApplications: [],
 };
 
 const createMockOptions = (): Options => ({

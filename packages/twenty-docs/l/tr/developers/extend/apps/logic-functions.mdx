@@ -1,0 +1,566 @@
+---
+title: Mantıksal işlevler
+description: Sunucu tarafı TypeScript işlevlerini HTTP, cron ve veritabanı olay tetikleyicileriyle tanımlayın.
+icon: bolt
+---
+
+Mantık işlevleri, Twenty platformunda çalışan sunucu tarafı TypeScript işlevleridir. HTTP istekleri, cron zamanlamaları veya veritabanı olayları tarafından tetiklenebilirler — ve ayrıca yapay zekâ ajanları için araçlar olarak sunulabilirler.
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="Mantık fonksiyonlarını ve tetikleyicilerini tanımlayın">
+
+Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir yapılandırmayı dışa aktarmak için `defineLogicFunction()` kullanır.
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'GET',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+Kullanılabilir tetikleyici türleri:
+* **httpRoute**: Fonksiyonunuzu bir HTTP yolu ve yöntemiyle **`/s/` uç noktasının altında** kullanıma sunar:
+> örn. `path: '/post-card/create'` `https://your-twenty-server.com/s/post-card/create` adresinden çağrılabilir
+* **cron**: Bir CRON ifadesi kullanarak fonksiyonunuzu bir zamanlamayla çalıştırır.
+* **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme fonksiyonu tetikler.
+> örn. `person.updated`, `*.created`, `company.*`
+
+<Note>
+Bir fonksiyonu CLI kullanarak manuel olarak da çalıştırabilirsiniz:
+
+```bash filename="Terminal"
+yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+Günlükleri şu şekilde izleyebilirsiniz:
+
+```bash filename="Terminal"
+yarn twenty logs
+```
+</Note>
+
+#### Rota tetikleyicisi yükü
+
+Bir rota tetikleyicisi mantık fonksiyonunuzu çağırdığında,
+[AWS HTTP API v2 formatını](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html) izleyen bir `RoutePayload` nesnesi alır.
+`RoutePayload` türünü `twenty-sdk` içinden içe aktarın:
+
+```ts
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+`RoutePayload` türünün yapısı şu şekildedir:
+
+  | Özellik                      | Tür                                                     | Açıklama                                                                                                                                                                                                             | Örnek                                                                      |
+  | ---------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı)                                                                                                                                           | aşağıdaki bölüme bakın                                                     |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)                                                                                                                                                 | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri                                                                                                                                                                          | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Ayrıştırılmış istek gövdesi (JSON)                                                                                                                                                                                   | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | JSON ayrıştırılmadan önceki özgün UTF-8 istek gövdesi. HMAC tarzı webhook imzalarını doğrulamak için kullanışlıdır (ör. GitHub'ın `X-Hub-Signature-256`, Stripe). Çalışma zamanı onu korumadığında `undefined` olur. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Gövdenin base64 ile kodlanıp kodlanmadığı                                                                                                                                                                            |                                                                            |
+  | `requestContext.http.method` | `string`                                                | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                         |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Ham istek yolu                                                                                                                                                                                                       |                                                                            |
+
+
+#### forwardedRequestHeaders
+
+Varsayılan olarak, güvenlik nedenleriyle gelen isteklerden HTTP başlıkları mantık fonksiyonunuza **aktarılmaz**.
+Belirli başlıklara erişmek için bunları `forwardedRequestHeaders` dizisinde listeleyin:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+İşleyicinizde, iletilen başlıklara şu şekilde erişin:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+Başlık adları küçük harfe normalize edilir. Onlara küçük harfli anahtarlarla erişin (örneğin, `event.headers['content-type']`).
+</Note>
+
+#### Bir işlevi bir yapay zekâ aracı veya iş akışı eylemi olarak kullanıma sunma
+
+Mantık işlevleri, her birinin kendi tetikleyicisi olacak şekilde iki yerde kullanılabilir hâle getirilebilir:
+
+* **`toolTriggerSettings`** — işlevi Twenty'nin yapay zekâ özellikleri (sohbet, MCP, işlev çağırma) tarafından bulunabilir hâle getirir. Standart JSON Şeması'nı kullanır; LLM'lerin doğal olarak anladığı biçimdir.
+* **`workflowActionTriggerSettings`** — işlevin görsel iş akışı oluşturucusunda bir adım olarak görünmesini sağlar. Oluşturucunun uygun alan düzenleyicilerini, değişken seçicilerini ve etiketleri oluşturabilmesi için Twenty'nin zengin `InputSchema`'sını kullanır.
+
+Bir işlev bunlardan birini, diğerini veya her ikisini de tercih edebilir. Bunlar, `cronTriggerSettings`, `databaseEventTriggerSettings` ve `httpRouteTriggerSettings` ile birlikte yer alır — aynı desen, aynı biçim.
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  toolTriggerSettings: {},
+});
+```
+
+Önemli noktalar:
+
+* Bir işlev yüzeyleri karıştırabilir — onu sohbette VE iş akışı oluşturucusunda kullanıma sunmak için hem `toolTriggerSettings` hem de `workflowActionTriggerSettings` bildirin.
+* `toolTriggerSettings.inputSchema` ve `workflowActionTriggerSettings.inputSchema` ikisi de isteğe bağlıdır. Atlandığında, manifest oluşturucu bunları işleyici kaynak kodundan çıkarır (yapay zekâ aracı için JSON Şeması, iş akışı eylemi için Twenty'nin `InputSchema`'sı). Daha zengin tipleme istediğinizde birini açıkça belirtin — örneğin, iş akışı oluşturucu için `FieldMetadataType`'ı bilen `CURRENCY` veya `RELATION` gibi alanlarla ya da yapay zekâ aracısının okuyabileceği `description` alanlarıyla:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
+      },
+      required: ['companyName'],
+    },
+  },
+});
+```
+
+<Note>
+**İyi bir `description` yazın.** AI ajanları, aracı ne zaman kullanacaklarına karar vermek için işlevin `description` alanına güvenir. Aracın ne yaptığını ve ne zaman çağrılması gerektiğini açıkça belirtin.
+</Note>
+
+</Accordion>
+<Accordion title="definePostInstallLogicFunction" description="Bir kurulum sonrası mantık işlevi tanımlayın (uygulama başına bir adet)">
+
+Kurulum sonrası işlev, uygulamanız bir çalışma alanına yüklendikten sonra otomatik olarak çalışan bir mantık işlevidir. Sunucu, uygulamanın meta verileri senkronize edildikten ve SDK istemcisi oluşturulduktan **sonra** bunu yürütür; böylece çalışma alanı tamamen kullanıma hazırdır ve yeni şema kullanıma alınmıştır. Tipik kullanım örnekleri arasında varsayılan verilerin tohumlanması, başlangıç kayıtlarının oluşturulması, çalışma alanı ayarlarının yapılandırılması veya üçüncü taraf hizmetlerde kaynak sağlanması yer alır.
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
+  handler,
+});
+```
+
+Ayrıca kurulum sonrası işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
+
+```bash filename="Terminal"
+yarn twenty exec --postInstall
+```
+
+Önemli noktalar:
+* Kurulum sonrası işlevler `definePostInstallLogicFunction()` kullanır — tetikleyici ayarlarını atlayan (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`) özel bir varyanttır.
+* İşleyici, `{ previousVersion?: string; newVersion: string }` içeren bir `InstallPayload` alır — `newVersion`, yüklenen sürümdür; `previousVersion` ise daha önce yüklü olan sürümdür (veya ilk kurulumda `undefined`). Bu değerleri ilk kurulumları yükseltmelerden ayırt etmek ve sürüme özgü geçiş (migration) mantığını çalıştırmak için kullanın.
+* **Kanca ne zaman çalışır**: varsayılan olarak yalnızca ilk kurulumlarda. Uygulama önceki bir sürümden yükseltildiğinde de çalışmasını istiyorsanız `shouldRunOnVersionUpgrade: true` geçin. Belirtilmediğinde, bayrak varsayılan olarak `false` olur ve yükseltmeler kancayı atlar.
+* **Yürütme modeli — varsayılan olarak eşzamansız, isteğe bağlı senkron**: `shouldRunSynchronously` bayrağı kurulum sonrası işlemin *nasıl* yürütüldüğünü kontrol eder.
+  * `shouldRunSynchronously: false` *(varsayılan)* — kanca, `retryLimit: 3` ile **mesaj kuyruğuna alınır** ve bir worker içinde eşzamansız çalışır. İş kuyruğa alınır alınmaz kurulum yanıtı döner; dolayısıyla yavaşlayan veya hata veren bir işleyici çağıranı engellemez. Worker en fazla üç kez yeniden deneyecektir. **Bunu uzun süre çalışan işler için kullanın** — büyük veri kümelerini tohumlama, yavaş üçüncü taraf API'lerini çağırma, harici kaynakları sağlama; makul bir HTTP yanıt süresini aşabilecek her şey.
+  * `shouldRunSynchronously: true` — kanca **kurulum akışı sırasında satır içi** olarak yürütülür (kurulum öncesi ile aynı yürütücü). İşleyici bitene kadar kurulum isteği engellenir; hata fırlatırsa, kurulum çağıranı bir `POST_INSTALL_ERROR` alır. Otomatik yeniden deneme yok. **Bunu, yanıt dönmeden mutlaka tamamlanması gereken hızlı işler için kullanın** — örneğin, kullanıcıya bir doğrulama hatası iletmek veya kurulum çağrısı döner dönmez istemcinin ihtiyaç duyacağı hızlı bir kurulum yapmak. Kurulum sonrası çalıştığında, üstveri (metadata) geçişinin zaten uygulanmış olduğunu unutmayın; bu nedenle, senkron moddaki bir hata şema değişikliklerini **geri almaz** — yalnızca hatayı görünür kılar.
+* İşleyicinizin idempotent olduğundan emin olun. Eşzamansız modda kuyruk en fazla üç kez yeniden deneyebilir; her iki modda da `shouldRunOnVersionUpgrade: true` iken yükseltmelerde kanca tekrar çalışabilir.
+* Ortam değişkenleri `APPLICATION_ID`, `APP_ACCESS_TOKEN` ve `API_URL` işleyici içinde kullanılabilir (diğer mantık işlevlerinde olduğu gibi), böylece uygulamanıza özel kapsamda bir uygulama erişim belirteciyle Twenty API'sini çağırabilirsiniz.
+* Uygulama başına yalnızca bir kurulum sonrası işlevine izin verilir. Birden fazla tespit edilirse manifest oluşturma hataya düşer.
+* İşlevin `universalIdentifier`, `shouldRunOnVersionUpgrade` ve `shouldRunSynchronously` değerleri, derleme sırasında uygulama manifestine `postInstallLogicFunction` alanı altında otomatik olarak eklenir — bunlara `defineApplication()` içinde atıfta bulunmanıza gerek yoktur.
+* Varsayılan zaman aşımı, veri tohumlama gibi daha uzun kurulum görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
+* **Geliştirme modunda çalıştırılmaz**: bir uygulama yerel olarak kaydedildiğinde (`yarn twenty dev` aracılığıyla), sunucu kurulum akışını tamamen atlar ve dosyaları doğrudan CLI watcher üzerinden eşitler — bu nedenle, `shouldRunSynchronously` ne olursa olsun, kurulum sonrası geliştirme modunda hiç çalışmaz. Çalışan bir çalışma alanında bunu elle tetiklemek için `yarn twenty exec --postInstall` kullanın.
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="Bir kurulum öncesi mantık işlevi tanımlayın (uygulama başına bir adet)">
+
+Kurulum öncesi işlev, kurulum sırasında otomatik olarak çalışan ve **çalışma alanı üstveri (metadata) geçişi uygulanmadan önce** yürütülen bir mantık işlevidir. Kurulum sonrası ile (`InstallPayload`) aynı yük (payload) biçimini paylaşır, ancak kurulum akışında daha erken konumlandığından yaklaşan geçişin bağlı olduğu durumu hazırlayabilir — tipik kullanımlar arasında verileri yedeklemek, yeni şemayla uyumluluğu doğrulamak veya yeniden yapılandırılacak ya da kaldırılacak kayıtları arşivlemek yer alır.
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+Ayrıca kurulum öncesi işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
+
+```bash filename="Terminal"
+yarn twenty exec --preInstall
+```
+
+Önemli noktalar:
+* Kurulum öncesi işlevler `definePreInstallLogicFunction()` kullanır — kurulum sonrasıyla aynı özel yapılandırma, sadece yaşam döngüsünde farklı bir yuvaya eklenir.
+* Hem kurulum öncesi hem de kurulum sonrası işleyiciler aynı `InstallPayload` türünü alır: `{ previousVersion?: string; newVersion: string }`. Bunu bir kez içe aktarın ve her iki kanca için yeniden kullanın.
+* **Kanca ne zaman çalışır**: çalışma alanı üstveri (metadata) geçişinden hemen önce konumlandırılır (`synchronizeFromManifest`). Çalıştırmadan önce, sunucu yalnızca ekleyici bir "indirgenmiş eşitleme" yürütür; bu, çalışma alanı üstverisinde **yeni** sürümün kurulum öncesi işlevini kaydeder — başka hiçbir şeye dokunulmaz — ve ardından bunu yürütür. Bu eşitleme yalnızca ekleyici olduğundan, işleyiciniz çalıştığında önceki sürümün nesneleri, alanları ve verileri hâlâ sağlamdır: geçiş öncesi durumu güvenle okuyabilir ve yedekleyebilirsiniz.
+* **Yürütme modeli**: kurulum öncesi **senkron** olarak yürütülür ve **kurulumu bloklar**. İşleyici bir hata fırlatırsa, herhangi bir şema değişikliği uygulanmadan önce kurulum iptal edilir — çalışma alanı, tutarlı bir durumda önceki sürümde kalır. Bu kasıtlıdır: kurulum öncesi, riskli bir yükseltmeyi reddetmek için son şansınızdır.
+* Kurulum sonrası ile aynı şekilde, uygulama başına yalnızca bir kurulum öncesi işlevine izin verilir. Derleme sırasında uygulama manifestine `preInstallLogicFunction` altında otomatik olarak eklenir.
+* **Geliştirme modunda çalıştırılmaz**: kurulum sonrasında olduğu gibi — yerel olarak kaydedilen uygulamalarda kurulum akışı tamamen atlanır, bu nedenle `yarn twenty dev` altında kurulum öncesi hiç çalışmaz. Bunu elle tetiklemek için `yarn twenty exec --preInstall` kullanın.
+
+</Accordion>
+<Accordion title="Kurulum öncesi vs kurulum sonrası: hangisini ne zaman kullanmalı" description="Doğru kurulum kancasını seçme">
+
+Her iki kanca da aynı kurulum akışının parçasıdır ve aynı `InstallPayload`'ı alır. Fark, çalışma alanı üstveri (metadata) geçişine göre **ne zaman** çalıştıklarıdır ve bu, güvenle erişebilecekleri verileri değiştirir.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Kurulum öncesi her zaman **senkron**dur (kurulumu bloke eder ve iptal edebilir). Kurulum sonrası **varsayılan olarak asenkron**dur — otomatik yeniden denemelerle bir worker üzerinde kuyruğa alınır — ancak `shouldRunSynchronously: true` ile senkron yürütmeye geçebilir. Her modun ne zaman kullanılacağı için yukarıdaki `definePostInstallLogicFunction` akordeonuna bakın.
+
+**Yeni şemanın mevcut olmasını gerektiren her şey için `post-install` kullanın.** Bu yaygın durumdur:
+
+* Yeni eklenen nesne ve alanlara karşı varsayılan verileri tohumlama (ilk kayıtları, varsayılan görünümleri, demo içeriği oluşturma).
+* Uygulamanın kimlik bilgileri artık mevcut olduğuna göre, üçüncü taraf hizmetlerle webhook'ları kaydetmek.
+* Eşitlenmiş üstveriye (metadata) bağlı kurulumu tamamlamak için kendi API'nizi çağırmak.
+* Her yükseltmede durumu uzlaştırması gereken idempotent "bu mevcut olsun" mantığı — `shouldRunOnVersionUpgrade: true` ile birleştirin.
+
+Örnek — kurulumdan sonra varsayılan bir `PostCard` kaydı tohumlama:
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = createClient();
+  await client.postCard.create({
+    data: { title: 'Welcome to Postcard', content: 'Your first card!' },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  handler,
+});
+```
+
+**Bir geçiş mevcut verileri aksi takdirde silecek veya bozacaksa `pre-install` kullanın.** Kurulum öncesi *önceki* şemaya karşı çalıştığı ve hatalandığında yükseltmeyi geri aldığı için, riskli olan her şey için doğru yerdir:
+
+* **Kaldırılmak veya yeniden yapılandırılmak üzere olan verileri yedekleme** — örn. v2'de bir alanı kaldırıyorsunuz ve geçiş çalışmadan önce değerlerini başka bir alana kopyalamanız veya depolamaya aktarmanız gerekiyor.
+* **Yeni bir kısıtın geçersiz kılacağı kayıtları arşivleme** — örn. bir alan `NOT NULL` oluyor ve önce null değerli satırları silmeniz veya düzeltmeniz gerekiyor.
+* **Uyumluluğu doğrulama ve mevcut veriler temiz bir şekilde geçirilemiyorsa yükseltmeyi reddetme** — işleyiciden hata fırlatın ve kurulum, herhangi bir değişiklik uygulanmadan iptal edilir. Bu, uyumsuzluğu geçişin ortasında keşfetmekten daha güvenlidir.
+* İlişkilendirmeyi kaybettirecek bir şema değişikliğinden önce **verileri yeniden adlandırma veya yeniden anahtarlama**.
+
+Örnek — yıkıcı bir geçişten önce kayıtları arşivleme:
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = createClient();
+  const legacyRecords = await client.postCard.findMany({
+    where: { notes: { isNotNull: true } },
+  });
+
+  if (legacyRecords.length === 0) return;
+
+  // Copy legacy `notes` into the new `description` field before the migration
+  // drops the `notes` column. If this fails, the upgrade is aborted and the
+  // workspace stays on v1 with all data intact.
+  await Promise.all(
+    legacyRecords.map((record) =>
+      client.postCard.update({
+        where: { id: record.id },
+        data: { description: record.notes },
+      }),
+    ),
+  );
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+**Kural olarak:**
+
+| Şunu yapmak istiyorsunuz...                                                                            | Kullan                                                                                      |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Varsayılan verileri tohumlamak, çalışma alanını yapılandırmak, harici kaynakları kaydetmek             | `post-install`                                                                              |
+| Kurulum yanıtını engellememesi gereken uzun süreli tohumlama veya üçüncü taraf çağrılarını çalıştırmak | `post-install` (varsayılan — `shouldRunSynchronously: false`, worker yeniden denemeleriyle) |
+| Kurulum çağrısı döner dönmez çağıranın güveneceği hızlı kurulumu çalıştırmak                           | `post-install` ile `shouldRunSynchronously: true`                                           |
+| Yaklaşan geçişin kaybedeceği verileri okumak veya yedeklemek                                           | `pre-install`                                                                               |
+| Mevcut verileri bozacak bir yükseltmeyi reddetmek                                                      | `pre-install` (işleyiciden hata fırlatmak)                                                  |
+| Her yükseltmede uzlaştırma çalıştırmak                                                                 | `post-install` ile `shouldRunOnVersionUpgrade: true`                                        |
+| Yalnızca ilk kurulumda tek seferlik kurulum yapmak                                                     | `post-install` ile `shouldRunOnVersionUpgrade: false` (varsayılan)                          |
+
+<Note>
+Emin değilseniz, varsayılan olarak **kurulum sonrası**nı tercih edin. Yalnızca geçişin kendisi yıkıcıysa ve önceki durum yok olmadan önce onu yakalamanız gerekiyorsa kurulum öncesine başvurun.
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+## Tipli API istemcileri (twenty-client-sdk)
+
+`twenty-client-sdk` paketi, mantık fonksiyonlarınızdan ve ön uç bileşenlerinizden Twenty API ile etkileşim kurmak için tip tanımlı iki GraphQL istemcisi sağlar.
+
+| İstemci             | İçe Aktar                    | Uç nokta                                                      | Oluşturuldu mu?                         |
+| ------------------- | ---------------------------- | ------------------------------------------------------------- | --------------------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — çalışma alanı verileri (kayıtlar, nesneler)      | Evet, geliştirme/derleme zamanında      |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — çalışma alanı yapılandırması, dosya yüklemeleri | Hayır, önceden hazırlanmış olarak gelir |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="Çalışma alanı verilerini sorgulayın ve değiştirin (kayıtlar, nesneler)">
+
+`CoreApiClient`, çalışma alanı verilerini sorgulamak ve değiştirmek için ana istemcidir. `yarn twenty dev` veya `yarn twenty build` sırasında **çalışma alanı şemanızdan oluşturulur**, bu nedenle nesnelerinize ve alanlarınıza uyacak şekilde tamamen tiplenmiştir.
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+İstemci bir seçim kümesi sözdizimi kullanır: Bir alanı dahil etmek için `true` geçin, bağımsız değişkenler için `__args` kullanın ve ilişkiler için nesneleri iç içe yerleştirin. Çalışma alanı şemanıza göre tam otomatik tamamlama ve tip denetimi elde edersiniz.
+
+<Note>
+**CoreApiClient geliştirme/derleme zamanında oluşturulur.** Bunu önce `yarn twenty dev` veya `yarn twenty build` çalıştırmadan kullanırsanız, bir hata verir. Oluşturma otomatik olarak gerçekleşir — CLI, çalışma alanınızın GraphQL şemasını inceler ve `@genql/cli` kullanarak tiplenmiş bir istemci üretir.
+</Note>
+
+#### Tür açıklamaları için CoreSchema'yı kullanma
+
+`CoreSchema`, çalışma alanı nesnelerinize uyan TypeScript türleri sağlar — bileşen durumunu veya işlev parametrelerini tiplemek için kullanışlıdır:
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="Çalışma alanı yapılandırması, uygulamalar ve dosya yüklemeleri">
+
+`MetadataApiClient`, SDK ile birlikte önceden hazırlanmış olarak gelir (oluşturma gerektirmez). Çalışma alanı yapılandırması, uygulamalar ve dosya yüklemeleri için `/metadata` uç noktasını sorgular.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### Dosya yükleme
+
+`MetadataApiClient`, dosya türündeki alanlara dosya eklemek için bir `uploadFile` yöntemi içerir:
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| Parametre                          | Tür      | Açıklama                                                                          |
+| ---------------------------------- | -------- | --------------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Dosyanın ham içeriği                                                              |
+| `filename`                         | `string` | Dosyanın adı (depolama ve görüntüleme için kullanılır)                            |
+| `contentType`                      | `string` | MIME türü (belirtilmezse varsayılan olarak `application/octet-stream` kullanılır) |
+| `fieldMetadataUniversalIdentifier` | `string` | Nesnenizdeki dosya türü alanının `universalIdentifier` değeri                     |
+
+Önemli noktalar:
+* Alan için `universalIdentifier` kullanır (çalışma alanına özgü kimliği değil), böylece yükleme kodunuz uygulamanızın yüklü olduğu herhangi bir çalışma alanında çalışır.
+* Döndürülen `url`, yüklenen dosyaya erişmek için kullanabileceğiniz imzalı bir URL'dir.
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+  Kodunuz Twenty üzerinde çalıştığında (mantık işlevleri veya ön uç bileşenleri), platform kimlik bilgilerini ortam değişkenleri olarak enjekte eder:
+
+  * `TWENTY_API_URL` — Twenty API'nin temel URL'si
+  * `TWENTY_APP_ACCESS_TOKEN` — Uygulamanızın varsayılan işlev rolü kapsamında kısa ömürlü bir anahtar
+
+  Bunları istemcilere iletmeniz gerekmez — otomatik olarak `process.env`'den okurlar. API anahtarının izinleri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` ile referans verilen role göre belirlenir.
+</Note>

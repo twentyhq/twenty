@@ -69,10 +69,12 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   commandMenuItem: {
     objectMetadata: true,
     frontComponent: true,
+    pageLayout: true,
   },
   navigationMenuItem: {
     objectMetadata: true,
     view: true,
+    pageLayout: true,
   },
   permissionFlag: {
     role: true,
@@ -110,4 +112,6 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   },
   frontComponent: {},
   webhook: {},
+  applicationVariable: {},
+  connectionProvider: {},
 } as const satisfies MetadataRequiredForValidation;

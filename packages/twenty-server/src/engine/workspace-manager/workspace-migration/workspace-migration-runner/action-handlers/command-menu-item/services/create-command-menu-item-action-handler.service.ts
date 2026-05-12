@@ -30,7 +30,7 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateCommandMenuItemAction>): Promise<FlatCreateCommandMenuItemAction> {
-    const { availabilityObjectMetadataId, frontComponentId } =
+    const { availabilityObjectMetadataId, frontComponentId, pageLayoutId } =
       resolveUniversalRelationIdentifiersToIds({
         flatEntityMaps: allFlatEntityMaps,
         metadataName: action.metadataName,
@@ -48,6 +48,7 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
         ...action.flatEntity,
         availabilityObjectMetadataId,
         frontComponentId,
+        pageLayoutId,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,

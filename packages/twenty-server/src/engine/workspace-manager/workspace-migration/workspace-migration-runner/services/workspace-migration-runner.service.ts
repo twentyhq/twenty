@@ -288,6 +288,18 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
+      try {
+        await this.invalidateCache({
+          allFlatEntityMapsKeys,
+          workspaceId,
+        });
+      } catch (cacheError) {
+        this.logger.error(
+          `Cache invalidation failed after rollback: ${cacheError}`,
+          'Runner',
+        );
+      }
+
       if (error instanceof WorkspaceMigrationRunnerException) {
         throw error;
       }

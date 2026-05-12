@@ -60,7 +60,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         position: 1,
         size: 1,
         isVisible: false,
-        isOverridden: false,
+        isActive: true,
         definition: {
           fieldMetadataId: '1',
           label: 'label 1',
@@ -79,7 +79,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         position: 2,
         size: 2,
         isVisible: false,
-        isOverridden: false,
+        isActive: true,
         definition: {
           fieldMetadataId: '2',
           label: 'label 2',
@@ -98,7 +98,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         position: 3,
         size: 3,
         isVisible: true,
-        isOverridden: false,
+        isActive: true,
         definition: {
           fieldMetadataId: '3',
           label: 'label 3',
@@ -191,7 +191,7 @@ describe('mapColumnDefinitionsToViewFields', () => {
         fieldMetadataId: 1,
         position: 1,
         isVisible: true,
-        isOverridden: false,
+        isActive: true,
         definition: columnDefinitions[0],
         size: undefined,
       },
@@ -201,7 +201,7 @@ describe('mapColumnDefinitionsToViewFields', () => {
         position: 2,
         size: 200,
         isVisible: false,
-        isOverridden: false,
+        isActive: true,
         definition: columnDefinitions[1],
       },
     ];

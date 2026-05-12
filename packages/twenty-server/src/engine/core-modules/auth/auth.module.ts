@@ -8,6 +8,9 @@ import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.enti
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
+import { ConnectionProviderOAuthController } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth.controller';
+import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
@@ -58,10 +61,10 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
-import { CalendarChannelDataAccessModule } from 'src/engine/metadata-modules/calendar-channel/data-access/calendar-channel-data-access.module';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { ConnectedAccountDataAccessModule } from 'src/engine/metadata-modules/connected-account/data-access/connected-account-data-access.module';
-import { MessageChannelDataAccessModule } from 'src/engine/metadata-modules/message-channel/data-access/message-channel-data-access.module';
+import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -94,15 +97,14 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       TwoFactorAuthenticationMethodEntity,
       ObjectMetadataEntity,
       ConnectedAccountEntity,
+      MessageChannelEntity,
+      CalendarChannelEntity,
     ]),
     UserWorkspaceModule,
     OnboardingModule,
     ConnectedAccountModule,
     MessagingCommonModule,
     MessagingFolderSyncManagerModule,
-    CalendarChannelDataAccessModule,
-    ConnectedAccountDataAccessModule,
-    MessageChannelDataAccessModule,
     WorkspaceSSOModule,
     FeatureFlagModule,
     WorkspaceInvitationModule,
@@ -117,11 +119,14 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     DomainServerConfigModule,
     ApplicationRegistrationModule,
     ApplicationModule,
+    ConnectionProviderModule,
+    ApplicationConnectionsModule,
     WorkspaceCacheModule,
     CoreEntityCacheModule,
     SecureHttpClientModule,
     EnterpriseModule,
     FileModule,
+    ConnectedAccountTokenEncryptionModule,
   ],
   controllers: [
     GoogleAuthController,
@@ -130,6 +135,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MicrosoftAPIsAuthController,
     OAuthPropagatorController,
     SSOAuthController,
+    ConnectionProviderOAuthController,
   ],
   providers: [
     SignInUpService,

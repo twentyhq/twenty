@@ -1,0 +1,53 @@
+name: Install Twenty App
+description: Install (or upgrade) a Twenty app on a specific workspace
+
+inputs:
+  api-url:
+    description: Base URL of the target Twenty instance (e.g. https://my.twenty.instance)
+    required: true
+  api-key:
+    description: API key or access token for the target workspace
+    required: true
+  app-path:
+    description: Path to the app directory (relative to repo root). Defaults to repo root.
+    required: false
+    default: '.'
+
+runs:
+  using: composite
+  steps:
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
+    - name: Setup Node.js
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      with:
+        node-version-file: '${{ inputs.app-path }}/.nvmrc'
+        cache: yarn
+        cache-dependency-path: '${{ inputs.app-path }}/yarn.lock'
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.app-path }}
+      run: yarn install --immutable
+
+    - name: Configure remote
+      shell: bash
+      run: |
+        mkdir -p ~/.twenty
+        node -e "
+          const fs = require('fs'), path = require('path'), os = require('os');
+          fs.writeFileSync(path.join(os.homedir(), '.twenty', 'config.json'), JSON.stringify({
+            version: 1,
+            remotes: { target: { apiUrl: process.env.API_URL, apiKey: process.env.API_KEY } }
+          }, null, 2));
+        "
+      env:
+        API_URL: ${{ inputs.api-url }}
+        API_KEY: ${{ inputs.api-key }}
+
+    - name: Install
+      shell: bash
+      working-directory: ${{ inputs.app-path }}
+      run: yarn twenty install --remote target

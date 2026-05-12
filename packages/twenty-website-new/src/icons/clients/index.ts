@@ -1,22 +1,25 @@
 import type { ComponentType } from 'react';
-import { BeagleIcon } from './Beagle';
-import { EvergreenIcon } from './Evergreen';
-import { FlexportIcon } from './Flexport';
-import { RealyticsIcon } from './Realytics';
-import { ZapierIcon } from './Zapier';
+import { ActEducationIcon } from './ActEducation';
+import type { ClientIconProps } from './client-icon-props';
+import { AlternativePartnersIcon } from './AlternativePartners';
+import { ElevateConsultingIcon } from './ElevateConsulting';
+import { NetZeroIcon } from './Netzero';
+import { NineDotsIcon } from './NineDots';
+import { W3villaIcon } from './W3Villa';
 
-export { BeagleIcon } from './Beagle';
-export { EvergreenIcon } from './Evergreen';
-export { FlexportIcon } from './Flexport';
-export { RealyticsIcon } from './Realytics';
-export { ZapierIcon } from './Zapier';
-
-export type ClientIconProps = { fillColor: string; size: number };
+export { ActEducationIcon } from './ActEducation';
+export { AlternativePartnersIcon } from './AlternativePartners';
+export { ElevateConsultingIcon } from './ElevateConsulting';
+export { NetZeroIcon } from './Netzero';
+export { NineDotsIcon } from './NineDots';
+export { W3villaIcon } from './W3Villa';
+export type { ClientIconProps } from './client-icon-props';
 
 export const CLIENT_ICONS: Record<string, ComponentType<ClientIconProps>> = {
-  beagle: BeagleIcon,
-  evergreen: EvergreenIcon,
-  flexport: FlexportIcon,
-  realytics: RealyticsIcon,
-  zapier: ZapierIcon,
+  'act-education': ActEducationIcon,
+  'alternative-partners': AlternativePartnersIcon,
+  'elevate-consulting': ElevateConsultingIcon,
+  netzero: NetZeroIcon,
+  'nine-dots': NineDotsIcon,
+  w3villa: W3villaIcon,
 };

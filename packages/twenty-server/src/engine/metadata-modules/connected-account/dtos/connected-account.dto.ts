@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ImapSmtpCaldavConnectionParametersDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 
 @ObjectType('ConnectedAccountDTO')
 export class ConnectedAccountDTO {
@@ -54,8 +55,9 @@ export class ConnectedAccountDTO {
   @Field(() => [String], { nullable: true })
   scopes: string[] | null;
 
-  @HideField()
-  connectionParameters: Record<string, unknown> | null;
+  @IsOptional()
+  @Field(() => ImapSmtpCaldavConnectionParametersDTO, { nullable: true })
+  connectionParameters: ImapSmtpCaldavConnectionParametersDTO | null;
 
   @IsDateString()
   @IsOptional()
@@ -69,6 +71,28 @@ export class ConnectedAccountDTO {
   @IsNotEmpty()
   @Field(() => UUIDScalarType)
   userWorkspaceId: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  connectionProviderId: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId: string | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  name: string | null;
+
+  // 'user' = private to the connecting user.
+  // 'workspace' = shared with all members.
+  // Named `visibility` to disambiguate from the OAuth `scopes` array.
+  @IsString()
+  @Field(() => String)
+  visibility: string;
 
   @HideField()
   workspaceId: string;

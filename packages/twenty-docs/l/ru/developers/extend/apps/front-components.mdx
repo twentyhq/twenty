@@ -1,0 +1,489 @@
+---
+title: Компоненты фронтенда
+description: Создавайте компоненты React, которые отображаются внутри интерфейса Twenty в изолированной песочнице.
+icon: window-maximize
+---
+
+Фронтенд-компоненты — это компоненты React, которые отображаются непосредственно внутри интерфейса Twenty. Они выполняются в изолированном Web Worker с использованием Remote DOM — ваш код изолирован (sandboxed), но рендерится нативно на странице, а не в iframe.
+
+## Где можно использовать фронт-компоненты
+
+Фронт-компоненты могут отображаться в двух местах внутри Twenty:
+
+* **Боковая панель** — фронт-компоненты с интерфейсом открываются в правой боковой панели. Это поведение по умолчанию, когда фронт-компонент запускается из меню команд.
+* **Виджеты (дашборды и страницы записей)** — фронт-компоненты можно встраивать как виджеты в макеты страниц. При настройке дашборда или макета страницы записи пользователи могут добавить виджет фронт-компонента.
+
+## Простой пример
+
+Самый быстрый способ увидеть фронтенд-компонент в действии — зарегистрировать его в качестве **пункта меню команд**. Используйте `defineCommandMenuItem` в отдельном файле, чтобы компонент отображался как кнопка быстрого действия в правом верхнем углу страницы:
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  icon: 'IconBolt',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+После синхронизации с помощью `yarn twenty dev` (или однократного запуска `yarn twenty dev --once`) быстрое действие появится в правом верхнем углу страницы:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Кнопка быстрого действия в правом верхнем углу" />
+</div>
+
+Нажмите её, чтобы отобразить компонент инлайн.
+
+## Поля конфигурации
+
+| Поле                  | Обязательно | Описание                                                                                           |
+| --------------------- | ----------- | -------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Да          | Стабильный уникальный идентификатор для этого компонента                                           |
+| `component`           | Да          | Функция компонента React                                                                           |
+| `name`                | Нет         | Отображаемое имя                                                                                   |
+| `description`         | Нет         | Описание того, что делает компонент                                                                |
+| `isHeadless`          | Нет         | Установите значение `true`, если у компонента нет видимого пользовательского интерфейса (см. ниже) |
+
+## Размещение фронт-компонента на странице
+
+Помимо команд, вы можете встроить фронт-компонент непосредственно на страницу записи, добавив его как виджет в **макет страницы**. См. раздел [definePageLayout](/l/ru/developers/extend/apps/skills-and-agents#definepagelayout) для подробностей.
+
+## Headless и non-headless
+
+Фронт-компоненты поддерживают два режима отображения, управляемых опцией `isHeadless`:
+
+**Non-headless (по умолчанию)** — компонент отображает видимый интерфейс. При запуске из меню команд он открывается в боковой панели. Это поведение по умолчанию, когда `isHeadless` имеет значение `false` или опущен.
+
+**Headless (`isHeadless: true`)** — компонент монтируется невидимо в фоновом режиме. Он не открывает боковую панель. Компоненты headless предназначены для действий, которые выполняют логику и затем размонтируются — например, запуск асинхронной задачи, переход на страницу или показ модального окна подтверждения. Они естественно сочетаются с компонентами SDK Command, описанными ниже.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+Поскольку компонент возвращает `null`, Twenty пропускает рендеринг контейнера для него — в макете не появляется пустое место. Компонент по-прежнему имеет доступ ко всем хукам и API взаимодействия с хостом.
+
+## Компоненты SDK Command
+
+Пакет `twenty-sdk` предоставляет четыре вспомогательных компонента Command, предназначенных для headless фронт-компонентов. Каждый компонент выполняет действие при монтировании, обрабатывает ошибки, показывая уведомление snackbar, и автоматически размонтирует фронт-компонент по завершении.
+
+Импортируйте их из `twenty-sdk/command`:
+
+* **`Command`** — запускает асинхронный колбэк через проп `execute`.
+* **`CommandLink`** — переходит по пути внутри приложения. Пропы: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — открывает модальное окно подтверждения. Если пользователь подтвердит, выполняет колбэк `execute`. Пропы: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — открывает конкретную страницу боковой панели. Пропы: `page`, `pageTitle`, `pageIcon`.
+
+Полный пример headless фронт-компонента, использующего `Command` для запуска действия из меню команд:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+А также пример с использованием `CommandModal` для запроса подтверждения перед выполнением:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+## Доступ к контексту времени выполнения
+
+Внутри вашего компонента используйте хуки SDK для доступа к текущему пользователю, записи и экземпляру компонента:
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useRecordId,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const recordId = useRecordId();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+Доступные хуки:
+
+| Хук                                           | Возвращает          | Описание                                                                     |
+| --------------------------------------------- | ------------------- | ---------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` или `null` | ID текущего пользователя                                                     |
+| `useSelectedRecordIds()`                      | `string[]`          | Все выбранные идентификаторы записей (пустой массив, если ничего не выбрано) |
+| `useRecordId()`                               | `string` или `null` | **Устарело.** Используйте `useSelectedRecordIds()` вместо этого              |
+| `useFrontComponentId()`                       | `string`            | ID этого экземпляра компонента                                               |
+| `useFrontComponentExecutionContext(selector)` | различается         | Доступ к полному контексту выполнения с помощью функции-селектора            |
+
+## API взаимодействия с хостом
+
+Компоненты фронтенда могут вызывать навигацию, модальные окна и уведомления с помощью функций из `twenty-sdk`:
+
+| Функция                                         | Описание                         |
+| ----------------------------------------------- | -------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Перейти на страницу в приложении |
+| `openSidePanelPage(params)`                     | Открыть боковую панель           |
+| `closeSidePanel()`                              | Закрыть боковую панель           |
+| `openCommandConfirmationModal(params)`          | Показать диалог подтверждения    |
+| `enqueueSnackbar(params)`                       | Показать всплывающее уведомление |
+| `unmountFrontComponent()`                       | Размонтировать компонент         |
+| `updateProgress(progress)`                      | Обновить индикатор прогресса     |
+
+Пример, который использует API хоста для показа snackbar и закрытия боковой панели после завершения действия:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+### Работа с несколькими записями
+
+Используйте `useSelectedRecordIds()` для обработки нескольких выбранных записей. Это полезно для массовых операций:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+  command: {
+    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+    label: 'Bulk Export',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+  },
+});
+```
+
+## defineCommandMenuItem
+
+Используйте `defineCommandMenuItem`, чтобы зарегистрировать фронтенд-компонент в меню команд (Cmd+K). Если `isPinned` имеет значение `true`, команда также отображается как кнопка быстрого действия в правом верхнем углу страницы.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+| Поле                                    | Обязательно | Описание                                                                                                                                                                               |
+| --------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Да          | Стабильный уникальный идентификатор для команды                                                                                                                                        |
+| `label`                                 | Да          | Полная метка, отображаемая в меню команд (Cmd+K)                                                                                                                                       |
+| `frontComponentUniversalIdentifier`     | Да          | `universalIdentifier` фронтенд-компонента, который открывается этой командой                                                                                                           |
+| `shortLabel`                            | Нет         | Короткая метка, отображаемая на закреплённой кнопке быстрого действия                                                                                                                  |
+| `icon`                                  | Нет         | Имя значка, отображаемое рядом с меткой (например, `'IconBolt'`, `'IconSend'`)                                                                                                         |
+| `isPinned`                              | Нет         | При значении `true` показывает команду как кнопку быстрого действия в правом верхнем углу страницы                                                                                     |
+| `availabilityType`                      | Нет         | Определяет, где отображается команда: `'GLOBAL'` (доступна всегда), `'RECORD_SELECTION'` (только при выборе записей) или `'FALLBACK'` (показывается, когда другие команды не подходят) |
+| `availabilityObjectUniversalIdentifier` | Нет         | Ограничивает команду страницами определённого типа объектов (например, только для записей Company)                                                                                     |
+| `conditionalAvailabilityExpression`     | Нет         | Логическое выражение для динамического управления видимостью команды (см. ниже)                                                                                                        |
+
+## Выражения условной доступности
+
+Поле `conditionalAvailabilityExpression` позволяет управлять видимостью команды в зависимости от текущего контекста страницы. Импортируйте типизированные переменные и операторы из `twenty-sdk`, чтобы составлять выражения:
+
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  objectPermissions,
+  everyEquals,
+} from 'twenty-sdk/front-component';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
+});
+```
+
+**Переменные контекста** — представляют текущее состояние страницы:
+
+| Переменная                     | Тип       | Описание                                                                 |
+| ------------------------------ | --------- | ------------------------------------------------------------------------ |
+| `pageType`                     | `string`  | Текущий тип страницы (например, `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Указывает, рендерится ли компонент в боковой панели                      |
+| `numberOfSelectedRecords`      | `number`  | Количество выбранных в данный момент записей                             |
+| `isSelectAll`                  | `boolean` | Активен ли режим "выбрать все"                                           |
+| `selectedRecords`              | `array`   | Объекты выбранных записей                                                |
+| `favoriteRecordIds`            | `array`   | ID избранных записей                                                     |
+| `objectPermissions`            | `object`  | Разрешения для текущего типа объекта                                     |
+| `targetObjectReadPermissions`  | `object`  | Права на чтение для целевого объекта                                     |
+| `targetObjectWritePermissions` | `object`  | Права на запись для целевого объекта                                     |
+| `featureFlags`                 | `object`  | Активные флаги функций                                                   |
+| `objectMetadataItem`           | `object`  | Метаданные текущего типа объекта                                         |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Есть ли у текущего представления фильтр мягкого удаления                 |
+
+**Операторы** — комбинируют переменные в логические выражения:
+
+| Оператор                            | Описание                                                                  |
+| ----------------------------------- | ------------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true`, если значение не null/undefined                                   |
+| `isNonEmptyString(value)`           | `true`, если значение — непустая строка                                   |
+| `includes(array, value)`            | `true`, если массив содержит значение                                     |
+| `includesEvery(array, prop, value)` | `true`, если свойство каждого элемента включает значение                  |
+| `every(array, prop)`                | `true`, если свойство истинно для каждого элемента                        |
+| `everyDefined(array, prop)`         | `true`, если свойство определено у каждого элемента                       |
+| `everyEquals(array, prop, value)`   | `true`, если свойство равно значению у каждого элемента                   |
+| `some(array, prop)`                 | `true`, если свойство истинно хотя бы у одного элемента                   |
+| `someDefined(array, prop)`          | `true`, если свойство определено хотя бы у одного элемента                |
+| `someEquals(array, prop, value)`    | `true`, если свойство равно значению хотя бы у одного элемента            |
+| `someNonEmptyString(array, prop)`   | `true`, если свойство является непустой строкой хотя бы у одного элемента |
+| `none(array, prop)`                 | `true`, если свойство ложно для каждого элемента                          |
+| `noneDefined(array, prop)`          | `true`, если свойство не определено ни у одного элемента                  |
+| `noneEquals(array, prop, value)`    | `true`, если свойство не равно значению ни у одного элемента              |
+
+## Публичные ресурсы
+
+Компоненты фронтенда могут получать доступ к файлам из каталога приложения `public/` с помощью `getPublicAssetUrl`:
+
+```tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+См. [раздел о публичных ресурсах](/l/ru/developers/extend/apps/cli-and-testing#public-assets-public-folder) для подробностей.
+
+## Стилизация
+
+Компоненты фронтенда поддерживают несколько подходов к стилизации. Вы можете использовать:
+
+* **Встроенные стили** — `style={{ color: 'red' }}`
+* **Компоненты Twenty UI** — импорт из `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar и другие)
+* **Emotion** — CSS-in-JS с `@emotion/react`
+* **Styled-components** — паттерны `styled.div`
+* **Tailwind CSS** — утилитарные классы
+* **Любая библиотека CSS-in-JS**, совместимая с React
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button, Tag, Status } from 'twenty-sdk/ui';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```

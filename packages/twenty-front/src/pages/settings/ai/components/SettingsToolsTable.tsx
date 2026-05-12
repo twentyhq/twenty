@@ -36,6 +36,7 @@ import {
   SettingsToolTableRow,
   TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
 } from './SettingsToolTableRow';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 type ToolItem = {
   identifier: string;
@@ -53,6 +54,7 @@ const FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE = gql`
       id
       name
       universalIdentifier
+      logo
     }
   }
 `;
@@ -90,6 +92,7 @@ export const SettingsToolsTable = () => {
       id: string;
       name: string;
       universalIdentifier: string;
+      logo?: string | null;
     }>;
   }>(FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE);
   const { data: marketplaceAppsData } = useQuery<{
@@ -115,14 +118,28 @@ export const SettingsToolsTable = () => {
   const isCustom = (item: ToolItem) => isDefined(item.applicationId);
 
   const getToolLink = (item: ToolItem) =>
-    getSettingsPath(SettingsPath.AIToolDetail, {
+    getSettingsPath(SettingsPath.AiToolDetail, {
       toolIdentifier: item.identifier,
     });
+
+  const getToolApplicationId = (item: ToolItem) => {
+    if (isDefined(item.applicationId)) {
+      return item.applicationId;
+    }
+
+    return (
+      currentWorkspace?.installedApplications?.find(
+        (app) =>
+          app.universalIdentifier ===
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      )?.id ?? ''
+    );
+  };
 
   const allTools: ToolItem[] = useMemo(
     () => [
       ...logicFunctions
-        .filter((fn) => fn.isTool === true)
+        .filter((fn) => isDefined(fn.toolTriggerSettings))
         .map((fn) => ({
           identifier: fn.id,
           name: fn.name,
@@ -264,10 +281,6 @@ export const SettingsToolsTable = () => {
                   )
                 : undefined;
 
-              const appLabel = isCustom(item)
-                ? (application?.name ?? t`Custom`)
-                : t`Standard`;
-
               return (
                 <SettingsToolTableRow
                   key={item.identifier}
@@ -281,7 +294,7 @@ export const SettingsToolsTable = () => {
                     />
                   }
                   name={item.name}
-                  appLabel={appLabel}
+                  applicationId={getToolApplicationId(item)}
                   action={
                     <IconChevronRight
                       size={theme.icon.size.md}

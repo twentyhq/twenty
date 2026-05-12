@@ -94,36 +94,6 @@ export class WorkspaceCacheService implements OnModuleInit {
         }
       }
     }
-
-    setInterval(() => {
-      const stats = this.getStats();
-
-      this.logger.log(
-        `Cache stats: localCacheSize=${stats.localCacheSize} memoizerCacheSize=${stats.memoizerCacheSize} memoizerPendingSize=${stats.memoizerPendingSize} entriesByKey=${JSON.stringify(stats.entriesByKey)} versionsByKey=${JSON.stringify(stats.versionsByKey)}`,
-      );
-    }, 60_000).unref();
-  }
-
-  public getStats() {
-    const memoizerSize = this.memoizer.getSize();
-    const entriesByKey: Record<string, number> = {};
-    const versionsByKey: Record<string, number> = {};
-
-    for (const [key, entry] of this.localCache.entries()) {
-      const prefix = key.substring(0, key.lastIndexOf(':'));
-
-      entriesByKey[prefix] = (entriesByKey[prefix] ?? 0) + 1;
-      versionsByKey[prefix] =
-        (versionsByKey[prefix] ?? 0) + entry.versions.size;
-    }
-
-    return {
-      localCacheSize: this.localCache.size,
-      memoizerCacheSize: memoizerSize.cache,
-      memoizerPendingSize: memoizerSize.pending,
-      entriesByKey,
-      versionsByKey,
-    };
   }
 
   public async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(

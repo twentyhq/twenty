@@ -1,9 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelObjectMenuItem } from '@/navigation-menu-item/edit/side-panel/components/SidePanelObjectMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -29,8 +27,6 @@ export const SidePanelObjectPickerItem = ({
   dragIndex,
   disableDrag = false,
 }: SidePanelObjectPickerItemProps) => {
-  const { getIcon } = useIcons();
-
   if (isViewItem && isDefined(onSelectObjectForViewEdit)) {
     return (
       <SelectableListItem
@@ -39,10 +35,7 @@ export const SidePanelObjectPickerItem = ({
       >
         <CommandMenuItem
           Icon={() => (
-            <NavigationMenuItemStyleIcon
-              Icon={getIcon(objectMetadataItem.icon)}
-              color={getObjectColorWithFallback(objectMetadataItem)}
-            />
+            <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
           )}
           label={objectMetadataItem.labelPlural}
           id={objectMetadataItem.id}

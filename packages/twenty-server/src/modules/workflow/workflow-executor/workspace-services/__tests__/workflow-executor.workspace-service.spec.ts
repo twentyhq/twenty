@@ -2,18 +2,21 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { getWorkflowRunContext, StepStatus } from 'twenty-shared/workflow';
 
-import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
+import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
+import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
 import {
   type WorkflowAction,
   WorkflowActionType,
@@ -30,9 +33,23 @@ jest.mock(
 
     return {
       ...actual,
-      shouldExecuteStep: jest.fn().mockReturnValue(true), // default behavior
+      shouldExecuteStep: jest.fn().mockReturnValue(true),
     };
   },
+);
+
+jest.mock(
+  'src/modules/workflow/workflow-executor/utils/should-fail-safely.util',
+  () => ({
+    shouldFailSafely: jest.fn().mockReturnValue(false),
+  }),
+);
+
+jest.mock(
+  'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util',
+  () => ({
+    shouldSkipStepExecution: jest.fn().mockReturnValue(false),
+  }),
 );
 
 describe('WorkflowExecutorWorkspaceService', () => {
@@ -57,7 +74,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
   const mockBillingService = {
     isBillingEnabled: jest.fn().mockReturnValue(true),
-    canBillMeteredProduct: jest.fn().mockReturnValue(true),
+  };
+
+  const mockBillingUsageService = {
+    hasAvailableCredits: jest.fn().mockResolvedValue(true),
+    decrementAvailableCredits: jest.fn().mockResolvedValue(undefined),
   };
 
   const mockExceptionHandlerService = {
@@ -95,6 +116,20 @@ describe('WorkflowExecutorWorkspaceService', () => {
         {
           provide: BillingService,
           useValue: mockBillingService,
+        },
+        {
+          provide: BillingUsageService,
+          useValue: mockBillingUsageService,
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              billingSubscription: {
+                currentPeriodStart: new Date('2026-04-01T00:00:00Z'),
+              },
+            }),
+          },
         },
         {
           provide: ExceptionHandlerService,
@@ -197,10 +232,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
           {
             resourceType: UsageResourceType.WORKFLOW,
             operationType: UsageOperationType.WORKFLOW_EXECUTION,
-            creditsUsedMicro: 1,
+            creditsUsedMicro: 100,
             quantity: 1,
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',
+            periodStart: new Date('2026-04-01T00:00:00.000Z'),
           },
         ],
         'workspace-id',
@@ -325,9 +361,9 @@ describe('WorkflowExecutorWorkspaceService', () => {
       );
     });
 
-    it('should stop when billing validation fails', async () => {
-      mockBillingService.isBillingEnabled.mockReturnValueOnce(true);
-      mockBillingService.canBillMeteredProduct.mockReturnValueOnce(false);
+    it('should not emit billing event for skipped steps', async () => {
+      (shouldExecuteStep as jest.Mock).mockReturnValue(false);
+      (shouldSkipStepExecution as jest.Mock).mockReturnValue(true);
 
       await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
@@ -335,27 +371,28 @@ describe('WorkflowExecutorWorkspaceService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(workflowActionFactory.get).toHaveBeenCalledTimes(0);
+      expect(workflowActionFactory.get).not.toHaveBeenCalled();
+      expect(workspaceEventEmitter.emitCustomBatchEvent).not.toHaveBeenCalled();
 
-      expect(
-        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
-      ).toHaveBeenCalledTimes(1);
+      (shouldExecuteStep as jest.Mock).mockReturnValue(true);
+      (shouldSkipStepExecution as jest.Mock).mockReturnValue(false);
+    });
 
-      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledTimes(
-        1,
-      );
+    it('should not emit billing event for fail-safely steps', async () => {
+      (shouldExecuteStep as jest.Mock).mockReturnValue(false);
+      (shouldFailSafely as jest.Mock).mockReturnValue(true);
 
-      expect(
-        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
-      ).toHaveBeenCalledWith({
-        stepId: 'step-1',
-        stepInfo: {
-          error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
-          status: StepStatus.FAILED,
-        },
+      await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
-        workspaceId: 'workspace-id',
+        stepIds: ['step-1'],
+        workspaceId: mockWorkspaceId,
       });
+
+      expect(workflowActionFactory.get).not.toHaveBeenCalled();
+      expect(workspaceEventEmitter.emitCustomBatchEvent).not.toHaveBeenCalled();
+
+      (shouldExecuteStep as jest.Mock).mockReturnValue(true);
+      (shouldFailSafely as jest.Mock).mockReturnValue(false);
     });
 
     it('should return if step should not be executed', async () => {
@@ -669,8 +706,8 @@ describe('WorkflowExecutorWorkspaceService', () => {
   });
 
   describe('sendWorkflowNodeRunEvent', () => {
-    it('should emit a billing event', () => {
-      service['sendWorkflowNodeRunEvent']('workspace-id', 'workflow-id');
+    it('should emit a billing event', async () => {
+      await service['sendWorkflowNodeRunEvent']('workspace-id', 'workflow-id');
 
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
         USAGE_RECORDED,
@@ -678,10 +715,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
           {
             resourceType: UsageResourceType.WORKFLOW,
             operationType: UsageOperationType.WORKFLOW_EXECUTION,
-            creditsUsedMicro: 1,
+            creditsUsedMicro: 100,
             quantity: 1,
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',
+            periodStart: new Date('2026-04-01T00:00:00.000Z'),
           },
         ],
         'workspace-id',

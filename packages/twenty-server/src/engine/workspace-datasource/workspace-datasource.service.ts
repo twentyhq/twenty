@@ -3,13 +3,10 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { type DataSource, type EntityManager, Repository } from 'typeorm';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -27,8 +24,6 @@ export class WorkspaceDataSourceService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly dataSourceService: DataSourceService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -43,26 +38,12 @@ export class WorkspaceDataSourceService {
   }
 
   public async checkSchemaExists(workspaceId: string) {
-    const isDataSourceMigrated = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_DATASOURCE_MIGRATED,
-      workspaceId,
-    );
+    const workspace = await this.workspaceRepository.findOne({
+      select: ['databaseSchema'],
+      where: { id: workspaceId },
+    });
 
-    if (isDataSourceMigrated) {
-      const workspace = await this.workspaceRepository.findOne({
-        select: ['databaseSchema'],
-        where: { id: workspaceId },
-      });
-
-      return isNonEmptyString(workspace?.databaseSchema);
-    }
-
-    const dataSources =
-      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-        workspaceId,
-      );
-
-    return dataSources.length > 0;
+    return isNonEmptyString(workspace?.databaseSchema);
   }
 
   /**

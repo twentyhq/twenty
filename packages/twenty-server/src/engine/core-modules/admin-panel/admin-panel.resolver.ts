@@ -3,20 +3,23 @@ import { Args, Int, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import GraphQLJSON from 'graphql-type-json';
-import { In, type Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
+import { In, type Repository } from 'typeorm';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { InstanceAndAllWorkspacesUpgradeStatusDTO } from 'src/engine/core-modules/upgrade/dtos/instance-and-all-workspaces-upgrade-status.dto';
+import { WorkspaceUpgradeStatusDTO } from 'src/engine/core-modules/upgrade/dtos/workspace-upgrade-status.dto';
+import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
+
+import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
-import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
-import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { AdminAIModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
-import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
-import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
-import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
+import { AdminChatThreadMessagesDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-thread-messages.dto';
+import { AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
+import { AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
+import { AdminPanelWorkspaceBillingDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing.dto';
+import { AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
 import { ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables.dto';
 import { DeleteJobsResponseDTO } from 'src/engine/core-modules/admin-panel/dtos/delete-jobs-response.dto';
@@ -27,33 +30,45 @@ import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-p
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
+import { HealthIndicatorId } from 'src/engine/core-modules/admin-panel/enums/health-indicator-id.enum';
 import { JobStateEnum } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
+import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
+import { AdminPanelBillingService } from 'src/engine/core-modules/admin-panel/services/admin-panel-billing.service';
+import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
+import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
+import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-statistics.service';
+import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
+import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
 import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { HealthIndicatorId } from 'src/engine/core-modules/admin-panel/enums/health-indicator-id.enum';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
-import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
-import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
-import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
-import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
-import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
+import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
+import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
+import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
+import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
+import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
+import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 
 import { AdminPanelHealthServiceDataDTO } from './dtos/admin-panel-health-service-data.dto';
 import { MaintenanceModeDTO } from './dtos/maintenance-mode.dto';
@@ -63,7 +78,7 @@ import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
 
 @UsePipes(ResolverValidationPipe)
-@MetadataResolver()
+@AdminResolver()
 @UseFilters(
   AuthGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -76,26 +91,61 @@ import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
 )
 export class AdminPanelResolver {
   constructor(
-    private readonly adminService: AdminPanelService,
+    private readonly adminUserLookupService: AdminPanelUserLookupService,
+    private readonly adminStatisticsService: AdminPanelStatisticsService,
+    private readonly adminBillingService: AdminPanelBillingService,
+    private readonly adminChatService: AdminPanelChatService,
+    private readonly adminConfigService: AdminPanelConfigService,
+    private readonly adminVersionService: AdminPanelVersionService,
     private readonly adminPanelHealthService: AdminPanelHealthService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private adminPanelQueueService: AdminPanelQueueService,
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly defaultAiCatalogService: DefaultAiCatalogService,
     private readonly modelsDevCatalogService: ModelsDevCatalogService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly maintenanceModeService: MaintenanceModeService,
+    private readonly upgradeStatusService: UpgradeStatusService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   @UseGuards(ServerLevelImpersonateGuard)
-  @Mutation(() => UserLookup)
+  @Query(() => UserLookup)
   async userLookupAdminPanel(
     @Args() userLookupInput: UserLookupInput,
   ): Promise<UserLookup> {
-    return await this.adminService.userLookup(userLookupInput.userIdentifier);
+    return await this.adminUserLookupService.userLookup(
+      userLookupInput.userIdentifier,
+    );
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => [AdminPanelRecentUserDTO])
+  async adminPanelRecentUsers(
+    @Args('searchTerm', {
+      type: () => String,
+      nullable: true,
+      defaultValue: '',
+    })
+    searchTerm: string,
+  ): Promise<AdminPanelRecentUserDTO[]> {
+    return this.adminStatisticsService.getRecentUsers(searchTerm);
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => [AdminPanelTopWorkspaceDTO])
+  async adminPanelTopWorkspaces(
+    @Args('searchTerm', {
+      type: () => String,
+      nullable: true,
+      defaultValue: '',
+    })
+    searchTerm: string,
+  ): Promise<AdminPanelTopWorkspaceDTO[]> {
+    return this.adminStatisticsService.getTopWorkspaces(searchTerm);
   }
 
   @UseGuards(AdminPanelGuard)
@@ -123,7 +173,7 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Query(() => ConfigVariablesDTO)
   async getConfigVariablesGrouped(): Promise<ConfigVariablesDTO> {
-    return this.adminService.getConfigVariablesGrouped();
+    return this.adminConfigService.getConfigVariablesGrouped();
   }
 
   @UseGuards(AdminPanelGuard)
@@ -164,12 +214,12 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Query(() => VersionInfoDTO)
   async versionInfo(): Promise<VersionInfoDTO> {
-    return this.adminService.getVersionInfo();
+    return this.adminVersionService.getVersionInfo();
   }
 
   @UseGuards(AdminPanelGuard)
-  @Query(() => AdminAIModelsDTO)
-  async getAdminAiModels(): Promise<AdminAIModelsDTO> {
+  @Query(() => AdminAiModelsDTO)
+  async getAdminAiModels(): Promise<AdminAiModelsDTO> {
     const resolvedProviders =
       this.aiModelRegistryService.getResolvedProvidersForAdmin();
 
@@ -230,11 +280,36 @@ export class AdminPanelResolver {
 
   @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
+  async setAdminAiModelsEnabled(
+    @Args('modelIds', { type: () => [String] }) modelIds: string[],
+    @Args('enabled', { type: () => Boolean }) enabled: boolean,
+  ): Promise<boolean> {
+    await this.aiModelRegistryService.setModelsAdminEnabled(modelIds, enabled);
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
   async setAdminAiModelRecommended(
     @Args('modelId', { type: () => String }) modelId: string,
     @Args('recommended', { type: () => Boolean }) recommended: boolean,
   ): Promise<boolean> {
     await this.aiModelRegistryService.setModelRecommended(modelId, recommended);
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async setAdminAiModelsRecommended(
+    @Args('modelIds', { type: () => [String] }) modelIds: string[],
+    @Args('recommended', { type: () => Boolean }) recommended: boolean,
+  ): Promise<boolean> {
+    await this.aiModelRegistryService.setModelsRecommended(
+      modelIds,
+      recommended,
+    );
 
     return true;
   }
@@ -257,7 +332,7 @@ export class AdminPanelResolver {
   ): Promise<ConfigVariableDTO> {
     this.twentyConfigService.validateConfigVariableExists(key as string);
 
-    return this.adminService.getConfigVariable(key);
+    return this.adminConfigService.getConfigVariable(key);
   }
 
   @UseGuards(AdminPanelGuard)
@@ -356,7 +431,7 @@ export class AdminPanelResolver {
     const providers =
       this.aiModelRegistryService.getResolvedProvidersForAdmin();
     const catalogNames = this.aiModelRegistryService.getCatalogProviderNames();
-    const rawCatalog = loadDefaultAiProviders();
+    const rawCatalog = this.defaultAiCatalogService.getDefaultAiCatalog();
     const masked: Record<string, Record<string, unknown>> = {};
 
     for (const [key, config] of Object.entries(providers)) {
@@ -403,7 +478,6 @@ export class AdminPanelResolver {
 
     customProviders[providerName] = providerConfig;
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }
@@ -420,7 +494,6 @@ export class AdminPanelResolver {
 
     delete customProviders[providerName];
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }
@@ -475,7 +548,6 @@ export class AdminPanelResolver {
     };
 
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }
@@ -508,7 +580,6 @@ export class AdminPanelResolver {
     };
 
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }
@@ -592,5 +663,70 @@ export class AdminPanelResolver {
     await this.maintenanceModeService.clearMaintenanceMode();
 
     return true;
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => UserLookup)
+  async workspaceLookupAdminPanel(
+    @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
+  ): Promise<UserLookup> {
+    return this.adminUserLookupService.workspaceLookup(workspaceId);
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => AdminPanelWorkspaceBillingDTO, { nullable: true })
+  async workspaceBillingAdminPanel(
+    @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
+  ): Promise<AdminPanelWorkspaceBillingDTO | null> {
+    return this.adminBillingService.getWorkspaceBilling(workspaceId);
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => [AdminWorkspaceChatThreadDTO])
+  async getAdminWorkspaceChatThreads(
+    @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
+  ): Promise<AdminWorkspaceChatThreadDTO[]> {
+    return this.adminChatService.getWorkspaceChatThreads(workspaceId);
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => AdminChatThreadMessagesDTO)
+  async getAdminChatThreadMessages(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+  ): Promise<AdminChatThreadMessagesDTO> {
+    return this.adminChatService.getChatThreadMessages(threadId);
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => ApplicationRegistrationEntity)
+  async findOneAdminApplicationRegistration(
+    @Args('id') id: string,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.findOneByIdGlobal(id);
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => InstanceAndAllWorkspacesUpgradeStatusDTO)
+  async getInstanceAndAllWorkspacesUpgradeStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatusDTO> {
+    return this.upgradeStatusService.getInstanceAndAllWorkspacesStatus();
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => InstanceAndAllWorkspacesUpgradeStatusDTO)
+  async refreshUpgradeStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatusDTO> {
+    return this.upgradeStatusService.refreshInstanceAndAllWorkspacesStatus();
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => [WorkspaceUpgradeStatusDTO])
+  async getUpgradeStatus(
+    @Args('workspaceIds', { type: () => [UUIDScalarType] })
+    workspaceIds: string[],
+  ): Promise<WorkspaceUpgradeStatusDTO[]> {
+    if (workspaceIds.length === 0) {
+      return [];
+    }
+
+    return this.upgradeStatusService.getWorkspaceStatuses(workspaceIds);
   }
 }

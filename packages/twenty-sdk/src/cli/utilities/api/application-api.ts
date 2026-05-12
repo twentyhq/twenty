@@ -159,6 +159,51 @@ export class ApplicationApi {
     }
   }
 
+  async rotateApplicationRegistrationClientSecret(
+    id: string,
+  ): Promise<ApiResponse<{ clientSecret: string }>> {
+    try {
+      const mutation = `
+        mutation RotateApplicationRegistrationClientSecret($id: String!) {
+          rotateApplicationRegistrationClientSecret(id: $id) {
+            clientSecret
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { id },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.rotateApplicationRegistrationClientSecret,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
   async createDevelopmentApplication(input: {
     universalIdentifier: string;
     name: string;

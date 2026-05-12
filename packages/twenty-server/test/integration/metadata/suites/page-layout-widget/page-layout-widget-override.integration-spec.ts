@@ -11,7 +11,6 @@ const WIDGET_OVERRIDE_GQL_FIELDS = `
   type
   pageLayoutTabId
   conditionalDisplay
-  isOverridden
   createdAt
   updatedAt
   deletedAt
@@ -80,7 +79,6 @@ describe('Page layout widget override behavior', () => {
     });
 
     expect(data.updatePageLayoutWidget.title).toBe(overriddenTitle);
-    expect(data.updatePageLayoutWidget.isOverridden).toBe(true);
   });
 
   it('should return the overridden title when querying the widget', async () => {
@@ -123,7 +121,6 @@ describe('Page layout widget override behavior', () => {
     });
 
     expect(data.updatePageLayoutWidget.title).toBe(seededWidgetOriginalTitle);
-    expect(data.updatePageLayoutWidget.isOverridden).toBe(false);
   });
 
   it('should override conditionalDisplay independently from title', async () => {
@@ -155,9 +152,9 @@ describe('Page layout widget override behavior', () => {
     });
 
     expect(conditionalData.updatePageLayoutWidget.title).toBe(overriddenTitle);
-    expect(
-      conditionalData.updatePageLayoutWidget.conditionalDisplay,
-    ).toEqual(overriddenConditionalDisplay);
+    expect(conditionalData.updatePageLayoutWidget.conditionalDisplay).toEqual(
+      overriddenConditionalDisplay,
+    );
 
     await updateOnePageLayoutWidget({
       expectToFail: false,

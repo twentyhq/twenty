@@ -4,6 +4,7 @@ import {
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
   type GridPosition,
+  type SerializedRelation,
 } from 'twenty-shared/types';
 import {
   Column,
@@ -30,6 +31,8 @@ export type PageLayoutWidgetOverrides = {
   title?: string;
   position?: PageLayoutWidgetPosition | null;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+  conditionalAvailabilityExpression?: string | null;
+  pageLayoutTabId?: SerializedRelation;
 };
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
@@ -82,6 +85,9 @@ export class PageLayoutWidgetEntity<
 
   @Column({ type: 'jsonb', nullable: true })
   conditionalDisplay: JsonbProperty<PageLayoutWidgetConditionalDisplay | null>;
+
+  @Column({ type: 'varchar', nullable: true })
+  conditionalAvailabilityExpression: string | null;
 
   @Column({ type: 'jsonb', nullable: false })
   gridPosition: JsonbProperty<GridPosition>;

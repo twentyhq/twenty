@@ -1,0 +1,419 @@
+---
+title: Frontendové komponenty
+description: Vytvářejte komponenty Reactu, které se vykreslují uvnitř uživatelského rozhraní Twenty se sandboxovou izolací.
+icon: window-maximize
+---
+
+Frontendové komponenty jsou React komponenty, které se vykreslují přímo v uživatelském rozhraní Twenty. Běží v **izolovaném Web Workeru** s využitím Remote DOM — váš kód je sandboxovaný, ale vykresluje se nativně na stránce, nikoli v iframu.
+
+## Kde lze použít frontendové komponenty
+
+Frontendové komponenty se mohou vykreslovat na dvou místech v rámci Twenty:
+
+* **Postranní panel** — Frontendové komponenty, které nejsou headless, se otevírají v pravém postranním panelu. Toto je výchozí chování, když je frontendová komponenta vyvolána z příkazového menu.
+* **Widgety (nástěnky a stránky záznamů)** — Frontendové komponenty lze vkládat jako widgety do rozložení stránek. Při konfiguraci nástěnky nebo rozložení stránky záznamu mohou uživatelé přidat widget frontendové komponenty.
+
+## Základní příklad
+
+Nejrychlejší způsob, jak vidět frontendovou komponentu v akci, je zaregistrovat ji jako **příkaz**. Přidáním pole `command` s `isPinned: true` se zobrazí jako tlačítko rychlé akce v pravém horním rohu stránky — není potřeba žádné rozvržení stránky:
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+    shortLabel: 'Hello',
+    label: 'Hello World',
+    icon: 'IconBolt',
+    isPinned: true,
+    availabilityType: 'GLOBAL',
+  },
+});
+```
+
+Po synchronizaci pomocí `yarn twenty dev` (nebo po jednorázovém spuštění `yarn twenty dev --once`) se rychlá akce zobrazí v pravém horním rohu stránky:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Tlačítko rychlé akce v pravém horním rohu" />
+</div>
+
+Kliknutím na něj vykreslíte komponentu přímo ve stránce.
+
+## Konfigurační pole
+
+| Pole                  | Povinné | Popis                                                                                |
+| --------------------- | ------- | ------------------------------------------------------------------------------------ |
+| `universalIdentifier` | Ano     | Stabilní jedinečné ID pro tuto komponentu                                            |
+| `component`           | Ano     | Funkce komponenty React                                                              |
+| `name`                | Ne      | Zobrazovaný název                                                                    |
+| `description`         | Ne      | Popis toho, co komponenta dělá                                                       |
+| `isHeadless`          | Ne      | Nastavte na `true`, pokud komponenta nemá viditelné UI (viz níže)                    |
+| `command`             | Ne      | Zaregistrujte komponentu jako příkaz (viz [možnosti příkazu](#command-options) níže) |
+
+## Umístění frontendové komponenty na stránku
+
+Mimo příkazy můžete frontendovou komponentu vložit přímo na stránku záznamu přidáním jako widget v **rozvržení stránky**. Podrobnosti viz sekce [definePageLayout](/l/cs/developers/extend/apps/skills-and-agents#definepagelayout).
+
+## Headless vs. ne-headless
+
+Front-endové komponenty existují ve dvou režimech vykreslování řízených volbou `isHeadless`:
+
+**Ne-headless (výchozí)** — Komponenta vykreslí viditelné uživatelské rozhraní. Po vyvolání z menu příkazů se otevře v postranním panelu. Toto je výchozí chování, když je `isHeadless` `false` nebo když tato volba není uvedena.
+
+**Headless (`isHeadless: true`)** — Komponenta se neviditelně inicializuje na pozadí. Neotevírá postranní panel. Headless komponenty jsou určené pro akce, které provedou logiku a poté se odpojí — například spuštění asynchronního úkolu, navigaci na stránku nebo zobrazení potvrzovacího modálního okna. Přirozeně se hodí ke komponentám SDK Command popsaným níže.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+Protože komponenta vrací `null`, Twenty přeskočí vykreslení kontejneru — v rozvržení se neobjeví žádné prázdné místo. Komponenta má však stále přístup ke všem hookům a API komunikace s hostitelem.
+
+## Komponenty SDK Command
+
+Balíček `twenty-sdk` poskytuje čtyři pomocné komponenty Command navržené pro headless front-endové komponenty. Každá komponenta při připojení provede akci, chyby zpracuje zobrazením oznámení ve snackbaru a po dokončení automaticky odpojí front-endovou komponentu.
+
+Importujte je z `twenty-sdk/command`:
+
+* **`Command`** — Spustí asynchronní callback přes prop `execute`.
+* **`CommandLink`** — Naviguje na cestu v aplikaci. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Otevře potvrzovací modální okno. Pokud uživatel potvrdí, provede callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Otevře konkrétní stránku postranního panelu. Props: `page`, `pageTitle`, `pageIcon`.
+
+Zde je kompletní příklad headless front-endové komponenty, která pomocí `Command` spouští akci z menu příkazů:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+A příklad s použitím `CommandModal` k vyžádání potvrzení před provedením:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
+
+## Přístup k běhovému kontextu
+
+Uvnitř komponenty použijte hooky SDK pro přístup k aktuálnímu uživateli, záznamu a instanci komponenty:
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useRecordId,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const recordId = useRecordId();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+Dostupné hooky:
+
+| Hook                                          | Vrací                | Popis                                                        |
+| --------------------------------------------- | -------------------- | ------------------------------------------------------------ |
+| `useUserId()`                                 | `string` nebo `null` | ID aktuálního uživatele                                      |
+| `useRecordId()`                               | `string` nebo `null` | ID aktuálního záznamu (pokud je umístěna na stránce záznamu) |
+| `useFrontComponentId()`                       | `string`             | ID této instance komponenty                                  |
+| `useFrontComponentExecutionContext(selector)` | různé                | Přístup k úplnému kontextu běhu pomocí selektorové funkce    |
+
+## API komunikace s hostitelem
+
+Frontendové komponenty mohou pomocí funkcí z `twenty-sdk` vyvolávat navigaci, modály a oznámení:
+
+| Funkce                                          | Popis                          |
+| ----------------------------------------------- | ------------------------------ |
+| `navigate(to, params?, queryParams?, options?)` | Přejít na stránku v aplikaci   |
+| `openSidePanelPage(params)`                     | Otevřít postranní panel        |
+| `closeSidePanel()`                              | Zavřít postranní panel         |
+| `openCommandConfirmationModal(params)`          | Zobrazit potvrzovací dialog    |
+| `enqueueSnackbar(params)`                       | Zobrazit oznámení typu toast   |
+| `unmountFrontComponent()`                       | Odpojit komponentu             |
+| `updateProgress(progress)`                      | Aktualizovat indikátor průběhu |
+
+Zde je příklad, který používá hostitelské API k zobrazení snackbaru a zavření postranního panelu po dokončení akce:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+## Možnosti příkazu
+
+Přidání pole `command` do `defineFrontComponent` zaregistruje komponentu v příkazovém menu (Cmd+K). Pokud je `isPinned` nastaveno na `true`, zobrazí se také jako tlačítko rychlé akce v pravém horním rohu stránky.
+
+| Pole                                    | Povinné | Popis                                                                                                                                                                                   |
+| --------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Ano     | Stabilní jedinečné ID pro příkaz                                                                                                                                                        |
+| `label`                                 | Ano     | Plný popisek zobrazený v příkazovém menu (Cmd+K)                                                                                                                                        |
+| `shortLabel`                            | Ne      | Kratší popisek zobrazený na připnutém tlačítku rychlé akce                                                                                                                              |
+| `icon`                                  | Ne      | Název ikony zobrazený vedle popisku (např. `'IconBolt'`, `'IconSend'`)                                                                                                                  |
+| `isPinned`                              | Ne      | Pokud je `true`, zobrazí příkaz jako tlačítko rychlé akce v pravém horním rohu stránky                                                                                                  |
+| `availabilityType`                      | Ne      | Určuje, kde se příkaz zobrazuje: `'GLOBAL'` (vždy dostupné), `'RECORD_SELECTION'` (pouze když jsou vybrány záznamy) nebo `'FALLBACK'` (zobrazeno, když neodpovídají žádné jiné příkazy) |
+| `availabilityObjectUniversalIdentifier` | Ne      | Omezí příkaz na stránky konkrétního typu objektu (např. pouze u záznamů Company)                                                                                                        |
+| `conditionalAvailabilityExpression`     | Ne      | Logický výraz pro dynamické řízení, zda je příkaz viditelný (viz níže)                                                                                                                  |
+
+## Výrazy podmíněné dostupnosti
+
+Pole `conditionalAvailabilityExpression` vám umožní řídit viditelnost příkazu na základě aktuálního kontextu stránky. Pro sestavení výrazů importujte typované proměnné a operátory z `twenty-sdk`:
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  pageType,
+  numberOfSelectedRecords,
+  objectPermissions,
+  everyEquals,
+  isDefined,
+} from 'twenty-sdk/front-component';
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'bulk-action',
+  component: BulkAction,
+  command: {
+    universalIdentifier: '...',
+    label: 'Bulk Update',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: everyEquals(
+      objectPermissions,
+      'canUpdateObjectRecords',
+      true,
+    ),
+  },
+});
+```
+
+**Kontextové proměnné** — reprezentují aktuální stav stránky:
+
+| Proměnná                       | Typ       | Popis                                                                |
+| ------------------------------ | --------- | -------------------------------------------------------------------- |
+| `pageType`                     | `string`  | Aktuální typ stránky (např. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Zda je komponenta vykreslena v postranním panelu                     |
+| `numberOfSelectedRecords`      | `number`  | Počet aktuálně vybraných záznamů                                     |
+| `isSelectAll`                  | `boolean` | Zda je aktivní "vybrat vše"                                          |
+| `selectedRecords`              | `array`   | Vybrané objekty záznamů                                              |
+| `favoriteRecordIds`            | `array`   | ID oblíbených záznamů                                                |
+| `objectPermissions`            | `object`  | Oprávnění pro aktuální typ objektu                                   |
+| `targetObjectReadPermissions`  | `object`  | Oprávnění ke čtení pro cílový objekt                                 |
+| `targetObjectWritePermissions` | `object`  | Oprávnění k zápisu pro cílový objekt                                 |
+| `featureFlags`                 | `object`  | Aktivní příznaky funkcí                                              |
+| `objectMetadataItem`           | `object`  | Metadata aktuálního typu objektu                                     |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Zda má aktuální zobrazení filtr soft-delete                          |
+
+**Operátory** — kombinují proměnné do logických výrazů:
+
+| Operátor                            | Popis                                                                          |
+| ----------------------------------- | ------------------------------------------------------------------------------ |
+| `isDefined(value)`                  | `true`, pokud hodnota není null/undefined                                      |
+| `isNonEmptyString(value)`           | `true`, pokud je hodnota neprázdný řetězec                                     |
+| `includes(array, value)`            | `true`, pokud pole obsahuje danou hodnotu                                      |
+| `includesEvery(array, prop, value)` | `true`, pokud vlastnost každé položky zahrnuje danou hodnotu                   |
+| `every(array, prop)`                | `true`, pokud je vlastnost u každé položky pravdivá (truthy)                   |
+| `everyDefined(array, prop)`         | `true`, pokud je vlastnost definována u každé položky                          |
+| `everyEquals(array, prop, value)`   | `true`, pokud se vlastnost rovná hodnotě u každé položky                       |
+| `some(array, prop)`                 | `true`, pokud je vlastnost pravdivá (truthy) alespoň u jedné položky           |
+| `someDefined(array, prop)`          | `true`, pokud je vlastnost definována alespoň u jedné položky                  |
+| `someEquals(array, prop, value)`    | `true`, pokud se vlastnost rovná hodnotě alespoň u jedné položky               |
+| `someNonEmptyString(array, prop)`   | `true`, pokud má vlastnost alespoň u jedné položky hodnotu neprázdného řetězce |
+| `none(array, prop)`                 | `true`, pokud je vlastnost u všech položek nepravdivá (falsy)                  |
+| `noneDefined(array, prop)`          | `true`, pokud je vlastnost u všech položek nedefinovaná                        |
+| `noneEquals(array, prop, value)`    | `true`, pokud se vlastnost nerovná hodnotě u žádné položky                     |
+
+## Veřejné soubory
+
+Frontendové komponenty mohou přistupovat k souborům ze složky aplikace `public/` pomocí `getPublicAssetUrl`:
+
+```tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+Podrobnosti viz [sekci veřejných souborů](/l/cs/developers/extend/apps/cli-and-testing#public-assets-public-folder).
+
+## Styling
+
+Frontendové komponenty podporují více přístupů ke stylování. Můžete použít:
+
+* **Inline styly** — `style={{ color: 'red' }}`
+* **Komponenty Twenty UI** — import z `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar a další)
+* **Emotion** — CSS-in-JS s `@emotion/react`
+* **Styled-components** — vzory `styled.div`
+* **Tailwind CSS** — utilitní třídy
+* **Jakákoli CSS-in-JS knihovna** kompatibilní s Reactem
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button, Tag, Status } from 'twenty-sdk/ui';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```

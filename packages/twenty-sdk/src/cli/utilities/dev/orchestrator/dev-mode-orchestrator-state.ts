@@ -4,6 +4,7 @@ import { type CheckServerOrchestratorStepOutput } from '@/cli/utilities/dev/orch
 import { type StartWatchersOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
 import { type SyncApplicationOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { type UploadFilesOrchestratorStepOutput } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
+import { type VersionInfo } from '@/cli/utilities/version/version-info';
 import { type Manifest, SyncableEntity } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
 
@@ -71,9 +72,12 @@ const ENTITY_TYPE_TO_SYNCABLE: Record<string, SyncableEntity | undefined> = {
   frontComponents: SyncableEntity.FrontComponent,
   roles: SyncableEntity.Role,
   skills: SyncableEntity.Skill,
+  connectionProviders: SyncableEntity.ConnectionProvider,
   views: SyncableEntity.View,
   navigationMenuItems: SyncableEntity.NavigationMenuItem,
   pageLayouts: SyncableEntity.PageLayout,
+  pageLayoutTabs: SyncableEntity.PageLayoutTab,
+  commandMenuItems: SyncableEntity.CommandMenuItem,
 };
 
 const MAX_EVENT_COUNT = 200;
@@ -110,6 +114,8 @@ export class OrchestratorState {
   previousObjectsFieldsFingerprint: string | null;
 
   pipeline: OrchestratorStatePipeline;
+
+  versionInfo: VersionInfo | null;
 
   entities: Map<string, OrchestratorStateEntityInfo>;
   events: OrchestratorStateEvent[];
@@ -169,8 +175,15 @@ export class OrchestratorState {
       appName: null,
     };
 
+    this.versionInfo = null;
+
     this.entities = new Map();
     this.events = [];
+  }
+
+  setVersionInfo(versionInfo: VersionInfo): void {
+    this.versionInfo = versionInfo;
+    this.notify();
   }
 
   notify(): void {

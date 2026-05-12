@@ -34,10 +34,8 @@ import {
 } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/types/code-interpreter-input.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import {
-  type Tool,
-  type ToolExecutionContext,
-} from 'src/engine/core-modules/tool/types/tool.type';
+import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
+import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
@@ -214,20 +212,20 @@ export class CodeInterpreterTool implements Tool {
         ),
       );
 
-      return {
+      const output = {
         success: result.exitCode === 0,
         message:
           result.exitCode === 0
             ? 'Code executed successfully'
             : 'Code execution failed',
-        result: {
-          stdout: result.stdout,
-          stderr: result.stderr,
-          exitCode: result.exitCode,
-          files: allOutputFileUrls,
-        },
+        stdout: result.stdout,
+        stderr: result.stderr,
+        exitCode: result.exitCode,
+        files: allOutputFileUrls,
         error: result.error,
       };
+
+      return output;
     } catch (error) {
       this.logger.error('Code interpreter execution failed', error);
 

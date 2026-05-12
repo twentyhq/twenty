@@ -1,29 +1,46 @@
 ---
-description: Guidelines for generating and managing TypeORM migrations in twenty-server
+description: Guidelines for generating and managing upgrade commands (instance commands and workspace commands) in twenty-server
 globs: [
   "packages/twenty-server/src/**/*.entity.ts",
-  "packages/twenty-server/src/database/typeorm/**/*.ts"
+  "packages/twenty-server/src/database/commands/upgrade-version-command/**/*.ts"
 ]
 alwaysApply: false
 ---
 
-## Server Migrations (twenty-server)
+## Upgrade Commands (twenty-server)
 
-- **When changing an entity, always generate a migration**
-  - If you modify a `*.entity.ts` file in `packages/twenty-server/src`, you **must** generate a corresponding TypeORM migration instead of manually editing the database schema.
-  - Use the Nx + TypeORM command from the project root:
+The upgrade system uses two types of commands instead of raw TypeORM migrations:
+- **Instance commands** — schema and data migrations that run once at the instance level.
+- **Workspace commands** — commands that iterate over all active/suspended workspaces.
+
+See `packages/twenty-server/docs/UPGRADE_COMMANDS.md` for full documentation.
+
+### Instance Commands
+
+- **When changing a `*.entity.ts` file**, generate an instance command:
 
     ```bash
-    npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/common/[name] -d src/database/typeorm/core/core.datasource.ts
+    npx nx run twenty-server:database:migrate:generate --name <name> --type <fast|slow>
     ```
 
-  - Replace `[name]` with a descriptive, kebab-case migration name that reflects the change (for example, `add-agent-turn-evaluation`).
+- **Fast commands** (`--type fast`, default) are for schema-only changes that must run immediately. They implement `FastInstanceCommand` with `up`/`down` methods and use the `@RegisteredInstanceCommand` decorator.
 
-- **Prefer generated migrations over manual edits**
-  - Let TypeORM infer schema changes from the updated entities; only adjust the generated migration file manually if absolutely necessary (for example, for data backfills or complex constraints).
-  - Keep schema changes (DDL) in these generated migrations and avoid mixing in heavy data migrations unless there is a strong reason and clear comments.
+- **Slow commands** (`--type slow`) add a `runDataMigration` method for potentially long-running data backfills that execute before `up`. They only run when `--include-slow` is passed. Use the decorator with `{ type: 'slow' }`.
 
-- **Keep migrations consistent and reversible**
-  - Ensure the generated migration includes both `up` and `down` logic that correctly applies and reverts the entity change when possible.
-  - Do not delete or rewrite existing, committed migrations unless you are explicitly working on a pre-release branch where history rewrites are allowed by team conventions.
+- The generator auto-registers the command in `instance-commands.constant.ts` — do not edit that file manually.
+
+- **Keep commands consistent and reversible**: include both `up` and `down` logic. Do not delete or rewrite existing, committed commands unless on a pre-release branch.
+
+### Workspace Commands
+
+- Use the `@RegisteredWorkspaceCommand` decorator alongside nest-commander's `@Command` decorator.
+- Extend `ActiveOrSuspendedWorkspaceCommandRunner` and implement `runOnWorkspace`.
+- The base class provides `--dry-run`, `--verbose`, and workspace filter options automatically.
+
+### Execution Order
+
+Within a given version, commands run in this order (timestamp-sorted within each group):
+1. Instance fast commands
+2. Instance slow commands (only with `--include-slow`)
+3. Workspace commands
 

@@ -1,4 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -20,7 +21,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -63,8 +64,9 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerDatabaseEventFormProps) => {
-  const { getIcon } = useIcons();
   const { t } = useLingui();
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
   const dropdownId = 'workflow-edit-trigger-record-type';
@@ -90,7 +92,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     .map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
-      Icon: getIcon(item.icon),
+      ...getSelectIconPropsFromObjectMetadataItem(item),
     }));
 
   const systemObjects = objectMetadataItems
@@ -98,7 +100,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     .map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
-      Icon: getIcon(item.icon),
+      ...getSelectIconPropsFromObjectMetadataItem(item),
     }));
 
   const selectedOption =

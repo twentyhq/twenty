@@ -1,0 +1,178 @@
+---
+title: Layout
+description: Definieren Sie Ansichten, Navigationsmenüeinträge und Seitenlayouts, um das Erscheinungsbild Ihrer App in Twenty zu gestalten.
+icon: table-columns
+---
+
+Layout-Entitäten steuern, wie Ihre App innerhalb der Benutzeroberfläche von Twenty dargestellt wird — was in der Seitenleiste angezeigt wird, welche gespeicherten Ansichten mit der App ausgeliefert werden und wie eine Detailseite eines Datensatzes angeordnet ist.
+
+## Layout-Konzepte
+
+| Konzept                        | Was es steuert                                                                                                            | Entität                    |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| **Ansicht**                    | Eine gespeicherte Listen-Konfiguration für ein Objekt — sichtbare Felder, Reihenfolge, Filter, Gruppen                    | `defineView`               |
+| **Navigationsmenüeintrag**     | Ein Eintrag in der linken Seitenleiste, der auf eine Ansicht oder eine externe URL verweist                               | `defineNavigationMenuItem` |
+| **Seitenlayout**               | Die Tabs und Widgets, aus denen die Detailseite eines Datensatzes besteht                                                 | `definePageLayout`         |
+| **Seitenlayout-Registerkarte** | Eine eigenständige Registerkarte, die an ein vorhandenes Seitenlayout angehängt ist (Standard oder das Ihrer eigenen App) | `definePageLayoutTab`      |
+
+Ansichten, Navigationsmenüeinträge und Seitenlayouts verweisen über `universalIdentifier` aufeinander:
+
+* Ein **Navigationsmenüeintrag** vom Typ `VIEW` verweist auf einen `defineView`-Bezeichner, sodass der Seitenleistenlink diese gespeicherte Ansicht öffnet.
+* Ein **Seitenlayout** vom Typ `RECORD_PAGE` zielt auf ein Objekt ab und kann [Frontkomponenten](/l/de/developers/extend/apps/front-components) innerhalb seiner Tabs als Widgets einbetten.
+
+<AccordionGroup>
+<Accordion title="defineView" description="Gespeicherte Views für Objekte definieren">
+
+Ansichten sind gespeicherte Konfigurationen dafür, wie Datensätze eines Objekts angezeigt werden — einschließlich sichtbarer Felder, deren Reihenfolge sowie angewendeter Filter oder Gruppen. Verwenden Sie `defineView()`, um vorkonfigurierte Ansichten mit Ihrer App auszuliefern:
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Hauptpunkte:
+* `objectUniversalIdentifier` gibt an, auf welches Objekt diese Ansicht angewendet wird.
+* `key` bestimmt den Ansichtstyp (z. B. `ViewKey.INDEX` für die Hauptlistenansicht).
+* `fields` steuert, welche Spalten erscheinen und in welcher Reihenfolge. Jedes Feld referenziert einen `fieldMetadataUniversalIdentifier`.
+* Für erweiterte Konfigurationen können Sie außerdem `filters`, `filterGroups`, `groups` und `fieldGroups` definieren.
+* `position` steuert die Reihenfolge, wenn mehrere Ansichten für dasselbe Objekt existieren.
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="Seitenleisten-Navigationslinks definieren">
+
+Navigationsmenüeinträge fügen der Workspace-Seitenleiste benutzerdefinierte Einträge hinzu. Verwenden Sie `defineNavigationMenuItem()`, um auf Ansichten, externe URLs oder Objekte zu verlinken:
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Hauptpunkte:
+* `type` bestimmt, worauf der Menüeintrag verweist: `NavigationMenuItemType.VIEW` für eine gespeicherte Ansicht oder `NavigationMenuItemType.LINK` für eine externe URL.
+* Für Ansichtslinks setzen Sie `viewUniversalIdentifier`. Für externe Links setzen Sie `link`.
+* `position` steuert die Reihenfolge in der Seitenleiste.
+* `icon` und `color` (optional) passen das Erscheinungsbild an.
+
+</Accordion>
+<Accordion title="definePageLayout" description="Benutzerdefinierte Seitenlayouts für Datensatzansichten definieren">
+
+Seitenlayouts ermöglichen es Ihnen, das Aussehen einer Datensatzdetailseite anzupassen — welche Tabs erscheinen, welche Widgets sich in jedem Tab befinden und wie sie angeordnet sind. Verwenden Sie `definePageLayout()`, um benutzerdefinierte Layouts mit Ihrer App auszuliefern:
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+Hauptpunkte:
+* `type` ist typischerweise `'RECORD_PAGE'`, um die Detailansicht eines bestimmten Objekts anzupassen.
+* `objectUniversalIdentifier` gibt an, auf welches Objekt dieses Layout angewendet wird.
+* Jeder `tab` definiert einen Abschnitt der Seite mit `title`, `position` und `layoutMode` (`CANVAS` für ein freies Layout).
+* Jedes `widget` innerhalb eines Tabs kann eine Frontend-Komponente, eine Relationenliste oder andere eingebaute Widget-Typen rendern.
+* `position` auf Tabs steuert deren Reihenfolge. Verwenden Sie höhere Werte (z. B. 50), um benutzerdefinierte Tabs hinter den integrierten zu platzieren.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="Eine Registerkarte zu einem bestehenden Seitenlayout hinzufügen">
+
+`definePageLayoutTab` ermöglicht es Ihrer App, eine einzelne Registerkarte — mit optionalen Widgets — an ein **bestehendes** Seitenlayout anzuhängen. Der häufigste Anwendungsfall ist das Hinzufügen einer benutzerdefinierten Registerkarte (z. B. einer Analytics- oder KI-Zusammenfassungs-Registerkarte) zu einer der in Twenty integrierten Datensatzseiten oder zu einem Seitenlayout, das Ihre eigene App bereits mitliefert.
+
+Das Zielseitenlayout muss entweder ein **Standard**-Seitenlayout von Twenty sein oder eines, das von **Ihrer eigenen App** definiert wird; appübergreifende Verweise auf Seitenlayouts, die einer anderen installierten App gehören, werden derzeit nicht unterstützt.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+Hauptpunkte:
+* `pageLayoutUniversalIdentifier` ist **erforderlich** bei der Verwendung von `definePageLayoutTab` und muss auf ein Seitenlayout verweisen, das zum Installationszeitpunkt bereits existiert (Standard oder das Ihrer App). Wenn das übergeordnete Seitenlayout fehlt, schlägt die Installation mit einem eindeutigen Validierungsfehler fehl.
+* `widgets` sind ausschließlich auf diese Registerkarte beschränkt — sie verweisen auf Frontend-Komponenten, Ansichten usw., genau wie Widgets, die inline in `definePageLayout` definiert sind.
+* `position` steuert die Reihenfolge im Zielseitenlayout relativ zu den vorhandenen Registerkarten. Wählen Sie einen Wert, der Ihre Registerkarte relativ zu integrierten Registerkarten an die gewünschte Position bringt.
+* Verwenden Sie dies anstelle von `definePageLayout`, wenn Sie einem vorhandenen Layout nur etwas **hinzufügen** möchten. Verwenden Sie `definePageLayout`, wenn Sie das gesamte Layout besitzen (typischerweise eine `RECORD_PAGE` für ein Objekt, das Sie in Ihrer App ausliefern, oder eine `STANDALONE_PAGE`).
+
+</Accordion>
+</AccordionGroup>

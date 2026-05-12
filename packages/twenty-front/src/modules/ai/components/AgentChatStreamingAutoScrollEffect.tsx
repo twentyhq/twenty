@@ -1,17 +1,17 @@
-import { agentChatIsScrolledToBottomSelector } from '@/ai/states/agentChatIsScrolledToBottomSelector';
+import { agentChatIsScrolledToBottomSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomSelector';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { scrollAIChatToBottom } from '@/ai/utils/scrollAIChatToBottom';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
 
 export const AgentChatStreamingAutoScrollEffect = () => {
-  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
   const agentChatMessages = useAtomComponentFamilyStateValue(
     agentChatMessagesComponentFamilyState,
-    { threadId: currentAIChatThread },
+    { threadId: currentAiChatThread },
   );
 
   const agentChatIsScrolledToBottom = useAtomStateValue(
@@ -24,7 +24,7 @@ export const AgentChatStreamingAutoScrollEffect = () => {
     }
 
     if (agentChatIsScrolledToBottom) {
-      scrollAIChatToBottom();
+      scrollAiChatToBottom();
     }
   }, [agentChatMessages, agentChatIsScrolledToBottom]);
 

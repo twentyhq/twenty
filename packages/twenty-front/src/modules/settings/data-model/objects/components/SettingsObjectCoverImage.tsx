@@ -12,43 +12,60 @@ import LightCoverImage from '@/settings/data-model/assets/cover-light.png';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCoverImageContainer = styled.div`
-  align-items: center;
-  background-size: cover;
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
-  display: flex;
-  justify-content: center;
   margin-bottom: ${themeCssVariables.spacing[8]};
   min-height: 153px;
   overflow: hidden;
   position: relative;
 `;
 
-const StyledButtonContainer = styled.div`
-  padding-top: ${themeCssVariables.spacing[5]};
+const StyledCoverImage = styled.img`
+  display: block;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  width: 100%;
+`;
+
+const StyledButtonOverlay = styled.div`
+  align-items: center;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+
+  & > * {
+    pointer-events: auto;
+  }
 `;
 export const SettingsObjectCoverImage = () => {
   const { colorScheme } = useContext(ThemeContext);
 
   const { t } = useLingui();
   return (
-    <StyledCoverImageContainer
-      style={{
-        backgroundImage:
+    <StyledCoverImageContainer>
+      <StyledCoverImage
+        src={
           colorScheme === 'light'
-            ? `url('${LightCoverImage.toString()}')`
-            : `url('${DarkCoverImage.toString()}')`,
-      }}
-    >
-      <StyledButtonContainer>
+            ? LightCoverImage.toString()
+            : DarkCoverImage.toString()
+        }
+        alt=""
+        aria-hidden
+      />
+      <StyledButtonOverlay>
         <FloatingButton
           Icon={IconEye}
           title={t`Visualize`}
           size="small"
           to={getSettingsPath(SettingsPath.ObjectOverview)}
         />
-      </StyledButtonContainer>
+      </StyledButtonOverlay>
     </StyledCoverImageContainer>
   );
 };

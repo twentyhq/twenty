@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useRef } from 'react';
 
-import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
-import {
-  applyHelpedSceneLayout,
-  type HelpedSceneLayoutRefs,
-} from '@/sections/Helped/utils/helped-scene-layout';
+import { useScheduledOnScroll } from '@/lib/scroll';
+import { applyHelpedSceneLayout } from '../utils/apply-helped-scene-layout';
+import { createHelpedSceneLayoutState } from '../utils/create-helped-scene-layout-state';
+import type { HeadingCardType } from '../types/heading-card-type';
+import type { HelpedSceneLayoutRefs } from '../types/helped-scene-layout-refs';
 
 type HelpedSceneScrollLayoutEffectProps = HelpedSceneLayoutRefs & {
   cards: HeadingCardType[];
@@ -15,43 +15,19 @@ type HelpedSceneScrollLayoutEffectProps = HelpedSceneLayoutRefs & {
 export function HelpedSceneScrollLayoutEffect({
   cardRefs,
   cards,
-  headlineRef,
   innerRef,
   sectionRef,
 }: HelpedSceneScrollLayoutEffectProps) {
-  useEffect(() => {
-    const refs: HelpedSceneLayoutRefs = {
-      cardRefs,
-      headlineRef,
-      innerRef,
-      sectionRef,
-    };
+  const layoutStateRef = useRef(createHelpedSceneLayoutState());
+  const runLayout = useCallback(() => {
+    applyHelpedSceneLayout(
+      { cardRefs, innerRef, sectionRef },
+      cards,
+      layoutStateRef.current,
+    );
+  }, [cardRefs, cards, innerRef, sectionRef]);
 
-    let rafId: number | null = null;
-
-    const flushLayout = () => {
-      rafId = null;
-      applyHelpedSceneLayout(refs, cards);
-    };
-
-    const scheduleLayout = () => {
-      if (rafId !== null) {
-        return;
-      }
-      rafId = window.requestAnimationFrame(flushLayout);
-    };
-
-    applyHelpedSceneLayout(refs, cards);
-    window.addEventListener('scroll', scheduleLayout, { passive: true });
-    window.addEventListener('resize', scheduleLayout);
-    return () => {
-      window.removeEventListener('scroll', scheduleLayout);
-      window.removeEventListener('resize', scheduleLayout);
-      if (rafId !== null) {
-        window.cancelAnimationFrame(rafId);
-      }
-    };
-  }, [cardRefs, cards, headlineRef, innerRef, sectionRef]);
+  useScheduledOnScroll(runLayout);
 
   return null;
 }

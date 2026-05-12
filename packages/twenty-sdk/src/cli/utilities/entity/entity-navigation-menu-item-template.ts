@@ -19,22 +19,22 @@ export const getNavigationMenuItemBaseFile = ({
   let typeAndConfig: string;
 
   if (type === 'OBJECT' && targetObjectUniversalIdentifier) {
-    typeAndConfig = `  type: 'OBJECT',
+    typeAndConfig = `  type: NavigationMenuItemType.OBJECT,
   targetObjectUniversalIdentifier: '${targetObjectUniversalIdentifier}',`;
   } else if (type === 'VIEW' && viewUniversalIdentifier) {
-    typeAndConfig = `  type: 'VIEW',
+    typeAndConfig = `  type: NavigationMenuItemType.VIEW,
   viewUniversalIdentifier: '${viewUniversalIdentifier}',`;
   } else if (type === 'LINK') {
-    typeAndConfig = `  type: 'LINK',
+    typeAndConfig = `  type: NavigationMenuItemType.LINK,
   link: 'https://example.com',`;
   } else if (type === 'FOLDER') {
-    typeAndConfig = `  type: 'FOLDER',`;
+    typeAndConfig = `  type: NavigationMenuItemType.FOLDER,`;
   } else {
-    typeAndConfig = `  type: 'VIEW',
+    typeAndConfig = `  type: NavigationMenuItemType.VIEW,
   // viewUniversalIdentifier: '...',`;
   }
 
-  return `import { defineNavigationMenuItem } from 'twenty-sdk';
+  return `import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
 
 export default defineNavigationMenuItem({
   universalIdentifier: '${universalIdentifier}',

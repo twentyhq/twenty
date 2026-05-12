@@ -36,6 +36,7 @@ export class AgentTurnGraderService {
 
     const evaluation = this.evaluationRepository.create({
       turnId,
+      workspaceId: turn.workspaceId,
       score,
       comment,
     });

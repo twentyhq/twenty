@@ -9,11 +9,11 @@ import { type Response } from 'express';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { type CustomException } from 'src/utils/custom-exception';
 import {
-  type WorkflowTriggerException,
+  WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
-@Catch()
+@Catch(WorkflowTriggerException)
 export class WorkflowTriggerRestApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,

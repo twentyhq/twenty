@@ -1,0 +1,190 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Sync application should fail when retargeting existing permissions to a standard role on update should fail when retargeting a field permission from own role to the standard admin role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldPermission": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
+              "message": "Cannot target a role owned by another application",
+              "userFriendlyMessage": "Cannot target a role owned by another application.",
+            },
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldPermission",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_LABEL_ALREADY_EXISTS",
+              "message": "A role with this label already exists",
+              "userFriendlyMessage": "A role with this label already exists.",
+            },
+            {
+              "code": "ENTITY_ALREADY_EXISTS",
+              "message": "Cannot create role: universalIdentifier "20202020-02c2-43f2-b94d-cab1f2b532eb" already exists in role maps from application "20202020-64aa-4b6f-b003-9c74b97cee20"",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "label": "Admin",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role, 1 fieldPermission",
+    "summary": {
+      "fieldPermission": 1,
+      "role": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Many validation errors",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail when retargeting existing permissions to a standard role on update should fail when retargeting a permission flag from own role to the standard admin role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "permissionFlag": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
+              "message": "Cannot target a role owned by another application",
+              "userFriendlyMessage": "Cannot target a role owned by another application.",
+            },
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "permissionFlag",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_LABEL_ALREADY_EXISTS",
+              "message": "A role with this label already exists",
+              "userFriendlyMessage": "A role with this label already exists.",
+            },
+            {
+              "code": "ENTITY_ALREADY_EXISTS",
+              "message": "Cannot create role: universalIdentifier "20202020-02c2-43f2-b94d-cab1f2b532eb" already exists in role maps from application "20202020-64aa-4b6f-b003-9c74b97cee20"",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "label": "Admin",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role, 1 permissionFlag",
+    "summary": {
+      "permissionFlag": 1,
+      "role": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Many validation errors",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail when retargeting existing permissions to a standard role on update should fail when retargeting an object permission from own role to the standard admin role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "objectPermission": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
+              "message": "Cannot target a role owned by another application",
+              "userFriendlyMessage": "Cannot target a role owned by another application.",
+            },
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "objectPermission",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_LABEL_ALREADY_EXISTS",
+              "message": "A role with this label already exists",
+              "userFriendlyMessage": "A role with this label already exists.",
+            },
+            {
+              "code": "ENTITY_ALREADY_EXISTS",
+              "message": "Cannot create role: universalIdentifier "20202020-02c2-43f2-b94d-cab1f2b532eb" already exists in role maps from application "20202020-64aa-4b6f-b003-9c74b97cee20"",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "label": "Admin",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role, 1 objectPermission",
+    "summary": {
+      "objectPermission": 1,
+      "role": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Many validation errors",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

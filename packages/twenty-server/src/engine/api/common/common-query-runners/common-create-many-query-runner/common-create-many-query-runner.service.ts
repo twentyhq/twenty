@@ -307,6 +307,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     const whereConditions = buildWhereConditions(args.data, conflictingFields);
 
+    if (whereConditions.length === 0) {
+      return [];
+    }
+
     whereConditions.forEach((condition) => {
       queryBuilder.orWhere(condition);
     });

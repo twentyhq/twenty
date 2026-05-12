@@ -1,6 +1,3 @@
-export type { ThreeCardsBaseDataType } from "./ThreeCardsBase";
-export type { ThreeCardsIllustrationCardAttributionType } from "./ThreeCardsIllustrationCardAttribution";
-export type { ThreeCardsIllustrationCardType } from "./ThreeCardsIllustrationCard";
-export type { ThreeCardsIllustrationDataType } from "./ThreeCardsIllustrationData";
-export type { ThreeCardsFeatureCardType } from "./ThreeCardsFeatureCard";
-export type { ThreeCardsFeatureCardsDataType } from "./ThreeCardsFeatureData";
+export type { ThreeCardsIllustrationCardAttributionType } from './three-cards-illustration-card-attribution';
+export type { ThreeCardsIllustrationCardType } from './three-cards-illustration-card';
+export type { ThreeCardsFeatureCardType } from './three-cards-feature-card';

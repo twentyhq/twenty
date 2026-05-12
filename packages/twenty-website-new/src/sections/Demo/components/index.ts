@@ -1,6 +1,5 @@
-import { Cta } from './Cta/Cta';
-import { Heading } from './Heading/Heading';
-import { Root } from './Root/Root';
-import { Screenshot } from './Screenshot/Screenshot';
+import { Cta } from './Cta';
+import { Root } from './Root';
+import { Preview } from './Preview';
 
-export const Demo = { Cta, Heading, Root, Screenshot };
+export const Demo = { Cta, Preview, Root };

@@ -17,7 +17,7 @@ const INTROSPECTION_QUERY = `
 `;
 
 // Custom objects seeded in the dev workspace that should NOT appear
-// in a schema scoped to the Twenty Standard Application
+// in a schema scoped to the Standard Application
 const CUSTOM_OBJECT_TYPE_NAMES = [
   'Rocket',
   'Pet',

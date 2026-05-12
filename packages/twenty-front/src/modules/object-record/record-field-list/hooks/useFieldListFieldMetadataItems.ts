@@ -79,13 +79,17 @@ export const useFieldListFieldMetadataItems = ({
         : 'inlineFieldMetadataItems',
   );
 
-  const { activityTargetFields, inlineRelationFields, boxedRelationFields } =
-    categorizeRelationFields({
-      relationFields: relationFieldMetadataItems ?? [],
-      objectNameSingular,
-      objectPermissionsByObjectMetadataId,
-      isJunctionRelationsEnabled,
-    });
+  const {
+    activityTargetFields,
+    inlineRelationFields,
+    junctionRelationFields,
+    boxedRelationFields,
+  } = categorizeRelationFields({
+    relationFields: relationFieldMetadataItems ?? [],
+    objectNameSingular,
+    objectPermissionsByObjectMetadataId,
+    isJunctionRelationsEnabled,
+  });
 
   const allInlineFieldMetadataItems = [
     ...(inlineFieldMetadataItems ?? []),
@@ -95,6 +99,7 @@ export const useFieldListFieldMetadataItems = ({
   return {
     inlineFieldMetadataItems: allInlineFieldMetadataItems,
     legacyActivityTargetFieldMetadataItems: activityTargetFields,
+    junctionRelationFieldMetadataItems: junctionRelationFields,
     boxedRelationFieldMetadataItems: boxedRelationFields,
   };
 };

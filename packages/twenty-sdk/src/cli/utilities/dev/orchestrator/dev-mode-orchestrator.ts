@@ -215,6 +215,7 @@ export class DevModeOrchestrator {
     if (objectsOrFieldsChanged) {
       await this.generateApiClientStep.execute({
         appPath: this.state.appPath,
+        credentials: this.registerAppStep.registrationCredentials,
       });
 
       this.skipTypecheck = false;
@@ -232,7 +233,7 @@ export class DevModeOrchestrator {
     if (!createResult.success || !createResult.data) {
       this.state.applyStepEvents([
         {
-          message: 'Failed to create development application',
+          message: 'Failed to install development application',
           status: 'error',
         },
         { message: JSON.stringify(createResult, null, 2), status: 'error' },
@@ -249,7 +250,7 @@ export class DevModeOrchestrator {
     this.state.steps.resolveApplication.status = 'done';
 
     this.state.applyStepEvents([
-      { message: 'Application created', status: 'success' },
+      { message: 'Application installed', status: 'success' },
     ]);
 
     this.uploadFilesStep.initialize({

@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -30,7 +31,7 @@ type SidePanelContainerProps = {
 export const SidePanelContainer = ({ children }: SidePanelContainerProps) => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
-    SIDE_PANEL_COMPONENT_INSTANCE_ID,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
   const isMobile = useIsMobile();
 
@@ -43,7 +44,7 @@ export const SidePanelContainer = ({ children }: SidePanelContainerProps) => {
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
-    SIDE_PANEL_COMPONENT_INSTANCE_ID,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
@@ -54,7 +55,7 @@ export const SidePanelContainer = ({ children }: SidePanelContainerProps) => {
   return (
     <RecordComponentInstanceContextsWrapper componentInstanceId={recordIndexId}>
       <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}
+        value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
       >
         <CommandMenuComponentInstanceContext.Provider
           value={{ instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID }}

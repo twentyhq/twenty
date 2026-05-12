@@ -227,7 +227,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     isSearchable: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -242,9 +242,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     imageIdentifierFieldMetadataId: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
-      universalProperty: undefined,
+      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+      universalProperty: 'imageIdentifierFieldMetadataUniversalIdentifier',
     },
     targetTableName: {
       toCompare: false,
@@ -575,16 +576,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    toolInputSchema: {
-      toCompare: true,
-      toStringify: true,
-      universalProperty: undefined,
-    },
-    isTool: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     isBuildUpToDate: {
       toCompare: true,
       toStringify: false,
@@ -606,6 +597,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     httpRouteTriggerSettings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    toolTriggerSettings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    workflowActionTriggerSettings: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
@@ -921,10 +922,17 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'pageLayoutTabUniversalIdentifier',
+      isOverridable: true,
     },
     conditionalDisplay: {
       toCompare: true,
       toStringify: true,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    conditionalAvailabilityExpression: {
+      toCompare: true,
+      toStringify: false,
       universalProperty: undefined,
       isOverridable: true,
     },
@@ -937,7 +945,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     overrides: {
       toCompare: true,
       toStringify: true,
-      universalProperty: undefined,
+      universalProperty: 'universalOverrides',
     },
   },
   pageLayoutTab: {
@@ -1092,6 +1100,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    payload: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     hotKeys: {
       toCompare: true,
       toStringify: true,
@@ -1101,6 +1114,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
+    },
+    pageLayoutId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'pageLayoutUniversalIdentifier',
     },
   },
   navigationMenuItem: {
@@ -1156,6 +1174,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'targetObjectMetadataUniversalIdentifier',
+    },
+    pageLayoutId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'pageLayoutUniversalIdentifier',
     },
   },
   permissionFlag: {
@@ -1514,6 +1537,62 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     deletedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  applicationVariable: {
+    key: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    value: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isSecret: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  connectionProvider: {
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    displayName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    type: { toCompare: true, toStringify: false, universalProperty: undefined },
+    oauthConfig: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,

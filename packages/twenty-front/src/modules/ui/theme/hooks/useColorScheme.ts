@@ -1,8 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useCallback } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
@@ -18,7 +17,7 @@ export const useColorScheme = () => {
     currentWorkspaceMemberState,
   );
 
-  const { updateOneRecord } = useUpdateOneRecord();
+  const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
   const setPersistedColorScheme = useSetAtomState(persistedColorSchemeState);
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
@@ -38,10 +37,9 @@ export const useColorScheme = () => {
           colorScheme: value,
         };
       });
-      await updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-        idToUpdate: currentWorkspaceMember?.id,
-        updateOneRecordInput: {
+      await updateWorkspaceMemberSettings({
+        workspaceMemberId: currentWorkspaceMember.id,
+        update: {
           colorScheme: value,
         },
       });
@@ -50,7 +48,7 @@ export const useColorScheme = () => {
       currentWorkspaceMember,
       setCurrentWorkspaceMember,
       setPersistedColorScheme,
-      updateOneRecord,
+      updateWorkspaceMemberSettings,
     ],
   );
 

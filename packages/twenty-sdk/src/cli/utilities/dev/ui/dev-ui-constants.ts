@@ -97,12 +97,15 @@ export const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.Field]: 'Fields',
   [SyncableEntity.LogicFunction]: 'Logic functions',
   [SyncableEntity.FrontComponent]: 'Front components',
+  [SyncableEntity.CommandMenuItem]: 'Command menu items',
   [SyncableEntity.Role]: 'Roles',
   [SyncableEntity.Skill]: 'Skills',
   [SyncableEntity.View]: 'Views',
   [SyncableEntity.NavigationMenuItem]: 'Navigation menu items',
   [SyncableEntity.PageLayout]: 'Page layouts',
+  [SyncableEntity.PageLayoutTab]: 'Page layout tabs',
   [SyncableEntity.Agent]: 'Agents',
+  [SyncableEntity.ConnectionProvider]: 'Connection providers',
 };
 
 export const ENTITY_ORDER = Object.keys(ENTITY_LABELS) as SyncableEntity[];

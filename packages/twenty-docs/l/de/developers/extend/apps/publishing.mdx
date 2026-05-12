@@ -1,11 +1,8 @@
 ---
 title: Veröffentlichen
+icon: hochladen
 description: Veröffentlichen Sie Ihre Twenty-App auf dem Twenty-Marktplatz oder stellen Sie sie intern bereit.
 ---
-
-<Warning>
-  Apps befinden sich derzeit in der Alpha-Phase. Die Funktion ist funktionsfähig, entwickelt sich jedoch noch weiter.
-</Warning>
 
 ## Übersicht
 
@@ -52,7 +49,11 @@ yarn twenty deploy
 
 ### Eine bereitgestellte App freigeben
 
-Tarball-Apps werden nicht im öffentlichen Marktplatz gelistet, daher entdecken andere Arbeitsbereiche auf demselben Server sie nicht durch Stöbern. So geben Sie eine bereitgestellte App frei:
+<Warning>
+Das Teilen privater (Tarball-)Apps über Arbeitsbereiche hinweg ist eine **Enterprise**-Funktion. Die Registerkarte **Distribution** zeigt anstelle der Freigabeoptionen eine Aufforderung zum Upgrade an, bis Ihr Arbeitsbereich über einen gültigen Enterprise-Schlüssel verfügt. Gehen Sie zu [Einstellungen > Admin-Panel > Enterprise](/settings/admin-panel#enterprise), um es zu aktivieren.
+</Warning>
+
+Tarball-Apps werden nicht im öffentlichen Marktplatz gelistet, daher entdecken andere Arbeitsbereiche auf demselben Server sie nicht durch Stöbern. Sobald sich Ihr Arbeitsbereich im Enterprise-Plan befindet, können Sie eine bereitgestellte App wie folgt freigeben:
 
 1. Gehen Sie zu **Einstellungen > Anwendungen > Registrierungen** und öffnen Sie Ihre App
 2. Klicken Sie im Tab **Distribution** auf **Freigabelink kopieren**
@@ -60,19 +61,105 @@ Tarball-Apps werden nicht im öffentlichen Marktplatz gelistet, daher entdecken 
 
 Der Freigabelink verwendet die Basis-URL des Servers (ohne Workspace-Subdomain), sodass er für jeden Arbeitsbereich auf dem Server funktioniert.
 
-<Warning>
-Das Teilen privater Apps ist eine Enterprise-Funktion. Gehen Sie zu [Einstellungen > Admin-Panel > Enterprise](/settings/admin-panel#enterprise), um es zu aktivieren.
-</Warning>
-
 ### Versionsverwaltung
+
+Beim Aktualisieren einer bereits bereitgestellten Tarball-App verlangt der Server, dass die `version` in `package.json` **strikt höher** (gemäß der [semver](https://semver.org)-Reihenfolge) ist als die derzeit bereitgestellte Version. Das erneute Bereitstellen derselben Version oder das Pushen einer niedrigeren Version wird abgelehnt, bevor das Tarball gespeichert wird — in der CLI wird ein `VERSION_ALREADY_EXISTS`-Fehler angezeigt.
 
 So veröffentlichen Sie ein Update:
 
-1. Erhöhen Sie das Feld `version` in Ihrer `package.json`
+1. Erhöhen Sie das Feld `version` in Ihrer `package.json` (z. B. `1.2.3` → `1.2.4`, `1.3.0` oder `2.0.0`).
 2. Führen Sie `yarn twenty deploy` aus (oder `yarn twenty deploy --remote production`)
 3. Arbeitsbereiche, die die App installiert haben, sehen in ihren Einstellungen, dass ein Upgrade verfügbar ist.
 
+<Note>
+Pre-Release-Tags funktionieren wie erwartet: Das Erhöhen von `1.0.0-rc.1` → `1.0.0-rc.2` ist zulässig, und eine finale Version wie `1.0.0` wird korrekt als höher als `1.0.0-rc.5` erkannt. Die Version in `package.json` muss selbst eine gültige semver-Zeichenfolge sein.
+</Note>
+
 {/* TODO: add screenshot of the Upgrade button */}
+
+### Kompatibilität der Serverversionen
+
+Wenn Ihre App eine Funktion verwendet, die in einer bestimmten Twenty-Serverversion eingeführt wurde (z. B. OAuth-Anbieter, die in v2.3.0 hinzugefügt wurden), sollten Sie die minimale Serverversion, die Ihre App benötigt, mithilfe des Felds `engines.twenty` in `package.json` angeben:
+
+```json filename="package.json"
+{
+  "name": "twenty-my-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": "^24.5.0",
+    "twenty": ">=2.3.0"
+  }
+}
+```
+
+Der Wert ist ein standardmäßiger [semver-Bereich](https://github.com/npm/node-semver#ranges). Häufige Muster:
+
+| Bereich                            | Bedeutung                                              |
+| ---------------------------------- | ------------------------------------------------------ |
+| `>=2.3.0`                          | Jeder Server ab 2.3.0                                  |
+| `>=2.3.0 \<3.0.0` | 2.3.0 oder höher, aber unter der nächsten Hauptversion |
+| `^2.3.0`                           | Entspricht `>=2.3.0 \<3.0.0`          |
+
+**Was bei Bereitstellung und Installation passiert:**
+
+* Wenn `engines.twenty` gesetzt ist und die Version des Zielservers den Bereich nicht erfüllt, wird die Bereitstellung (Tarball-Upload) oder Installation mit dem Fehler `SERVER_VERSION_INCOMPATIBLE` abgelehnt, zusammen mit einer Meldung, die sowohl den erforderlichen Bereich als auch die tatsächliche Serverversion angibt.
+* Wenn `engines.twenty` nicht gesetzt ist, wird die App auf jeder Serverversion akzeptiert (abwärtskompatibel mit bestehenden Apps).
+* Wenn auf dem Server keine `APP_VERSION` konfiguriert ist, wird die Prüfung übersprungen.
+
+<Note>
+Der Server ist die maßgebliche Prüfinstanz — er validiert `engines.twenty` sowohl beim Tarball-Upload als auch bei der Workspace-Installation. Auch wenn Sie ein Tarball außerhalb des regulären Prozesses bereitstellen oder aus dem Marketplace installieren, erzwingt der Server weiterhin die Kompatibilität.
+</Note>
+
+## Automatisiertes CI/CD (vorgefertigte Workflows)
+
+Apps, die mit `create-twenty-app` erzeugt wurden, enthalten von Haus aus zwei GitHub-Actions-Workflows unter `.github/workflows/`. Sie sind einsatzbereit, sobald Sie das Repository zu GitHub pushen — für CI ist keine zusätzliche Einrichtung erforderlich, und für CD ist nur ein einziges Secret nötig.
+
+### CI — `ci.yml`
+
+Führt Ihre Integrationstests bei jedem Push auf `main` und bei Pull Requests aus.
+
+**Was sie macht:**
+
+1. Checkt den Quellcode Ihrer App aus.
+2. Startet eine isolierte Twenty-Testinstanz mithilfe der Composite-Action `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (das CI-Äquivalent zu `yarn twenty server start --test`).
+3. Aktiviert Corepack, richtet Node.js anhand Ihrer `.nvmrc` ein und installiert Abhängigkeiten mit `yarn install --immutable`.
+4. Führt `yarn test` aus und übergibt `TWENTY_API_URL` und `TWENTY_API_KEY` aus der gestarteten Instanz, damit Ihre Tests mit einem echten Server kommunizieren können.
+
+**Konfigurationsoptionen:**
+
+* `TWENTY_VERSION` (env, standardmäßig `latest`) — fixieren Sie die in CI verwendete Twenty-Server-Version, indem Sie dies in `ci.yml` anpassen.
+* Die Parallelität wird nach `github.ref` gruppiert und bricht laufende Ausführungen bei neuen Pushes ab.
+
+Es sind keine Secrets erforderlich — die Testinstanz ist flüchtig und existiert nur für die Dauer des Jobs.
+
+### CD — `cd.yml`
+
+Stellt Ihre App bei jedem Push auf `main` auf einem konfigurierten Twenty-Server bereit und optional aus einem Pull Request, wenn das Label `deploy` gesetzt ist.
+
+**Was sie macht:**
+
+1. Checkt den PR-Head (bei PRs mit Label) oder den gepushten Commit aus.
+2. Führt `twentyhq/twenty/.github/actions/deploy-twenty-app@main` aus — das CI-Äquivalent zu `yarn twenty deploy`.
+3. Führt `twentyhq/twenty/.github/actions/install-twenty-app@main` aus, damit die neu bereitgestellte Version in den Ziel-Workspace installiert wird.
+
+**Erforderliche Konfiguration:**
+
+| Einstellung             | Wo                                                               | Zweck                                                                                                                      |
+| ----------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (standardmäßig `http://localhost:3000`)        | Der Twenty-Server, auf den bereitgestellt werden soll. Ändern Sie dies vor der ersten Verwendung auf die echte Server-URL. |
+| `TWENTY_DEPLOY_API_KEY` | GitHub-Repository **Settings → Secrets and variables → Actions** | API-Schlüssel mit Berechtigung zum Bereitstellen auf dem Zielserver.                                                       |
+
+<Note>
+Der Standardwert von `TWENTY_DEPLOY_URL` (`http://localhost:3000`) ist ein Platzhalter — von einem GitHub-gehosteten Runner ist er nicht erreichbar. Aktualisieren Sie sie auf die öffentliche URL Ihres Servers (oder verwenden Sie einen selbstgehosteten Runner mit Netzwerkzugriff), bevor Sie CD aktivieren.
+</Note>
+
+**Eine Vorschau-Bereitstellung aus einem PR auslösen:**
+
+Fügen Sie einem Pull Request das Label `deploy` hinzu. Die `if:`-Bedingung in `cd.yml` führt den Job für diesen PR mit dem Head-Commit des PR aus, sodass Sie eine Änderung auf dem Zielserver vor dem Mergen validieren können.
+
+### Fixieren der wiederverwendbaren Actions
+
+Beide Workflows verweisen auf wiederverwendbare Actions mit `@main`, sodass Aktualisierungen der Actions im Repository `twentyhq/twenty` automatisch übernommen werden. Wenn Sie deterministische Builds möchten, ersetzen Sie `@main` in jeder `uses:`-Zeile durch eine Commit-SHA oder einen Release-Tag.
 
 ## Auf npm veröffentlichen
 
@@ -81,7 +168,7 @@ Die Veröffentlichung auf npm macht Ihre App im Twenty-Marktplatz auffindbar. Je
 ### Anforderungen
 
 * Ein [npm](https://www.npmjs.com)-Konto
-* Das Schlüsselwort `twenty-app` in Ihrem `package.json`-Array `keywords` (bereits enthalten, wenn Sie mit `create-twenty-app` ein Gerüst erstellen)
+* Das Schlüsselwort `twenty-app` in Ihrem `package.json`-Array `keywords` (manuell hinzufügen — es ist in der `create-twenty-app`-Vorlage standardmäßig nicht enthalten)
 
 ```json filename="package.json"
 {
@@ -111,6 +198,14 @@ export default defineApplication({
 
 Siehe das [defineApplication-Akkordeon](/l/de/developers/extend/apps/building#defineentity-functions) auf der Seite Building Apps für die vollständige Liste der Marktplatzfelder (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` usw.).
 
+#### Empfohlene Abmessungen für Screenshots
+
+Der Marktplatz stellt `screenshots` in einem festen `8:5`-Container dar (zum Beispiel `1600×1000 px`).
+
+<Note>
+Screenshots mit beliebigem Seitenverhältnis werden vollständig angezeigt und niemals beschnitten, aber alles, was deutlich höher oder schmaler als `8:5` ist, zeigt an den Seiten leere Balken.
+</Note>
+
 ### Veröffentlichen
 
 ```bash filename="Terminal"
@@ -130,9 +225,9 @@ Der Twenty-Server synchronisiert seinen Marktplatzkatalog **stündlich** aus der
 Sie können die Synchronisierung sofort auslösen, anstatt zu warten:
 
 ```bash filename="Terminal"
-yarn twenty catalog-sync
+yarn twenty server catalog-sync
 # To target a specific remote:
-# yarn twenty catalog-sync --remote production
+# yarn twenty server catalog-sync --remote production
 ```
 
 Die im Marktplatz angezeigten Metadaten stammen aus Ihrer `defineApplication()`-Konfiguration — Felder wie `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` und `termsUrl`.
@@ -189,3 +284,12 @@ Sie können Apps auch über die Befehlszeile installieren:
 ```bash filename="Terminal"
 yarn twenty install
 ```
+
+<Note>
+Der Server erzwingt bei der Installation semver-Versionierung und spiegelt damit die Regeln beim Bereitstellen wider:
+
+* Die Installation derselben Version, die in Ihrem Arbeitsbereich bereits installiert ist, wird mit einem `APP_ALREADY_INSTALLED`-Fehler abgelehnt.
+* Die Installation einer niedrigeren Version als die aktuell installierte wird mit einem `CANNOT_DOWNGRADE_APPLICATION`-Fehler abgelehnt.
+
+Um eine neuere Version zu installieren, stellen Sie sie zuerst bereit oder veröffentlichen Sie sie und führen Sie dann `yarn twenty install` erneut aus.
+</Note>

@@ -26,6 +26,7 @@ export const getJestMetadataAndApolloMocksAndCommandMenuWrapper = ({
   contextStoreTargetedRecordsRule,
   contextStoreCurrentViewId,
   contextStoreCurrentViewType,
+  contextStoreCurrentPageType,
   contextStoreNumberOfSelectedRecords,
   contextStoreCurrentObjectMetadataNameSingular,
   contextStoreFilters,
@@ -70,6 +71,7 @@ export const getJestMetadataAndApolloMocksAndCommandMenuWrapper = ({
                 contextStoreCurrentObjectMetadataNameSingular
               }
               contextStoreCurrentViewType={contextStoreCurrentViewType}
+              contextStoreCurrentPageType={contextStoreCurrentPageType}
             >
               {children}
             </JestContextStoreSetter>

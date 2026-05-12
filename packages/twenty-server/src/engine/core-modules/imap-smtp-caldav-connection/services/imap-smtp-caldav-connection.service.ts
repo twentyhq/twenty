@@ -1,20 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { ImapFlow } from 'imapflow';
 import { createTransport } from 'nodemailer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { Repository } from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   type AccountType,
   type ConnectionParameters,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
+import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 
 @Injectable()
 export class ImapSmtpCaldavService {
@@ -22,15 +25,22 @@ export class ImapSmtpCaldavService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly caldavClientService: CalDavClientService,
+    private readonly caldavFetchEventsService: CalDavFetchEventsService,
   ) {}
 
   async testImapConnection(
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const validatedHost = await this.secureHttpClientService.getValidatedHost(
+      params.host,
+    );
     const client = new ImapFlow({
-      host: params.host,
+      host: validatedHost,
       port: params.port,
       secure: params.secure ?? true,
       auth: {
@@ -91,8 +101,11 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const validatedHost = await this.secureHttpClientService.getValidatedHost(
+      params.host,
+    );
     const transport = createTransport({
-      host: params.host,
+      host: validatedHost,
       port: params.port,
       auth: {
         user: params.username ?? handle,
@@ -122,26 +135,30 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
-    const client = new CalDAVClient({
-      serverUrl: params.host,
-      username: params.username ?? handle,
-      password: params.password,
-    });
-
     try {
-      await client.listCalendars();
-      await client.validateSyncCollectionSupport();
+      const client = await this.caldavClientService.getClient({
+        serverUrl: params.host,
+        username: params.username ?? handle,
+        password: params.password,
+      });
+
+      const calendars =
+        await this.caldavFetchEventsService.listEventCalendars(client);
+
+      if (calendars.length === 0) {
+        throw new UserInputError('No calendar with event support found', {
+          userFriendlyMessage: msg`We couldn't find any calendars on your CalDAV server. Please make sure your account has at least one calendar.`,
+        });
+      }
     } catch (error) {
+      if (error instanceof UserInputError) {
+        throw error;
+      }
+
       this.logger.error(
         `CALDAV connection failed: ${error.message}`,
         error.stack,
       );
-
-      if (error.message?.includes('CALDAV_SYNC_COLLECTION_NOT_SUPPORTED')) {
-        throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
-          userFriendlyMessage: msg`Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail.`,
-        });
-      }
 
       if (error.code === 'FailedToOpenSocket') {
         throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
@@ -185,20 +202,20 @@ export class ImapSmtpCaldavService {
   async getImapSmtpCaldav(
     workspaceId: string,
     connectionId: string,
-  ): Promise<ConnectedAccountWorkspaceEntity | null> {
+  ): Promise<ConnectedAccountEntity | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const connectedAccount =
-          await this.connectedAccountDataAccessService.findOne(workspaceId, {
-            where: {
-              id: connectionId,
-              provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-            },
-          });
+        const connectedAccount = await this.connectedAccountRepository.findOne({
+          where: {
+            id: connectionId,
+            provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+            workspaceId,
+          },
+        });
 
-        return connectedAccount as ConnectedAccountWorkspaceEntity | null;
+        return connectedAccount;
       },
       authContext,
     );

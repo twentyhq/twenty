@@ -61,6 +61,15 @@ describe('computeStepOutputSchema', () => {
 
       expect(result).toBeUndefined();
     });
+
+    it('should return undefined for LOGIC_FUNCTION step type', () => {
+      const result = computeStepOutputSchema({
+        step: { type: 'LOGIC_FUNCTION', settings: {} } as any,
+        objectMetadataItems: [],
+      });
+
+      expect(result).toBeUndefined();
+    });
   });
 
   describe('DATABASE_EVENT trigger', () => {
@@ -464,6 +473,10 @@ describe('shouldComputeOutputSchemaOnFrontend', () => {
 
   it('should return false for ITERATOR', () => {
     expect(shouldComputeOutputSchemaOnFrontend('ITERATOR')).toBe(false);
+  });
+
+  it('should return false for LOGIC_FUNCTION', () => {
+    expect(shouldComputeOutputSchemaOnFrontend('LOGIC_FUNCTION')).toBe(false);
   });
 
   it('should return true for DATABASE_EVENT', () => {

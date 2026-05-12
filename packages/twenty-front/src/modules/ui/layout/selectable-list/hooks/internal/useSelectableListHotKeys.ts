@@ -1,11 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback } from 'react';
 import { useStore } from 'jotai';
+import { useCallback, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
+import { isSelectableListGridFocusedState } from '@/ui/layout/selectable-list/states/isSelectableListGridFocusedState';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 
 type Direction = 'up' | 'down' | 'left' | 'right';
@@ -15,6 +16,41 @@ export const useSelectableListHotKeys = (
   focusId: string,
   onSelect?: (itemId: string) => void,
 ) => {
+  // oxlint-disable-next-line twenty/no-state-useref
+  const lastBlurredInputRef = useRef<HTMLInputElement | null>(null);
+
+  const store = useStore();
+
+  const blurActiveInputIfNeeded = () => {
+    if (document.activeElement instanceof HTMLInputElement) {
+      lastBlurredInputRef.current = document.activeElement;
+      store.set(isSelectableListGridFocusedState.atom, true);
+      document.activeElement.blur();
+    }
+  };
+
+  const refocusBlurredInput = () => {
+    if (!lastBlurredInputRef.current) {
+      return;
+    }
+    store.set(isSelectableListGridFocusedState.atom, false);
+    lastBlurredInputRef.current.focus();
+    lastBlurredInputRef.current = null;
+  };
+
+  const clearSelection = (selectedItemId: string | null) => {
+    if (isNonEmptyString(selectedItemId)) {
+      store.set(selectedItemIdComponentState.atomFamily({ instanceId }), null);
+      store.set(
+        isSelectedItemIdComponentFamilyState.atomFamily({
+          instanceId,
+          familyKey: selectedItemId,
+        }),
+        false,
+      );
+    }
+  };
+
   const findPosition = (
     selectableItemIds: string[][],
     selectedItemId?: string | null,
@@ -30,8 +66,6 @@ export const useSelectableListHotKeys = (
       }
     }
   };
-
-  const store = useStore();
 
   const handleSelect = useCallback(
     (direction: Direction) => {
@@ -138,16 +172,58 @@ export const useSelectableListHotKeys = (
 
   useHotkeysOnFocusedElement({
     keys: Key.ArrowUp,
-    callback: () => handleSelect('up'),
+    callback: () => {
+      blurActiveInputIfNeeded();
+
+      const selectedItemId = store.get(
+        selectedItemIdComponentState.atomFamily({ instanceId }),
+      );
+      const selectableItemIds = store.get(
+        selectableItemIdsComponentState.atomFamily({ instanceId }),
+      );
+      const position = findPosition(selectableItemIds, selectedItemId);
+      const isAtTop = position !== undefined && position.row === 0;
+
+      if (!isAtTop || !lastBlurredInputRef.current) {
+        handleSelect('up');
+        return;
+      }
+
+      clearSelection(selectedItemId);
+      refocusBlurredInput();
+    },
+    focusId,
+    dependencies: [handleSelect, store, instanceId],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: Key.ArrowDown,
+    callback: () => {
+      blurActiveInputIfNeeded();
+      handleSelect('down');
+    },
     focusId,
     dependencies: [handleSelect],
   });
 
   useHotkeysOnFocusedElement({
-    keys: Key.ArrowDown,
-    callback: () => handleSelect('down'),
+    keys: '*',
+    callback: (keyboardEvent) => {
+      if (keyboardEvent.key.length !== 1) {
+        return;
+      }
+      if (
+        keyboardEvent.metaKey ||
+        keyboardEvent.ctrlKey ||
+        keyboardEvent.altKey
+      ) {
+        return;
+      }
+      refocusBlurredInput();
+    },
     focusId,
-    dependencies: [handleSelect],
+    dependencies: [],
+    options: { enableOnFormTags: false, preventDefault: false },
   });
 
   useHotkeysOnFocusedElement({
@@ -155,6 +231,7 @@ export const useSelectableListHotKeys = (
     callback: () => handleSelect('left'),
     focusId,
     dependencies: [handleSelect],
+    options: { enableOnFormTags: false },
   });
 
   useHotkeysOnFocusedElement({
@@ -162,5 +239,6 @@ export const useSelectableListHotKeys = (
     callback: () => handleSelect('right'),
     focusId,
     dependencies: [handleSelect],
+    options: { enableOnFormTags: false },
   });
 };

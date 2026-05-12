@@ -1,0 +1,178 @@
+---
+title: Rozvržení
+description: Definujte pohledy, položky navigační nabídky a rozvržení stránek, abyste utvářeli, jak se vaše aplikace zobrazuje v Twenty.
+icon: table-columns
+---
+
+Prvky rozvržení řídí, jak se vaše aplikace zobrazuje v uživatelském rozhraní Twenty — co je v postranním panelu, které uložené pohledy jsou součástí aplikace a jak je uspořádána stránka s podrobnostmi záznamu.
+
+## Pojmy rozvržení
+
+| Pojem                         | Co řídí                                                                                                         | Entita                     |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| **Pohled**                    | Uložené nastavení seznamu pro objekt — viditelná pole, pořadí, filtry, skupiny                                  | `defineView`               |
+| **Položka navigační nabídky** | Položka v levém postranním panelu, která odkazuje na pohled nebo externí URL                                    | `defineNavigationMenuItem` |
+| **Rozvržení stránky**         | Karty a widgety, které tvoří stránku s podrobnostmi záznamu                                                     | `definePageLayout`         |
+| **Karta Rozložení stránky**   | Samostatná karta připojená k existujícímu rozložení stránky (standardnímu nebo rozložení vaší vlastní aplikace) | `definePageLayoutTab`      |
+
+Pohledy, položky navigační nabídky a rozvržení stránek se na sebe odkazují pomocí `universalIdentifier`:
+
+* Položka **navigační nabídky** typu `VIEW` odkazuje na identifikátor `defineView`, takže odkaz v postranním panelu otevře daný uložený pohled.
+* **Rozvržení stránky** typu `RECORD_PAGE` cílí na objekt a může vkládat [front components](/l/cs/developers/extend/apps/front-components) do svých karet jako widgety.
+
+<AccordionGroup>
+<Accordion title="defineView" description="Definujte uložená zobrazení pro objekty">
+
+Zobrazení jsou uložené konfigurace toho, jak se zobrazují záznamy objektu — včetně toho, která pole jsou viditelná, jejich pořadí a jaké filtry či seskupení jsou použity. Pomocí `defineView()` můžete k aplikaci přidat předkonfigurovaná zobrazení:
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Hlavní body:
+* `objectUniversalIdentifier` určuje, na který objekt se toto zobrazení vztahuje.
+* `key` určuje typ zobrazení (např. `ViewKey.INDEX` pro hlavní seznam).
+* `fields` určuje, které sloupce se zobrazí a v jakém pořadí. Každé pole odkazuje na `fieldMetadataUniversalIdentifier`.
+* Pro pokročilejší konfigurace můžete definovat také `filters`, `filterGroups`, `groups` a `fieldGroups`.
+* `position` určuje pořadí, pokud pro stejný objekt existuje více zobrazení.
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="Definujte odkazy postranní navigace">
+
+Položky navigační nabídky přidávají vlastní položky do postranního panelu pracovního prostoru. Použijte `defineNavigationMenuItem()` k odkazování na zobrazení, externí URL nebo objekty:
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Hlavní body:
+* `type` určuje, na co položka menu odkazuje: `NavigationMenuItemType.VIEW` pro uložené zobrazení nebo `NavigationMenuItemType.LINK` pro externí URL.
+* Pro odkazy na zobrazení nastavte `viewUniversalIdentifier`. Pro externí odkazy nastavte `link`.
+* `position` určuje pořadí v postranním panelu.
+* `icon` a `color` (volitelné) upravují vzhled.
+
+</Accordion>
+<Accordion title="definePageLayout" description="Definujte vlastní rozvržení stránek pro zobrazení záznamů">
+
+Rozvržení stránek vám umožní přizpůsobit vzhled stránky s detailem záznamu — které karty se zobrazí, jaké widgety jsou uvnitř každé karty a jak jsou uspořádány. Pomocí `definePageLayout()` můžete k aplikaci přidat vlastní rozvržení:
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+Hlavní body:
+* `type` je obvykle `'RECORD_PAGE'` pro úpravu detailního zobrazení konkrétního objektu.
+* `objectUniversalIdentifier` určuje, na který objekt se toto rozvržení vztahuje.
+* Každá `tab` definuje sekci stránky s `title`, `position` a `layoutMode` (`CANVAS` pro volné rozvržení).
+* Každý `widget` uvnitř karty může vykreslit frontendovou komponentu, seznam relací nebo jiné vestavěné typy widgetů.
+* `position` na kartách určuje jejich pořadí. Použijte vyšší hodnoty (např. 50) pro umístění vlastních karet za vestavěné.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="Přidat kartu do existujícího rozvržení stránky">
+
+`definePageLayoutTab` umožňuje vaší aplikaci připojit jednu kartu — s volitelnými widgety — k **existujícímu** rozvržení stránky. Nejčastějším případem použití je přidání vlastní karty (například karty s analytikou nebo souhrnem AI) na jednu z vestavěných stránek záznamů Twenty nebo do rozvržení stránky, které vaše vlastní aplikace již dodává.
+
+Cílové rozvržení stránky musí být buď **standardní** rozvržení stránky Twenty, nebo takové, které je definované **vaší vlastní aplikací**; křížové odkazy na rozvržení stránek, která vlastní jiná nainstalovaná aplikace, dnes nejsou podporovány.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+Hlavní body:
+* `pageLayoutUniversalIdentifier` je při použití `definePageLayoutTab` **povinný** a musí odkazovat na rozvržení stránky, které již existuje v době instalace (standardní nebo vaší aplikace). Pokud nadřazené rozvržení stránky chybí, instalace selže s jasnou validační chybou.
+* `widgets` mají rozsah pouze pro tuto kartu — odkazují na frontendové komponenty, zobrazení apod. úplně stejně jako widgety definované přímo v `definePageLayout`.
+* `position` určuje pořadí vzhledem ke stávajícím kartám v cílovém rozvržení. Zvolte hodnotu, která umístí vaši kartu tam, kde ji chcete mít, relativně k vestavěným kartám.
+* Použijte to místo `definePageLayout`, když chcete pouze **přidat** do existujícího rozvržení. Použijte `definePageLayout`, když vlastníte celé rozvržení (typicky `RECORD_PAGE` pro objekt, který ve své aplikaci dodáváte, nebo `STANDALONE_PAGE`).
+
+</Accordion>
+</AccordionGroup>

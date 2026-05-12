@@ -1,18 +1,22 @@
+import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconEyeOff } from 'twenty-ui/display';
+import { Avatar, IconEyeOff } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
+import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 
 type SettingsApplicationDetailTitleProps = {
   displayName: string;
   description?: string;
   logoUrl?: string;
+  applicationId?: string;
+  applicationName?: string;
+  universalIdentifier?: string;
   isUnlisted?: boolean;
 };
 
 const StyledTitleContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[4]};
   width: ${() => {
     return OBJECT_SETTINGS_WIDTH + 'px';
   }};
@@ -34,38 +38,7 @@ const StyledHeaderLeft = styled.div`
 const StyledHeaderTop = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledLogo = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.tertiary};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  flex-shrink: 0;
-  height: 24px;
-  justify-content: center;
-  overflow: hidden;
-  width: 24px;
-`;
-
-const StyledLogoImage = styled.img`
-  height: 32px;
-  object-fit: contain;
-  width: 32px;
-`;
-
-const StyledLogoPlaceholder = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.color.blue};
-  border-radius: ${themeCssVariables.border.radius.xs};
-  color: ${themeCssVariables.font.color.inverted};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  height: 32px;
-  justify-content: center;
-  width: 32px;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledAppName = styled.div`
@@ -75,9 +48,10 @@ const StyledAppName = styled.div`
 `;
 
 const StyledAppDescription = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
+  color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
 `;
 
 const StyledUnlistedBanner = styled.div`
@@ -88,41 +62,50 @@ const StyledUnlistedBanner = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
   gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+  justify-content: center;
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 export const SettingsApplicationDetailTitle = ({
   displayName,
   description,
-  logoUrl,
+  applicationId,
   isUnlisted = false,
 }: SettingsApplicationDetailTitleProps) => {
+  const descriptionSummary = getApplicationDescriptionSummary(description);
+
+  const { applicationChipData } = useApplicationChipData({
+    applicationId,
+  });
+
   return (
     <StyledTitleContainer>
       {isUnlisted && (
         <StyledUnlistedBanner>
           <IconEyeOff size={16} />
-          {t`This application is not listed on the marketplace. It was shared via a direct link.`}
+          {t`Application not listed on the marketplace. It was shared via a direct link`}
         </StyledUnlistedBanner>
       )}
       <StyledHeader>
         <StyledHeaderLeft>
           <StyledHeaderTop>
-            <StyledLogo>
-              {logoUrl ? (
-                <StyledLogoImage src={logoUrl} alt={displayName} />
-              ) : (
-                <StyledLogoPlaceholder>
-                  {displayName.charAt(0).toUpperCase()}
-                </StyledLogoPlaceholder>
-              )}
-            </StyledLogo>
+            <Avatar
+              type="app"
+              size="lg"
+              avatarUrl={applicationChipData.logo}
+              placeholder={applicationChipData.name}
+              placeholderColorSeed={applicationChipData.seed}
+              color={applicationChipData.colors?.color}
+              backgroundColor={applicationChipData.colors?.backgroundColor}
+              borderColor={applicationChipData.colors?.borderColor}
+            />
             <StyledAppName>{displayName}</StyledAppName>
           </StyledHeaderTop>
-          {description && (
-            <StyledAppDescription>{description}</StyledAppDescription>
+          {descriptionSummary && (
+            <StyledAppDescription>{descriptionSummary}</StyledAppDescription>
           )}
         </StyledHeaderLeft>
       </StyledHeader>

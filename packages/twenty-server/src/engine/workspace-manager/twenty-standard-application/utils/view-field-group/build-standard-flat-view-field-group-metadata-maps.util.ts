@@ -9,8 +9,6 @@ import { computeStandardCalendarChannelEventAssociationViewFieldGroups } from 's
 import { computeStandardCalendarEventParticipantViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-calendar-event-participant-view-field-groups.util';
 import { computeStandardCompanyViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-company-view-field-groups.util';
 import { computeStandardConnectedAccountViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-connected-account-view-field-groups.util';
-import { computeStandardFavoriteViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-favorite-view-field-groups.util';
-import { computeStandardFavoriteFolderViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-favorite-folder-view-field-groups.util';
 import { computeStandardMessageChannelViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-message-channel-view-field-groups.util';
 import { computeStandardMessageChannelMessageAssociationViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-message-channel-message-association-view-field-groups.util';
 import { computeStandardMessageChannelMessageAssociationMessageFolderViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-message-channel-message-association-message-folder-view-field-groups.util';
@@ -38,8 +36,6 @@ const STANDARD_FLAT_VIEW_FIELD_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME = {
     computeStandardCalendarEventParticipantViewFieldGroups,
   company: computeStandardCompanyViewFieldGroups,
   connectedAccount: computeStandardConnectedAccountViewFieldGroups,
-  favorite: computeStandardFavoriteViewFieldGroups,
-  favoriteFolder: computeStandardFavoriteFolderViewFieldGroups,
   messageChannel: computeStandardMessageChannelViewFieldGroups,
   messageChannelMessageAssociation:
     computeStandardMessageChannelMessageAssociationViewFieldGroups,
@@ -62,18 +58,11 @@ const STANDARD_FLAT_VIEW_FIELD_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME = {
 export type BuildStandardFlatViewFieldGroupMetadataMapsArgs = Omit<
   CreateStandardViewFieldGroupArgs,
   'context' | 'objectName'
-> & {
-  shouldIncludeRecordPageLayouts?: boolean;
-};
+>;
 
-export const buildStandardFlatViewFieldGroupMetadataMaps = ({
-  shouldIncludeRecordPageLayouts,
-  ...args
-}: BuildStandardFlatViewFieldGroupMetadataMapsArgs): FlatEntityMaps<FlatViewFieldGroup> => {
-  if (!shouldIncludeRecordPageLayouts) {
-    return createEmptyFlatEntityMaps();
-  }
-
+export const buildStandardFlatViewFieldGroupMetadataMaps = (
+  args: BuildStandardFlatViewFieldGroupMetadataMapsArgs,
+): FlatEntityMaps<FlatViewFieldGroup> => {
   const allViewFieldGroupMetadatas: FlatViewFieldGroup[] = (
     Object.keys(
       STANDARD_FLAT_VIEW_FIELD_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME,

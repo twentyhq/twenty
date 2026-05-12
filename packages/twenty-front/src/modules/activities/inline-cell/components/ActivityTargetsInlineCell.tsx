@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
@@ -13,8 +13,9 @@ import { FieldFocusContextProvider } from '@/object-record/record-field/ui/conte
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { IconArrowUpRight, IconPencil } from 'twenty-ui/display';
 
 type ActivityTargetsInlineCellProps = {
@@ -37,8 +38,6 @@ export const ActivityTargetsInlineCell = ({
   const { activityTargetObjectRecords } =
     useActivityTargetObjectRecords(activityRecordId);
 
-  const { closeInlineCell } = useInlineCell(componentInstanceId);
-
   const {
     fieldDefinition,
     isRecordFieldReadOnly: isReadOnly,
@@ -53,6 +52,28 @@ export const ActivityTargetsInlineCell = ({
     activityObjectNameSingular,
     activityId: activityRecordId,
   });
+
+  const [isRelationPickerOpen, setIsRelationPickerOpen] = useState(false);
+
+  const { goBackToPreviousDropdownFocusId } =
+    useGoBackToPreviousDropdownFocusId();
+
+  const handleOpenRelationPicker = useCallback(() => {
+    openActivityTargetCellEditMode({
+      recordPickerInstanceId: componentInstanceId,
+      activityTargetObjectRecords,
+    });
+    setIsRelationPickerOpen(true);
+  }, [
+    activityTargetObjectRecords,
+    componentInstanceId,
+    openActivityTargetCellEditMode,
+  ]);
+
+  const handleCloseRelationPicker = useCallback(() => {
+    setIsRelationPickerOpen(false);
+    goBackToPreviousDropdownFocusId();
+  }, [goBackToPreviousDropdownFocusId]);
 
   return (
     <RecordFieldsScopeContextProvider
@@ -80,13 +101,24 @@ export const ActivityTargetsInlineCell = ({
                 showLabel: showLabel,
                 readonly: isReadOnly,
                 labelWidth: fieldDefinition?.labelWidth,
-                editModeContent: (
+                label: t`Relations`,
+                displayModeContent: (
+                  <ActivityTargetChips
+                    activityTargetObjectRecords={activityTargetObjectRecords}
+                    maxWidth={maxWidth}
+                  />
+                ),
+                onOpenEditMode: handleOpenRelationPicker,
+                onCloseEditMode: handleCloseRelationPicker,
+              }}
+            >
+              <RecordInlineCellContainer />
+              {isRelationPickerOpen && (
+                <RecordInlineCellEditMode>
                   <MultipleRecordPicker
                     focusId={componentInstanceId}
                     componentInstanceId={componentInstanceId}
-                    onClickOutside={() => {
-                      closeInlineCell();
-                    }}
+                    onClickOutside={handleCloseRelationPicker}
                     onChange={(morphItem) => {
                       updateActivityTargetFromCell({
                         recordPickerInstanceId: componentInstanceId,
@@ -95,27 +127,10 @@ export const ActivityTargetsInlineCell = ({
                           activityTargetObjectRecords,
                       });
                     }}
-                    onSubmit={() => {
-                      closeInlineCell();
-                    }}
+                    onSubmit={handleCloseRelationPicker}
                   />
-                ),
-                label: t`Relations`,
-                displayModeContent: (
-                  <ActivityTargetChips
-                    activityTargetObjectRecords={activityTargetObjectRecords}
-                    maxWidth={maxWidth}
-                  />
-                ),
-                onOpenEditMode: () => {
-                  openActivityTargetCellEditMode({
-                    recordPickerInstanceId: componentInstanceId,
-                    activityTargetObjectRecords,
-                  });
-                },
-              }}
-            >
-              <RecordInlineCellContainer />
+                </RecordInlineCellEditMode>
+              )}
             </RecordInlineCellContext.Provider>
           </FieldContextProvider>
         </FieldFocusContextProvider>

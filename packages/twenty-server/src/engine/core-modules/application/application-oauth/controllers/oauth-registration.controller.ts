@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
+  Param,
   Post,
   Req,
   Res,
@@ -116,16 +118,22 @@ export class OAuthRegistrationController {
       }
     }
 
-    // Validate token_endpoint_auth_method — only 'none' for public clients
-    const tokenEndpointAuthMethod = body.token_endpoint_auth_method ?? 'none';
+    // Dynamic registrations are always public — we don't issue a client
+    // secret via DCR. Silently downgrade any auth method to "none".
+    const requestedTokenEndpointAuthMethod =
+      body.token_endpoint_auth_method ?? 'none';
+    const tokenEndpointAuthMethod = 'none';
 
-    if (tokenEndpointAuthMethod !== 'none') {
+    if (
+      requestedTokenEndpointAuthMethod !== 'none' &&
+      requestedTokenEndpointAuthMethod !== 'client_secret_post' &&
+      requestedTokenEndpointAuthMethod !== 'client_secret_basic'
+    ) {
       res.status(400);
 
       return {
         error: 'invalid_client_metadata',
-        error_description:
-          'Only token_endpoint_auth_method "none" is supported for dynamic registrations (public clients with PKCE)',
+        error_description: `Unsupported token_endpoint_auth_method: ${requestedTokenEndpointAuthMethod}`,
       };
     }
 
@@ -154,6 +162,8 @@ export class OAuthRegistrationController {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Pragma', 'no-cache');
 
+    const issuer = `${req.protocol}://${req.get('host')}`;
+
     return {
       client_id: clientId,
       client_name: body.client_name,
@@ -163,6 +173,49 @@ export class OAuthRegistrationController {
       token_endpoint_auth_method: tokenEndpointAuthMethod,
       scope: requestedScopes.join(' '),
       client_id_issued_at: Math.floor(Date.now() / 1000),
+      registration_client_uri: `${issuer}/oauth/register/${clientId}`,
+    };
+  }
+
+  // RFC 7592 read-back. No registration_access_token is issued; the client_id
+  // is an unguessable UUID and the fields returned are already public.
+  @Get('register/:clientId')
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  async readRegistration(
+    @Param('clientId') clientId: string,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const registration = await this.applicationRegistrationRepository.findOne({
+      where: {
+        oAuthClientId: clientId,
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+      },
+    });
+
+    if (!registration) {
+      res.status(404);
+
+      return {
+        error: 'invalid_client',
+        error_description: 'Client not found',
+      };
+    }
+
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Pragma', 'no-cache');
+
+    const issuer = `${req.protocol}://${req.get('host')}`;
+
+    return {
+      client_id: registration.oAuthClientId,
+      client_name: registration.name,
+      redirect_uris: registration.oAuthRedirectUris,
+      grant_types: ['authorization_code', 'refresh_token'],
+      response_types: ['code'],
+      token_endpoint_auth_method: 'none',
+      scope: registration.oAuthScopes.join(' '),
+      registration_client_uri: `${issuer}/oauth/register/${registration.oAuthClientId}`,
     };
   }
 

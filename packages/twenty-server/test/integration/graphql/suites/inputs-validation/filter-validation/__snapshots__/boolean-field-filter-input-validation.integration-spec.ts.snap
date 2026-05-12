@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Filter input validation - BOOLEAN Gql filter input - failure BOOLEAN field type - should fail with filter : {"booleanField":{"eq":"not-a-boolean"}} 1`] = `"Boolean cannot represent a non boolean value: "not-a-boolean""`;
+exports[`Filter input validation - BOOLEAN Gql filter input - failure BOOLEAN field type - should fail with filter : {"booleanField":{"eq":"not-a-boolean"}} 1`] = `"Invalid boolean value 'not-a-boolean' for field "booleanField""`;
 
-exports[`Filter input validation - BOOLEAN Gql filter input - failure BOOLEAN field type - should fail with filter : {"booleanField":{"eq":[]}} 1`] = `"Boolean cannot represent a non boolean value: []"`;
+exports[`Filter input validation - BOOLEAN Gql filter input - failure BOOLEAN field type - should fail with filter : {"booleanField":{"eq":[]}} 1`] = `"Invalid boolean value [] for field "booleanField""`;
 
-exports[`Filter input validation - BOOLEAN Gql filter input - failure BOOLEAN field type - should fail with filter : {"booleanField":{"eq":2}} 1`] = `"Boolean cannot represent a non boolean value: 2"`;
+exports[`Filter input validation - BOOLEAN Gql filter input - failure BOOLEAN field type - should fail with filter : {"booleanField":{"eq":2}} 1`] = `"Invalid boolean value 2 for field "booleanField""`;
 
 exports[`Filter input validation - BOOLEAN Rest filter input - failure BOOLEAN field type - should fail with filter : "booleanField[eq]:\\"[]\\"" 1`] = `
 [

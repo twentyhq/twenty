@@ -20,6 +20,7 @@ const StyledAvatar = styled.div<{
   clickable?: boolean;
   color: string;
   backgroundColor: string;
+  borderColor?: string;
   backgroundTransparentLight: string;
   type?: Nullable<AvatarType>;
 }>`
@@ -29,8 +30,13 @@ const StyledAvatar = styled.div<{
   user-select: none;
 
   border-radius: ${({ rounded, type }) => {
-    return rounded ? '50%' : type === 'icon' ? '4px' : '2px';
+    if (rounded) return '50%';
+    if (type === 'icon') return '4px';
+    return '2px';
   }};
+  border: ${({ type, borderColor }) =>
+    type === 'app' && borderColor ? `1px solid ${borderColor}` : 'none'};
+  box-sizing: border-box;
   display: flex;
   font-size: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].fontSize};
   height: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].width};
@@ -69,6 +75,7 @@ export type AvatarProps = {
   type?: Nullable<AvatarType>;
   color?: string;
   backgroundColor?: string;
+  borderColor?: string;
   onClick?: () => void;
 };
 
@@ -83,6 +90,7 @@ export const Avatar = ({
   type = 'squared',
   color,
   backgroundColor,
+  borderColor,
 }: AvatarProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -124,11 +132,25 @@ export const Avatar = ({
     : (backgroundColor ??
       stringToThemeColorP3String({
         string: placeholderColorSeed ?? '',
-        variant: 4,
+        variant: type === 'app' ? 5 : 4,
         theme,
       }));
 
+  const fixedBorderColor =
+    type === 'app'
+      ? (borderColor ??
+        (isPlaceholderFirstCharEmpty
+          ? undefined
+          : stringToThemeColorP3String({
+              string: placeholderColorSeed ?? '',
+              variant: 6,
+              theme,
+            })))
+      : undefined;
+
   const showBackgroundColor = showPlaceholder;
+
+  const showBorderColor = showPlaceholder;
 
   return (
     <StyledAvatar
@@ -136,6 +158,7 @@ export const Avatar = ({
       backgroundColor={
         Icon ? 'inherit' : showBackgroundColor ? fixedBackgroundColor : 'none'
       }
+      borderColor={showBorderColor ? fixedBorderColor : undefined}
       color={fixedColor}
       clickable={!isUndefined(onClick)}
       rounded={type === 'rounded'}

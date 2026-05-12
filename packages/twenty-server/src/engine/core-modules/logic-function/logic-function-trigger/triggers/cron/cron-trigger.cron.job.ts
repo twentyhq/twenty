@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -5,6 +6,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -22,12 +24,15 @@ export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class CronTriggerCronJob {
+  private readonly logger = new Logger(CronTriggerCronJob.name);
+
   constructor(
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -43,45 +48,54 @@ export class CronTriggerCronJob {
     const now = new Date();
 
     for (const activeWorkspace of activeWorkspaces) {
-      const { flatLogicFunctionMaps } =
-        await this.workspaceCacheService.getOrRecompute(activeWorkspace.id, [
-          'flatLogicFunctionMaps',
-        ]);
+      try {
+        const { flatLogicFunctionMaps } =
+          await this.workspaceCacheService.getOrRecompute(activeWorkspace.id, [
+            'flatLogicFunctionMaps',
+          ]);
 
-      const logicFunctions = Object.values(
-        flatLogicFunctionMaps.byUniversalIdentifier,
-      );
-
-      for (const logicFunction of logicFunctions) {
-        if (!isDefined(logicFunction)) {
-          continue;
-        }
-
-        const cronSettings = logicFunction.cronTriggerSettings;
-
-        if (!isDefined(cronSettings?.pattern)) {
-          continue;
-        }
-
-        if (isDefined(logicFunction.deletedAt)) {
-          continue;
-        }
-
-        if (!shouldRunNow(cronSettings.pattern, now)) {
-          continue;
-        }
-
-        await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
-          LogicFunctionTriggerJob.name,
-          [
-            {
-              logicFunctionId: logicFunction.id,
-              workspaceId: activeWorkspace.id,
-              payload: {},
-            },
-          ],
-          { retryLimit: 3 },
+        const logicFunctions = Object.values(
+          flatLogicFunctionMaps.byUniversalIdentifier,
         );
+
+        for (const logicFunction of logicFunctions) {
+          if (!isDefined(logicFunction)) {
+            continue;
+          }
+
+          const cronSettings = logicFunction.cronTriggerSettings;
+
+          if (!isDefined(cronSettings?.pattern)) {
+            continue;
+          }
+
+          if (isDefined(logicFunction.deletedAt)) {
+            continue;
+          }
+
+          if (!shouldRunNow(cronSettings.pattern, now)) {
+            continue;
+          }
+
+          await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+            LogicFunctionTriggerJob.name,
+            [
+              {
+                logicFunctionId: logicFunction.id,
+                workspaceId: activeWorkspace.id,
+                payload: {},
+              },
+            ],
+            { retryLimit: 3 },
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error processing workspace ${activeWorkspace.id}: ${error}`,
+        );
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: { id: activeWorkspace.id },
+        });
       }
     }
   }

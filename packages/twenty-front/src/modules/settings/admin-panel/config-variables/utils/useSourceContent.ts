@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { CustomError } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
-import { ConfigSource } from '~/generated-metadata/graphql';
+import { ConfigSource } from '~/generated-admin/graphql';
 
 export const useSourceContent = (source: ConfigSource) => {
   const { theme } = useContext(ThemeContext);

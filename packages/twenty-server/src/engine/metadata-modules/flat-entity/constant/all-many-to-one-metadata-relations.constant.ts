@@ -86,6 +86,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'frontComponentUniversalIdentifier',
     },
+    pageLayout: {
+      metadataName: 'pageLayout',
+      foreignKey: 'pageLayoutId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'pageLayoutUniversalIdentifier',
+    },
   },
   navigationMenuItem: {
     workspace: null,
@@ -111,6 +118,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       inverseOneToManyProperty: null,
       isNullable: true,
       universalForeignKey: 'viewUniversalIdentifier',
+    },
+    pageLayout: {
+      metadataName: 'pageLayout',
+      foreignKey: 'pageLayoutId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'pageLayoutUniversalIdentifier',
     },
   },
   fieldMetadata: {
@@ -139,7 +153,6 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     },
   },
   objectMetadata: {
-    dataSource: null,
     workspace: null,
     application: null,
   },
@@ -474,6 +487,10 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
+  applicationVariable: {
+    workspace: null,
+    application: null,
+  },
   viewSort: {
     application: null,
     workspace: null,
@@ -491,6 +508,10 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: false,
       metadataName: 'view',
     },
+  },
+  connectionProvider: {
+    workspace: null,
+    application: null,
   },
 } as const satisfies ManyToOneMetadataRelationsProperties;
 

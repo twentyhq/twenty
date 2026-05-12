@@ -1,0 +1,1 @@
+export { TermsDocument } from './TermsDocument';

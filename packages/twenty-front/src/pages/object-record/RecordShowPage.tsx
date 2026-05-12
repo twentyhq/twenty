@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-import { CommandMenuItemMoreActionsButton } from '@/command-menu-item/server-items/display/components/CommandMenuItemMoreActionsButton';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
@@ -13,7 +13,6 @@ import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/compon
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
-import { PageHeaderToggleSidePanelButton } from '@/ui/layout/page-header/components/PageHeaderToggleSidePanelButton';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
@@ -57,11 +56,7 @@ export const RecordShowPage = () => {
               objectRecordId={objectRecordId}
             >
               <RecordShowCommandMenu />
-              {!isLayoutCustomizationModeEnabled ? (
-                <CommandMenuItemMoreActionsButton />
-              ) : (
-                <PageHeaderToggleSidePanelButton />
-              )}
+              {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
             </RecordShowPageHeader>
             <MainContainerLayoutWithSidePanel>
               <TimelineActivityContext.Provider

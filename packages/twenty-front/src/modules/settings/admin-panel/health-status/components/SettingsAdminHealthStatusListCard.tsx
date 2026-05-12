@@ -14,7 +14,7 @@ import { ThemeContext } from 'twenty-ui/theme-constants';
 import {
   HealthIndicatorId,
   type SystemHealthService,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 
 import { SettingsAdminHealthStatusRightContainer } from './SettingsAdminHealthStatusRightContainer';
 

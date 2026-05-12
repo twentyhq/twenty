@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
@@ -19,6 +20,7 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
     CodeStepBuildModule,
     WorkflowRunnerModule,
     AutomatedTriggerModule,
+    CacheStorageModule,
     CommandMenuItemModule,
     FeatureFlagModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),

@@ -1,20 +1,30 @@
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { ResourceCreditPriceSelector } from '@/settings/billing/components/internal/ResourceCreditPriceSelector';
 import { MeteredPriceSelector } from '@/settings/billing/components/internal/MeteredPriceSelector';
 import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
+import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
+import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
+import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
+import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { formatToShortNumber, getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, HorizontalSeparator, IconChartBar } from 'twenty-ui/display';
+import {
+  H2Title,
+  HorizontalSeparator,
+  IconChartBar,
+  IconExternalLink,
+} from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -26,6 +36,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 const StyledCreditUsageFooterActions = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[4]};
 `;
 
@@ -43,24 +55,24 @@ export const SettingsBillingCreditsSection = ({
   const { isMonthlyPlan } = useCurrentBillingFlags();
 
   const { getCurrentMeteredPricesByInterval } = useCurrentMetered();
-
-  const isUsageAnalyticsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
-  );
+  const { getResourceCreditPricesByInterval } = useCurrentResourceCredit();
 
   const { getIntervalLabel } = useBillingWording();
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
+  const isV2 = useIsFeatureEnabled(FeatureFlagKey.IS_BILLING_V2_ENABLED);
+
   const { getWorkflowNodeExecutionUsage } = useGetWorkflowNodeExecutionUsage();
+  const { getResourceCreditUsage } = useGetResourceCreditUsage();
 
   const {
     usedCredits,
     grantedCredits,
-    rolloverCredits,
     totalGrantedCredits,
     unitPriceCents,
-  } = getWorkflowNodeExecutionUsage();
+    rolloverCredits,
+  } = isV2 ? getResourceCreditUsage() : getWorkflowNodeExecutionUsage();
 
   const progressBarValue = (usedCredits / totalGrantedCredits) * 100;
 
@@ -68,11 +80,15 @@ export const SettingsBillingCreditsSection = ({
 
   const extraCreditsUsed = Math.max(0, usedCredits - totalGrantedCredits);
 
-  const costPer1kExtraCredits = (unitPriceCents / 100) * 1000;
+  const costPerExtraCredits = unitPriceCents / 100;
 
   const costExtraCredits = (extraCreditsUsed * unitPriceCents) / 100;
 
   const meteredBillingPrices = getCurrentMeteredPricesByInterval(
+    currentBillingSubscription.interval,
+  );
+
+  const resourceCreditPrices = getResourceCreditPricesByInterval(
     currentBillingSubscription.interval,
   );
 
@@ -86,7 +102,7 @@ export const SettingsBillingCreditsSection = ({
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
             label={t`Credits Used`}
-            value={`${formatNumber(usedCredits)}/${formatNumber(totalGrantedCredits, { abbreviate: true, decimals: 2 })}`}
+            value={`${formatNumber(usedCredits, { abbreviate: true, decimals: 2 })}/${formatNumber(totalGrantedCredits, { abbreviate: true, decimals: 2 })}`}
           />
           <ProgressBar
             value={progressBarValue}
@@ -114,6 +130,8 @@ export const SettingsBillingCreditsSection = ({
                     abbreviate: true,
                     decimals: 2,
                   })}
+                  tooltipText={t`Unused credits from the previous period. Expired at the end of the period.`}
+                  tooltipId="rollover-credits-info"
                 />
               )}
               {rolloverCredits > 0 && (
@@ -125,41 +143,66 @@ export const SettingsBillingCreditsSection = ({
                   })}
                 />
               )}
-              <HorizontalSeparator noMargin color={theme.background.tertiary} />
-              <SettingsBillingLabelValueItem
-                label={t`Extra Credits Used`}
-                value={`${formatToShortNumber(extraCreditsUsed)}`}
-              />
-              <SettingsBillingLabelValueItem
-                label={t`Cost per 1k Extra Credits`}
-                value={`$${formatNumber(costPer1kExtraCredits, { abbreviate: true, decimals: 6 })}`}
-              />
-              <SettingsBillingLabelValueItem
-                label={t`Cost`}
-                isValueInPrimaryColor={true}
-                value={`$${formatNumber(costExtraCredits, { decimals: 2 })}`}
-              />
+              {!isV2 && (
+                <>
+                  <HorizontalSeparator
+                    noMargin
+                    color={theme.background.tertiary}
+                  />
+                  <SettingsBillingLabelValueItem
+                    label={t`Extra Credits Used`}
+                    value={`${formatToShortNumber(extraCreditsUsed)}`}
+                  />
+                  <SettingsBillingLabelValueItem
+                    label={t`Cost per Extra Credits`}
+                    value={`$${formatNumber(costPerExtraCredits, { abbreviate: true, decimals: 2 })}`}
+                  />
+                  <SettingsBillingLabelValueItem
+                    label={t`Cost`}
+                    isValueInPrimaryColor={true}
+                    value={`$${formatNumber(costExtraCredits, { decimals: 2 })}`}
+                  />
+                </>
+              )}
             </>
           )}
         </SubscriptionInfoContainer>
 
-        {isUsageAnalyticsEnabled && (
-          <StyledCreditUsageFooterActions>
-            <UndecoratedLink to={getSettingsPath(SettingsPath.Usage)}>
-              <Button
-                Icon={IconChartBar}
-                title={t`View usage`}
-                variant="secondary"
-              />
-            </UndecoratedLink>
-          </StyledCreditUsageFooterActions>
-        )}
+        <StyledCreditUsageFooterActions>
+          <UndecoratedLink to={getSettingsPath(SettingsPath.Usage)}>
+            <Button
+              Icon={IconChartBar}
+              title={t`View usage`}
+              variant="secondary"
+            />
+          </UndecoratedLink>
+          <Button
+            Icon={IconExternalLink}
+            title={t`How credits work`}
+            variant="secondary"
+            onClick={() =>
+              window.open(
+                getDocumentationUrl({
+                  path: DOCUMENTATION_PATHS.USER_GUIDE_BILLING_CAPABILITIES_CREDITS,
+                }),
+                '_blank',
+              )
+            }
+          />
+        </StyledCreditUsageFooterActions>
       </Section>
       <Section>
-        <MeteredPriceSelector
-          meteredBillingPrices={meteredBillingPrices}
-          isTrialing={isTrialing}
-        />
+        {isV2 ? (
+          <ResourceCreditPriceSelector
+            resourceCreditPrices={resourceCreditPrices}
+            isTrialing={isTrialing}
+          />
+        ) : (
+          <MeteredPriceSelector
+            meteredBillingPrices={meteredBillingPrices}
+            isTrialing={isTrialing}
+          />
+        )}
       </Section>
     </>
   );

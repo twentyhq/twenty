@@ -1,10 +1,19 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -29,6 +38,53 @@ export class CommandMenuItemResolver {
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly frontComponentService: FrontComponentService,
   ) {}
+
+  @ResolveField(() => String)
+  async label(
+    @Parent() commandMenuItem: CommandMenuItemDTO,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string> {
+    return (
+      (await this.commandMenuItemService.resolveNavigationField({
+        commandMenuItem,
+        fieldName: 'label',
+        objectMetadataLoader: context.loaders.objectMetadataLoader,
+        workspaceId: workspace.id,
+        locale: context.req.locale,
+      })) ?? ''
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async shortLabel(
+    @Parent() commandMenuItem: CommandMenuItemDTO,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | undefined> {
+    return this.commandMenuItemService.resolveNavigationField({
+      commandMenuItem,
+      fieldName: 'shortLabel',
+      objectMetadataLoader: context.loaders.objectMetadataLoader,
+      workspaceId: workspace.id,
+      locale: context.req.locale,
+    });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async icon(
+    @Parent() commandMenuItem: CommandMenuItemDTO,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | undefined> {
+    return this.commandMenuItemService.resolveNavigationField({
+      commandMenuItem,
+      fieldName: 'icon',
+      objectMetadataLoader: context.loaders.objectMetadataLoader,
+      workspaceId: workspace.id,
+      locale: context.req.locale,
+    });
+  }
 
   @ResolveField(() => FrontComponentDTO, { nullable: true })
   async frontComponent(

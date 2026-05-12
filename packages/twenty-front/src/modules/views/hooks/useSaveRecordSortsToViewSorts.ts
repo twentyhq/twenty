@@ -16,7 +16,7 @@ export const useSaveRecordSortsToViewSorts = () => {
   const {
     performViewSortAPICreate,
     performViewSortAPIUpdate,
-    performViewSortAPIDelete,
+    performViewSortAPIDestroy,
   } = usePerformViewSortAPIPersist();
 
   const { currentView } = useGetCurrentViewOnly();
@@ -71,7 +71,7 @@ export const useSaveRecordSortsToViewSorts = () => {
       },
     }));
 
-    const deleteViewSortInputs = viewSortsToDelete.map((viewSort) => ({
+    const destroyViewSortInputs = viewSortsToDelete.map((viewSort) => ({
       input: {
         id: viewSort.id,
       },
@@ -87,7 +87,7 @@ export const useSaveRecordSortsToViewSorts = () => {
       return;
     }
 
-    const deleteResult = await performViewSortAPIDelete(deleteViewSortInputs);
+    const deleteResult = await performViewSortAPIDestroy(destroyViewSortInputs);
     if (deleteResult.status === 'failed') {
       return;
     }
@@ -98,7 +98,7 @@ export const useSaveRecordSortsToViewSorts = () => {
     currentRecordSortsCallbackState,
     performViewSortAPICreate,
     performViewSortAPIUpdate,
-    performViewSortAPIDelete,
+    performViewSortAPIDestroy,
   ]);
 
   return {

@@ -2,7 +2,7 @@ import {
   PEOPLE_ON_CALL_RECORDING_ID,
 } from 'src/fields/people-on-call-recording.field';
 import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
-import { defineField, FieldType, RelationType } from 'twenty-sdk';
+import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
 
 export const CALL_RECORDING_ON_PERSON_ID =
   'c62ae064-88aa-48a7-84b3-c9940e3a5db9';

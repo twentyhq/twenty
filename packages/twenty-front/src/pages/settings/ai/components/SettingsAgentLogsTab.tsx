@@ -239,7 +239,7 @@ export const SettingsAgentLogsTab = ({
               >
                 {latestEvaluation && (
                   <UndecoratedLink
-                    to={getSettingsPath(SettingsPath.AIAgentTurnDetail)
+                    to={getSettingsPath(SettingsPath.AiAgentTurnDetail)
                       .replace(':agentId', agentId)
                       .replace(':turnId', turn.id)}
                   >

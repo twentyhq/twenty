@@ -1,0 +1,189 @@
+---
+title: OAuth
+icon: klíč
+description: Tok s autorizačním kódem s PKCE a přihlašovacími údaji klienta pro přístup server-to-server.
+---
+
+Twenty implementuje OAuth 2.0 s autorizačním kódem + PKCE pro aplikace pro uživatele a přihlašovací údaje klienta pro přístup server-to-server. Klienti se registrují dynamicky přes [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — žádné ruční nastavení v dashboardu.
+
+## Kdy použít OAuth
+
+| Scénář                                               | Metoda ověřování                                                                 |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Interní skripty, automatizace                        | [Klíč API](/l/cs/developers/extend/api#authentication)                                |
+| Externí aplikace jednající jménem uživatele          | **OAuth — autorizační kód**                                                      |
+| Server-to-server, bez uživatelského kontextu         | **OAuth — přihlašovací údaje klienta**                                           |
+| Aplikace Twenty s rozšířeními uživatelského rozhraní | [Aplikace](/l/cs/developers/extend/apps/getting-started) (OAuth je řešen automaticky) |
+
+## Registrace klienta
+
+Twenty podporuje **dynamickou registraci klienta** podle [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591). Není potřeba žádné ruční nastavení — registrujte programově:
+
+```bash
+POST /oauth/register
+Content-Type: application/json
+
+{
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"],
+  "grant_types": ["authorization_code"],
+  "token_endpoint_auth_method": "client_secret_post"
+}
+```
+
+**Odpověď:**
+
+```json
+{
+  "client_id": "abc123",
+  "client_secret": "secret456",
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"]
+}
+```
+
+<Warning>
+Uložte `client_secret` bezpečně — později jej nelze získat zpět.
+</Warning>
+
+## Oprávnění
+
+| Oprávnění | Přístup                                               |
+| --------- | ----------------------------------------------------- |
+| `api`     | Úplný přístup pro čtení i zápis k API Core a Metadata |
+| `profile` | Čtení informací o profilu ověřeného uživatele         |
+
+Vyžádejte oprávnění jako řetězec oddělený mezerami: `scope=api profile`
+
+## Tok s autorizačním kódem
+
+Tento tok použijte, když vaše aplikace jedná jménem uživatele Twenty.
+
+### 1. Přesměrujte uživatele k autorizaci
+
+```
+GET /oauth/authorize?
+  client_id=YOUR_CLIENT_ID&
+  response_type=code&
+  redirect_uri=https://myapp.com/callback&
+  scope=api&
+  state=random_state_value&
+  code_challenge=CHALLENGE&
+  code_challenge_method=S256
+```
+
+| Parametr                | Povinné    | Popis                                                          |
+| ----------------------- | ---------- | -------------------------------------------------------------- |
+| `client_id`             | Ano        | Vaše registrované ID klienta                                   |
+| `response_type`         | Ano        | Musí být `code`                                                |
+| `redirect_uri`          | Ano        | Musí odpovídat registrované adrese URI pro přesměrování        |
+| `scope`                 | Ne         | Oprávnění oddělená mezerami (výchozí je `api`)                 |
+| `state`                 | Doporučeno | Náhodný řetězec k prevenci útoků CSRF                          |
+| `code_challenge`        | Doporučeno | Výzva PKCE (hash SHA-256 z verifieru, kódovaný jako base64url) |
+| `code_challenge_method` | Doporučeno | Při použití PKCE musí být `S256`                               |
+
+Uživatel uvidí souhlasovou obrazovku a přístup schválí nebo zamítne.
+
+### 2. Zpracujte callback
+
+Po autorizaci Twenty přesměruje zpět na vaše `redirect_uri`:
+
+```
+https://myapp.com/callback?code=AUTH_CODE&state=random_state_value
+```
+
+Ověřte, že `state` odpovídá tomu, co jste poslali.
+
+### 3. Vyměňte kód za tokeny
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&
+code=AUTH_CODE&
+redirect_uri=https://myapp.com/callback&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+code_verifier=YOUR_PKCE_VERIFIER
+```
+
+**Odpověď:**
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "dGhpcyBpcyBh..."
+}
+```
+
+### 4. Použijte přístupový token
+
+```bash
+GET /rest/companies
+Authorization: Bearer ACCESS_TOKEN
+```
+
+### 5. Obnovte po vypršení platnosti
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&
+refresh_token=YOUR_REFRESH_TOKEN&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET
+```
+
+## Tok s přihlašovacími údaji klienta
+
+Pro integrace server-to-server bez interakce uživatele:
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+scope=api
+```
+
+Vrácený token má přístup na úrovni pracovního prostoru, není vázán na žádného konkrétního uživatele.
+
+## Zjišťování serveru
+
+Twenty zveřejňuje svou konfiguraci OAuth na standardním koncovém bodu pro zjišťování:
+
+```
+GET /.well-known/oauth-authorization-server
+```
+
+Vrací všechny koncové body, podporované typy grantů, oprávnění a možnosti — užitečné pro tvorbu obecných klientů OAuth.
+
+## Přehled koncových bodů API
+
+| Koncový bod                               | Účel                         |
+| ----------------------------------------- | ---------------------------- |
+| `/.well-known/oauth-authorization-server` | Zjišťování metadat serveru   |
+| `/oauth/register`                         | Dynamická registrace klienta |
+| `/oauth/authorize`                        | Autorizace uživatele         |
+| `/oauth/token`                            | Výměna a obnovení tokenu     |
+
+| Prostředí           | Základní URL             |
+| ------------------- | ------------------------ |
+| **Cloud**           | `https://api.twenty.com` |
+| **Vlastní hosting** | `https://{your-domain}`  |
+
+## OAuth vs klíče API
+
+|                             | API Klíče                             | OAuth                                       |
+| --------------------------- | ------------------------------------- | ------------------------------------------- |
+| **Nastavení**               | Generovat v Nastavení                 | Zaregistrovat klienta, implementovat tok    |
+| **Uživatelský kontext**     | Žádný (na úrovni pracovního prostoru) | Oprávnění konkrétního uživatele             |
+| **Vhodné pro**              | Skripty, interní nástroje             | Externí aplikace, víceuživatelské integrace |
+| **Rotace tokenů**           | Ruční                                 | Automaticky prostřednictvím refresh tokenů  |
+| **Přístup podle oprávnění** | Plný přístup k API                    | Jemně odstupňovaný pomocí oprávnění         |

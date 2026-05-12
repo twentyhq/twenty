@@ -1,7 +1,7 @@
+import { defineFrontComponent } from 'twenty-sdk/define';
 import Button from '@mui/material/Button';
 import MuiChip from '@mui/material/Chip';
 import { useState } from 'react';
-import { defineFrontComponent } from '@/sdk';
 
 const MuiComponent = () => {
   const [count, setCount] = useState(0);

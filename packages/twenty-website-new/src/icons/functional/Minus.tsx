@@ -1,4 +1,4 @@
-const MINUS_PATH = "M.5 7.25H14.5";
+const MINUS_PATH = 'M.5 7.25H14.5';
 
 interface MinusIconProps {
   size: number;

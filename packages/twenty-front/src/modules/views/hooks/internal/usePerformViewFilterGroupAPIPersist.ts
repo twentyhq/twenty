@@ -104,11 +104,11 @@ export const usePerformViewFilterGroupAPIPersist = () => {
     [apolloClient],
   );
 
-  const performViewFilterGroupAPIDelete = useCallback(
-    (viewFilterGroupIdsToDelete: string[]) => {
-      if (!viewFilterGroupIdsToDelete.length) return;
+  const performViewFilterGroupAPIDestroy = useCallback(
+    (viewFilterGroupIdsToDestroy: string[]) => {
+      if (!viewFilterGroupIdsToDestroy.length) return;
       return Promise.all(
-        viewFilterGroupIdsToDelete.map((viewFilterGroupId) =>
+        viewFilterGroupIdsToDestroy.map((viewFilterGroupId) =>
           apolloClient.mutate<{ destroyViewFilterGroup: ViewFilterGroup }>({
             mutation: DESTROY_VIEW_FILTER_GROUP,
             variables: {
@@ -124,6 +124,6 @@ export const usePerformViewFilterGroupAPIPersist = () => {
   return {
     performViewFilterGroupAPICreate,
     performViewFilterGroupAPIUpdate,
-    performViewFilterGroupAPIDelete,
+    performViewFilterGroupAPIDestroy,
   };
 };

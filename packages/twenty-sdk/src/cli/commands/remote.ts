@@ -2,6 +2,7 @@ import { authLogin } from '@/cli/operations/login';
 import { authLoginOAuth } from '@/cli/operations/login-oauth';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 import { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
@@ -17,20 +18,29 @@ const deriveRemoteName = (url: string): string => {
   }
 };
 
-const authenticate = async (apiUrl: string, apiKey?: string): Promise<void> => {
-  const result = apiKey
-    ? await authLogin({ apiKey, apiUrl })
-    : await runOAuthWithApiKeyFallback(apiUrl);
+type AuthMethod = 'OAuth' | 'API key';
 
-  if (!result.success) {
-    console.error(chalk.red('✗ Authentication failed.'));
-    process.exit(1);
+const authenticate = async (
+  apiUrl: string,
+  apiKey?: string,
+): Promise<AuthMethod> => {
+  if (apiKey) {
+    const result = await authLogin({ apiKey, apiUrl });
+
+    if (!result.success) {
+      console.error(chalk.red('✗ Authentication failed.'));
+      process.exit(1);
+    }
+
+    return 'API key';
   }
+
+  return runOAuthWithApiKeyFallback(apiUrl);
 };
 
 const runOAuthWithApiKeyFallback = async (
   apiUrl: string,
-): Promise<{ success: boolean }> => {
+): Promise<AuthMethod> => {
   await inquirer.prompt([
     {
       type: 'input',
@@ -42,7 +52,7 @@ const runOAuthWithApiKeyFallback = async (
   const oauthResult = await authLoginOAuth({ apiUrl });
 
   if (oauthResult.success) {
-    return oauthResult;
+    return 'OAuth';
   }
 
   console.log(chalk.yellow(oauthResult.error.message));
@@ -57,7 +67,17 @@ const runOAuthWithApiKeyFallback = async (
     },
   ]);
 
-  return authLogin({ apiKey: keyAnswer.apiKey, apiUrl });
+  const fallbackResult = await authLogin({
+    apiKey: keyAnswer.apiKey,
+    apiUrl,
+  });
+
+  if (!fallbackResult.success) {
+    console.error(chalk.red('✗ Authentication failed.'));
+    process.exit(1);
+  }
+
+  return 'API key';
 };
 
 export const registerRemoteCommands = (program: Command): void => {
@@ -72,21 +92,33 @@ export const registerRemoteCommands = (program: Command): void => {
     .option('--api-key <apiKey>', 'API key for non-interactive auth')
     .option('--api-url <apiUrl>', 'Server URL')
     .option('--local', 'Connect to a local Twenty server (auto-detect)')
+    .option('--test', 'Write to config.test.json (for integration tests)')
     .action(
       async (options: {
         as?: string;
         apiKey?: string;
         apiUrl?: string;
         local?: boolean;
+        test?: boolean;
       }) => {
-        const configService = new ConfigService();
+        const configPath = options.test ? getConfigPath(true) : undefined;
+        const configService = new ConfigService(
+          configPath ? { configPath } : undefined,
+        );
         const existingRemotes = await configService.getRemotes();
 
         if (options.as !== undefined && existingRemotes.includes(options.as)) {
           const config = await configService.getConfigForRemote(options.as);
 
           ConfigService.setActiveRemote(options.as);
-          await authenticate(config.apiUrl, options.apiKey);
+          const method = await authenticate(config.apiUrl, options.apiKey);
+
+          console.log(
+            chalk.green(`✓ Re-authenticated "${options.as}" via ${method}.`),
+          );
+
+          await configService.setDefaultRemote(options.as);
+          console.log(chalk.green(`✓ Default remote set to "${options.as}".`));
 
           return;
         }
@@ -134,13 +166,14 @@ export const registerRemoteCommands = (program: Command): void => {
         const name = options.as ?? deriveRemoteName(apiUrl);
 
         ConfigService.setActiveRemote(name);
-        await authenticate(apiUrl, options.apiKey);
+        const method = await authenticate(apiUrl, options.apiKey);
 
-        const defaultRemote = await configService.getDefaultRemote();
+        console.log(
+          chalk.green(`✓ Remote "${name}" added (${apiUrl}) via ${method}.`),
+        );
 
-        if (defaultRemote === 'local') {
-          await configService.setDefaultRemote(name);
-        }
+        await configService.setDefaultRemote(name);
+        console.log(chalk.green(`✓ Default remote set to "${name}".`));
       },
     );
 
@@ -164,7 +197,7 @@ export const registerRemoteCommands = (program: Command): void => {
       for (const remoteName of remotes) {
         const config = await configService.getConfigForRemote(remoteName);
 
-        const authMethod = config.accessToken
+        const authMethod = config.twentyCLIAccessToken
           ? 'oauth'
           : config.apiKey
             ? 'api-key'
@@ -224,7 +257,7 @@ export const registerRemoteCommands = (program: Command): void => {
       const activeRemote = ConfigService.getActiveRemote();
       const config = await configService.getConfig();
 
-      const authMethod = config.accessToken
+      const authMethod = config.twentyCLIAccessToken
         ? 'oauth'
         : config.apiKey
           ? 'api-key'

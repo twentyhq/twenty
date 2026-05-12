@@ -19,7 +19,6 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/work
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
@@ -28,20 +27,21 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
-  type WorkflowAction,
   WorkflowActionType,
+  type WorkflowAction,
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
@@ -182,10 +182,13 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               },
               input: {
                 logicFunctionId: newLogicFunction.id,
-                logicFunctionInput: isDefined(newLogicFunction.toolInputSchema)
-                  ? (getFunctionInputFromInputSchema([
-                      newLogicFunction.toolInputSchema,
-                    ])[0] ?? {})
+                logicFunctionInput: isDefined(
+                  newLogicFunction.workflowActionTriggerSettings?.inputSchema,
+                )
+                  ? (getFunctionInputFromInputSchema(
+                      newLogicFunction.workflowActionTriggerSettings
+                        .inputSchema,
+                    )[0] ?? {})
                   : {},
               },
             },
@@ -220,13 +223,31 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           builtStep: {
             ...baseStep,
-            name: flatLogicFunction.name,
+            name:
+              flatLogicFunction.workflowActionTriggerSettings?.label ??
+              flatLogicFunction.name,
             type: WorkflowActionType.LOGIC_FUNCTION,
             settings: {
               ...BASE_STEP_DEFINITION,
+              outputSchema: {
+                link: {
+                  isLeaf: true,
+                  icon: 'IconVariable',
+                  tab: 'test',
+                  label: 'Generate Function Output',
+                },
+                _outputSchemaType: 'LINK',
+              },
               input: {
                 logicFunctionId,
-                logicFunctionInput: {},
+                logicFunctionInput: isDefined(
+                  flatLogicFunction.workflowActionTriggerSettings?.inputSchema,
+                )
+                  ? (getFunctionInputFromInputSchema(
+                      flatLogicFunction.workflowActionTriggerSettings
+                        .inputSchema,
+                    )[0] ?? {})
+                  : {},
               },
             },
           },

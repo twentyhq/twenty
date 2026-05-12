@@ -15,12 +15,12 @@ import { detectNumberFormat } from '@/localization/utils/detection/detectNumberF
 import { detectTimeFormat } from '@/localization/utils/detection/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
 import { getWorkspaceMemberUpdateFromFormatPreferences } from '@/localization/utils/format-preferences/getWorkspaceMemberUpdateFromFormatPreferences';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 
-jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
-  useUpdateOneRecord: jest.fn(),
+jest.mock('@/settings/profile/hooks/useUpdateWorkspaceMemberSettings', () => ({
+  useUpdateWorkspaceMemberSettings: jest.fn(),
 }));
 jest.mock('@/localization/utils/detection/detectTimeZone');
 jest.mock('@/localization/utils/detection/detectDateFormat');
@@ -31,9 +31,10 @@ jest.mock(
   '@/localization/utils/format-preferences/getWorkspaceMemberUpdateFromFormatPreferences',
 );
 
-const mockUseUpdateOneRecord = useUpdateOneRecord as jest.MockedFunction<
-  typeof useUpdateOneRecord
->;
+const mockUseUpdateWorkspaceMemberSettings =
+  useUpdateWorkspaceMemberSettings as jest.MockedFunction<
+    typeof useUpdateWorkspaceMemberSettings
+  >;
 const mockDetectTimeZone = detectTimeZone as jest.MockedFunction<
   typeof detectTimeZone
 >;
@@ -53,7 +54,7 @@ const mockGetWorkspaceMemberUpdateFromFormatPreferences =
     typeof getWorkspaceMemberUpdateFromFormatPreferences
   >;
 
-const mockUpdateOneRecord = jest.fn();
+const mockUpdateWorkspaceMemberSettingsFn = jest.fn();
 
 const mockCurrentWorkspaceMember = {
   id: 'workspace-member-1',
@@ -94,8 +95,8 @@ describe('useFormatPreferences', () => {
       mockCurrentWorkspaceMember,
     );
 
-    mockUseUpdateOneRecord.mockReturnValue({
-      updateOneRecord: mockUpdateOneRecord,
+    mockUseUpdateWorkspaceMemberSettings.mockReturnValue({
+      updateWorkspaceMemberSettings: mockUpdateWorkspaceMemberSettingsFn,
     });
 
     mockDetectTimeZone.mockReturnValue('America/New_York');
@@ -105,7 +106,7 @@ describe('useFormatPreferences', () => {
     mockDetectCalendarStartDay.mockReturnValue(FirstDayOfTheWeek.MONDAY);
     mockGetWorkspaceMemberUpdateFromFormatPreferences.mockReturnValue({});
 
-    mockUpdateOneRecord.mockResolvedValue({});
+    mockUpdateWorkspaceMemberSettingsFn.mockResolvedValue(undefined);
   });
 
   it('should be a function', () => {
@@ -151,10 +152,9 @@ describe('useFormatPreferences', () => {
       await result.current.updateFormatPreference('timeZone', newTimeZone);
     });
 
-    expect(mockUpdateOneRecord).toHaveBeenCalledWith({
-      idToUpdate: mockCurrentWorkspaceMember.id,
-      objectNameSingular: 'workspaceMember',
-      updateOneRecordInput: { timeZone: newTimeZone },
+    expect(mockUpdateWorkspaceMemberSettingsFn).toHaveBeenCalledWith({
+      workspaceMemberId: mockCurrentWorkspaceMember.id,
+      update: { timeZone: newTimeZone },
     });
   });
 
@@ -173,10 +173,9 @@ describe('useFormatPreferences', () => {
     });
 
     expect(mockDetectTimeZone).toHaveBeenCalled();
-    expect(mockUpdateOneRecord).toHaveBeenCalledWith({
-      idToUpdate: mockCurrentWorkspaceMember.id,
-      objectNameSingular: 'workspaceMember',
-      updateOneRecordInput: { timeZone: 'SYSTEM' },
+    expect(mockUpdateWorkspaceMemberSettingsFn).toHaveBeenCalledWith({
+      workspaceMemberId: mockCurrentWorkspaceMember.id,
+      update: { timeZone: 'SYSTEM' },
     });
   });
 
@@ -198,10 +197,9 @@ describe('useFormatPreferences', () => {
       await result.current.updateMultipleFormatPreferences(updates);
     });
 
-    expect(mockUpdateOneRecord).toHaveBeenCalledWith({
-      idToUpdate: mockCurrentWorkspaceMember.id,
-      objectNameSingular: 'workspaceMember',
-      updateOneRecordInput: { timeZone: 'Europe/Paris' },
+    expect(mockUpdateWorkspaceMemberSettingsFn).toHaveBeenCalledWith({
+      workspaceMemberId: mockCurrentWorkspaceMember.id,
+      update: { timeZone: 'Europe/Paris' },
     });
   });
 
@@ -216,7 +214,7 @@ describe('useFormatPreferences', () => {
       await result.current.updateFormatPreference('timeZone', 'Europe/London');
     });
 
-    expect(mockUpdateOneRecord).not.toHaveBeenCalled();
+    expect(mockUpdateWorkspaceMemberSettingsFn).not.toHaveBeenCalled();
   });
 
   it('should handle update errors gracefully', async () => {
@@ -225,7 +223,7 @@ describe('useFormatPreferences', () => {
     });
 
     const error = new Error('Update failed');
-    mockUpdateOneRecord.mockRejectedValue(error);
+    mockUpdateWorkspaceMemberSettingsFn.mockRejectedValue(error);
 
     await expect(
       act(async () => {

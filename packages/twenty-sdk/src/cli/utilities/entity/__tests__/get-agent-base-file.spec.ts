@@ -7,7 +7,9 @@ describe('getAgentBaseFile', () => {
       universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
     });
 
-    expect(result).toContain("import { defineAgent } from 'twenty-sdk'");
+    expect(result).toContain(
+      "import { defineAgent } from 'twenty-sdk/define';",
+    );
     expect(result).toContain('export default defineAgent({');
     expect(result).toContain(
       'universalIdentifier: MY_AGENT_AGENT_UNIVERSAL_IDENTIFIER',

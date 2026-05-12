@@ -5,3 +5,4 @@ export const AI_SDK_MISTRAL = '@ai-sdk/mistral' as const;
 export const AI_SDK_XAI = '@ai-sdk/xai' as const;
 export const AI_SDK_BEDROCK = '@ai-sdk/amazon-bedrock' as const;
 export const AI_SDK_OPENAI_COMPATIBLE = '@ai-sdk/openai-compatible' as const;
+export const AI_SDK_AZURE = '@ai-sdk/azure' as const;

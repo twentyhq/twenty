@@ -1,10 +1,7 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
-import { styled } from '@linaria/react';
+import { AppChip } from '@/applications/components/AppChip';
 import { Avatar } from 'twenty-ui/display';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Chip, ChipAccent, ChipVariant } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsItemTypeTagProps = {
   item: {
@@ -15,38 +12,30 @@ type SettingsItemTypeTagProps = {
   className?: string;
 };
 
-const StyledContainer = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
 export const SettingsItemTypeTag = ({
   className,
-  item: { isCustom, isRemote, applicationId },
+  item: { isRemote, applicationId },
 }: SettingsItemTypeTagProps) => {
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const itemTagInfo = getItemTagInfo({
-    item: { isCustom, isRemote, applicationId },
-    workspaceCustomApplicationId:
-      currentWorkspace?.workspaceCustomApplication?.id,
-  });
-
-  const { theme } = useContext(ThemeContext);
-
-  return (
-    <StyledContainer className={className}>
-      <Avatar
-        placeholder={itemTagInfo.labelText}
-        placeholderColorSeed={itemTagInfo.labelText}
-        type="squared"
-        size="xs"
-        color={theme.tag.text[itemTagInfo.labelColor]}
-        backgroundColor={theme.tag.background[itemTagInfo.labelColor]}
+  if (isDefined(applicationId)) {
+    return <AppChip applicationId={applicationId} className={className} />;
+  } else if (isRemote === true) {
+    return (
+      <Chip
+        className={className}
+        label="Remote"
+        variant={ChipVariant.Transparent}
+        accent={ChipAccent.TextPrimary}
+        leftComponent={
+          <Avatar
+            type="app"
+            size="sm"
+            placeholder="Remote"
+            placeholderColorSeed="Remote"
+          />
+        }
       />
-      {itemTagInfo.labelText}
-    </StyledContainer>
-  );
+    );
+  } else {
+    return null;
+  }
 };

@@ -1,33 +1,43 @@
 {
   "tabs": [
     {
+      "key": "gettingStarted",
+      "label": "Getting Started",
+      "groups": [
+        {
+          "key": "welcome",
+          "label": "Welcome",
+          "pages": [
+            "getting-started/introduction",
+            "getting-started/key-features",
+            "getting-started/quickstart"
+          ]
+        },
+        {
+          "key": "coreConcepts",
+          "label": "Core Concepts",
+          "pages": [
+            "getting-started/core-concepts/data-model",
+            "getting-started/core-concepts/layout",
+            "getting-started/core-concepts/workflows",
+            "getting-started/core-concepts/calendar-and-email",
+            "getting-started/core-concepts/ai",
+            "getting-started/core-concepts/apps",
+            "getting-started/core-concepts/dashboards",
+            "getting-started/core-concepts/glossary"
+          ]
+        }
+      ]
+    },
+    {
       "key": "userGuide",
       "label": "User Guide",
       "groups": [
         {
-          "key": "discoverTwenty",
-          "label": "Discover Twenty",
-          "icon": "rocket",
+          "key": "userGuideOverview",
+          "label": "Overview",
           "pages": [
-            "user-guide/introduction",
-            {
-              "key": "gettingStartedCapabilities",
-              "label": "Capabilities",
-              "pages": [
-                "user-guide/getting-started/capabilities/what-is-twenty",
-                "user-guide/getting-started/capabilities/implementation-services",
-                "user-guide/getting-started/capabilities/glossary"
-              ]
-            },
-            {
-              "key": "gettingStartedHowTos",
-              "label": "How-Tos",
-              "pages": [
-                "user-guide/getting-started/how-tos/create-workspace",
-                "user-guide/getting-started/how-tos/navigate-around-twenty",
-                "user-guide/getting-started/how-tos/configure-your-workspace"
-              ]
-            }
+            "user-guide/introduction"
           ]
         },
         {
@@ -37,8 +47,8 @@
           "pages": [
             "user-guide/data-model/overview",
             {
-              "key": "dataModelCapabilities",
-              "label": "Capabilities",
+              "key": "dataModelReference",
+              "label": "Reference",
               "pages": [
                 "user-guide/data-model/capabilities/objects",
                 "user-guide/data-model/capabilities/fields",
@@ -66,8 +76,8 @@
           "pages": [
             "user-guide/data-migration/overview",
             {
-              "key": "dataMigrationCapabilities",
-              "label": "Capabilities",
+              "key": "dataMigrationReference",
+              "label": "Reference",
               "pages": [
                 "user-guide/data-migration/capabilities/file-formats",
                 "user-guide/data-migration/capabilities/field-mapping",
@@ -101,8 +111,8 @@
           "pages": [
             "user-guide/calendar-emails/overview",
             {
-              "key": "calendarEmailsCapabilities",
-              "label": "Capabilities",
+              "key": "calendarEmailsReference",
+              "label": "Reference",
               "pages": [
                 "user-guide/calendar-emails/capabilities/mailbox",
                 "user-guide/calendar-emails/capabilities/calendar"
@@ -129,8 +139,8 @@
           "pages": [
             "user-guide/workflows/overview",
             {
-              "key": "workflowsCapabilities",
-              "label": "Capabilities",
+              "key": "workflowsReference",
+              "label": "Reference",
               "pages": [
                 "user-guide/workflows/capabilities/workflow-triggers",
                 "user-guide/workflows/capabilities/workflow-actions",
@@ -199,8 +209,8 @@
           "pages": [
             "user-guide/ai/overview",
             {
-              "key": "aiCapabilities",
-              "label": "Capabilities",
+              "key": "aiReference",
+              "label": "Reference",
               "pages": [
                 "user-guide/ai/capabilities/ai-chatbot",
                 "user-guide/ai/capabilities/ai-agents",
@@ -217,25 +227,33 @@
           ]
         },
         {
-          "key": "viewsPipelines",
-          "label": "Views & Pipelines",
-          "icon": "table",
+          "key": "layout",
+          "label": "Layout",
+          "icon": "table-columns",
           "pages": [
-            "user-guide/views-pipelines/overview",
+            "user-guide/layout/overview",
             {
-              "key": "viewsPipelinesCapabilities",
-              "label": "Capabilities",
+              "key": "layoutReference",
+              "label": "Reference",
               "pages": [
-                "user-guide/views-pipelines/capabilities/table-views",
-                "user-guide/views-pipelines/capabilities/kanban-views",
-                "user-guide/views-pipelines/capabilities/calendar-view",
-                "user-guide/views-pipelines/capabilities/filters-and-sorting",
-                "user-guide/views-pipelines/capabilities/fields-and-columns",
-                "user-guide/views-pipelines/capabilities/view-settings"
+                "user-guide/layout/capabilities/navigation",
+                {
+                  "key": "layoutViews",
+                  "label": "Views",
+                  "pages": [
+                    "user-guide/views-pipelines/capabilities/table-views",
+                    "user-guide/views-pipelines/capabilities/kanban-views",
+                    "user-guide/views-pipelines/capabilities/calendar-view",
+                    "user-guide/views-pipelines/capabilities/filters-and-sorting",
+                    "user-guide/views-pipelines/capabilities/fields-and-columns",
+                    "user-guide/views-pipelines/capabilities/view-settings"
+                  ]
+                },
+                "user-guide/layout/capabilities/record-pages"
               ]
             },
             {
-              "key": "viewsPipelinesHowTos",
+              "key": "layoutHowTos",
               "label": "How-Tos",
               "pages": [
                 "user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
@@ -256,8 +274,8 @@
           "pages": [
             "user-guide/dashboards/overview",
             {
-              "key": "dashboardsCapabilities",
-              "label": "Capabilities",
+              "key": "dashboardsReference",
+              "label": "Reference",
               "pages": [
                 "user-guide/dashboards/capabilities/dashboards",
                 "user-guide/dashboards/capabilities/widgets",
@@ -281,8 +299,8 @@
           "pages": [
             "user-guide/permissions-access/overview",
             {
-              "key": "permissionsAccessCapabilities",
-              "label": "Capabilities",
+              "key": "permissionsAccessReference",
+              "label": "Reference",
               "pages": [
                 "user-guide/permissions-access/capabilities/permissions",
                 "user-guide/permissions-access/capabilities/sso-configuration"
@@ -304,11 +322,11 @@
           "pages": [
             "user-guide/billing/overview",
             {
-              "key": "billingCapabilities",
-              "label": "Capabilities",
+              "key": "billingReference",
+              "label": "Reference",
               "pages": [
                 "user-guide/billing/capabilities/pricing-plans",
-                "user-guide/billing/capabilities/workflow-credits"
+                "user-guide/billing/capabilities/credits"
               ]
             },
             {
@@ -327,8 +345,8 @@
           "pages": [
             "user-guide/settings/overview",
             {
-              "key": "settingsCapabilities",
-              "label": "Capabilities",
+              "key": "settingsReference",
+              "label": "Reference",
               "pages": [
                 "user-guide/settings/capabilities/workspace-settings",
                 "user-guide/settings/capabilities/member-management",
@@ -354,143 +372,110 @@
       "label": "Developers",
       "groups": [
         {
-          "key": "developersGroup",
-          "label": "Developers",
+          "key": "developersOverview",
+          "label": "Overview",
           "pages": [
             "developers/introduction"
           ]
         },
         {
-          "key": "extend",
-          "label": "Extend",
-          "icon": "plug",
+          "key": "apps",
+          "label": "Apps",
+          "pages": [
+            {
+              "key": "appsGettingStarted",
+              "label": "Getting Started",
+              "pages": [
+                "developers/extend/apps/getting-started/quick-start",
+                "developers/extend/apps/getting-started/concepts",
+                "developers/extend/apps/getting-started/project-structure",
+                "developers/extend/apps/getting-started/local-server",
+                "developers/extend/apps/getting-started/scaffolding",
+                "developers/extend/apps/getting-started/troubleshooting"
+              ]
+            },
+            {
+              "key": "appsConfig",
+              "label": "Config",
+              "pages": [
+                "developers/extend/apps/config/overview",
+                "developers/extend/apps/config/application",
+                "developers/extend/apps/config/roles",
+                "developers/extend/apps/config/install-hooks",
+                "developers/extend/apps/config/public-assets"
+              ]
+            },
+            {
+              "key": "appsData",
+              "label": "Data",
+              "pages": [
+                "developers/extend/apps/data/overview",
+                "developers/extend/apps/data/objects",
+                "developers/extend/apps/data/extending-objects",
+                "developers/extend/apps/data/relations"
+              ]
+            },
+            {
+              "key": "appsLogic",
+              "label": "Logic",
+              "pages": [
+                "developers/extend/apps/logic/overview",
+                "developers/extend/apps/logic/logic-functions",
+                "developers/extend/apps/logic/skills-and-agents",
+                "developers/extend/apps/logic/connections"
+              ]
+            },
+            {
+              "key": "appsLayout",
+              "label": "Layout",
+              "pages": [
+                "developers/extend/apps/layout/overview",
+                "developers/extend/apps/layout/views",
+                "developers/extend/apps/layout/navigation-menu-items",
+                "developers/extend/apps/layout/page-layouts",
+                "developers/extend/apps/layout/front-components",
+                "developers/extend/apps/layout/command-menu-items"
+              ]
+            },
+            {
+              "key": "appsOperations",
+              "label": "Operations",
+              "pages": [
+                "developers/extend/apps/operations/overview",
+                "developers/extend/apps/operations/cli",
+                "developers/extend/apps/operations/testing",
+                "developers/extend/apps/operations/publishing"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "api",
+          "label": "API",
           "pages": [
             "developers/extend/api",
             "developers/extend/webhooks",
-            {
-              "key": "apps",
-              "label": "Apps",
-              "pages": [
-                "developers/extend/apps/getting-started",
-                "developers/extend/apps/building",
-                "developers/extend/apps/publishing"
-              ]
-            }
+            "developers/extend/oauth"
           ]
         },
         {
           "key": "selfHost",
           "label": "Self-Host",
-          "icon": "desktop",
           "pages": [
-            "developers/self-host/self-host",
-            {
-              "key": "selfHostCapabilities",
-              "label": "Capabilities",
-              "pages": [
-                "developers/self-host/capabilities/docker-compose",
-                "developers/self-host/capabilities/setup",
-                "developers/self-host/capabilities/upgrade-guide",
-                "developers/self-host/capabilities/cloud-providers",
-                "developers/self-host/capabilities/troubleshooting"
-              ]
-            }
+            "developers/self-host/capabilities/docker-compose",
+            "developers/self-host/capabilities/setup",
+            "developers/self-host/capabilities/upgrade-guide",
+            "developers/self-host/capabilities/cloud-providers",
+            "developers/self-host/capabilities/troubleshooting"
           ]
         },
         {
           "key": "contribute",
           "label": "Contribute",
-          "icon": "github",
           "pages": [
-            "developers/contribute/contribute",
-            {
-              "key": "contributeCapabilities",
-              "label": "Capabilities",
-              "pages": [
-                "developers/contribute/capabilities/local-setup",
-                "developers/contribute/capabilities/bug-and-requests",
-                {
-                  "key": "frontendDevelopment",
-                  "label": "Frontend Development",
-                  "pages": [
-                    "developers/contribute/capabilities/frontend-development/storybook",
-                    {
-                      "key": "twentyUi",
-                      "label": "Twenty UI",
-                      "pages": [
-                        "twenty-ui/introduction",
-                        {
-                          "key": "display",
-                          "label": "Display",
-                          "pages": [
-                            "twenty-ui/display/checkmark",
-                            "twenty-ui/display/chip",
-                            "twenty-ui/display/icons",
-                            "twenty-ui/display/soon-pill",
-                            "twenty-ui/display/tag",
-                            "twenty-ui/display/app-tooltip"
-                          ]
-                        },
-                        {
-                          "key": "feedback",
-                          "label": "Feedback",
-                          "pages": [
-                            "twenty-ui/progress-bar"
-                          ]
-                        },
-                        {
-                          "key": "input",
-                          "label": "Input",
-                          "pages": [
-                            "twenty-ui/input/buttons",
-                            "twenty-ui/input/color-scheme",
-                            "twenty-ui/input/text",
-                            "twenty-ui/input/checkbox",
-                            "twenty-ui/input/icon-picker",
-                            "twenty-ui/input/image-input",
-                            "twenty-ui/input/radio",
-                            "twenty-ui/input/select",
-                            "twenty-ui/input/toggle",
-                            "twenty-ui/input/block-editor"
-                          ]
-                        },
-                        {
-                          "key": "navigation",
-                          "label": "Navigation",
-                          "pages": [
-                            "twenty-ui/navigation",
-                            "twenty-ui/navigation/breadcrumb",
-                            "twenty-ui/navigation/links",
-                            "twenty-ui/navigation/menu-item",
-                            "twenty-ui/navigation/navigation-bar",
-                            "twenty-ui/navigation/step-bar"
-                          ]
-                        }
-                      ]
-                    },
-                    "developers/contribute/capabilities/frontend-development/frontend-commands",
-                    "developers/contribute/capabilities/frontend-development/work-with-figma",
-                    "developers/contribute/capabilities/frontend-development/best-practices-front",
-                    "developers/contribute/capabilities/frontend-development/style-guide",
-                    "developers/contribute/capabilities/frontend-development/folder-architecture-front",
-                    "developers/contribute/capabilities/frontend-development/hotkeys"
-                  ]
-                },
-                {
-                  "key": "backendDevelopment",
-                  "label": "Backend Development",
-                  "pages": [
-                    "developers/contribute/capabilities/backend-development/server-commands",
-                    "developers/contribute/capabilities/backend-development/feature-flags",
-                    "developers/contribute/capabilities/backend-development/folder-architecture-server",
-                    "developers/contribute/capabilities/backend-development/zapier",
-                    "developers/contribute/capabilities/backend-development/best-practices-server",
-                    "developers/contribute/capabilities/backend-development/custom-objects",
-                    "developers/contribute/capabilities/backend-development/queue"
-                  ]
-                }
-              ]
-            }
+            "developers/contribute/capabilities/local-setup",
+            "developers/contribute/commands",
+            "developers/contribute/style-guide"
           ]
         }
       ]

@@ -13,7 +13,6 @@ import {
   StyledStickyFirstCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
-import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -86,6 +85,7 @@ export const SettingsObjectTable = ({
     useCombinedGetTotalCount();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const installedApplications = currentWorkspace?.installedApplications;
 
   const allObjectSettingsArray = useMemo(
     () =>
@@ -94,11 +94,11 @@ export const SettingsObjectTable = ({
           ({
             objectMetadataItem,
             labelPlural: objectMetadataItem.labelPlural,
-            objectTypeLabel: getItemTagInfo({
-              item: objectMetadataItem,
-              workspaceCustomApplicationId:
-                currentWorkspace?.workspaceCustomApplication?.id,
-            }).labelText,
+            objectTypeLabel:
+              installedApplications?.find(
+                (application) =>
+                  application.id === objectMetadataItem.applicationId,
+              )?.name ?? (objectMetadataItem.isRemote ? 'Remote' : ''),
             fieldsCount: objectMetadataItem.fields.filter(
               (field) => !isHiddenSystemField(field),
             ).length,
@@ -111,7 +111,7 @@ export const SettingsObjectTable = ({
     [
       objectMetadataItems,
       totalCountByObjectMetadataItemNamePlural,
-      currentWorkspace,
+      installedApplications,
     ],
   );
 

@@ -1,4 +1,4 @@
-import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
 import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-exclude-search-filter.util';
 
 describe('computeGmailExcludeSearchFilter', () => {
