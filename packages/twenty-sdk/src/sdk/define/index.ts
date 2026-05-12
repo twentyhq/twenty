@@ -138,6 +138,12 @@ export type {
 
 export { defineApplicationRole } from '@/sdk/define/roles/define-application-role';
 export { defineRole } from '@/sdk/define/roles/define-role';
+export { PermissionFlag } from '@/sdk/define/roles/permission-flag-type';
+export type {
+  RoleConfig,
+  RowLevelPermissionPredicateConfig,
+  RowLevelPermissionPredicateGroupConfig,
+} from '@/sdk/define/roles/role-config';
 export { SystemPermissionFlag } from 'twenty-shared/constants';
 
 export { defineSkill } from '@/sdk/define/skills/define-skill';
@@ -166,6 +172,8 @@ export {
   NumberDataType,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,

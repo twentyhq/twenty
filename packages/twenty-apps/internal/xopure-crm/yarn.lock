@@ -3752,21 +3752,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.2.0":
-  version: 2.2.0
-  resolution: "twenty-client-sdk@npm:2.2.0"
+"twenty-client-sdk@npm:2.3.0":
+  version: 2.3.0
+  resolution: "twenty-client-sdk@npm:2.3.0"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.25.0"
     graphql: "npm:^16.8.1"
-  checksum: 10c0/90122593efa53440ae386960211a2c274b13a410942bf6f9bc35cf952ae55fe83280e29074677fd284fa3c79069fc578980db06a92a143c08e043f865dbbbd3c
+  checksum: 10c0/ab9a4f4ea9222eebdab6d80f396e5281cc0b78bc571163bc8a4f302afc38989ded21c67e0a8e2aad3cdad20f5ec24f60cd2286d9b38a86f7a77333aff5500b20
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:2.2.0":
-  version: 2.2.0
-  resolution: "twenty-sdk@npm:2.2.0"
+"twenty-sdk@npm:2.3.0":
+  version: 2.3.0
+  resolution: "twenty-sdk@npm:2.3.0"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
     "@genql/runtime": "npm:^2.10.0"
@@ -3786,7 +3786,7 @@ __metadata:
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.2.0"
+    twenty-client-sdk: "npm:2.3.0"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
     vite: "npm:^7.0.0"
@@ -3794,7 +3794,7 @@ __metadata:
     zod: "npm:^4.1.11"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/8978b4b0aa5ea282c8f76799347d9d1812901ec609bc2bd9270261a6bc5589ad361f6102a06900a4511a29a8378cd3811c2c0bad9f01cb8adadabca6d96dfd0b
+  checksum: 10c0/8020481e7500472ec841574458ed18a20588e31f51a8ff9b86e8ceddc933afd9e34840e4130b1aab53b66c35ea7e6b571d2f2dd7b35836bac96f487d84239c1f
   languageName: node
   linkType: hard
 
@@ -4202,8 +4202,8 @@ __metadata:
     oxlint: "npm:^0.16.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
-    twenty-client-sdk: "npm:2.2.0"
-    twenty-sdk: "npm:2.2.0"
+    twenty-client-sdk: "npm:2.3.0"
+    twenty-sdk: "npm:2.3.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^3.1.1"

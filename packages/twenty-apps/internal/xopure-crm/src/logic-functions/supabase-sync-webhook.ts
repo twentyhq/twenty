@@ -186,6 +186,40 @@ const normalizeRecordForTwenty = (
   }
 };
 
+// Extracts raw ambassador attribution from the Supabase record so the
+// write-through can resolve affiliate_id to a workspace member via the
+// ambassador profile's workspaceMemberId field.
+const extractAttribution = (
+  sourceTable: string,
+  record: Record<string, unknown> | null | undefined,
+): { affiliateId: string | null } | null => {
+  if (!record) {
+    return null;
+  }
+
+  switch (sourceTable) {
+    case 'orders':
+    case 'order': {
+      const chain = record.affiliate_chain;
+      const affiliateId = Array.isArray(chain) && chain.length > 0
+        ? String(chain[0])
+        : null;
+      return { affiliateId };
+    }
+    case 'commission_ledger':
+    case 'commissions':
+    case 'commission':
+    case 'affiliate_payouts':
+      return { affiliateId: typeof record.affiliate_id === 'string' ? record.affiliate_id : null };
+    case 'affiliates':
+    case 'ambassadors':
+    case 'ambassador':
+      return { affiliateId: typeof record.id === 'string' ? record.id : null };
+    default:
+      return null;
+  }
+};
+
 const handler = async (event: RoutePayload) => {
   const expectedSecret = process.env.XOPURE_SYNC_WEBHOOK_SECRET;
   const providedSecret = event.headers['x-xopure-sync-secret'];
@@ -226,11 +260,12 @@ const handler = async (event: RoutePayload) => {
       hasTargetMapping: targetObject !== null,
       upsertKey: `${body.schema ?? 'public'}.${sourceTable}.${sourceRecordId}`,
       fieldValues: normalizedFieldValues,
+      attribution: extractAttribution(sourceTable, body.record),
     },
     nextStep:
       targetObject === null
         ? 'Add this source table to TARGET_OBJECT_BY_SOURCE_TABLE before enabling writes.'
-        : 'Send fieldValues to Twenty Core API upsert and persist the resulting record ID in public.crm_sync_map.',
+        : 'Send fieldValues to Twenty Core API upsert and persist the resulting record ID in public.crm_sync_map. Resolve attribution.affiliateId to workspaceMemberId via ambassador profile lookup.',
   };
 };
 

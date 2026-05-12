@@ -7,7 +7,7 @@
 #
 # IMPORTANT: services/server and services/worker MUST use the same tag.
 
-FROM twentycrm/twenty:v0.32.0
+FROM twentycrm/twenty:v2.3.2
 
 # Twenty's official entrypoint already runs migrations on boot and starts
 # the NestJS server. We don't need to override anything here; this Dockerfile

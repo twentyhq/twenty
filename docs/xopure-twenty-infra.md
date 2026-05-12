@@ -2,6 +2,10 @@
 
 This document preserves and adapts the infrastructure README from `/Users/brians/Downloads/crm_xopure_additions` after migrating the deploy assets into the main CRM repository.
 
+## Related Docs
+
+- [Ambassador Access Control Plan](./ambassador-access-control.md)
+
 ## Architecture
 
 XO Pure CRM is a self-hosted Twenty deployment designed for Railway with Cloudflare R2 off-platform backups.

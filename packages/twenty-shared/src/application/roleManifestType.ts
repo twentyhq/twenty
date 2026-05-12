@@ -1,3 +1,8 @@
+import {
+  type RowLevelPermissionPredicateGroupLogicalOperator,
+  type RowLevelPermissionPredicateOperand,
+  type RowLevelPermissionPredicateValue,
+} from '@/types';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
 export type ObjectPermissionManifest = SyncableEntityOptions & {
@@ -15,6 +20,24 @@ export type FieldPermissionManifest = SyncableEntityOptions & {
   canUpdateFieldValue?: boolean;
 };
 
+export type RowLevelPermissionPredicateGroupManifest = SyncableEntityOptions & {
+  objectUniversalIdentifier: string;
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+  parentRowLevelPermissionPredicateGroupUniversalIdentifier?: string | null;
+  positionInRowLevelPermissionPredicateGroup?: number | null;
+};
+
+export type RowLevelPermissionPredicateManifest = SyncableEntityOptions & {
+  objectUniversalIdentifier: string;
+  fieldUniversalIdentifier: string;
+  operand: RowLevelPermissionPredicateOperand;
+  value?: RowLevelPermissionPredicateValue | null;
+  subFieldName?: string | null;
+  workspaceMemberFieldUniversalIdentifier?: string | null;
+  workspaceMemberSubFieldName?: string | null;
+  rowLevelPermissionPredicateGroupUniversalIdentifier?: string | null;
+  positionInRowLevelPermissionPredicateGroup?: number | null;
+};
 export type RoleManifest = SyncableEntityOptions & {
   label: string;
   description?: string;
@@ -31,4 +54,6 @@ export type RoleManifest = SyncableEntityOptions & {
   objectPermissions?: ObjectPermissionManifest[];
   fieldPermissions?: FieldPermissionManifest[];
   permissionFlagUniversalIdentifiers?: string[];
+  rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupManifest[];
+  rowLevelPermissionPredicates?: RowLevelPermissionPredicateManifest[];
 };

@@ -59,3 +59,8 @@ output/playwright/
 screenshots/
 !**/public/screenshots/
 !**/assets/screenshots/
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key

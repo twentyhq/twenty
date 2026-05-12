@@ -22,8 +22,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "twenty-client-sdk": "2.2.0",
-    "twenty-sdk": "2.2.0"
+    "twenty-client-sdk": "2.3.0",
+    "twenty-sdk": "2.3.0"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
