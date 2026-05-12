@@ -58,7 +58,7 @@ export class FilesFieldService {
       filename,
     });
 
-    const sanitizedFile = sanitizeFile({ file, ext, mimeType });
+    const sanitizedFile = await sanitizeFile({ file, ext, mimeType });
 
     const fileId = v4();
     const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;

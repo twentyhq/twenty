@@ -497,7 +497,11 @@ export class ApplicationInstallService {
         file: content,
         filename: relativePath,
       });
-      const sanitizedContent = sanitizeFile({ file: content, ext, mimeType });
+      const sanitizedContent = await sanitizeFile({
+        file: content,
+        ext,
+        mimeType,
+      });
 
       await this.fileStorageService.writeFile({
         sourceFile: sanitizedContent,

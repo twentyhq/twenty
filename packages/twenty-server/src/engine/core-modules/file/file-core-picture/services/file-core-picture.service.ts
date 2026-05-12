@@ -73,7 +73,7 @@ export class FileCorePictureService {
     queryRunner?: QueryRunner;
   }): Promise<FileEntity> {
     const { mimeType, ext } = await extractFileInfo({ file, filename });
-    const sanitizedFile = sanitizeFile({ file, ext, mimeType });
+    const sanitizedFile = await sanitizeFile({ file, ext, mimeType });
 
     const fileId = v4();
     const finalName = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
