@@ -5,6 +5,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingMessageCleanerRemoveOrphansCommand } from 'src/modules/messaging/message-cleaner/commands/messaging-message-clearner-remove-orphans.command';
 import { MessagingResetChannelCommand } from 'src/modules/messaging/message-cleaner/commands/messaging-reset-channel.command';
@@ -20,7 +21,7 @@ import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cl
     TypeOrmModule.forFeature([WorkspaceEntity]),
     FeatureFlagModule,
     MessagingCommonModule,
-    TypeOrmModule.forFeature([MessageChannelEntity]),
+    TypeOrmModule.forFeature([MessageChannelEntity, ObjectMetadataEntity]),
     WorkspaceIteratorModule,
   ],
   providers: [

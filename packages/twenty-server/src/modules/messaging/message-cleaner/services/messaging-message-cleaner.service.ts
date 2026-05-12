@@ -1,8 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
-import { In, IsNull } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -10,13 +12,64 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { deleteUsingPagination } from 'src/modules/messaging/message-cleaner/utils/delete-using-pagination.util';
+import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 @Injectable()
 export class MessagingMessageCleanerService {
   private readonly logger = new Logger(MessagingMessageCleanerService.name);
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
+
+  private async resolveMessageAndThreadObjectMetadataIds(workspaceId: string) {
+    const [messageObjectMetadata, messageThreadObjectMetadata] =
+      await Promise.all([
+        this.objectMetadataRepository.findOne({
+          where: { nameSingular: 'message', workspaceId },
+        }),
+        this.objectMetadataRepository.findOne({
+          where: { nameSingular: 'messageThread', workspaceId },
+        }),
+      ]);
+
+    return {
+      messageObjectMetadataId: messageObjectMetadata?.id ?? null,
+      messageThreadObjectMetadataId: messageThreadObjectMetadata?.id ?? null,
+    };
+  }
+
+  private async deleteTimelineActivitiesForLinkedRecords({
+    workspaceId,
+    linkedObjectMetadataId,
+    linkedRecordIds,
+    transactionManager,
+  }: {
+    workspaceId: string;
+    linkedObjectMetadataId: string | null;
+    linkedRecordIds: string[];
+    transactionManager?: WorkspaceEntityManager;
+  }) {
+    if (!linkedObjectMetadataId || linkedRecordIds.length === 0) {
+      return;
+    }
+
+    const timelineActivityRepository =
+      await this.globalWorkspaceOrmManager.getRepository<TimelineActivityWorkspaceEntity>(
+        workspaceId,
+        'timelineActivity',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    await timelineActivityRepository.delete(
+      {
+        linkedObjectMetadataId,
+        linkedRecordId: In(linkedRecordIds),
+      },
+      transactionManager,
+    );
+  }
 
   async deleteMessagesChannelMessageAssociationsAndRelatedOrphans({
     workspaceId,
@@ -28,6 +81,9 @@ export class MessagingMessageCleanerService {
     messageChannelId: string;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
+
+    const { messageObjectMetadataId, messageThreadObjectMetadataId } =
+      await this.resolveMessageAndThreadObjectMetadataIds(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository =
@@ -92,7 +148,15 @@ export class MessagingMessageCleanerService {
           `WorkspaceId: ${workspaceId} Deleting ${orphanMessages.length} orphan messages`,
         );
 
-        await messageRepository.delete(orphanMessages.map(({ id }) => id));
+        const orphanMessageIds = orphanMessages.map(({ id }) => id);
+
+        await this.deleteTimelineActivitiesForLinkedRecords({
+          workspaceId,
+          linkedObjectMetadataId: messageObjectMetadataId,
+          linkedRecordIds: orphanMessageIds,
+        });
+
+        await messageRepository.delete(orphanMessageIds);
 
         const orphanMessageThreads = await messageThreadRepository.find({
           where: {
@@ -113,9 +177,15 @@ export class MessagingMessageCleanerService {
           `WorkspaceId: ${workspaceId} Deleting ${orphanMessageThreads.length} orphan message threads`,
         );
 
-        await messageThreadRepository.delete(
-          orphanMessageThreads.map(({ id }) => id),
-        );
+        const orphanMessageThreadIds = orphanMessageThreads.map(({ id }) => id);
+
+        await this.deleteTimelineActivitiesForLinkedRecords({
+          workspaceId,
+          linkedObjectMetadataId: messageThreadObjectMetadataId,
+          linkedRecordIds: orphanMessageThreadIds,
+        });
+
+        await messageThreadRepository.delete(orphanMessageThreadIds);
       }
     }, authContext);
   }
@@ -185,6 +255,9 @@ export class MessagingMessageCleanerService {
   public async cleanOrphanMessagesAndThreads(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
+    const { messageObjectMetadataId, messageThreadObjectMetadataId } =
+      await this.resolveMessageAndThreadObjectMetadataIds(workspaceId);
+
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
         await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
@@ -236,6 +309,12 @@ export class MessagingMessageCleanerService {
               this.logger.debug(
                 `WorkspaceId: ${workspaceId} Deleting ${ids.length} messages from message cleaner`,
               );
+              await this.deleteTimelineActivitiesForLinkedRecords({
+                workspaceId,
+                linkedObjectMetadataId: messageObjectMetadataId,
+                linkedRecordIds: ids,
+                transactionManager,
+              });
               await messageRepository.delete(ids, transactionManager);
             },
             transactionManager,
@@ -270,6 +349,12 @@ export class MessagingMessageCleanerService {
               _workspaceId: string,
               transactionManager?: WorkspaceEntityManager,
             ) => {
+              await this.deleteTimelineActivitiesForLinkedRecords({
+                workspaceId,
+                linkedObjectMetadataId: messageThreadObjectMetadataId,
+                linkedRecordIds: ids,
+                transactionManager,
+              });
               await messageThreadRepository.delete(ids, transactionManager);
             },
             transactionManager,
