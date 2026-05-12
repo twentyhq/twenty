@@ -1,3 +1,10 @@
+export type SerializedFileData = {
+  name: string;
+  size: number;
+  type: string;
+  lastModified: number;
+};
+
 export type SerializedEventData = {
   type: string;
   altKey?: boolean;
@@ -34,4 +41,5 @@ export type SerializedEventData = {
   volume?: number;
   muted?: boolean;
   playbackRate?: number;
+  files?: SerializedFileData[];
 };

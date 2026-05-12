@@ -1,22 +1,13 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { DotLottieReact, type DotLottie } from '@lottiefiles/dotlottie-react';
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
-import {
-  HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES,
-  scrollProgressToHomeStepperLottieFrame,
-} from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
 import { theme } from '@/theme';
 
-export const HOME_STEPPER_LOTTIE_SRC =
+import { useDotLottieScrollSync } from './use-dot-lottie-scroll-sync';
+
+const HOME_STEPPER_LOTTIE_SRC =
   '/lottie/stepper/stepper.lottie?v=data-model-icon-white-4-logic-outline';
 
 const LottieSlot = styled.div`
@@ -32,64 +23,8 @@ type StepperLottieProps = {
   scrollProgress: number;
 };
 
-function applyScrollToDotLottie(
-  dotLottie: DotLottie | null,
-  scrollProgress: number,
-  totalFrames: number,
-) {
-  if (!dotLottie?.isLoaded || totalFrames <= 0) {
-    return;
-  }
-  const frame = scrollProgressToHomeStepperLottieFrame(
-    scrollProgress,
-    totalFrames,
-  );
-  dotLottie.setFrame(frame);
-}
-
 export function StepperLottie({ scrollProgress }: StepperLottieProps) {
-  const [player, setPlayer] = useState<DotLottie | null>(null);
-  const [totalFrames, setTotalFrames] = useState(0);
-  const scrollProgressRef = useRef(scrollProgress);
-  scrollProgressRef.current = scrollProgress;
-
-  const dotLottieRefCallback = useCallback((instance: DotLottie | null) => {
-    setPlayer(instance);
-  }, []);
-
-  useEffect(() => {
-    if (!player) {
-      setTotalFrames(0);
-      return;
-    }
-
-    const onReady = () => {
-      const frames = Math.floor(player.totalFrames);
-      if (frames > 0 && frames !== HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES) {
-        console.error(
-          `[StepperLottie] Lottie totalFrames mismatch — expected ${HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES}, got ${frames} (raw player.totalFrames=${player.totalFrames}). ` +
-            'The scroll → frame mapping in home-stepper-lottie-frame-map.ts is tied to the authored timeline; ' +
-            'update HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES and the STEP_*_END constants together.',
-        );
-      }
-      setTotalFrames(frames);
-      applyScrollToDotLottie(player, scrollProgressRef.current, frames);
-    };
-
-    if (player.isLoaded) {
-      onReady();
-      return;
-    }
-
-    player.addEventListener('load', onReady);
-    return () => {
-      player.removeEventListener('load', onReady);
-    };
-  }, [player]);
-
-  useLayoutEffect(() => {
-    applyScrollToDotLottie(player, scrollProgress, totalFrames);
-  }, [player, scrollProgress, totalFrames]);
+  const dotLottieRefCallback = useDotLottieScrollSync(scrollProgress);
 
   return (
     <LottieSlot aria-hidden>

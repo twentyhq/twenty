@@ -1,13 +1,15 @@
-export function formatArticleDate(dateString: string): string {
-  const date = new Date(dateString);
+const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+});
 
-  if (Number.isNaN(date.getTime())) {
-    throw new Error(`Invalid article date: ${dateString}`);
+export function formatArticleDate(date: Date | string): string {
+  const resolved = typeof date === 'string' ? new Date(date) : date;
+
+  if (Number.isNaN(resolved.getTime())) {
+    throw new Error(`Invalid article date: ${String(date)}`);
   }
 
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(date);
+  return DATE_FORMATTER.format(resolved);
 }

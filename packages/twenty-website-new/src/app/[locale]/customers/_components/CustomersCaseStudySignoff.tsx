@@ -1,43 +1,29 @@
 import { msg } from '@lingui/core/macro';
-import { TalkToUsButton } from '@/lib/contact-cal';
+import { TalkToUsButton } from '@/sections/ContactCal';
 import { HeadingPart, LinkButton } from '@/design-system/components';
+import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
 import { Pages } from '@/lib/pages';
-import { Signoff } from '@/sections/Signoff/components';
-import { theme } from '@/theme';
-import type { MessageDescriptor } from '@lingui/core';
+import { Signoff } from '@/sections/Signoff';
 
-const SIGNOFF_BODY = {
-  text: msg`Join the teams that chose to own their CRM.\nStart building with Twenty today.`,
-};
-
-type CustomersCaseStudySignoffProps = {
-  renderText: (descriptor: MessageDescriptor) => string;
-};
-
-export function CustomersCaseStudySignoff({
-  renderText,
-}: CustomersCaseStudySignoffProps) {
+export function CustomersCaseStudySignoff() {
+  const i18n = getServerI18n();
   return (
-    <Signoff.Root
-      backgroundColor={theme.colors.secondary.background[5]}
-      color={theme.colors.primary.text[100]}
-      page={Pages.Partners}
-    >
+    <Signoff.Root scheme="muted" page={Pages.Partners}>
       <Signoff.Heading page={Pages.Partners}>
         <HeadingPart fontFamily="serif">
-          {renderText(msg`Ready to grow\nwith Twenty?`)}
+          {i18n._(msg`Ready to grow\nwith Twenty?`)}
         </HeadingPart>
       </Signoff.Heading>
-      <Signoff.Body
-        body={SIGNOFF_BODY}
-        page={Pages.Partners}
-        renderText={renderText}
-      />
+      <Signoff.Body page={Pages.Partners}>
+        {i18n._(
+          msg`Join the teams that chose to own their CRM.\nStart building with Twenty today.`,
+        )}
+      </Signoff.Body>
       <Signoff.Cta>
         <LinkButton
           color="secondary"
           href="https://app.twenty.com/welcome"
-          label={renderText(msg`Get started`)}
+          label={i18n._(msg`Get started`)}
           variant="contained"
         />
         <TalkToUsButton

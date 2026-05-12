@@ -47,7 +47,7 @@ function buildNavItems(): MenuNavItemType[] {
           external: true,
           icon: 'code',
           preview: {
-            image: '/images/shared/menu/developers-preview.png',
+            image: '/images/shared/menu/developers-preview.webp',
             imageAlt: 'Blue developer illustration with branching arrows',
             imagePosition: 'center',
             imageScale: 1.6,
@@ -58,7 +58,7 @@ function buildNavItems(): MenuNavItemType[] {
         {
           label: msg`Why Twenty`,
           description: msg`The open source CRM built to be customised`,
-          href: '/resources/why-twenty',
+          href: '/why-twenty',
           preview: {
             image: '/images/why-twenty/hero/background.webp',
             imageAlt: 'Why Twenty',

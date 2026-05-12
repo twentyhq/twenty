@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
-import { resolveLocaleParam } from '@/lib/i18n/resolve-locale-param';
-import { setServerI18n } from '@/lib/i18n/set-server-i18n';
+import { resolveLocaleParam } from '@/lib/i18n/utils/resolve-locale-param';
+import { setServerI18n } from '@/lib/i18n/utils/set-server-i18n';
 
 import {
   buildPageMetadata,

@@ -5,8 +5,8 @@ import NextImage from 'next/image';
 import type { ReactNode } from 'react';
 
 const OVERLAY_SRC_BY_TONE = {
-  white: '/images/shared/engagement-band/halftone-on-white.png',
-  gray: '/images/shared/engagement-band/halftone-on-gray.png',
+  white: '/images/shared/engagement-band/halftone-on-white.webp',
+  gray: '/images/shared/engagement-band/halftone-on-gray.webp',
 } as const;
 
 type StripTone = keyof typeof OVERLAY_SRC_BY_TONE;
