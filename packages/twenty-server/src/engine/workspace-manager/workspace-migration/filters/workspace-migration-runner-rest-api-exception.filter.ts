@@ -13,7 +13,6 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
-import { type CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
 @Catch(WorkspaceMigrationRunnerException)
@@ -43,9 +42,6 @@ export class WorkspaceMigrationRunnerRestApiExceptionFilter
       }
     }
 
-    return this.httpExceptionHandlerService.handleError(
-      exception as unknown as CustomException,
-      response,
-    );
+    return this.httpExceptionHandlerService.handleError(exception, response);
   }
 }
