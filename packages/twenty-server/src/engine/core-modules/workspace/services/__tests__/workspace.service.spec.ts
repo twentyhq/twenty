@@ -39,6 +39,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
+import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
@@ -128,6 +129,7 @@ describe('WorkspaceService', () => {
           AiModelRegistryService,
           ApplicationService,
           PreInstalledAppsService,
+          SdkClientGenerationService,
           PrefillLogicFunctionService,
           WorkspaceMigrationValidateBuildAndRunService,
           UpgradeMigrationService,
