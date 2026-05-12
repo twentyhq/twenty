@@ -14,6 +14,7 @@ import {
   JwtKeyManagerExceptionCode,
 } from 'src/engine/core-modules/jwt/jwt-key-manager.exception';
 import { computeJwkThumbprint } from 'src/engine/core-modules/jwt/utils/compute-jwk-thumbprint.util';
+import { isJwkThumbprint } from 'src/engine/core-modules/jwt/utils/is-jwk-thumbprint.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type CurrentSigningKey = {
@@ -50,7 +51,7 @@ export class JwtKeyManagerService {
   }
 
   async getActivePublicKeyByKid(kid: string): Promise<KeyObject | null> {
-    if (!isNonEmptyString(kid)) {
+    if (!isJwkThumbprint(kid)) {
       return null;
     }
 

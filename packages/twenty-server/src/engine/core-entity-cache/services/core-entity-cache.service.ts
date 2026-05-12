@@ -84,10 +84,7 @@ export class CoreEntityCacheService implements OnModuleInit {
   ): Promise<CoreEntityCacheDataMap[K] | null> {
     this.evictExpiredLocalEntries();
 
-    if (
-      !isDefined(entityId) ||
-      !CORE_ENTITY_CACHE_KEYS[cacheKeyName].isValidId(entityId)
-    ) {
+    if (!isDefined(entityId)) {
       return null;
     }
 
@@ -330,6 +327,6 @@ export class CoreEntityCacheService implements OnModuleInit {
     entityId: string,
     keyName: CoreEntityCacheKeyName,
   ): string {
-    return `${CORE_ENTITY_CACHE_KEYS[keyName].prefix}:${entityId}`;
+    return `${CORE_ENTITY_CACHE_KEYS[keyName]}:${entityId}`;
   }
 }
