@@ -8,7 +8,7 @@ on:
   pull_request_review:
     types: [submitted]
   issues:
-    types: [opened, assigned]
+    types: [opened]
   repository_dispatch:
     types: [claude-core-team-issues]
 
@@ -44,11 +44,6 @@ jobs:
         github.event.action == 'opened' &&
         (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')) &&
         contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association)
-      ) ||
-      (
-        github.event_name == 'issues' &&
-        github.event.action == 'assigned' &&
-        (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude'))
       )
     runs-on: ubuntu-latest
     timeout-minutes: 60
