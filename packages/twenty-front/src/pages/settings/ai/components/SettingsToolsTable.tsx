@@ -63,8 +63,6 @@ const FIND_MANY_MARKETPLACE_APPS_FOR_TOOL_TABLE = gql`
   query FindManyMarketplaceAppsForToolTable {
     findManyMarketplaceApps {
       id
-      universalIdentifier
-      icon
       logo
     }
   }
@@ -98,8 +96,6 @@ export const SettingsToolsTable = () => {
   const { data: marketplaceAppsData } = useQuery<{
     findManyMarketplaceApps: Array<{
       id: string;
-      universalIdentifier: string;
-      icon: string;
       logo?: string | null;
     }>;
   }>(FIND_MANY_MARKETPLACE_APPS_FOR_TOOL_TABLE);
@@ -166,9 +162,11 @@ export const SettingsToolsTable = () => {
       application,
     ]),
   );
+  // MarketplaceApp.id === Application.universalIdentifier
+  // (set in marketplace-query.service.ts: `id: registration.universalIdentifier`)
   const marketplaceAppByUniversalIdentifier = new Map(
     (marketplaceAppsData?.findManyMarketplaceApps ?? []).map(
-      (marketplaceApp) => [marketplaceApp.universalIdentifier, marketplaceApp],
+      (marketplaceApp) => [marketplaceApp.id, marketplaceApp],
     ),
   );
 
