@@ -11,7 +11,7 @@ import {
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { QueryFailedError, Repository } from 'typeorm';
+import { IsNull, QueryFailedError, Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
@@ -98,11 +98,9 @@ export class JwtKeyManagerService {
   }
 
   private async findCurrentSigningKeyRow(): Promise<SigningKeyEntity | null> {
-    return this.signingKeyRepository
-      .createQueryBuilder('signingKey')
-      .where('signingKey.isCurrent = :isCurrent', { isCurrent: true })
-      .andWhere('signingKey.revokedAt IS NULL')
-      .getOne();
+    return this.signingKeyRepository.findOne({
+      where: { isCurrent: true, revokedAt: IsNull() },
+    });
   }
 
   private decryptPrivateKey(
