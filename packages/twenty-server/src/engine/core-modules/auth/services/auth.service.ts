@@ -432,7 +432,7 @@ export class AuthService {
       userId: _impersonatorUserId,
     });
 
-    void analytics.insertWorkspaceEvent('Monitoring', {
+    await analytics.insertWorkspaceEvent('Monitoring', {
       eventName: 'workspace.impersonation.attempted',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -458,7 +458,7 @@ export class AuthService {
       true,
     );
 
-    void analytics.insertWorkspaceEvent('Monitoring', {
+    await analytics.insertWorkspaceEvent('Monitoring', {
       eventName: 'workspace.impersonation.issued',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
