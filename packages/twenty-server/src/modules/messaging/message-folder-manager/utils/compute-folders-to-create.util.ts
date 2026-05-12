@@ -7,6 +7,8 @@ import {
 
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 
+import { matchFolders } from './match-folders.util';
+
 export const computeFoldersToCreate = ({
   discoveredFolders,
   existingFolders,
@@ -16,24 +18,17 @@ export const computeFoldersToCreate = ({
   existingFolders: MessageFolder[];
   messageChannelId: string;
 }): Partial<MessageFolderEntity>[] => {
-  const existingFoldersByExternalId = new Map(
-    existingFolders.map((folder) => [folder.externalId, folder]),
-  );
+  const { toCreate } = matchFolders({ discoveredFolders, existingFolders });
 
-  return discoveredFolders
-    .filter(
-      (discoveredFolder) =>
-        !existingFoldersByExternalId.has(discoveredFolder.externalId),
-    )
-    .map((discoveredFolder) => ({
-      name: discoveredFolder.name,
-      externalId: discoveredFolder.externalId,
-      messageChannelId,
-      isSentFolder: discoveredFolder.isSentFolder,
-      isSynced: discoveredFolder.isSynced,
-      syncCursor: null,
-      parentFolderId: isNonEmptyString(discoveredFolder.parentFolderId)
-        ? discoveredFolder.parentFolderId
-        : null,
-    }));
+  return toCreate.map((discoveredFolder) => ({
+    name: discoveredFolder.name,
+    externalId: discoveredFolder.externalId,
+    messageChannelId,
+    isSentFolder: discoveredFolder.isSentFolder,
+    isSynced: discoveredFolder.isSynced,
+    syncCursor: null,
+    parentFolderId: isNonEmptyString(discoveredFolder.parentFolderId)
+      ? discoveredFolder.parentFolderId
+      : null,
+  }));
 };

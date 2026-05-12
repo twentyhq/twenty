@@ -8,6 +8,8 @@ import {
 
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 
+import { matchFolders } from './match-folders.util';
+
 export const computeFoldersToUpdate = ({
   discoveredFolders,
   existingFolders,
@@ -15,16 +17,16 @@ export const computeFoldersToUpdate = ({
   discoveredFolders: DiscoveredMessageFolder[];
   existingFolders: MessageFolder[];
 }): Map<string, Partial<MessageFolderEntity>> => {
-  const existingFoldersByExternalId = new Map(
-    existingFolders.map((folder) => [folder.externalId, folder]),
-  );
+  const { matches } = matchFolders({ discoveredFolders, existingFolders });
 
   const foldersToUpdate = new Map<string, Partial<MessageFolderEntity>>();
 
-  for (const discoveredFolder of discoveredFolders) {
-    const existingFolder = existingFoldersByExternalId.get(
-      discoveredFolder.externalId,
-    );
+  const existingFoldersMap = new Map(
+    existingFolders.map((folder) => [folder.id, folder]),
+  );
+
+  for (const [existingFolderId, discoveredFolder] of matches.entries()) {
+    const existingFolder = existingFoldersMap.get(existingFolderId);
 
     if (!existingFolder) {
       continue;
@@ -37,19 +39,42 @@ export const computeFoldersToUpdate = ({
     const discoveredFolderData = {
       name: discoveredFolder.name,
       isSentFolder: discoveredFolder.isSentFolder,
+      isSynced: discoveredFolder.isSynced,
+      externalId: discoveredFolder.externalId,
       parentFolderId,
     };
 
     const existingFolderData = {
       name: existingFolder.name,
       isSentFolder: existingFolder.isSentFolder,
+      isSynced: existingFolder.isSynced,
+      externalId: existingFolder.externalId,
       parentFolderId: isNonEmptyString(existingFolder.parentFolderId)
         ? existingFolder.parentFolderId
         : null,
     };
 
     if (!fastDeepEqual(discoveredFolderData, existingFolderData)) {
-      foldersToUpdate.set(existingFolder.id, discoveredFolderData);
+      const updatePayload: Partial<MessageFolderEntity> = {
+        name: discoveredFolder.name,
+        isSentFolder: discoveredFolder.isSentFolder,
+        isSynced: discoveredFolder.isSynced,
+        externalId: discoveredFolder.externalId,
+        parentFolderId,
+      };
+
+      /**
+       * Fix for issue #17095: When a folder is toggled back to synced
+       * (isSynced: false → true), we must reset the syncCursor to null.
+       * This forces the next import cycle to perform a full backfill of
+       * historical messages instead of continuing from the stale cursor,
+       * which would incorrectly skip all previously unsynced messages.
+       */
+      if (!existingFolder.isSynced && discoveredFolder.isSynced) {
+        updatePayload.syncCursor = null;
+      }
+
+      foldersToUpdate.set(existingFolder.id, updatePayload);
     }
   }
 

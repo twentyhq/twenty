@@ -81,7 +81,7 @@ export default defineConfig(({ command }) => {
       react(),
       tsconfigPaths({
         root: __dirname,
-        projects: ['tsconfig.json'],
+        projects: [tsConfigPath],
       }),
       svgr(),
       dts(dtsConfig),

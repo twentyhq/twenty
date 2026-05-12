@@ -3,6 +3,8 @@ import {
   type MessageFolder,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
+import { matchFolders } from './match-folders.util';
+
 export const computeFolderIdsToDelete = ({
   discoveredFolders,
   existingFolders,
@@ -10,13 +12,7 @@ export const computeFolderIdsToDelete = ({
   discoveredFolders: DiscoveredMessageFolder[];
   existingFolders: MessageFolder[];
 }): string[] => {
-  const discoveredExternalIds = new Set(
-    discoveredFolders.map((discoveredFolder) => discoveredFolder.externalId),
-  );
+  const { toDelete } = matchFolders({ discoveredFolders, existingFolders });
 
-  return existingFolders
-    .filter(
-      (existingFolder) => !discoveredExternalIds.has(existingFolder.externalId),
-    )
-    .map((existingFolder) => existingFolder.id);
+  return toDelete;
 };
