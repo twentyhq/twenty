@@ -29,6 +29,13 @@ export class JwtKeyManagerService {
   private currentSigningKeyPromise: Promise<CurrentSigningKey | null> | null =
     null;
 
+  // POC: master private keys are needed on the verify path to derive
+  // per-tenant public keys, so we memoise them per-process by kid.
+  private readonly masterPrivateKeyPemByIdPromise = new Map<
+    string,
+    Promise<string | null>
+  >();
+
   constructor(
     @InjectRepository(SigningKeyEntity)
     private readonly signingKeyRepository: Repository<SigningKeyEntity>,
@@ -61,6 +68,53 @@ export class JwtKeyManagerService {
     }
 
     return this.coreEntityCacheService.get('signingKeyPublicKey', id);
+  }
+
+  async getValidMasterPrivateKeyPemById(id: string): Promise<string | null> {
+    if (!isNonEmptyString(id) || !isValidUuid(id)) {
+      return null;
+    }
+
+    const cached = this.masterPrivateKeyPemByIdPromise.get(id);
+
+    if (isDefined(cached)) {
+      return cached;
+    }
+
+    const loader = this.loadMasterPrivateKeyPemById(id);
+
+    this.masterPrivateKeyPemByIdPromise.set(id, loader);
+
+    try {
+      const result = await loader;
+
+      if (!isDefined(result)) {
+        this.masterPrivateKeyPemByIdPromise.delete(id);
+      }
+
+      return result;
+    } catch (error) {
+      this.masterPrivateKeyPemByIdPromise.delete(id);
+      throw error;
+    }
+  }
+
+  private async loadMasterPrivateKeyPemById(
+    id: string,
+  ): Promise<string | null> {
+    const row = await this.signingKeyRepository.findOne({
+      where: { id, revokedAt: IsNull() },
+    });
+
+    if (!isDefined(row)) {
+      return null;
+    }
+
+    if (!isDefined(row.privateKey)) {
+      return null;
+    }
+
+    return this.secretEncryptionService.decrypt(row.privateKey);
   }
 
   private async loadOrCreateCurrentSigningKey(): Promise<CurrentSigningKey | null> {

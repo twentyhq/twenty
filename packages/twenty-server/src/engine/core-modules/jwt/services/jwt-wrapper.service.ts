@@ -29,6 +29,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
 import { decodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
 import {
+  deriveTenantKeyPair,
+  extractDerivationScope,
+} from 'src/engine/core-modules/jwt/utils/derive-workspace-signing-key.util';
+import {
   isAsymmetricJwtHeader,
   isAsymmetricSigningEligible,
 } from 'src/engine/core-modules/jwt/utils/is-asymmetric-jwt-header.util';
@@ -84,6 +88,17 @@ export class JwtWrapperService {
       );
     }
 
+    const scope = extractDerivationScope(payload);
+
+    if (!isDefined(scope)) {
+      throw new AuthException(
+        `Cannot derive a per-tenant signing key for token type "${payload.type}": payload has no workspaceId nor userId`,
+        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+      );
+    }
+
+    const derived = deriveTenantKeyPair(signingKey.privateKeyPem, scope);
+
     const signOptions: jwt.SignOptions = {
       expiresIn: options.expiresIn as jwt.SignOptions['expiresIn'],
       algorithm: JWT_ASYMMETRIC_ALGORITHM,
@@ -91,7 +106,7 @@ export class JwtWrapperService {
       ...(isDefined(options.jwtid) ? { jwtid: options.jwtid } : {}),
     };
 
-    return jwt.sign(payload as object, signingKey.privateKeyPem, signOptions);
+    return jwt.sign(payload as object, derived.privateKeyPem, signOptions);
   }
 
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
@@ -113,18 +128,34 @@ export class JwtWrapperService {
     const header = decodeJwtHeader(rawToken);
     const payload = decodeJwtPayload<JwtPayload>(rawToken);
 
-    if (isAsymmetricJwtHeader(header, payload)) {
-      const publicKeyPem =
-        await this.jwtKeyManagerService.getValidPublicKeyPemById(header.kid);
+    if (isAsymmetricJwtHeader(header, payload) && isDefined(payload)) {
+      const masterPrivateKeyPem =
+        await this.jwtKeyManagerService.getValidMasterPrivateKeyPemById(
+          header.kid,
+        );
 
-      if (!isDefined(publicKeyPem)) {
+      if (!isDefined(masterPrivateKeyPem)) {
         throw new AuthException(
           'Token invalid.',
           AuthExceptionCode.UNAUTHENTICATED,
         );
       }
 
-      return { key: publicKeyPem, algorithm: JWT_ASYMMETRIC_ALGORITHM };
+      const scope = extractDerivationScope(payload);
+
+      if (!isDefined(scope)) {
+        throw new AuthException(
+          'Token invalid.',
+          AuthExceptionCode.UNAUTHENTICATED,
+        );
+      }
+
+      const derived = deriveTenantKeyPair(masterPrivateKeyPem, scope);
+
+      return {
+        key: derived.publicKeyPem,
+        algorithm: JWT_ASYMMETRIC_ALGORITHM,
+      };
     }
 
     if (!isDefined(payload)) {
