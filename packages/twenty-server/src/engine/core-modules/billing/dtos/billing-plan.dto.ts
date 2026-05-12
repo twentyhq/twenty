@@ -16,6 +16,11 @@ export class BillingPlanDTO {
   @Field(() => [BillingLicensedProduct])
   baseProducts: BillingLicensedProduct[];
 
+  @Field(() => [BillingLicensedProduct], {
+    deprecationReason: 'Use baseProducts instead.',
+  })
+  licensedProducts: BillingLicensedProduct[];
+
   @Field(() => [BillingLicensedProduct])
   resourceCreditProducts: BillingLicensedProduct[];
 

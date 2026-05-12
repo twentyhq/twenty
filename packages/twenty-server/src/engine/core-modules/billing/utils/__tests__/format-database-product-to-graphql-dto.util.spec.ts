@@ -76,6 +76,29 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
           ],
         },
       ],
+      licensedProducts: [
+        {
+          id: 'product-1',
+          name: 'Test Licensed Product',
+          billingPrices: [
+            {
+              interval: SubscriptionInterval.Month,
+              unitAmount: 1500,
+              stripePriceId: 'price_123',
+              priceUsageType: BillingUsageType.LICENSED,
+            },
+          ],
+          prices: [
+            {
+              recurringInterval: SubscriptionInterval.Month,
+              unitAmount: 1500,
+              stripePriceId: 'price_123',
+              priceUsageType: BillingUsageType.LICENSED,
+              creditAmount: null,
+            },
+          ],
+        },
+      ],
       resourceCreditProducts: [],
       meteredProducts: [
         {

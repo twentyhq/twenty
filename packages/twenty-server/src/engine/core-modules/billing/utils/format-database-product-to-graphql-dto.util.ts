@@ -16,16 +16,19 @@ import {
 export const formatBillingDatabaseProductToGraphqlDTO = (
   plan: BillingGetPlanResult,
 ): BillingPlanDTO => {
+  const baseProducts = plan.baseProducts.map((product) => {
+    return {
+      ...product,
+      prices: product.billingPrices.map(
+        formatBillingDatabasePriceToLicensedPriceDTO,
+      ),
+    };
+  });
+
   return {
     planKey: plan.planKey,
-    baseProducts: plan.baseProducts.map((product) => {
-      return {
-        ...product,
-        prices: product.billingPrices.map(
-          formatBillingDatabasePriceToLicensedPriceDTO,
-        ),
-      };
-    }),
+    baseProducts,
+    licensedProducts: baseProducts,
     resourceCreditProducts: plan.resourceCreditProducts.map((product) => {
       return {
         ...product,
