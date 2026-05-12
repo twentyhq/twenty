@@ -9,6 +9,7 @@ import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/dom
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
@@ -77,7 +78,10 @@ export class WorkspaceDomainsService {
       );
     }
 
-    const foundWorkspace = workspaces[0];
+    const foundWorkspace =
+      workspaces.length === 1
+        ? workspaces[0]
+        : workspaces.find((workspace) => workspace.id === SEED_APPLE_WORKSPACE_ID);
 
     assertIsDefinedOrThrow(foundWorkspace, WorkspaceNotFoundDefaultError);
 
