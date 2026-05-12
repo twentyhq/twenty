@@ -105,3 +105,5 @@ exports[`getRecordFromRecordNode should handle null and undefined values 1`] = `
   "phone": undefined,
 }
 `;
+
+exports[`getRecordFromRecordNode should return an empty object when record node is undefined 1`] = `{}`;

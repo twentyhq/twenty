@@ -7,8 +7,12 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 export const getRecordFromRecordNode = <T extends ObjectRecord>({
   recordNode,
 }: {
-  recordNode: RecordGqlNode;
+  recordNode: RecordGqlNode | undefined;
 }): T => {
+  if (!isDefined(recordNode)) {
+    return {} as T;
+  }
+
   const { id, __typename } = recordNode;
 
   return {

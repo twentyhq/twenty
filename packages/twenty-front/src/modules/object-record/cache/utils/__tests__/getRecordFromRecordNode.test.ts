@@ -137,4 +137,12 @@ describe('getRecordFromRecordNode', () => {
 
     expect(result).toMatchSnapshot();
   });
+
+  it('should return an empty object when record node is undefined', () => {
+    const result = getRecordFromRecordNode({
+      recordNode: undefined,
+    });
+
+    expect(result).toMatchSnapshot();
+  });
 });
