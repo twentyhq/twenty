@@ -29,6 +29,14 @@ const StyledLinkContainer = styled.span`
 
   & > a {
     text-decoration: none;
+    // Propagate the parent's width constraint down so the inner Chip's
+    // max-width: 100% (and its text's text-overflow: ellipsis) clip at the
+    // visible boundary instead of growing to content. Without this, the
+    // text element reports scrollWidth === clientWidth even when an
+    // ancestor with overflow: hidden is clipping it, which breaks
+    // OverflowingTextWithTooltip's overflow detection (e.g. on kanban cards).
+    max-width: 100%;
+    min-width: 0;
   }
 `;
 
