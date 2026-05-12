@@ -16,8 +16,8 @@ uses: actions/checkout@v4
 uses: actions/setup-node@v4
 
 # ✅ Pinned to commit SHA with tag comment for readability
-uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
 ```
 
 ## Prefer `gh api` Over Third-Party Dispatch Actions

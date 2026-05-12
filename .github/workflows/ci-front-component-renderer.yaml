@@ -33,7 +33,7 @@ jobs:
         task: [build, typecheck, lint]
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -68,7 +68,7 @@ jobs:
       STORYBOOK_URL: http://localhost:6008
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies

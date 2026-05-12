@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Determine project and artifact name
         id: project
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.0.1
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const workflowName = context.payload.workflow_run.name;
@@ -43,7 +43,7 @@ jobs:
 
       - name: Check if storybook artifact exists
         id: check-artifact
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.0.1
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const artifactName = '${{ steps.project.outputs.artifact_name }}';
@@ -65,7 +65,7 @@ jobs:
       - name: Get PR number
         if: steps.check-artifact.outputs.exists == 'true'
         id: pr-info
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.0.1
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const headBranch = context.payload.workflow_run.head_branch;

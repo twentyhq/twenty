@@ -39,7 +39,7 @@ jobs:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
       - name: Fetch local actions
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -75,7 +75,7 @@ jobs:
       STORYBOOK_URL: http://localhost:6006
     steps:
       - name: Fetch local actions
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -132,7 +132,7 @@ jobs:
   #     matrix:
   #       storybook_scope: [modules, pages, performance]
   #   steps:
-  #     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
+  #     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
   #       with:
   #         fetch-depth: 10
   #     - name: Install dependencies
@@ -161,7 +161,7 @@ jobs:
         task: [lint, typecheck, test]
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -196,7 +196,7 @@ jobs:
       ANALYZE: "true"
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.0
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies

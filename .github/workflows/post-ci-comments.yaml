@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Get PR number from workflow run
         id: pr-info
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.0.1
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const runId = context.payload.workflow_run.id;
