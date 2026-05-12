@@ -78,9 +78,9 @@ export class JwtWrapperService {
 
     const signOptions: jwt.SignOptions = {
       expiresIn: options.expiresIn as jwt.SignOptions['expiresIn'],
-      jwtid: options.jwtid,
       algorithm: JWT_ASYMMETRIC_ALGORITHM,
       keyid: signingKey.id,
+      ...(isDefined(options.jwtid) ? { jwtid: options.jwtid } : {}),
     };
 
     return jwt.sign(payload as object, signingKey.privateKeyPem, signOptions);
