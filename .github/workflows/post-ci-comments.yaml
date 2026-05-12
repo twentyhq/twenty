@@ -63,9 +63,9 @@ jobs:
 
       - name: Dispatch to ci-privileged
         if: steps.pr-info.outputs.has_pr == 'true'
-        uses: peter-evans/repository-dispatch@bf47d102fdb849e755b0b0023ea3e81a44b6f570 # v2
-        with:
-          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          repository: twentyhq/ci-privileged
-          event-type: breaking-changes-report
-          client-payload: '{"pr_number": ${{ toJSON(steps.pr-info.outputs.pr_number) }}, "run_id": ${{ toJSON(steps.pr-info.outputs.run_id) }}, "repo": ${{ toJSON(github.repository) }}, "branch_state": ${{ toJSON(github.event.workflow_run.head_branch) }}}'
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            --raw-field event_type=breaking-changes-report \
+            --raw-field 'client_payload={"pr_number": "${{ steps.pr-info.outputs.pr_number }}", "run_id": "${{ steps.pr-info.outputs.run_id }}", "repo": "${{ github.repository }}", "branch_state": "${{ github.event.workflow_run.head_branch }}"}'

@@ -128,17 +128,9 @@ jobs:
 
       - name: Dispatch to ci-privileged
         if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
-        uses: peter-evans/repository-dispatch@bf47d102fdb849e755b0b0023ea3e81a44b6f570 # v2
-        with:
-          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          repository: twentyhq/ci-privileged
-          event-type: visual-regression
-          client-payload: >-
-            {
-              "pr_number": "${{ steps.pr-info.outputs.pr_number }}",
-              "run_id": "${{ github.run_id }}",
-              "repo": "${{ github.repository }}",
-              "project": "${{ steps.project.outputs.project }}",
-              "branch": "${{ github.event.workflow_run.head_branch }}",
-              "commit": "${{ github.event.workflow_run.head_sha }}"
-            }
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            --raw-field event_type=visual-regression \
+            --raw-field 'client_payload={"pr_number": "${{ steps.pr-info.outputs.pr_number }}", "run_id": "${{ github.run_id }}", "repo": "${{ github.repository }}", "project": "${{ steps.project.outputs.project }}", "branch": "${{ github.event.workflow_run.head_branch }}", "commit": "${{ github.event.workflow_run.head_sha }}"}'

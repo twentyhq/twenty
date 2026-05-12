@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@bf47d102fdb849e755b0b0023ea3e81a44b6f570 # v2
-        with:
-          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
-          repository: twentyhq/twenty-infra
-          event-type: auto-deploy-tag
-          client-payload: '{"github": {"sha": ${{ toJSON(github.sha) }}, "ref": ${{ toJSON(github.ref) }}, "ref_name": ${{ toJSON(github.ref_name) }}, "actor": ${{ toJSON(github.actor) }}, "run_id": ${{ toJSON(github.run_id) }}, "repository": ${{ toJSON(github.repository) }}}}'
+        env:
+          GH_TOKEN: ${{ secrets.TWENTY_INFRA_TOKEN }}
+        run: |
+          gh api repos/twentyhq/twenty-infra/dispatches \
+            --raw-field event_type=auto-deploy-tag \
+            --raw-field 'client_payload={"github": {"sha": "${{ github.sha }}", "ref": "${{ github.ref }}", "ref_name": "${{ github.ref_name }}", "actor": "${{ github.actor }}", "run_id": "${{ github.run_id }}", "repository": "${{ github.repository }}"}}'

@@ -186,9 +186,9 @@ jobs:
             }
       - name: Dispatch response to ci-privileged
         if: always()
-        uses: peter-evans/repository-dispatch@bf47d102fdb849e755b0b0023ea3e81a44b6f570 # v2
-        with:
-          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          repository: twentyhq/ci-privileged
-          event-type: claude-cross-repo-response
-          client-payload: '{"repo": ${{ toJSON(steps.prompt.outputs.repo) }}, "issue_number": ${{ toJSON(steps.prompt.outputs.issue_number) }}, "run_id": ${{ toJSON(github.run_id) }}, "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            --raw-field event_type=claude-cross-repo-response \
+            --raw-field "client_payload={\"repo\": \"${{ steps.prompt.outputs.repo }}\", \"issue_number\": \"${{ steps.prompt.outputs.issue_number }}\", \"run_id\": \"${{ github.run_id }}\", \"run_url\": \"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}"
