@@ -87,7 +87,7 @@ export class RoleResolver {
     private readonly roleService: RoleService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly objectPermissionService: ObjectPermissionService,
-    private readonly settingPermissionService: PermissionFlagGrantService,
+    private readonly permissionFlagGrantService: PermissionFlagGrantService,
     private readonly agentRoleService: AiAgentRoleService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly fieldPermissionService: FieldPermissionService,
@@ -230,7 +230,7 @@ export class RoleResolver {
     upsertPermissionFlagGrantsInput: UpsertPermissionFlagGrantsInput,
   ): Promise<PermissionFlagGrantDTO[]> {
     const flatPermissionFlagGrants =
-      await this.settingPermissionService.upsertPermissionFlagGrants({
+      await this.permissionFlagGrantService.upsertPermissionFlagGrants({
         workspaceId: workspace.id,
         input: upsertPermissionFlagGrantsInput,
       });
