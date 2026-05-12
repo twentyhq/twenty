@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`JWT Asymmetric Signing & Key Rotation (integration) rejects a token signed by a revoked kid (publicKey present, revokedAt set) 1`] = `
+{
+  "extensions": {
+    "code": "UNAUTHENTICATED",
+    "subCode": "UNAUTHENTICATED",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "You must be authenticated to perform this action.",
+    },
+  },
+  "message": "Token invalid.",
+}
+`;
+
+exports[`JWT Asymmetric Signing & Key Rotation (integration) rejects a token whose kid was never registered without leaking a 500 1`] = `
+{
+  "extensions": {
+    "code": "UNAUTHENTICATED",
+    "subCode": "UNAUTHENTICATED",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "You must be authenticated to perform this action.",
+    },
+  },
+  "message": "Token invalid.",
+}
+`;
