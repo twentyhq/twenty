@@ -12,6 +12,8 @@ on:
   repository_dispatch:
     types: [claude-core-team-issues]
 
+permissions: {}
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number || github.event.client_payload.issue_number }}
   cancel-in-progress: false
