@@ -4,30 +4,38 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.5.0', 1778550000000)
-export class CreateJwtPublicKeyTableFastInstanceCommand
+export class CreateSigningKeyTableFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE IF NOT EXISTS "core"."jwtPublicKey" (
+      `CREATE TABLE IF NOT EXISTS "core"."signingKey" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "kid" character varying NOT NULL,
         "publicKey" character varying NOT NULL,
+        "privateKey" character varying,
+        "isCurrent" boolean NOT NULL DEFAULT false,
         "revokedAt" TIMESTAMP WITH TIME ZONE,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        CONSTRAINT "PK_jwtPublicKey_id" PRIMARY KEY ("id")
+        CONSTRAINT "PK_signingKey_id" PRIMARY KEY ("id")
       )`,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_JWT_PUBLIC_KEY_KID_UNIQUE" ON "core"."jwtPublicKey" ("kid")`,
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_SIGNING_KEY_KID_UNIQUE" ON "core"."signingKey" ("kid")`,
+    );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_SIGNING_KEY_IS_CURRENT_UNIQUE" ON "core"."signingKey" ("isCurrent") WHERE "isCurrent" = true`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `DROP INDEX IF EXISTS "core"."IDX_JWT_PUBLIC_KEY_KID_UNIQUE"`,
+      `DROP INDEX IF EXISTS "core"."IDX_SIGNING_KEY_IS_CURRENT_UNIQUE"`,
     );
-    await queryRunner.query(`DROP TABLE IF EXISTS "core"."jwtPublicKey"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "core"."IDX_SIGNING_KEY_KID_UNIQUE"`,
+    );
+    await queryRunner.query(`DROP TABLE IF EXISTS "core"."signingKey"`);
   }
 }

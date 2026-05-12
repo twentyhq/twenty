@@ -10,7 +10,9 @@ import {
 export const JwtKeyManagerExceptionCode = appendCommonExceptionCode({
   INVALID_PRIVATE_KEY: 'INVALID_PRIVATE_KEY',
   INVALID_PUBLIC_KEY: 'INVALID_PUBLIC_KEY',
-  PUBLIC_KEY_PERSISTENCE_FAILED: 'PUBLIC_KEY_PERSISTENCE_FAILED',
+  SIGNING_KEY_PERSISTENCE_FAILED: 'SIGNING_KEY_PERSISTENCE_FAILED',
+  SIGNING_KEY_GENERATION_FAILED: 'SIGNING_KEY_GENERATION_FAILED',
+  SIGNING_KEY_DECRYPTION_FAILED: 'SIGNING_KEY_DECRYPTION_FAILED',
 } as const);
 
 const getJwtKeyManagerExceptionUserFriendlyMessage = (
@@ -19,7 +21,9 @@ const getJwtKeyManagerExceptionUserFriendlyMessage = (
   switch (code) {
     case JwtKeyManagerExceptionCode.INVALID_PRIVATE_KEY:
     case JwtKeyManagerExceptionCode.INVALID_PUBLIC_KEY:
-    case JwtKeyManagerExceptionCode.PUBLIC_KEY_PERSISTENCE_FAILED:
+    case JwtKeyManagerExceptionCode.SIGNING_KEY_PERSISTENCE_FAILED:
+    case JwtKeyManagerExceptionCode.SIGNING_KEY_GENERATION_FAILED:
+    case JwtKeyManagerExceptionCode.SIGNING_KEY_DECRYPTION_FAILED:
     case JwtKeyManagerExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:

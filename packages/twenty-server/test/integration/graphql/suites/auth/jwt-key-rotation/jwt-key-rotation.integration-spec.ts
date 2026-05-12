@@ -7,7 +7,6 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
-import { CURRENT_KID } from 'test/integration/utils/jwt-signing-key.fixture';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -54,6 +53,7 @@ const buildAccessTokenPayload = (payload: AccessTokenJwtPayload) => ({
 
 let sharedAccessToken: string;
 let sharedPayload: AccessTokenJwtPayload;
+let currentKid: string;
 
 describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
   beforeAll(async () => {
@@ -91,6 +91,8 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
       tokensData.getAuthTokensFromLoginToken.tokens
         .accessOrWorkspaceAgnosticToken.token;
     sharedPayload = jwt.decode(sharedAccessToken) as AccessTokenJwtPayload;
+    currentKid = decodeJwtCompleteOrThrow(sharedAccessToken).header
+      .kid as string;
   });
 
   afterAll(async () => {
@@ -106,25 +108,29 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     }
 
     await global.testDataSource.query(
-      `DELETE FROM core."jwtPublicKey" WHERE "kid" = $1`,
+      `DELETE FROM core."signingKey" WHERE "kid" = $1`,
       [PREVIOUS_KID],
     );
   });
 
-  it('signs ACCESS tokens with ES256 + the configured kid and persists the public key row', async () => {
+  it('auto-generates an ES256 signing key on first boot and signs ACCESS tokens with kid + isCurrent row', async () => {
     const decoded = decodeJwtCompleteOrThrow(sharedAccessToken);
 
     expect(decoded.header.alg).toBe('ES256');
-    expect(decoded.header.kid).toBe(CURRENT_KID);
+    expect(isNonEmptyString(decoded.header.kid)).toBe(true);
 
     const rows = await global.testDataSource.query(
-      `SELECT "kid", "publicKey", "revokedAt" FROM core."jwtPublicKey" WHERE "kid" = $1`,
-      [CURRENT_KID],
+      `SELECT "kid", "publicKey", "privateKey", "isCurrent", "revokedAt"
+       FROM core."signingKey" WHERE "kid" = $1`,
+      [currentKid],
     );
 
     expect(rows).toHaveLength(1);
+    expect(rows[0].isCurrent).toBe(true);
     expect(rows[0].revokedAt).toBeNull();
     expect(isNonEmptyString(rows[0].publicKey)).toBe(true);
+    expect(isNonEmptyString(rows[0].privateKey)).toBe(true);
+    expect(rows[0].publicKey).toContain('-----BEGIN PUBLIC KEY-----');
 
     const { data, errors } = await getCurrentUser({
       accessToken: sharedAccessToken,
@@ -159,10 +165,10 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     expect(data?.currentUser?.id).toBe(sharedPayload.userId);
   });
 
-  it('verifies a token signed by a hardcoded previous private key when its public key row pre-exists', async () => {
+  it('verifies a token signed by a previously rotated-out kid (privateKey null, public key still present)', async () => {
     await global.testDataSource.query(
-      `INSERT INTO core."jwtPublicKey" ("kid", "publicKey")
-       VALUES ($1, $2)
+      `INSERT INTO core."signingKey" ("kid", "publicKey", "privateKey", "isCurrent")
+       VALUES ($1, $2, NULL, false)
        ON CONFLICT ("kid") DO NOTHING`,
       [PREVIOUS_KID, PREVIOUS_PUBLIC_KEY_PEM],
     );
@@ -177,7 +183,7 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
 
     expect(decoded.header.alg).toBe('ES256');
     expect(decoded.header.kid).toBe(PREVIOUS_KID);
-    expect(decoded.header.kid).not.toBe(CURRENT_KID);
+    expect(decoded.header.kid).not.toBe(currentKid);
 
     const { data, errors } = await getCurrentUser({
       accessToken: tokenSignedByPreviousKey,

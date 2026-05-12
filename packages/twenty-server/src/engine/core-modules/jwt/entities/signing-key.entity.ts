@@ -7,9 +7,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'jwtPublicKey', schema: 'core' })
-@Index('IDX_JWT_PUBLIC_KEY_KID_UNIQUE', ['kid'], { unique: true })
-export class JwtPublicKeyEntity {
+@Entity({ name: 'signingKey', schema: 'core' })
+@Index('IDX_SIGNING_KEY_KID_UNIQUE', ['kid'], { unique: true })
+export class SigningKeyEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -18,6 +18,12 @@ export class JwtPublicKeyEntity {
 
   @Column({ type: 'varchar' })
   publicKey: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  privateKey: string | null;
+
+  @Column({ type: 'boolean', default: false })
+  isCurrent: boolean;
 
   @Column({ type: 'timestamptz', nullable: true })
   revokedAt: Date | null;

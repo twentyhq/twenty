@@ -1152,17 +1152,6 @@ export class ConfigVariables {
   APP_SECRET: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
-    isSensitive: true,
-    description:
-      'PKCS#8 PEM encoded ES256 (P-256) private key used to sign ACCESS and REFRESH JWTs. When set, new tokens are signed asymmetrically and carry a kid header. When unset, tokens fall back to the legacy HS256 signing derived from APP_SECRET. Generate with: openssl ecparam -name prime256v1 -genkey -noout | openssl pkcs8 -topk8 -nocrypt',
-    isEnvOnly: true,
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  JWT_SIGNING_PRIVATE_KEY: string;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description: 'Maximum number of records affected by mutations',
     type: ConfigVariableType.NUMBER,
