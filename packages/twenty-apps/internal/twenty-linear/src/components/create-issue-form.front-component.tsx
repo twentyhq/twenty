@@ -21,6 +21,41 @@ type LinearWorkflowState = {
   position: number;
 };
 
+type LinearMember = {
+  id: string;
+  name: string;
+  displayName: string;
+};
+
+type LinearProject = {
+  id: string;
+  name: string;
+};
+
+type LinearLabel = {
+  id: string;
+  name: string;
+  color: string;
+};
+
+type LinearCycle = {
+  id: string;
+  name: string | null;
+  number: number;
+  startsAt: string;
+  endsAt: string;
+};
+
+type IssueOptions = {
+  states: LinearWorkflowState[];
+  members: LinearMember[];
+  projects: LinearProject[];
+  labels: LinearLabel[];
+  cycles: LinearCycle[];
+  estimationType: string;
+  estimationAllowZero: boolean;
+};
+
 type CreatedIssue = {
   id: string;
   identifier: string;
@@ -35,6 +70,46 @@ const PRIORITY_OPTIONS = [
   { value: 3, label: 'Medium' },
   { value: 4, label: 'Low' },
 ];
+
+const ESTIMATE_SCALES: Record<string, { value: number; label: string }[]> = {
+  exponential: [
+    { value: 1, label: '1' },
+    { value: 2, label: '2' },
+    { value: 4, label: '4' },
+    { value: 8, label: '8' },
+    { value: 16, label: '16' },
+    { value: 32, label: '32' },
+  ],
+  fibonacci: [
+    { value: 1, label: '1' },
+    { value: 2, label: '2' },
+    { value: 3, label: '3' },
+    { value: 5, label: '5' },
+    { value: 8, label: '8' },
+    { value: 13, label: '13' },
+    { value: 21, label: '21' },
+  ],
+  linear: [
+    { value: 1, label: '1' },
+    { value: 2, label: '2' },
+    { value: 3, label: '3' },
+    { value: 4, label: '4' },
+    { value: 5, label: '5' },
+    { value: 6, label: '6' },
+    { value: 7, label: '7' },
+    { value: 8, label: '8' },
+    { value: 9, label: '9' },
+    { value: 10, label: '10' },
+  ],
+  tShirt: [
+    { value: 1, label: 'XS' },
+    { value: 2, label: 'S' },
+    { value: 3, label: 'M' },
+    { value: 5, label: 'L' },
+    { value: 8, label: 'XL' },
+    { value: 13, label: 'XXL' },
+  ],
+};
 
 // The front component sandbox dispatches events with a non-standard shape.
 // Values may live on e.detail.value, e.value, or e.target.value.
@@ -55,7 +130,8 @@ const readSerializedValue = (
 };
 
 const onValueChange =
-  (fn: (value: string) => void) => (e: React.SyntheticEvent<HTMLElement>) => {
+  (fn: (value: string) => void) =>
+  (e: React.SyntheticEvent<HTMLElement>) => {
     const v = readSerializedValue(e);
 
     if (typeof v === 'string') fn(v);
@@ -113,6 +189,16 @@ const STYLES = {
     margin: 0,
   },
   fieldGroup: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '4px',
+  },
+  fieldRow: {
+    display: 'flex',
+    gap: '12px',
+  },
+  fieldRowItem: {
+    flex: 1,
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '4px',
@@ -207,6 +293,42 @@ const STYLES = {
     textAlign: 'center' as const,
     padding: '24px',
   },
+  labelsContainer: {
+    display: 'flex',
+    flexWrap: 'wrap' as const,
+    gap: '6px',
+  },
+  labelChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '4px 8px',
+    borderRadius: '4px',
+    border: '1px solid #ddd',
+    fontSize: '12px',
+    cursor: 'pointer',
+    backgroundColor: '#fff',
+  },
+  labelChipSelected: {
+    borderColor: '#141414',
+    backgroundColor: '#f5f5f5',
+  },
+  labelDot: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    flexShrink: 0,
+  },
+};
+
+const EMPTY_OPTIONS: IssueOptions = {
+  states: [],
+  members: [],
+  projects: [],
+  labels: [],
+  cycles: [],
+  estimationType: 'notUsed',
+  estimationAllowZero: false,
 };
 
 const CreateIssueForm = () => {
@@ -216,61 +338,76 @@ const CreateIssueForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const [createdIssue, setCreatedIssue] = useState<CreatedIssue | null>(null);
   const [closing, setClosing] = useState(false);
+  const [optionsLoading, setOptionsLoading] = useState(false);
+  const [options, setOptions] = useState<IssueOptions>(EMPTY_OPTIONS);
 
   const [teamId, setTeamId] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('0');
-  const [workflowStates, setWorkflowStates] = useState<LinearWorkflowState[]>(
-    [],
-  );
-  const [statesLoading, setStatesLoading] = useState(false);
   const [stateId, setStateId] = useState('');
+  const [assigneeId, setAssigneeId] = useState('');
+  const [projectId, setProjectId] = useState('');
+  const [estimate, setEstimate] = useState('');
+  const [selectedLabelIds, setSelectedLabelIds] = useState<string[]>([]);
+  const [cycleId, setCycleId] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [attachmentUrl, setAttachmentUrl] = useState('');
 
-  const fetchWorkflowStates = useCallback(async (selectedTeamId: string) => {
+  const fetchIssueOptions = useCallback(async (selectedTeamId: string) => {
     if (!selectedTeamId) {
-      setWorkflowStates([]);
+      setOptions(EMPTY_OPTIONS);
       setStateId('');
+      setAssigneeId('');
+      setProjectId('');
+      setEstimate('');
+      setSelectedLabelIds([]);
+      setCycleId('');
 
       return;
     }
 
-    setStatesLoading(true);
+    setOptionsLoading(true);
 
     try {
       const result = await callAppRoute(
-        `/linear/workflow-states?teamId=${encodeURIComponent(selectedTeamId)}`,
+        `/linear/issue-options?teamId=${encodeURIComponent(selectedTeamId)}`,
         'GET',
       );
 
       if (!result.success) {
-        setWorkflowStates([]);
-        setStateId('');
+        setOptions(EMPTY_OPTIONS);
 
         return;
       }
 
-      const states: LinearWorkflowState[] = result.states ?? [];
+      const issueOptions: IssueOptions = result.options;
 
-      setWorkflowStates(states);
+      setOptions(issueOptions);
 
-      const todoState = states.find((s) => s.type === 'unstarted');
+      const todoState = issueOptions.states.find(
+        (s) => s.type === 'unstarted',
+      );
 
-      setStateId(todoState?.id ?? states[0]?.id ?? '');
+      setStateId(todoState?.id ?? issueOptions.states[0]?.id ?? '');
+      setAssigneeId('');
+      setProjectId('');
+      setEstimate('');
+      setSelectedLabelIds([]);
+      setCycleId('');
     } catch {
-      setWorkflowStates([]);
-      setStateId('');
+      setOptions(EMPTY_OPTIONS);
     } finally {
-      setStatesLoading(false);
+      setOptionsLoading(false);
     }
   }, []);
 
   const handleTeamChange = useCallback(
     (newTeamId: string) => {
       setTeamId(newTeamId);
-      fetchWorkflowStates(newTeamId);
+      fetchIssueOptions(newTeamId);
     },
-    [fetchWorkflowStates],
+    [fetchIssueOptions],
   );
 
   const fetchTeams = useCallback(async () => {
@@ -288,7 +425,7 @@ const CreateIssueForm = () => {
 
       if (result.teams?.length === 1) {
         setTeamId(result.teams[0].id);
-        fetchWorkflowStates(result.teams[0].id);
+        fetchIssueOptions(result.teams[0].id);
       }
     } catch (error) {
       setTeamsError(
@@ -297,11 +434,19 @@ const CreateIssueForm = () => {
     } finally {
       setTeamsLoading(false);
     }
-  }, [fetchWorkflowStates]);
+  }, [fetchIssueOptions]);
 
   useEffect(() => {
     fetchTeams();
   }, [fetchTeams]);
+
+  const toggleLabel = useCallback((labelId: string) => {
+    setSelectedLabelIds((prev) =>
+      prev.includes(labelId)
+        ? prev.filter((id) => id !== labelId)
+        : [...prev, labelId],
+    );
+  }, []);
 
   const handleSubmit = async () => {
     const trimmedTitle = title.trim();
@@ -319,6 +464,13 @@ const CreateIssueForm = () => {
         description: description.trim() || undefined,
         priority: Number(priority) || undefined,
         stateId: stateId || undefined,
+        assigneeId: assigneeId || undefined,
+        projectId: projectId || undefined,
+        estimate: estimate ? Number(estimate) : undefined,
+        labelIds: selectedLabelIds.length > 0 ? selectedLabelIds : undefined,
+        cycleId: cycleId || undefined,
+        dueDate: dueDate || undefined,
+        attachmentUrl: attachmentUrl.trim() || undefined,
       });
 
       if (!result.success) {
@@ -403,6 +555,14 @@ const CreateIssueForm = () => {
   }
 
   const canSubmit = teamId && title.trim() && !submitting;
+  const hasEstimates = options.estimationType !== 'notUsed';
+  const baseEstimateOptions = ESTIMATE_SCALES[options.estimationType] ?? [];
+  const estimateOptions =
+    options.estimationAllowZero &&
+    baseEstimateOptions.length > 0 &&
+    !baseEstimateOptions.some((o) => o.value === 0)
+      ? [{ value: 0, label: 'None' }, ...baseEstimateOptions]
+      : baseEstimateOptions;
 
   return (
     <div style={STYLES.container}>
@@ -447,41 +607,168 @@ const CreateIssueForm = () => {
         />
       </div>
 
-      <div style={STYLES.fieldGroup}>
-        <label style={STYLES.label}>Priority</label>
-        <select
-          value={priority}
-          onChange={onValueChange(setPriority)}
-          style={STYLES.select}
-        >
-          {PRIORITY_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+      <div style={STYLES.fieldRow}>
+        <div style={STYLES.fieldRowItem}>
+          <label style={STYLES.label}>Status</label>
+          <select
+            value={stateId}
+            onChange={onValueChange(setStateId)}
+            style={STYLES.select}
+            disabled={!teamId || optionsLoading}
+          >
+            {optionsLoading ? (
+              <option value="">Loading...</option>
+            ) : options.states.length === 0 ? (
+              <option value="">Select a team first</option>
+            ) : (
+              options.states.map((state) => (
+                <option key={state.id} value={state.id}>
+                  {state.name}
+                </option>
+              ))
+            )}
+          </select>
+        </div>
+        <div style={STYLES.fieldRowItem}>
+          <label style={STYLES.label}>Priority</label>
+          <select
+            value={priority}
+            onChange={onValueChange(setPriority)}
+            style={STYLES.select}
+          >
+            {PRIORITY_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <div style={STYLES.fieldGroup}>
-        <label style={STYLES.label}>Status</label>
-        <select
-          value={stateId}
-          onChange={onValueChange(setStateId)}
-          style={STYLES.select}
-          disabled={!teamId || statesLoading}
-        >
-          {statesLoading ? (
-            <option value="">Loading...</option>
-          ) : workflowStates.length === 0 ? (
-            <option value="">Select a team first</option>
-          ) : (
-            workflowStates.map((state) => (
-              <option key={state.id} value={state.id}>
-                {state.name}
+      <div style={STYLES.fieldRow}>
+        <div style={STYLES.fieldRowItem}>
+          <label style={STYLES.label}>Assignee</label>
+          <select
+            value={assigneeId}
+            onChange={onValueChange(setAssigneeId)}
+            style={STYLES.select}
+            disabled={!teamId || optionsLoading}
+          >
+            <option value="">Unassigned</option>
+            {options.members.map((member) => (
+              <option key={member.id} value={member.id}>
+                {member.displayName}
               </option>
-            ))
-          )}
-        </select>
+            ))}
+          </select>
+        </div>
+        <div style={STYLES.fieldRowItem}>
+          <label style={STYLES.label}>Project</label>
+          <select
+            value={projectId}
+            onChange={onValueChange(setProjectId)}
+            style={STYLES.select}
+            disabled={!teamId || optionsLoading}
+          >
+            <option value="">No project</option>
+            {options.projects.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div style={STYLES.fieldRow}>
+        <div style={STYLES.fieldRowItem}>
+          <label style={STYLES.label}>Cycle</label>
+          <select
+            value={cycleId}
+            onChange={onValueChange(setCycleId)}
+            style={STYLES.select}
+            disabled={!teamId || optionsLoading}
+          >
+            <option value="">No cycle</option>
+            {options.cycles.map((cycle) => (
+              <option key={cycle.id} value={cycle.id}>
+                {cycle.name ?? `Cycle ${cycle.number}`}
+              </option>
+            ))}
+          </select>
+        </div>
+        {hasEstimates && (
+          <div style={STYLES.fieldRowItem}>
+            <label style={STYLES.label}>Estimate</label>
+            <select
+              value={estimate}
+              onChange={onValueChange(setEstimate)}
+              style={STYLES.select}
+              disabled={!teamId || optionsLoading}
+            >
+              <option value="">No estimate</option>
+              {estimateOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+
+      {options.labels.length > 0 && (
+        <div style={STYLES.fieldGroup}>
+          <label style={STYLES.label}>Labels</label>
+          <div style={STYLES.labelsContainer}>
+            {options.labels.map((label) => {
+              const isSelected = selectedLabelIds.includes(label.id);
+
+              return (
+                <button
+                  key={label.id}
+                  type="button"
+                  style={{
+                    ...STYLES.labelChip,
+                    ...(isSelected ? STYLES.labelChipSelected : {}),
+                  }}
+                  onClick={() => toggleLabel(label.id)}
+                >
+                  <span
+                    style={{
+                      ...STYLES.labelDot,
+                      backgroundColor: label.color,
+                    }}
+                  />
+                  {label.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <div style={STYLES.fieldRow}>
+        <div style={STYLES.fieldRowItem}>
+          <label style={STYLES.label}>Due date</label>
+          <input
+            value={dueDate}
+            onChange={onValueChange(setDueDate)}
+            style={STYLES.input}
+            type="date"
+          />
+        </div>
+        <div style={STYLES.fieldRowItem}>
+          <label style={STYLES.label}>Attachment URL</label>
+          <input
+            value={attachmentUrl}
+            onInput={onValueChange(setAttachmentUrl)}
+            onChange={onValueChange(setAttachmentUrl)}
+            style={STYLES.input}
+            type="url"
+            placeholder="https://..."
+          />
+        </div>
       </div>
 
       <div style={STYLES.buttonRow}>
@@ -512,6 +799,6 @@ export default defineFrontComponent({
   universalIdentifier: CREATE_ISSUE_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'create-linear-issue-form',
   description:
-    'Form to create a Linear issue with team, title, description, and priority.',
+    'Form to create a Linear issue with team, title, description, status, priority, assignee, project, cycle, estimate, labels, due date, and attachment.',
   component: CreateIssueForm,
 });

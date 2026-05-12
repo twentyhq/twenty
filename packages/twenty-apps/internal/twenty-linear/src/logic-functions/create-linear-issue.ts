@@ -37,7 +37,39 @@ export default defineLogicFunction({
         stateId: {
           type: 'string',
           description:
-            'The workflow state ID for the issue status. Use list-linear-workflow-states to discover available states for a team.',
+            'The workflow state ID for the issue status. Use list-linear-issue-options to discover available states for a team.',
+        },
+        assigneeId: {
+          type: 'string',
+          description:
+            'The user ID to assign the issue to. Use list-linear-issue-options to discover team members.',
+        },
+        projectId: {
+          type: 'string',
+          description: 'The project ID to associate the issue with.',
+        },
+        estimate: {
+          type: 'number',
+          description:
+            'The estimate value for the issue. Must match the team estimate scale.',
+        },
+        labelIds: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Array of label IDs to apply to the issue.',
+        },
+        cycleId: {
+          type: 'string',
+          description: 'The cycle ID to add the issue to.',
+        },
+        dueDate: {
+          type: 'string',
+          description: 'Due date in YYYY-MM-DD format.',
+        },
+        attachmentUrl: {
+          type: 'string',
+          description:
+            'A URL to attach to the issue after creation.',
         },
       },
       required: ['teamId', 'title'],
@@ -54,6 +86,13 @@ export default defineLogicFunction({
           description: { type: 'string' },
           priority: { type: 'number' },
           stateId: { type: 'string' },
+          assigneeId: { type: 'string' },
+          projectId: { type: 'string' },
+          estimate: { type: 'number' },
+          labelIds: { type: 'array', items: { type: 'string' } },
+          cycleId: { type: 'string' },
+          dueDate: { type: 'string' },
+          attachmentUrl: { type: 'string' },
         },
       },
     ],

@@ -13,6 +13,13 @@ const handler = async (event: RoutePayload) => {
     description: body?.description as string | undefined,
     priority: body?.priority as number | undefined,
     stateId: body?.stateId as string | undefined,
+    assigneeId: body?.assigneeId as string | undefined,
+    projectId: body?.projectId as string | undefined,
+    estimate: body?.estimate as number | undefined,
+    labelIds: body?.labelIds as string[] | undefined,
+    cycleId: body?.cycleId as string | undefined,
+    dueDate: body?.dueDate as string | undefined,
+    attachmentUrl: body?.attachmentUrl as string | undefined,
   });
 };
 
