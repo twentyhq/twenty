@@ -241,6 +241,7 @@ describe('WorkspaceEntityManager', () => {
         IS_JUNCTION_RELATIONS_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: false,
         [FeatureFlagKey.IS_BILLING_V2_ENABLED]: false,
+        [FeatureFlagKey.IS_CUSTOM_PERMISSION_FLAGS_ENABLED]: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
