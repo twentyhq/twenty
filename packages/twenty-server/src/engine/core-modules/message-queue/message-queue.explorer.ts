@@ -66,7 +66,7 @@ export class MessageQueueExplorer implements OnModuleInit {
       const queueToken = getQueueToken(queueName);
       const messageQueueService = this.getQueueService(queueToken);
 
-      this.handleProcessorGroupCollection(
+      void this.handleProcessorGroupCollection(
         processorGroupCollection,
         messageQueueService,
         QUEUE_WORKER_OPTIONS[queueName as MessageQueue],
