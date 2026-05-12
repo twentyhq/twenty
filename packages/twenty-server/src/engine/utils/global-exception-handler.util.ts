@@ -20,6 +20,11 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type CustomException } from 'src/utils/custom-exception';
 
+const GRAPHQL_ERROR_CODES_TO_FILTER = [
+  'APP_VERSION_MISMATCH',
+  'SCHEMA_VERSION_MISMATCH',
+] as const;
+
 const graphQLPredefinedExceptions = {
   400: ValidationError,
   401: AuthenticationError,
@@ -62,11 +67,19 @@ export const shouldCaptureException = (
   exception: Error,
   statusCode?: number,
 ): boolean => {
-  if (
-    exception instanceof GraphQLError &&
-    (exception?.extensions?.http?.status ?? 500) < 500
-  ) {
-    return false;
+  if (exception instanceof GraphQLError) {
+    const graphQLErrorCode = exception.extensions?.code;
+
+    if (
+      typeof graphQLErrorCode === 'string' &&
+      GRAPHQL_ERROR_CODES_TO_FILTER.includes(graphQLErrorCode)
+    ) {
+      return false;
+    }
+
+    if ((exception?.extensions?.http?.status ?? 500) < 500) {
+      return false;
+    }
   }
 
   if (

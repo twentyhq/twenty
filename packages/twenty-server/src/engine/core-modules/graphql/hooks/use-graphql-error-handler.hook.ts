@@ -40,6 +40,7 @@ const SCHEMA_MISMATCH_ERROR = 'Schema version mismatch.';
 const APP_VERSION_HEADER = 'x-app-version';
 const APP_VERSION_MISMATCH_ERROR = 'App version mismatch.';
 const APP_VERSION_MISMATCH_CODE = 'APP_VERSION_MISMATCH';
+const SCHEMA_VERSION_MISMATCH_CODE = 'SCHEMA_VERSION_MISMATCH';
 
 type GraphQLErrorHandlerHookOptions = {
   metricsService: MetricsService;
@@ -286,6 +287,7 @@ export const useGraphQLErrorHandlerHook = <
 
           throw new GraphQLError(SCHEMA_MISMATCH_ERROR, {
             extensions: {
+              code: SCHEMA_VERSION_MISMATCH_CODE,
               userFriendlyMessage: i18n._(
                 msg`Your workspace has been updated with a new data model. Please refresh the page.`,
               ),

@@ -29,6 +29,10 @@ export const useSentryTracing = <
         operation: operationType,
       });
 
+      if (workspace?.id) {
+        Sentry.setTag('workspaceId', workspace.id);
+      }
+
       const scope = Sentry.getCurrentScope();
 
       scope.setTransactionName(transactionName);
