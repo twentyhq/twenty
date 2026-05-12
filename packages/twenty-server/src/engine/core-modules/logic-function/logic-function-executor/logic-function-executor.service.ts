@@ -332,7 +332,7 @@ export class LogicFunctionExecutorService {
       executionId,
     }));
 
-    this.applicationLogsService.writeLogs(logEntries).catch((error) => {
+    void this.applicationLogsService.writeLogs(logEntries).catch((error) => {
       this.logger.error('Failed to persist application logs', error);
     });
 
