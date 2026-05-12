@@ -7,7 +7,4 @@ export class ResendEmailVerificationTokenDTO {
   @IsBoolean()
   @Field(() => Boolean)
   success: boolean;
-
-  @Field(() => String, { nullable: true })
-  message?: string;
 }

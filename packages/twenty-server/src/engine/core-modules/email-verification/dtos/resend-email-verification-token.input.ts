@@ -8,4 +8,8 @@ export class ResendEmailVerificationTokenInput {
   @IsEmail()
   @IsNotEmpty()
   email: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  fieldToTriggerBreakingChange: string;
 }
