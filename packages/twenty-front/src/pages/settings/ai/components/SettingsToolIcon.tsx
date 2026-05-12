@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
   getIconTileColorShades,
+  IconApps,
   IconCode,
   IconEdit,
   IconPlus,
@@ -22,7 +23,6 @@ type ApplicationInfo = {
 };
 
 type MarketplaceAppInfo = {
-  icon: string;
   logo?: string | null;
 };
 
@@ -110,8 +110,7 @@ export const SettingsToolIcon = ({
   }
 
   if (isDefined(marketplaceApp)) {
-    const MarketplaceIcon = getIcon(marketplaceApp.icon);
-    return <MarketplaceIcon size={16} />;
+    return <IconApps size={16} />;
   }
 
   if (isDefined(application)) {
