@@ -32,10 +32,10 @@ export class OAuth2ClientManagerService {
     }
 
     return this.googleOAuth2ClientManagerService.getOAuth2Client(
-      this.connectedAccountTokenEncryptionService.decrypt(
-        connectedAccount.refreshToken,
-        connectedAccount.workspaceId,
-      ),
+      this.connectedAccountTokenEncryptionService.decrypt({
+        ciphertext: connectedAccount.refreshToken,
+        workspaceId: connectedAccount.workspaceId,
+      }),
     );
   }
 
@@ -53,10 +53,10 @@ export class OAuth2ClientManagerService {
     }
 
     return this.microsoftOAuth2ClientManagerService.getOAuth2Client(
-      this.connectedAccountTokenEncryptionService.decrypt(
-        connectedAccount.accessToken,
-        connectedAccount.workspaceId,
-      ),
+      this.connectedAccountTokenEncryptionService.decrypt({
+        ciphertext: connectedAccount.accessToken,
+        workspaceId: connectedAccount.workspaceId,
+      }),
     );
   }
 }

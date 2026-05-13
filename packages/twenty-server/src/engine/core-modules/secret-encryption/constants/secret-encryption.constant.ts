@@ -1,5 +1,4 @@
 export const SECRET_ENCRYPTION_ENVELOPE_PREFIX = 'enc:';
-export const SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX = 'enc:v1:';
 export const SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX = 'enc:v2:';
 
 export const SECRET_ENCRYPTION_KEY_ID_REGEX = /^[0-9a-f]{8}$/;

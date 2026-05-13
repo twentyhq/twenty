@@ -71,14 +71,14 @@ export class ConnectedAccountRefreshTokensService {
       }
 
       return {
-        accessToken: this.connectedAccountTokenEncryptionService.decrypt(
-          encryptedAccessToken,
+        accessToken: this.connectedAccountTokenEncryptionService.decrypt({
+          ciphertext: encryptedAccessToken,
           workspaceId,
-        ),
-        refreshToken: this.connectedAccountTokenEncryptionService.decrypt(
-          encryptedRefreshToken,
+        }),
+        refreshToken: this.connectedAccountTokenEncryptionService.decrypt({
+          ciphertext: encryptedRefreshToken,
           workspaceId,
-        ),
+        }),
       };
     }
 
@@ -87,10 +87,10 @@ export class ConnectedAccountRefreshTokensService {
     );
 
     const decryptedRefreshTokenForRefreshCall =
-      this.connectedAccountTokenEncryptionService.decrypt(
-        encryptedRefreshToken,
+      this.connectedAccountTokenEncryptionService.decrypt({
+        ciphertext: encryptedRefreshToken,
         workspaceId,
-      );
+      });
 
     const connectedAccountTokens = await this.refreshTokens(
       connectedAccount,

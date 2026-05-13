@@ -1,7 +1,4 @@
-import {
-  SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX,
-  SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
-} from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import {
   SecretEncryptionException,
   SecretEncryptionExceptionCode,
@@ -19,14 +16,6 @@ describe('parseSecretEncryptionEnvelopeOrThrow', () => {
     expect(parseSecretEncryptionEnvelopeOrThrow({ value: '' })).toEqual({
       version: null,
     });
-  });
-
-  it('parses a v1 envelope and exposes the payload', () => {
-    expect(
-      parseSecretEncryptionEnvelopeOrThrow({
-        value: `${SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX}payloadbase64`,
-      }),
-    ).toEqual({ version: 1, payload: 'payloadbase64' });
   });
 
   it('parses a v2 envelope, splitting keyId and payload', () => {
@@ -85,7 +74,14 @@ describe('parseSecretEncryptionEnvelopeOrThrow', () => {
     );
   });
 
-  it('throws UNKNOWN_ENVELOPE_VERSION on an unknown envelope version', () => {
+  it('throws UNKNOWN_ENVELOPE_VERSION on an unknown envelope version (including the dropped v1)', () => {
+    expect(() =>
+      parseSecretEncryptionEnvelopeOrThrow({ value: 'enc:v1:legacy' }),
+    ).toThrow(
+      expect.objectContaining({
+        code: SecretEncryptionExceptionCode.UNKNOWN_ENVELOPE_VERSION,
+      }) as SecretEncryptionException,
+    );
     expect(() =>
       parseSecretEncryptionEnvelopeOrThrow({ value: 'enc:v99:whatever' }),
     ).toThrow(

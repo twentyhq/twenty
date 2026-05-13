@@ -2,7 +2,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
-import { parseSecretEncryptionEnvelopeOrThrow } from 'src/engine/core-modules/secret-encryption/utils/parse-secret-encryption-envelope-or-throw.util';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
@@ -14,10 +13,6 @@ const ACCESS_TOKEN_CHECK_CONSTRAINT_NAME =
 const REFRESH_TOKEN_CHECK_CONSTRAINT_NAME =
   'CHK_connectedAccount_refreshToken_encrypted';
 
-// Matches the new envelope: rows already in v2 are skipped on re-runs.
-// v1 and plaintext rows are upgraded to v2 (v1 must be upgraded so a later
-// rotation of ENCRYPTION_KEY can route by keyId — v1 has no keyId and could
-// silently decrypt with the wrong key under CTR).
 const V2_ENCRYPTED_LIKE_PATTERN = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}%`;
 
 type ConnectedAccountTokenRow = {
@@ -27,22 +22,8 @@ type ConnectedAccountTokenRow = {
   refreshToken: string | null;
 };
 
-const needsUpgradeToV2 = (value: string | null): boolean => {
-  if (!isDefined(value)) {
-    return false;
-  }
-
-  try {
-    const parsed = parseSecretEncryptionEnvelopeOrThrow({ value });
-
-    return parsed.version !== 2;
-  } catch {
-    // Malformed envelope (e.g. unknown version, invalid keyId): treat as
-    // plaintext so the slow command rewrites it into a valid v2 row rather
-    // than leaving it to fail the CHECK constraint added in up().
-    return true;
-  }
-};
+const isPlaintext = (value: string | null): value is string =>
+  isDefined(value) && !value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX);
 
 @RegisteredInstanceCommand('2.5.0', 1798000004000, { type: 'slow' })
 export class EncryptConnectedAccountTokensSlowInstanceCommand
@@ -77,32 +58,22 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
         const sets: string[] = [];
         const params: unknown[] = [row.id];
 
-        if (needsUpgradeToV2(row.accessToken)) {
-          const plaintext = this.connectedAccountTokenEncryptionService.decrypt(
-            row.accessToken as string,
-            row.workspaceId,
-          );
-
+        if (isPlaintext(row.accessToken)) {
           params.push(
-            this.connectedAccountTokenEncryptionService.encrypt(
-              plaintext,
-              row.workspaceId,
-            ),
+            this.connectedAccountTokenEncryptionService.encrypt({
+              plaintext: row.accessToken,
+              workspaceId: row.workspaceId,
+            }),
           );
           sets.push(`"accessToken" = $${params.length}`);
         }
 
-        if (needsUpgradeToV2(row.refreshToken)) {
-          const plaintext = this.connectedAccountTokenEncryptionService.decrypt(
-            row.refreshToken as string,
-            row.workspaceId,
-          );
-
+        if (isPlaintext(row.refreshToken)) {
           params.push(
-            this.connectedAccountTokenEncryptionService.encrypt(
-              plaintext,
-              row.workspaceId,
-            ),
+            this.connectedAccountTokenEncryptionService.encrypt({
+              plaintext: row.refreshToken,
+              workspaceId: row.workspaceId,
+            }),
           );
           sets.push(`"refreshToken" = $${params.length}`);
         }

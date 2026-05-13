@@ -284,16 +284,16 @@ describe('Secret encryption key rotation (integration)', () => {
 
       expect(isDefined(encryptedRefreshToken)).toBe(true);
       expect(
-        connectedAccountTokenEncryptionService.decrypt(
-          encryptedAccessToken,
-          WORKSPACE_ID,
-        ),
+        connectedAccountTokenEncryptionService.decrypt({
+          ciphertext: encryptedAccessToken,
+          workspaceId: WORKSPACE_ID,
+        }),
       ).toBe('access');
       expect(
-        connectedAccountTokenEncryptionService.decrypt(
-          encryptedRefreshToken as string,
-          WORKSPACE_ID,
-        ),
+        connectedAccountTokenEncryptionService.decrypt({
+          ciphertext: encryptedRefreshToken as string,
+          workspaceId: WORKSPACE_ID,
+        }),
       ).toBe('refresh');
     });
 
@@ -314,7 +314,12 @@ describe('Secret encryption key rotation (integration)', () => {
         FALLBACK_ENCRYPTION_KEY: KEY_X,
       });
 
-      expect(post.decrypt(preRotationAccessToken, WORKSPACE_ID)).toBe('access');
+      expect(
+        post.decrypt({
+          ciphertext: preRotationAccessToken,
+          workspaceId: WORKSPACE_ID,
+        }),
+      ).toBe('access');
     });
 
     it('rejects double-encryption: refuses to encrypt a value that already looks like an envelope', () => {
@@ -322,16 +327,16 @@ describe('Secret encryption key rotation (integration)', () => {
         ENCRYPTION_KEY: KEY_X,
       });
 
-      const alreadyEncrypted = connectedAccountTokenEncryptionService.encrypt(
-        'plain',
-        WORKSPACE_ID,
-      );
+      const alreadyEncrypted = connectedAccountTokenEncryptionService.encrypt({
+        plaintext: 'plain',
+        workspaceId: WORKSPACE_ID,
+      });
 
       expect(() =>
-        connectedAccountTokenEncryptionService.encrypt(
-          alreadyEncrypted,
-          WORKSPACE_ID,
-        ),
+        connectedAccountTokenEncryptionService.encrypt({
+          plaintext: alreadyEncrypted,
+          workspaceId: WORKSPACE_ID,
+        }),
       ).toThrow(
         expect.objectContaining({
           code: SecretEncryptionExceptionCode.ALREADY_ENCRYPTED,
@@ -345,10 +350,10 @@ describe('Secret encryption key rotation (integration)', () => {
       });
 
       expect(
-        connectedAccountTokenEncryptionService.decrypt(
-          'raw-plaintext-no-prefix',
-          WORKSPACE_ID,
-        ),
+        connectedAccountTokenEncryptionService.decrypt({
+          ciphertext: 'raw-plaintext-no-prefix',
+          workspaceId: WORKSPACE_ID,
+        }),
       ).toBe('raw-plaintext-no-prefix');
     });
   });

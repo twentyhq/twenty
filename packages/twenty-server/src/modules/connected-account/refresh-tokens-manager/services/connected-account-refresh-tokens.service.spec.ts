@@ -49,19 +49,21 @@ describe('ConnectedAccountRefreshTokensService', () => {
     const wrap = (value: string) => `${FAKE_CIPHER_PREFIX}CIPHER(${value})`;
 
     return {
-      decrypt: jest.fn((value: string, _workspaceId: string) => {
-        const match = value.match(
-          new RegExp(`^${FAKE_CIPHER_PREFIX}CIPHER\\((.*)\\)$`),
-        );
-
-        if (!isDefined(match)) {
-          throw new Error(
-            `fake encryption stub: decrypt called with a non-CIPHER value: ${value}`,
+      decrypt: jest.fn(
+        ({ ciphertext }: { ciphertext: string; workspaceId: string }) => {
+          const match = ciphertext.match(
+            new RegExp(`^${FAKE_CIPHER_PREFIX}CIPHER\\((.*)\\)$`),
           );
-        }
 
-        return match[1];
-      }),
+          if (!isDefined(match)) {
+            throw new Error(
+              `fake encryption stub: decrypt called with a non-CIPHER value: ${ciphertext}`,
+            );
+          }
+
+          return match[1];
+        },
+      ),
       encryptTokenPair: jest.fn(
         ({
           accessToken,
@@ -167,10 +169,16 @@ describe('ConnectedAccountRefreshTokensService', () => {
       });
       expect(
         connectedAccountTokenEncryptionService.decrypt,
-      ).toHaveBeenCalledWith(mockEncryptedAccessToken, mockWorkspaceId);
+      ).toHaveBeenCalledWith({
+        ciphertext: mockEncryptedAccessToken,
+        workspaceId: mockWorkspaceId,
+      });
       expect(
         connectedAccountTokenEncryptionService.decrypt,
-      ).toHaveBeenCalledWith(mockEncryptedRefreshToken, mockWorkspaceId);
+      ).toHaveBeenCalledWith({
+        ciphertext: mockEncryptedRefreshToken,
+        workspaceId: mockWorkspaceId,
+      });
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).not.toHaveBeenCalled();

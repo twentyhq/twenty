@@ -6,7 +6,7 @@ const deriveCtrKey = (rawKey: string): string =>
 // AES-CTR has no integrity tag, so a wrong key produces an arbitrary byte
 // sequence instead of throwing. `OrThrow` reflects only the malformed-input
 // failures from Node crypto (e.g. invalid base64).
-export const decryptAesCtrV1OrThrow = ({
+export const decryptAesCtrOrThrow = ({
   ciphertext,
   rawKey,
 }: {

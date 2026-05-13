@@ -1,6 +1,5 @@
 import {
   SECRET_ENCRYPTION_ENVELOPE_PREFIX,
-  SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX,
   SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
   SECRET_ENCRYPTION_KEY_ID_REGEX,
 } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
@@ -17,13 +16,6 @@ export const parseSecretEncryptionEnvelopeOrThrow = ({
 }): ParsedSecretEncryptionEnvelope => {
   if (!value.startsWith(SECRET_ENCRYPTION_ENVELOPE_PREFIX)) {
     return { version: null };
-  }
-
-  if (value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX)) {
-    return {
-      version: 1,
-      payload: value.slice(SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX.length),
-    };
   }
 
   if (value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) {

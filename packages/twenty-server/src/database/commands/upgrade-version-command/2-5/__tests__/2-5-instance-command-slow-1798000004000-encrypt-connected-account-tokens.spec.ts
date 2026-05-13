@@ -2,10 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
-import {
-  SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX,
-  SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
-} from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 type FakeRow = {
@@ -19,20 +16,6 @@ const FAKE_V2_KEY_ID = 'deadbeef';
 
 const wrapAsV2 = (plaintext: string, workspaceId: string): string =>
   `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}${FAKE_V2_KEY_ID}:CIPHER(${plaintext}|${workspaceId})`;
-
-const unwrapV1 = (ciphertext: string): string => {
-  const match = ciphertext.match(
-    new RegExp(`^${SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX}V1CIPHER\\((.*)\\)$`),
-  );
-
-  if (!isDefined(match)) {
-    throw new Error(
-      `Fake encryption stub: decrypt called with an unexpected value: ${ciphertext}`,
-    );
-  }
-
-  return match[1];
-};
 
 const buildFakeDataSource = (
   initialRows: FakeRow[],
@@ -76,19 +59,19 @@ const buildFakeDataSource = (
         const id = params?.[0] as string;
         const target = rows.find((row) => row.id === id);
 
-        if (!target) {
+        if (!isDefined(target)) {
           return;
         }
 
         const accessTokenMatch = sql.match(/"accessToken" = \$(\d+)/);
         const refreshTokenMatch = sql.match(/"refreshToken" = \$(\d+)/);
 
-        if (accessTokenMatch) {
+        if (isDefined(accessTokenMatch)) {
           target.accessToken = params?.[
             Number(accessTokenMatch[1]) - 1
           ] as string;
         }
-        if (refreshTokenMatch) {
+        if (isDefined(refreshTokenMatch)) {
           target.refreshToken = params?.[
             Number(refreshTokenMatch[1]) - 1
           ] as string;
@@ -108,28 +91,18 @@ const buildFakeDataSource = (
   };
 };
 
-// The fake encryption service mimics the real one: encrypt produces a v2
-// envelope, decrypt unwraps v1 envelopes (modelling pre-existing rows from
-// the unreleased v2.4.0 staging window) and pass-through for plaintext.
 const buildFakeTokenEncryptionService =
   (): ConnectedAccountTokenEncryptionService =>
     ({
-      encrypt: jest.fn((plaintext: string, workspaceId: string): string =>
-        wrapAsV2(plaintext, workspaceId),
+      encrypt: jest.fn(
+        ({
+          plaintext,
+          workspaceId,
+        }: {
+          plaintext: string;
+          workspaceId: string;
+        }): string => wrapAsV2(plaintext, workspaceId),
       ),
-      decrypt: jest.fn((ciphertext: string, _workspaceId: string): string => {
-        if (ciphertext.startsWith(SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX)) {
-          return unwrapV1(ciphertext);
-        }
-
-        if (ciphertext.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) {
-          throw new Error(
-            `Fake encryption stub: decrypt should not be called on v2 rows; the slow command should skip them.`,
-          );
-        }
-
-        return ciphertext;
-      }),
     }) as unknown as ConnectedAccountTokenEncryptionService;
 
 const buildCommand = (): {
@@ -144,10 +117,9 @@ const buildCommand = (): {
 
 describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
   describe('runDataMigration', () => {
-    it('upgrades plaintext rows to v2, upgrades v1 rows to v2, and leaves v2 rows untouched', async () => {
+    it('upgrades plaintext rows to v2 with workspaceId threaded through, and leaves v2 rows untouched', async () => {
       const wsA = '11111111-1111-1111-1111-111111111111';
       const wsB = '22222222-2222-2222-2222-222222222222';
-      const v1AccessToken = `${SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX}V1CIPHER(legacy-v1-access)`;
       const alreadyV2 = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}cafebabe:preexisting-v2-ciphertext`;
 
       const { dataSource, rows } = buildFakeDataSource([
@@ -160,7 +132,7 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
         {
           id: 'bbbbbbbb-0000-0000-0000-000000000002',
           workspaceId: wsB,
-          accessToken: v1AccessToken,
+          accessToken: alreadyV2,
           refreshToken: alreadyV2,
         },
         {
@@ -183,7 +155,7 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
         {
           id: 'bbbbbbbb-0000-0000-0000-000000000002',
           workspaceId: wsB,
-          accessToken: wrapAsV2('legacy-v1-access', wsB),
+          accessToken: alreadyV2,
           refreshToken: alreadyV2,
         },
         {
@@ -195,10 +167,10 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
       ]);
     });
 
-    // Regression guard: the SELECT filter is per-row (one column non-v2 is
-    // enough to fetch the row), so the loop body sees rows where one column
-    // is already v2 and the other isn't. The per-cell guard inside the loop
-    // is what prevents the v2 column from being double-encrypted.
+    // Regression guard: the SELECT filter is per-row (one non-v2 column is
+    // enough to fetch the row), so the loop sees rows where one column is
+    // already v2 and the other is plaintext. The per-cell guard inside the
+    // loop is what prevents the v2 column from being double-encrypted.
     it('only rewrites the non-v2 column when a row mixes v2 and plaintext', async () => {
       const ws = '33333333-3333-3333-3333-333333333333';
       const alreadyV2 = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}cafebabe:preexisting-v2-access`;

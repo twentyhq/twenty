@@ -3,12 +3,8 @@ import { config } from 'dotenv';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
-import {
-  SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX,
-  SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
-} from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { encryptAesCtrV1 } from 'src/engine/core-modules/secret-encryption/utils/encrypt-aes-ctr-v1.util';
 import { type EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
@@ -55,9 +51,7 @@ const seedRow = async ({
   refreshToken: string | null;
 }): Promise<string> => {
   // Insert directly with raw SQL to bypass the CHECK constraint while we
-  // seed the legacy/plaintext rows that the slow command is meant to
-  // upgrade. SET CONSTRAINTS DEFERRED would not help here (CHECK is
-  // immediate); we drop and re-add inside the transaction instead.
+  // seed the plaintext rows that the slow command is meant to upgrade.
   await dataSource.query(
     `ALTER TABLE "core"."connectedAccount"
        DROP CONSTRAINT IF EXISTS "CHK_connectedAccount_accessToken_encrypted"`,
@@ -198,58 +192,17 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand (integration)', () =>
       row.refreshToken.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX),
     ).toBe(true);
     expect(
-      connectedAccountTokenEncryptionService.decrypt(
-        row.accessToken,
+      connectedAccountTokenEncryptionService.decrypt({
+        ciphertext: row.accessToken,
         workspaceId,
-      ),
+      }),
     ).toBe(accessTokenPlaintext);
     expect(
-      connectedAccountTokenEncryptionService.decrypt(
-        row.refreshToken,
+      connectedAccountTokenEncryptionService.decrypt({
+        ciphertext: row.refreshToken,
         workspaceId,
-      ),
+      }),
     ).toBe(refreshTokenPlaintext);
-  });
-
-  it('upgrades enc:v1 rows to enc:v2 and preserves the decrypted plaintext', async () => {
-    const handle = `${TEST_ROW_HANDLE_PREFIX}v1`;
-    const accessTokenPlaintext = 'v1-access-token';
-    const v1AccessToken = `${SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX}${encryptAesCtrV1(
-      {
-        plaintext: accessTokenPlaintext,
-        rawKey: process.env.APP_SECRET as string,
-      },
-    )}`;
-
-    const id = await seedRow({
-      dataSource,
-      workspaceId,
-      userWorkspaceId,
-      handle,
-      accessToken: v1AccessToken,
-      refreshToken: null,
-    });
-
-    seededRowIds.push(id);
-
-    await command.runDataMigration(dataSource);
-
-    const [row] = await dataSource.query(
-      `SELECT "accessToken", "refreshToken"
-         FROM "core"."connectedAccount" WHERE id = $1`,
-      [id],
-    );
-
-    expect(
-      row.accessToken.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX),
-    ).toBe(true);
-    expect(
-      connectedAccountTokenEncryptionService.decrypt(
-        row.accessToken,
-        workspaceId,
-      ),
-    ).toBe(accessTokenPlaintext);
-    expect(row.refreshToken).toBeNull();
   });
 
   it('leaves enc:v2 rows untouched and is idempotent across re-runs', async () => {
@@ -288,21 +241,21 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand (integration)', () =>
     expect(afterSecondRun.accessToken).toBe(preexistingV2Ciphertext);
   });
 
-  it('handles a row that mixes a v1 column and a plaintext column (per-cell guard)', async () => {
+  it('handles a row that mixes a v2 column and a plaintext column (per-cell guard)', async () => {
     const handle = `${TEST_ROW_HANDLE_PREFIX}mixed`;
     const accessPlaintext = 'mixed-access';
     const refreshPlaintext = 'mixed-refresh';
-    const v1Access = `${SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX}${encryptAesCtrV1({
-      plaintext: accessPlaintext,
-      rawKey: process.env.APP_SECRET as string,
-    })}`;
+    const preexistingV2Access = secretEncryptionService.encryptVersioned(
+      accessPlaintext,
+      { workspaceId },
+    );
 
     const id = await seedRow({
       dataSource,
       workspaceId,
       userWorkspaceId,
       handle,
-      accessToken: v1Access,
+      accessToken: preexistingV2Access,
       refreshToken: refreshPlaintext,
     });
 
@@ -316,30 +269,19 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand (integration)', () =>
       [id],
     );
 
-    expect(
-      row.accessToken.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX),
-    ).toBe(true);
+    expect(row.accessToken).toBe(preexistingV2Access);
     expect(
       row.refreshToken.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX),
     ).toBe(true);
     expect(
-      connectedAccountTokenEncryptionService.decrypt(
-        row.accessToken,
+      connectedAccountTokenEncryptionService.decrypt({
+        ciphertext: row.refreshToken,
         workspaceId,
-      ),
-    ).toBe(accessPlaintext);
-    expect(
-      connectedAccountTokenEncryptionService.decrypt(
-        row.refreshToken,
-        workspaceId,
-      ),
+      }),
     ).toBe(refreshPlaintext);
   });
 
   it('rejects a plaintext insert once the CHECK constraint is in place', async () => {
-    // up() is responsible for installing the constraint; assert it does
-    // so by dropping and re-applying via the command itself, then
-    // attempting an insert that should fail.
     await dropEncryptionCheckConstraints(dataSource);
 
     const queryRunner = dataSource.createQueryRunner();

@@ -19,7 +19,13 @@ export class ConnectedAccountTokenEncryptionService {
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  encrypt(plaintext: string, workspaceId: string): string {
+  encrypt({
+    plaintext,
+    workspaceId,
+  }: {
+    plaintext: string;
+    workspaceId: string;
+  }): string {
     if (this.looksLikeCiphertext(plaintext)) {
       throw new SecretEncryptionException(
         'ConnectedAccountTokenEncryptionService.encrypt received an already-encrypted envelope. This indicates a double-encryption bug — the caller is encrypting ciphertext.',
@@ -32,21 +38,30 @@ export class ConnectedAccountTokenEncryptionService {
     });
   }
 
-  encryptNullable(
-    plaintext: string | null,
-    workspaceId: string,
-  ): string | null {
+  encryptNullable({
+    plaintext,
+    workspaceId,
+  }: {
+    plaintext: string | null;
+    workspaceId: string;
+  }): string | null {
     if (!isDefined(plaintext)) {
       return null;
     }
 
-    return this.encrypt(plaintext, workspaceId);
+    return this.encrypt({ plaintext, workspaceId });
   }
 
   // v2.4.0 rollout-window tolerance: rows written before the encryption
   // backfill ran may still be plaintext. Returning them as-is lets the slow
   // command finish; once it has run everywhere this branch can throw.
-  decrypt(ciphertext: string, workspaceId: string): string {
+  decrypt({
+    ciphertext,
+    workspaceId,
+  }: {
+    ciphertext: string;
+    workspaceId: string;
+  }): string {
     const parsed = parseSecretEncryptionEnvelopeOrThrow({ value: ciphertext });
 
     if (!isDefined(parsed.version)) {
@@ -62,15 +77,18 @@ export class ConnectedAccountTokenEncryptionService {
     });
   }
 
-  decryptNullable(
-    ciphertext: string | null,
-    workspaceId: string,
-  ): string | null {
+  decryptNullable({
+    ciphertext,
+    workspaceId,
+  }: {
+    ciphertext: string | null;
+    workspaceId: string;
+  }): string | null {
     if (!isDefined(ciphertext)) {
       return null;
     }
 
-    return this.decrypt(ciphertext, workspaceId);
+    return this.decrypt({ ciphertext, workspaceId });
   }
 
   encryptTokenPair({
@@ -86,8 +104,14 @@ export class ConnectedAccountTokenEncryptionService {
     encryptedRefreshToken: string | null;
   } {
     return {
-      encryptedAccessToken: this.encrypt(accessToken, workspaceId),
-      encryptedRefreshToken: this.encryptNullable(refreshToken, workspaceId),
+      encryptedAccessToken: this.encrypt({
+        plaintext: accessToken,
+        workspaceId,
+      }),
+      encryptedRefreshToken: this.encryptNullable({
+        plaintext: refreshToken,
+        workspaceId,
+      }),
     };
   }
 
@@ -95,7 +119,7 @@ export class ConnectedAccountTokenEncryptionService {
     try {
       const parsed = parseSecretEncryptionEnvelopeOrThrow({ value });
 
-      return parsed.version === 1 || parsed.version === 2;
+      return parsed.version === 2;
     } catch {
       return false;
     }

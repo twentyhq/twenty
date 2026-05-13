@@ -3,7 +3,7 @@ import { createCipheriv, createHash, randomBytes } from 'crypto';
 const deriveCtrKey = (rawKey: string): string =>
   createHash('sha512').update(rawKey).digest('hex').substring(0, 32);
 
-export const encryptAesCtrV1 = ({
+export const encryptAesCtr = ({
   plaintext,
   rawKey,
 }: {
