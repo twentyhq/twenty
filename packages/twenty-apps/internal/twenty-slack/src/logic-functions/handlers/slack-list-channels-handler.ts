@@ -1,6 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type SlackListChannelsInput } from 'src/logic-functions/types/slack-list-channels-input.type';
+import {
+  type SlackChannelType,
+  type SlackListChannelsInput,
+} from 'src/logic-functions/types/slack-list-channels-input.type';
 import {
   type SlackListChannelsResult,
   type SlackListChannelsResultChannel,
@@ -11,19 +14,11 @@ const DEFAULT_LIMIT = 200;
 const MAX_LIMIT = 1000;
 const SLACK_PAGE_SIZE = 200;
 
-const channelTypeToSlackTypes = (
-  channelType: SlackListChannelsInput['channelType'],
-): string => {
-  switch (channelType) {
-    case 'Public':
-      return 'public_channel';
-    case 'Private':
-      return 'private_channel';
-    case 'All':
-    default:
-      return 'public_channel,private_channel';
-  }
-};
+const SLACK_TYPES_BY_CHANNEL_TYPE = {
+  Public: 'public_channel',
+  Private: 'private_channel',
+  All: 'public_channel,private_channel',
+} as const satisfies Record<SlackChannelType, string>;
 
 export const slackListChannelsHandler = async (
   parameters: SlackListChannelsInput,
@@ -46,7 +41,7 @@ export const slackListChannelsHandler = async (
     MAX_LIMIT,
   );
   const excludeArchived = parameters.excludeArchived ?? true;
-  const types = channelTypeToSlackTypes(parameters.channelType);
+  const types = SLACK_TYPES_BY_CHANNEL_TYPE[parameters.channelType ?? 'All'];
 
   const channels: SlackListChannelsResultChannel[] = [];
   let cursor: string | undefined;
