@@ -12,6 +12,7 @@ import {
   resolveEncryptionKeys,
   type ResolvedEncryptionKeys,
 } from './utils/key-resolution.util';
+import { pickKeyByKeyId } from './utils/pick-key-by-key-id.util';
 
 type VersionedOptions = {
   workspaceId?: string;
@@ -99,7 +100,9 @@ export class SecretEncryptionService {
     const parsed = parseEnvelope(value);
 
     if (parsed.version === 2) {
-      return this.decryptV2(parsed.keyId, parsed.payload, opts.workspaceId);
+      const key = pickKeyByKeyId(parsed.keyId, this.resolveKeys());
+
+      return decryptAesGcmV2(parsed.payload, key, opts.workspaceId);
     }
 
     if (parsed.version === 1) {
@@ -114,26 +117,6 @@ export class SecretEncryptionService {
     this.warnLegacyDecryptionOnce();
 
     return this.decrypt(value);
-  }
-
-  private decryptV2(
-    keyId: string,
-    payload: string,
-    workspaceId: string | undefined,
-  ): string {
-    const { primary, fallback } = this.resolveKeys();
-
-    if (computeKeyId(primary) === keyId) {
-      return decryptAesGcmV2(payload, primary, workspaceId);
-    }
-
-    if (fallback !== null && computeKeyId(fallback) === keyId) {
-      return decryptAesGcmV2(payload, fallback, workspaceId);
-    }
-
-    throw new Error(
-      `No encryption key matches keyId '${keyId}'. Configure FALLBACK_ENCRYPTION_KEY with the key that encrypted this row.`,
-    );
   }
 
   private warnLegacyDecryptionOnce(): void {
