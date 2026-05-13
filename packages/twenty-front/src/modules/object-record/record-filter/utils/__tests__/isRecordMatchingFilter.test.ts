@@ -122,6 +122,34 @@ describe('isRecordMatchingFilter', () => {
       ).toBe(false);
     });
 
+    it('matches a record with a simple equality filter on id', () => {
+      const companyMockInFilter = {
+        ...companiesMock[0],
+      };
+
+      const companyMockNotInFilter = {
+        ...companiesMock[1],
+      };
+
+      const filter = { id: { eq: companyMockInFilter.id } };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockInFilter,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMockNotInFilter,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
     it('matches a record with a simple equality filter on domainName', () => {
       const companyMockInFilter = {
         ...companiesMock[0],

@@ -217,6 +217,13 @@ export const isRecordMatchingFilter = ({
       );
 
     if (!isDefined(objectMetadataField)) {
+      if (filterKey === 'id') {
+        return isMatchingUUIDFilter({
+          uuidFilter: filterValue as UUIDFilter,
+          value: record.id,
+        });
+      }
+
       throw new Error(
         'Field metadata item "' +
           filterKey +
