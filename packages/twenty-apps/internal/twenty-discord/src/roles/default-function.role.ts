@@ -1,8 +1,8 @@
-import { defineRole } from 'twenty-sdk/define';
+import { defineApplicationRole } from 'twenty-sdk/define';
 
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
-export default defineRole({
+export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Twenty Discord tools role',
   description:
