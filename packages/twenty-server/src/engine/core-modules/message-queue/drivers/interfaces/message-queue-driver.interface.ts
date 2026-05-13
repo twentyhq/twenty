@@ -18,7 +18,7 @@ export interface MessageQueueDriver {
     queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
     options?: MessageQueueWorkerOptions,
-  ): Promise<void>;
+  ): void;
   addCron<T extends MessageQueueJobData | undefined>({
     queueName,
     jobName,

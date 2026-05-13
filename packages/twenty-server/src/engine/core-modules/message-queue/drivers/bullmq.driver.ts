@@ -92,7 +92,7 @@ export class BullMQDriver
     ]);
   }
 
-  async work<T>(
+  work<T>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void>,
     options?: MessageQueueWorkerOptions,
