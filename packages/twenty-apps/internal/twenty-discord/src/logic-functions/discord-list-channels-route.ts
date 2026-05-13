@@ -6,7 +6,10 @@ import { discordListChannelsHandler } from 'src/logic-functions/handlers/discord
 
 const handler = async (event: RoutePayload) => {
   const params = event.queryStringParameters ?? {};
-  const guildId = typeof params.guildId === 'string' ? params.guildId : '';
+  const guildId =
+    typeof params.guildId === 'string' && params.guildId.length > 0
+      ? params.guildId
+      : undefined;
 
   return discordListChannelsHandler({ guildId });
 };

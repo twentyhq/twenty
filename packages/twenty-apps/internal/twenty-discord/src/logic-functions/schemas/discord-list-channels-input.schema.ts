@@ -6,11 +6,10 @@ export const discordListChannelsInputSchema: InputJsonSchema = {
     guildId: {
       type: 'string',
       label: 'Discord server (guild) ID',
-      multiline: false,
       description:
-        'The Discord server ID to list channels for (a long number like `1234567890123456789`). In Discord with Developer Mode on: right-click the server icon → "Copy Server ID". The bot must be a member of this server. Discord bot tokens are global, not per-server, so this ID is required to scope the listing.',
+        'Optional. The Discord server ID to list channels for (a long number like `1234567890123456789`). In Discord with Developer Mode on: right-click the server icon → "Copy Server ID". If omitted and the bot is in exactly one server, that server is used automatically; if the bot is in multiple servers, the error response lists each server name and ID so you can pick one.',
     },
   },
-  required: ['guildId'],
+  required: [],
   additionalProperties: false,
 };

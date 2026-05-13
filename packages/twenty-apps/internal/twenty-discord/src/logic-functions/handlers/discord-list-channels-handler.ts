@@ -8,11 +8,6 @@ import {
 import { discordApiRequest } from 'src/logic-functions/utils/discord-api-request';
 import { getDiscordBotToken } from 'src/logic-functions/utils/get-discord-bot-token';
 
-// Discord channel type enum from the gateway docs:
-// https://discord.com/developers/docs/resources/channel#channel-object-channel-types
-// We expose only the two text-postable, top-level guild channel types — the
-// kinds workflow steps can actually send messages to. Voice channels, threads,
-// forums, categories, and DM-likes are intentionally excluded.
 const GUILD_TEXT_CHANNEL_TYPE = 0;
 const GUILD_ANNOUNCEMENT_CHANNEL_TYPE = 5;
 
@@ -29,44 +24,91 @@ type DiscordChannelResponse = {
   position: number;
 };
 
+type DiscordGuildResponse = {
+  id: string;
+  name: string;
+};
+
+const buildFailureResult = (error: string): DiscordListChannelsResult => ({
+  success: false,
+  channels: [],
+  count: 0,
+  error,
+});
+
+const resolveGuildId = async ({
+  botToken,
+  providedGuildId,
+}: {
+  botToken: string;
+  providedGuildId: string | undefined;
+}): Promise<{ ok: true; guildId: string } | { ok: false; error: string }> => {
+  const trimmed = providedGuildId?.trim();
+
+  if (isDefined(trimmed) && trimmed.length > 0) {
+    return { ok: true, guildId: trimmed };
+  }
+
+  const guildsResult = await discordApiRequest<DiscordGuildResponse[]>({
+    botToken,
+    method: 'GET',
+    path: '/users/@me/guilds',
+  });
+
+  if (!guildsResult.ok) {
+    return { ok: false, error: guildsResult.errorMessage };
+  }
+
+  const guilds = guildsResult.data;
+
+  if (guilds.length === 0) {
+    return {
+      ok: false,
+      error:
+        'Bot has not been invited to any Discord server yet. Use the OAuth2 → URL Generator in the Discord Developer Portal (scope `bot`) to invite it to a server, then retry.',
+    };
+  }
+
+  if (guilds.length > 1) {
+    const guildList = guilds
+      .map((guild) => `"${guild.name}" (${guild.id})`)
+      .join(', ');
+
+    return {
+      ok: false,
+      error: `Bot is in ${guilds.length} Discord servers — please specify which one via the guildId input. Available: ${guildList}.`,
+    };
+  }
+
+  return { ok: true, guildId: guilds[0].id };
+};
+
 export const discordListChannelsHandler = async (
   parameters: DiscordListChannelsInput,
 ): Promise<DiscordListChannelsResult> => {
   const tokenResult = getDiscordBotToken();
 
   if (!tokenResult.success) {
-    return {
-      success: false,
-      channels: [],
-      count: 0,
-      error: tokenResult.error,
-    };
+    return buildFailureResult(tokenResult.error);
   }
 
-  const guildId = parameters.guildId.trim();
+  const guildIdResult = await resolveGuildId({
+    botToken: tokenResult.botToken,
+    providedGuildId: parameters.guildId,
+  });
 
-  if (guildId.length === 0) {
-    return {
-      success: false,
-      channels: [],
-      count: 0,
-      error: 'A Discord server (guild) ID is required.',
-    };
+  if (!guildIdResult.ok) {
+    return buildFailureResult(guildIdResult.error);
   }
 
   const result = await discordApiRequest<DiscordChannelResponse[]>({
     botToken: tokenResult.botToken,
     method: 'GET',
-    path: `/guilds/${encodeURIComponent(guildId)}/channels`,
+    path: `/guilds/${encodeURIComponent(guildIdResult.guildId)}/channels`,
   });
 
   if (!result.ok) {
-    return {
-      success: false,
-      channels: [],
-      count: 0,
-      error: result.errorMessage,
-    };
+    return buildFailureResult(result.errorMessage);
   }
 
   const channels: DiscordListChannelsResultChannel[] = result.data

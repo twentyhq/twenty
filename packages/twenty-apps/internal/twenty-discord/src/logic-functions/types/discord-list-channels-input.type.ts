@@ -1,3 +1,3 @@
 export type DiscordListChannelsInput = {
-  guildId: string;
+  guildId?: string;
 };
