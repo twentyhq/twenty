@@ -266,11 +266,6 @@ msgstr "{contextStoreNumberOfSelectedRecords} được chọn"
 msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
 msgstr "{count, plural, other {Ví dụ: {2}{3} cho {count} chữ số thập phân}}"
 
-#. js-lingui-id: aTq2js
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "{credits} Credits - ${price}"
-msgstr "{credits} tín dụng - ${price}"
-
 #. js-lingui-id: q8RNNe
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "{credits} Credits - ${priceDisplay}"
@@ -3044,16 +3039,6 @@ msgstr "Hủy chuyển đổi khoảng thời gian"
 msgid "Cancel interval switching?"
 msgstr "Hủy chuyển đổi khoảng thời gian?"
 
-#. js-lingui-id: /Dmw1h
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel metered tier switching"
-msgstr "Hủy chuyển đổi cấp đo"
-
-#. js-lingui-id: Q/chGD
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel metered tier switching?"
-msgstr "Hủy chuyển đổi cấp đo?"
-
 #. js-lingui-id: rRK/Lf
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
@@ -3795,11 +3780,6 @@ msgstr "Đã cấu hình"
 msgid "Confirm"
 msgstr "Xác nhận"
 
-#. js-lingui-id: qmnX/6
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Confirm changing your current credit plan."
-msgstr "Xác nhận thay đổi gói tín dụng hiện tại."
-
 #. js-lingui-id: q2rgqr
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Confirm changing your current resource credit allocation."
@@ -3812,7 +3792,6 @@ msgstr "Xác nhận xóa vai trò {roleName}? Điều này không thể hoàn t�
 
 #. js-lingui-id: kZkFSm
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "Xác nhận hạ cấp"
 
@@ -3823,7 +3802,6 @@ msgstr "Xác nhận cập nhật vai trò"
 
 #. js-lingui-id: DDbn3x
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm upgrade"
 msgstr "Xác nhận nâng cấp"
 
@@ -4128,7 +4106,6 @@ msgid "Core Objects"
 msgstr "Đối tượng cốt lõi"
 
 #. js-lingui-id: I99Miw
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Cost"
 msgstr "Chi phí"
@@ -4136,11 +4113,6 @@ msgstr "Chi phí"
 #. js-lingui-id: Z9Z9PX
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 msgid "Cost per 1M tokens"
-msgstr ""
-
-#. js-lingui-id: HUPoL8
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "Cost per Extra Credits"
 msgstr ""
 
 #. js-lingui-id: 3X5ngu
@@ -4424,11 +4396,6 @@ msgstr "Tiêu thụ tín dụng theo thời gian."
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credit pack switching has been cancelled."
 msgstr ""
-
-#. js-lingui-id: Efny36
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Credit Plan"
-msgstr "Kế hoạch tín dụng"
 
 #. js-lingui-id: qtEx+T
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
@@ -5560,8 +5527,6 @@ msgstr ""
 #. js-lingui-id: LE8J+K
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Downgrade"
 msgstr "Hạ cấp"
 
@@ -6560,11 +6525,6 @@ msgstr ""
 msgid "Error while cancelling interval switching."
 msgstr "Lỗi khi hủy chuyển đổi khoảng thời gian."
 
-#. js-lingui-id: a1gs9Y
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while cancelling metered tier switching."
-msgstr "Lỗi khi hủy chuyển đổi cấp đo."
-
 #. js-lingui-id: FS6DQK
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling plan switching."
@@ -6888,11 +6848,6 @@ msgstr ""
 msgid "Expression"
 msgstr "Biểu thức"
 
-#. js-lingui-id: uE7S0L
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "Extra Credits Used"
-msgstr "Số tín dụng bổ sung đã sử dụng"
-
 #. js-lingui-id: 7Bj3x9
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -7110,11 +7065,6 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Failed to update model selection mode"
 msgstr "Cập nhật chế độ chọn mô hình thất bại"
-
-#. js-lingui-id: HnBqPY
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Failed to update price."
-msgstr "Cập nhật giá thất bại."
 
 #. js-lingui-id: J7vly7
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -9810,11 +9760,6 @@ msgstr "Siêu dữ liệu"
 msgid "Metadata file generation failed"
 msgstr "Tạo tập tin Metadata thất bại"
 
-#. js-lingui-id: onCJJ6
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Metered tier switching has been cancelled."
-msgstr "Chuyển đổi cấp đo đã bị hủy."
-
 #. js-lingui-id: fiPesM
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Method"
@@ -11169,7 +11114,6 @@ msgstr "Số lượng chữ số thập phân"
 
 #. js-lingui-id: tYOaY8
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
 msgstr "Số lượng tín dụng mới được cấp phát mỗi {recurringInterval}"
 
@@ -12046,7 +11990,6 @@ msgstr "Vui lòng chọn ít nhất một đối tượng đích cho mối quan 
 
 #. js-lingui-id: 8YnlGz
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
 msgstr "Vui lòng bắt đầu đăng ký của bạn trước"
 
@@ -12174,11 +12117,6 @@ msgstr "Trước"
 #: src/modules/ai/utils/groupThreadsByDate.ts
 msgid "Previous 7 days"
 msgstr ""
-
-#. js-lingui-id: jmc+FY
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Price updated."
-msgstr "Giá đã cập nhật."
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -16316,8 +16254,6 @@ msgstr "Cập nhật"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "Upgrade"
@@ -16362,9 +16298,9 @@ msgstr ""
 msgid "Upgrade to {latestAvailableVersion}"
 msgstr "Nâng cấp lên {latestAvailableVersion}"
 
-#. js-lingui-id: tLOGrv
+#. js-lingui-id: Kutw4+
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "Upgrade to {nextTierCredits} credits for ${nextTierPrice}/{nextTierInterval}."
+msgid "Upgrade to {nextResourceCreditsAmount} credits for ${nextResourceCreditPrice}/{nextTierInterval}."
 msgstr ""
 
 #. js-lingui-id: ggd+Ee
@@ -17545,11 +17481,6 @@ msgstr ""
 msgid "You have scheduled a credit pack change. Do you want to cancel it?"
 msgstr ""
 
-#. js-lingui-id: M2lYgq
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You have scheduled a metered tier change. Do you want to cancel it?"
-msgstr "Bạn đã lên lịch thay đổi cấp đo. Bạn có muốn hủy nó không?"
-
 #. js-lingui-id: z8eKS7
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "you will be charged ${enterprisePrice} per user per month"
@@ -17587,11 +17518,11 @@ msgid ""
 "Reach to our support team to upgrade."
 msgstr ""
 
-#. js-lingui-id: UUaKVD
+#. js-lingui-id: /fksQo
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid ""
 "You've hit your usage limit. \n"
-"Upgrade to {nextTierCredits} credits for ${nextTierPrice}/{nextTierInterval}."
+"Upgrade to {nextResourceCreditsAmount} credits for ${nextResourceCreditPrice}/{nextTierInterval}."
 msgstr ""
 
 #. js-lingui-id: yZ0wRS

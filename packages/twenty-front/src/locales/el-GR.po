@@ -266,11 +266,6 @@ msgstr "{contextStoreNumberOfSelectedRecords} επιλεγμένα"
 msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
 msgstr "{count, plural, one {Π.χ. {0}{1} για {count} δεκαδικό} other {Π.χ. {2}{3} για {count} δεκαδικά}}"
 
-#. js-lingui-id: aTq2js
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "{credits} Credits - ${price}"
-msgstr "{credits} Πιστώσεις - ${price}"
-
 #. js-lingui-id: q8RNNe
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "{credits} Credits - ${priceDisplay}"
@@ -3044,16 +3039,6 @@ msgstr "Ακύρωση αλλαγής περιόδου"
 msgid "Cancel interval switching?"
 msgstr "Ακύρωση αλλαγής περιόδου;"
 
-#. js-lingui-id: /Dmw1h
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel metered tier switching"
-msgstr "Ακύρωση αλλαγής τιμολογιακής βαθμίδας"
-
-#. js-lingui-id: Q/chGD
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel metered tier switching?"
-msgstr "Ακύρωση αλλαγής τιμολογιακής βαθμίδας;"
-
 #. js-lingui-id: rRK/Lf
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
@@ -3795,11 +3780,6 @@ msgstr "Ρυθμισμένο"
 msgid "Confirm"
 msgstr "Επιβεβαίωση"
 
-#. js-lingui-id: qmnX/6
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Confirm changing your current credit plan."
-msgstr "Επιβεβαίωση αλλαγής του τρέχοντος πλάνου πιστώσεων."
-
 #. js-lingui-id: q2rgqr
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Confirm changing your current resource credit allocation."
@@ -3812,7 +3792,6 @@ msgstr "Επιβεβαιώστε την διαγραφή του ρόλου {role
 
 #. js-lingui-id: kZkFSm
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "Επιβεβαίωση υποβάθμισης"
 
@@ -3823,7 +3802,6 @@ msgstr "Επιβεβαίωση ενημέρωσης ρόλου"
 
 #. js-lingui-id: DDbn3x
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm upgrade"
 msgstr "Επιβεβαίωση αναβάθμισης"
 
@@ -4128,7 +4106,6 @@ msgid "Core Objects"
 msgstr "Κύρια Αντικείμενα"
 
 #. js-lingui-id: I99Miw
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Cost"
 msgstr "Κόστος"
@@ -4136,11 +4113,6 @@ msgstr "Κόστος"
 #. js-lingui-id: Z9Z9PX
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 msgid "Cost per 1M tokens"
-msgstr ""
-
-#. js-lingui-id: HUPoL8
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "Cost per Extra Credits"
 msgstr ""
 
 #. js-lingui-id: 3X5ngu
@@ -4424,11 +4396,6 @@ msgstr "Κατανάλωση πιστώσεων με την πάροδο του 
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credit pack switching has been cancelled."
 msgstr ""
-
-#. js-lingui-id: Efny36
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Credit Plan"
-msgstr "Πρόγραμμα Πιστώσεων"
 
 #. js-lingui-id: qtEx+T
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
@@ -5560,8 +5527,6 @@ msgstr ""
 #. js-lingui-id: LE8J+K
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Downgrade"
 msgstr "Υποβάθμιση"
 
@@ -6560,11 +6525,6 @@ msgstr ""
 msgid "Error while cancelling interval switching."
 msgstr "Σφάλμα κατά την ακύρωση αλλαγής περιόδου."
 
-#. js-lingui-id: a1gs9Y
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while cancelling metered tier switching."
-msgstr "Σφάλμα κατά την ακύρωση αλλαγής τιμολογιακής βαθμίδας."
-
 #. js-lingui-id: FS6DQK
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling plan switching."
@@ -6888,11 +6848,6 @@ msgstr ""
 msgid "Expression"
 msgstr "Έκφραση"
 
-#. js-lingui-id: uE7S0L
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "Extra Credits Used"
-msgstr "Πρόσθετες μονάδες χρησιμοποιήθηκαν"
-
 #. js-lingui-id: 7Bj3x9
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -7110,11 +7065,6 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Failed to update model selection mode"
 msgstr "Αποτυχία ενημέρωσης λειτουργίας επιλογής μοντέλου"
-
-#. js-lingui-id: HnBqPY
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Failed to update price."
-msgstr "Αποτυχία ενημέρωσης τιμής."
 
 #. js-lingui-id: J7vly7
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -9810,11 +9760,6 @@ msgstr "Μεταδεδομένα"
 msgid "Metadata file generation failed"
 msgstr "Αποτυχία δημιουργίας αρχείου μεταδεδομένων"
 
-#. js-lingui-id: onCJJ6
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Metered tier switching has been cancelled."
-msgstr "Η αλλαγή βαθμίδας ακυρώθηκε."
-
 #. js-lingui-id: fiPesM
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Method"
@@ -11169,7 +11114,6 @@ msgstr "Αριθμός δεκαδικών"
 
 #. js-lingui-id: tYOaY8
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
 msgstr "Αριθμός νέων πιστώσεων που διατίθενται κάθε {recurringInterval}"
 
@@ -12046,7 +11990,6 @@ msgstr "Παρακαλώ επιλέξτε τουλάχιστον ένα αντι
 
 #. js-lingui-id: 8YnlGz
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
 msgstr "Παρακαλώ ξεκινήστε πρώτα τη συνδρομή σας"
 
@@ -12174,11 +12117,6 @@ msgstr "Προηγούμενο"
 #: src/modules/ai/utils/groupThreadsByDate.ts
 msgid "Previous 7 days"
 msgstr ""
-
-#. js-lingui-id: jmc+FY
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Price updated."
-msgstr "Η τιμή ενημερώθηκε."
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -16320,8 +16258,6 @@ msgstr "Ενημερώσεις"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "Upgrade"
@@ -16366,9 +16302,9 @@ msgstr ""
 msgid "Upgrade to {latestAvailableVersion}"
 msgstr "Αναβάθμιση σε {latestAvailableVersion}"
 
-#. js-lingui-id: tLOGrv
+#. js-lingui-id: Kutw4+
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "Upgrade to {nextTierCredits} credits for ${nextTierPrice}/{nextTierInterval}."
+msgid "Upgrade to {nextResourceCreditsAmount} credits for ${nextResourceCreditPrice}/{nextTierInterval}."
 msgstr ""
 
 #. js-lingui-id: ggd+Ee
@@ -17549,11 +17485,6 @@ msgstr ""
 msgid "You have scheduled a credit pack change. Do you want to cancel it?"
 msgstr ""
 
-#. js-lingui-id: M2lYgq
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You have scheduled a metered tier change. Do you want to cancel it?"
-msgstr "Έχετε προγραμματίσει αλλαγή βαθμίδας. Θέλετε να την ακυρώσετε;"
-
 #. js-lingui-id: z8eKS7
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "you will be charged ${enterprisePrice} per user per month"
@@ -17591,11 +17522,11 @@ msgid ""
 "Reach to our support team to upgrade."
 msgstr ""
 
-#. js-lingui-id: UUaKVD
+#. js-lingui-id: /fksQo
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid ""
 "You've hit your usage limit. \n"
-"Upgrade to {nextTierCredits} credits for ${nextTierPrice}/{nextTierInterval}."
+"Upgrade to {nextResourceCreditsAmount} credits for ${nextResourceCreditPrice}/{nextTierInterval}."
 msgstr ""
 
 #. js-lingui-id: yZ0wRS
