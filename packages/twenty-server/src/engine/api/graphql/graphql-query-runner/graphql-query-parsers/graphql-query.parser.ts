@@ -20,6 +20,7 @@ import {
   GraphqlQuerySelectedFieldsParser,
   type GraphqlQuerySelectedFieldsResult,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { ensureRelationJoin } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/ensure-relation-join.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -45,6 +46,7 @@ export class GraphqlQueryParser {
     this.filterConditionParser = new GraphqlQueryFilterConditionParser(
       this.flatObjectMetadata,
       this.flatFieldMetadataMaps,
+      this.flatObjectMetadataMaps,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
       this.flatObjectMetadata,
@@ -124,12 +126,11 @@ export class GraphqlQueryParser {
       isForwardPagination,
     );
 
-    // Add LEFT JOINs for relation ordering
+    // Add LEFT JOINs for relation ordering. ensureRelationJoin dedupes against
+    // joins already on the builder, so filter-driven joins on the same
+    // relation don't collide with order-driven ones.
     for (const joinInfo of parseResult.relationJoins) {
-      queryBuilder.leftJoin(
-        `${objectNameSingular}.${joinInfo.joinAlias}`,
-        joinInfo.joinAlias,
-      );
+      ensureRelationJoin(queryBuilder, objectNameSingular, joinInfo.joinAlias);
     }
 
     queryBuilder.orderBy(parseResult.orderBy);

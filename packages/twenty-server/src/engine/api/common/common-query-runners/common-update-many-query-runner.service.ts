@@ -112,6 +112,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       filter: this.filterArgProcessor.process({
         filter: args.filter,
         flatObjectMetadata,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
       data: (

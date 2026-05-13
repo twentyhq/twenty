@@ -78,16 +78,19 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
   public generateSimpleRelationFieldFilterInputType({
     fieldMetadata,
     typeOptions,
+    context,
   }: {
     fieldMetadata: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
     typeOptions: { settings?: FlatFieldMetadata['settings'] };
+    context?: SchemaGenerationContext;
   }) {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
       return {};
 
-    const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
+    const { joinColumnName, fieldMetadataName } =
+      extractGraphQLRelationFieldNames(fieldMetadata);
 
     const type = this.typeMapperService.mapToFilterType(
       fieldMetadata.type,
@@ -104,12 +107,49 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
       throw new Error(message);
     }
 
-    return {
+    const fields: GraphQLInputFieldConfigMap = {
       [joinColumnName]: {
         type,
         description: fieldMetadata.description,
       },
     };
+
+    // Expose the related object's filter input under the relation field name so
+    // callers can write `filter: { company: { name: { like: "%X%" } } }`. Only
+    // MANY_TO_ONE is supported for now — ONE_TO_MANY is handled by the early
+    // return above and would need EXISTS-subquery support to do correctly.
+    if (
+      isDefined(fieldMetadata.relationTargetObjectMetadataId) &&
+      isDefined(context)
+    ) {
+      const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
+        flatEntityMaps: context.flatObjectMetadataMaps,
+      });
+
+      if (isDefined(targetObjectMetadata)) {
+        const targetFilterInputTypeKey = computeObjectMetadataInputTypeKey(
+          targetObjectMetadata.nameSingular,
+          GqlInputTypeDefinitionKind.Filter,
+        );
+
+        const targetFilterInputType = this.gqlTypesStorage.getGqlTypeByKey(
+          targetFilterInputTypeKey,
+        );
+
+        if (
+          isDefined(targetFilterInputType) &&
+          isInputObjectType(targetFilterInputType)
+        ) {
+          fields[fieldMetadataName] = {
+            type: targetFilterInputType,
+            description: `Filter on fields of the related ${targetObjectMetadata.nameSingular}`,
+          };
+        }
+      }
+    }
+
+    return fields;
   }
 
   public generateSimpleRelationFieldOrderByInputType({

@@ -1,4 +1,9 @@
-import { Brackets, NotBrackets, type WhereExpressionBuilder } from 'typeorm';
+import {
+  Brackets,
+  NotBrackets,
+  type ObjectLiteral,
+  type WhereExpressionBuilder,
+} from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -16,36 +21,59 @@ export class GraphqlQueryFilterConditionParser {
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
+    depth = 0,
   ) {
     this.flatObjectMetadata = flatObjectMetadata;
     this.queryFilterFieldParser = new GraphqlQueryFilterFieldParser(
       this.flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      depth,
     );
   }
 
   public parse(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-    queryBuilder: WorkspaceSelectQueryBuilder<any>,
+    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
     objectNameSingular: string,
     filter: Partial<ObjectRecordFilter>,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-  ): WorkspaceSelectQueryBuilder<any> {
+  ): WorkspaceSelectQueryBuilder<ObjectLiteral> {
     if (!filter || Object.keys(filter).length === 0) {
       return queryBuilder;
     }
 
     return queryBuilder.where(
       new Brackets((qb) => {
-        Object.entries(filter).forEach(([key, value], index) => {
-          this.parseKeyFilter(qb, objectNameSingular, key, value, index === 0);
-        });
+        this.populateBrackets(qb, queryBuilder, objectNameSingular, filter);
       }),
     );
   }
 
+  // Walks the entries of a filter object into an already-opened Brackets.
+  // Public so the field parser can recurse for relation traversal — the
+  // outer query builder is threaded through so JOINs can still be added
+  // even though we're inside a Brackets closure.
+  public populateBrackets(
+    innerQueryBuilder: WhereExpressionBuilder,
+    outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+    objectNameSingular: string,
+    filter: Partial<ObjectRecordFilter>,
+  ): void {
+    Object.entries(filter).forEach(([key, value], index) => {
+      this.parseKeyFilter(
+        innerQueryBuilder,
+        outerQueryBuilder,
+        objectNameSingular,
+        key,
+        value,
+        index === 0,
+      );
+    });
+  }
+
   private parseKeyFilter(
     queryBuilder: WhereExpressionBuilder,
+    outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
     objectNameSingular: string,
     key: string,
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
@@ -61,6 +89,7 @@ export class GraphqlQueryFilterConditionParser {
                 ([subFilterkey, subFilterValue], index) => {
                   this.parseKeyFilter(
                     qb2,
+                    outerQueryBuilder,
                     objectNameSingular,
                     subFilterkey,
                     subFilterValue,
@@ -93,6 +122,7 @@ export class GraphqlQueryFilterConditionParser {
                 ([subFilterkey, subFilterValue], index) => {
                   this.parseKeyFilter(
                     qb2,
+                    outerQueryBuilder,
                     objectNameSingular,
                     subFilterkey,
                     subFilterValue,
@@ -124,6 +154,7 @@ export class GraphqlQueryFilterConditionParser {
             ([subFilterkey, subFilterValue], index) => {
               this.parseKeyFilter(
                 qb,
+                outerQueryBuilder,
                 objectNameSingular,
                 subFilterkey,
                 subFilterValue,
@@ -144,6 +175,7 @@ export class GraphqlQueryFilterConditionParser {
       default:
         this.queryFilterFieldParser.parse(
           queryBuilder,
+          outerQueryBuilder,
           objectNameSingular,
           key,
           value,

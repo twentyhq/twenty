@@ -26,15 +26,23 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
+// Cap relation-traversal nesting depth. The schema allows arbitrary depth
+// because filter inputs reference each other lazily, but the query builder
+// can only realistically handle a single hop today — joins are added against
+// the root alias only. Bump this when reverse joins / multi-hop are wired up.
+const MAX_RELATION_FILTER_DEPTH = 1;
+
 @Injectable()
 export class FilterArgProcessorService {
   process<T extends ObjectRecordFilter | undefined>({
     filter,
     flatObjectMetadata,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
     filter: T;
     flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): T {
     if (!isDefined(filter)) {
@@ -50,18 +58,22 @@ export class FilterArgProcessorService {
     return this.validateAndTransformFilter(
       filter,
       flatObjectMetadata,
+      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       fieldIdByName,
       fieldIdByJoinColumnName,
+      0,
     ) as T;
   }
 
   private validateAndTransformFilter(
     filterObject: ObjectRecordFilter,
     flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> | undefined,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     fieldIdByName: Record<string, string>,
     fieldIdByJoinColumnName: Record<string, string>,
+    depth: number,
   ): ObjectRecordFilter {
     const transformedFilter: ObjectRecordFilter = {};
 
@@ -72,9 +84,11 @@ export class FilterArgProcessorService {
             this.validateAndTransformFilter(
               nestedFilter,
               flatObjectMetadata,
+              flatObjectMetadataMaps,
               flatFieldMetadataMaps,
               fieldIdByName,
               fieldIdByJoinColumnName,
+              depth,
             ),
         );
         continue;
@@ -84,9 +98,11 @@ export class FilterArgProcessorService {
         transformedFilter[key] = this.validateAndTransformFilter(
           value as ObjectRecordFilter,
           flatObjectMetadata,
+          flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           fieldIdByName,
           fieldIdByJoinColumnName,
+          depth,
         );
         continue;
       }
@@ -95,9 +111,11 @@ export class FilterArgProcessorService {
         key,
         value,
         flatObjectMetadata,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         fieldIdByName,
         fieldIdByJoinColumnName,
+        depth,
       );
     }
 
@@ -108,9 +126,11 @@ export class FilterArgProcessorService {
     key: string,
     filterValue: Record<string, unknown>,
     flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> | undefined,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     fieldIdByName: Record<string, string>,
     fieldIdByJoinColumnName: Record<string, string>,
+    depth: number,
   ): Record<string, unknown> {
     const resolvedByName = fieldIdByName[key];
     const resolvedByJoinColumn = fieldIdByJoinColumnName[key];
@@ -152,6 +172,54 @@ export class FilterArgProcessorService {
           FieldMetadataType.MORPH_RELATION,
         ))
     ) {
+      // Relation accessed by name (e.g. `company` rather than `companyId`).
+      // A nested filter object means the caller wants to traverse the relation
+      // (e.g. `{ company: { name: { like: "%X%" } } }`). Recurse into the
+      // target object's metadata so each leaf still gets validated and
+      // value-coerced. Only MANY_TO_ONE is supported for now; ONE_TO_MANY
+      // would need EXISTS-subquery support downstream.
+      if (
+        fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE &&
+        isDefined(flatObjectMetadataMaps) &&
+        isDefined(fieldMetadata.relationTargetObjectMetadataId)
+      ) {
+        if (depth >= MAX_RELATION_FILTER_DEPTH) {
+          throw new CommonQueryRunnerException(
+            `Relation filter nesting deeper than ${MAX_RELATION_FILTER_DEPTH} hop is not supported`,
+            CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+            {
+              userFriendlyMessage: msg`Relation filters can only traverse one relation deep`,
+            },
+          );
+        }
+
+        const targetObjectMetadata =
+          findFlatEntityByIdInFlatEntityMaps<FlatObjectMetadata>({
+            flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          });
+
+        if (isDefined(targetObjectMetadata)) {
+          const {
+            fieldIdByName: targetFieldIdByName,
+            fieldIdByJoinColumnName: targetFieldIdByJoinColumnName,
+          } = buildFieldMapsFromFlatObjectMetadata(
+            flatFieldMetadataMaps,
+            targetObjectMetadata,
+          );
+
+          return this.validateAndTransformFilter(
+            filterValue as unknown as ObjectRecordFilter,
+            targetObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            targetFieldIdByName,
+            targetFieldIdByJoinColumnName,
+            depth + 1,
+          ) as unknown as Record<string, unknown>;
+        }
+      }
+
       if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
         const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
           name: key,
