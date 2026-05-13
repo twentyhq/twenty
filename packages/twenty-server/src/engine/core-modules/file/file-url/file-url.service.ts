@@ -52,7 +52,7 @@ export class FileUrlService {
       type: JwtTokenTypeEnum.FILE,
     };
 
-    const token = await this.jwtWrapperService.signAsync(payload, {
+    const token = await this.jwtWrapperService.signAsyncOrThrow(payload, {
       expiresIn: fileTokenExpiresIn,
     });
 

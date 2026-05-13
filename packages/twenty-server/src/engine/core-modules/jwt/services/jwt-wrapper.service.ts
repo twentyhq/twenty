@@ -47,7 +47,7 @@ export class JwtWrapperService {
     private readonly jwtKeyManagerService: JwtKeyManagerService,
   ) {}
 
-  async signAsync(
+  async signAsyncOrThrow(
     payload: JwtPayload,
     options: { expiresIn: string | number; jwtid?: string },
   ): Promise<string> {

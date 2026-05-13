@@ -34,7 +34,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
     getClientCredentials: jest.Mock;
   };
   let jwtWrapperService: {
-    signAsync: jest.Mock;
+    signAsyncOrThrow: jest.Mock;
     verifyJwtToken: jest.Mock;
   };
   let secureHttpClientService: { createSsrfSafeFetch: jest.Mock };
@@ -79,7 +79,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
       })),
     };
     jwtWrapperService = {
-      signAsync: jest.fn(),
+      signAsyncOrThrow: jest.fn(),
       verifyJwtToken: jest.fn(),
     };
     secureHttpClientService = { createSsrfSafeFetch: jest.fn() };
@@ -145,7 +145,9 @@ describe('ConnectionProviderOAuthFlowService', () => {
 
   describe('startAuthorizationFlow', () => {
     it('builds the provider authorization URL with the workspace + visibility context signed into state', async () => {
-      jwtWrapperService.signAsync.mockResolvedValue('signed-state-token');
+      jwtWrapperService.signAsyncOrThrow.mockResolvedValue(
+        'signed-state-token',
+      );
 
       const { authorizationUrl } = await service.startAuthorizationFlow({
         connectionProvider: baseProvider,
@@ -174,7 +176,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
       expect(url.searchParams.has('code_challenge')).toBe(false);
 
       // signed payload carries workspace identity for the callback to use
-      expect(jwtWrapperService.signAsync).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         expect.objectContaining({
           type: JwtTokenTypeEnum.APP_OAUTH_STATE,
           workspaceId: 'workspace-1',
@@ -187,7 +189,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
     });
 
     it('emits PKCE challenge params when usePkce is enabled', async () => {
-      jwtWrapperService.signAsync.mockResolvedValue('signed-state');
+      jwtWrapperService.signAsyncOrThrow.mockResolvedValue('signed-state');
 
       const { authorizationUrl } = await service.startAuthorizationFlow({
         connectionProvider: {
@@ -245,7 +247,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
           },
         });
         // No state JWT signed, no upstream URL built.
-        expect(jwtWrapperService.signAsync).not.toHaveBeenCalled();
+        expect(jwtWrapperService.signAsyncOrThrow).not.toHaveBeenCalled();
       });
 
       it('throws FORBIDDEN when reconnecting an id that belongs to a different provider in the same workspace', async () => {
@@ -267,7 +269,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
           workspaceId: 'workspace-1',
           connectionProviderId: 'provider-1',
         });
-        jwtWrapperService.signAsync.mockResolvedValue('state');
+        jwtWrapperService.signAsyncOrThrow.mockResolvedValue('state');
 
         const { authorizationUrl } = await service.startAuthorizationFlow({
           ...validateArgs,
@@ -277,11 +279,11 @@ describe('ConnectionProviderOAuthFlowService', () => {
         expect(new URL(authorizationUrl).searchParams.get('state')).toBe(
           'state',
         );
-        expect(jwtWrapperService.signAsync).toHaveBeenCalled();
+        expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalled();
       });
 
       it('skips the lookup entirely when reconnectingConnectedAccountId is null', async () => {
-        jwtWrapperService.signAsync.mockResolvedValue('state');
+        jwtWrapperService.signAsyncOrThrow.mockResolvedValue('state');
 
         await service.startAuthorizationFlow({
           ...validateArgs,

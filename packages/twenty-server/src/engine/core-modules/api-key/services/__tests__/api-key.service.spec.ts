@@ -67,7 +67,7 @@ describe('ApiKeyService', () => {
     };
 
     mockJwtWrapperService = {
-      signAsync: jest.fn(),
+      signAsyncOrThrow: jest.fn(),
     };
 
     mockApiKeyRoleService = {
@@ -379,7 +379,7 @@ describe('ApiKeyService', () => {
     const mockToken = 'mock-jwt-token';
 
     beforeEach(() => {
-      mockJwtWrapperService.signAsync.mockResolvedValue(mockToken);
+      mockJwtWrapperService.signAsyncOrThrow.mockResolvedValue(mockToken);
     });
 
     it('should generate a JWT token for a valid API key', async () => {
@@ -392,7 +392,7 @@ describe('ApiKeyService', () => {
         expiresAt,
       );
 
-      expect(mockJwtWrapperService.signAsync).toHaveBeenCalledWith(
+      expect(mockJwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         {
           sub: mockWorkspaceId,
           type: JwtTokenTypeEnum.API_KEY,
@@ -410,7 +410,7 @@ describe('ApiKeyService', () => {
       const result = await service.generateApiKeyToken(mockWorkspaceId);
 
       expect(result).toBeUndefined();
-      expect(mockJwtWrapperService.signAsync).not.toHaveBeenCalled();
+      expect(mockJwtWrapperService.signAsyncOrThrow).not.toHaveBeenCalled();
     });
 
     it('should use default expiration if no expiresAt provided', async () => {
@@ -418,7 +418,7 @@ describe('ApiKeyService', () => {
 
       await service.generateApiKeyToken(mockWorkspaceId, mockApiKeyId);
 
-      expect(mockJwtWrapperService.signAsync).toHaveBeenCalledWith(
+      expect(mockJwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining({
           expiresIn: '100y',
@@ -436,7 +436,7 @@ describe('ApiKeyService', () => {
         expiresAt,
       );
 
-      expect(mockJwtWrapperService.signAsync).toHaveBeenCalledWith(
+      expect(mockJwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         {
           sub: mockWorkspaceId,
           type: JwtTokenTypeEnum.API_KEY,

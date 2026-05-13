@@ -263,7 +263,7 @@ export class ApplicationTokenService {
     };
 
     return {
-      token: await this.jwtWrapperService.signAsync(jwtPayload, {
+      token: await this.jwtWrapperService.signAsyncOrThrow(jwtPayload, {
         expiresIn,
       }),
       expiresAt,

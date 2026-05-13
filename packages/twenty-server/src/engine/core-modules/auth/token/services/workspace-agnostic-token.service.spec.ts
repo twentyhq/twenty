@@ -24,7 +24,7 @@ describe('WorkspaceAgnosticToken', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            signAsync: jest.fn(),
+            signAsyncOrThrow: jest.fn(),
             verifyJwtToken: jest.fn(),
             decode: jest.fn(),
           },
@@ -70,7 +70,9 @@ describe('WorkspaceAgnosticToken', () => {
 
         return undefined;
       });
-      jest.spyOn(jwtWrapperService, 'signAsync').mockResolvedValue(mockToken);
+      jest
+        .spyOn(jwtWrapperService, 'signAsyncOrThrow')
+        .mockResolvedValue(mockToken);
       jest
         .spyOn(userRepository, 'findOne')
         .mockResolvedValue(mockUser as UserEntity);
@@ -90,7 +92,7 @@ describe('WorkspaceAgnosticToken', () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId },
       });
-      expect(jwtWrapperService.signAsync).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         {
           authProvider: AuthProviderEnum.Password,
           sub: userId,
@@ -184,6 +186,25 @@ describe('WorkspaceAgnosticToken', () => {
         .spyOn(jwtWrapperService, 'verifyJwtToken')
         .mockResolvedValue(mockPayload);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
+
+      await expect(service.validateToken(mockToken)).rejects.toThrow(
+        AuthException,
+      );
+    });
+
+    it('should reject a valid token that is not of WORKSPACE_AGNOSTIC type', async () => {
+      const mockToken = 'valid-but-wrong-type-token';
+      const userId = 'user-id';
+      const mockPayload = {
+        sub: userId,
+        userId: userId,
+        type: JwtTokenTypeEnum.ACCESS,
+      };
+
+      jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockPayload);
+      jest
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
+        .mockResolvedValue(mockPayload);
 
       await expect(service.validateToken(mockToken)).rejects.toThrow(
         AuthException,

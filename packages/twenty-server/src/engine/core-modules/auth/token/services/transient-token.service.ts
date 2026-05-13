@@ -42,7 +42,7 @@ export class TransientTokenService {
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     return {
-      token: await this.jwtWrapperService.signAsync(jwtPayload, {
+      token: await this.jwtWrapperService.signAsyncOrThrow(jwtPayload, {
         expiresIn,
       }),
       expiresAt,

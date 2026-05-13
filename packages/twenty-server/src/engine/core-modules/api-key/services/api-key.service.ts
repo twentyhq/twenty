@@ -157,7 +157,7 @@ export class ApiKeyService {
       expiresIn = '100y';
     }
 
-    const token = await this.jwtWrapperService.signAsync(
+    const token = await this.jwtWrapperService.signAsyncOrThrow(
       {
         sub: workspaceId,
         type: JwtTokenTypeEnum.API_KEY,

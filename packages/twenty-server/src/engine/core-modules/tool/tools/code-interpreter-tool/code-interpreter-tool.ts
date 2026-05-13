@@ -307,7 +307,7 @@ export class CodeInterpreterTool implements Tool {
       authProvider: AuthProviderEnum.Password,
     };
 
-    return this.jwtWrapperService.signAsync(payload, {
+    return this.jwtWrapperService.signAsyncOrThrow(payload, {
       expiresIn: '5m',
     });
   }

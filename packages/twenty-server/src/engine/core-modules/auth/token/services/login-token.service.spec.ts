@@ -19,7 +19,7 @@ describe('LoginTokenService', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            signAsync: jest.fn(),
+            signAsyncOrThrow: jest.fn(),
             verifyJwtToken: jest.fn(),
             decode: jest.fn(),
           },
@@ -50,7 +50,9 @@ describe('LoginTokenService', () => {
       const workspaceId = 'workspace-id';
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(mockExpiresIn);
-      jest.spyOn(jwtWrapperService, 'signAsync').mockResolvedValue(mockToken);
+      jest
+        .spyOn(jwtWrapperService, 'signAsyncOrThrow')
+        .mockResolvedValue(mockToken);
 
       const result = await service.generateLoginToken(
         email,
@@ -65,7 +67,7 @@ describe('LoginTokenService', () => {
       expect(twentyConfigService.get).toHaveBeenCalledWith(
         'LOGIN_TOKEN_EXPIRES_IN',
       );
-      expect(jwtWrapperService.signAsync).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         {
           sub: email,
           workspaceId,
@@ -86,7 +88,9 @@ describe('LoginTokenService', () => {
       const impersonatorUserWorkspaceId = 'impersonator-id';
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
-      jest.spyOn(jwtWrapperService, 'signAsync').mockResolvedValue(mockToken);
+      jest
+        .spyOn(jwtWrapperService, 'signAsyncOrThrow')
+        .mockResolvedValue(mockToken);
 
       const result = await service.generateLoginToken(
         email,
@@ -99,7 +103,7 @@ describe('LoginTokenService', () => {
         token: mockToken,
         expiresAt: expect.any(Date),
       });
-      expect(jwtWrapperService.signAsync).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         {
           sub: email,
           workspaceId,

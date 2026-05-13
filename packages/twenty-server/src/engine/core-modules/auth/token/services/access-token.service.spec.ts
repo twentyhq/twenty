@@ -37,7 +37,7 @@ describe('AccessTokenService', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            signAsync: jest.fn(),
+            signAsyncOrThrow: jest.fn(),
             verifyJwtToken: jest.fn(),
             decode: jest.fn(),
             generateAppSecret: jest.fn(),
@@ -137,7 +137,9 @@ describe('AccessTokenService', () => {
       jest.spyOn(globalWorkspaceOrmManager, 'getRepository').mockResolvedValue({
         findOne: jest.fn().mockResolvedValue(mockWorkspaceMember),
       } as any);
-      jest.spyOn(jwtWrapperService, 'signAsync').mockResolvedValue(mockToken);
+      jest
+        .spyOn(jwtWrapperService, 'signAsyncOrThrow')
+        .mockResolvedValue(mockToken);
 
       const result = await service.generateAccessToken({
         userId,
@@ -149,7 +151,7 @@ describe('AccessTokenService', () => {
         token: mockToken,
         expiresAt: expect.any(Date),
       });
-      expect(jwtWrapperService.signAsync).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         expect.objectContaining({
           sub: userId,
           workspaceId: workspaceId,
@@ -197,7 +199,7 @@ describe('AccessTokenService', () => {
         findOne: jest.fn().mockResolvedValue(mockWorkspaceMember),
       } as any);
       const signSpy = jest
-        .spyOn(jwtWrapperService, 'signAsync')
+        .spyOn(jwtWrapperService, 'signAsyncOrThrow')
         .mockResolvedValue(mockToken);
 
       await service.generateAccessToken({

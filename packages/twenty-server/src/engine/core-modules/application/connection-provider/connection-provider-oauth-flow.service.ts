@@ -197,7 +197,7 @@ export class ConnectionProviderOAuthFlowService {
   }
 
   private async signState(payload: AppOAuthStateJwtPayload): Promise<string> {
-    return this.jwtWrapperService.signAsync(payload, {
+    return this.jwtWrapperService.signAsyncOrThrow(payload, {
       expiresIn: STATE_JWT_EXPIRES_IN,
     });
   }

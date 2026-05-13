@@ -583,38 +583,44 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     user: Pick<UserEntity, 'email'>,
     authProvider: AuthProviderEnum,
   ) {
+    const [availableWorkspacesForSignUp, availableWorkspacesForSignIn] =
+      await Promise.all([
+        Promise.all(
+          availableWorkspaces.availableWorkspacesForSignUp.map(
+            async ({ workspace, appToken }) => {
+              return {
+                ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
+                ...(appToken ? { personalInviteToken: appToken.value } : {}),
+              };
+            },
+          ),
+        ),
+        Promise.all(
+          availableWorkspaces.availableWorkspacesForSignIn.map(
+            async ({ workspace }) => {
+              return {
+                ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
+                loginToken: workspaceValidator.isAuthEnabled(
+                  authProvider,
+                  workspace,
+                )
+                  ? (
+                      await this.loginTokenService.generateLoginToken(
+                        user.email,
+                        workspace.id,
+                        AuthProviderEnum.Password,
+                      )
+                    ).token
+                  : undefined,
+              };
+            },
+          ),
+        ),
+      ]);
+
     return {
-      availableWorkspacesForSignUp: await Promise.all(
-        availableWorkspaces.availableWorkspacesForSignUp.map(
-          async ({ workspace, appToken }) => {
-            return {
-              ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
-              ...(appToken ? { personalInviteToken: appToken.value } : {}),
-            };
-          },
-        ),
-      ),
-      availableWorkspacesForSignIn: await Promise.all(
-        availableWorkspaces.availableWorkspacesForSignIn.map(
-          async ({ workspace }) => {
-            return {
-              ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
-              loginToken: workspaceValidator.isAuthEnabled(
-                authProvider,
-                workspace,
-              )
-                ? (
-                    await this.loginTokenService.generateLoginToken(
-                      user.email,
-                      workspace.id,
-                      AuthProviderEnum.Password,
-                    )
-                  ).token
-                : undefined,
-            };
-          },
-        ),
-      ),
+      availableWorkspacesForSignUp,
+      availableWorkspacesForSignIn,
     };
   }
 
