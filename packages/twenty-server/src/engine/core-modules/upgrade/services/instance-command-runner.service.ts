@@ -8,6 +8,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
+import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 type RunSingleMigrationResult =
@@ -45,7 +46,12 @@ export class InstanceCommandRunnerService {
       });
 
     if (isAlreadyCompleted) {
-      this.logger.log(`${name} already executed, skipping`);
+      this.logger.log(
+        formatUpgradeLog('instance.skipped', {
+          command: name,
+          reason: 'already-executed',
+        }),
+      );
 
       return { status: 'already-executed' };
     }
@@ -74,7 +80,12 @@ export class InstanceCommandRunnerService {
 
       await queryRunner.commitTransaction();
 
-      this.logger.log(`${name} executed successfully`);
+      this.logger.log(
+        formatUpgradeLog('instance.success', {
+          command: name,
+          executedByVersion,
+        }),
+      );
 
       return { status: 'success' };
     } catch (error) {
@@ -95,7 +106,11 @@ export class InstanceCommandRunnerService {
       });
 
       this.logger.error(
-        `${name} failed`,
+        formatUpgradeLog('instance.failed', {
+          command: name,
+          executedByVersion,
+          error: error instanceof Error ? error.message : String(error),
+        }),
         error instanceof Error ? error.stack : String(error),
       );
 
@@ -111,9 +126,10 @@ export class InstanceCommandRunnerService {
       await this.upgradeStatusService.invalidateInstanceAndAllWorkspacesStatus();
     } catch (error) {
       this.logger.warn(
-        `Failed to invalidate upgrade-status cache: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+        formatUpgradeLog('cache.invalidate.failed', {
+          scope: 'instance-and-all-workspaces',
+          error: error instanceof Error ? error.message : String(error),
+        }),
       );
     }
   }
@@ -134,7 +150,12 @@ export class InstanceCommandRunnerService {
       });
 
     if (isAlreadyCompleted) {
-      this.logger.log(`${name} already executed, skipping`);
+      this.logger.log(
+        formatUpgradeLog('instance.skipped', {
+          command: name,
+          reason: 'already-executed',
+        }),
+      );
 
       return { status: 'already-executed' };
     }
@@ -144,9 +165,15 @@ export class InstanceCommandRunnerService {
         this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
       try {
-        this.logger.log(`${name} starting data migration...`);
+        this.logger.log(
+          formatUpgradeLog('instance.data_migration.start', { command: name }),
+        );
         await command.runDataMigration(this.dataSource);
-        this.logger.log(`${name} data migration completed`);
+        this.logger.log(
+          formatUpgradeLog('instance.data_migration.success', {
+            command: name,
+          }),
+        );
       } catch (error) {
         const workspaceIds =
           await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
@@ -161,7 +188,11 @@ export class InstanceCommandRunnerService {
         });
 
         this.logger.error(
-          `${name} data migration failed`,
+          formatUpgradeLog('instance.data_migration.failed', {
+            command: name,
+            executedByVersion,
+            error: error instanceof Error ? error.message : String(error),
+          }),
           error instanceof Error ? error.stack : String(error),
         );
 

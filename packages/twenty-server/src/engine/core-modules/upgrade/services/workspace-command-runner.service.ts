@@ -6,6 +6,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
+import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
 
 type WorkspaceCommandEntry = Pick<
   RegisteredWorkspaceCommand,
@@ -36,7 +37,12 @@ export class WorkspaceCommandRunnerService {
     const { workspaceId, index, total } = iteratorContext;
 
     this.logger.log(
-      `${options.dryRun ? '(dry run) ' : ''}Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
+      formatUpgradeLog('workspace.start', {
+        workspaceId,
+        index: index + 1,
+        total,
+        dryRun: options.dryRun ?? false,
+      }),
     );
 
     const executedByVersion =
@@ -53,7 +59,13 @@ export class WorkspaceCommandRunnerService {
         });
       }
 
-      this.logger.log(`Upgrade for workspace ${workspaceId} completed.`);
+      this.logger.log(
+        formatUpgradeLog('workspace.success', {
+          workspaceId,
+          executedByVersion,
+          dryRun: options.dryRun ?? false,
+        }),
+      );
     } finally {
       if (!options.dryRun) {
         await this.safeInvalidateWorkspace(workspaceId);
@@ -66,9 +78,10 @@ export class WorkspaceCommandRunnerService {
       await this.upgradeStatusService.invalidateInstanceAndAllWorkspacesStatus();
     } catch (error) {
       this.logger.warn(
-        `Failed to invalidate upgrade-status cache for workspace ${workspaceId}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+        formatUpgradeLog('cache.invalidate.failed', {
+          workspaceId,
+          error: error instanceof Error ? error.message : String(error),
+        }),
       );
     }
   }
@@ -117,6 +130,17 @@ export class WorkspaceCommandRunnerService {
           error,
         });
       }
+
+      this.logger.error(
+        formatUpgradeLog('workspace.failed', {
+          workspaceId,
+          command: name,
+          executedByVersion,
+          dryRun: options.dryRun ?? false,
+          error: error instanceof Error ? error.message : String(error),
+        }),
+        error instanceof Error ? error.stack : undefined,
+      );
 
       throw error;
     }
