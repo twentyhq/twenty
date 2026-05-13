@@ -29,7 +29,7 @@ describe('getOrderByForFieldMetadataType', () => {
       ]);
     });
 
-    it('uses the per-sort compositeSubField as the primary sort key', () => {
+    it('uses the per-sort primaryCompositeSubField as the primary sort key', () => {
       const field = buildField({
         type: FieldMetadataType.FULL_NAME,
         name: 'name',
@@ -39,7 +39,7 @@ describe('getOrderByForFieldMetadataType', () => {
         getOrderByForFieldMetadataType({
           field,
           orderByDirection: 'DescNullsLast',
-          compositeSubField: 'lastName',
+          primaryCompositeSubField: 'lastName',
         }),
       ).toEqual([
         { name: { lastName: 'DescNullsLast' } },
@@ -69,7 +69,7 @@ describe('getOrderByForFieldMetadataType', () => {
       ]);
     });
 
-    it('uses the per-sort compositeSubField when provided', () => {
+    it('uses the per-sort primaryCompositeSubField when provided', () => {
       const field = buildField({
         type: FieldMetadataType.ADDRESS,
         name: 'address',
@@ -79,7 +79,7 @@ describe('getOrderByForFieldMetadataType', () => {
         getOrderByForFieldMetadataType({
           field,
           orderByDirection: 'DescNullsLast',
-          compositeSubField: 'addressCountry',
+          primaryCompositeSubField: 'addressCountry',
         }),
       ).toEqual([
         {

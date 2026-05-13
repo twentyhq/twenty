@@ -5,7 +5,7 @@ describe('resolveAddressSortSubField', () => {
     expect(
       resolveAddressSortSubField({
         settings: { subFields: ['addressStreet1', 'addressState'] },
-        compositeSubField: 'addressState',
+        primaryCompositeSubField: 'addressState',
       }),
     ).toBe('addressState');
   });
@@ -14,7 +14,7 @@ describe('resolveAddressSortSubField', () => {
     expect(
       resolveAddressSortSubField({
         settings: { subFields: ['addressStreet1', 'addressCity'] },
-        compositeSubField: 'addressState',
+        primaryCompositeSubField: 'addressState',
       }),
     ).toBe('addressCity');
   });
@@ -23,7 +23,7 @@ describe('resolveAddressSortSubField', () => {
     expect(
       resolveAddressSortSubField({
         settings: {},
-        compositeSubField: 'notARealSubField',
+        primaryCompositeSubField: 'notARealSubField',
       }),
     ).toBe('addressCity');
   });
@@ -48,7 +48,7 @@ describe('resolveAddressSortSubField', () => {
     expect(
       resolveAddressSortSubField({
         settings: { subFields: ['addressStreet1', 'addressCountry'] },
-        compositeSubField: 'addressState',
+        primaryCompositeSubField: 'addressState',
       }),
     ).toBe('addressStreet1');
   });

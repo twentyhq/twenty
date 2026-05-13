@@ -19,16 +19,19 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const getOrderByForFieldMetadataType = ({
   field,
   orderByDirection,
-  compositeSubField,
+  primaryCompositeSubField,
 }: {
   field: Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'settings'>;
   orderByDirection: OrderBy | null | undefined;
-  compositeSubField?: string | null;
+  // Selected primary sub-field for composite types (FULL_NAME, ADDRESS).
+  // The other sub-fields are still included in the orderBy as
+  // secondaries — see the FULL_NAME case.
+  primaryCompositeSubField?: string | null;
 }): RecordGqlOperationOrderBy => {
   switch (field.type) {
     case FieldMetadataType.FULL_NAME: {
       const primarySubField = resolvePrimaryFullNameSortSubField({
-        requestedPrimarySubField: compositeSubField,
+        requestedPrimarySubField: primaryCompositeSubField,
       });
       const secondarySubField =
         primarySubField === 'firstName' ? 'lastName' : 'firstName';
@@ -44,7 +47,7 @@ export const getOrderByForFieldMetadataType = ({
           | FieldMetadataSettingsMapping[FieldMetadataType.ADDRESS]
           | null
           | undefined,
-        compositeSubField,
+        primaryCompositeSubField,
       });
       return [
         {

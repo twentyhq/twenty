@@ -1,52 +1,23 @@
 import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFieldMetadataItemByIdOrThrow';
-import { getEnabledAddressSubFields } from '@/object-metadata/utils/getEnabledAddressSubFields';
-import { resolveAddressSortSubField } from '@/object-metadata/utils/resolveAddressSortSubField';
-import { resolvePrimaryFullNameSortSubField } from '@/object-metadata/utils/resolvePrimaryFullNameSortSubField';
+import { useSortSubFieldChoicesForField } from '@/object-metadata/hooks/useSortSubFieldChoicesForField';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useLingui } from '@lingui/react/macro';
-import { styled } from '@linaria/react';
-import { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from 'twenty-shared/constants';
-import {
-  type AllowedAddressSubField,
-  type AllowedFullNameSortSubField,
-  type FieldMetadataSettingsMapping,
-} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  FieldMetadataType,
-  ViewSortDirection,
-} from '~/generated-metadata/graphql';
+import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 type EditableSortChipProps = {
   recordSort: RecordSort;
 };
-
-type SubFieldOption = {
-  value: AllowedFullNameSortSubField | AllowedAddressSubField;
-  label: string;
-};
-
-type SubFieldState = {
-  options: SubFieldOption[];
-  resolvedValue: string;
-};
-
-const StyledSubFieldTrigger = styled.span`
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
 
 export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
   const { t } = useLingui();
@@ -58,125 +29,107 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     recordSort.fieldMetadataId,
   );
 
-  const subFieldDropdownId = `sort-subfield-${recordSort.fieldMetadataId}`;
+  const subFieldChoices = useSortSubFieldChoicesForField({
+    fieldMetadataItem,
+    primaryCompositeSubField: recordSort.subFieldName,
+  });
 
-  const buildSubFieldState = (): SubFieldState | undefined => {
-    if (fieldMetadataItem.type === FieldMetadataType.FULL_NAME) {
-      const labels: Record<AllowedFullNameSortSubField, string> = {
-        firstName: t`First name`,
-        lastName: t`Last name`,
-      };
-      return {
-        options: ALLOWED_FULL_NAME_SORT_SUBFIELDS.map((value) => ({
-          value,
-          label: labels[value],
-        })),
-        resolvedValue: resolvePrimaryFullNameSortSubField({
-          requestedPrimarySubField: recordSort.subFieldName,
-        }),
-      };
-    }
-    if (fieldMetadataItem.type === FieldMetadataType.ADDRESS) {
-      const labels: Record<AllowedAddressSubField, string> = {
-        addressStreet1: t`Address 1`,
-        addressStreet2: t`Address 2`,
-        addressCity: t`City`,
-        addressState: t`State`,
-        addressPostcode: t`Postcode`,
-        addressCountry: t`Country`,
-        addressLat: t`Latitude`,
-        addressLng: t`Longitude`,
-      };
-      const addressSettings = fieldMetadataItem.settings as
-        | FieldMetadataSettingsMapping[FieldMetadataType.ADDRESS]
-        | null
-        | undefined;
-      return {
-        options: getEnabledAddressSubFields(addressSettings).map((value) => ({
-          value,
-          label: labels[value],
-        })),
-        resolvedValue: resolveAddressSortSubField({
-          settings: addressSettings,
-          compositeSubField: recordSort.subFieldName,
-        }),
-      };
-    }
-    return undefined;
+  const dropdownId = `sort-chip-${recordSort.fieldMetadataId}`;
+
+  const setDirection = (direction: ViewSortDirection) => {
+    upsertRecordSort({ ...recordSort, direction });
   };
 
-  const subFieldState = buildSubFieldState();
+  const toggleDirection = () => {
+    setDirection(
+      recordSort.direction === ViewSortDirection.ASC
+        ? ViewSortDirection.DESC
+        : ViewSortDirection.ASC,
+    );
+  };
 
-  const selectedSubFieldLabel = subFieldState?.options.find(
-    (option) => option.value === subFieldState.resolvedValue,
-  )?.label;
-
-  const handleRemoveClick = () => {
+  const handleRemove = () => {
     removeRecordSort(recordSort.fieldMetadataId);
-  };
-
-  const handleDirectionToggle = () => {
-    upsertRecordSort({
-      ...recordSort,
-      direction:
-        recordSort.direction === ViewSortDirection.ASC
-          ? ViewSortDirection.DESC
-          : ViewSortDirection.ASC,
-    });
   };
 
   const handleSubFieldSelect = (value: string) => {
     upsertRecordSort({ ...recordSort, subFieldName: value });
-    closeDropdown(subFieldDropdownId);
+    closeDropdown(dropdownId);
   };
 
-  // Fence the dropdown from the chip's outer onClick (which toggles
-  // ASC/DESC) — both the trigger and the portaled menu items bubble
-  // through the React tree back up to the chip.
-  const subFieldNode =
-    isDefined(subFieldState) && isDefined(selectedSubFieldLabel) ? (
-      <span onClick={(event) => event.stopPropagation()}>
-        <Dropdown
-          dropdownId={subFieldDropdownId}
-          clickableComponent={
-            <StyledSubFieldTrigger>
-              {selectedSubFieldLabel}
-            </StyledSubFieldTrigger>
-          }
-          dropdownComponents={
-            <DropdownContent>
-              <DropdownMenuItemsContainer>
-                {subFieldState.options.map((option) => (
-                  <MenuItemSelect
-                    key={option.value}
-                    text={option.label}
-                    selected={option.value === subFieldState.resolvedValue}
-                    onClick={() => handleSubFieldSelect(option.value)}
-                  />
-                ))}
-              </DropdownMenuItemsContainer>
-            </DropdownContent>
-          }
-          dropdownOffset={{ y: 4, x: 0 }}
-          dropdownPlacement="bottom-start"
-        />
-      </span>
-    ) : undefined;
+  const handleDirectionSelect = (direction: ViewSortDirection) => {
+    setDirection(direction);
+    closeDropdown(dropdownId);
+  };
 
+  const Icon =
+    recordSort.direction === ViewSortDirection.DESC
+      ? IconArrowDown
+      : IconArrowUp;
+
+  // Non-composite sort chips: clicking the chip directly toggles ASC/DESC.
+  if (!isDefined(subFieldChoices)) {
+    return (
+      <SortOrFilterChip
+        key={recordSort.fieldMetadataId}
+        testId={recordSort.fieldMetadataId}
+        labelValue={fieldMetadataItem.label}
+        Icon={Icon}
+        onRemove={handleRemove}
+        onClick={toggleDirection}
+        type="sort"
+      />
+    );
+  }
+
+  // Composite sort chips: clicking the chip opens a dropdown that lets the
+  // user change both direction and the primary sub-field, so there is only
+  // ever one click action on the chip itself.
   return (
-    <SortOrFilterChip
-      key={recordSort.fieldMetadataId}
-      testId={recordSort.fieldMetadataId}
-      labelValue={fieldMetadataItem.label}
-      labelSubField={subFieldNode}
-      Icon={
-        recordSort.direction === ViewSortDirection.DESC
-          ? IconArrowDown
-          : IconArrowUp
+    <Dropdown
+      dropdownId={dropdownId}
+      clickableComponent={
+        <SortOrFilterChip
+          key={recordSort.fieldMetadataId}
+          testId={recordSort.fieldMetadataId}
+          labelValue={fieldMetadataItem.label}
+          labelSubField={subFieldChoices.selectedLabel}
+          Icon={Icon}
+          onRemove={handleRemove}
+          type="sort"
+        />
       }
-      onRemove={handleRemoveClick}
-      onClick={handleDirectionToggle}
-      type="sort"
+      dropdownComponents={
+        <DropdownContent>
+          <DropdownMenuItemsContainer>
+            <MenuItemSelect
+              LeftIcon={IconArrowUp}
+              text={t`Ascending`}
+              selected={recordSort.direction === ViewSortDirection.ASC}
+              onClick={() => handleDirectionSelect(ViewSortDirection.ASC)}
+            />
+            <MenuItemSelect
+              LeftIcon={IconArrowDown}
+              text={t`Descending`}
+              selected={recordSort.direction === ViewSortDirection.DESC}
+              onClick={() => handleDirectionSelect(ViewSortDirection.DESC)}
+            />
+          </DropdownMenuItemsContainer>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer>
+            {subFieldChoices.options.map((option) => (
+              <MenuItemSelect
+                key={option.value}
+                text={option.label}
+                selected={option.value === subFieldChoices.selectedValue}
+                onClick={() => handleSubFieldSelect(option.value)}
+              />
+            ))}
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
+      }
+      dropdownOffset={{ y: 8, x: 0 }}
+      dropdownPlacement="bottom-start"
     />
   );
 };

@@ -63,7 +63,7 @@ export const turnSortsIntoOrderBy = (
       return getOrderByForFieldMetadataType({
         field: correspondingField,
         orderByDirection: direction,
-        compositeSubField: sort.subFieldName,
+        primaryCompositeSubField: sort.subFieldName,
       });
     })
     .filter(isDefined);

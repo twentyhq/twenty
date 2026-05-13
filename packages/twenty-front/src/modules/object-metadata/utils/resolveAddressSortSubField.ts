@@ -16,22 +16,22 @@ const isAllowedAddressSubField = (
 
 export const resolveAddressSortSubField = ({
   settings,
-  compositeSubField,
+  primaryCompositeSubField,
 }: {
   settings:
     | FieldMetadataSettingsMapping[FieldMetadataType.ADDRESS]
     | null
     | undefined;
-  compositeSubField?: string | null;
+  primaryCompositeSubField?: string | null;
 }): AllowedAddressSubField => {
   const enabledSubFields = getEnabledAddressSubFields(settings);
 
   if (
-    isDefined(compositeSubField) &&
-    isAllowedAddressSubField(compositeSubField) &&
-    enabledSubFields.includes(compositeSubField)
+    isDefined(primaryCompositeSubField) &&
+    isAllowedAddressSubField(primaryCompositeSubField) &&
+    enabledSubFields.includes(primaryCompositeSubField)
   ) {
-    return compositeSubField;
+    return primaryCompositeSubField;
   }
 
   if (enabledSubFields.includes(DEFAULT_SUB_FIELD)) {
