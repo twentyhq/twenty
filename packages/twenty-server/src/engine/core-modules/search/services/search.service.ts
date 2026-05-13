@@ -366,74 +366,76 @@ export class SearchService {
     // Must not run inside a caller transaction: SET LOCAL is transaction-scoped
     // and would leak into the outer transaction.
     try {
-      return await entityManager.manager.transaction(async (txManager) => {
-        await txManager.query(
-          `SELECT set_config('statement_timeout', $1, true)`,
-          [String(timeoutMs)],
-        );
+      return await entityManager.manager.transaction(
+        async (transactionManager) => {
+          await transactionManager.queryRunner.query(
+            `SELECT set_config('statement_timeout', $1, true)`,
+            [String(timeoutMs)],
+          );
 
-        const queryBuilder = entityManager.createQueryBuilder(
-          undefined,
-          txManager.queryRunner,
-        );
+          const queryBuilder = entityManager.createQueryBuilder(
+            undefined,
+            transactionManager.queryRunner,
+          );
 
-        const { flatObjectMetadataMaps } = entityManager.internalContext;
+          const { flatObjectMetadataMaps } = entityManager.internalContext;
 
-        const queryParser = new GraphqlQueryParser(
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        );
+          const queryParser = new GraphqlQueryParser(
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          );
 
-        queryParser.applyFilterToBuilder(
-          queryBuilder,
-          flatObjectMetadata.nameSingular,
-          filter,
-        );
+          queryParser.applyFilterToBuilder(
+            queryBuilder,
+            flatObjectMetadata.nameSingular,
+            filter,
+          );
 
-        queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
+          queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
 
-        const imageIdentifierField = this.getImageIdentifierColumn(
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-        );
-
-        const fieldsToSelect = [
-          'id',
-          ...this.getLabelIdentifierColumns(
+          const imageIdentifierField = this.getImageIdentifierColumn(
             flatObjectMetadata,
             flatFieldMetadataMaps,
-          ),
-          ...(imageIdentifierField ? [imageIdentifierField] : []),
-        ].map((field) => `"${field}"`);
-
-        queryBuilder.select(fieldsToSelect);
-
-        const searchWords = searchInput
-          .trim()
-          .split(/\s+/)
-          .filter(isNonEmptyString);
-
-        searchWords.forEach((word, index) => {
-          const paramName = `ilikeFallback${index}`;
-
-          queryBuilder.andWhere(
-            `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:${paramName})`,
-            { [paramName]: `%${escapeForIlike(word)}%` },
           );
-        });
 
-        const rawResults = await queryBuilder
-          .orderBy('"id"', 'ASC')
-          .take(limit)
-          .getRawMany();
+          const fieldsToSelect = [
+            'id',
+            ...this.getLabelIdentifierColumns(
+              flatObjectMetadata,
+              flatFieldMetadataMaps,
+            ),
+            ...(imageIdentifierField ? [imageIdentifierField] : []),
+          ].map((field) => `"${field}"`);
 
-        return rawResults.map((record) => ({
-          ...record,
-          tsRankCD: 0,
-          tsRank: 0,
-        }));
-      });
+          queryBuilder.select(fieldsToSelect);
+
+          const searchWords = searchInput
+            .trim()
+            .split(/\s+/)
+            .filter(isNonEmptyString);
+
+          searchWords.forEach((word, index) => {
+            const paramName = `ilikeFallback${index}`;
+
+            queryBuilder.andWhere(
+              `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:${paramName})`,
+              { [paramName]: `%${escapeForIlike(word)}%` },
+            );
+          });
+
+          const rawResults = await queryBuilder
+            .orderBy('"id"', 'ASC')
+            .take(limit)
+            .getRawMany();
+
+          return rawResults.map((record) => ({
+            ...record,
+            tsRankCD: 0,
+            tsRank: 0,
+          }));
+        },
+      );
     } catch (error) {
       if (isQueryCanceledError(error)) {
         this.logger.warn(
