@@ -1713,7 +1713,7 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   @IsOptional()
-  SEARCH_ILIKE_FALLBACK_TIMEOUT_MS: number = 500;
+  SEARCH_ILIKE_FALLBACK_TIMEOUT_MS: number = 2000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
