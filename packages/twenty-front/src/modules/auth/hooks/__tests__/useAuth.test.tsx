@@ -87,8 +87,6 @@ const renderHooks = () => {
 describe('useAuth', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Reset the in-memory returnToPath between tests since the Jotai default
-    // store is shared.
     getDefaultStore().set(returnToPathState.atom, '');
   });
 

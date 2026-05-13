@@ -10,7 +10,11 @@ import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isSafeUrl,
+} from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -54,7 +58,6 @@ import {
   type SignInUpBaseParams,
   type SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { isValidReturnToPath } from 'src/engine/core-modules/auth/utils/is-valid-return-to-path.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -775,7 +778,11 @@ export class AuthService {
       searchParams: {
         loginToken,
         ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
-        ...(isValidReturnToPath(returnToPath) ? { returnToPath } : {}),
+        ...(returnToPath !== undefined &&
+        returnToPath.startsWith('/') &&
+        isSafeUrl(returnToPath)
+          ? { returnToPath }
+          : {}),
       },
     });
 
@@ -1000,7 +1007,11 @@ export class AuthService {
               targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
             }),
           }),
-          ...(isValidReturnToPath(returnToPath) ? { returnToPath } : {}),
+          ...(returnToPath !== undefined &&
+          returnToPath.startsWith('/') &&
+          isSafeUrl(returnToPath)
+            ? { returnToPath }
+            : {}),
         },
       });
 
