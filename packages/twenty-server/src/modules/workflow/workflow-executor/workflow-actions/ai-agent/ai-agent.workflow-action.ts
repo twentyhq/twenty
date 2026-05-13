@@ -48,7 +48,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     }
 
     const { agentId, prompt } = step.settings.input;
-    const workspaceId = context.workspaceId as string;
+    const workspaceId = runInfo.workspaceId;
 
     let agent: AgentEntity | null = null;
 
