@@ -81,9 +81,6 @@ export const SettingsObjectDetailPage = () => {
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
   );
-  const isRecordPageLayoutEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-  );
 
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -123,7 +120,6 @@ export const SettingsObjectDetailPage = () => {
       title: t`Layout`,
       Icon: IconLayout,
       hide:
-        !isRecordPageLayoutEditingEnabled ||
         objectMetadataItem.isRemote ||
         objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard,
     },
