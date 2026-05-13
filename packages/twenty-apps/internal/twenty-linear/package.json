@@ -1,6 +1,6 @@
 {
   "name": "twenty-linear",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Linear integration for Twenty. Connect a user's Linear account and create issues from logic functions.",
   "license": "MIT",
   "engines": {
@@ -20,7 +20,7 @@
     "test:watch": "vitest --config vitest.unit.config.ts"
   },
   "dependencies": {
-    "twenty-sdk": "2.3.0"
+    "twenty-sdk": "2.3.1"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

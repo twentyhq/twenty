@@ -49,6 +49,17 @@ export const createLinearIssueHandler = async (
         teamId: input.teamId,
         title: input.title,
         description: input.description,
+        ...(input.priority !== undefined && { priority: input.priority }),
+        ...(input.stateId !== undefined && { stateId: input.stateId }),
+        ...(input.assigneeId !== undefined && {
+          assigneeId: input.assigneeId,
+        }),
+        ...(input.projectId !== undefined && { projectId: input.projectId }),
+        ...(input.estimate !== undefined && { estimate: input.estimate }),
+        ...(input.labelIds !== undefined &&
+          input.labelIds.length > 0 && { labelIds: input.labelIds }),
+        ...(input.cycleId !== undefined && { cycleId: input.cycleId }),
+        ...(input.dueDate !== undefined && { dueDate: input.dueDate }),
       },
     },
   });

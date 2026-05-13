@@ -1967,6 +1967,18 @@ type RotateClientSecret {
   clientSecret: String!
 }
 
+type ApplicationRegistrationVariableDTO {
+  id: UUID!
+  key: String!
+  value: String
+  description: String!
+  isSecret: Boolean!
+  isRequired: Boolean!
+  isFilled: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Relation {
   type: RelationType!
   sourceObjectMetadata: Object!
@@ -3034,7 +3046,7 @@ type Query {
   findManyApplicationRegistrations: [ApplicationRegistration!]!
   findOneApplicationRegistration(id: String!): ApplicationRegistration!
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
-  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
+  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
   applicationRegistrationTarballUrl(id: String!): String
   currentUser: User!
   currentWorkspace: Workspace!

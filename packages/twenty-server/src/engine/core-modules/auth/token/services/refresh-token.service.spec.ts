@@ -32,6 +32,7 @@ describe('RefreshTokenService', () => {
             verifyJwtToken: jest.fn(),
             decode: jest.fn(),
             sign: jest.fn(),
+            signAsync: jest.fn(),
             generateAppSecret: jest.fn(),
           },
         },
@@ -125,10 +126,7 @@ describe('RefreshTokenService', () => {
       const mockExpiresIn = '7d';
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(mockExpiresIn);
-      jest
-        .spyOn(jwtWrapperService, 'generateAppSecret')
-        .mockReturnValue('mock-secret');
-      jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      jest.spyOn(jwtWrapperService, 'signAsync').mockResolvedValue(mockToken);
       jest
         .spyOn(appTokenRepository, 'create')
         .mockReturnValue({ id: 'new-token-id' } as AppTokenEntity);
@@ -147,7 +145,7 @@ describe('RefreshTokenService', () => {
         expiresAt: expect.any(Date),
       });
       expect(appTokenRepository.save).toHaveBeenCalled();
-      expect(jwtWrapperService.sign).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsync).toHaveBeenCalledWith(
         {
           sub: userId,
           workspaceId,
@@ -156,7 +154,6 @@ describe('RefreshTokenService', () => {
           targetedTokenType: JwtTokenTypeEnum.ACCESS,
         },
         expect.objectContaining({
-          secret: 'mock-secret',
           expiresIn: mockExpiresIn,
           jwtid: 'new-token-id',
         }),
