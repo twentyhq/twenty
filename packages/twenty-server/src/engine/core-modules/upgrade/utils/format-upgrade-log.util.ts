@@ -45,5 +45,5 @@ export const formatUpgradeLog = ({
     );
   }
 
-  return `${UPGRADE_LOG_PREFIX} ${collapseControlCharacters(humanMessage)} | ${tailParts.join(' ')}`;
+  return `${humanMessage}\n${UPGRADE_LOG_PREFIX} ${tailParts.join(' ')}`;
 };
