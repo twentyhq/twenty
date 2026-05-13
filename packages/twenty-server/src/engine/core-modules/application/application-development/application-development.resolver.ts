@@ -48,8 +48,8 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-const APP_DEV_RATE_LIMIT_MAX = 2;
-const APP_DEV_RATE_LIMIT_WINDOW_MS = 2_000;
+const APP_DEV_RATE_LIMIT_MAX = 30;
+const APP_DEV_RATE_LIMIT_WINDOW_MS = 30_000;
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
