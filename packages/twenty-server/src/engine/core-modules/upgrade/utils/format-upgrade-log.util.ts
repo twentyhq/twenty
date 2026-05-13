@@ -15,9 +15,6 @@ const UPGRADE_LOG_PREFIX = '[upgrade]';
 const NEEDS_QUOTING = /[\s"=]/;
 const CONTROL_CHARACTERS = /[\n\r\t]/;
 
-const collapseControlCharacters = (raw: string): string =>
-  raw.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
-
 const escapeLogValue = (value: UpgradeLogScalar): string => {
   const raw = String(value);
 
@@ -25,9 +22,12 @@ const escapeLogValue = (value: UpgradeLogScalar): string => {
     return raw;
   }
 
-  const escaped = collapseControlCharacters(
-    raw.replace(/\\/g, '\\\\').replace(/"/g, '\\"'),
-  );
+  const escaped = raw
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t');
 
   return `"${escaped}"`;
 };
