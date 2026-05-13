@@ -10,18 +10,6 @@ import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-val
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-// Each slow command upgrades legacy CTR ciphertext to the versioned envelope.
-// These tests drive the real command against Postgres and the real
-// SecretEncryptionService wired up by the test Nest app:
-//   1. drop the CHECK constraint so we can seed legacy rows,
-//   2. seed legacy CTR ciphertext (or the pre-encryption shape the column
-//      previously held) directly through SQL,
-//   3. run `runDataMigration` end-to-end,
-//   4. assert the row now matches the v2 envelope and decrypts back to the
-//      original plaintext,
-//   5. restore the constraint — which also asserts every migrated row
-//      conforms to the schema invariant.
-
 const V2_ENVELOPE_REGEX = /^enc:v2:[0-9a-f]{8}:[A-Za-z0-9+/=]+$/;
 
 describe('Encryption backfill slow instance commands (integration)', () => {
@@ -30,9 +18,6 @@ describe('Encryption backfill slow instance commands (integration)', () => {
 
   beforeAll(() => {
     dataSource = global.testDataSource;
-    // SecretEncryptionService lives behind SecretEncryptionModule (not
-    // globally exported), so a strict lookup from the root injector fails.
-    // `strict: false` walks the import graph to find the provider.
     secretEncryption = global.app.get(SecretEncryptionService, {
       strict: false,
     });
@@ -45,8 +30,6 @@ describe('Encryption backfill slow instance commands (integration)', () => {
     let applicationId: string;
 
     beforeAll(async () => {
-      // The seeded Apple workspace's auto-created custom application is a
-      // pre-existing FK target we can borrow without seeding more rows.
       const [{ workspaceCustomApplicationId }] = await dataSource.query(
         `SELECT "workspaceCustomApplicationId"
            FROM core."workspace" WHERE id = $1`,
@@ -172,7 +155,6 @@ describe('Encryption backfill slow instance commands (integration)', () => {
     });
 
     afterAll(async () => {
-      // Cascades to applicationRegistrationVariable rows we seeded.
       await dataSource.query(
         `DELETE FROM core."applicationRegistration" WHERE id = $1`,
         [registrationId],
@@ -287,15 +269,9 @@ describe('Encryption backfill slow instance commands (integration)', () => {
   });
 
   describe('EncryptSensitiveConfigStorageSlowInstanceCommand', () => {
-    // EMAIL_SMTP_USER is declared as sensitive STRING in ConfigVariables.
-    // Picking a real key (vs. a fabricated one) is required because the
-    // command introspects ConfigVariables metadata to decide what to walk.
     const KEY = 'EMAIL_SMTP_USER';
 
     beforeAll(async () => {
-      // The (key, NULL userId, NULL workspaceId) partial unique index would
-      // collide if the app already wrote a value to this slot — wipe any
-      // pre-existing instance-scoped row so we own the slot for the test.
       await dataSource.query(
         `DELETE FROM core."keyValuePair"
            WHERE type = $1 AND key = $2
@@ -317,9 +293,6 @@ describe('Encryption backfill slow instance commands (integration)', () => {
       const id = crypto.randomUUID();
       const plaintext = 'smtp-legacy-username';
 
-      // jsonb stores strings JSON-encoded — `to_jsonb($::text)` produces a
-      // JSON string value that the command's `typeof rawValue === 'string'`
-      // guard matches.
       await dataSource.query(
         `INSERT INTO core."keyValuePair"
            (id, "userId", "workspaceId", key, value, type)
