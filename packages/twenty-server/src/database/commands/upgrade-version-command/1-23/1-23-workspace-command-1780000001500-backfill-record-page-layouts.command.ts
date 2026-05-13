@@ -1,5 +1,5 @@
 import { Command } from 'nest-commander';
-import { ViewType } from 'twenty-shared/types';
+import { type FeatureFlagKey, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
@@ -7,6 +7,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -26,13 +27,14 @@ import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-m
 @Command({
   name: 'upgrade:1-23:backfill-record-page-layouts',
   description:
-    'Delete and recreate all record page layouts from standard config and backfill custom objects',
+    'Delete and recreate all record page layouts from standard config, backfill custom objects, and enable IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED',
 })
 export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(workspaceIteratorService);
@@ -44,9 +46,22 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
+    const isAlreadyEnabled = await this.featureFlagService.isFeatureEnabled(
+      'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' as FeatureFlagKey,
+      workspaceId,
+    );
+
+    if (isAlreadyEnabled) {
+      this.logger.log(
+        `IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED already enabled for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Would recreate all record page layouts for workspace ${workspaceId}`,
+        `[DRY RUN] Would recreate all record page layouts and enable feature flag for workspace ${workspaceId}`,
       );
 
       return;
@@ -71,6 +86,16 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
       workspaceId,
       twentyStandardFlatApplication,
     });
+
+    await this.featureFlagService.enableFeatureFlags(
+      ['IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' as FeatureFlagKey],
+      workspaceId,
+    );
+
+    await this.featureFlagService.enableFeatureFlags(
+      ['IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' as FeatureFlagKey],
+      workspaceId,
+    );
 
     this.logger.log(
       `Successfully backfilled record page layouts for workspace ${workspaceId}`,

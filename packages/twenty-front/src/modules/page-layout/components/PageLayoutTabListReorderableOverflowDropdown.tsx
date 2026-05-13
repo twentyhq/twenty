@@ -29,9 +29,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-import {
-  type PageLayoutType,
-} from '~/generated-metadata/graphql';
+import { type PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
   cursor: grab;
