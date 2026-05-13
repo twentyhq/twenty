@@ -1,4 +1,4 @@
-import { type InputJsonSchema } from 'twenty-shared/logic-function';
+import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 
 export const slackListChannelsInputSchema: InputJsonSchema = {
   type: 'object',
