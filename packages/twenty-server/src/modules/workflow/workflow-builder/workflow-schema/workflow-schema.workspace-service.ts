@@ -449,7 +449,8 @@ export class WorkflowSchemaWorkspaceService {
         };
       }
       case WorkflowActionType.CODE:
-      case WorkflowActionType.HTTP_REQUEST: {
+      case WorkflowActionType.HTTP_REQUEST:
+      case WorkflowActionType.LOGIC_FUNCTION: {
         const propertyPath = extractPropertyPathFromVariable(items);
         const schemaNode = navigateOutputSchemaProperty({
           schema: step.settings.outputSchema as BaseOutputSchemaV2,
