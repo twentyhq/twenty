@@ -4,12 +4,15 @@ import { type DataSource } from 'typeorm';
 
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
-// Real integration test for the legacy CTR encryption path: drive the
-// full create/read/delete lifecycle through the GraphQL API and peek
-// into Postgres mid-test to verify the stored value is ciphertext.
-// applicationRegistrationVariable uses SecretEncryptionService.encrypt
-// (unprefixed CTR), the same legacy path as applicationVariable and
-// every other non-connected-account encrypted column.
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
+
+// Real integration test for the encryption path: drive the full
+// create/read/delete lifecycle through the GraphQL API and peek into
+// Postgres mid-test to verify the stored value is ciphertext.
+// applicationRegistrationVariable now uses
+// SecretEncryptionService.encryptVersioned with no workspaceId (instance
+// scope) — registration variables are server-level config, readable by
+// any workspace that installs the parent registration.
 
 describe('ApplicationRegistrationVariable encryption (integration)', () => {
   let dataSource: DataSource;
@@ -93,11 +96,16 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
       [variableId],
     );
 
-    // The legacy CTR envelope is base64(IV || ciphertext) — no enc: prefix.
-    // Two invariants: the column does NOT contain the plaintext, and the
-    // value looks like a base64 blob (proving encryption actually ran).
+    // The v2 envelope is `enc:v2:<8-hex keyId>:<base64 payload>`. Two
+    // invariants: the column does NOT contain the plaintext, and the
+    // value matches the envelope shape (proving encryption actually ran).
     expect(dbRow.encryptedValue).not.toContain(plaintext);
-    expect(dbRow.encryptedValue).toMatch(/^[A-Za-z0-9+/]+={0,2}$/);
+    expect(dbRow.encryptedValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)).toBe(
+      true,
+    );
+    expect(dbRow.encryptedValue).toMatch(
+      /^enc:v2:[0-9a-f]{8}:[A-Za-z0-9+/=]+$/,
+    );
 
     const findResponse = await makeMetadataAPIRequest({
       query: gql`

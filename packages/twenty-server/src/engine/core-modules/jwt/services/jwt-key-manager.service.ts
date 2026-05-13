@@ -106,7 +106,7 @@ export class JwtKeyManagerService {
       );
     }
 
-    return this.secretEncryptionService.decrypt(encryptedPrivateKey);
+    return this.secretEncryptionService.decryptVersioned(encryptedPrivateKey);
   }
 
   private async generateAndPersistCurrent(): Promise<CurrentSigningKey> {
@@ -117,7 +117,7 @@ export class JwtKeyManagerService {
       await this.signingKeyRepository.insert({
         id,
         publicKey: generated.publicKeyPem,
-        privateKey: this.secretEncryptionService.encrypt(
+        privateKey: this.secretEncryptionService.encryptVersioned(
           generated.privateKeyPem,
         ),
         isCurrent: true,

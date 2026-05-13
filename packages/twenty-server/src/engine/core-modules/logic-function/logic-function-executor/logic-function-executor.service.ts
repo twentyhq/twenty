@@ -300,8 +300,13 @@ export class LogicFunctionExecutorService {
     // .updateVariable call encrypt unconditionally), independent of
     // `isSecret`. `isSecret` is display metadata — the storage contract is
     // not conditional, so decryption isn't either.
+    //
+    // Registration variables are server-level config — any installed
+    // application across any workspace must be able to read them — so they
+    // use the instance-scoped versioned envelope (no workspaceId in the HKDF
+    // info).
     for (const variable of serverVariables) {
-      envMap[variable.key] = this.secretEncryptionService.decrypt(
+      envMap[variable.key] = this.secretEncryptionService.decryptVersioned(
         variable.encryptedValue,
       );
     }
