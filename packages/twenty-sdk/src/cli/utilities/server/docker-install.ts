@@ -21,7 +21,7 @@ export const getDockerInstallInstructions = (): string => {
     DOCKER_DOWNLOAD_URLS[process.platform] ?? DOCKER_DOWNLOAD_URLS.linux;
 
   return [
-    'Docker is required but not installed.',
+    '  Docker is required but not installed.',
     '',
     `  Install Docker: ${url}`,
     '',

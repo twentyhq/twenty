@@ -13,15 +13,9 @@ const program = new Command(packageJson.name)
   )
   .argument('[directory]')
   .option('--example <name>', 'Initialize from an example')
-  .option('-n, --name <name>', 'Application name (skips prompt)')
-  .option(
-    '-d, --display-name <displayName>',
-    'Application display name (skips prompt)',
-  )
-  .option(
-    '--description <description>',
-    'Application description (skips prompt)',
-  )
+  .option('-n, --name <name>', 'Application name')
+  .option('-d, --display-name <displayName>', 'Application display name')
+  .option('--description <description>', 'Application description')
   .option('--skip-docker', 'Skip Docker server setup and authentication')
   .helpOption('-h, --help', 'Display this help message.')
   .action(
