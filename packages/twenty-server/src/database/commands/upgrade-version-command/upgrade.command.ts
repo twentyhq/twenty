@@ -122,9 +122,6 @@ export class UpgradeCommand extends CommandRunner {
       );
     }
 
-    let totalSuccesses = 0;
-    let totalFailures = 0;
-
     try {
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
 
@@ -154,17 +151,16 @@ export class UpgradeCommand extends CommandRunner {
         );
       }
 
-      const report = await this.upgradeSequenceRunnerService.run({
-        sequence,
-        options: {
-          ...options,
-          workspaceIds: isDefined(options.workspaceId)
-            ? Array.from(options.workspaceId)
-            : undefined,
-        },
-      });
-      totalSuccesses = report.totalSuccesses;
-      totalFailures = report.totalFailures;
+      const { totalSuccesses, totalFailures } =
+        await this.upgradeSequenceRunnerService.run({
+          sequence,
+          options: {
+            ...options,
+            workspaceIds: isDefined(options.workspaceId)
+              ? Array.from(options.workspaceId)
+              : undefined,
+          },
+        });
 
       this.logger.log(
         formatUpgradeLog({
@@ -177,6 +173,12 @@ export class UpgradeCommand extends CommandRunner {
           },
         }),
       );
+
+      if (totalFailures > 0) {
+        throw new Error(
+          `Upgrade completed with ${totalFailures} workspace failure(s)`,
+        );
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -189,12 +191,6 @@ export class UpgradeCommand extends CommandRunner {
         }),
       );
       throw error;
-    }
-
-    if (totalFailures > 0) {
-      throw new Error(
-        `Upgrade completed with ${totalFailures} workspace failure(s)`,
-      );
     }
   }
 }
