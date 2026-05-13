@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should match snapshot 1`] = `
 {
@@ -241,13 +241,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [],
   },
-  "rolePermissionFlag": {
-    "propertiesToCompare": [
-      "flag",
-      "roleUniversalIdentifier",
-    ],
-    "propertiesToStringify": [],
-  },
   "role": {
     "propertiesToCompare": [
       "label",
@@ -262,6 +255,13 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "canBeAssignedToUsers",
       "canBeAssignedToAgents",
       "canBeAssignedToApiKeys",
+    ],
+    "propertiesToStringify": [],
+  },
+  "rolePermissionFlag": {
+    "propertiesToCompare": [
+      "flag",
+      "roleUniversalIdentifier",
     ],
     "propertiesToStringify": [],
   },
