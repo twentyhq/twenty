@@ -29,6 +29,23 @@ describe('formatUpgradeLog', () => {
     );
   });
 
+  it('matches the summary call site emitted by UpgradeCommand at the end of a run', () => {
+    expect(
+      formatUpgradeLog({
+        humanMessage:
+          'Upgrade summary: 42 workspace(s) succeeded, 1 workspace(s) failed',
+        event: 'summary',
+        logFields: {
+          totalSuccesses: 42,
+          totalFailures: 1,
+          dryRun: false,
+        },
+      }),
+    ).toMatchInlineSnapshot(
+      `"[upgrade] Upgrade summary: 42 workspace(s) succeeded, 1 workspace(s) failed | event=summary totalSuccesses=42 totalFailures=1 dryRun=false"`,
+    );
+  });
+
   it('emits null and undefined logFields explicitly', () => {
     expect(
       formatUpgradeLog({
