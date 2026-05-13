@@ -53,6 +53,22 @@ describe('resolvePageLayoutWidgetTitle', () => {
     expect(result).toBe('My Custom Widget');
   });
 
+  it('should return original title without translating when message is not compiled', () => {
+    mockGenerateMessageId.mockReturnValue('missing-translation');
+    mockI18n.messages = {};
+
+    const result = resolvePageLayoutWidgetTitle({
+      title: 'My Custom Widget',
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
+      i18nInstance: mockI18n,
+    });
+
+    expect(mockGenerateMessageId).toHaveBeenCalledWith('My Custom Widget');
+    expect(mockI18n._).not.toHaveBeenCalled();
+    expect(result).toBe('My Custom Widget');
+  });
+
   it('should return original title for empty string', () => {
     mockGenerateMessageId.mockReturnValue('empty-hash');
     mockI18n._.mockReturnValue('empty-hash');

@@ -53,6 +53,22 @@ describe('resolvePageLayoutTabTitle', () => {
     expect(result).toBe('My Custom Tab');
   });
 
+  it('should return original title without translating when message is not compiled', () => {
+    mockGenerateMessageId.mockReturnValue('missing-translation');
+    mockI18n.messages = {};
+
+    const result = resolvePageLayoutTabTitle({
+      title: 'My Custom Tab',
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
+      i18nInstance: mockI18n,
+    });
+
+    expect(mockGenerateMessageId).toHaveBeenCalledWith('My Custom Tab');
+    expect(mockI18n._).not.toHaveBeenCalled();
+    expect(result).toBe('My Custom Tab');
+  });
+
   it('should return original title for empty string', () => {
     mockGenerateMessageId.mockReturnValue('empty-hash');
     mockI18n._.mockReturnValue('empty-hash');

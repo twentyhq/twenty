@@ -27,6 +27,15 @@ export const resolvePageLayoutTabTitle = ({
   }
 
   const messageId = generateMessageId(title);
+
+  const isMessageCompiled =
+    !isDefined(i18nInstance.messages) ||
+    isDefined(i18nInstance.messages[messageId]);
+
+  if (!isMessageCompiled) {
+    return title;
+  }
+
   const translatedMessage = i18nInstance._(messageId);
 
   if (translatedMessage === messageId) {
