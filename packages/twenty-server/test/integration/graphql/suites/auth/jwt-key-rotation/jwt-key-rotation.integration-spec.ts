@@ -16,7 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   type AccessTokenJwtPayload,
-  type ApiKeyTokenJwtPayload,
   type ApplicationAccessTokenJwtPayload,
   type ApplicationRefreshTokenJwtPayload,
   JwtTokenTypeEnum,
@@ -25,6 +24,8 @@ import {
   type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 import {
   PREVIOUS_KID,
@@ -338,7 +339,8 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
       sub: sharedLoginPayload.sub,
       type: JwtTokenTypeEnum.LOGIN,
       workspaceId: sharedLoginPayload.workspaceId,
-      authProvider: sharedLoginPayload.authProvider ?? AuthProviderEnum.Password,
+      authProvider:
+        sharedLoginPayload.authProvider ?? AuthProviderEnum.Password,
     };
 
     const forgedToken = forgeLegacyHs256Token(
@@ -499,9 +501,9 @@ const renewApplicationTokenMutation = async (
 };
 
 describe('JWT Asymmetric Signing for seeded-workspace tokens (integration)', () => {
+  const seededApiKeyId = API_KEY_DATA_SEED_IDS.ID_1;
+  const seededWorkspaceId = SEED_APPLE_WORKSPACE_ID;
   let seededCurrentKid: string;
-  let seededApiKeyId: string;
-  let seededWorkspaceId: string;
   let seededApplicationId: string;
 
   beforeAll(async () => {
@@ -510,17 +512,6 @@ describe('JWT Asymmetric Signing for seeded-workspace tokens (integration)', () 
     );
 
     seededCurrentKid = currentKidRow;
-
-    const apiKeyPayload = jwt.decode(
-      API_KEY_ACCESS_TOKEN,
-    ) as ApiKeyTokenJwtPayload;
-
-    if (!isNonEmptyString(apiKeyPayload.jti)) {
-      throw new Error('Seeded API_KEY_ACCESS_TOKEN is missing a jti claim');
-    }
-
-    seededApiKeyId = apiKeyPayload.jti;
-    seededWorkspaceId = apiKeyPayload.workspaceId;
 
     const { data: applicationsData } = await findManyApplications({
       expectToFail: false,
@@ -563,9 +554,8 @@ describe('JWT Asymmetric Signing for seeded-workspace tokens (integration)', () 
     expect(decoded.header.alg).toBe('HS256');
     expect(decoded.header.kid).toBeUndefined();
 
-    const apiResponse = await findManyApplicationsWithApiKey(
-      API_KEY_ACCESS_TOKEN,
-    );
+    const apiResponse =
+      await findManyApplicationsWithApiKey(API_KEY_ACCESS_TOKEN);
 
     expect(apiResponse.body.errors).toBeUndefined();
     expect(apiResponse.body.data?.findManyApplications).toBeDefined();
@@ -606,7 +596,9 @@ describe('JWT Asymmetric Signing for seeded-workspace tokens (integration)', () 
     const { applicationAccessToken, applicationRefreshToken } =
       data.generateApplicationToken;
 
-    const decodedAccess = decodeJwtCompleteOrThrow(applicationAccessToken.token);
+    const decodedAccess = decodeJwtCompleteOrThrow(
+      applicationAccessToken.token,
+    );
     const decodedRefresh = decodeJwtCompleteOrThrow(
       applicationRefreshToken.token,
     );
