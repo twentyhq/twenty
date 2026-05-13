@@ -1,8 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
 
-// Pin a major version so silent API changes can't break workflow steps.
-// Discord's docs strongly recommend explicit version pinning; unversioned
-// URLs auto-track the latest version and risk breakage at any time.
 const DISCORD_API_BASE_URL = 'https://discord.com/api/v10';
 
 type DiscordApiSuccess<TData> = {
@@ -17,7 +14,9 @@ type DiscordApiFailure = {
   errorMessage: string;
 };
 
-export type DiscordApiResult<TData> = DiscordApiSuccess<TData> | DiscordApiFailure;
+export type DiscordApiResult<TData> =
+  | DiscordApiSuccess<TData>
+  | DiscordApiFailure;
 
 type DiscordErrorBody = {
   code?: number;
@@ -86,7 +85,9 @@ export const discordApiRequest = async <TData = unknown>({
     return {
       ok: false,
       status: response.status,
-      errorMessage: `Discord API returned a non-JSON response: ${(error as Error).message}`,
+      errorMessage: `Discord API returned a non-JSON response: ${
+        (error as Error).message
+      }`,
     };
   }
 };
