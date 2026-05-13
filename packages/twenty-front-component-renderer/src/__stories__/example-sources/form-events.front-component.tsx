@@ -1,5 +1,5 @@
-import { defineFrontComponent } from 'twenty-sdk/define';
 import { type ChangeEvent, useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
 
 const CARD_STYLE = {
   padding: 24,
@@ -50,6 +50,8 @@ const SUBMIT_BUTTON_STYLE = {
 
 const FormEventsComponent = () => {
   const [textValue, setTextValue] = useState('');
+  const [textareaValue, setTextareaValue] = useState('');
+  const [selectValue, setSelectValue] = useState('alpha');
   const [checkboxValue, setCheckboxValue] = useState(false);
   const [focusState, setFocusState] = useState('none');
   const [submittedData, setSubmittedData] = useState<string | null>(null);
@@ -65,9 +67,7 @@ const FormEventsComponent = () => {
           type="text"
           placeholder="Type here..."
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            const detail = (event as unknown as { detail: { value?: string } })
-              .detail;
-            setTextValue(detail?.value ?? '');
+            setTextValue(event.target.value);
           }}
           onFocus={() => setFocusState('focused')}
           onBlur={() => setFocusState('blurred')}
@@ -78,16 +78,47 @@ const FormEventsComponent = () => {
         </span>
       </div>
 
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <label style={LABEL_STYLE}>Textarea</label>
+        <textarea
+          data-testid="textarea-input"
+          placeholder="Type a note..."
+          value={textareaValue}
+          onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
+            setTextareaValue(event.target.value);
+          }}
+          style={INPUT_STYLE}
+        />
+        <span data-testid="textarea-value" style={HINT_STYLE}>
+          {textareaValue}
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <label style={LABEL_STYLE}>Select</label>
+        <select
+          data-testid="select-input"
+          value={selectValue}
+          onChange={(event: ChangeEvent<HTMLSelectElement>) => {
+            setSelectValue(event.target.value);
+          }}
+          style={INPUT_STYLE}
+        >
+          <option value="alpha">Alpha</option>
+          <option value="beta">Beta</option>
+        </select>
+        <span data-testid="select-value" style={HINT_STYLE}>
+          {selectValue}
+        </span>
+      </div>
+
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <input
           data-testid="checkbox-input"
           type="checkbox"
           checked={checkboxValue}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            const detail = (
-              event as unknown as { detail: { checked?: boolean } }
-            ).detail;
-            setCheckboxValue(detail?.checked ?? false);
+            setCheckboxValue(event.target.checked);
           }}
         />
         <label style={LABEL_STYLE}>Check me</label>
@@ -105,7 +136,12 @@ const FormEventsComponent = () => {
         type="button"
         onClick={() =>
           setSubmittedData(
-            JSON.stringify({ text: textValue, checkbox: checkboxValue }),
+            JSON.stringify({
+              text: textValue,
+              textarea: textareaValue,
+              select: selectValue,
+              checkbox: checkboxValue,
+            }),
           )
         }
         style={SUBMIT_BUTTON_STYLE}

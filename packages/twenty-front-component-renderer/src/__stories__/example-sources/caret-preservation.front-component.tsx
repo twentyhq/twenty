@@ -57,9 +57,7 @@ const CaretPreservationComponent = () => {
           type="text"
           value={text}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            const detail = (event as unknown as { detail: { value?: string } })
-              .detail;
-            setText(detail?.value ?? '');
+            setText(event.target.value);
           }}
           style={INPUT_STYLE}
         />
@@ -74,9 +72,7 @@ const CaretPreservationComponent = () => {
           data-testid="caret-textarea-input"
           value={textareaText}
           onChange={(event: ChangeEvent<HTMLTextAreaElement>) => {
-            const detail = (event as unknown as { detail: { value?: string } })
-              .detail;
-            setTextareaText(detail?.value ?? '');
+            setTextareaText(event.target.value);
           }}
           style={INPUT_STYLE}
           rows={3}

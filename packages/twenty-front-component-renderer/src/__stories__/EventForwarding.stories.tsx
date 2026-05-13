@@ -107,6 +107,48 @@ export const FormCheckbox: Story = createComponentStory('form-events', {
   },
 });
 
+export const FormTextarea: Story = createComponentStory('form-events', {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId(
+      'form-events-component',
+      {},
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    const textarea = await canvas.findByTestId('textarea-input');
+    await userEvent.type(textarea, 'hello note');
+
+    expect(
+      await canvas.findByText(
+        'hello note',
+        {},
+        { timeout: INTERACTION_TIMEOUT },
+      ),
+    ).toBeVisible();
+  },
+});
+
+export const FormSelect: Story = createComponentStory('form-events', {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId(
+      'form-events-component',
+      {},
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    const select = await canvas.findByTestId('select-input');
+    await userEvent.selectOptions(select, 'beta');
+
+    expect(
+      await canvas.findByText('beta', {}, { timeout: INTERACTION_TIMEOUT }),
+    ).toBeVisible();
+  },
+});
+
 export const FormFocusAndBlur: Story = createComponentStory('form-events', {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -145,6 +187,12 @@ export const FormSubmission: Story = createComponentStory('form-events', {
     const textInput = await canvas.findByTestId('text-input');
     await userEvent.type(textInput, 'hello');
 
+    const textarea = await canvas.findByTestId('textarea-input');
+    await userEvent.type(textarea, 'note');
+
+    const select = await canvas.findByTestId('select-input');
+    await userEvent.selectOptions(select, 'beta');
+
     const checkbox = await canvas.findByTestId('checkbox-input');
     await userEvent.click(checkbox);
 
@@ -153,7 +201,7 @@ export const FormSubmission: Story = createComponentStory('form-events', {
 
     expect(
       await canvas.findByText(
-        '{"text":"hello","checkbox":true}',
+        '{"text":"hello","textarea":"note","select":"beta","checkbox":true}',
         {},
         { timeout: INTERACTION_TIMEOUT },
       ),
