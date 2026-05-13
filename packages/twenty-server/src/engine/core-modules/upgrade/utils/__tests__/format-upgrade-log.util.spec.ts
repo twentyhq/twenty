@@ -1,10 +1,10 @@
 import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
 
 describe('formatUpgradeLog', () => {
-  it('emits "[upgrade] <message> | event=<event>" with no fields', () => {
+  it('emits "[upgrade] <humanMessage> | event=<event>" with no logFields', () => {
     expect(
       formatUpgradeLog({
-        message: 'Upgrade for workspace abc-123 completed.',
+        humanMessage: 'Upgrade for workspace abc-123 completed.',
         event: 'workspace.success',
       }),
     ).toMatchInlineSnapshot(
@@ -12,12 +12,12 @@ describe('formatUpgradeLog', () => {
     );
   });
 
-  it('serializes numeric, boolean and string fields after the message', () => {
+  it('serializes numeric, boolean and string logFields after the humanMessage', () => {
     expect(
       formatUpgradeLog({
-        message: 'Upgrading workspace abc-123 1/10',
+        humanMessage: 'Upgrading workspace abc-123 1/10',
         event: 'workspace.start',
-        fields: {
+        logFields: {
           workspaceId: 'abc-123',
           index: 1,
           total: 10,
@@ -29,12 +29,12 @@ describe('formatUpgradeLog', () => {
     );
   });
 
-  it('emits null and undefined fields explicitly', () => {
+  it('emits null and undefined logFields explicitly', () => {
     expect(
       formatUpgradeLog({
-        message: 'migration-foo executed successfully',
+        humanMessage: 'migration-foo executed successfully',
         event: 'instance.success',
-        fields: {
+        logFields: {
           command: 'migration-foo',
           error: undefined,
           executedByVersion: null,
@@ -48,50 +48,51 @@ describe('formatUpgradeLog', () => {
   it('quotes values containing whitespace, quotes or equals signs', () => {
     expect(
       formatUpgradeLog({
-        message: 'Workspace abc failed on migrate-foo',
+        humanMessage:
+          'Workspace abc failed on migrate-foo: Connection timed out',
         event: 'workspace.failed',
-        fields: {
+        logFields: {
           workspaceId: 'abc',
-          error: 'Connection timed out',
+          command: 'migrate-foo',
         },
       }),
     ).toMatchInlineSnapshot(
-      `"[upgrade] Workspace abc failed on migrate-foo | event=workspace.failed workspaceId=abc error="Connection timed out""`,
+      `"[upgrade] Workspace abc failed on migrate-foo: Connection timed out | event=workspace.failed workspaceId=abc command=migrate-foo"`,
     );
   });
 
-  it('escapes embedded quotes and backslashes', () => {
+  it('escapes embedded quotes and backslashes in logField values', () => {
     expect(
       formatUpgradeLog({
-        message: 'Workspace abc failed',
+        humanMessage: 'Workspace abc failed',
         event: 'workspace.failed',
-        fields: {
-          error: 'bad "quote" and \\ backslash',
+        logFields: {
+          reason: 'bad "quote" and \\ backslash',
         },
       }),
     ).toMatchInlineSnapshot(
-      `"[upgrade] Workspace abc failed | event=workspace.failed error="bad \\"quote\\" and \\\\ backslash""`,
+      `"[upgrade] Workspace abc failed | event=workspace.failed reason="bad \\"quote\\" and \\\\ backslash""`,
     );
   });
 
-  it('keeps multi-line values on a single log line via \\n / \\r / \\t escaping', () => {
+  it('keeps multi-line logField values on a single log line via \\n / \\r / \\t escaping', () => {
     expect(
       formatUpgradeLog({
-        message: 'Workspace abc failed',
+        humanMessage: 'Workspace abc failed',
         event: 'workspace.failed',
-        fields: {
-          error: 'line one\nline two\rline three\ttab',
+        logFields: {
+          reason: 'line one\nline two\rline three\ttab',
         },
       }),
     ).toMatchInlineSnapshot(
-      `"[upgrade] Workspace abc failed | event=workspace.failed error="line one\\nline two\\rline three\\ttab""`,
+      `"[upgrade] Workspace abc failed | event=workspace.failed reason="line one\\nline two\\rline three\\ttab""`,
     );
   });
 
   it('escapes an event name containing whitespace or =', () => {
     expect(
       formatUpgradeLog({
-        message: 'Something happened',
+        humanMessage: 'Something happened',
         event: 'weird event=with-equals',
       }),
     ).toMatchInlineSnapshot(

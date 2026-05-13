@@ -127,9 +127,9 @@ export class UpgradeCommand extends CommandRunner {
 
       this.logger.log(
         formatUpgradeLog({
-          message: `Initialized upgrade sequence: ${sequence.length} step(s)`,
+          humanMessage: `Initialized upgrade sequence: ${sequence.length} step(s)`,
           event: 'sequence.initialized',
-          fields: {
+          logFields: {
             stepCount: sequence.length,
             dryRun: options.dryRun ?? false,
           },
@@ -139,9 +139,9 @@ export class UpgradeCommand extends CommandRunner {
       for (const [index, step] of sequence.entries()) {
         this.logger.verbose(
           formatUpgradeLog({
-            message: `  [${index}] ${step.kind} — ${step.name} (${step.version})`,
+            humanMessage: `  [${index}] ${step.kind} — ${step.name} (${step.version})`,
             event: 'sequence.step',
-            fields: {
+            logFields: {
               index,
               kind: step.kind,
               name: step.name,
@@ -164,9 +164,9 @@ export class UpgradeCommand extends CommandRunner {
 
       this.logger.log(
         formatUpgradeLog({
-          message: `Upgrade summary: ${totalSuccesses} workspace(s) succeeded, ${totalFailures} workspace(s) failed`,
+          humanMessage: `Upgrade summary: ${totalSuccesses} workspace(s) succeeded, ${totalFailures} workspace(s) failed`,
           event: 'summary',
-          fields: {
+          logFields: {
             totalSuccesses,
             totalFailures,
             dryRun: options.dryRun ?? false,
@@ -185,9 +185,8 @@ export class UpgradeCommand extends CommandRunner {
 
       this.logger.error(
         formatUpgradeLog({
-          message: `Upgrade failed: ${errorMessage}`,
+          humanMessage: `Upgrade failed: ${errorMessage}`,
           event: 'aborted',
-          fields: { error: errorMessage },
         }),
       );
       throw error;

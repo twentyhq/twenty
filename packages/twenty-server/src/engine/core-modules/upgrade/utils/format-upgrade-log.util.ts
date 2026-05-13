@@ -5,9 +5,9 @@ type UpgradeLogScalar = string | number | boolean;
 type UpgradeLogFields = Record<string, UpgradeLogScalar | null | undefined>;
 
 type FormatUpgradeLogParams = {
-  message: string;
+  humanMessage: string;
   event: string;
-  fields?: UpgradeLogFields;
+  logFields?: UpgradeLogFields;
 };
 
 const UPGRADE_LOG_PREFIX = '[upgrade]';
@@ -33,17 +33,17 @@ const escapeLogValue = (value: UpgradeLogScalar): string => {
 };
 
 export const formatUpgradeLog = ({
-  message,
+  humanMessage,
   event,
-  fields = {},
+  logFields = {},
 }: FormatUpgradeLogParams): string => {
   const tailParts: string[] = [`event=${escapeLogValue(event)}`];
 
-  for (const [key, value] of Object.entries(fields)) {
+  for (const [key, value] of Object.entries(logFields)) {
     tailParts.push(
       `${key}=${isDefined(value) ? escapeLogValue(value) : String(value)}`,
     );
   }
 
-  return `${UPGRADE_LOG_PREFIX} ${message} | ${tailParts.join(' ')}`;
+  return `${UPGRADE_LOG_PREFIX} ${humanMessage} | ${tailParts.join(' ')}`;
 };

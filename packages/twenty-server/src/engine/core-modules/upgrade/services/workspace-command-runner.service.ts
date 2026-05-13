@@ -40,9 +40,9 @@ export class WorkspaceCommandRunnerService {
 
     this.logger.log(
       formatUpgradeLog({
-        message: `${dryRunPrefix}Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
+        humanMessage: `${dryRunPrefix}Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
         event: 'workspace.start',
-        fields: {
+        logFields: {
           workspaceId,
           index: index + 1,
           total,
@@ -67,9 +67,9 @@ export class WorkspaceCommandRunnerService {
 
       this.logger.log(
         formatUpgradeLog({
-          message: `Upgrade for workspace ${workspaceId} completed.`,
+          humanMessage: `Upgrade for workspace ${workspaceId} completed.`,
           event: 'workspace.success',
-          fields: {
+          logFields: {
             workspaceId,
             executedByVersion,
             dryRun: options.dryRun ?? false,
@@ -92,12 +92,11 @@ export class WorkspaceCommandRunnerService {
 
       this.logger.warn(
         formatUpgradeLog({
-          message: `Failed to invalidate upgrade-status cache (triggered by workspace ${workspaceId}): ${errorMessage}`,
+          humanMessage: `Failed to invalidate upgrade-status cache (triggered by workspace ${workspaceId}): ${errorMessage}`,
           event: 'cache.invalidate.failed',
-          fields: {
+          logFields: {
             scope: 'instance-and-all-workspaces',
             triggeredByWorkspaceId: workspaceId,
-            error: errorMessage,
           },
         }),
       );

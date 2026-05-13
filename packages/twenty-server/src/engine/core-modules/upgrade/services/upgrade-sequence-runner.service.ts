@@ -77,12 +77,12 @@ export class UpgradeSequenceRunnerService {
         ) {
           this.logger.log(
             formatUpgradeLog({
-              message:
+              humanMessage:
                 `Stopping before instance step "${step.name}": ` +
                 'upgrade was run with a workspace filter (-w, --start-from-workspace-id, or --workspace-count-limit). ' +
                 'Instance commands require all workspaces to be aligned.',
               event: 'sequence.stopped',
-              fields: {
+              logFields: {
                 before: step.name,
                 reason: 'workspace-filter-active',
               },
@@ -130,11 +130,11 @@ export class UpgradeSequenceRunnerService {
       if (report.fail.length > 0) {
         this.logger.error(
           formatUpgradeLog({
-            message:
+            humanMessage:
               `Workspace steps ended with ${report.fail.length} failure(s). ` +
               'Aborting — cannot proceed to next instance step.',
             event: 'sequence.aborted',
-            fields: {
+            logFields: {
               failures: report.fail.length,
               reason: 'workspace-failures',
             },
