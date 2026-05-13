@@ -75,6 +75,38 @@ describe('ImapGetAllFoldersService', () => {
     imapFindSentFolderService = module.get(ImapFindSentFolderService);
   });
 
+  describe('Gmail folder path handling', () => {
+    it('should persist the full IMAP path for Gmail special folders', async () => {
+      const mailboxList = [
+        createMockMailbox({
+          path: '[Gmail]/Sent Mail',
+          name: 'Sent Mail',
+          delimiter: '/',
+          parentPath: '[Gmail]',
+        }),
+      ];
+
+      mockImapClient.list.mockResolvedValue(mailboxList);
+      mockImapClient.status.mockResolvedValue({ uidValidity: BigInt(42) } as any);
+      imapFindSentFolderService.findSentFolder.mockResolvedValue({
+        path: '[Gmail]/Sent Mail',
+        name: 'Sent Mail',
+      });
+
+      const result = await service.getAllMessageFolders(
+        CONNECTED_ACCOUNT,
+        MESSAGE_CHANNEL,
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        externalId: '[Gmail]/Sent Mail:42',
+        name: '[Gmail]/Sent Mail',
+        isSentFolder: true,
+      });
+    });
+  });
+
   describe('Noselect folder handling', () => {
     it('should not issue STATUS against a \\Noselect folder', async () => {
       const mailboxList = [
