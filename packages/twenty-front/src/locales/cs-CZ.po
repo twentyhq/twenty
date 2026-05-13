@@ -1321,6 +1321,7 @@ msgstr "Přidáno do blokovaného seznamu"
 #: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "Address 1"
 msgstr "Adresa 1"
 
@@ -1328,6 +1329,7 @@ msgstr "Adresa 1"
 #: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "Address 2"
 msgstr "Adresa 2"
 
@@ -2327,6 +2329,7 @@ msgstr "vzestupně"
 
 #. js-lingui-id: nYD/Cq
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
+#: src/modules/views/editable-chip/components/EditableSortChip.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -3352,6 +3355,7 @@ msgstr "Vyberte si Trial"
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "City"
 msgstr "Město"
 
@@ -4197,6 +4201,7 @@ msgstr "Počet unikátních hodnot"
 #: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "Country"
 msgstr "Země"
 
@@ -5298,6 +5303,7 @@ msgstr "sestupně"
 
 #. js-lingui-id: Cko536
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
+#: src/modules/views/editable-chip/components/EditableSortChip.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -7433,6 +7439,11 @@ msgstr "První 2 řádky"
 msgid "First 5 lines"
 msgstr "Prvních 5 řádků"
 
+#. js-lingui-id: V1EGGU
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
+msgid "First name"
+msgstr ""
+
 #. js-lingui-id: kODvZJ
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -9012,6 +9023,7 @@ msgstr "Poslední zpráva {lastMessageSentAtFormatted}"
 
 #. js-lingui-id: 1ZaQUH
 #: src/modules/settings/members/components/MemberNameFields.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "Last name"
 msgstr ""
 
@@ -9071,6 +9083,11 @@ msgstr "Nejnovější datum"
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version"
 msgstr "Nejnovější verze"
+
+#. js-lingui-id: Q7hYLw
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
+msgid "Latitude"
+msgstr ""
 
 #. js-lingui-id: ZEP8tT
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -9448,6 +9465,11 @@ msgstr "Odhlásit"
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
 msgid "Logs"
 msgstr "Protokoly"
+
+#. js-lingui-id: FJBbw5
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
+msgid "Longitude"
+msgstr ""
 
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
@@ -12068,6 +12090,7 @@ msgstr ""
 
 #. js-lingui-id: OKJUcC
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "Postcode"
 msgstr "PSČ"
 
@@ -14507,6 +14530,7 @@ msgstr "Zahájen proces ověřování"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "State"
 msgstr "Stav"
 
