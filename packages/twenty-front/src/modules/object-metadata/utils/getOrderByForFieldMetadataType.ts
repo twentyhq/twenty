@@ -23,9 +23,6 @@ export const getOrderByForFieldMetadataType = ({
 }: {
   field: Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'settings'>;
   orderByDirection: OrderBy | null | undefined;
-  // Selected primary sub-field for composite types (FULL_NAME, ADDRESS).
-  // The other sub-fields are still included in the orderBy as
-  // secondaries — see the FULL_NAME case.
   primaryCompositeSubField?: string | null;
 }): RecordGqlOperationOrderBy => {
   switch (field.type) {
@@ -131,8 +128,5 @@ export const getOrderByForRelationField = ({
     orderByDirection,
   });
 
-  // Preserve every entry from the label sort (e.g. composite labels emit
-  // one entry per sub-field for Apollo cache identity — see the FULL_NAME
-  // case above).
   return labelFieldOrderBy.map((entry) => ({ [field.name]: entry }));
 };

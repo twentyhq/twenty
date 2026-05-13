@@ -22,10 +22,6 @@ export type SortSubFieldChoices = {
   selectedLabel: string;
 };
 
-// Returns the sub-field options that can be picked as the primary sort key
-// for a composite field (FULL_NAME, ADDRESS), plus the currently selected
-// option resolved against the field settings. Returns `undefined` for
-// non-composite fields, signaling that there is nothing to pick.
 export const useSortSubFieldChoicesForField = ({
   fieldMetadataItem,
   primaryCompositeSubField,

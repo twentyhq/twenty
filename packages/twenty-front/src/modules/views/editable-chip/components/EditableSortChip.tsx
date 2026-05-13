@@ -34,9 +34,6 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     primaryCompositeSubField: recordSort.subFieldName,
   });
 
-  // The id of the RecordSort row itself, not the field — fieldMetadataId
-  // can repeat across views/widgets and would collide on the shared
-  // dropdown-open atom.
   const dropdownId = `sort-chip-${recordSort.id}`;
 
   const setDirection = (direction: ViewSortDirection) => {
@@ -70,7 +67,6 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
       ? IconArrowDown
       : IconArrowUp;
 
-  // Non-composite sort chips: clicking the chip directly toggles ASC/DESC.
   if (!isDefined(subFieldChoices)) {
     return (
       <SortOrFilterChip
@@ -85,9 +81,6 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     );
   }
 
-  // Composite sort chips: clicking the chip opens a dropdown that lets the
-  // user change both direction and the primary sub-field, so there is only
-  // ever one click action on the chip itself.
   return (
     <Dropdown
       dropdownId={dropdownId}
