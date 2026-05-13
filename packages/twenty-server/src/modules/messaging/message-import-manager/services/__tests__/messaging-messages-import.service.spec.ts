@@ -246,7 +246,7 @@ describe('MessagingMessagesImportService', () => {
     mockMessageChannel.syncStage =
       MessageChannelSyncStage.MESSAGES_IMPORT_PENDING;
 
-    expect(
+    await expect(
       service.processMessageBatchImport(
         mockMessageChannel as MessageChannelEntity,
         mockConnectedAccount,

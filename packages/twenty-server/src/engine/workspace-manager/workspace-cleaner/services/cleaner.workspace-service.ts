@@ -134,7 +134,7 @@ export class CleanerWorkspaceService {
       throw new Error('Workspace member email is missing');
     }
 
-    this.emailService.send({
+    await this.emailService.send({
       to: workspaceMember.userEmail,
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
@@ -177,18 +177,18 @@ export class CleanerWorkspaceService {
 
     if (!dryRun) {
       for (const workspaceMember of workspaceMembers) {
+        await this.sendWarningEmail(
+          workspaceMember,
+          workspace.displayName,
+          daysSinceInactive,
+        );
+
         await this.userVarsService.set({
           userId: workspaceMember.userId,
           workspaceId: workspace.id,
           key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
           value: true,
         });
-
-        await this.sendWarningEmail(
-          workspaceMember,
-          workspace.displayName,
-          daysSinceInactive,
-        );
       }
     }
   }
@@ -212,7 +212,7 @@ export class CleanerWorkspaceService {
       throw new Error('Workspace member email is missing');
     }
 
-    this.emailService.send({
+    await this.emailService.send({
       to: workspaceMember.userEmail,
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
@@ -356,7 +356,7 @@ export class CleanerWorkspaceService {
     }
 
     await this.workspaceService.deleteWorkspace(workspace.id);
-    this.metricsService.incrementCounter({
+    void this.metricsService.incrementCounter({
       key: MetricsKeys.CronJobDeletedWorkspace,
       shouldStoreInCache: false,
     });

@@ -18,9 +18,9 @@ export class FileUrlService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  signWorkspaceLogoUrl(
+  async signWorkspaceLogoUrl(
     workspace: Pick<WorkspaceEntity, 'id' | 'logoFileId'>,
-  ): string | null {
+  ): Promise<string | null> {
     if (!isDefined(workspace.logoFileId)) {
       return null;
     }
@@ -32,7 +32,7 @@ export class FileUrlService {
     });
   }
 
-  signFileByIdUrl({
+  async signFileByIdUrl({
     fileId,
     workspaceId,
     fileFolder,
@@ -40,7 +40,7 @@ export class FileUrlService {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
-  }): string {
+  }): Promise<string> {
     const fileTokenExpiresIn = this.twentyConfigService.get(
       'FILE_TOKEN_EXPIRES_IN',
     );
@@ -52,13 +52,7 @@ export class FileUrlService {
       type: JwtTokenTypeEnum.FILE,
     };
 
-    const secret = this.jwtWrapperService.generateAppSecret(
-      payload.type,
-      workspaceId,
-    );
-
-    const token = this.jwtWrapperService.sign(payload, {
-      secret,
+    const token = await this.jwtWrapperService.signAsyncOrThrow(payload, {
       expiresIn: fileTokenExpiresIn,
     });
 

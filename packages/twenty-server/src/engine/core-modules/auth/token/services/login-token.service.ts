@@ -37,18 +37,12 @@ export class LoginTokenService {
       impersonatorUserWorkspaceId: options?.impersonatorUserWorkspaceId,
     };
 
-    const secret = this.jwtWrapperService.generateAppSecret(
-      jwtPayload.type,
-      workspaceId,
-    );
-
     const expiresIn = this.twentyConfigService.get('LOGIN_TOKEN_EXPIRES_IN');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret,
+      token: await this.jwtWrapperService.signAsyncOrThrow(jwtPayload, {
         expiresIn,
       }),
       expiresAt,

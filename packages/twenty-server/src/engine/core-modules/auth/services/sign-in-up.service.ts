@@ -384,7 +384,7 @@ export class SignInUpService {
       undefined,
     );
 
-    this.metricsService.incrementCounter({
+    void this.metricsService.incrementCounter({
       key: MetricsKeys.SignUpSuccess,
       shouldStoreInCache: false,
     });
@@ -597,7 +597,7 @@ export class SignInUpService {
 
       await queryRunner.commitTransaction();
 
-      this.auditService
+      void this.auditService
         .createContext({ workspaceId })
         .insertWorkspaceEvent(WORKSPACE_CREATED_EVENT, {});
 

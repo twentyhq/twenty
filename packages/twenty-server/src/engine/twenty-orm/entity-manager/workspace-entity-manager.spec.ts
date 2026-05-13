@@ -240,6 +240,7 @@ describe('WorkspaceEntityManager', () => {
         IS_EMAIL_GROUP_ENABLED: false,
         IS_JUNCTION_RELATIONS_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: false,
+        IS_REST_METADATA_API_NEW_FORMAT_DIRECT: false,
         [FeatureFlagKey.IS_BILLING_V2_ENABLED]: false,
       },
       userWorkspaceRoleMap: {},
