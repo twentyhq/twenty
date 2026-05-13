@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  JwtService,
-  type JwtSignOptions,
-  type JwtVerifyOptions,
-} from '@nestjs/jwt';
+import { JwtService, type JwtVerifyOptions } from '@nestjs/jwt';
 
 import { createHash } from 'crypto';
 
@@ -28,10 +24,7 @@ import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-k
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
 import { decodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
-import {
-  isAsymmetricJwtHeader,
-  isAsymmetricSigningEligible,
-} from 'src/engine/core-modules/jwt/utils/is-asymmetric-jwt-header.util';
+import { isAsymmetricJwtHeader } from 'src/engine/core-modules/jwt/utils/is-asymmetric-jwt-header.util';
 
 type ResolvedVerificationKey = {
   key: string;
@@ -54,32 +47,15 @@ export class JwtWrapperService {
     private readonly jwtKeyManagerService: JwtKeyManagerService,
   ) {}
 
-  /**
-   * @deprecated Use {@link signAsync} for ACCESS / REFRESH tokens (ES256, with
-   * rotatable signing keys). Synchronous HS256 signing remains in place for
-   * token types not yet migrated to asymmetric signing, but new call sites
-   * should not be introduced.
-   */
-  sign(payload: JwtPayload, options?: JwtSignOptions): string {
-    return this.jwtService.sign(payload, options);
-  }
-
-  async signAsync(
+  async signAsyncOrThrow(
     payload: JwtPayload,
     options: { expiresIn: string | number; jwtid?: string },
   ): Promise<string> {
-    if (!isAsymmetricSigningEligible(payload.type)) {
-      throw new AuthException(
-        `signAsync called with non-rotatable token type "${payload.type}"`,
-        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
-      );
-    }
-
     const signingKey = await this.jwtKeyManagerService.getCurrentSigningKey();
 
     if (!isDefined(signingKey)) {
       throw new AuthException(
-        'No active signing key available to sign ACCESS / REFRESH token',
+        'No active signing key available to sign asymmetric token',
         AuthExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
@@ -111,9 +87,8 @@ export class JwtWrapperService {
     rawToken: string,
   ): Promise<ResolvedVerificationKey> {
     const header = decodeJwtHeader(rawToken);
-    const payload = decodeJwtPayload<JwtPayload>(rawToken);
 
-    if (isAsymmetricJwtHeader(header, payload)) {
+    if (isAsymmetricJwtHeader(header)) {
       const publicKeyPem =
         await this.jwtKeyManagerService.getValidPublicKeyPemById(header.kid);
 
@@ -126,6 +101,8 @@ export class JwtWrapperService {
 
       return { key: publicKeyPem, algorithm: JWT_ASYMMETRIC_ALGORITHM };
     }
+
+    const payload = decodeJwtPayload<JwtPayload>(rawToken);
 
     if (!isDefined(payload)) {
       throw new AuthException(

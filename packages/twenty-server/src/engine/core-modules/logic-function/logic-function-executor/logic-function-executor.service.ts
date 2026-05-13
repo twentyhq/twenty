@@ -332,7 +332,9 @@ export class LogicFunctionExecutorService {
       executionId,
     }));
 
-    this.applicationLogsService.writeLogs(logEntries);
+    void this.applicationLogsService.writeLogs(logEntries).catch((error) => {
+      this.logger.error('Failed to persist application logs', error);
+    });
 
     await this.subscriptionService.publish({
       channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
@@ -349,7 +351,7 @@ export class LogicFunctionExecutorService {
       },
     });
 
-    this.auditService
+    void this.auditService
       .createContext({
         workspaceId,
       })

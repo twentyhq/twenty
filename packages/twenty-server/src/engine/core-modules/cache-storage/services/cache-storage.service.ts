@@ -97,13 +97,13 @@ export class CacheStorageService {
       return;
     }
 
-    this.get(key).then((res: string[]) => {
-      if (res) {
-        this.set(key, [...res, ...value], ttl);
-      } else {
-        this.set(key, value, ttl);
-      }
-    });
+    const res = await this.get<string[]>(key);
+
+    if (res) {
+      await this.set(key, [...res, ...value], ttl);
+    } else {
+      await this.set(key, value, ttl);
+    }
   }
 
   async setRemove(key: string, values: string[]): Promise<number> {
@@ -146,15 +146,15 @@ export class CacheStorageService {
       );
     }
 
-    return this.get(key).then((res: string[]) => {
-      if (res) {
-        this.set(key, res.slice(0, -size));
+    const res = await this.get<string[]>(key);
 
-        return res.slice(-size);
-      }
+    if (res) {
+      await this.set(key, res.slice(0, -size));
 
-      return [];
-    });
+      return res.slice(-size);
+    }
+
+    return [];
   }
 
   async getSetLength(key: string) {
@@ -164,9 +164,9 @@ export class CacheStorageService {
       );
     }
 
-    return this.get(key).then((res: string[]) => {
-      return res.length;
-    });
+    const res = await this.get<string[]>(key);
+
+    return res?.length ?? 0;
   }
 
   async setMembers(key: string): Promise<string[]> {

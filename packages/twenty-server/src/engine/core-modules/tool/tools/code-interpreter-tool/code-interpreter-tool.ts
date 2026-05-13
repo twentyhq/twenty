@@ -110,7 +110,7 @@ export class CodeInterpreterTool implements Tool {
       );
 
       const serverUrl = this.twentyConfigService.get('SERVER_URL');
-      const sessionToken = this.generateSessionToken(
+      const sessionToken = await this.generateSessionToken(
         workspaceId,
         userId,
         userWorkspaceId,
@@ -293,16 +293,11 @@ export class CodeInterpreterTool implements Tool {
     return inputFiles;
   }
 
-  private generateSessionToken(
+  private async generateSessionToken(
     workspaceId: string,
     userId?: string,
     userWorkspaceId?: string,
-  ): string {
-    const secret = this.jwtWrapperService.generateAppSecret(
-      JwtTokenTypeEnum.ACCESS,
-      workspaceId,
-    );
-
+  ): Promise<string> {
     const payload: AccessTokenJwtPayload = {
       sub: userId ?? workspaceId,
       type: JwtTokenTypeEnum.ACCESS,
@@ -312,9 +307,8 @@ export class CodeInterpreterTool implements Tool {
       authProvider: AuthProviderEnum.Password,
     };
 
-    return this.jwtWrapperService.sign(payload, {
-      secret,
-      expiresIn: '5m', // Short-lived token for code execution session
+    return this.jwtWrapperService.signAsyncOrThrow(payload, {
+      expiresIn: '5m',
     });
   }
 
@@ -349,7 +343,7 @@ export class CodeInterpreterTool implements Tool {
         },
       });
 
-      const signedUrl = this.fileUrlService.signFileByIdUrl({
+      const signedUrl = await this.fileUrlService.signFileByIdUrl({
         fileId: savedFile.id,
         workspaceId,
         fileFolder: FileFolder.AgentChat,

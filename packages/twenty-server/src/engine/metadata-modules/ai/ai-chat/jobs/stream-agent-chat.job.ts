@@ -298,7 +298,7 @@ export class StreamAgentChatJob {
 
       // Publish all chunks first, then signal completion. This guarantees
       // message-persisted arrives after every stream-chunk on the client.
-      (async () => {
+      void (async () => {
         try {
           for await (const chunk of uiStream) {
             await this.eventPublisherService.publish({

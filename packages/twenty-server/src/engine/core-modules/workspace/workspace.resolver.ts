@@ -406,7 +406,7 @@ export class WorkspaceResolver {
       let workspaceLogoWithToken = '';
 
       if (isDefined(workspace.logoFileId)) {
-        workspaceLogoWithToken = this.fileUrlService.signFileByIdUrl({
+        workspaceLogoWithToken = await this.fileUrlService.signFileByIdUrl({
           fileId: workspace.logoFileId,
           workspaceId: workspace.id,
           fileFolder: FileFolder.CorePicture,
@@ -448,7 +448,7 @@ export class WorkspaceResolver {
       assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
       const logo = isDefined(workspace.logoFileId)
-        ? this.fileUrlService.signFileByIdUrl({
+        ? await this.fileUrlService.signFileByIdUrl({
             fileId: workspace.logoFileId,
             workspaceId: workspace.id,
             fileFolder: FileFolder.CorePicture,
