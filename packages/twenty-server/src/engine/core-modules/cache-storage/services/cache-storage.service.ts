@@ -164,9 +164,9 @@ export class CacheStorageService {
       );
     }
 
-    return this.get(key).then((res: string[]) => {
-      return res.length;
-    });
+    const res = await this.get<string[]>(key);
+
+    return res?.length ?? 0;
   }
 
   async setMembers(key: string): Promise<string[]> {
