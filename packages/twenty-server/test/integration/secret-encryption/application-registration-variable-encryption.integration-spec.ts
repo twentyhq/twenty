@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 // Real integration test for the legacy CTR encryption path: drive the
 // full create/read/delete lifecycle through the GraphQL API and peek
@@ -18,7 +18,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
   beforeAll(async () => {
     dataSource = global.testDataSource;
 
-    const createRegistrationResponse = await makeGraphqlAPIRequest({
+    const createRegistrationResponse = await makeMetadataAPIRequest({
       query: gql`
         mutation CreateRegistrationForEncryptionTest(
           $input: CreateApplicationRegistrationInput!
@@ -51,7 +51,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
   });
 
   afterAll(async () => {
-    await makeGraphqlAPIRequest({
+    await makeMetadataAPIRequest({
       query: gql`
         mutation DeleteRegistrationForEncryptionTest($id: String!) {
           deleteApplicationRegistration(id: $id)
@@ -64,7 +64,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
   it('encrypts the value on the API write path, persists ciphertext in Postgres, and decrypts back via the API read path', async () => {
     const plaintext = 'this-is-a-legacy-ctr-secret-value';
 
-    const createVariableResponse = await makeGraphqlAPIRequest({
+    const createVariableResponse = await makeMetadataAPIRequest({
       query: gql`
         mutation CreateVariableForEncryptionTest(
           $input: CreateApplicationRegistrationVariableInput!
@@ -99,7 +99,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
     expect(dbRow.encryptedValue).not.toContain(plaintext);
     expect(dbRow.encryptedValue).toMatch(/^[A-Za-z0-9+/]+={0,2}$/);
 
-    const findResponse = await makeGraphqlAPIRequest({
+    const findResponse = await makeMetadataAPIRequest({
       query: gql`
         query FindVariablesForEncryptionTest(
           $applicationRegistrationId: String!
