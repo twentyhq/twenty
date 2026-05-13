@@ -349,5 +349,4 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
       columnSpan: 6,
     });
   });
-
 });

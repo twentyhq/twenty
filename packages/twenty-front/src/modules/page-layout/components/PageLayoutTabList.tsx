@@ -257,7 +257,8 @@ export const PageLayoutTabList = ({
   const handleSelectTab = useCallback(
     (tabId: string) => {
       const shouldOpenSettings =
-        isPageLayoutInEditMode && shouldEnableTabEditingFeatures(pageLayoutType);
+        isPageLayoutInEditMode &&
+        shouldEnableTabEditingFeatures(pageLayoutType);
 
       if (shouldOpenSettings && activeTabId === tabId) {
         openTabSettings(tabId);
@@ -283,7 +284,8 @@ export const PageLayoutTabList = ({
   const handleSelectTabFromDropdown = useCallback(
     (tabId: string) => {
       const shouldOpenSettings =
-        isPageLayoutInEditMode && shouldEnableTabEditingFeatures(pageLayoutType);
+        isPageLayoutInEditMode &&
+        shouldEnableTabEditingFeatures(pageLayoutType);
 
       if (shouldOpenSettings && activeTabId === tabId) {
         openTabSettings(tabId);

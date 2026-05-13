@@ -614,8 +614,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         flatApplication: twentyStandardFlatApplication,
       });
 
-    const flatRecordPageFieldsViewFieldsToCreate = computeFlatViewFieldsToCreate(
-      {
+    const flatRecordPageFieldsViewFieldsToCreate =
+      computeFlatViewFieldsToCreate({
         flatApplication: twentyStandardFlatApplication,
         objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
         labelIdentifierFieldMetadataUniversalIdentifier:
@@ -623,8 +623,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         viewUniversalIdentifier:
           flatRecordPageFieldsViewToCreate.universalIdentifier,
         excludeLabelIdentifier: true,
-      },
-    );
+      });
 
     const flatDefaultRecordPageLayoutsToCreate =
       this.computeFlatDefaultRecordPageLayoutToCreate({
