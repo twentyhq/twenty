@@ -14,6 +14,7 @@ messages, update/delete bot messages, and add reactions. Uses the official
 | `slack-update-message` | `chat.update` |
 | `slack-delete-message` | `chat.delete` |
 | `slack-add-reaction` | `reactions.add` |
+| `slack-list-channels` | `conversations.list` |
 
 ### Workflow field names (for authors)
 
@@ -27,6 +28,8 @@ Fields use camelCase names in the step UI, for example **`slackChannelId`** (Sla
    - `chat:write`
    - `chat:write.public` (optional, if posting to channels the bot is not in)
    - `reactions:write`
+   - `channels:read` (for `slack-list-channels` on public channels)
+   - `groups:read` (for `slack-list-channels` on private channels)
 3. Set the **Redirect URL** to `<SERVER_URL>/apps/oauth/callback` (local dev:
    `http://localhost:3000/apps/oauth/callback`).
 4. Copy the Slack **Client ID** and **Client Secret**.
