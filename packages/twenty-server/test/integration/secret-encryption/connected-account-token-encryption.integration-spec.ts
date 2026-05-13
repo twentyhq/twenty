@@ -1,28 +1,22 @@
 import crypto from 'crypto';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import gql from 'graphql-tag';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import {
   SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
   SECRET_ENCRYPTION_KEY_ID_REGEX,
 } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
-import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
-import { decryptAesGcmV2OrThrow } from 'src/engine/core-modules/secret-encryption/utils/decrypt-aes-gcm-v2-or-throw.util';
-import { encryptAesGcmV2 } from 'src/engine/core-modules/secret-encryption/utils/encrypt-aes-gcm-v2.util';
-import { formatSecretEncryptionEnvelopeV2 } from 'src/engine/core-modules/secret-encryption/utils/format-secret-encryption-envelope-v2.util';
-import { parseSecretEncryptionEnvelopeOrThrow } from 'src/engine/core-modules/secret-encryption/utils/parse-secret-encryption-envelope-or-throw.util';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-// Temporary: should be replaced by an integration test against a simpler
-// API surface once one exists that itself performs token encryption.
-
-const APPLE_JANE_WORKSPACE_MEMBER_ID = '20202020-463f-435b-828c-107e007a2711';
-const APPLE_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+// Temporary: replace with a richer integration test once an API surface
+// exists that itself performs token encryption.
 
 const CONNECTED_ACCOUNT_GQL_FIELDS = `
   id
@@ -32,57 +26,58 @@ const CONNECTED_ACCOUNT_GQL_FIELDS = `
   refreshToken
 `;
 
-const getRawEncryptionKey = (): string => {
-  const key = process.env.ENCRYPTION_KEY ?? process.env.APP_SECRET;
+const fetchCurrentWorkspaceContext = async (): Promise<{
+  workspaceId: string;
+  workspaceMemberId: string;
+}> => {
+  const response = await makeGraphqlAPIRequest({
+    query: gql`
+      query CurrentUserForEncryptionTest {
+        currentUser {
+          currentWorkspace {
+            id
+          }
+          workspaceMember {
+            id
+          }
+        }
+      }
+    `,
+  });
 
-  if (!isNonEmptyString(key)) {
+  const currentUser = response.body?.data?.currentUser;
+  const workspaceId = currentUser?.currentWorkspace?.id as string | undefined;
+  const workspaceMemberId = currentUser?.workspaceMember?.id as
+    | string
+    | undefined;
+
+  if (!isDefined(workspaceId) || !isDefined(workspaceMemberId)) {
     throw new Error(
-      'ENCRYPTION_KEY or APP_SECRET must be set in the integration test environment.',
+      `currentUser query did not return workspace context: ${JSON.stringify(
+        response.body,
+      )}`,
     );
   }
 
-  return key;
-};
-
-const buildEncryptedV2Envelope = ({
-  plaintext,
-  workspaceId,
-}: {
-  plaintext: string;
-  workspaceId: string;
-}): string => {
-  const rawKey = getRawEncryptionKey();
-
-  return formatSecretEncryptionEnvelopeV2({
-    keyId: computeEncryptionKeyId({ rawKey }),
-    payloadBase64: encryptAesGcmV2({ plaintext, rawKey, workspaceId }),
-  });
-};
-
-const decryptV2Envelope = ({
-  ciphertext,
-  workspaceId,
-}: {
-  ciphertext: string;
-  workspaceId: string;
-}): string => {
-  const parsed = parseSecretEncryptionEnvelopeOrThrow({ value: ciphertext });
-
-  if (parsed.version !== 2) {
-    throw new Error(
-      `Expected an enc:v2 envelope but got ${JSON.stringify(parsed)}`,
-    );
-  }
-
-  return decryptAesGcmV2OrThrow({
-    payloadBase64: parsed.payload,
-    rawKey: getRawEncryptionKey(),
-    workspaceId,
-  });
+  return { workspaceId, workspaceMemberId };
 };
 
 describe('ConnectedAccount token encryption (integration)', () => {
+  let service: ConnectedAccountTokenEncryptionService;
+  let workspaceId: string;
+  let workspaceMemberId: string;
   const seededRowIds: string[] = [];
+
+  beforeAll(async () => {
+    // AuthModule imports ConnectedAccountTokenEncryptionModule which
+    // exports the service — select() scopes the lookup to that module's
+    // container so the provider is found.
+    service = global.app
+      .select(AuthModule)
+      .get(ConnectedAccountTokenEncryptionService);
+
+    ({ workspaceId, workspaceMemberId } = await fetchCurrentWorkspaceContext());
+  });
 
   afterEach(async () => {
     for (const id of seededRowIds) {
@@ -102,14 +97,12 @@ describe('ConnectedAccount token encryption (integration)', () => {
     const accessTokenPlaintext = 'integration-access-token';
     const refreshTokenPlaintext = 'integration-refresh-token';
 
-    const encryptedAccessToken = buildEncryptedV2Envelope({
-      plaintext: accessTokenPlaintext,
-      workspaceId: APPLE_WORKSPACE_ID,
-    });
-    const encryptedRefreshToken = buildEncryptedV2Envelope({
-      plaintext: refreshTokenPlaintext,
-      workspaceId: APPLE_WORKSPACE_ID,
-    });
+    const { encryptedAccessToken, encryptedRefreshToken } =
+      service.encryptTokenPair({
+        accessToken: accessTokenPlaintext,
+        refreshToken: refreshTokenPlaintext,
+        workspaceId,
+      });
 
     const createResponse = await makeGraphqlAPIRequest(
       createOneOperationFactory({
@@ -121,7 +114,7 @@ describe('ConnectedAccount token encryption (integration)', () => {
           provider: ConnectedAccountProvider.GOOGLE,
           accessToken: encryptedAccessToken,
           refreshToken: encryptedRefreshToken,
-          accountOwnerId: APPLE_JANE_WORKSPACE_MEMBER_ID,
+          accountOwnerId: workspaceMemberId,
         },
       }),
     );
@@ -155,20 +148,20 @@ describe('ConnectedAccount token encryption (integration)', () => {
     expect(storedRow.refreshToken).not.toContain(refreshTokenPlaintext);
 
     expect(
-      decryptV2Envelope({
+      service.decrypt({
         ciphertext: storedRow.accessToken,
-        workspaceId: APPLE_WORKSPACE_ID,
+        workspaceId,
       }),
     ).toBe(accessTokenPlaintext);
     expect(
-      decryptV2Envelope({
+      service.decrypt({
         ciphertext: storedRow.refreshToken,
-        workspaceId: APPLE_WORKSPACE_ID,
+        workspaceId,
       }),
     ).toBe(refreshTokenPlaintext);
   });
 
-  it('rejects a plaintext accessToken at the Postgres CHECK constraint level', async () => {
+  it('rejects a plaintext accessToken at the Postgres CHECK constraint level via GraphQL', async () => {
     const connectedAccountId = crypto.randomUUID();
 
     const response = await makeGraphqlAPIRequest(
@@ -180,7 +173,7 @@ describe('ConnectedAccount token encryption (integration)', () => {
           handle: `enc-integration-rejected-${connectedAccountId}`,
           provider: ConnectedAccountProvider.GOOGLE,
           accessToken: 'plaintext-should-be-rejected',
-          accountOwnerId: APPLE_JANE_WORKSPACE_MEMBER_ID,
+          accountOwnerId: workspaceMemberId,
         },
       }),
     );
