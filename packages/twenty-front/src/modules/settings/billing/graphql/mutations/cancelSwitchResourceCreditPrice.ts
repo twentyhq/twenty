@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const CANCEL_SWITCH_METERED_PRICE = gql`
-  mutation CancelSwitchMeteredPrice {
-    cancelSwitchMeteredPrice {
+export const CANCEL_SWITCH_RESOURCE_CREDIT_PRICE = gql`
+  mutation CancelSwitchResourceCreditPrice {
+    cancelSwitchResourceCreditPrice {
       currentBillingSubscription {
         ...CurrentBillingSubscriptionFragment
       }

@@ -16,7 +16,7 @@ import { mockedUserData } from '~/testing/mock-data/users';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
 import { BILLING_PORTAL_SESSION } from '@/settings/billing/graphql/queries/billingPortalSession';
-import { GET_METERED_PRODUCTS_USAGE } from '@/settings/billing/graphql/queries/getMeteredProductsUsage';
+import { GET_RESOURCE_CREDIT_USAGE } from '@/settings/billing/graphql/queries/getResourceCreditUsage';
 import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
@@ -530,13 +530,13 @@ export const graphqlMocks = {
         data: mockBillingPlans,
       });
     }),
-    graphql.query(getOperationName(GET_METERED_PRODUCTS_USAGE) ?? '', () => {
+    graphql.query(getOperationName(GET_RESOURCE_CREDIT_USAGE) ?? '', () => {
       return HttpResponse.json({
         data: {
-          getMeteredProductsUsage: [
+          getResourceCreditUsage: [
             {
               __typename: 'BillingMeteredProductUsage',
-              productKey: 'WORKFLOW_NODE_EXECUTION',
+              productKey: 'RESOURCE_CREDIT',
               usedCredits: 1000,
               grantedCredits: 500000,
               rolloverCredits: 0,

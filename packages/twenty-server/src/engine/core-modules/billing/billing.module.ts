@@ -10,7 +10,6 @@ import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolve
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
 import { BillingUpdateSubscriptionPriceCommand } from 'src/engine/core-modules/billing/commands/billing-update-subscription-price.command';
-import { EnforceUsageCapCronCommand } from 'src/engine/core-modules/billing/crons/commands/enforce-usage-cap.cron.command';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -19,7 +18,6 @@ import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/b
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
-import { BillingUsageEventListener } from 'src/engine/core-modules/billing/listeners/billing-usage-event.listener';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -33,7 +31,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
+import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { WorkspaceBillingSubscriptionCacheService } from 'src/engine/core-modules/billing/services/workspace-billing-subscription-cache.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
@@ -82,7 +80,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingResolver,
     BillingPlanService,
     BillingWorkspaceMemberListener,
-    BillingUsageEventListener,
     BillingService,
     BillingRestApiExceptionFilter,
     BillingSyncCustomerDataCommand,
@@ -92,9 +89,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingUsageCapService,
     BillingPriceService,
     BillingCreditRolloverService,
-    MeteredCreditService,
+    ResourceCreditService,
     BillingGaugeService,
-    EnforceUsageCapCronCommand,
     WorkspaceBillingSubscriptionCacheService,
   ],
   exports: [
@@ -107,8 +103,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingUsageService,
     BillingUsageCapService,
     BillingCreditRolloverService,
-    MeteredCreditService,
-    EnforceUsageCapCronCommand,
+    ResourceCreditService,
   ],
 })
 export class BillingModule {}

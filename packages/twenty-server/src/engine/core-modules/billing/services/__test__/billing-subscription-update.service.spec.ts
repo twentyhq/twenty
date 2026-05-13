@@ -15,13 +15,11 @@ import { BillingProductService } from 'src/engine/core-modules/billing/services/
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
-import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
+import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { SubscriptionUpdateType } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 import {
   arrangeBillingPriceRepositoryFindOneOrFail,
@@ -69,12 +67,6 @@ describe('BillingSubscriptionUpdateService', () => {
       providers: [
         BillingSubscriptionUpdateService,
         {
-          provide: FeatureFlagService,
-          useValue: {
-            isFeatureEnabled: jest.fn().mockResolvedValue(false),
-          },
-        },
-        {
           provide: StripeInvoiceService,
           useValue: {
             createImmediateUpgradeInvoice: jest
@@ -117,57 +109,33 @@ describe('BillingSubscriptionUpdateService', () => {
           useValue: {
             toPhaseUpdateParams: jest.fn(),
             buildPhaseUpdateParams: jest.fn().mockImplementation(
-              async ({
+              ({
                 toUpdatePrices,
                 startDate,
                 endDate,
-                isV2,
               }: {
                 toUpdatePrices: {
                   licensedPriceId: string;
                   seats: number;
-                  meteredPriceId?: string;
-                  resourceCreditPriceId?: string;
+                  resourceCreditPriceId: string;
                 };
                 startDate: Stripe.SubscriptionScheduleUpdateParams.Phase['start_date'];
                 endDate: number | undefined;
-                isV2: boolean;
-              }) => {
-                if (isV2) {
-                  return {
-                    start_date: startDate,
-                    ...(endDate ? { end_date: endDate } : {}),
-                    proration_behavior: 'none',
-                    items: [
-                      {
-                        price: toUpdatePrices.licensedPriceId,
-                        quantity: toUpdatePrices.seats,
-                      },
-                      {
-                        price: toUpdatePrices.resourceCreditPriceId,
-                        quantity: 1,
-                      },
-                    ],
-                  };
-                }
-
-                return {
-                  start_date: startDate,
-                  ...(endDate ? { end_date: endDate } : {}),
-                  proration_behavior: 'none',
-                  items: [
-                    {
-                      price: toUpdatePrices.licensedPriceId,
-                      quantity: toUpdatePrices.seats,
-                    },
-                    { price: toUpdatePrices.meteredPriceId },
-                  ],
-                  billing_thresholds: {
-                    amount_gte: 1000,
-                    reset_billing_cycle_anchor: false,
+              }) => ({
+                start_date: startDate,
+                ...(endDate ? { end_date: endDate } : {}),
+                proration_behavior: 'none',
+                items: [
+                  {
+                    price: toUpdatePrices.licensedPriceId,
+                    quantity: toUpdatePrices.seats,
                   },
-                };
-              },
+                  {
+                    price: toUpdatePrices.resourceCreditPriceId,
+                    quantity: 1,
+                  },
+                ],
+              }),
             ),
             isSamePhaseSignature: jest.fn().mockResolvedValue(false),
           },
@@ -185,18 +153,11 @@ describe('BillingSubscriptionUpdateService', () => {
           useValue: repoMock<BillingSubscriptionItemEntity>(),
         },
         {
-          provide: StripeBillingAlertService,
+          provide: ResourceCreditService,
           useValue: {
-            createUsageThresholdAlertForCustomerMeter: jest.fn(),
-          },
-        },
-        {
-          provide: MeteredCreditService,
-          useValue: {
-            getMeteredPricingInfoFromPriceId: jest
+            extractResourceCreditPricingInfo: jest
               .fn()
-              .mockResolvedValue({ tierCap: 1000, unitPriceCents: 10 }),
-            getCreditBalance: jest.fn().mockResolvedValue(0),
+              .mockReturnValue({ tierCap: 1000, unitPriceCents: 10 }),
           },
         },
         BillingPriceService,
@@ -219,12 +180,6 @@ describe('BillingSubscriptionUpdateService', () => {
     );
     billingSubscriptionService = module.get(BillingSubscriptionService);
 
-    jest
-      .spyOn(billingPriceService, 'getBillingThresholdsByMeterPriceId')
-      .mockResolvedValue({
-        amount_gte: 1000,
-        reset_billing_cycle_anchor: false,
-      });
   });
 
   afterEach(() => {
@@ -239,7 +194,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.PRO,
           interval: SubscriptionInterval.Month,
           licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-          meteredPriceId: METER_PRICE_PRO_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
           seats: 1,
         },
       );
@@ -295,14 +250,10 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
               quantity: 1,
             },
-            { id: 'si_metered', price: METER_PRICE_ENTERPRISE_MONTH_ID },
+            { id: 'si_resource_credit', price: METER_PRICE_ENTERPRISE_MONTH_ID , quantity: 1 },
           ],
           proration_behavior: 'always_invoice',
           metadata: { plan: BillingPlanKey.ENTERPRISE },
-          billing_thresholds: {
-            amount_gte: 1000,
-            reset_billing_cycle_anchor: false,
-          },
         },
       );
       expect(
@@ -320,7 +271,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.PRO,
           interval: SubscriptionInterval.Month,
           licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-          meteredPriceId: METER_PRICE_PRO_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
           seats: 1,
         },
       );
@@ -356,12 +307,12 @@ describe('BillingSubscriptionUpdateService', () => {
 
       const currentPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
-        meteredPriceId: METER_PRICE_PRO_YEAR_ID,
+        resourceCreditPriceId: METER_PRICE_PRO_YEAR_ID,
         seats: 1,
       });
       const nextPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-        meteredPriceId: METER_PRICE_PRO_MONTH_ID,
+        resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
         seats: 1,
       });
 
@@ -383,7 +334,7 @@ describe('BillingSubscriptionUpdateService', () => {
 
       const refreshedCurrentPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-        meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+        resourceCreditPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
         seats: 1,
       });
 
@@ -421,14 +372,10 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
               quantity: 1,
             },
-            { id: 'si_metered', price: METER_PRICE_ENTERPRISE_MONTH_ID },
+            { id: 'si_resource_credit', price: METER_PRICE_ENTERPRISE_MONTH_ID , quantity: 1 },
           ],
           proration_behavior: 'always_invoice',
           metadata: { plan: BillingPlanKey.ENTERPRISE },
-          billing_thresholds: {
-            amount_gte: 1000,
-            reset_billing_cycle_anchor: false,
-          },
         },
       );
       expect(
@@ -456,7 +403,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.ENTERPRISE,
           interval: SubscriptionInterval.Month,
           licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
           seats: 1,
         },
       );
@@ -484,7 +431,7 @@ describe('BillingSubscriptionUpdateService', () => {
 
       const currentPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-        meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+        resourceCreditPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
         seats: 1,
       });
 
@@ -552,7 +499,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.ENTERPRISE,
           interval: SubscriptionInterval.Month,
           licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
           seats: 1,
         },
       );
@@ -588,12 +535,12 @@ describe('BillingSubscriptionUpdateService', () => {
 
       const currentPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-        meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+        resourceCreditPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
         seats: 1,
       });
       const nextPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-        meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+        resourceCreditPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
         seats: 1,
       });
 
@@ -656,422 +603,6 @@ describe('BillingSubscriptionUpdateService', () => {
     });
   });
 
-  describe('updateSubscription - Metered price update', () => {
-    it('should change metered price from low cap to high cap - without schedule', async () => {
-      arrangeBillingSubscriptionRepositoryFindOneOrFail(
-        billingSubscriptionRepository,
-        {
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Month,
-          licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-          meteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
-          seats: 1,
-        },
-      );
-
-      arrangeBillingPriceRepositoryFindOneOrFail(billingPriceRepository, {
-        [LICENSE_PRICE_PRO_MONTH_ID]: buildBillingPriceEntity({
-          stripePriceId: LICENSE_PRICE_PRO_MONTH_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Month,
-          isMetered: false,
-        }),
-        [METER_PRICE_PRO_MONTH_TIER_LOW_ID]: buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Month,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(1000),
-        }),
-        [METER_PRICE_PRO_MONTH_TIER_HIGH_ID]: buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_PRO_MONTH_TIER_HIGH_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Month,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(10000),
-        }),
-      });
-
-      arrangeStripeSubscriptionScheduleServiceLoadSubscriptionSchedule(
-        stripeSubscriptionScheduleService,
-        {},
-      );
-
-      await service.updateSubscription('sub_db_1', {
-        type: SubscriptionUpdateType.METERED_PRICE,
-        newMeteredPriceId: METER_PRICE_PRO_MONTH_TIER_HIGH_ID,
-      });
-
-      expect(stripeSubscriptionService.updateSubscription).toHaveBeenCalledWith(
-        'sub_1',
-        {
-          items: [
-            {
-              id: 'si_licensed',
-              price: LICENSE_PRICE_PRO_MONTH_ID,
-              quantity: 1,
-            },
-            { id: 'si_metered', price: METER_PRICE_PRO_MONTH_TIER_HIGH_ID },
-          ],
-          proration_behavior: 'create_prorations',
-          billing_thresholds: {
-            amount_gte: 1000,
-            reset_billing_cycle_anchor: false,
-          },
-        },
-      );
-      expect(
-        billingSubscriptionService.syncSubscriptionToDatabase,
-      ).toHaveBeenCalled();
-    });
-
-    it('should change metered price from low cap to high cap - with schedule (ENTERPRISE to PRO downgrade)', async () => {
-      arrangeBillingSubscriptionRepositoryFindOneOrFail(
-        billingSubscriptionRepository,
-        {
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-          seats: 1,
-        },
-      );
-
-      arrangeBillingPriceRepositoryFindOneOrFail(billingPriceRepository, {
-        [LICENSE_PRICE_ENTERPRISE_MONTH_ID]: buildBillingPriceEntity({
-          stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          isMetered: false,
-        }),
-        [METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID]: buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(1000),
-        }),
-        [METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID]: buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(10000),
-        }),
-        [LICENSE_PRICE_PRO_YEAR_ID]: buildBillingPriceEntity({
-          stripePriceId: LICENSE_PRICE_PRO_YEAR_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Year,
-          isMetered: false,
-        }),
-        [METER_PRICE_PRO_YEAR_ID]: buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_PRO_YEAR_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Year,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(1000),
-        }),
-      });
-
-      const currentPhase = buildSchedulePhase({
-        licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-        meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-        seats: 1,
-      });
-      const nextPhase = buildSchedulePhase({
-        licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
-        meteredPriceId: METER_PRICE_PRO_YEAR_ID,
-        seats: 1,
-      });
-
-      jest
-        .spyOn(stripeSubscriptionScheduleService, 'loadSubscriptionSchedule')
-        .mockResolvedValueOnce({
-          schedule: { id: 'schedule_1' } as Stripe.SubscriptionSchedule,
-          currentPhase,
-          nextPhase,
-        })
-        .mockResolvedValueOnce({
-          schedule: { id: 'schedule_1' } as Stripe.SubscriptionSchedule,
-          currentPhase: buildSchedulePhase({
-            licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-            meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-            seats: 1,
-          }),
-          nextPhase,
-        });
-
-      arrangeBillingProductServiceGetProductPrices(billingProductService, [
-        buildBillingPriceEntity({
-          stripePriceId: LICENSE_PRICE_PRO_YEAR_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Year,
-          isMetered: false,
-        }) as BillingPriceEntity,
-        buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_PRO_YEAR_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Year,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(10000),
-        }) as BillingPriceEntity,
-      ]);
-
-      arrangeBillingSubscriptionPhaseServiceToPhaseUpdateParams(
-        billingSubscriptionPhaseService,
-        {
-          items: currentPhase.items,
-        } as Stripe.SubscriptionScheduleUpdateParams.Phase,
-      );
-
-      await service.updateSubscription('sub_db_1', {
-        type: SubscriptionUpdateType.METERED_PRICE,
-        newMeteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-      });
-
-      expect(stripeSubscriptionService.updateSubscription).toHaveBeenCalledWith(
-        'sub_1',
-        {
-          items: [
-            {
-              id: 'si_licensed',
-              price: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-              quantity: 1,
-            },
-            {
-              id: 'si_metered',
-              price: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-            },
-          ],
-          proration_behavior: 'create_prorations',
-          billing_thresholds: {
-            amount_gte: 1000,
-            reset_billing_cycle_anchor: false,
-          },
-        },
-      );
-      expect(
-        stripeSubscriptionScheduleService.updateSchedule,
-      ).toHaveBeenCalledWith('schedule_1', {
-        phases: [
-          expect.objectContaining({ items: currentPhase.items }),
-          expect.objectContaining({
-            items: [
-              { price: LICENSE_PRICE_PRO_YEAR_ID, quantity: 1 },
-              { price: METER_PRICE_PRO_YEAR_ID },
-            ],
-          }),
-        ],
-      });
-      expect(
-        billingSubscriptionService.syncSubscriptionToDatabase,
-      ).toHaveBeenCalled();
-    });
-
-    it('should change metered price from high cap to low cap - without schedule', async () => {
-      arrangeBillingSubscriptionRepositoryFindOneOrFail(
-        billingSubscriptionRepository,
-        {
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Month,
-          licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-          meteredPriceId: METER_PRICE_PRO_MONTH_TIER_HIGH_ID,
-          seats: 1,
-        },
-      );
-
-      arrangeBillingPriceRepositoryFindOneOrFail(billingPriceRepository, {
-        [LICENSE_PRICE_PRO_MONTH_ID]: buildBillingPriceEntity({
-          stripePriceId: LICENSE_PRICE_PRO_MONTH_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Month,
-          isMetered: false,
-        }),
-        [METER_PRICE_PRO_MONTH_TIER_HIGH_ID]: buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_PRO_MONTH_TIER_HIGH_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Month,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(10000),
-        }),
-        [METER_PRICE_PRO_MONTH_TIER_LOW_ID]: buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Month,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(1000),
-        }),
-      });
-
-      arrangeStripeSubscriptionScheduleServiceLoadSubscriptionSchedule(
-        stripeSubscriptionScheduleService,
-        {},
-      );
-
-      const currentPhase = buildSchedulePhase({
-        licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-        meteredPriceId: METER_PRICE_PRO_MONTH_TIER_HIGH_ID,
-        seats: 1,
-      });
-
-      arrangeStripeSubscriptionScheduleServiceCreateSubscriptionSchedule(
-        stripeSubscriptionScheduleService,
-        currentPhase,
-      );
-
-      arrangeBillingSubscriptionPhaseServiceToPhaseUpdateParams(
-        billingSubscriptionPhaseService,
-        {
-          items: currentPhase.items,
-        } as Stripe.SubscriptionScheduleUpdateParams.Phase,
-      );
-
-      await service.updateSubscription('sub_db_1', {
-        type: SubscriptionUpdateType.METERED_PRICE,
-        newMeteredPriceId: METER_PRICE_PRO_MONTH_TIER_LOW_ID,
-      });
-
-      expect(
-        stripeSubscriptionScheduleService.createSubscriptionSchedule,
-      ).toHaveBeenCalled();
-      expect(
-        stripeSubscriptionScheduleService.updateSchedule,
-      ).toHaveBeenCalledWith('schedule_1', {
-        phases: [
-          expect.objectContaining({ items: currentPhase.items }),
-          expect.objectContaining({
-            items: [
-              { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 1 },
-              { price: METER_PRICE_PRO_MONTH_TIER_LOW_ID },
-            ],
-          }),
-        ],
-      });
-      expect(
-        stripeSubscriptionService.updateSubscription,
-      ).not.toHaveBeenCalled();
-      expect(
-        billingSubscriptionService.syncSubscriptionToDatabase,
-      ).toHaveBeenCalled();
-    });
-
-    it('should change metered price from high cap to low cap - with schedule (ENTERPRISE to PRO downgrade)', async () => {
-      arrangeBillingSubscriptionRepositoryFindOneOrFail(
-        billingSubscriptionRepository,
-        {
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-          seats: 1,
-        },
-      );
-
-      arrangeBillingPriceRepositoryFindOneOrFail(billingPriceRepository, {
-        [LICENSE_PRICE_ENTERPRISE_MONTH_ID]: buildBillingPriceEntity({
-          stripePriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          isMetered: false,
-        }),
-        [METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID]: buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(10000),
-        }),
-        [METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID]: buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-          planKey: BillingPlanKey.ENTERPRISE,
-          interval: SubscriptionInterval.Month,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(1000),
-        }),
-        [LICENSE_PRICE_PRO_YEAR_ID]: buildBillingPriceEntity({
-          stripePriceId: LICENSE_PRICE_PRO_YEAR_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Year,
-          isMetered: false,
-        }),
-        [METER_PRICE_PRO_YEAR_ID]: buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_PRO_YEAR_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Year,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(10000),
-        }),
-      });
-
-      const currentPhase = buildSchedulePhase({
-        licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-        meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-        seats: 1,
-      });
-      const nextPhase = buildSchedulePhase({
-        licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
-        meteredPriceId: METER_PRICE_PRO_YEAR_ID,
-        seats: 1,
-      });
-
-      arrangeStripeSubscriptionScheduleServiceLoadSubscriptionSchedule(
-        stripeSubscriptionScheduleService,
-        {
-          schedule: { id: 'schedule_1' } as Stripe.SubscriptionSchedule,
-          currentPhase,
-          nextPhase,
-        },
-      );
-
-      arrangeBillingProductServiceGetProductPrices(billingProductService, [
-        buildBillingPriceEntity({
-          stripePriceId: LICENSE_PRICE_PRO_YEAR_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Year,
-          isMetered: false,
-        }) as BillingPriceEntity,
-        buildBillingPriceEntity({
-          stripePriceId: METER_PRICE_PRO_YEAR_ID,
-          planKey: BillingPlanKey.PRO,
-          interval: SubscriptionInterval.Year,
-          isMetered: true,
-          tiers: buildDefaultMeteredTiers(1000),
-        }) as BillingPriceEntity,
-      ]);
-
-      arrangeBillingSubscriptionPhaseServiceToPhaseUpdateParams(
-        billingSubscriptionPhaseService,
-        {
-          items: currentPhase.items,
-        } as Stripe.SubscriptionScheduleUpdateParams.Phase,
-      );
-
-      await service.updateSubscription('sub_db_1', {
-        type: SubscriptionUpdateType.METERED_PRICE,
-        newMeteredPriceId: METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
-      });
-
-      expect(
-        stripeSubscriptionScheduleService.updateSchedule,
-      ).toHaveBeenCalledWith('schedule_1', {
-        phases: [
-          expect.objectContaining({ items: currentPhase.items }),
-          expect.objectContaining({
-            items: [
-              { price: LICENSE_PRICE_PRO_YEAR_ID, quantity: 1 },
-              { price: METER_PRICE_PRO_YEAR_ID },
-            ],
-          }),
-        ],
-      });
-      expect(
-        stripeSubscriptionService.updateSubscription,
-      ).not.toHaveBeenCalled();
-      expect(
-        billingSubscriptionService.syncSubscriptionToDatabase,
-      ).toHaveBeenCalled();
-    });
-  });
 
   describe('updateSubscription - Interval update', () => {
     it('should change interval from monthly to yearly - without schedule', async () => {
@@ -1081,7 +612,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.PRO,
           interval: SubscriptionInterval.Month,
           licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-          meteredPriceId: METER_PRICE_PRO_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
           seats: 1,
         },
       );
@@ -1137,14 +668,10 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_PRO_YEAR_ID,
               quantity: 1,
             },
-            { id: 'si_metered', price: METER_PRICE_PRO_YEAR_ID },
+            { id: 'si_resource_credit', price: METER_PRICE_PRO_YEAR_ID , quantity: 1 },
           ],
           proration_behavior: 'create_prorations',
           billing_cycle_anchor: 'now',
-          billing_thresholds: {
-            amount_gte: 1000,
-            reset_billing_cycle_anchor: false,
-          },
         },
       );
       expect(
@@ -1159,7 +686,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.ENTERPRISE,
           interval: SubscriptionInterval.Month,
           licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
           seats: 1,
         },
       );
@@ -1195,12 +722,12 @@ describe('BillingSubscriptionUpdateService', () => {
 
       const currentPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-        meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+        resourceCreditPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
         seats: 1,
       });
       const nextPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
-        meteredPriceId: METER_PRICE_PRO_YEAR_ID,
+        resourceCreditPriceId: METER_PRICE_PRO_YEAR_ID,
         seats: 1,
       });
 
@@ -1215,7 +742,7 @@ describe('BillingSubscriptionUpdateService', () => {
           schedule: { id: 'schedule_1' } as Stripe.SubscriptionSchedule,
           currentPhase: buildSchedulePhase({
             licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-            meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+            resourceCreditPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
             seats: 1,
           }),
           nextPhase,
@@ -1258,14 +785,10 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
               quantity: 1,
             },
-            { id: 'si_metered', price: METER_PRICE_ENTERPRISE_YEAR_ID },
+            { id: 'si_resource_credit', price: METER_PRICE_ENTERPRISE_YEAR_ID , quantity: 1 },
           ],
           proration_behavior: 'create_prorations',
           billing_cycle_anchor: 'now',
-          billing_thresholds: {
-            amount_gte: 1000,
-            reset_billing_cycle_anchor: false,
-          },
         },
       );
       expect(
@@ -1293,7 +816,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.PRO,
           interval: SubscriptionInterval.Year,
           licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
-          meteredPriceId: METER_PRICE_PRO_YEAR_ID,
+          resourceCreditPriceId: METER_PRICE_PRO_YEAR_ID,
           seats: 1,
         },
       );
@@ -1321,7 +844,7 @@ describe('BillingSubscriptionUpdateService', () => {
 
       const currentPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
-        meteredPriceId: METER_PRICE_PRO_YEAR_ID,
+        resourceCreditPriceId: METER_PRICE_PRO_YEAR_ID,
         seats: 1,
       });
 
@@ -1389,7 +912,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.ENTERPRISE,
           interval: SubscriptionInterval.Year,
           licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+          resourceCreditPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
           seats: 1,
         },
       );
@@ -1425,12 +948,12 @@ describe('BillingSubscriptionUpdateService', () => {
 
       const currentPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
-        meteredPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
+        resourceCreditPriceId: METER_PRICE_ENTERPRISE_YEAR_ID,
         seats: 1,
       });
       const nextPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-        meteredPriceId: METER_PRICE_PRO_MONTH_ID,
+        resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
         seats: 1,
       });
 
@@ -1501,7 +1024,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.PRO,
           interval: SubscriptionInterval.Month,
           licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-          meteredPriceId: METER_PRICE_PRO_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
           seats: 1,
         },
       );
@@ -1541,13 +1064,9 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_PRO_MONTH_ID,
               quantity: 2,
             },
-            { id: 'si_metered', price: METER_PRICE_PRO_MONTH_ID },
+            { id: 'si_resource_credit', price: METER_PRICE_PRO_MONTH_ID , quantity: 1 },
           ],
           proration_behavior: 'create_prorations',
-          billing_thresholds: {
-            amount_gte: 1000,
-            reset_billing_cycle_anchor: false,
-          },
         },
       );
       expect(
@@ -1562,7 +1081,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.ENTERPRISE,
           interval: SubscriptionInterval.Month,
           licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-          meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
           seats: 1,
         },
       );
@@ -1598,12 +1117,12 @@ describe('BillingSubscriptionUpdateService', () => {
 
       const currentPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-        meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+        resourceCreditPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
         seats: 1,
       });
       const nextPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
-        meteredPriceId: METER_PRICE_PRO_YEAR_ID,
+        resourceCreditPriceId: METER_PRICE_PRO_YEAR_ID,
         seats: 1,
       });
 
@@ -1618,7 +1137,7 @@ describe('BillingSubscriptionUpdateService', () => {
           schedule: { id: 'schedule_1' } as Stripe.SubscriptionSchedule,
           currentPhase: buildSchedulePhase({
             licensedPriceId: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
-            meteredPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
+            resourceCreditPriceId: METER_PRICE_ENTERPRISE_MONTH_ID,
             seats: 2,
           }),
           nextPhase,
@@ -1645,13 +1164,9 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
               quantity: 2,
             },
-            { id: 'si_metered', price: METER_PRICE_ENTERPRISE_MONTH_ID },
+            { id: 'si_resource_credit', price: METER_PRICE_ENTERPRISE_MONTH_ID , quantity: 1 },
           ],
           proration_behavior: 'create_prorations',
-          billing_thresholds: {
-            amount_gte: 1000,
-            reset_billing_cycle_anchor: false,
-          },
         },
       );
       expect(
@@ -1679,7 +1194,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.PRO,
           interval: SubscriptionInterval.Month,
           licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-          meteredPriceId: METER_PRICE_PRO_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
           seats: 2,
         },
       );
@@ -1719,13 +1234,9 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_PRO_MONTH_ID,
               quantity: 1,
             },
-            { id: 'si_metered', price: METER_PRICE_PRO_MONTH_ID },
+            { id: 'si_resource_credit', price: METER_PRICE_PRO_MONTH_ID , quantity: 1 },
           ],
           proration_behavior: 'create_prorations',
-          billing_thresholds: {
-            amount_gte: 1000,
-            reset_billing_cycle_anchor: false,
-          },
         },
       );
       expect(
@@ -1740,7 +1251,7 @@ describe('BillingSubscriptionUpdateService', () => {
           planKey: BillingPlanKey.PRO,
           interval: SubscriptionInterval.Month,
           licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-          meteredPriceId: METER_PRICE_PRO_MONTH_ID,
+          resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
           seats: 2,
         },
       );
@@ -1776,12 +1287,12 @@ describe('BillingSubscriptionUpdateService', () => {
 
       const currentPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-        meteredPriceId: METER_PRICE_PRO_MONTH_ID,
+        resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
         seats: 2,
       });
       const nextPhase = buildSchedulePhase({
         licensedPriceId: LICENSE_PRICE_PRO_YEAR_ID,
-        meteredPriceId: METER_PRICE_PRO_YEAR_ID,
+        resourceCreditPriceId: METER_PRICE_PRO_YEAR_ID,
         seats: 2,
       });
 
@@ -1796,7 +1307,7 @@ describe('BillingSubscriptionUpdateService', () => {
           schedule: { id: 'schedule_1' } as Stripe.SubscriptionSchedule,
           currentPhase: buildSchedulePhase({
             licensedPriceId: LICENSE_PRICE_PRO_MONTH_ID,
-            meteredPriceId: METER_PRICE_PRO_MONTH_ID,
+            resourceCreditPriceId: METER_PRICE_PRO_MONTH_ID,
             seats: 1,
           }),
           nextPhase,
@@ -1823,13 +1334,9 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_PRO_MONTH_ID,
               quantity: 1,
             },
-            { id: 'si_metered', price: METER_PRICE_PRO_MONTH_ID },
+            { id: 'si_resource_credit', price: METER_PRICE_PRO_MONTH_ID , quantity: 1 },
           ],
           proration_behavior: 'create_prorations',
-          billing_thresholds: {
-            amount_gte: 1000,
-            reset_billing_cycle_anchor: false,
-          },
         },
       );
       expect(

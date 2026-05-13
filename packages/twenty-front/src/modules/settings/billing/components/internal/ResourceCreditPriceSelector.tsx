@@ -17,7 +17,7 @@ import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
-  SetMeteredSubscriptionPriceDocument,
+  SetResourceCreditSubscriptionPriceDocument,
   SubscriptionInterval,
   type BillingPriceLicensed,
 } from '~/generated-metadata/graphql';
@@ -75,7 +75,7 @@ export const ResourceCreditPriceSelector = ({
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const [setResourceCreditPrice, { loading: isUpdating }] = useMutation(
-    SetMeteredSubscriptionPriceDocument,
+    SetResourceCreditSubscriptionPriceDocument,
   );
 
   const options = [...resourceCreditPrices]
@@ -133,16 +133,16 @@ export const ResourceCreditPriceSelector = ({
       });
       if (
         isDefined(
-          data?.setMeteredSubscriptionPrice.currentBillingSubscription,
+          data?.setResourceCreditSubscriptionPrice.currentBillingSubscription,
         ) &&
         isDefined(currentWorkspace)
       ) {
         const newCurrentWorkspace = {
           ...currentWorkspace,
           currentBillingSubscription:
-            data.setMeteredSubscriptionPrice.currentBillingSubscription,
+            data.setResourceCreditSubscriptionPrice.currentBillingSubscription,
           billingSubscriptions:
-            data?.setMeteredSubscriptionPrice.billingSubscriptions,
+            data?.setResourceCreditSubscriptionPrice.billingSubscriptions,
         };
         setCurrentWorkspace(newCurrentWorkspace);
         refetchResourceCreditUsage();

@@ -83,52 +83,27 @@ export class BillingSubscriptionPhaseService {
     } as Stripe.SubscriptionScheduleUpdateParams.Phase;
   }
 
-  async buildPhaseUpdateParams({
+  buildPhaseUpdateParams({
     toUpdatePrices,
     startDate,
     endDate,
-    isV2,
   }: {
     toUpdatePrices: SubscriptionStripePrices;
     startDate: Stripe.SubscriptionScheduleUpdateParams.Phase['start_date'];
     endDate: number | undefined;
-    isV2: boolean;
-  }): Promise<Stripe.SubscriptionScheduleUpdateParams.Phase> {
-    if (isV2) {
-      assertIsDefinedOrThrow(toUpdatePrices.resourceCreditPriceId);
-      return {
-        start_date: startDate,
-        ...(endDate ? { end_date: endDate } : {}),
-        proration_behavior: 'none',
-        items: [
-          {
-            price: toUpdatePrices.licensedPriceId,
-            quantity: toUpdatePrices.seats,
-          },
-          { price: toUpdatePrices.resourceCreditPriceId, quantity: 1 },
-        ],
-      };
-    } else {
-      assertIsDefinedOrThrow(toUpdatePrices.meteredPriceId);
-      return {
-        start_date: startDate,
-        ...(endDate ? { end_date: endDate } : {}),
-        proration_behavior: 'none',
-        items: [
-          {
-            price: toUpdatePrices.licensedPriceId,
-            quantity: toUpdatePrices.seats,
-          },
-          {
-            price: toUpdatePrices.meteredPriceId,
-          },
-        ],
-        billing_thresholds:
-          await this.billingPriceService.getBillingThresholdsByMeterPriceId(
-            toUpdatePrices.meteredPriceId,
-          ),
-      };
-    }
+  }): Stripe.SubscriptionScheduleUpdateParams.Phase {
+    return {
+      start_date: startDate,
+      ...(endDate ? { end_date: endDate } : {}),
+      proration_behavior: 'none',
+      items: [
+        {
+          price: toUpdatePrices.licensedPriceId,
+          quantity: toUpdatePrices.seats,
+        },
+        { price: toUpdatePrices.resourceCreditPriceId, quantity: 1 },
+      ],
+    };
   }
 
   getLicensedPriceIdAndQuantityFromPhaseUpdateParams(

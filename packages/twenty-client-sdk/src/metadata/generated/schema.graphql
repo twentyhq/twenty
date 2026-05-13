@@ -1486,7 +1486,6 @@ enum BillingUsageType {
 enum BillingProductKey {
   BASE_PRODUCT
   RESOURCE_CREDIT
-  WORKFLOW_NODE_EXECUTION
 }
 
 type BillingPriceLicensed {
@@ -1755,7 +1754,6 @@ enum FeatureFlagKey {
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
-  IS_BILLING_V2_ENABLED
 }
 
 type WorkspaceUrls {

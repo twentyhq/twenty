@@ -2,8 +2,8 @@ import { Field, Float, ObjectType } from '@nestjs/graphql';
 
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 
-@ObjectType('BillingMeteredProductUsage')
-export class BillingMeteredProductUsageDTO {
+@ObjectType('BillingResourceCreditUsage')
+export class BillingResourceCreditUsageDTO {
   @Field(() => BillingProductKey)
   productKey: BillingProductKey;
 
