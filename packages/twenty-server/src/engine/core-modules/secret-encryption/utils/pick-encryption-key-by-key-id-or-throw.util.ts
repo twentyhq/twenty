@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   SecretEncryptionException,
   SecretEncryptionExceptionCode,
@@ -17,7 +19,7 @@ export const pickEncryptionKeyByKeyIdOrThrow = ({
   }
 
   if (
-    keys.fallback !== null &&
+    isDefined(keys.fallback) &&
     computeEncryptionKeyId({ rawKey: keys.fallback }) === keyId
   ) {
     return keys.fallback;

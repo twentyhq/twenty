@@ -3,7 +3,7 @@ import { createDecipheriv } from 'crypto';
 import {
   SECRET_ENCRYPTION_GCM_IV_LENGTH,
   SECRET_ENCRYPTION_GCM_TAG_LENGTH,
-} from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constants';
+} from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import {
   SecretEncryptionException,
   SecretEncryptionExceptionCode,

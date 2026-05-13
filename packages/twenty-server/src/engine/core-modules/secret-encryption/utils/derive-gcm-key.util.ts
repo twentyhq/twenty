@@ -4,7 +4,7 @@ import {
   SECRET_ENCRYPTION_DERIVED_KEY_LENGTH,
   SECRET_ENCRYPTION_HKDF_INFO_PREFIX,
   SECRET_ENCRYPTION_INSTANCE_CONTEXT,
-} from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constants';
+} from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 
 const ZERO_SALT = Buffer.alloc(32);
 

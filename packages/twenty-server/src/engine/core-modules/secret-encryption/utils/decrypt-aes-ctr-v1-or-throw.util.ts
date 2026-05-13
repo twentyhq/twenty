@@ -3,8 +3,8 @@ import { createDecipheriv, createHash } from 'crypto';
 const deriveCtrKey = (rawKey: string): string =>
   createHash('sha512').update(rawKey).digest('hex').substring(0, 32);
 
-// AES-CTR has no integrity tag, so a wrong key silently returns garbage
-// rather than throwing. `OrThrow` reflects only the malformed-input
+// AES-CTR has no integrity tag, so a wrong key produces an arbitrary byte
+// sequence instead of throwing. `OrThrow` reflects only the malformed-input
 // failures from Node crypto (e.g. invalid base64).
 export const decryptAesCtrV1OrThrow = ({
   ciphertext,

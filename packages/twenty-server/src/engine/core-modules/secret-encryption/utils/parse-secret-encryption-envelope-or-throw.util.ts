@@ -3,7 +3,7 @@ import {
   SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX,
   SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
   SECRET_ENCRYPTION_KEY_ID_REGEX,
-} from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constants';
+} from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import {
   SecretEncryptionException,
   SecretEncryptionExceptionCode,

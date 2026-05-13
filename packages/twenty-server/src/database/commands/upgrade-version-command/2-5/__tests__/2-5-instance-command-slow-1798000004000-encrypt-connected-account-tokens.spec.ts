@@ -1,10 +1,11 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
 import {
   SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX,
   SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
-} from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constants';
+} from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 type FakeRow = {
@@ -24,7 +25,7 @@ const unwrapV1 = (ciphertext: string): string => {
     new RegExp(`^${SECRET_ENCRYPTION_ENVELOPE_V1_PREFIX}V1CIPHER\\((.*)\\)$`),
   );
 
-  if (match === null) {
+  if (!isDefined(match)) {
     throw new Error(
       `Fake encryption stub: decrypt called with an unexpected value: ${ciphertext}`,
     );
@@ -63,9 +64,9 @@ const buildFakeDataSource = (
           .filter((row) => row.id > cursor)
           .filter(
             (row) =>
-              (row.accessToken !== null &&
+              (isDefined(row.accessToken) &&
                 !matchesLikePattern(row.accessToken, likePattern)) ||
-              (row.refreshToken !== null &&
+              (isDefined(row.refreshToken) &&
                 !matchesLikePattern(row.refreshToken, likePattern)),
           )
           .slice(0, batchSize);

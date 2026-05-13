@@ -2,9 +2,10 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
-import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constants';
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   ConnectedAccountRefreshAccessTokenException,
@@ -53,7 +54,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
           new RegExp(`^${FAKE_CIPHER_PREFIX}CIPHER\\((.*)\\)$`),
         );
 
-        if (match === null) {
+        if (!isDefined(match)) {
           throw new Error(
             `fake encryption stub: decrypt called with a non-CIPHER value: ${value}`,
           );
@@ -71,8 +72,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
           workspaceId: string;
         }) => ({
           encryptedAccessToken: wrap(accessToken),
-          encryptedRefreshToken:
-            refreshToken === null ? null : wrap(refreshToken),
+          encryptedRefreshToken: isDefined(refreshToken)
+            ? wrap(refreshToken)
+            : null,
         }),
       ),
     };

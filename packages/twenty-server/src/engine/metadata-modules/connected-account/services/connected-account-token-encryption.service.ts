@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   SecretEncryptionException,
   SecretEncryptionExceptionCode,
@@ -34,7 +36,7 @@ export class ConnectedAccountTokenEncryptionService {
     plaintext: string | null,
     workspaceId: string,
   ): string | null {
-    if (plaintext === null) {
+    if (!isDefined(plaintext)) {
       return null;
     }
 
@@ -47,7 +49,7 @@ export class ConnectedAccountTokenEncryptionService {
   decrypt(ciphertext: string, workspaceId: string): string {
     const parsed = parseSecretEncryptionEnvelopeOrThrow({ value: ciphertext });
 
-    if (parsed.version === null) {
+    if (!isDefined(parsed.version)) {
       this.logger.warn(
         'Decrypted a legacy plaintext token. Expected during the rollout window until the slow instance command finishes backfilling.',
       );
@@ -64,7 +66,7 @@ export class ConnectedAccountTokenEncryptionService {
     ciphertext: string | null,
     workspaceId: string,
   ): string | null {
-    if (ciphertext === null) {
+    if (!isDefined(ciphertext)) {
       return null;
     }
 

@@ -1,6 +1,6 @@
 import { createCipheriv, randomBytes } from 'crypto';
 
-import { SECRET_ENCRYPTION_GCM_IV_LENGTH } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constants';
+import { SECRET_ENCRYPTION_GCM_IV_LENGTH } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { deriveGcmKey } from 'src/engine/core-modules/secret-encryption/utils/derive-gcm-key.util';
 
 export const encryptAesGcmV2 = ({
