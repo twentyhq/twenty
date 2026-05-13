@@ -30,10 +30,6 @@ type DiscordApiRequestParams = {
   body?: unknown;
 };
 
-// All Discord REST calls go through here so authorization, base URL, error
-// shape parsing, and JSON content-type handling stay consistent across
-// handlers. Discord auths bots with `Authorization: Bot <token>` — the `Bot `
-// prefix is required, not the `Bearer` prefix used for OAuth tokens.
 export const discordApiRequest = async <TData = unknown>({
   botToken,
   path,
@@ -62,7 +58,6 @@ export const discordApiRequest = async <TData = unknown>({
     };
   }
 
-  // 204 No Content from PUT reactions and DELETE message — no body to parse.
   if (response.status === 204) {
     return { ok: true, status: 204, data: undefined as TData };
   }
