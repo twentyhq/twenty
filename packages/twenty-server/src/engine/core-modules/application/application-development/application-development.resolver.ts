@@ -44,8 +44,12 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+
+const APP_DEV_RATE_LIMIT_MAX = 2;
+const APP_DEV_RATE_LIMIT_WINDOW_MS = 2_000;
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -65,6 +69,7 @@ export class ApplicationDevelopmentResolver {
     private readonly fileStorageService: FileStorageService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly throttlerService: ThrottlerService,
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
@@ -72,6 +77,8 @@ export class ApplicationDevelopmentResolver {
     @Args() { universalIdentifier, name }: CreateDevelopmentApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<DevelopmentApplicationDTO> {
+    await this.throttlePerApplication(universalIdentifier, workspaceId);
+
     const applicationRegistrationId =
       await this.findApplicationRegistrationId(universalIdentifier);
 
@@ -109,6 +116,8 @@ export class ApplicationDevelopmentResolver {
     @AuthUser({ allowUndefined: true }) user?: { id: string },
     @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
   ): Promise<ApplicationTokenPairDTO> {
+    await this.throttlePerApplication(applicationId, workspaceId);
+
     return this.applicationTokenService.generateApplicationTokenPair({
       workspaceId,
       applicationId,
@@ -122,6 +131,11 @@ export class ApplicationDevelopmentResolver {
     @Args() { manifest }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceMigrationDTO> {
+    await this.throttlePerApplication(
+      manifest.application.universalIdentifier,
+      workspaceId,
+    );
+
     const applicationRegistrationId = await this.findApplicationRegistrationId(
       manifest.application.universalIdentifier,
     );
@@ -185,6 +199,11 @@ export class ApplicationDevelopmentResolver {
       filePath,
     }: UploadApplicationFileInput,
   ): Promise<FileDTO> {
+    await this.throttlePerApplication(
+      applicationUniversalIdentifier,
+      workspaceId,
+    );
+
     const allowedApplicationFileFolders: FileFolder[] = [
       FileFolder.BuiltLogicFunction,
       FileFolder.BuiltFrontComponent,
@@ -211,6 +230,18 @@ export class ApplicationDevelopmentResolver {
       resourcePath: filePath,
       settings: { isTemporaryFile: false, toDelete: false },
     });
+  }
+
+  private async throttlePerApplication(
+    applicationIdentifier: string,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `app-dev:${workspaceId}:${applicationIdentifier}`,
+      1,
+      APP_DEV_RATE_LIMIT_MAX,
+      APP_DEV_RATE_LIMIT_WINDOW_MS,
+    );
   }
 
   private async findApplicationRegistrationId(
