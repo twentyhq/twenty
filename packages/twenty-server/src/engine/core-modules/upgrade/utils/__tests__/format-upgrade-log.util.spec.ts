@@ -46,6 +46,25 @@ describe('formatUpgradeLog', () => {
     );
   });
 
+  it('collapses a multi-line humanMessage (e.g. an Error with embedded newlines) so the line stays a single Loki event', () => {
+    const errorMessage =
+      'Workspace migration runner failed:\n  - Option id is required\n  - Option id is invalid';
+
+    expect(
+      formatUpgradeLog({
+        humanMessage: `Upgrade failed: ${errorMessage}`,
+        event: 'aborted',
+        logFields: {
+          totalSuccesses: 41,
+          totalFailures: 2,
+          dryRun: false,
+        },
+      }),
+    ).toMatchInlineSnapshot(
+      `"[upgrade] Upgrade failed: Workspace migration runner failed:\\n  - Option id is required\\n  - Option id is invalid | event=aborted totalSuccesses=41 totalFailures=2 dryRun=false"`,
+    );
+  });
+
   it('emits null and undefined logFields explicitly', () => {
     expect(
       formatUpgradeLog({
