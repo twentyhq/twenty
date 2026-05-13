@@ -374,7 +374,7 @@ export class LogicFunctionExecutorService {
 
       periodStart = currentPeriodStart;
 
-      await this.billingUsageService.decrementAvailableCredits({
+      await this.billingUsageService.decrementAvailableCreditsInCache({
         workspaceId,
         usedCredits: 100,
       });

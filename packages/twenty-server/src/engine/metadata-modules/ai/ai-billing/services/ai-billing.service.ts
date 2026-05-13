@@ -77,7 +77,7 @@ export class AiBillingService {
       (billingInput.cacheCreationTokens ?? 0);
 
     if (this.billingService.isBillingEnabled()) {
-      await this.billingUsageService.decrementAvailableCredits({
+      await this.billingUsageService.decrementAvailableCreditsInCache({
         workspaceId,
         usedCredits: creditsUsedMicro,
       });
@@ -109,7 +109,7 @@ export class AiBillingService {
     );
 
     const remainingCredits =
-      await this.billingUsageService.decrementAvailableCredits({
+      await this.billingUsageService.decrementAvailableCreditsInCache({
         workspaceId,
         usedCredits: creditsUsedMicro,
       });
@@ -147,7 +147,7 @@ export class AiBillingService {
 
       periodStart = currentPeriodStart;
 
-      await this.billingUsageService.decrementAvailableCredits({
+      await this.billingUsageService.decrementAvailableCreditsInCache({
         workspaceId,
         usedCredits: creditsUsedMicro,
       });

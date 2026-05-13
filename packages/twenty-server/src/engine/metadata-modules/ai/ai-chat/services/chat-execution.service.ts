@@ -323,8 +323,6 @@ export class ChatExecutionService {
         convertDollarsToBillingCredits(costInDollars),
       );
 
-      // Redis was already decremented per-step via onStepFinish; only emit the
-      // aggregated ClickHouse event here (one row per turn).
       await this.aiBillingService.emitAiTokenUsageEvent(
         workspace.id,
         creditsUsedMicro,

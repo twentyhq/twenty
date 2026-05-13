@@ -5,4 +5,5 @@ export interface AgentExecutionResult {
   usage: LanguageModelUsage;
   cacheCreationTokens: number;
   nativeWebSearchCallCount: number;
+  hasNoMoreAvailableCredits: boolean;
 }

@@ -18,8 +18,8 @@ export const InformationBannerEndTrialPeriod = () => {
       variant="secondary"
       message={
         hasPermissionToEndTrialPeriod
-          ? t`Free trial credits exhausted. End trial period to continue using Workflow or AI features.`
-          : t`Free trial credits exhausted. Contact your admin to continue using Workflow or AI features.`
+          ? t`End trial period to continue using Workflow or AI features.`
+          : t`Contact your admin to continue using Workflow or AI features.`
       }
       buttonTitle={
         hasPermissionToEndTrialPeriod ? t`End Trial Period` : undefined

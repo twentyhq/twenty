@@ -25,8 +25,12 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
-import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import {
+  extractCacheCreationTokens,
+  extractCacheCreationTokensFromSteps,
+} from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import {
   AiException,
@@ -222,14 +226,36 @@ export class AgentAsyncExecutorService {
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
+      let hasNoMoreAvailableCredits = false;
+
       const textResponse = await generateText({
         system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
         tools,
         model: registeredModel.model,
         prompt: userPrompt,
-        stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
+        stopWhen: (step) =>
+          stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
+          hasNoMoreAvailableCredits,
         providerOptions,
         experimental_telemetry: AI_TELEMETRY_CONFIG,
+        onStepFinish: async (step) => {
+          const {
+            hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits,
+          } = await this.aiBillingService.decrementAndCheckAvailableCredits(
+            registeredModel.modelId,
+            {
+              usage: step.usage,
+              cacheCreationTokens: extractCacheCreationTokens(
+                step.providerMetadata,
+              ),
+            },
+            workspaceId,
+          );
+
+          if (stepHasNoMoreAvailableCredits) {
+            hasNoMoreAvailableCredits = true;
+          }
+        },
         experimental_repairToolCall: async ({
           toolCall,
           tools: toolsForRepair,
@@ -265,6 +291,7 @@ export class AgentAsyncExecutorService {
           usage: textResponse.usage,
           cacheCreationTokens,
           nativeWebSearchCallCount,
+          hasNoMoreAvailableCredits,
         };
       }
 
@@ -297,6 +324,7 @@ export class AgentAsyncExecutorService {
         usage: accumulatedUsage,
         cacheCreationTokens,
         nativeWebSearchCallCount,
+        hasNoMoreAvailableCredits,
       };
     } catch (error) {
       if (error instanceof AiException) {
@@ -307,10 +335,24 @@ export class AgentAsyncExecutorService {
         AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     } finally {
-      this.aiBillingService.calculateAndBillUsage(
-        agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
-        { usage: accumulatedUsage, cacheCreationTokens },
+      const modelId = agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID;
+      const costInDollars = this.aiBillingService.calculateCost(modelId, {
+        usage: accumulatedUsage,
+        cacheCreationTokens,
+      });
+      const creditsUsedMicro = Math.round(
+        convertDollarsToBillingCredits(costInDollars),
+      );
+      const totalTokens =
+        (accumulatedUsage.inputTokens ?? 0) +
+        (accumulatedUsage.outputTokens ?? 0) +
+        cacheCreationTokens;
+
+      this.aiBillingService.emitAiTokenUsageEvent(
         workspaceId,
+        creditsUsedMicro,
+        totalTokens,
+        modelId,
         operationType,
         agent?.id ?? null,
         userWorkspaceId,

@@ -285,7 +285,7 @@ export class BillingUsageService {
     );
   }
 
-  private async warmAvailableCredits(
+  private async warmAvailableCreditsInCache(
     workspaceId: string,
     periodStart: Date | string,
     periodEnd: Date | string,
@@ -421,7 +421,7 @@ export class BillingUsageService {
     return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);
   }
 
-  async decrementAvailableCredits({
+  async decrementAvailableCreditsInCache({
     workspaceId,
     usedCredits,
   }: {
@@ -447,7 +447,7 @@ export class BillingUsageService {
         });
 
     if (!isDefined(cachedAvailableCredits)) {
-      await this.warmAvailableCredits(
+      await this.warmAvailableCreditsInCache(
         workspaceId,
         currentPeriodStart,
         currentPeriodEnd,
@@ -474,7 +474,7 @@ export class BillingUsageService {
     return decrementedAvailableCredits;
   }
 
-  async invalidateAvailableCredits(
+  async invalidateAvailableCreditsInCache(
     workspaceId: string,
     periodStart: Date,
   ): Promise<void> {
@@ -506,7 +506,7 @@ export class BillingUsageService {
       currentPeriodStart: subscription.currentPeriodStart,
     });
 
-    await this.warmAvailableCredits(
+    await this.warmAvailableCreditsInCache(
       subscription.workspaceId,
       subscription.currentPeriodStart,
       subscription.currentPeriodEnd,
