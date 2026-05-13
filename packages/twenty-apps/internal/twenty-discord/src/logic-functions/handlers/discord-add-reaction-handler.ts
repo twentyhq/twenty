@@ -27,18 +27,17 @@ export const discordAddReactionHandler = async (
     };
   }
 
-  // Discord's reaction endpoint encodes the emoji in the URL path. For
-  // standard unicode emojis (e.g. 👍) percent-encoding is sufficient; for
-  // custom server emojis the caller passes `name:id` (e.g. `partyparrot:64…`)
-  // which also URL-encodes safely. The trailing `/@me` posts the reaction
-  // as the bot itself.
   const encodedEmoji = encodeURIComponent(emoji);
 
   try {
     const result = await discordApiRequest({
       botToken: tokenResult.botToken,
       method: 'PUT',
-      path: `/channels/${encodeURIComponent(parameters.channelId)}/messages/${encodeURIComponent(parameters.messageId)}/reactions/${encodedEmoji}/@me`,
+      path: `/channels/${encodeURIComponent(
+        parameters.channelId,
+      )}/messages/${encodeURIComponent(
+        parameters.messageId,
+      )}/reactions/${encodedEmoji}/@me`,
     });
 
     if (!result.ok) {
