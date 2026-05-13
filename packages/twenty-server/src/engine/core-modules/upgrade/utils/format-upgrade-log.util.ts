@@ -12,36 +12,36 @@ type FormatUpgradeLogParams = {
 
 const UPGRADE_LOG_PREFIX = '[upgrade]';
 
-const escapeForLogfmt = (value: UpgradeLogScalar): string => {
-  const stringified = String(value);
+const NEEDS_QUOTING = /[\s"=]/;
+const CONTROL_CHARACTERS = /[\n\r\t]/;
 
-  if (!/[\s"=]/.test(stringified)) {
-    return stringified;
+const escapeLogValue = (value: UpgradeLogScalar): string => {
+  const raw = String(value);
+
+  if (!NEEDS_QUOTING.test(raw) && !CONTROL_CHARACTERS.test(raw)) {
+    return raw;
   }
 
-  return `"${stringified.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+  const escaped = raw
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t');
+
+  return `"${escaped}"`;
 };
 
-/**
- * Emits a log line that reads naturally for humans yet is parseable by Loki's
- * `| logfmt` decoder. The shape is:
- *
- *   [upgrade] <message> | event=<event> key=value ...
- *
- * The free-text message keeps a `git log`-style narrative for engineers
- * scrolling pod logs; the structured tail lets the dashboard panel pull out
- * `event`, `workspaceId`, `command`, `error`, etc.
- */
 export const formatUpgradeLog = ({
   message,
   event,
   fields = {},
 }: FormatUpgradeLogParams): string => {
-  const tailParts: string[] = [`event=${event}`];
+  const tailParts: string[] = [`event=${escapeLogValue(event)}`];
 
   for (const [key, value] of Object.entries(fields)) {
     if (!isDefined(value)) continue;
-    tailParts.push(`${key}=${escapeForLogfmt(value)}`);
+    tailParts.push(`${key}=${escapeLogValue(value)}`);
   }
 
   return `${UPGRADE_LOG_PREFIX} ${message} | ${tailParts.join(' ')}`;

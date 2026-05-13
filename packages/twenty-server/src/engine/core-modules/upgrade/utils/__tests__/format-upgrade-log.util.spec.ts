@@ -73,4 +73,27 @@ describe('formatUpgradeLog', () => {
       '[upgrade] Workspace abc failed | event=workspace.failed error="bad \\"quote\\" and \\\\ backslash"',
     );
   });
+
+  it('should escape newlines, carriage returns and tabs so a single event stays on one line', () => {
+    expect(
+      formatUpgradeLog({
+        message: 'Workspace abc failed',
+        event: 'workspace.failed',
+        fields: {
+          error: 'line one\nline two\rline three\ttab',
+        },
+      }),
+    ).toBe(
+      '[upgrade] Workspace abc failed | event=workspace.failed error="line one\\nline two\\rline three\\ttab"',
+    );
+  });
+
+  it('should escape an event name containing whitespace or =', () => {
+    expect(
+      formatUpgradeLog({
+        message: 'Something happened',
+        event: 'weird event=with-equals',
+      }),
+    ).toBe('[upgrade] Something happened | event="weird event=with-equals"');
+  });
 });

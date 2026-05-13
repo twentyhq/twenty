@@ -92,9 +92,13 @@ export class WorkspaceCommandRunnerService {
 
       this.logger.warn(
         formatUpgradeLog({
-          message: `Failed to invalidate upgrade-status cache for workspace ${workspaceId}: ${errorMessage}`,
+          message: `Failed to invalidate upgrade-status cache (triggered by workspace ${workspaceId}): ${errorMessage}`,
           event: 'cache.invalidate.failed',
-          fields: { workspaceId, error: errorMessage },
+          fields: {
+            scope: 'instance-and-all-workspaces',
+            triggeredByWorkspaceId: workspaceId,
+            error: errorMessage,
+          },
         }),
       );
     }
