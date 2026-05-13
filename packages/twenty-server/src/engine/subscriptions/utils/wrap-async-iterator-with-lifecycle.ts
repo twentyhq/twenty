@@ -17,13 +17,11 @@ export function wrapAsyncIteratorWithLifecycle<T>(
 
   const startHeartbeat = () => {
     if (onHeartbeat && heartbeatIntervalMs) {
-      heartbeatInterval = setInterval(async () => {
-        try {
-          await onHeartbeat();
-        } catch {
-          // Heartbeat failure shouldn't crash the stream
-        }
-      }, heartbeatIntervalMs);
+      // Heartbeat failure shouldn't crash the stream
+      heartbeatInterval = setInterval(
+        () => void onHeartbeat().catch(() => {}),
+        heartbeatIntervalMs,
+      );
     }
   };
 

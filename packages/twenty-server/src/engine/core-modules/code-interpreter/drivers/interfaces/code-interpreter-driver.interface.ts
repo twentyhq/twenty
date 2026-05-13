@@ -25,7 +25,7 @@ export type ExecutionContext = {
 export type StreamCallbacks = {
   onStdout?: (line: string) => void;
   onStderr?: (line: string) => void;
-  onResult?: (result: OutputFile) => void;
+  onResult?: (result: OutputFile) => Promise<void>;
 };
 
 export interface CodeInterpreterDriver {

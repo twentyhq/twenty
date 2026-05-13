@@ -1270,17 +1270,22 @@ export class WorkspaceEntityManager extends EntityManager {
         updatedColumns,
       });
 
-      const result = await new EntityPersistExecutor(
-        this.connection,
-        queryRunnerForEntityPersistExecutor,
-        'save',
-        target,
-        formattedEntityOrEntities as ObjectLiteral[],
-        options as SaveOptions | (SaveOptions & { reload: false }),
-      )
-        .execute()
-        .then(() => formattedEntityOrEntities as Entity[])
-        .finally(() => queryRunnerForEntityPersistExecutor.release());
+      let result: Entity[];
+
+      try {
+        await new EntityPersistExecutor(
+          this.connection,
+          queryRunnerForEntityPersistExecutor,
+          'save',
+          target,
+          formattedEntityOrEntities as ObjectLiteral[],
+          options as SaveOptions | (SaveOptions & { reload: false }),
+        ).execute();
+
+        result = formattedEntityOrEntities as Entity[];
+      } finally {
+        await queryRunnerForEntityPersistExecutor.release();
+      }
 
       if (isDefined(filesFieldFileIds)) {
         await filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
@@ -1490,17 +1495,22 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.flatFieldMetadataMaps,
     );
 
-    const result = new EntityPersistExecutor(
-      this.connection,
-      queryRunnerForEntityPersistExecutor,
-      'remove',
-      target as string | undefined,
-      formattedEntity as ObjectLiteral,
-      options as RemoveOptions,
-    )
-      .execute()
-      .then(() => formattedEntity as Entity | Entity[])
-      .finally(() => queryRunnerForEntityPersistExecutor.release());
+    let result: Entity | Entity[];
+
+    try {
+      await new EntityPersistExecutor(
+        this.connection,
+        queryRunnerForEntityPersistExecutor,
+        'remove',
+        target as string | undefined,
+        formattedEntity as ObjectLiteral,
+        options as RemoveOptions,
+      ).execute();
+
+      result = formattedEntity as Entity | Entity[];
+    } finally {
+      await queryRunnerForEntityPersistExecutor.release();
+    }
 
     const formattedResult = formatResult<Entity[]>(
       result,
@@ -1638,17 +1648,22 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.flatFieldMetadataMaps,
     );
 
-    const result = new EntityPersistExecutor(
-      this.connection,
-      queryRunnerForEntityPersistExecutor,
-      'soft-remove',
-      target,
-      formattedEntity as ObjectLiteral,
-      options as SaveOptions,
-    )
-      .execute()
-      .then(() => formattedEntity as Entity)
-      .finally(() => queryRunnerForEntityPersistExecutor.release());
+    let result: Entity;
+
+    try {
+      await new EntityPersistExecutor(
+        this.connection,
+        queryRunnerForEntityPersistExecutor,
+        'soft-remove',
+        target,
+        formattedEntity as ObjectLiteral,
+        options as SaveOptions,
+      ).execute();
+
+      result = formattedEntity as Entity;
+    } finally {
+      await queryRunnerForEntityPersistExecutor.release();
+    }
 
     const formattedResult = formatResult<Entity[]>(
       result,
@@ -1787,17 +1802,22 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.flatFieldMetadataMaps,
     );
 
-    const result = new EntityPersistExecutor(
-      this.connection,
-      queryRunnerForEntityPersistExecutor,
-      'recover',
-      target,
-      formattedEntity as ObjectLiteral,
-      options as SaveOptions,
-    )
-      .execute()
-      .then(() => formattedEntity as Entity)
-      .finally(() => queryRunnerForEntityPersistExecutor.release());
+    let result: Entity;
+
+    try {
+      await new EntityPersistExecutor(
+        this.connection,
+        queryRunnerForEntityPersistExecutor,
+        'recover',
+        target,
+        formattedEntity as ObjectLiteral,
+        options as SaveOptions,
+      ).execute();
+
+      result = formattedEntity as Entity;
+    } finally {
+      await queryRunnerForEntityPersistExecutor.release();
+    }
 
     const formattedResult = formatResult<Entity[]>(
       result,
