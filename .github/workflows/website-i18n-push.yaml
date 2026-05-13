@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ github.token }}
           ref: main
@@ -78,7 +78,7 @@ jobs:
 
       - name: Upload missing website translations
         if: steps.check_extract_changes.outputs.changes_detected == 'true'
-        uses: crowdin/github-action@v2
+        uses: crowdin/github-action@8868a33591d21088edfc398968173a3b98d51706 # v2
         with:
           upload_sources: true
           upload_translations: true
@@ -104,8 +104,7 @@ jobs:
 
       - name: Trigger i18n automerge
         if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
-          repository: twentyhq/twenty-infra
-          event-type: i18n-pr-ready
+        env:
+          GH_TOKEN: ${{ secrets.TWENTY_INFRA_TOKEN }}
+        run: |
+          gh api repos/twentyhq/twenty-infra/dispatches -f event_type=i18n-pr-ready

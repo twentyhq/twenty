@@ -112,10 +112,6 @@ export class RefreshTokenService {
     payload: Omit<RefreshTokenJwtPayload, 'type' | 'sub' | 'jti'>,
     isImpersonationToken: boolean = false,
   ): Promise<AuthToken> {
-    const secret = this.jwtWrapperService.generateAppSecret(
-      JwtTokenTypeEnum.REFRESH,
-      payload.workspaceId ?? payload.userId,
-    );
     const expiresIn = isImpersonationToken
       ? '1d'
       : this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
@@ -137,20 +133,17 @@ export class RefreshTokenService {
 
     await this.appTokenRepository.save(refreshToken);
 
-    return {
-      token: this.jwtWrapperService.sign(
-        {
-          ...payload,
-          sub: payload.userId,
-          type: JwtTokenTypeEnum.REFRESH,
-        },
-        {
-          secret,
-          expiresIn,
-          jwtid: refreshToken.id,
-        },
-      ),
-      expiresAt,
+    const jwtPayload: RefreshTokenJwtPayload = {
+      ...payload,
+      sub: payload.userId,
+      type: JwtTokenTypeEnum.REFRESH,
     };
+
+    const token = await this.jwtWrapperService.signAsync(jwtPayload, {
+      expiresIn,
+      jwtid: refreshToken.id,
+    });
+
+    return { token, expiresAt };
   }
 }
