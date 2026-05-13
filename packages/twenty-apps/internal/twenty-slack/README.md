@@ -20,6 +20,15 @@ messages, update/delete bot messages, and add reactions. Uses the official
 
 Fields use camelCase names in the step UI, for example **`slackChannelId`** (Slack’s channel / DM ID), **`messageText`**, and **`messageTimestamp`** (Slack’s per-message id — same value as tool output **`slackTs`** when chaining steps). Optional **`parentMessageTimestamp`** is only for **thread replies**. Post / update / ephemeral steps support optional **`messageFormat`**: **`markdown`** sends the body as Slack **`markdown_text`** (e.g. **`**bold**`**), **`plain`** sends **`text`** with markup disabled, omit uses Slack’s default for **`text`**. Ephemeral steps use **`recipientSlackUserId`**; reactions use **`emojiName`** (Slack shortcode, for example `white_check_mark`). Updating a message uses **`newMessageText`**.
 
+### Quick-send command menu item
+
+This app also ships a global command menu item — **Send Slack message** — that opens a side-panel form to pick a channel (from `conversations.list`) and post a message via `chat.postMessage`. The form is backed by two HTTP routes exposed by the app:
+
+- `GET /slack/channels` — lists channels visible to the bot (mirrors `slack-list-channels`).
+- `POST /slack/messages` — posts a message (mirrors `slack-post-message`).
+
+Both routes require an authenticated Twenty user and use the same shared Slack connection as the workflow tools.
+
 ## Slack app setup
 
 1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps)
