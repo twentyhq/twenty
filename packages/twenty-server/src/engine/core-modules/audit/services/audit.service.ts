@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import {
@@ -14,6 +14,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class AuditService {
+  private readonly logger = new Logger(AuditService.name);
+
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly clickHouseService: ClickHouseService,
@@ -87,7 +89,9 @@ export class AuditService {
 
     try {
       return await sendEventOrPageviewFunction();
-    } catch {
+    } catch (error) {
+      this.logger.error('Failed to persist audit event to ClickHouse', error);
+
       return { success: false };
     }
   }
