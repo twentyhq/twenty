@@ -9,19 +9,8 @@ import { SECRET_ENCRYPTION_KEY_ID_REGEX } from 'src/engine/core-modules/secret-e
 import { SecretEncryptionExceptionCode } from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
-// End-to-end test of the connected-account token encryption path: resolve
-// the real ConnectedAccountTokenEncryptionService from the running Nest DI
-// container (which itself depends on SecretEncryptionService, which reads
-// keys from the real EnvironmentConfigDriver), insert a row through the
-// real Postgres data source, verify the on-disk ciphertext shape, decrypt
-// back through the same service, and check that the CHECK constraint
-// blocks plaintext.
-//
-// We don't go through the HTTP OAuth controllers because that would
-// require mocking the upstream provider's OAuth strategy — encryption
-// itself sits below that boundary, so the DI-resolved seam exercises the
-// same code path that production controllers hit.
-
+// Temporary: should be replaced by an integration test against a simpler
+// HTTP/GraphQL surface once one exists for connected-account creation.
 const TEST_HANDLE_PREFIX = 'enc-integration-test-';
 
 describe('ConnectedAccountTokenEncryptionService (integration)', () => {
