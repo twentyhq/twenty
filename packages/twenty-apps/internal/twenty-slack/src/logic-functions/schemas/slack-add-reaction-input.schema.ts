@@ -5,7 +5,7 @@ export const slackAddReactionInputSchema: InputJsonSchema = {
   properties: {
     slackChannelId: {
       type: 'string',
-      label: 'Channel',
+      label: 'Slack channel (name or ID)',
       description:
         'Channel where the message lives (Slack channel ID like C…).',
     },

@@ -5,7 +5,7 @@ export const slackPostMessageInputSchema: InputJsonSchema = {
   properties: {
     slackChannelId: {
       type: 'string',
-      label: 'Channel',
+      label: 'Slack channel (name or ID)',
       description:
         'Where to post: the Slack channel or DM ID (looks like C0123…, G… for private channels, or D… for DMs). In Slack: open the channel → channel name → scroll down → copy Channel ID. Using the ID is more reliable than a channel name.',
     },

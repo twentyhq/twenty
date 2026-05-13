@@ -5,7 +5,7 @@ export const slackUpdateMessageInputSchema: InputJsonSchema = {
   properties: {
     slackChannelId: {
       type: 'string',
-      label: 'Channel',
+      label: 'Slack channel (name or ID)',
       description:
         'Channel that contains the message (Slack channel ID like C…).',
     },

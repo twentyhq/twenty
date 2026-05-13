@@ -5,7 +5,7 @@ export const slackPostEphemeralMessageInputSchema: InputJsonSchema = {
   properties: {
     slackChannelId: {
       type: 'string',
-      label: 'Channel',
+      label: 'Slack channel (name or ID)',
       description:
         'Channel where the note appears (Slack channel ID like C…). The person you choose must already be in this channel, or they will not see the message.',
     },
