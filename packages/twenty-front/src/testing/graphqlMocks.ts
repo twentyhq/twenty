@@ -535,21 +535,12 @@ export const graphqlMocks = {
         data: {
           getResourceCreditUsage: [
             {
-              __typename: 'BillingMeteredProductUsage',
+              __typename: 'BillingResourceCreditUsage',
               productKey: 'RESOURCE_CREDIT',
               usedCredits: 1000,
               grantedCredits: 500000,
               rolloverCredits: 0,
               totalGrantedCredits: 500000,
-              unitPriceCents: 1,
-            },
-            {
-              __typename: 'BillingMeteredProductUsage',
-              productKey: 'RESOURCE_CREDIT',
-              usedCredits: 0,
-              grantedCredits: 10000,
-              rolloverCredits: 0,
-              totalGrantedCredits: 10000,
               unitPriceCents: 1,
             },
           ],
