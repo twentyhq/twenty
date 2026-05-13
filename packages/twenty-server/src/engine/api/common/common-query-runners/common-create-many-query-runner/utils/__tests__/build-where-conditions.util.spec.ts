@@ -1,5 +1,6 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 
+import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
 
 describe('buildWhereConditions', () => {
@@ -28,9 +29,16 @@ describe('buildWhereConditions', () => {
   });
 
   it('builds a single where condition for a flat field using all defined values', () => {
-    const where = buildWhereConditions(records, [
-      { baseField: 'uniqueText', fullPath: 'uniqueText', column: 'uniqueText' },
-    ]);
+    const groups: ConflictingFieldGroup[] = [
+      {
+        baseField: 'uniqueText',
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
+      },
+    ];
+
+    const where = buildWhereConditions(records, groups);
 
     expect(where).toHaveLength(1);
     const condition = where[0];
@@ -44,28 +52,34 @@ describe('buildWhereConditions', () => {
   });
 
   it('skips adding a condition when all values for a field are undefined', () => {
-    const where = buildWhereConditions(
-      [{ id: '1' }, { id: '2' }],
-      [
-        {
-          baseField: 'uniqueText',
-          fullPath: 'uniqueText',
-          column: 'uniqueText',
-        },
-      ],
-    );
+    const groups: ConflictingFieldGroup[] = [
+      {
+        baseField: 'uniqueText',
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
+      },
+    ];
+
+    const where = buildWhereConditions([{ id: '1' }, { id: '2' }], groups);
 
     expect(where).toEqual([]);
   });
 
   it('builds conditions for nested paths', () => {
-    const where = buildWhereConditions(records, [
+    const groups: ConflictingFieldGroup[] = [
       {
         baseField: 'emailsField',
-        fullPath: 'emailsField.primaryEmail',
-        column: 'emailsFieldPrimaryEmail',
+        conflictingProperties: [
+          {
+            fullPath: 'emailsField.primaryEmail',
+            column: 'emailsFieldPrimaryEmail',
+          },
+        ],
       },
-    ]);
+    ];
+
+    const where = buildWhereConditions(records, groups);
 
     expect(where).toHaveLength(1);
     const condition = where[0];
@@ -79,14 +93,25 @@ describe('buildWhereConditions', () => {
   });
 
   it('builds multiple conditions when multiple conflicting fields are provided', () => {
-    const where = buildWhereConditions(records, [
-      { baseField: 'uniqueText', fullPath: 'uniqueText', column: 'uniqueText' },
+    const groups: ConflictingFieldGroup[] = [
+      {
+        baseField: 'uniqueText',
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
+      },
       {
         baseField: 'emailsField',
-        fullPath: 'emailsField.primaryEmail',
-        column: 'emailsFieldPrimaryEmail',
+        conflictingProperties: [
+          {
+            fullPath: 'emailsField.primaryEmail',
+            column: 'emailsFieldPrimaryEmail',
+          },
+        ],
       },
-    ]);
+    ];
+
+    const where = buildWhereConditions(records, groups);
 
     expect(where).toHaveLength(2);
 

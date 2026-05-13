@@ -307,7 +307,7 @@ export class AgentAsyncExecutorService {
         AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     } finally {
-      this.aiBillingService.calculateAndBillUsage(
+      void this.aiBillingService.calculateAndBillUsage(
         agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
         { usage: accumulatedUsage, cacheCreationTokens },
         workspaceId,
@@ -316,7 +316,7 @@ export class AgentAsyncExecutorService {
         userWorkspaceId,
       );
 
-      this.aiBillingService.billNativeWebSearchUsage(
+      void this.aiBillingService.billNativeWebSearchUsage(
         nativeWebSearchCallCount,
         workspaceId,
         userWorkspaceId,

@@ -807,7 +807,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     await new Promise<void>((resolve, reject) => {
       archive.on('end', resolve);
       archive.on('error', reject);
-      archive.finalize();
+      void archive.finalize();
     });
 
     return Buffer.concat(chunks);

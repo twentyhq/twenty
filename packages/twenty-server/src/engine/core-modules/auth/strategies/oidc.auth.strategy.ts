@@ -47,7 +47,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
   }
 
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-  async authenticate(req: Request, options: any) {
+  authenticate(req: Request, options: any) {
     return super.authenticate(req, {
       ...options,
       state: JSON.stringify({

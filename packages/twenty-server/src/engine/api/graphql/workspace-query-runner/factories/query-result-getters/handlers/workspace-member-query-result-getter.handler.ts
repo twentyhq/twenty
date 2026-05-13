@@ -32,7 +32,7 @@ export class WorkspaceMemberQueryResultGetterHandler
       };
     }
 
-    const signedUrl = this.fileUrlService.signFileByIdUrl({
+    const signedUrl = await this.fileUrlService.signFileByIdUrl({
       fileId,
       workspaceId,
       fileFolder: FileFolder.CorePicture,
