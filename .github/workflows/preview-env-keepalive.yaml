@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ github.event.client_payload.pr_head_sha }}
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -56,10 +56,54 @@ jobs:
 
       - name: Create Tunnel
         id: expose-tunnel
-        uses: codetalkio/expose-tunnel@v1.5.0
-        with:
-          service: bore.pub
-          port: 3000
+        env:
+          CLOUDFLARED_VERSION: '2026.3.0'
+        run: |
+          set -euo pipefail
+
+          # Install cloudflared (pinned for reproducibility)
+          sudo curl -fsSL -o /usr/local/bin/cloudflared \
+            "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-linux-amd64"
+          sudo chmod +x /usr/local/bin/cloudflared
+          cloudflared --version
+
+          # Start an account-less "quick tunnel" pointing at the server container.
+          # Cloudflare prints the assigned https://*.trycloudflare.com URL into the log.
+          log_file="$RUNNER_TEMP/cloudflared.log"
+          : > "$log_file"
+
+          cloudflared tunnel \
+            --url http://localhost:3000 \
+            --no-autoupdate \
+            --logfile "$log_file" \
+            --loglevel info \
+            > "$RUNNER_TEMP/cloudflared.stdout" 2>&1 &
+
+          pid=$!
+          echo "$pid" > "$RUNNER_TEMP/cloudflared.pid"
+          echo "cloudflared PID: $pid"
+
+          # Wait up to 2 minutes for the URL to appear; fail fast if cloudflared exits.
+          url=''
+          for _ in $(seq 1 60); do
+            url=$(grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$log_file" 2>/dev/null | head -n1 || true)
+            [ -n "$url" ] && break
+            if ! kill -0 "$pid" 2>/dev/null; then
+              echo "cloudflared exited before producing a URL"
+              cat "$log_file" || true
+              exit 1
+            fi
+            sleep 2
+          done
+
+          if [ -z "$url" ]; then
+            echo "Timed out waiting for tunnel URL"
+            cat "$log_file" || true
+            exit 1
+          fi
+
+          echo "Tunnel URL: $url"
+          echo "tunnel-url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Start services with correct SERVER_URL
         env:
@@ -99,9 +143,9 @@ jobs:
       - name: Seed Dev Workspace
         run: |
           cd packages/twenty-docker/
-          echo "Seeding full dev workspace..."
-          if ! docker compose exec -T server yarn command:prod -- workspace:seed:dev; then
-            echo "❌ Seeding full dev workspace failed. Dumping server logs..."
+          echo "Seeding light dev workspace (Apple only)..."
+          if ! docker compose exec -T server yarn command:prod workspace:seed:dev --light; then
+            echo "❌ Seeding light dev workspace failed. Dumping server logs..."
             docker compose logs server
             exit 1
           fi
@@ -122,7 +166,7 @@ jobs:
           echo "$TUNNEL_URL" > tunnel-url.txt
 
       - name: Upload tunnel URL artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: tunnel-url
           path: tunnel-url.txt
@@ -134,6 +178,9 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
+          if [ -f "$RUNNER_TEMP/cloudflared.pid" ]; then
+            kill "$(cat "$RUNNER_TEMP/cloudflared.pid")" 2>/dev/null || true
+          fi
           cd packages/twenty-docker/
           docker compose down -v
         working-directory: ./

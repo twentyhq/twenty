@@ -24,6 +24,7 @@ type ConnectedAccountType = Pick<
   | 'provider'
   | 'handle'
   | 'handleAliases'
+  | 'workspaceId'
 >;
 
 @Injectable()

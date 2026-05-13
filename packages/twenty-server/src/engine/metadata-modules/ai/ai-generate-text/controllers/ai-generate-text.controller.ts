@@ -77,7 +77,7 @@ export class AiGenerateTextController {
       };
     } finally {
       if (result) {
-        this.aiBillingService.calculateAndBillUsage(
+        void this.aiBillingService.calculateAndBillUsage(
           resolvedModelId,
           {
             usage: result.usage,

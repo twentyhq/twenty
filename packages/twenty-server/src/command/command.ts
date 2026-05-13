@@ -31,6 +31,6 @@ async function bootstrap() {
 
   await CommandFactory.runApplication(app);
 
-  app.close();
+  await app.close();
 }
-bootstrap();
+void bootstrap();

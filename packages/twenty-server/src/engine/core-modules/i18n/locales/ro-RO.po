@@ -471,6 +471,11 @@ msgstr "A apărut o eroare la metadatele indexului."
 msgid "An index must contain at least one field"
 msgstr "Un index trebuie să conțină cel puțin un câmp"
 
+#. js-lingui-id: KvWKJI
+#: src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception.ts
+msgid "An internal error occurred while handling encrypted data."
+msgstr ""
+
 #. js-lingui-id: SOp/Vw
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."

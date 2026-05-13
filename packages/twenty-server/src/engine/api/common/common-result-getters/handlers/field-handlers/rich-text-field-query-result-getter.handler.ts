@@ -62,7 +62,7 @@ export class RichTextFieldQueryResultGetterHandler
         continue;
       }
 
-      const signedBlocks = this.signBlocknoteImageUrls(
+      const signedBlocks = await this.signBlocknoteImageUrls(
         blocknoteBlocks,
         workspaceId,
       );
@@ -76,37 +76,39 @@ export class RichTextFieldQueryResultGetterHandler
     return record;
   }
 
-  signBlocknoteImageUrls = (
+  signBlocknoteImageUrls = async (
     blocknoteBlocks: RichTextBlock[],
     workspaceId: string,
-  ): RichTextBlock[] => {
-    return blocknoteBlocks.map((block: RichTextBlock) => {
-      if (!isDefined(block.props?.url)) {
-        return block;
-      }
+  ): Promise<RichTextBlock[]> => {
+    return Promise.all(
+      blocknoteBlocks.map(async (block: RichTextBlock) => {
+        if (!isDefined(block.props?.url)) {
+          return block;
+        }
 
-      const fileIdFromUrl = extractFileIdFromUrl(
-        block.props.url,
-        FileFolder.FilesField,
-      );
+        const fileIdFromUrl = extractFileIdFromUrl(
+          block.props.url,
+          FileFolder.FilesField,
+        );
 
-      if (!isDefined(fileIdFromUrl)) {
-        return block;
-      }
+        if (!isDefined(fileIdFromUrl)) {
+          return block;
+        }
 
-      const url = this.fileUrlService.signFileByIdUrl({
-        fileId: fileIdFromUrl,
-        workspaceId,
-        fileFolder: FileFolder.FilesField,
-      });
+        const url = await this.fileUrlService.signFileByIdUrl({
+          fileId: fileIdFromUrl,
+          workspaceId,
+          fileFolder: FileFolder.FilesField,
+        });
 
-      return {
-        ...block,
-        props: {
-          ...block.props,
-          url,
-        },
-      };
-    });
+        return {
+          ...block,
+          props: {
+            ...block.props,
+            url,
+          },
+        };
+      }),
+    );
   };
 }

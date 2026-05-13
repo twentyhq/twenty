@@ -53,6 +53,7 @@ export class SyncMessageFoldersService {
         | 'id'
         | 'handle'
         | 'connectionParameters'
+        | 'workspaceId'
       >;
       messageFolders: MessageFolder[];
     };
@@ -83,6 +84,7 @@ export class SyncMessageFoldersService {
       | 'handle'
       | 'provider'
       | 'connectionParameters'
+      | 'workspaceId'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<DiscoveredMessageFolder[]> {

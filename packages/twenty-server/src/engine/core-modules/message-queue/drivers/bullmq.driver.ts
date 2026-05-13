@@ -92,7 +92,7 @@ export class BullMQDriver
     ]);
   }
 
-  async work<T>(
+  work<T>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void>,
     options?: MessageQueueWorkerOptions,
@@ -136,7 +136,7 @@ export class BullMQDriver
     );
 
     this.workerMap[queueName].on('completed', (job) => {
-      this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounter({
         key: MetricsKeys.JobCompleted,
         attributes: { queue: queueName, job_name: job?.name ?? '' },
         shouldStoreInCache: false,
@@ -148,7 +148,7 @@ export class BullMQDriver
         return;
       }
 
-      this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounter({
         key: MetricsKeys.JobFailed,
         attributes: {
           queue: queueName,

@@ -471,6 +471,11 @@ msgstr "'n Indeksmetadata-fout het voorgekom."
 msgid "An index must contain at least one field"
 msgstr " 80Nag \\b0aan vergelykings \\b8met ten minste een veld"
 
+#. js-lingui-id: KvWKJI
+#: src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception.ts
+msgid "An internal error occurred while handling encrypted data."
+msgstr ""
+
 #. js-lingui-id: SOp/Vw
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."

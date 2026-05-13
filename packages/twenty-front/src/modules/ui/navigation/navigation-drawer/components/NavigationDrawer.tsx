@@ -114,19 +114,21 @@ export const NavigationDrawer = ({
     setTableWidthResizeIsActive(false);
   };
 
+  const isExpanded = isSettingsDrawer || isNavigationDrawerExpanded;
+
   return (
     <>
       <NavigationDrawerWidthEffect />
       <StyledAnimatedContainer
         className={className}
         data-click-outside-id={NAVIGATION_DRAWER_CLICK_OUTSIDE_ID}
-        isExpanded={isNavigationDrawerExpanded}
+        isExpanded={isExpanded}
         isResizing={isResizing}
       >
         <StyledContainer
           isSettings={isSettingsDrawer}
           isMobile={isMobile}
-          isExpanded={isNavigationDrawerExpanded}
+          isExpanded={isExpanded}
         >
           {isSettingsDrawer && title ? (
             <NavigationDrawerBackButton title={title} />

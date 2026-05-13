@@ -933,6 +933,7 @@ type Workspace {
   isMicrosoftAuthEnabled: Boolean!
   isMicrosoftAuthBypassEnabled: Boolean!
   isCustomDomainEnabled: Boolean!
+  isInternalMessagesImportEnabled: Boolean!
   editableProfileFields: [String!]
   defaultRole: Role
   fastModel: String!
@@ -1748,18 +1749,15 @@ type FeatureFlag {
 enum FeatureFlagKey {
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
-  IS_COMMAND_MENU_ITEM_ENABLED
   IS_MARKETPLACE_SETTING_TAB_VISIBLE
   IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
   IS_PUBLIC_DOMAIN_ENABLED
   IS_EMAILING_DOMAIN_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
-  IS_CONNECTED_ACCOUNT_MIGRATED
-  IS_RICH_TEXT_V1_MIGRATED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
-  IS_DATASOURCE_MIGRATED
   IS_BILLING_V2_ENABLED
+  IS_REST_METADATA_API_NEW_FORMAT_DIRECT
 }
 
 type WorkspaceUrls {
@@ -1969,6 +1967,18 @@ type PublicApplicationRegistration {
 
 type RotateClientSecret {
   clientSecret: String!
+}
+
+type ApplicationRegistrationVariableDTO {
+  id: UUID!
+  key: String!
+  value: String
+  description: String!
+  isSecret: Boolean!
+  isRequired: Boolean!
+  isFilled: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Relation {
@@ -3038,7 +3048,7 @@ type Query {
   findManyApplicationRegistrations: [ApplicationRegistration!]!
   findOneApplicationRegistration(id: String!): ApplicationRegistration!
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
-  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
+  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
   applicationRegistrationTarballUrl(id: String!): String
   currentUser: User!
   currentWorkspace: Workspace!
@@ -4321,6 +4331,7 @@ input UpdateWorkspaceInput {
   editableProfileFields: [String!]
   enabledAiModelIds: [String!]
   useRecommendedModels: Boolean
+  isInternalMessagesImportEnabled: Boolean
 }
 
 input WorkspaceMigrationInput {
