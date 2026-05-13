@@ -135,7 +135,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
     );
 
   const selectableItemIdArray = isRelationSubMenu
-    ? ['-1', ...relationTargetFields.map((field) => field.id)]
+    ? relationTargetFields.map((field) => field.id)
     : ['-1', ...subFieldNames.map((subFieldName) => subFieldName)];
 
   const fieldLabel = fieldMetadataItemUsedInDropdown?.label;

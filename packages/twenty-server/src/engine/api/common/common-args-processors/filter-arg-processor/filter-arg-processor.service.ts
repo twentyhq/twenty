@@ -41,6 +41,30 @@ function throwUseJoinColumnInstead(key: string): never {
   );
 }
 
+// GraphQL leaf-operator names. A filter whose keys are exclusively these is
+// never a relation traversal — even if a custom field happens to share one of
+// these names. This prevents `{ eq: "uuid" }` from being misclassified as a
+// traversal when someone creates a field called "eq".
+const GRAPHQL_LEAF_OPERATORS = new Set([
+  'eq',
+  'neq',
+  'in',
+  'is',
+  'like',
+  'ilike',
+  'gt',
+  'gte',
+  'lt',
+  'lte',
+  'startsWith',
+  'endsWith',
+  'regex',
+  'search',
+  'containsAny',
+  'isEmptyArray',
+  'containsIlike',
+]);
+
 // A relation filter is treated as a traversal (`{ name: { eq: "X" } }`) when
 // at least one top-level key matches a field on the target object or is a
 // logical operator (`and`/`or`/`not`). Otherwise the value looks like a leaf
@@ -69,8 +93,9 @@ const isRelationTraversalShape = ({
       k === 'and' ||
       k === 'or' ||
       k === 'not' ||
-      isDefined(targetFieldIdByName[k]) ||
-      isDefined(targetFieldIdByJoinColumnName[k]),
+      (!GRAPHQL_LEAF_OPERATORS.has(k) &&
+        (isDefined(targetFieldIdByName[k]) ||
+          isDefined(targetFieldIdByJoinColumnName[k]))),
   );
 };
 

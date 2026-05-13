@@ -87,10 +87,22 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     return;
   }
 
-  const shouldComputeEmptinessFilter = checkIfShouldComputeEmptinessFilter({
-    recordFilterOperand: recordFilter.operand,
-    correspondingFieldMetadataItem,
-  });
+  const subFieldName = recordFilter.subFieldName;
+
+  const isSubFieldFilter = isNonEmptyString(subFieldName);
+
+  // For relation traversals IS_EMPTY / IS_NOT_EMPTY apply to the target field,
+  // not the FK column — the traversal branch below recurses and handles them.
+  const isRelationTraversal =
+    correspondingFieldMetadataItem.type === FieldMetadataType.RELATION &&
+    isSubFieldFilter;
+
+  const shouldComputeEmptinessFilter =
+    !isRelationTraversal &&
+    checkIfShouldComputeEmptinessFilter({
+      recordFilterOperand: recordFilter.operand,
+      correspondingFieldMetadataItem,
+    });
 
   if (shouldComputeEmptinessFilter) {
     const emptinessFilter = getEmptyRecordGqlOperationFilter({
@@ -102,20 +114,13 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     return emptinessFilter;
   }
 
-  const subFieldName = recordFilter.subFieldName;
-
-  const isSubFieldFilter = isNonEmptyString(subFieldName);
-
   // Relation traversal: the record filter targets a field on the related
   // object (e.g. `company.name`). The frontend already stored the target
   // field's type on `recordFilter.type`, so we synthesize a field metadata
   // for the target, recurse to build the inner filter, then wrap the result
   // under the relation field's name to produce
   // `{ relationName: { targetFieldName: { operator: value } } }`.
-  if (
-    correspondingFieldMetadataItem.type === FieldMetadataType.RELATION &&
-    isSubFieldFilter
-  ) {
+  if (isRelationTraversal) {
     const syntheticTargetFieldId = `__relation-traversal-target__${correspondingFieldMetadataItem.id}`;
 
     const syntheticTargetField: FieldShared = {
