@@ -1579,7 +1579,7 @@ type BillingEndTrialPeriod {
   billingPortalUrl: String
 }
 
-type BillingMeteredProductUsage {
+type BillingResourceCreditUsage {
   productKey: BillingProductKey!
   periodStart: DateTime!
   periodEnd: DateTime!
@@ -2960,7 +2960,7 @@ type Query {
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   billingPortalSession(returnUrlPath: String): BillingSession!
   listPlans: [BillingPlan!]!
-  getMeteredProductsUsage: [BillingMeteredProductUsage!]!
+  getResourceCreditUsage: [BillingResourceCreditUsage!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   getApprovedAccessDomains: [ApprovedAccessDomain!]!
   getPageLayoutTabs(pageLayoutId: String!): [PageLayoutTab!]!
@@ -3200,9 +3200,9 @@ type Mutation {
   switchBillingPlan: BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!
   cancelSwitchBillingInterval: BillingUpdate!
-  setMeteredSubscriptionPrice(priceId: String!): BillingUpdate!
+  setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
-  cancelSwitchMeteredPrice: BillingUpdate!
+  cancelSwitchResourceCreditPrice: BillingUpdate!
   deleteWorkspaceInvitation(appTokenId: String!): String!
   resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
   sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!

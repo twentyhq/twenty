@@ -387,7 +387,7 @@ describe('BillingSubscriptionUpdateService', () => {
           expect.objectContaining({
             items: [
               { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 1 },
-              { price: METER_PRICE_ENTERPRISE_MONTH_ID },
+              { price: METER_PRICE_ENTERPRISE_MONTH_ID, quantity: 1 },
             ],
           }),
         ],
@@ -480,7 +480,7 @@ describe('BillingSubscriptionUpdateService', () => {
           expect.objectContaining({
             items: [
               { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 1 },
-              { price: METER_PRICE_PRO_MONTH_ID },
+              { price: METER_PRICE_PRO_MONTH_ID, quantity: 1 },
             ],
           }),
         ],
@@ -590,7 +590,7 @@ describe('BillingSubscriptionUpdateService', () => {
           expect.objectContaining({
             items: [
               { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 1 },
-              { price: METER_PRICE_PRO_MONTH_ID },
+              { price: METER_PRICE_PRO_MONTH_ID, quantity: 1 },
             ],
           }),
         ],
@@ -807,7 +807,7 @@ describe('BillingSubscriptionUpdateService', () => {
           expect.objectContaining({
             items: [
               { price: LICENSE_PRICE_PRO_YEAR_ID, quantity: 1 },
-              { price: METER_PRICE_PRO_YEAR_ID },
+              { price: METER_PRICE_PRO_YEAR_ID, quantity: 1 },
             ],
           }),
         ],
@@ -900,7 +900,7 @@ describe('BillingSubscriptionUpdateService', () => {
           expect.objectContaining({
             items: [
               { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 1 },
-              { price: METER_PRICE_PRO_MONTH_ID },
+              { price: METER_PRICE_PRO_MONTH_ID, quantity: 1 },
             ],
           }),
         ],
@@ -1010,7 +1010,7 @@ describe('BillingSubscriptionUpdateService', () => {
           expect.objectContaining({
             items: [
               { price: LICENSE_PRICE_PRO_MONTH_ID, quantity: 1 },
-              { price: METER_PRICE_PRO_MONTH_ID },
+              { price: METER_PRICE_PRO_MONTH_ID, quantity: 1 },
             ],
           }),
         ],
@@ -1193,7 +1193,7 @@ describe('BillingSubscriptionUpdateService', () => {
           expect.objectContaining({
             items: [
               { price: LICENSE_PRICE_PRO_YEAR_ID, quantity: 2 },
-              { price: METER_PRICE_PRO_YEAR_ID },
+              { price: METER_PRICE_PRO_YEAR_ID, quantity: 1 },
             ],
           }),
         ],
@@ -1371,7 +1371,7 @@ describe('BillingSubscriptionUpdateService', () => {
           expect.objectContaining({
             items: [
               { price: LICENSE_PRICE_PRO_YEAR_ID, quantity: 1 },
-              { price: METER_PRICE_PRO_YEAR_ID },
+              { price: METER_PRICE_PRO_YEAR_ID, quantity: 1 },
             ],
           }),
         ],

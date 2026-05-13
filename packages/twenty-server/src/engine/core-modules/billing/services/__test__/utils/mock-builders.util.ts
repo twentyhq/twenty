@@ -52,9 +52,10 @@ export const buildBillingPriceEntity = ({
           : BillingUsageType.LICENSED,
       },
     },
-    ...(isMetered && tiers
+    ...(isMetered
       ? {
-          tiers,
+          metadata: { credit_amount: '1000' },
+          ...(tiers ? { tiers } : {}),
         }
       : {}),
   }) as BillingPriceEntity | BillingMeterPrice;

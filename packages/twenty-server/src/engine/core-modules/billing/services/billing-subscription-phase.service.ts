@@ -120,16 +120,6 @@ export class BillingSubscriptionPhaseService {
     };
   }
 
-  getMeteredPriceIdFromPhaseUpdateParams(
-    phase: Stripe.SubscriptionScheduleUpdateParams.Phase,
-  ): string {
-    const meteredItem = findOrThrow(phase.items!, (i) => i.quantity == null);
-
-    assertIsDefinedOrThrow(meteredItem.price);
-
-    return meteredItem.price;
-  }
-
   async isSamePhaseSignature(
     a: Stripe.SubscriptionScheduleUpdateParams.Phase,
     b: Stripe.SubscriptionScheduleUpdateParams.Phase,
@@ -139,24 +129,22 @@ export class BillingSubscriptionPhaseService {
         this.getLicensedPriceIdAndQuantityFromPhaseUpdateParams(a);
       const phaseBLicensedPriceIdAndQuantity =
         this.getLicensedPriceIdAndQuantityFromPhaseUpdateParams(b);
-      const phaseAMeteredPriceId =
-        this.getMeteredPriceIdFromPhaseUpdateParams(a);
-      const phaseBMeteredPriceId =
-        this.getMeteredPriceIdFromPhaseUpdateParams(b);
+      const phaseAResourceCreditPriceId =
+        this.getResourceCreditPriceIdFromPhaseUpdateParams(a);
+      const phaseBResourceCreditPriceId =
+        this.getResourceCreditPriceIdFromPhaseUpdateParams(b);
 
       return (
         phaseALicensedPriceIdAndQuantity.price ===
           phaseBLicensedPriceIdAndQuantity.price &&
         phaseALicensedPriceIdAndQuantity.quantity ===
           phaseBLicensedPriceIdAndQuantity.quantity &&
-        phaseAMeteredPriceId === phaseBMeteredPriceId
+        phaseAResourceCreditPriceId === phaseBResourceCreditPriceId
       );
     } catch {
       return false;
     }
   }
-
-  // Billing V2: emits { price, quantity: 1 } for the resource credit price; no billing_thresholds
   async buildResourceCreditPhaseUpdateParams({
     basePlanStripePriceId,
     seats,
@@ -208,7 +196,6 @@ export class BillingSubscriptionPhaseService {
     }
   }
 
-  // Billing V2 counterpart of getMeteredPriceIdFromPhaseUpdateParams (resource credit has quantity: 1)
   getResourceCreditPriceIdFromPhaseUpdateParams(
     phase: Stripe.SubscriptionScheduleUpdateParams.Phase,
   ): string {
