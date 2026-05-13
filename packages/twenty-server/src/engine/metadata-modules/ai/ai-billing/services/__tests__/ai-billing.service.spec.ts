@@ -85,7 +85,9 @@ describe('AiBillingService', () => {
         {
           provide: BillingUsageService,
           useValue: {
-            decrementAvailableCreditsInCache: jest.fn().mockResolvedValue(undefined),
+            decrementAvailableCreditsInCache: jest
+              .fn()
+              .mockResolvedValue(undefined),
           },
         },
         {

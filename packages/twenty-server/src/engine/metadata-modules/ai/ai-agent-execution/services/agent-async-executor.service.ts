@@ -364,7 +364,7 @@ export class AgentAsyncExecutorService {
         (accumulatedUsage.outputTokens ?? 0) +
         cacheCreationTokens;
 
-      this.aiBillingService.emitAiTokenUsageEvent(
+      void this.aiBillingService.emitAiTokenUsageEvent(
         workspaceId,
         creditsUsedMicro,
         totalTokens,
