@@ -5,6 +5,7 @@
     "watchPatterns": [
       "packages/twenty-server/src/**",
       "packages/twenty-front/src/**",
+      "packages/twenty-front-component-renderer/**",
       "packages/twenty-shared/**",
       "packages/twenty-ui/**",
       "packages/twenty-emails/**",
