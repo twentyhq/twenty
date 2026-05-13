@@ -19,7 +19,10 @@ export class OAuth2ClientManagerService {
   ) {}
 
   public async getGoogleOAuth2Client(
-    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'refreshToken'>,
+    connectedAccount: Pick<
+      ConnectedAccountEntity,
+      'provider' | 'refreshToken' | 'workspaceId'
+    >,
   ): Promise<Auth.OAuth2Client> {
     if (!isDefined(connectedAccount.refreshToken)) {
       throw new CustomError(
@@ -31,12 +34,16 @@ export class OAuth2ClientManagerService {
     return this.googleOAuth2ClientManagerService.getOAuth2Client(
       this.connectedAccountTokenEncryptionService.decrypt(
         connectedAccount.refreshToken,
+        connectedAccount.workspaceId,
       ),
     );
   }
 
   public async getMicrosoftOAuth2Client(
-    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'accessToken'>,
+    connectedAccount: Pick<
+      ConnectedAccountEntity,
+      'provider' | 'accessToken' | 'workspaceId'
+    >,
   ): Promise<Client> {
     if (!isDefined(connectedAccount.accessToken)) {
       throw new CustomError(
@@ -48,6 +55,7 @@ export class OAuth2ClientManagerService {
     return this.microsoftOAuth2ClientManagerService.getOAuth2Client(
       this.connectedAccountTokenEncryptionService.decrypt(
         connectedAccount.accessToken,
+        connectedAccount.workspaceId,
       ),
     );
   }

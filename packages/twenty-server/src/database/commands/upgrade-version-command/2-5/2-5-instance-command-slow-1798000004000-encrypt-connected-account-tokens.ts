@@ -1,11 +1,9 @@
 import { DataSource, QueryRunner } from 'typeorm';
 
+import { ENVELOPE_PREFIX } from 'src/engine/core-modules/secret-encryption/utils/envelope.util';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
-import {
-  CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
-  ConnectedAccountTokenEncryptionService,
-} from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 const BACKFILL_BATCH_SIZE = 500;
 
@@ -14,8 +12,14 @@ const ACCESS_TOKEN_CHECK_CONSTRAINT_NAME =
 const REFRESH_TOKEN_CHECK_CONSTRAINT_NAME =
   'CHK_connectedAccount_refreshToken_encrypted';
 
+// Matches both the legacy enc:v1: format and the current enc:v2: envelope
+// (`_` is the SQL single-character wildcard). Rows that already pass either
+// scheme are considered done and are skipped on subsequent re-runs.
+const ENCRYPTED_TOKEN_LIKE_PATTERN = `${ENVELOPE_PREFIX}v_:%`;
+
 type ConnectedAccountTokenRow = {
   id: string;
+  workspaceId: string;
   accessToken: string | null;
   refreshToken: string | null;
 };
@@ -36,7 +40,7 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
 
     while (true) {
       const rows: ConnectedAccountTokenRow[] = await dataSource.query(
-        `SELECT id, "accessToken", "refreshToken"
+        `SELECT id, "workspaceId", "accessToken", "refreshToken"
            FROM "core"."connectedAccount"
           WHERE id > $1
             AND (
@@ -45,11 +49,7 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
             )
           ORDER BY id
           LIMIT $3`,
-        [
-          cursor,
-          `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}%`,
-          BACKFILL_BATCH_SIZE,
-        ],
+        [cursor, ENCRYPTED_TOKEN_LIKE_PATTERN, BACKFILL_BATCH_SIZE],
       );
 
       if (rows.length === 0) {
@@ -59,13 +59,15 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
       for (const row of rows) {
         const sets: string[] = [];
         const params: unknown[] = [row.id];
+
         if (
           row.accessToken !== null &&
-          !row.accessToken.startsWith(CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX)
+          !row.accessToken.startsWith(ENVELOPE_PREFIX)
         ) {
           params.push(
             this.connectedAccountTokenEncryptionService.encrypt(
               row.accessToken,
+              row.workspaceId,
             ),
           );
           sets.push(`"accessToken" = $${params.length}`);
@@ -73,13 +75,12 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
 
         if (
           row.refreshToken !== null &&
-          !row.refreshToken.startsWith(
-            CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
-          )
+          !row.refreshToken.startsWith(ENVELOPE_PREFIX)
         ) {
           params.push(
             this.connectedAccountTokenEncryptionService.encrypt(
               row.refreshToken,
+              row.workspaceId,
             ),
           );
           sets.push(`"refreshToken" = $${params.length}`);
@@ -105,12 +106,12 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
        ADD CONSTRAINT "${ACCESS_TOKEN_CHECK_CONSTRAINT_NAME}"
-       CHECK ("accessToken" IS NULL OR "accessToken" LIKE '${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}%')`,
+       CHECK ("accessToken" IS NULL OR "accessToken" LIKE '${ENCRYPTED_TOKEN_LIKE_PATTERN}')`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
        ADD CONSTRAINT "${REFRESH_TOKEN_CHECK_CONSTRAINT_NAME}"
-       CHECK ("refreshToken" IS NULL OR "refreshToken" LIKE '${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}%')`,
+       CHECK ("refreshToken" IS NULL OR "refreshToken" LIKE '${ENCRYPTED_TOKEN_LIKE_PATTERN}')`,
     );
   }
 

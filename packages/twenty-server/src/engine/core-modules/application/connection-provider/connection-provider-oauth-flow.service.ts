@@ -254,6 +254,7 @@ export class ConnectionProviderOAuthFlowService {
       this.connectedAccountTokenEncryptionService.encryptTokenPair({
         accessToken: tokenResponse.accessToken,
         refreshToken: tokenResponse.refreshToken,
+        workspaceId,
       });
 
     const sharedFields = {

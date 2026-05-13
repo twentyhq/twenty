@@ -1152,6 +1152,28 @@ export class ConfigVariables {
   APP_SECRET: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description:
+      'Primary key for at-rest encryption of secrets. Falls back to APP_SECRET when unset.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ENCRYPTION_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description:
+      'Decrypt-only fallback key. During rotation, set this to the previous ENCRYPTION_KEY so rows encrypted with the old key remain readable.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  FALLBACK_ENCRYPTION_KEY: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description: 'Maximum number of records affected by mutations',
     type: ConfigVariableType.NUMBER,

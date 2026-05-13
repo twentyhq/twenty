@@ -52,6 +52,7 @@ xdescribe('Microsoft dev tests : get messages service', () => {
     handleAliases: [] as string[],
     accessToken: accessToken,
     refreshToken: refreshToken,
+    workspaceId: 'workspace-id',
   };
 
   it('should fetch and format messages successfully', async () => {

@@ -91,6 +91,7 @@ export class CreateConnectedAccountService {
         this.connectedAccountTokenEncryptionService.encryptTokenPair({
           accessToken,
           refreshToken,
+          workspaceId,
         });
 
       await input.transactionManager
