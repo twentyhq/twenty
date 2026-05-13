@@ -60,11 +60,7 @@ export class WorkspaceAgnosticTokenService {
     };
 
     return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret: this.jwtWrapperService.generateAppSecret(
-          JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-          user.id,
-        ),
+      token: await this.jwtWrapperService.signAsyncOrThrow(jwtPayload, {
         expiresIn,
       }),
       expiresAt,
@@ -73,15 +69,17 @@ export class WorkspaceAgnosticTokenService {
 
   async validateToken(token: string): Promise<AuthContext> {
     try {
+      await this.jwtWrapperService.verifyJwtToken(token);
+
       const decoded =
         this.jwtWrapperService.decode<WorkspaceAgnosticTokenJwtPayload>(token);
 
-      this.jwtWrapperService.verify(token, {
-        secret: this.jwtWrapperService.generateAppSecret(
-          JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-          decoded.userId,
-        ),
-      });
+      if (decoded.type !== JwtTokenTypeEnum.WORKSPACE_AGNOSTIC) {
+        throw new AuthException(
+          'Expected a workspace-agnostic token',
+          AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+        );
+      }
 
       const user = await this.userRepository.findOne({
         where: { id: decoded.sub },

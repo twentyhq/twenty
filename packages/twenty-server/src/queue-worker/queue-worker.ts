@@ -30,4 +30,4 @@ async function bootstrap() {
     throw err;
   }
 }
-bootstrap();
+void bootstrap();
