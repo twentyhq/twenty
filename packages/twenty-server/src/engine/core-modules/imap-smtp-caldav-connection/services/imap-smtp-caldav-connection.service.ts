@@ -51,6 +51,8 @@ export class ImapSmtpCaldavService {
       tls: {
         rejectUnauthorized: false,
       },
+      connectionTimeout: 30000,
+      greetingTimeout: 16000,
     });
 
     client.on('error', (error) => {
