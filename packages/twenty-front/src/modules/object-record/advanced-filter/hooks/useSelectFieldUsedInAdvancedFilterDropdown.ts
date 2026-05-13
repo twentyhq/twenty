@@ -1,8 +1,10 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -23,6 +25,11 @@ type SelectFilterParams = {
   fieldMetadataItemId: string;
   recordFilterId: string;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
+  // When the user drilled into a MANY_TO_ONE relation and picked a field on
+  // the target object, this carries that target field. The stored filter
+  // then operates against the target field's type (so operand picker /
+  // value input reflect the target, not the relation itself).
+  relationTargetFieldMetadataItem?: FieldMetadataItem | null | undefined;
 };
 
 export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
@@ -51,6 +58,11 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     subFieldNameUsedInDropdownComponentState,
   );
 
+  const setRelationTargetFieldMetadataIdUsedInDropdown =
+    useSetAtomComponentState(
+      relationTargetFieldMetadataIdUsedInDropdownComponentState,
+    );
+
   const setObjectFilterDropdownCurrentRecordFilter = useSetAtomComponentState(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
@@ -62,6 +74,7 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     fieldMetadataItemId,
     recordFilterId,
     subFieldName,
+    relationTargetFieldMetadataItem,
   }: SelectFilterParams) => {
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
 
@@ -85,7 +98,13 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       });
     }
 
-    const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
+    const isRelationTraversal = isDefined(relationTargetFieldMetadataItem);
+
+    const filterType = getFilterTypeFromFieldType(
+      isRelationTraversal
+        ? relationTargetFieldMetadataItem.type
+        : fieldMetadataItem.type,
+    );
 
     const firstOperand = getRecordFilterOperands({
       filterType,
@@ -110,7 +129,9 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     );
 
     const isCompositeFilterOnAnySubField =
-      isCompositeFieldType(filterType) && !isDefined(subFieldName);
+      !isRelationTraversal &&
+      isCompositeFieldType(filterType) &&
+      !isDefined(subFieldName);
     const compositeFilterNonFilterableByAnySubField =
       isCompositeTypeNonFilterableByAnySubField(filterType);
 
@@ -130,6 +151,10 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     const subFieldNameToUse =
       subFieldName ?? subFieldNameForNonFilterableWithAny;
 
+    const label = isRelationTraversal
+      ? `${fieldMetadataItem.label} → ${relationTargetFieldMetadataItem.label}`
+      : fieldMetadataItem.label;
+
     const newAdvancedFilter = {
       id: recordFilterId,
       fieldMetadataId: fieldMetadataItem.id,
@@ -140,11 +165,17 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       positionInRecordFilterGroup:
         existingRecordFilter?.positionInRecordFilterGroup,
       type: filterType,
-      label: fieldMetadataItem.label,
+      label,
       subFieldName: subFieldNameToUse,
+      relationTargetFieldMetadataId: isRelationTraversal
+        ? relationTargetFieldMetadataItem.id
+        : null,
     } satisfies RecordFilter;
 
     setSubFieldNameUsedInDropdown(subFieldNameToUse);
+    setRelationTargetFieldMetadataIdUsedInDropdown(
+      isRelationTraversal ? relationTargetFieldMetadataItem.id : null,
+    );
 
     setObjectFilterDropdownSearchInput('');
 

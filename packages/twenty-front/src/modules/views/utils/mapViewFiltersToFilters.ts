@@ -40,6 +40,13 @@ export const mapViewFiltersToFilters = (
 
       const stringValue = convertViewFilterValueToString(viewFilter.value);
 
+      // The codegen-generated `GqlViewFilter` and the local `ViewFilter`
+      // type don't both expose this field; `in` narrows safely across both.
+      const relationTargetFieldMetadataId =
+        'relationTargetFieldMetadataId' in viewFilter
+          ? (viewFilter.relationTargetFieldMetadataId ?? null)
+          : null;
+
       return {
         id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
@@ -54,6 +61,7 @@ export const mapViewFiltersToFilters = (
         label,
         type: filterType,
         subFieldName: viewFilter.subFieldName as CompositeFieldSubFieldName,
+        relationTargetFieldMetadataId,
       } satisfies RecordFilter;
     })
     .filter(isDefined);

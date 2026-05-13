@@ -13,7 +13,10 @@ import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-f
 import { useSelectFieldUsedInAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useSelectFieldUsedInAdvancedFilterDropdown';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
+import {
+  RELATION_SUB_MENU_FIELD_TYPE,
+  objectFilterDropdownSubMenuFieldTypeComponentState,
+} from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/IconNameBySubField';
 import { areCompositeTypeSubFieldsFilterable } from '@/object-record/record-filter/utils/areCompositeTypeSubFieldsFilterable';
@@ -94,7 +97,13 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
       advancedFilterFieldSelectDropdownId,
     );
 
-    if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
+    // The RELATION sentinel is exclusive to the filter dropdown's
+    // relation-traversal flow — role-permission sub-fields only ever drill
+    // into composite fields, so bail out early in that case.
+    if (
+      !isDefined(objectFilterDropdownSubMenuFieldType) ||
+      objectFilterDropdownSubMenuFieldType === RELATION_SUB_MENU_FIELD_TYPE
+    ) {
       return null;
     }
 

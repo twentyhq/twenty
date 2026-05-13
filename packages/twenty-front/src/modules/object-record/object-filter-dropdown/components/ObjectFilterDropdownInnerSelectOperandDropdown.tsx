@@ -1,7 +1,11 @@
+import { useMemo } from 'react';
+
+import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth';
 import { useApplyObjectFilterDropdownOperand } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownOperand';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
@@ -32,11 +36,34 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
     subFieldNameUsedInDropdownComponentState,
   );
 
-  const operandsForFilterType = isDefined(fieldMetadataItemUsedInDropdown)
+  const relationTargetFieldMetadataIdUsedInDropdown =
+    useAtomComponentStateValue(
+      relationTargetFieldMetadataIdUsedInDropdownComponentState,
+    );
+
+  const { getFieldMetadataItemByIdOrThrow } =
+    useGetFieldMetadataItemByIdOrThrow();
+
+  // For relation traversal the operand list must match the target field's
+  // type, not the relation field's. Looked up through the global metadata
+  // store so it works across objects.
+  const effectiveFieldMetadataItem = useMemo(
+    () =>
+      isDefined(relationTargetFieldMetadataIdUsedInDropdown)
+        ? getFieldMetadataItemByIdOrThrow(
+            relationTargetFieldMetadataIdUsedInDropdown,
+          ).fieldMetadataItem
+        : fieldMetadataItemUsedInDropdown,
+    [
+      relationTargetFieldMetadataIdUsedInDropdown,
+      fieldMetadataItemUsedInDropdown,
+      getFieldMetadataItemByIdOrThrow,
+    ],
+  );
+
+  const operandsForFilterType = isDefined(effectiveFieldMetadataItem)
     ? getRecordFilterOperands({
-        filterType: getFilterTypeFromFieldType(
-          fieldMetadataItemUsedInDropdown.type,
-        ),
+        filterType: getFilterTypeFromFieldType(effectiveFieldMetadataItem.type),
         subFieldName: subFieldNameUsedInDropdown,
       })
     : [];
@@ -70,13 +97,13 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
 
   if (
     !isDefined(selectedOperandInDropdown) ||
-    !isDefined(fieldMetadataItemUsedInDropdown)
+    !isDefined(effectiveFieldMetadataItem)
   ) {
     return null;
   }
 
   const filterType = getFilterTypeFromFieldType(
-    fieldMetadataItemUsedInDropdown.type,
+    effectiveFieldMetadataItem.type,
   );
 
   const isDateFilter = DATE_FILTER_TYPES.includes(filterType);

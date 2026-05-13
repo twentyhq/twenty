@@ -24,6 +24,10 @@ export type RecordFilter = {
   positionInRecordFilterGroup?: number | null;
   label: string;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
+  // For one-hop relation traversal: when `fieldMetadataId` references a
+  // MANY_TO_ONE relation field, this is the metadata id of the field on the
+  // target object whose value the filter compares against. Null otherwise.
+  relationTargetFieldMetadataId?: string | null;
   // RLS-specific: when set, filter compares against current user's field value
   rlsDynamicValue?: RLSDynamicValue | null;
 };

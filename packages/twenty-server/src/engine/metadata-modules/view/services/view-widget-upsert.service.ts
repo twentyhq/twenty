@@ -706,6 +706,9 @@ export class ViewWidgetUpsertService {
           positionInViewFilterGroup:
             inputFilter.positionInViewFilterGroup ?? null,
           subFieldName: inputFilter.subFieldName ?? null,
+          relationTargetFieldMetadataId:
+            inputFilter.relationTargetFieldMetadataId ?? null,
+          relationTargetFieldMetadataUniversalIdentifier: null,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,
@@ -719,7 +722,9 @@ export class ViewWidgetUpsertService {
           existingFilter.viewFilterGroupId !== inputFilter.viewFilterGroupId ||
           existingFilter.positionInViewFilterGroup !==
             inputFilter.positionInViewFilterGroup ||
-          existingFilter.subFieldName !== inputFilter.subFieldName;
+          existingFilter.subFieldName !== inputFilter.subFieldName ||
+          existingFilter.relationTargetFieldMetadataId !==
+            (inputFilter.relationTargetFieldMetadataId ?? null);
 
         if (hasChanged) {
           const {

@@ -23,6 +23,11 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @Index('IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_FILTER_VIEW_ID', ['viewId'])
 @Index('IDX_VIEW_FILTER_FIELD_METADATA_ID', ['fieldMetadataId'])
+@Index(
+  'IDX_VIEW_FILTER_RELATION_TARGET_FIELD_METADATA_ID',
+  ['relationTargetFieldMetadataId'],
+  { where: '"relationTargetFieldMetadataId" IS NOT NULL' },
+)
 export class ViewFilterEntity
   extends SyncableEntity
   implements Required<ViewFilterEntity>
@@ -58,6 +63,22 @@ export class ViewFilterEntity
 
   @Column({ nullable: true, type: 'text', default: null })
   subFieldName: string | null;
+
+  // Stable pointer to a field on the related object for one-hop relation
+  // traversal filters: when `fieldMetadataId` is a MANY_TO_ONE relation, this
+  // is the field on the target object whose value is being compared. Null for
+  // direct-field and composite-sub-field filters.
+  @Column({ nullable: true, type: 'uuid', default: null })
+  relationTargetFieldMetadataId: string | null;
+
+  // ON DELETE SET NULL — if the target field is deleted the filter survives
+  // and falls back to relation-by-record semantics rather than being lost.
+  @ManyToOne(() => FieldMetadataEntity, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'relationTargetFieldMetadataId' })
+  relationTargetFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;

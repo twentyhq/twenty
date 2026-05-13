@@ -16,8 +16,13 @@ import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/co
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
+import {
+  type ObjectFilterDropdownSubMenuFieldType,
+  RELATION_SUB_MENU_FIELD_TYPE,
+  objectFilterDropdownSubMenuFieldTypeComponentState,
+} from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
+import { isManyToOneRelationField } from '@/object-record/object-filter-dropdown/utils/isManyToOneRelationField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -117,8 +122,17 @@ export const AdvancedFilterFieldSelectMenu = ({
       recordFilterId,
     });
 
-    if (isCompositeFilterableFieldType(filterType)) {
-      setObjectFilterDropdownSubMenuFieldType(filterType);
+    const isRelationDrillDown = isManyToOneRelationField(
+      selectedFieldMetadataItem,
+    );
+    const isCompositeDrillDown = isCompositeFilterableFieldType(filterType);
+
+    if (isCompositeDrillDown || isRelationDrillDown) {
+      const subMenuType = (
+        isRelationDrillDown ? RELATION_SUB_MENU_FIELD_TYPE : filterType
+      ) as ObjectFilterDropdownSubMenuFieldType;
+
+      setObjectFilterDropdownSubMenuFieldType(subMenuType);
 
       setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
       setObjectFilterDropdownIsSelectingCompositeField(true);
