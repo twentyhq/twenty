@@ -19,9 +19,12 @@ const program = new Command(packageJson.name)
   .option('--description <description>', 'Application description')
   .option(
     '--skip-local-instance',
-    'Skip local Docker server setup (use with --api-url for remote instances)',
+    'Skip local Docker server setup (use with --workspace-url for remote instances)',
   )
-  .option('--api-url <apiUrl>', 'Twenty instance URL for remote authentication')
+  .option(
+    '--workspace-url <apiUrl>',
+    'Twenty instance URL for remote authentication',
+  )
   .helpOption('-h, --help', 'Display this help message.')
   .action(
     async (
