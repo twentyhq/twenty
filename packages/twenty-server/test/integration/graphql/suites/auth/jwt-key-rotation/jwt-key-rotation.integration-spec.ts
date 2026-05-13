@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import gql from 'graphql-tag';
 import * as jwt from 'jsonwebtoken';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
@@ -8,12 +9,17 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
   type AccessTokenJwtPayload,
   JwtTokenTypeEnum,
+  type LoginTokenJwtPayload,
+  type RefreshTokenJwtPayload,
+  type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 import {
   PREVIOUS_KID,
@@ -24,6 +30,9 @@ import {
 
 const HS256_APP_SECRET = 'replace_me_with_a_random_string';
 
+// Mirrors JwtWrapperService.generateAppSecret + extractAppSecretBody so we
+// can hand-craft tokens that match what a pre-2.5 server would have signed.
+// extractAppSecretBody resolves to workspaceId when present, else userId.
 const generateLegacyHs256Secret = (
   type: JwtTokenTypeEnum,
   appSecretBody: string,
@@ -31,6 +40,16 @@ const generateLegacyHs256Secret = (
   createHash('sha256')
     .update(`${HS256_APP_SECRET}${appSecretBody}${type}`)
     .digest('hex');
+
+const forgeLegacyHs256Token = <TPayload extends Record<string, unknown>>(
+  payload: TPayload & { type: JwtTokenTypeEnum },
+  appSecretBody: string,
+  expiresIn: jwt.SignOptions['expiresIn'] = '5m',
+): string =>
+  jwt.sign(payload, generateLegacyHs256Secret(payload.type, appSecretBody), {
+    algorithm: 'HS256',
+    expiresIn,
+  });
 
 const decodeJwtCompleteOrThrow = (token: string) => {
   const decoded = jwt.decode(token, { complete: true });
@@ -53,11 +72,36 @@ const buildAccessTokenPayload = (payload: AccessTokenJwtPayload) => ({
   type: JwtTokenTypeEnum.ACCESS,
 });
 
+const renewTokenMutation = async (appToken: string) => {
+  const mutation = gql`
+    mutation RenewToken($appToken: String!) {
+      renewToken(appToken: $appToken) {
+        tokens {
+          accessOrWorkspaceAgnosticToken {
+            token
+          }
+          refreshToken {
+            token
+          }
+        }
+      }
+    }
+  `;
+
+  return await makeMetadataAPIRequest(
+    { query: mutation, variables: { appToken } },
+    undefined,
+  );
+};
+
 let sharedAccessToken: string;
 let sharedRefreshToken: string;
 let sharedLoginToken: string;
 let sharedWorkspaceAgnosticToken: string;
-let sharedPayload: AccessTokenJwtPayload;
+let sharedAccessPayload: AccessTokenJwtPayload;
+let sharedRefreshPayload: RefreshTokenJwtPayload;
+let sharedLoginPayload: LoginTokenJwtPayload;
+let sharedWorkspaceAgnosticPayload: WorkspaceAgnosticTokenJwtPayload;
 let currentKid: string;
 
 describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
@@ -98,7 +142,16 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
         .accessOrWorkspaceAgnosticToken.token;
     sharedRefreshToken =
       tokensData.getAuthTokensFromLoginToken.tokens.refreshToken.token;
-    sharedPayload = jwt.decode(sharedAccessToken) as AccessTokenJwtPayload;
+    sharedAccessPayload = jwt.decode(
+      sharedAccessToken,
+    ) as AccessTokenJwtPayload;
+    sharedRefreshPayload = jwt.decode(
+      sharedRefreshToken,
+    ) as RefreshTokenJwtPayload;
+    sharedLoginPayload = jwt.decode(sharedLoginToken) as LoginTokenJwtPayload;
+    sharedWorkspaceAgnosticPayload = jwt.decode(
+      sharedWorkspaceAgnosticToken,
+    ) as WorkspaceAgnosticTokenJwtPayload;
     currentKid = decodeJwtCompleteOrThrow(sharedAccessToken).header
       .kid as string;
   });
@@ -152,13 +205,9 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
   });
 
   it('verifies a hand-crafted no-kid HS256 ACCESS token via the legacy fallback', async () => {
-    const legacyHs256Token = jwt.sign(
-      buildAccessTokenPayload(sharedPayload),
-      generateLegacyHs256Secret(
-        JwtTokenTypeEnum.ACCESS,
-        sharedPayload.workspaceId,
-      ),
-      { algorithm: 'HS256', expiresIn: '5m' },
+    const legacyHs256Token = forgeLegacyHs256Token(
+      buildAccessTokenPayload(sharedAccessPayload),
+      sharedAccessPayload.workspaceId,
     );
 
     const decoded = decodeJwtCompleteOrThrow(legacyHs256Token);
@@ -172,7 +221,7 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     });
 
     expect(errors).toBeUndefined();
-    expect(data?.currentUser?.id).toBe(sharedPayload.userId);
+    expect(data?.currentUser?.id).toBe(sharedAccessPayload.userId);
   });
 
   it('verifies a token signed by a previously rotated-out kid (privateKey null, public key still present)', async () => {
@@ -184,7 +233,7 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     );
 
     const tokenSignedByPreviousKey = jwt.sign(
-      buildAccessTokenPayload(sharedPayload),
+      buildAccessTokenPayload(sharedAccessPayload),
       PREVIOUS_PRIVATE_KEY_PEM,
       { algorithm: 'ES256', keyid: PREVIOUS_KID, expiresIn: '5m' },
     );
@@ -201,7 +250,7 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     });
 
     expect(errors).toBeUndefined();
-    expect(data?.currentUser?.id).toBe(sharedPayload.userId);
+    expect(data?.currentUser?.id).toBe(sharedAccessPayload.userId);
   });
 
   it('rejects a token signed by a revoked kid (publicKey present, revokedAt set)', async () => {
@@ -213,7 +262,7 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     );
 
     const tokenSignedByRevokedKey = jwt.sign(
-      buildAccessTokenPayload(sharedPayload),
+      buildAccessTokenPayload(sharedAccessPayload),
       PREVIOUS_PRIVATE_KEY_PEM,
       { algorithm: 'ES256', keyid: REVOKED_KID, expiresIn: '5m' },
     );
@@ -232,7 +281,7 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
     const unknownKid = '00000000-0000-4000-8000-000000000099';
 
     const tokenSignedByOrphanKey = jwt.sign(
-      buildAccessTokenPayload(sharedPayload),
+      buildAccessTokenPayload(sharedAccessPayload),
       PREVIOUS_PRIVATE_KEY_PEM,
       { algorithm: 'ES256', keyid: unknownKid, expiresIn: '5m' },
     );
@@ -260,4 +309,129 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
       expect(decoded.header.kid).toBe(currentKid);
     },
   );
+
+  it('round-trips a new ES256 REFRESH token through renewToken', async () => {
+    const response = await renewTokenMutation(sharedRefreshToken);
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      isNonEmptyString(
+        response.body.data?.renewToken.tokens.accessOrWorkspaceAgnosticToken
+          .token,
+      ),
+    ).toBe(true);
+    expect(
+      isNonEmptyString(
+        response.body.data?.renewToken.tokens.refreshToken.token,
+      ),
+    ).toBe(true);
+  });
+
+  it('verifies a hand-crafted no-kid HS256 LOGIN token via the legacy fallback (round-trip through getAuthTokensFromLoginToken)', async () => {
+    const forgedLoginPayload: LoginTokenJwtPayload = {
+      sub: sharedLoginPayload.sub,
+      type: JwtTokenTypeEnum.LOGIN,
+      workspaceId: sharedLoginPayload.workspaceId,
+      authProvider: sharedLoginPayload.authProvider ?? AuthProviderEnum.Password,
+    };
+
+    const forgedToken = forgeLegacyHs256Token(
+      forgedLoginPayload,
+      sharedLoginPayload.workspaceId,
+    );
+
+    const decoded = decodeJwtCompleteOrThrow(forgedToken);
+
+    expect(decoded.header.alg).toBe('HS256');
+    expect(decoded.header.kid).toBeUndefined();
+
+    const { data, errors } = await getAuthTokensFromLoginToken({
+      loginToken: forgedToken,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(
+      isNonEmptyString(
+        data?.getAuthTokensFromLoginToken.tokens.accessOrWorkspaceAgnosticToken
+          .token,
+      ),
+    ).toBe(true);
+  });
+
+  it('verifies a hand-crafted no-kid HS256 WORKSPACE_AGNOSTIC token via the legacy fallback (round-trip through signUpInNewWorkspace)', async () => {
+    const forgedAgnosticPayload: WorkspaceAgnosticTokenJwtPayload = {
+      sub: sharedWorkspaceAgnosticPayload.sub,
+      userId: sharedWorkspaceAgnosticPayload.userId,
+      type: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
+      authProvider:
+        sharedWorkspaceAgnosticPayload.authProvider ??
+        AuthProviderEnum.Password,
+    };
+
+    const forgedToken = forgeLegacyHs256Token(
+      forgedAgnosticPayload,
+      sharedWorkspaceAgnosticPayload.userId,
+    );
+
+    const decoded = decodeJwtCompleteOrThrow(forgedToken);
+
+    expect(decoded.header.alg).toBe('HS256');
+    expect(decoded.header.kid).toBeUndefined();
+
+    const { data, errors } = await signUpInNewWorkspace({
+      accessToken: forgedToken,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(isNonEmptyString(data?.signUpInNewWorkspace.workspace.id)).toBe(
+      true,
+    );
+  });
+
+  it('verifies a hand-crafted no-kid HS256 REFRESH token via the legacy fallback (round-trip through renewToken)', async () => {
+    expect(isNonEmptyString(sharedRefreshPayload.jti)).toBe(true);
+
+    // jti is a registered JWT claim and must be provided via the `jwtid`
+    // sign option, not on the payload object (jsonwebtoken throws otherwise).
+    const forgedRefreshPayload = {
+      sub: sharedRefreshPayload.sub,
+      type: JwtTokenTypeEnum.REFRESH,
+      userId: sharedRefreshPayload.userId,
+      workspaceId: sharedRefreshPayload.workspaceId,
+      authProvider:
+        sharedRefreshPayload.authProvider ?? AuthProviderEnum.Password,
+      targetedTokenType:
+        sharedRefreshPayload.targetedTokenType ?? JwtTokenTypeEnum.ACCESS,
+    };
+
+    const forgedToken = jwt.sign(
+      forgedRefreshPayload,
+      generateLegacyHs256Secret(
+        JwtTokenTypeEnum.REFRESH,
+        sharedRefreshPayload.workspaceId ?? sharedRefreshPayload.userId,
+      ),
+      {
+        algorithm: 'HS256',
+        expiresIn: '5m',
+        jwtid: sharedRefreshPayload.jti,
+      },
+    );
+
+    const decoded = decodeJwtCompleteOrThrow(forgedToken);
+
+    expect(decoded.header.alg).toBe('HS256');
+    expect(decoded.header.kid).toBeUndefined();
+
+    const response = await renewTokenMutation(forgedToken);
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      isNonEmptyString(
+        response.body.data?.renewToken.tokens.accessOrWorkspaceAgnosticToken
+          .token,
+      ),
+    ).toBe(true);
+  });
 });
