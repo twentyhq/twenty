@@ -9,7 +9,9 @@ import { BillingUsageService } from 'src/engine/core-modules/billing/services/bi
 
 describe('BillingCreditRolloverService', () => {
   let service: BillingCreditRolloverService;
-  let billingUsageService: jest.Mocked<Pick<BillingUsageService, 'getCurrentPeriodCreditsUsed'>>;
+  let billingUsageService: jest.Mocked<
+    Pick<BillingUsageService, 'getCurrentPeriodCreditsUsed'>
+  >;
   let billingCustomerRepository: jest.Mocked<{ update: jest.Mock }>;
 
   beforeEach(async () => {
@@ -53,7 +55,9 @@ describe('BillingCreditRolloverService', () => {
     };
 
     it('writes rollover amount to creditBalanceMicro when credits unused', async () => {
-      (billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock).mockResolvedValue(300);
+      (
+        billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock
+      ).mockResolvedValue(300);
 
       await service.processRolloverOnPeriodTransition(baseParams);
 
@@ -64,7 +68,9 @@ describe('BillingCreditRolloverService', () => {
     });
 
     it('sets creditBalanceMicro to tierQuantity when no credits used', async () => {
-      (billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock).mockResolvedValue(0);
+      (
+        billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock
+      ).mockResolvedValue(0);
 
       await service.processRolloverOnPeriodTransition(baseParams);
 
@@ -75,7 +81,9 @@ describe('BillingCreditRolloverService', () => {
     });
 
     it('sets creditBalanceMicro to 0 when all credits used', async () => {
-      (billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock).mockResolvedValue(1000);
+      (
+        billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock
+      ).mockResolvedValue(1000);
 
       await service.processRolloverOnPeriodTransition(baseParams);
 
@@ -86,7 +94,9 @@ describe('BillingCreditRolloverService', () => {
     });
 
     it('sets creditBalanceMicro to 0 when usage exceeds tier', async () => {
-      (billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock).mockResolvedValue(1500);
+      (
+        billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock
+      ).mockResolvedValue(1500);
 
       await service.processRolloverOnPeriodTransition(baseParams);
 
@@ -97,7 +107,9 @@ describe('BillingCreditRolloverService', () => {
     });
 
     it('caps rollover at tierQuantity', async () => {
-      (billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock).mockResolvedValue(0);
+      (
+        billingUsageService.getCurrentPeriodCreditsUsed as jest.Mock
+      ).mockResolvedValue(0);
       const params = { ...baseParams, tierQuantity: 500 };
 
       await service.processRolloverOnPeriodTransition(params);

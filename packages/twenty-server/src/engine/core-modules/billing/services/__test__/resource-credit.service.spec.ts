@@ -83,13 +83,17 @@ describe('ResourceCreditService', () => {
         ],
       };
 
-      expect(service.extractResourceCreditPricingInfo(subscription as any)).toBeNull();
+      expect(
+        service.extractResourceCreditPricingInfo(subscription as any),
+      ).toBeNull();
     });
 
     it('returns null when credit_amount is 0', () => {
       const subscription = buildSubscriptionWithResourceCredit(0);
 
-      expect(service.extractResourceCreditPricingInfo(subscription as any)).toBeNull();
+      expect(
+        service.extractResourceCreditPricingInfo(subscription as any),
+      ).toBeNull();
     });
 
     it('returns null when matching price not found', () => {
@@ -100,14 +104,19 @@ describe('ResourceCreditService', () => {
             billingProduct: {
               metadata: { productKey: BillingProductKey.RESOURCE_CREDIT },
               billingPrices: [
-                { stripePriceId: 'price_rc_other', metadata: { credit_amount: '500' } },
+                {
+                  stripePriceId: 'price_rc_other',
+                  metadata: { credit_amount: '500' },
+                },
               ],
             },
           },
         ],
       };
 
-      expect(service.extractResourceCreditPricingInfo(subscription as any)).toBeNull();
+      expect(
+        service.extractResourceCreditPricingInfo(subscription as any),
+      ).toBeNull();
     });
   });
 

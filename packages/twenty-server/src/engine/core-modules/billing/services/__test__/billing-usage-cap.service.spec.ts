@@ -6,7 +6,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -14,20 +13,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 describe('BillingUsageCapService', () => {
   let service: BillingUsageCapService;
   let clickHouseService: jest.Mocked<ClickHouseService>;
-  let resourceCreditService: jest.Mocked<ResourceCreditService>;
   let twentyConfigService: jest.Mocked<TwentyConfigService>;
-
-  const buildSubscription = (
-    overrides: Partial<BillingSubscriptionEntity> = {},
-  ): BillingSubscriptionEntity =>
-    ({
-      id: 'sub_123',
-      workspaceId: 'workspace_123',
-      stripeCustomerId: 'cus_123',
-      currentPeriodStart: new Date('2026-04-01T00:00:00Z'),
-      currentPeriodEnd: new Date('2026-05-01T00:00:00Z'),
-      ...overrides,
-    }) as BillingSubscriptionEntity;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -63,7 +49,6 @@ describe('BillingUsageCapService', () => {
 
     service = module.get<BillingUsageCapService>(BillingUsageCapService);
     clickHouseService = module.get(ClickHouseService);
-    resourceCreditService = module.get(ResourceCreditService);
     twentyConfigService = module.get(TwentyConfigService);
   });
 

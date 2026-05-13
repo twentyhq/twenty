@@ -112,7 +112,6 @@ export class BillingWebhookInvoiceService {
     if (periodStart && !isFirstPeriodAfterTrial) {
       await this.processRollover(subscription, new Date(periodStart * 1000));
     }
-
   }
 
   private async processRollover(
@@ -223,5 +222,4 @@ export class BillingWebhookInvoiceService {
       suspendedAt: new Date(),
     });
   }
-
 }

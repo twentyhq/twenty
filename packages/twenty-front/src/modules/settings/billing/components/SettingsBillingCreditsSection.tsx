@@ -55,12 +55,8 @@ export const SettingsBillingCreditsSection = ({
 
   const { getResourceCreditUsage } = useGetResourceCreditUsage();
 
-  const {
-    usedCredits,
-    grantedCredits,
-    totalGrantedCredits,
-    rolloverCredits,
-  } = getResourceCreditUsage();
+  const { usedCredits, grantedCredits, totalGrantedCredits, rolloverCredits } =
+    getResourceCreditUsage();
 
   const progressBarValue = (usedCredits / totalGrantedCredits) * 100;
 

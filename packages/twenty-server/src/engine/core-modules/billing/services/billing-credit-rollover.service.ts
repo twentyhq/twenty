@@ -41,5 +41,4 @@ export class BillingCreditRolloverService {
       { creditBalanceMicro: rolloverAmount },
     );
   }
-
 }

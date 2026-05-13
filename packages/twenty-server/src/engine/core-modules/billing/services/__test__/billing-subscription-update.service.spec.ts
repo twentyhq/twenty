@@ -39,12 +39,8 @@ import {
   LICENSE_PRICE_PRO_MONTH_ID,
   LICENSE_PRICE_PRO_YEAR_ID,
   METER_PRICE_ENTERPRISE_MONTH_ID,
-  METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID,
-  METER_PRICE_ENTERPRISE_MONTH_TIER_LOW_ID,
   METER_PRICE_ENTERPRISE_YEAR_ID,
   METER_PRICE_PRO_MONTH_ID,
-  METER_PRICE_PRO_MONTH_TIER_HIGH_ID,
-  METER_PRICE_PRO_MONTH_TIER_LOW_ID,
   METER_PRICE_PRO_YEAR_ID,
 } from './utils/price.constants';
 
@@ -56,7 +52,6 @@ describe('BillingSubscriptionUpdateService', () => {
   >;
   let billingPriceRepository: jest.Mocked<Repository<BillingPriceEntity>>;
   let billingProductService: jest.Mocked<BillingProductService>;
-  let billingPriceService: BillingPriceService;
   let stripeSubscriptionScheduleService: jest.Mocked<StripeSubscriptionScheduleService>;
   let stripeSubscriptionService: jest.Mocked<StripeSubscriptionService>;
   let billingSubscriptionPhaseService: jest.Mocked<BillingSubscriptionPhaseService>;
@@ -170,7 +165,6 @@ describe('BillingSubscriptionUpdateService', () => {
     );
     billingPriceRepository = module.get(getRepositoryToken(BillingPriceEntity));
     billingProductService = module.get(BillingProductService);
-    billingPriceService = module.get(BillingPriceService);
     stripeSubscriptionScheduleService = module.get(
       StripeSubscriptionScheduleService,
     );
@@ -179,7 +173,6 @@ describe('BillingSubscriptionUpdateService', () => {
       BillingSubscriptionPhaseService,
     );
     billingSubscriptionService = module.get(BillingSubscriptionService);
-
   });
 
   afterEach(() => {
@@ -250,7 +243,11 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
               quantity: 1,
             },
-            { id: 'si_resource_credit', price: METER_PRICE_ENTERPRISE_MONTH_ID , quantity: 1 },
+            {
+              id: 'si_resource_credit',
+              price: METER_PRICE_ENTERPRISE_MONTH_ID,
+              quantity: 1,
+            },
           ],
           proration_behavior: 'always_invoice',
           metadata: { plan: BillingPlanKey.ENTERPRISE },
@@ -372,7 +369,11 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
               quantity: 1,
             },
-            { id: 'si_resource_credit', price: METER_PRICE_ENTERPRISE_MONTH_ID , quantity: 1 },
+            {
+              id: 'si_resource_credit',
+              price: METER_PRICE_ENTERPRISE_MONTH_ID,
+              quantity: 1,
+            },
           ],
           proration_behavior: 'always_invoice',
           metadata: { plan: BillingPlanKey.ENTERPRISE },
@@ -603,7 +604,6 @@ describe('BillingSubscriptionUpdateService', () => {
     });
   });
 
-
   describe('updateSubscription - Interval update', () => {
     it('should change interval from monthly to yearly - without schedule', async () => {
       arrangeBillingSubscriptionRepositoryFindOneOrFail(
@@ -668,7 +668,11 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_PRO_YEAR_ID,
               quantity: 1,
             },
-            { id: 'si_resource_credit', price: METER_PRICE_PRO_YEAR_ID , quantity: 1 },
+            {
+              id: 'si_resource_credit',
+              price: METER_PRICE_PRO_YEAR_ID,
+              quantity: 1,
+            },
           ],
           proration_behavior: 'create_prorations',
           billing_cycle_anchor: 'now',
@@ -785,7 +789,11 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_ENTERPRISE_YEAR_ID,
               quantity: 1,
             },
-            { id: 'si_resource_credit', price: METER_PRICE_ENTERPRISE_YEAR_ID , quantity: 1 },
+            {
+              id: 'si_resource_credit',
+              price: METER_PRICE_ENTERPRISE_YEAR_ID,
+              quantity: 1,
+            },
           ],
           proration_behavior: 'create_prorations',
           billing_cycle_anchor: 'now',
@@ -1064,7 +1072,11 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_PRO_MONTH_ID,
               quantity: 2,
             },
-            { id: 'si_resource_credit', price: METER_PRICE_PRO_MONTH_ID , quantity: 1 },
+            {
+              id: 'si_resource_credit',
+              price: METER_PRICE_PRO_MONTH_ID,
+              quantity: 1,
+            },
           ],
           proration_behavior: 'create_prorations',
         },
@@ -1164,7 +1176,11 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_ENTERPRISE_MONTH_ID,
               quantity: 2,
             },
-            { id: 'si_resource_credit', price: METER_PRICE_ENTERPRISE_MONTH_ID , quantity: 1 },
+            {
+              id: 'si_resource_credit',
+              price: METER_PRICE_ENTERPRISE_MONTH_ID,
+              quantity: 1,
+            },
           ],
           proration_behavior: 'create_prorations',
         },
@@ -1234,7 +1250,11 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_PRO_MONTH_ID,
               quantity: 1,
             },
-            { id: 'si_resource_credit', price: METER_PRICE_PRO_MONTH_ID , quantity: 1 },
+            {
+              id: 'si_resource_credit',
+              price: METER_PRICE_PRO_MONTH_ID,
+              quantity: 1,
+            },
           ],
           proration_behavior: 'create_prorations',
         },
@@ -1334,7 +1354,11 @@ describe('BillingSubscriptionUpdateService', () => {
               price: LICENSE_PRICE_PRO_MONTH_ID,
               quantity: 1,
             },
-            { id: 'si_resource_credit', price: METER_PRICE_PRO_MONTH_ID , quantity: 1 },
+            {
+              id: 'si_resource_credit',
+              price: METER_PRICE_PRO_MONTH_ID,
+              quantity: 1,
+            },
           ],
           proration_behavior: 'create_prorations',
         },

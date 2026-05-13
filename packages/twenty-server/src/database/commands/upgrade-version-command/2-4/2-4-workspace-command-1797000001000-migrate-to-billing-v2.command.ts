@@ -20,7 +20,11 @@ export class MigrateToBillingV2Command extends ActiveOrSuspendedWorkspaceCommand
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace({ workspaceId }: RunOnWorkspaceArgs): Promise<void> {
-    this.logger.debug(`Workspace ${workspaceId}: already on resource-credit billing, nothing to do`);
+  override async runOnWorkspace({
+    workspaceId,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    this.logger.debug(
+      `Workspace ${workspaceId}: already on resource-credit billing, nothing to do`,
+    );
   }
 }
