@@ -106,6 +106,7 @@ exports[`Sync application should fail when creating permissions on a standard ro
             },
           ],
           "flatEntityMinimalInformation": {
+            "permissionFlagUniversalIdentifier": Any<String>,
             "roleUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },

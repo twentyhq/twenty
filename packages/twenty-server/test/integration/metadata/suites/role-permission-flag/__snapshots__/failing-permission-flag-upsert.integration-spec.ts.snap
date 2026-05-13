@@ -34,6 +34,7 @@ exports[`Permission flag upsert should fail when role is not editable (system ro
             },
           ],
           "flatEntityMinimalInformation": {
+            "permissionFlagUniversalIdentifier": Any<String>,
             "roleUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
