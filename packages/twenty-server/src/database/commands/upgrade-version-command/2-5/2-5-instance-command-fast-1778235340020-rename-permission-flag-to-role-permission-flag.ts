@@ -15,6 +15,10 @@ export class RenamePermissionFlagToRolePermissionFlagFastInstanceCommand
     );
 
     await queryRunner.query(
+      `ALTER TABLE "core"."rolePermissionFlag" RENAME CONSTRAINT "PK_a02789db60620a1e9f90147b50f" TO "PK_76591adc8035c2e7b0cd6115136"`,
+    );
+
+    await queryRunner.query(
       `ALTER TABLE "core"."rolePermissionFlag" RENAME CONSTRAINT "IDX_PERMISSION_FLAG_FLAG_ROLE_ID_UNIQUE" TO "IDX_ROLE_PERMISSION_FLAG_FLAG_ROLE_ID_UNIQUE"`,
     );
 
@@ -85,6 +89,10 @@ export class RenamePermissionFlagToRolePermissionFlagFastInstanceCommand
 
     await queryRunner.query(
       `ALTER TABLE "core"."rolePermissionFlag" RENAME CONSTRAINT "IDX_ROLE_PERMISSION_FLAG_FLAG_ROLE_ID_UNIQUE" TO "IDX_PERMISSION_FLAG_FLAG_ROLE_ID_UNIQUE"`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."rolePermissionFlag" RENAME CONSTRAINT "PK_76591adc8035c2e7b0cd6115136" TO "PK_a02789db60620a1e9f90147b50f"`,
     );
 
     await queryRunner.query(

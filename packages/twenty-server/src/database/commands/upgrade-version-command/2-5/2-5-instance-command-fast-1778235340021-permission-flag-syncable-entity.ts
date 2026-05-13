@@ -26,7 +26,7 @@ export class PermissionFlagSyncableEntityFastInstanceCommand
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "IDX_PERMISSION_FLAG_KEY_WORKSPACE_ID_UNIQUE" UNIQUE ("key", "workspaceId"),
-        CONSTRAINT "PK_permissionFlag_id" PRIMARY KEY ("id")
+        CONSTRAINT "PK_a02789db60620a1e9f90147b50f" PRIMARY KEY ("id")
       )`,
     );
 
