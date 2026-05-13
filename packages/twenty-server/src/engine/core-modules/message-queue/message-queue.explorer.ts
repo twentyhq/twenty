@@ -137,7 +137,7 @@ export class MessageQueueExplorer implements OnModuleInit {
     queue: MessageQueueService,
     options?: MessageQueueWorkerOptions,
   ) {
-    queue.work(async (job) => {
+    await queue.work(async (job) => {
       for (const processorGroup of processorGroupCollection) {
         await this.handleProcessor(processorGroup, job);
       }

@@ -8,6 +8,11 @@ import {
 
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
+// Synchronous driver for tests and local dev. Jobs are processed
+// sequentially inside `add`/`addCron` via `processJob`, not in a
+// background worker. Methods are marked `async` to satisfy the
+// MessageQueueDriver interface; this is a no-op since the bodies
+// are purely synchronous (equivalent to returning Promise.resolve()).
 export class SyncDriver implements MessageQueueDriver {
   private readonly logger = new Logger(SyncDriver.name);
   private workersMap: {
@@ -47,10 +52,10 @@ export class SyncDriver implements MessageQueueDriver {
     this.logger.log(`Removing '${queueName}' cron job with SyncDriver`);
   }
 
-  work<T extends MessageQueueJobData>(
+  async work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void> | void,
-  ) {
+  ): Promise<void> {
     this.logger.log(`Registering handler for queue: ${queueName}`);
     this.workersMap[queueName] = handler;
   }
