@@ -126,19 +126,27 @@ export class UpgradeCommand extends CommandRunner {
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
 
       this.logger.log(
-        formatUpgradeLog('sequence.initialized', {
-          stepCount: sequence.length,
-          dryRun: options.dryRun ?? false,
+        formatUpgradeLog({
+          message: `Initialized upgrade sequence: ${sequence.length} step(s)`,
+          event: 'sequence.initialized',
+          fields: {
+            stepCount: sequence.length,
+            dryRun: options.dryRun ?? false,
+          },
         }),
       );
 
       for (const [index, step] of sequence.entries()) {
         this.logger.verbose(
-          formatUpgradeLog('sequence.step', {
-            index,
-            kind: step.kind,
-            name: step.name,
-            version: step.version,
+          formatUpgradeLog({
+            message: `  [${index}] ${step.kind} — ${step.name} (${step.version})`,
+            event: 'sequence.step',
+            fields: {
+              index,
+              kind: step.kind,
+              name: step.name,
+              version: step.version,
+            },
           }),
         );
       }
@@ -155,10 +163,14 @@ export class UpgradeCommand extends CommandRunner {
         });
 
       this.logger.log(
-        formatUpgradeLog('summary', {
-          totalSuccesses,
-          totalFailures,
-          dryRun: options.dryRun ?? false,
+        formatUpgradeLog({
+          message: `Upgrade summary: ${totalSuccesses} workspace(s) succeeded, ${totalFailures} workspace(s) failed`,
+          event: 'summary',
+          fields: {
+            totalSuccesses,
+            totalFailures,
+            dryRun: options.dryRun ?? false,
+          },
         }),
       );
 
@@ -168,9 +180,14 @@ export class UpgradeCommand extends CommandRunner {
         );
       }
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
       this.logger.error(
-        formatUpgradeLog('aborted', {
-          error: error instanceof Error ? error.message : String(error),
+        formatUpgradeLog({
+          message: `Upgrade failed: ${errorMessage}`,
+          event: 'aborted',
+          fields: { error: errorMessage },
         }),
       );
       throw error;

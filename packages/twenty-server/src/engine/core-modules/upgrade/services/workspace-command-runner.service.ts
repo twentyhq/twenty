@@ -36,12 +36,18 @@ export class WorkspaceCommandRunnerService {
   }: RunWorkspaceCommandsArgs): Promise<void> {
     const { workspaceId, index, total } = iteratorContext;
 
+    const dryRunPrefix = options.dryRun ? '(dry run) ' : '';
+
     this.logger.log(
-      formatUpgradeLog('workspace.start', {
-        workspaceId,
-        index: index + 1,
-        total,
-        dryRun: options.dryRun ?? false,
+      formatUpgradeLog({
+        message: `${dryRunPrefix}Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
+        event: 'workspace.start',
+        fields: {
+          workspaceId,
+          index: index + 1,
+          total,
+          dryRun: options.dryRun ?? false,
+        },
       }),
     );
 
@@ -60,10 +66,14 @@ export class WorkspaceCommandRunnerService {
       }
 
       this.logger.log(
-        formatUpgradeLog('workspace.success', {
-          workspaceId,
-          executedByVersion,
-          dryRun: options.dryRun ?? false,
+        formatUpgradeLog({
+          message: `Upgrade for workspace ${workspaceId} completed.`,
+          event: 'workspace.success',
+          fields: {
+            workspaceId,
+            executedByVersion,
+            dryRun: options.dryRun ?? false,
+          },
         }),
       );
     } finally {
@@ -77,10 +87,14 @@ export class WorkspaceCommandRunnerService {
     try {
       await this.upgradeStatusService.invalidateInstanceAndAllWorkspacesStatus();
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
       this.logger.warn(
-        formatUpgradeLog('cache.invalidate.failed', {
-          workspaceId,
-          error: error instanceof Error ? error.message : String(error),
+        formatUpgradeLog({
+          message: `Failed to invalidate upgrade-status cache for workspace ${workspaceId}: ${errorMessage}`,
+          event: 'cache.invalidate.failed',
+          fields: { workspaceId, error: errorMessage },
         }),
       );
     }
@@ -131,13 +145,20 @@ export class WorkspaceCommandRunnerService {
         });
       }
 
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
       this.logger.error(
-        formatUpgradeLog('workspace.failed', {
-          workspaceId,
-          command: name,
-          executedByVersion,
-          dryRun: options.dryRun ?? false,
-          error: error instanceof Error ? error.message : String(error),
+        formatUpgradeLog({
+          message: `Workspace ${workspaceId} failed on ${name}: ${errorMessage}`,
+          event: 'workspace.failed',
+          fields: {
+            workspaceId,
+            command: name,
+            executedByVersion,
+            dryRun: options.dryRun ?? false,
+            error: errorMessage,
+          },
         }),
         error instanceof Error ? error.stack : undefined,
       );

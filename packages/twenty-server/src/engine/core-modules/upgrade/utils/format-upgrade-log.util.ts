@@ -1,36 +1,48 @@
-type UpgradeLogValue = string | number | boolean | null | undefined;
+import { isDefined } from 'twenty-shared/utils';
 
-type UpgradeLogFields = Record<string, UpgradeLogValue>;
+type UpgradeLogScalar = string | number | boolean;
+
+type UpgradeLogFields = Record<string, UpgradeLogScalar | null | undefined>;
+
+type FormatUpgradeLogParams = {
+  message: string;
+  event: string;
+  fields?: UpgradeLogFields;
+};
 
 const UPGRADE_LOG_PREFIX = '[upgrade]';
 
-const formatValue = (value: UpgradeLogValue): string | undefined => {
-  if (value === undefined || value === null) {
-    return undefined;
-  }
-
+const escapeForLogfmt = (value: UpgradeLogScalar): string => {
   const stringified = String(value);
 
-  if (/[\s"=]/.test(stringified)) {
-    return `"${stringified.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+  if (!/[\s"=]/.test(stringified)) {
+    return stringified;
   }
 
-  return stringified;
+  return `"${stringified.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 };
 
-export const formatUpgradeLog = (
-  event: string,
-  fields: UpgradeLogFields = {},
-): string => {
-  const parts = [`event=${event}`];
+/**
+ * Emits a log line that reads naturally for humans yet is parseable by Loki's
+ * `| logfmt` decoder. The shape is:
+ *
+ *   [upgrade] <message> | event=<event> key=value ...
+ *
+ * The free-text message keeps a `git log`-style narrative for engineers
+ * scrolling pod logs; the structured tail lets the dashboard panel pull out
+ * `event`, `workspaceId`, `command`, `error`, etc.
+ */
+export const formatUpgradeLog = ({
+  message,
+  event,
+  fields = {},
+}: FormatUpgradeLogParams): string => {
+  const tailParts: string[] = [`event=${event}`];
 
   for (const [key, value] of Object.entries(fields)) {
-    const formatted = formatValue(value);
-
-    if (formatted !== undefined) {
-      parts.push(`${key}=${formatted}`);
-    }
+    if (!isDefined(value)) continue;
+    tailParts.push(`${key}=${escapeForLogfmt(value)}`);
   }
 
-  return `${UPGRADE_LOG_PREFIX} ${parts.join(' ')}`;
+  return `${UPGRADE_LOG_PREFIX} ${message} | ${tailParts.join(' ')}`;
 };

@@ -47,9 +47,10 @@ export class InstanceCommandRunnerService {
 
     if (isAlreadyCompleted) {
       this.logger.log(
-        formatUpgradeLog('instance.skipped', {
-          command: name,
-          reason: 'already-executed',
+        formatUpgradeLog({
+          message: `${name} already executed, skipping`,
+          event: 'instance.skipped',
+          fields: { command: name, reason: 'already-executed' },
         }),
       );
 
@@ -81,9 +82,10 @@ export class InstanceCommandRunnerService {
       await queryRunner.commitTransaction();
 
       this.logger.log(
-        formatUpgradeLog('instance.success', {
-          command: name,
-          executedByVersion,
+        formatUpgradeLog({
+          message: `${name} executed successfully`,
+          event: 'instance.success',
+          fields: { command: name, executedByVersion },
         }),
       );
 
@@ -105,11 +107,18 @@ export class InstanceCommandRunnerService {
         error,
       });
 
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
       this.logger.error(
-        formatUpgradeLog('instance.failed', {
-          command: name,
-          executedByVersion,
-          error: error instanceof Error ? error.message : String(error),
+        formatUpgradeLog({
+          message: `${name} failed: ${errorMessage}`,
+          event: 'instance.failed',
+          fields: {
+            command: name,
+            executedByVersion,
+            error: errorMessage,
+          },
         }),
         error instanceof Error ? error.stack : String(error),
       );
@@ -125,10 +134,17 @@ export class InstanceCommandRunnerService {
     try {
       await this.upgradeStatusService.invalidateInstanceAndAllWorkspacesStatus();
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
       this.logger.warn(
-        formatUpgradeLog('cache.invalidate.failed', {
-          scope: 'instance-and-all-workspaces',
-          error: error instanceof Error ? error.message : String(error),
+        formatUpgradeLog({
+          message: `Failed to invalidate upgrade-status cache: ${errorMessage}`,
+          event: 'cache.invalidate.failed',
+          fields: {
+            scope: 'instance-and-all-workspaces',
+            error: errorMessage,
+          },
         }),
       );
     }
@@ -151,9 +167,10 @@ export class InstanceCommandRunnerService {
 
     if (isAlreadyCompleted) {
       this.logger.log(
-        formatUpgradeLog('instance.skipped', {
-          command: name,
-          reason: 'already-executed',
+        formatUpgradeLog({
+          message: `${name} already executed, skipping`,
+          event: 'instance.skipped',
+          fields: { command: name, reason: 'already-executed' },
         }),
       );
 
@@ -166,12 +183,18 @@ export class InstanceCommandRunnerService {
 
       try {
         this.logger.log(
-          formatUpgradeLog('instance.data_migration.start', { command: name }),
+          formatUpgradeLog({
+            message: `${name} starting data migration...`,
+            event: 'instance.data_migration.start',
+            fields: { command: name },
+          }),
         );
         await command.runDataMigration(this.dataSource);
         this.logger.log(
-          formatUpgradeLog('instance.data_migration.success', {
-            command: name,
+          formatUpgradeLog({
+            message: `${name} data migration completed`,
+            event: 'instance.data_migration.success',
+            fields: { command: name },
           }),
         );
       } catch (error) {
@@ -187,11 +210,18 @@ export class InstanceCommandRunnerService {
           error,
         });
 
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+
         this.logger.error(
-          formatUpgradeLog('instance.data_migration.failed', {
-            command: name,
-            executedByVersion,
-            error: error instanceof Error ? error.message : String(error),
+          formatUpgradeLog({
+            message: `${name} data migration failed: ${errorMessage}`,
+            event: 'instance.data_migration.failed',
+            fields: {
+              command: name,
+              executedByVersion,
+              error: errorMessage,
+            },
           }),
           error instanceof Error ? error.stack : String(error),
         );
