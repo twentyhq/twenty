@@ -39,7 +39,7 @@ const restoreCheckConstraint = async (
   );
 };
 
-describe('EncryptSigningKeyPrivateKeysSlowInstanceCommand (integration)', () => {
+describe('2-5 slow instance command 1798000007000 - EncryptSigningKeyPrivateKeysSlowInstanceCommand (integration)', () => {
   let dataSource: DataSource;
   let secretEncryptionService: SecretEncryptionService;
   let command: EncryptSigningKeyPrivateKeysSlowInstanceCommand;

@@ -22,7 +22,7 @@ config({
 // ConfigVariables, so the slow command's metadata scan picks it up.
 const SENSITIVE_STRING_KEY = 'EMAIL_SMTP_USER';
 
-describe('EncryptSensitiveConfigStorageSlowInstanceCommand (integration)', () => {
+describe('2-5 slow instance command 1798000008000 - EncryptSensitiveConfigStorageSlowInstanceCommand (integration)', () => {
   let dataSource: DataSource;
   let secretEncryptionService: SecretEncryptionService;
   let command: EncryptSensitiveConfigStorageSlowInstanceCommand;

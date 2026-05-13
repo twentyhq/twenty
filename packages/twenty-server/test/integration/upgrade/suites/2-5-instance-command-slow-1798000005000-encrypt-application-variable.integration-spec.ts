@@ -39,7 +39,7 @@ const restoreCheckConstraint = async (
   );
 };
 
-describe('EncryptApplicationVariableSlowInstanceCommand (integration)', () => {
+describe('2-5 slow instance command 1798000005000 - EncryptApplicationVariableSlowInstanceCommand (integration)', () => {
   let dataSource: DataSource;
   let secretEncryptionService: SecretEncryptionService;
   let command: EncryptApplicationVariableSlowInstanceCommand;
