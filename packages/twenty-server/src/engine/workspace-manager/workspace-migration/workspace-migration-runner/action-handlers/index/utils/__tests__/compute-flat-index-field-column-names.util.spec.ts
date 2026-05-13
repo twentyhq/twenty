@@ -36,6 +36,10 @@ describe('computeFlatIndexFieldColumnNames', () => {
         flatIndexFieldMetadatas,
         flatFieldMetadataMaps,
       }),
-    ).toEqual(['phonePrimaryPhoneNumber', 'phonePrimaryPhoneCallingCode']);
+    ).toEqual([
+      'phonePrimaryPhoneNumber',
+      'phonePrimaryPhoneCountryCode',
+      'phonePrimaryPhoneCallingCode',
+    ]);
   });
 });
