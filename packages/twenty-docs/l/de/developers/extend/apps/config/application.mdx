@@ -32,7 +32,7 @@ export default defineApplication({
 Notizen:
 
 * `universalIdentifier`-Felder sind deterministische IDs, die Ihnen gehören. Erzeugen Sie sie einmal und halten Sie sie über Synchronisierungen hinweg stabil.
-* `applicationVariables` werden zu Umgebungsvariablen für Ihre Funktionen und Frontend-Komponenten (z. B. ist `DEFAULT_RECIPIENT_NAME` als `process.env.DEFAULT_RECIPIENT_NAME` verfügbar).
+* `applicationVariables` werden zu Umgebungsvariablen für Ihre Funktionen und Front-Komponenten. In Logikfunktionen (serverseitig) sind sie als `process.env.VARIABLE_NAME` verfügbar. In Front-Komponenten verwenden Sie `getApplicationVariable('VARIABLE_NAME')` aus `twenty-sdk/front-component`. Variablen, die mit `isSecret: true` gekennzeichnet sind, werden nur in Logikfunktionen injiziert. Front-Komponenten erhalten nur nicht-geheime Variablen.
 * Die Standardrolle wird automatisch aus der Rollen-Datei erkannt, die mit [`defineApplicationRole()`](/l/de/developers/extend/apps/config/roles) markiert ist – Sie müssen sie nicht aus `defineApplication()` referenzieren.
 * Pre- und Post-Installationsfunktionen werden während des Manifest-Builds automatisch erkannt — Sie müssen sie in `defineApplication()` nicht referenzieren.
 * Die explizite Übergabe von `defaultRoleUniversalIdentifier` wird für die Abwärtskompatibilität weiterhin unterstützt, ist jedoch zugunsten von `defineApplicationRole()` veraltet.
