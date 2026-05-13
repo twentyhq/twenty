@@ -33,6 +33,7 @@ import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
@@ -95,6 +96,7 @@ export class RoleResolver {
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
     private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -234,8 +236,19 @@ export class RoleResolver {
         workspaceId: workspace.id,
         input: upsertPermissionFlagsInput,
       });
-    return flatRolePermissionFlags.map(
-      fromFlatRolePermissionFlagToRolePermissionFlagDto,
+    const { flatPermissionFlagMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: workspace.id,
+          flatMapsKeys: ['flatPermissionFlagMaps'],
+        },
+      );
+
+    return flatRolePermissionFlags.map((flatRolePermissionFlag) =>
+      fromFlatRolePermissionFlagToRolePermissionFlagDto(
+        flatRolePermissionFlag,
+        flatPermissionFlagMaps,
+      ),
     );
   }
 

@@ -39,6 +39,7 @@ export class CreatePermissionFlagActionHandlerService extends WorkspaceMigration
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
+        rolePermissionFlagIds: [],
         ...emptyUniversalForeignKeyAggregators,
       },
     };

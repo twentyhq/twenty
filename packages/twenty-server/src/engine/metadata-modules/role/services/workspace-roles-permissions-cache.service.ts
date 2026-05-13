@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type ObjectsPermissions,
@@ -73,6 +76,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       }),
       this.rolePermissionFlagRepository.find({
         where: { workspaceId },
+        relations: ['permissionFlag'],
       }),
       this.fieldPermissionRepository.find({
         where: { workspaceId },
@@ -274,9 +278,13 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     permissionFlagType: PermissionFlagType,
   ): boolean {
     const hasPermissionFromRole = role.canUpdateAllSettings;
+    const permissionFlagUniversalIdentifier =
+      SystemPermissionFlag[permissionFlagType];
     const hasPermissionFromSettingPermissions = isDefined(
       rolePermissionFlags.find(
-        (rolePermissionFlag) => rolePermissionFlag.flag === permissionFlagType,
+        (rolePermissionFlag) =>
+          rolePermissionFlag.permissionFlag?.universalIdentifier ===
+          permissionFlagUniversalIdentifier,
       ),
     );
 

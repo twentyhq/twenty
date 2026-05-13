@@ -10,31 +10,33 @@ export const fromCreateRolePermissionFlagInputToFlatRolePermissionFlagToCreate =
   ({
     createRolePermissionFlagInput,
     flatApplication,
+    flatPermissionFlagMaps,
     flatRoleMaps,
   }: {
     createRolePermissionFlagInput: CreateRolePermissionFlagInput;
     flatApplication: FlatApplication;
   } & Pick<
     AllFlatEntityMaps,
-    'flatRoleMaps'
+    'flatPermissionFlagMaps' | 'flatRoleMaps'
   >): UniversalFlatRolePermissionFlag & {
     id: string;
   } => {
-    const { roleId, flag, universalIdentifier } = createRolePermissionFlagInput;
+    const { roleId, permissionFlagId, universalIdentifier } =
+      createRolePermissionFlagInput;
     const now = new Date().toISOString();
 
-    const { roleUniversalIdentifier } =
+    const { permissionFlagUniversalIdentifier, roleUniversalIdentifier } =
       resolveEntityRelationUniversalIdentifiers({
         metadataName: 'rolePermissionFlag',
-        foreignKeyValues: { roleId },
-        flatEntityMaps: { flatRoleMaps },
+        foreignKeyValues: { permissionFlagId, roleId },
+        flatEntityMaps: { flatPermissionFlagMaps, flatRoleMaps },
       });
 
     return {
       id: v4(),
-      flag,
       universalIdentifier: universalIdentifier ?? v4(),
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      permissionFlagUniversalIdentifier,
       roleUniversalIdentifier,
       createdAt: now,
       updatedAt: now,

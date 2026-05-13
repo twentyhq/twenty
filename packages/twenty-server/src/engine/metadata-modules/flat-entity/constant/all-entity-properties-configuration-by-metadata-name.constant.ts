@@ -1182,10 +1182,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   rolePermissionFlag: {
-    flag: {
+    permissionFlagId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'permissionFlagUniversalIdentifier',
     },
     roleId: {
       toCompare: true,

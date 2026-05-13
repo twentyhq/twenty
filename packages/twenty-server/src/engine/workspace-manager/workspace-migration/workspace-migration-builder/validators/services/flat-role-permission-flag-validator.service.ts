@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,6 +17,7 @@ export class FlatRolePermissionFlagValidatorService {
   validateFlatRolePermissionFlagCreation({
     flatEntityToValidate: flatRolePermissionFlagToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatPermissionFlagMaps,
       flatRolePermissionFlagMaps: optimisticFlatRolePermissionFlagMaps,
       flatRoleMaps,
     },
@@ -29,6 +29,8 @@ export class FlatRolePermissionFlagValidatorService {
       flatEntityMinimalInformation: {
         universalIdentifier:
           flatRolePermissionFlagToValidate.universalIdentifier,
+        permissionFlagUniversalIdentifier:
+          flatRolePermissionFlagToValidate.permissionFlagUniversalIdentifier,
         roleUniversalIdentifier:
           flatRolePermissionFlagToValidate.roleUniversalIdentifier,
       },
@@ -44,8 +46,8 @@ export class FlatRolePermissionFlagValidatorService {
     if (isDefined(existingByUniversalId)) {
       validationResult.errors.push({
         code: PermissionsExceptionCode.INVALID_SETTING,
-        message: t`Permission flag with universal identifier ${flatRolePermissionFlagToValidate.universalIdentifier} already exists`,
-        userFriendlyMessage: msg`Permission flag already exists`,
+        message: t`Role permission flag with universal identifier ${flatRolePermissionFlagToValidate.universalIdentifier} already exists`,
+        userFriendlyMessage: msg`Role permission flag already exists`,
       });
     }
 
@@ -78,16 +80,16 @@ export class FlatRolePermissionFlagValidatorService {
       }
     }
 
-    const isValidFlag =
-      isDefined(flatRolePermissionFlagToValidate.flag) &&
-      Object.values(PermissionFlagType).includes(
-        flatRolePermissionFlagToValidate.flag,
-      );
+    const referencedPermissionFlag = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
+        flatRolePermissionFlagToValidate.permissionFlagUniversalIdentifier,
+      flatEntityMaps: flatPermissionFlagMaps,
+    });
 
-    if (!isValidFlag) {
+    if (!isDefined(referencedPermissionFlag)) {
       validationResult.errors.push({
         code: PermissionsExceptionCode.INVALID_SETTING,
-        message: t`Invalid permission flag value`,
+        message: t`Permission flag not found`,
         userFriendlyMessage: msg`Invalid permission setting`,
       });
     }
@@ -99,7 +101,8 @@ export class FlatRolePermissionFlagValidatorService {
         isDefined(pf) &&
         pf.roleUniversalIdentifier ===
           flatRolePermissionFlagToValidate.roleUniversalIdentifier &&
-        pf.flag === flatRolePermissionFlagToValidate.flag &&
+        pf.permissionFlagUniversalIdentifier ===
+          flatRolePermissionFlagToValidate.permissionFlagUniversalIdentifier &&
         pf.universalIdentifier !==
           flatRolePermissionFlagToValidate.universalIdentifier,
     );
@@ -119,6 +122,7 @@ export class FlatRolePermissionFlagValidatorService {
     universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatPermissionFlagMaps,
       flatRolePermissionFlagMaps: optimisticFlatRolePermissionFlagMaps,
       flatRoleMaps,
     },
@@ -183,15 +187,17 @@ export class FlatRolePermissionFlagValidatorService {
       }
     }
 
-    if (isDefined(flatEntityUpdate.flag)) {
-      const isValidFlag = Object.values(PermissionFlagType).includes(
-        flatEntityUpdate.flag as PermissionFlagType,
-      );
+    if (isDefined(flatEntityUpdate.permissionFlagUniversalIdentifier)) {
+      const referencedPermissionFlag = findFlatEntityByUniversalIdentifier({
+        universalIdentifier:
+          flatEntityUpdate.permissionFlagUniversalIdentifier as string,
+        flatEntityMaps: flatPermissionFlagMaps,
+      });
 
-      if (!isValidFlag) {
+      if (!isDefined(referencedPermissionFlag)) {
         validationResult.errors.push({
           code: PermissionsExceptionCode.INVALID_SETTING,
-          message: t`Invalid permission flag value`,
+          message: t`Permission flag not found`,
           userFriendlyMessage: msg`Invalid permission setting`,
         });
       }
@@ -204,7 +210,8 @@ export class FlatRolePermissionFlagValidatorService {
         isDefined(pf) &&
         pf.roleUniversalIdentifier ===
           updatedFlatRolePermissionFlag.roleUniversalIdentifier &&
-        pf.flag === updatedFlatRolePermissionFlag.flag &&
+        pf.permissionFlagUniversalIdentifier ===
+          updatedFlatRolePermissionFlag.permissionFlagUniversalIdentifier &&
         pf.universalIdentifier !== universalIdentifier,
     );
 

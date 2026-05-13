@@ -1,7 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -311,7 +314,10 @@ describe('PermissionsService', () => {
           rolePermissionFlags: [
             {
               id: 'permission-1',
-              flag: PermissionFlagType.UPLOAD_FILE,
+              permissionFlag: {
+                key: PermissionFlagType.UPLOAD_FILE,
+                universalIdentifier: SystemPermissionFlag.UPLOAD_FILE,
+              },
               roleId: 'test-role-id',
               workspaceId: 'test-workspace-id',
               createdAt: new Date(),
@@ -356,7 +362,10 @@ describe('PermissionsService', () => {
           rolePermissionFlags: [
             {
               id: 'permission-1',
-              flag: PermissionFlagType.ROLES,
+              permissionFlag: {
+                key: PermissionFlagType.ROLES,
+                universalIdentifier: SystemPermissionFlag.ROLES,
+              },
               roleId: 'test-role-id',
               workspaceId: 'test-workspace-id',
               createdAt: new Date(),

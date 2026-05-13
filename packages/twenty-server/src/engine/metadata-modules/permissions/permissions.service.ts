@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -66,7 +69,7 @@ export class PermissionsService {
 
     const defaultSettingsPermissions =
       this.getDefaultUserWorkspacePermissions().permissionFlags;
-    const permissionFlags = Object.keys(PermissionFlagType).reduce(
+    const permissionFlags = Object.values(PermissionFlagType).reduce(
       (acc, feature) => {
         const hasBasePermission = this.isToolPermission(feature)
           ? roleOfUserWorkspace.canAccessAllTools
@@ -76,9 +79,7 @@ export class PermissionsService {
           ...acc,
           [feature]:
             hasBasePermission ||
-            roleOfUserWorkspace.rolePermissionFlags.some(
-              (rolePermissionFlag) => rolePermissionFlag.flag === feature,
-            ),
+            this.roleHasPermissionFlag(roleOfUserWorkspace, feature),
         };
       },
       defaultSettingsPermissions,
@@ -150,7 +151,10 @@ export class PermissionsService {
 
       const role = await this.roleRepository.findOne({
         where: { id: roleId, workspaceId },
-        relations: ['rolePermissionFlags'],
+        relations: [
+          'rolePermissionFlags',
+          'rolePermissionFlags.permissionFlag',
+        ],
       });
 
       if (!isDefined(role)) {
@@ -203,7 +207,10 @@ export class PermissionsService {
 
       const role = await this.roleRepository.findOne({
         where: { id: applicationRoleId, workspaceId },
-        relations: ['rolePermissionFlags'],
+        relations: [
+          'rolePermissionFlags',
+          'rolePermissionFlags.permissionFlag',
+        ],
       });
 
       if (!isDefined(role)) {
@@ -240,10 +247,21 @@ export class PermissionsService {
       return true;
     }
 
+    return this.roleHasPermissionFlag(role, setting);
+  }
+
+  private roleHasPermissionFlag(
+    role: RoleEntity,
+    flag: PermissionFlagType,
+  ): boolean {
     const rolePermissionFlags = role.rolePermissionFlags ?? [];
 
+    const permissionFlagUniversalIdentifier = SystemPermissionFlag[flag];
+
     return rolePermissionFlags.some(
-      (rolePermissionFlag) => rolePermissionFlag.flag === setting,
+      (rolePermissionFlag) =>
+        rolePermissionFlag.permissionFlag?.universalIdentifier ===
+        permissionFlagUniversalIdentifier,
     );
   }
 
@@ -292,7 +310,7 @@ export class PermissionsService {
       const result = await this.getRolesFromPermissionConfig(
         rolePermissionConfig,
         workspaceId,
-        ['rolePermissionFlags'],
+        ['rolePermissionFlags', 'rolePermissionFlags.permissionFlag'],
       );
 
       if (result === null) {
@@ -318,7 +336,7 @@ export class PermissionsService {
       const result = await this.getRolesFromPermissionConfig(
         rolePermissionConfig,
         workspaceId,
-        ['rolePermissionFlags'],
+        ['rolePermissionFlags', 'rolePermissionFlags.permissionFlag'],
       );
 
       if (result === null) {
@@ -332,11 +350,7 @@ export class PermissionsService {
           return true;
         }
 
-        const rolePermissionFlags = role.rolePermissionFlags ?? [];
-
-        return rolePermissionFlags.some(
-          (rolePermissionFlag) => rolePermissionFlag.flag === flag,
-        );
+        return this.roleHasPermissionFlag(role, flag);
       };
 
       return useIntersection

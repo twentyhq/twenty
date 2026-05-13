@@ -7,6 +7,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { fromRolePermissionFlagEntityToFlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/utils/from-role-permission-flag-entity-to-flat-role-permission-flag.util';
+import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
@@ -24,6 +25,8 @@ export class WorkspaceFlatRolePermissionFlagMapCacheService extends WorkspaceCac
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
+    @InjectRepository(PermissionFlagEntity)
+    private readonly permissionFlagRepository: Repository<PermissionFlagEntity>,
   ) {
     super();
   }
@@ -31,27 +34,35 @@ export class WorkspaceFlatRolePermissionFlagMapCacheService extends WorkspaceCac
   async computeForCache(
     workspaceId: string,
   ): Promise<FlatRolePermissionFlagMaps> {
-    const [rolePermissionFlags, applications, roles] = await Promise.all([
-      this.rolePermissionFlagRepository.find({
-        where: { workspaceId },
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.roleRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-    ]);
+    const [rolePermissionFlags, applications, roles, permissionFlags] =
+      await Promise.all([
+        this.rolePermissionFlagRepository.find({
+          where: { workspaceId },
+          withDeleted: true,
+        }),
+        this.applicationRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier'],
+          withDeleted: true,
+        }),
+        this.roleRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier'],
+          withDeleted: true,
+        }),
+        this.permissionFlagRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier'],
+          withDeleted: true,
+        }),
+      ]);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const roleIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(roles);
+    const permissionFlagIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(permissionFlags);
 
     const flatRolePermissionFlagMaps = createEmptyFlatEntityMaps();
 
@@ -60,6 +71,7 @@ export class WorkspaceFlatRolePermissionFlagMapCacheService extends WorkspaceCac
         fromRolePermissionFlagEntityToFlatRolePermissionFlag({
           entity: rolePermissionFlagEntity,
           applicationIdToUniversalIdentifierMap,
+          permissionFlagIdToUniversalIdentifierMap,
           roleIdToUniversalIdentifierMap,
         });
 

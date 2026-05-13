@@ -48,7 +48,8 @@ const buildFlatRolePermissionFlag = (
   ({
     id: '00000000-0000-0000-0000-000000000101',
     universalIdentifier: '00000000-0000-0000-0000-000000000101',
-    flag: 'TEST_FLAG',
+    permissionFlagId: '00000000-0000-0000-0000-000000000001',
+    permissionFlagUniversalIdentifier: '00000000-0000-0000-0000-000000000001',
     roleUniversalIdentifier: '00000000-0000-0000-0000-000000000201',
     workspaceId: 'workspace-id',
     applicationId: '00000000-0000-0000-0000-000000000aaa',
@@ -349,7 +350,8 @@ describe('FlatPermissionFlagValidatorService', () => {
 
       const rolePermissionFlagMaps = buildEmptyRolePermissionFlagMaps();
       const rolePermissionFlag = buildFlatRolePermissionFlag({
-        flag: PermissionFlagType.WORKSPACE,
+        permissionFlagId: existing.id,
+        permissionFlagUniversalIdentifier: existing.universalIdentifier,
       });
       rolePermissionFlagMaps.byUniversalIdentifier[
         rolePermissionFlag.universalIdentifier

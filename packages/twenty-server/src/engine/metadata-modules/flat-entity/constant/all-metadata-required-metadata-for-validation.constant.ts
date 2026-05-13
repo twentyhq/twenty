@@ -77,6 +77,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     pageLayout: true,
   },
   rolePermissionFlag: {
+    permissionFlag: true,
     role: true,
   },
   permissionFlag: {

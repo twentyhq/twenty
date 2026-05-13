@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -32,11 +31,15 @@ export class RolePermissionFlagService {
     workspaceId: string;
     input: UpsertPermissionFlagsInput;
   }): Promise<FlatRolePermissionFlag[]> {
-    const { flatRolePermissionFlagMaps, flatRoleMaps } =
+    const { flatPermissionFlagMaps, flatRolePermissionFlagMaps, flatRoleMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRolePermissionFlagMaps', 'flatRoleMaps'],
+          flatMapsKeys: [
+            'flatPermissionFlagMaps',
+            'flatRolePermissionFlagMaps',
+            'flatRoleMaps',
+          ],
         },
       );
 
@@ -55,21 +58,29 @@ export class RolePermissionFlagService {
       );
     }
 
-    const invalidFlags = input.permissionFlagKeys.filter(
-      (flag) => !Object.values(PermissionFlagType).includes(flag),
+    const roleUniversalIdentifier = role.universalIdentifier;
+    const permissionFlagByKey = new Map(
+      Object.values(flatPermissionFlagMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .map((permissionFlag) => [permissionFlag.key, permissionFlag]),
     );
+    const permissionFlagsByInputKey = input.permissionFlagKeys.map((flag) => ({
+      flag,
+      permissionFlag: permissionFlagByKey.get(flag),
+    }));
+    const missingPermissionFlags = permissionFlagsByInputKey
+      .filter(({ permissionFlag }) => !isDefined(permissionFlag))
+      .map(({ flag }) => flag);
 
-    if (invalidFlags.length > 0) {
+    if (missingPermissionFlags.length > 0) {
       throw new PermissionsException(
-        `${PermissionsExceptionMessage.INVALID_SETTING}: ${invalidFlags.join(', ')}`,
+        `${PermissionsExceptionMessage.INVALID_SETTING}: ${missingPermissionFlags.join(', ')}`,
         PermissionsExceptionCode.INVALID_SETTING,
         {
           userFriendlyMessage: msg`Some of the permissions you selected are not valid. Please try again with valid permission settings.`,
         },
       );
     }
-
-    const roleUniversalIdentifier = role.universalIdentifier;
 
     const currentRolePermissionFlagsForRole = Object.values(
       flatRolePermissionFlagMaps.byUniversalIdentifier,
@@ -78,9 +89,15 @@ export class RolePermissionFlagService {
         isDefined(pf) && pf.roleUniversalIdentifier === roleUniversalIdentifier,
     );
 
-    const inputSet = new Set(input.permissionFlagKeys);
+    const inputSet = new Set(
+      permissionFlagsByInputKey
+        .map(({ permissionFlag }) => permissionFlag?.universalIdentifier)
+        .filter(isDefined),
+    );
     const existingSet = new Set(
-      currentRolePermissionFlagsForRole.map((pf) => pf.flag),
+      currentRolePermissionFlagsForRole.map(
+        (pf) => pf.permissionFlagUniversalIdentifier,
+      ),
     );
 
     const { workspaceCustomFlatApplication } =
@@ -88,25 +105,33 @@ export class RolePermissionFlagService {
         { workspaceId },
       );
 
-    const flatEntityToCreate = input.permissionFlagKeys
-      .filter((flag) => !existingSet.has(flag))
-      .map((flag) =>
+    const flatEntityToCreate = permissionFlagsByInputKey
+      .map(({ permissionFlag }) => permissionFlag)
+      .filter(isDefined)
+      .filter(
+        (permissionFlag) =>
+          !existingSet.has(permissionFlag.universalIdentifier),
+      )
+      .map((permissionFlag) =>
         fromCreateRolePermissionFlagInputToFlatRolePermissionFlagToCreate({
-          createRolePermissionFlagInput: { roleId: input.roleId, flag },
+          createRolePermissionFlagInput: {
+            roleId: input.roleId,
+            permissionFlagId: permissionFlag.id,
+          },
           flatApplication: workspaceCustomFlatApplication,
+          flatPermissionFlagMaps,
           flatRoleMaps,
         }),
       );
 
     const flatEntityToDelete = currentRolePermissionFlagsForRole.filter(
-      (pf) => !inputSet.has(pf.flag),
+      (pf) => !inputSet.has(pf.permissionFlagUniversalIdentifier),
     );
 
     if (flatEntityToCreate.length === 0 && flatEntityToDelete.length === 0) {
-      const unchanged = currentRolePermissionFlagsForRole.filter((pf) =>
-        inputSet.has(pf.flag),
+      return currentRolePermissionFlagsForRole.filter((pf) =>
+        inputSet.has(pf.permissionFlagUniversalIdentifier),
       );
-      return unchanged;
     }
 
     const buildAndRunResult =

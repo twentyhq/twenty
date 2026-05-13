@@ -214,7 +214,8 @@ export class FlatPermissionFlagValidatorService {
     ).some(
       (rolePermissionFlag) =>
         isDefined(rolePermissionFlag) &&
-        rolePermissionFlag.flag === existing.key,
+        rolePermissionFlag.permissionFlagUniversalIdentifier ===
+          existing.universalIdentifier,
     );
 
     if (isPermissionFlagInUse) {

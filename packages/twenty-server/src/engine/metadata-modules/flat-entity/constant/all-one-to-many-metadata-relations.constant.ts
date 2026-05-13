@@ -195,7 +195,14 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   },
   roleTarget: {},
   rolePermissionFlag: {},
-  permissionFlag: {},
+  permissionFlag: {
+    rolePermissionFlags: {
+      metadataName: 'rolePermissionFlag',
+      flatEntityForeignKeyAggregator: 'rolePermissionFlagIds',
+      universalFlatEntityForeignKeyAggregator:
+        'rolePermissionFlagUniversalIdentifiers',
+    },
+  },
   objectPermission: {},
   fieldPermission: {},
   pageLayout: {

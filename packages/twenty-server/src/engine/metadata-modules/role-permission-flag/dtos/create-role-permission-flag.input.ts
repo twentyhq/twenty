@@ -1,7 +1,5 @@
-import { PermissionFlagType } from 'twenty-shared/constants';
-
 export type CreateRolePermissionFlagInput = {
   roleId: string;
-  flag: PermissionFlagType;
+  permissionFlagId: string;
   universalIdentifier?: string;
 };

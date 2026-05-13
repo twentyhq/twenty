@@ -49,7 +49,9 @@ export class RoleService {
       },
       relations: {
         roleTargets: true,
-        rolePermissionFlags: true,
+        rolePermissionFlags: {
+          permissionFlag: true,
+        },
         objectPermissions: true,
         fieldPermissions: true,
       },
@@ -67,7 +69,9 @@ export class RoleService {
       },
       relations: {
         roleTargets: true,
-        rolePermissionFlags: true,
+        rolePermissionFlags: {
+          permissionFlag: true,
+        },
         objectPermissions: true,
         fieldPermissions: true,
       },

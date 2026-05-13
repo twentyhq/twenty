@@ -35,5 +35,12 @@ export const fromPermissionFlagEntityToFlatPermissionFlag = ({
     updatedAt: permissionFlagEntity.updatedAt.toISOString(),
     universalIdentifier: entityWithoutRelations.universalIdentifier,
     applicationUniversalIdentifier,
+    rolePermissionFlagIds: permissionFlagEntity.rolePermissionFlags.map(
+      ({ id }) => id,
+    ),
+    rolePermissionFlagUniversalIdentifiers:
+      permissionFlagEntity.rolePermissionFlags.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
   };
 };

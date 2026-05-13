@@ -3,12 +3,15 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { type PermissionFlagPermissionType } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
+import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('permissionFlag')
@@ -44,6 +47,12 @@ export class PermissionFlagEntity extends SyncableEntity {
 
   @Column({ nullable: false, type: 'boolean', default: false })
   isCustom: boolean;
+
+  @OneToMany(
+    () => RolePermissionFlagEntity,
+    (rolePermissionFlag) => rolePermissionFlag.permissionFlag,
+  )
+  rolePermissionFlags: Relation<RolePermissionFlagEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

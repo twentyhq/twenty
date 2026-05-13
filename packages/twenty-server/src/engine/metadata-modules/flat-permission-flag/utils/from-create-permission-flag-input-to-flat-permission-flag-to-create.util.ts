@@ -42,6 +42,8 @@ export const fromCreatePermissionFlagInputToFlatPermissionFlagToCreate = ({
     workspaceId,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    rolePermissionFlagIds: [],
+    rolePermissionFlagUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
   };

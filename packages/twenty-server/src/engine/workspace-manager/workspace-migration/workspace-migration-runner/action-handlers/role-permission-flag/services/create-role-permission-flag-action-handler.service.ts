@@ -24,7 +24,7 @@ export class CreateRolePermissionFlagActionHandlerService extends WorkspaceMigra
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateRolePermissionFlagAction>): Promise<FlatCreateRolePermissionFlagAction> {
-    const { roleId } = resolveUniversalRelationIdentifiersToIds({
+    const relationIds = resolveUniversalRelationIdentifiersToIds({
       flatEntityMaps: allFlatEntityMaps,
       metadataName: action.metadataName,
       universalForeignKeyValues: action.flatEntity,
@@ -34,7 +34,7 @@ export class CreateRolePermissionFlagActionHandlerService extends WorkspaceMigra
       ...action,
       flatEntity: {
         ...action.flatEntity,
-        roleId,
+        ...relationIds,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,

@@ -1,7 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type Repository } from 'typeorm';
 
@@ -167,7 +170,10 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       rolePermissionFlagRepository.find.mockResolvedValue([
         {
           roleId: ROLE_ID,
-          flag: PermissionFlagType.WORKSPACE_MEMBERS,
+          permissionFlag: {
+            key: PermissionFlagType.WORKSPACE_MEMBERS,
+            universalIdentifier: SystemPermissionFlag.WORKSPACE_MEMBERS,
+          },
         } as RolePermissionFlagEntity,
       ]);
 
@@ -228,7 +234,10 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       rolePermissionFlagRepository.find.mockResolvedValue([
         {
           roleId: ROLE_ID,
-          flag: PermissionFlagType.WORKFLOWS,
+          permissionFlag: {
+            key: PermissionFlagType.WORKFLOWS,
+            universalIdentifier: SystemPermissionFlag.WORKFLOWS,
+          },
         } as RolePermissionFlagEntity,
       ]);
 

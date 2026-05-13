@@ -11,6 +11,7 @@ import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/type
 export const fromRolePermissionFlagEntityToFlatRolePermissionFlag = ({
   entity: rolePermissionFlagEntity,
   applicationIdToUniversalIdentifierMap,
+  permissionFlagIdToUniversalIdentifierMap,
   roleIdToUniversalIdentifierMap,
 }: FromEntityToFlatEntityArgs<'rolePermissionFlag'>): FlatRolePermissionFlag => {
   const rolePermissionFlagEntityWithoutRelations = removePropertiesFromRecord(
@@ -41,6 +42,18 @@ export const fromRolePermissionFlagEntityToFlatRolePermissionFlag = ({
     );
   }
 
+  const permissionFlagUniversalIdentifier =
+    permissionFlagIdToUniversalIdentifierMap.get(
+      rolePermissionFlagEntity.permissionFlagId,
+    );
+
+  if (!isDefined(permissionFlagUniversalIdentifier)) {
+    throw new FlatEntityMapsException(
+      `PermissionFlag with id ${rolePermissionFlagEntity.permissionFlagId} not found for rolePermissionFlag ${rolePermissionFlagEntity.id}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
   return {
     ...rolePermissionFlagEntityWithoutRelations,
     createdAt: rolePermissionFlagEntity.createdAt.toISOString(),
@@ -48,6 +61,7 @@ export const fromRolePermissionFlagEntityToFlatRolePermissionFlag = ({
     universalIdentifier:
       rolePermissionFlagEntityWithoutRelations.universalIdentifier,
     applicationUniversalIdentifier,
+    permissionFlagUniversalIdentifier,
     roleUniversalIdentifier,
   };
 };
