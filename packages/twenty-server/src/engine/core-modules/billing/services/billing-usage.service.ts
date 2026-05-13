@@ -427,7 +427,7 @@ export class BillingUsageService {
   }: {
     workspaceId: string;
     usedCredits: number;
-  }): Promise<void> {
+  }): Promise<number> {
     const {
       billingSubscription: { currentPeriodStart, currentPeriodEnd },
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -470,6 +470,8 @@ export class BillingUsageService {
         true,
       );
     }
+
+    return decrementedAvailableCredits;
   }
 
   async invalidateAvailableCredits(

@@ -193,6 +193,7 @@ export class StreamAgentChatJob {
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
       let streamError: unknown;
+      let checkHasNoMoreAvailableCredits: () => boolean = () => false;
 
       // onFinish fires before the uiStream is fully drained. We use this
       // promise to coordinate: the IIFE waits for DB persist to complete
@@ -224,7 +225,7 @@ export class StreamAgentChatJob {
             });
           };
 
-          const { stream, modelConfig } =
+          const { stream, modelConfig, hasNoMoreAvailableCredits } =
             await this.chatExecutionService.streamChat({
               workspace,
               userWorkspaceId: data.userWorkspaceId,
@@ -236,6 +237,8 @@ export class StreamAgentChatJob {
               abortSignal,
               conversationSizeTokens: data.conversationSizeTokens,
             });
+
+          checkHasNoMoreAvailableCredits = hasNoMoreAvailableCredits;
 
           const titleWritePromise = titlePromise.then((generatedTitle) => {
             if (generatedTitle) {
@@ -315,6 +318,13 @@ export class StreamAgentChatJob {
 
           if (streamError) {
             reject(streamError);
+          } else if (checkHasNoMoreAvailableCredits()) {
+            await this.eventPublisherService.publish({
+              threadId: data.threadId,
+              workspaceId: data.workspaceId,
+              event: { type: 'credits-exhausted' },
+            });
+            resolve();
           } else {
             await this.eventPublisherService.publish({
               threadId: data.threadId,
