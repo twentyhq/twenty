@@ -5,6 +5,7 @@ import {
   enqueueSnackbar,
   unmountFrontComponent,
 } from 'twenty-sdk/front-component';
+import { themeCssVariables } from 'twenty-sdk/ui';
 
 import { SEND_MESSAGE_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
@@ -17,6 +18,20 @@ type SlackChannel = {
   numMembers: number;
   topic: string;
   purpose: string;
+};
+
+type ListChannelsResponse = {
+  success: boolean;
+  channels?: SlackChannel[];
+  error?: string;
+  message?: string;
+};
+
+type PostMessageResponse = {
+  success: boolean;
+  slackTs?: string;
+  error?: string;
+  message?: string;
 };
 
 type PostedMessage = {
@@ -32,8 +47,6 @@ const FORMAT_OPTIONS: { value: MessageFormat; label: string }[] = [
   { value: 'markdown', label: 'Markdown' },
 ];
 
-// The front component sandbox dispatches events with a non-standard shape.
-// Values may live on e.detail.value, e.value, or e.target.value.
 const readSerializedValue = (
   e: React.SyntheticEvent<HTMLElement>,
 ): string | undefined => {
@@ -52,22 +65,22 @@ const readSerializedValue = (
 
 const onValueChange =
   (fn: (value: string) => void) => (e: React.SyntheticEvent<HTMLElement>) => {
-    const v = readSerializedValue(e);
+    const value = readSerializedValue(e);
 
-    if (typeof v === 'string') fn(v);
+    if (typeof value === 'string') fn(value);
   };
 
-const callAppRoute = async (
+const callAppRoute = async <TResponse,>(
   path: string,
   method: 'GET' | 'POST',
   body?: Record<string, unknown>,
-) => {
+): Promise<TResponse> => {
   const apiBaseUrl = process.env.TWENTY_API_URL;
   const token =
     process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY;
 
   if (!apiBaseUrl || !token) {
-    throw new Error('API configuration missing');
+    throw new Error('App is missing API URL or access token configuration.');
   }
 
   const response = await fetch(`${apiBaseUrl}/s${path}`, {
@@ -82,296 +95,29 @@ const callAppRoute = async (
   if (!response.ok) {
     const text = await response.text().catch(() => '');
 
-    throw new Error(
-      `Request failed (${response.status}): ${text.slice(0, 200)}`,
-    );
+    try {
+      const parsed = JSON.parse(text) as {
+        messages?: string[];
+        message?: string;
+        error?: string;
+      };
+
+      throw new Error(
+        parsed.messages?.[0] ??
+          parsed.message ??
+          parsed.error ??
+          `Request failed with status ${response.status}.`,
+      );
+    } catch {
+      throw new Error(
+        text.length > 0
+          ? text.slice(0, 200)
+          : `Request failed with status ${response.status}.`,
+      );
+    }
   }
 
-  return response.json();
-};
-
-const COLOR = {
-  bg: '#f1f1f1',
-  card: '#ffffff',
-  surface: '#fcfcfc',
-  border: '#ebebeb',
-  borderStrong: '#d6d6d6',
-  text: '#333333',
-  textSecondary: '#666666',
-  textTertiary: '#999999',
-  placeholder: '#cccccc',
-  // Slack aubergine
-  accent: '#4a154b',
-  accentSurface: '#f3eaf3',
-  error: '#e05252',
-};
-
-const INLINE_SELECT: React.CSSProperties = {
-  appearance: 'none',
-  WebkitAppearance: 'none' as const,
-  border: 'none',
-  background: 'transparent',
-  color: 'inherit',
-  font: 'inherit',
-  cursor: 'pointer',
-  outline: 'none',
-  padding: 0,
-};
-
-const STYLES = {
-  outer: {
-    fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-    fontSize: '13px',
-    backgroundColor: COLOR.bg,
-    padding: '12px',
-    height: '100%',
-    boxSizing: 'border-box' as const,
-  },
-  container: {
-    backgroundColor: COLOR.card,
-    borderRadius: '8px',
-    border: `1px solid ${COLOR.border}`,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    height: '100%',
-    boxSizing: 'border-box' as const,
-    color: COLOR.text,
-  },
-  topBar: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '8px 12px',
-    borderBottom: `1px solid ${COLOR.border}`,
-    flexShrink: 0,
-  },
-  channelSelect: {
-    appearance: 'none' as const,
-    WebkitAppearance: 'none' as const,
-    background: COLOR.surface,
-    border: `1px solid ${COLOR.border}`,
-    borderRadius: '6px',
-    padding: '3px 8px',
-    color: COLOR.text,
-    fontSize: '12px',
-    fontFamily: 'inherit',
-    cursor: 'pointer',
-    outline: 'none',
-    minWidth: '160px',
-  },
-  optionsLoadingIndicator: {
-    marginLeft: 'auto',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  spinner: {
-    width: '14px',
-    height: '14px',
-    border: `2px solid ${COLOR.border}`,
-    borderTopColor: COLOR.textSecondary,
-    borderRadius: '50%',
-    animation: 'spin 0.6s linear infinite',
-  },
-  chipsRow: {
-    display: 'flex',
-    flexWrap: 'wrap' as const,
-    gap: '5px',
-    alignItems: 'center',
-    padding: '12px',
-    borderBottom: `1px solid ${COLOR.border}`,
-  },
-  chip: {
-    appearance: 'none' as const,
-    WebkitAppearance: 'none' as const,
-    background: 'transparent',
-    border: `1px solid ${COLOR.border}`,
-    borderRadius: '20px',
-    padding: '3px 9px',
-    color: COLOR.textSecondary,
-    fontSize: '12px',
-    fontFamily: 'inherit',
-    cursor: 'pointer',
-    outline: 'none',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '4px',
-    whiteSpace: 'nowrap' as const,
-    lineHeight: '16px',
-  },
-  chipIcon: {
-    fontSize: '10px',
-    lineHeight: 1,
-    flexShrink: 0,
-  },
-  body: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    padding: '24px',
-    overflow: 'auto',
-    minHeight: 0,
-    gap: '10px',
-  },
-  messageInput: {
-    background: 'transparent',
-    border: 'none',
-    outline: 'none',
-    color: COLOR.text,
-    fontSize: '14px',
-    fontFamily: 'inherit',
-    width: '100%',
-    padding: 0,
-    resize: 'none' as const,
-    flex: 1,
-    minHeight: '160px',
-  },
-  actionBar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: '6px',
-    padding: '6px 12px',
-    borderTop: `1px solid ${COLOR.border}`,
-    flexShrink: 0,
-  },
-  cancelButton: {
-    background: 'transparent',
-    border: 'none',
-    color: COLOR.textSecondary,
-    fontSize: '12px',
-    fontFamily: 'inherit',
-    cursor: 'pointer',
-    padding: '5px 10px',
-    borderRadius: '6px',
-  },
-  sendButton: {
-    background: COLOR.accent,
-    border: 'none',
-    color: '#ffffff',
-    fontSize: '12px',
-    fontWeight: 500,
-    fontFamily: 'inherit',
-    cursor: 'pointer',
-    padding: '5px 14px',
-    borderRadius: '6px',
-  },
-  sendButtonDisabled: {
-    background: COLOR.borderStrong,
-    color: COLOR.textTertiary,
-    cursor: 'not-allowed',
-  },
-  successOuter: {
-    fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-    backgroundColor: COLOR.bg,
-    padding: '12px',
-    height: '100%',
-    boxSizing: 'border-box' as const,
-  },
-  successContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    padding: '10px 14px',
-    boxSizing: 'border-box' as const,
-    backgroundColor: COLOR.card,
-    borderRadius: '8px',
-    border: `1px solid ${COLOR.border}`,
-    color: COLOR.text,
-  },
-  successCheck: {
-    width: '20px',
-    height: '20px',
-    borderRadius: '50%',
-    backgroundColor: '#2ea043',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '11px',
-    color: '#fff',
-    flexShrink: 0,
-  },
-  successText: {
-    color: COLOR.text,
-    fontWeight: 500,
-    fontSize: '13px',
-    flex: 1,
-    overflow: 'hidden' as const,
-    textOverflow: 'ellipsis' as const,
-    whiteSpace: 'nowrap' as const,
-  },
-  closeButton: {
-    background: 'transparent',
-    border: `1px solid ${COLOR.border}`,
-    color: COLOR.textSecondary,
-    fontSize: '12px',
-    fontFamily: 'inherit',
-    cursor: 'pointer',
-    padding: '5px 14px',
-    borderRadius: '6px',
-    flexShrink: 0,
-  },
-  sendAnotherButton: {
-    background: COLOR.accentSurface,
-    border: `1px solid ${COLOR.accent}`,
-    color: COLOR.accent,
-    fontSize: '12px',
-    fontFamily: 'inherit',
-    cursor: 'pointer',
-    padding: '5px 14px',
-    borderRadius: '6px',
-    flexShrink: 0,
-  },
-  loadingOuter: {
-    fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-    backgroundColor: COLOR.bg,
-    padding: '12px',
-    height: '100%',
-    boxSizing: 'border-box' as const,
-  },
-  loadingContainer: {
-    color: COLOR.textSecondary,
-    fontSize: '13px',
-    textAlign: 'center' as const,
-    backgroundColor: COLOR.card,
-    borderRadius: '8px',
-    border: `1px solid ${COLOR.border}`,
-    padding: '24px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorOuter: {
-    fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-    backgroundColor: COLOR.bg,
-    padding: '12px',
-    height: '100%',
-    boxSizing: 'border-box' as const,
-  },
-  errorContainer: {
-    backgroundColor: COLOR.card,
-    borderRadius: '8px',
-    border: `1px solid ${COLOR.border}`,
-    padding: '24px',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '10px',
-  },
-  errorText: {
-    color: COLOR.error,
-    fontSize: '12px',
-    textAlign: 'center' as const,
-  },
-  retryButton: {
-    background: COLOR.surface,
-    border: `1px solid ${COLOR.border}`,
-    color: COLOR.text,
-    fontSize: '12px',
-    fontFamily: 'inherit',
-    cursor: 'pointer',
-    padding: '5px 12px',
-    borderRadius: '6px',
-  },
+  return response.json() as Promise<TResponse>;
 };
 
 const sortChannels = (channels: SlackChannel[]): SlackChannel[] =>
@@ -383,6 +129,181 @@ const sortChannels = (channels: SlackChannel[]): SlackChannel[] =>
     return a.name.localeCompare(b.name);
   });
 
+const formatChannelOptionLabel = (channel: SlackChannel): string => {
+  const prefix = channel.isPrivate ? '🔒' : '#';
+  const suffix = channel.isMember ? '' : ' — bot is not a member';
+
+  return `${prefix} ${channel.name}${suffix}`;
+};
+
+const getStyles = (): Record<string, React.CSSProperties> => ({
+  container: {
+    fontFamily: themeCssVariables.font.family,
+    fontSize: themeCssVariables.font.size.sm,
+    color: themeCssVariables.font.color.primary,
+    background: themeCssVariables.background.primary,
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    boxSizing: 'border-box',
+  },
+  header: {
+    padding: themeCssVariables.spacing[4],
+    borderBottom: `1px solid ${themeCssVariables.border.color.light}`,
+    flexShrink: 0,
+  },
+  headerTitleBlock: {
+    marginBottom: themeCssVariables.spacing[4],
+  },
+  pageTitle: {
+    fontSize: themeCssVariables.font.size.md,
+    fontWeight: themeCssVariables.font.weight.semiBold,
+    color: themeCssVariables.font.color.primary,
+    margin: 0,
+  },
+  pageSubtitle: {
+    fontSize: themeCssVariables.font.size.md,
+    fontWeight: themeCssVariables.font.weight.regular,
+    color: themeCssVariables.font.color.tertiary,
+    margin: 0,
+    marginTop: themeCssVariables.spacing[2],
+    lineHeight: 1.5,
+  },
+  body: {
+    flex: 1,
+    minHeight: 0,
+    padding: themeCssVariables.spacing[4],
+    display: 'flex',
+    flexDirection: 'column',
+    gap: themeCssVariables.spacing[4],
+    overflowY: 'auto',
+  },
+  field: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: themeCssVariables.spacing[1],
+  },
+  fieldGrowing: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: themeCssVariables.spacing[1],
+    flex: 1,
+    minHeight: 0,
+  },
+  label: {
+    fontSize: themeCssVariables.font.size.xs,
+    fontWeight: themeCssVariables.font.weight.medium,
+    color: themeCssVariables.font.color.secondary,
+  },
+  helperText: {
+    fontSize: themeCssVariables.font.size.xs,
+    color: themeCssVariables.font.color.tertiary,
+  },
+  select: {
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    background: themeCssVariables.background.secondary,
+    border: `1px solid ${themeCssVariables.border.color.medium}`,
+    borderRadius: themeCssVariables.border.radius.sm,
+    padding: `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]}`,
+    color: themeCssVariables.font.color.primary,
+    fontSize: themeCssVariables.font.size.sm,
+    fontFamily: themeCssVariables.font.family,
+    height: themeCssVariables.spacing[8],
+    cursor: 'pointer',
+    outline: 'none',
+    width: '100%',
+    boxSizing: 'border-box',
+  },
+  textarea: {
+    background: themeCssVariables.background.secondary,
+    border: `1px solid ${themeCssVariables.border.color.medium}`,
+    borderRadius: themeCssVariables.border.radius.sm,
+    padding: themeCssVariables.spacing[3],
+    color: themeCssVariables.font.color.primary,
+    fontSize: themeCssVariables.font.size.sm,
+    fontFamily: themeCssVariables.font.family,
+    lineHeight: 1.5,
+    width: '100%',
+    boxSizing: 'border-box',
+    outline: 'none',
+    resize: 'none',
+    flex: 1,
+    minHeight: themeCssVariables.spacing[20],
+  },
+  footer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: themeCssVariables.spacing[2],
+    padding: themeCssVariables.spacing[3],
+    borderTop: `1px solid ${themeCssVariables.border.color.light}`,
+    flexShrink: 0,
+  },
+  buttonBase: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: themeCssVariables.spacing[1],
+    height: themeCssVariables.spacing[8],
+    padding: `0 ${themeCssVariables.spacing[3]}`,
+    borderRadius: themeCssVariables.border.radius.sm,
+    fontSize: themeCssVariables.font.size.sm,
+    fontFamily: themeCssVariables.font.family,
+    fontWeight: themeCssVariables.font.weight.medium,
+    cursor: 'pointer',
+    border: `1px solid transparent`,
+    boxSizing: 'border-box',
+  },
+  secondaryButton: {
+    background: themeCssVariables.background.secondary,
+    color: themeCssVariables.font.color.secondary,
+    border: `1px solid ${themeCssVariables.border.color.medium}`,
+  },
+  primaryButton: {
+    background: themeCssVariables.color.blue,
+    color: themeCssVariables.font.color.inverted,
+  },
+  primaryButtonDisabled: {
+    background: themeCssVariables.accent.accent4060,
+    cursor: 'not-allowed',
+  },
+  centeredState: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: themeCssVariables.spacing[4],
+    height: '100%',
+    boxSizing: 'border-box',
+  },
+  stateBlock: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: themeCssVariables.spacing[3],
+    maxWidth: '320px',
+    textAlign: 'center',
+  },
+  stateTitle: {
+    fontSize: themeCssVariables.font.size.md,
+    fontWeight: themeCssVariables.font.weight.medium,
+    color: themeCssVariables.font.color.primary,
+    margin: 0,
+  },
+  stateDescription: {
+    fontSize: themeCssVariables.font.size.sm,
+    color: themeCssVariables.font.color.tertiary,
+    margin: 0,
+    lineHeight: 1.5,
+  },
+  stateError: {
+    fontSize: themeCssVariables.font.size.sm,
+    color: themeCssVariables.font.color.danger,
+    margin: 0,
+    lineHeight: 1.5,
+  },
+});
+
 const SendMessageForm = () => {
   const [channels, setChannels] = useState<SlackChannel[]>([]);
   const [channelsLoading, setChannelsLoading] = useState(true);
@@ -391,21 +312,27 @@ const SendMessageForm = () => {
   const [postedMessage, setPostedMessage] = useState<PostedMessage | null>(
     null,
   );
-  const [closing, setClosing] = useState(false);
 
   const [channelId, setChannelId] = useState('');
   const [messageText, setMessageText] = useState('');
   const [messageFormat, setMessageFormat] = useState<MessageFormat>('markdown');
+
+  const styles = getStyles();
 
   const fetchChannels = useCallback(async () => {
     try {
       setChannelsError(null);
       setChannelsLoading(true);
 
-      const result = await callAppRoute('/slack/channels?limit=200', 'GET');
+      const result = await callAppRoute<ListChannelsResponse>(
+        '/slack/channels?limit=200',
+        'GET',
+      );
 
       if (!result.success) {
-        setChannelsError(result.error ?? 'Failed to load channels');
+        setChannelsError(
+          result.error ?? result.message ?? 'Failed to load Slack channels.',
+        );
 
         return;
       }
@@ -423,7 +350,9 @@ const SendMessageForm = () => {
       }
     } catch (error) {
       setChannelsError(
-        error instanceof Error ? error.message : 'Failed to load channels',
+        error instanceof Error
+          ? error.message
+          : 'Failed to load Slack channels.',
       );
     } finally {
       setChannelsLoading(false);
@@ -434,30 +363,40 @@ const SendMessageForm = () => {
     fetchChannels();
   }, [fetchChannels]);
 
-  const resetForm = useCallback(() => {
+  const handleClose = () => {
+    unmountFrontComponent();
+    closeSidePanel();
+  };
+
+  const handleSendAnother = () => {
     setMessageText('');
     setPostedMessage(null);
-  }, []);
+  };
 
   const handleSubmit = async () => {
     const trimmedMessage = messageText.trim();
 
-    if (!channelId || !trimmedMessage) {
+    if (channelId === '' || trimmedMessage === '') {
       return;
     }
 
     setSubmitting(true);
 
     try {
-      const result = await callAppRoute('/slack/messages', 'POST', {
-        slackChannelId: channelId,
-        messageText: trimmedMessage,
-        messageFormat,
-      });
+      const result = await callAppRoute<PostMessageResponse>(
+        '/slack/messages',
+        'POST',
+        {
+          slackChannelId: channelId,
+          messageText: trimmedMessage,
+          messageFormat,
+        },
+      );
 
       if (!result.success) {
         await enqueueSnackbar({
-          message: result.error ?? result.message ?? 'Failed to send message',
+          message:
+            result.error ?? result.message ?? 'Failed to send Slack message.',
           variant: 'error',
         });
         setSubmitting(false);
@@ -481,67 +420,37 @@ const SendMessageForm = () => {
     } catch (error) {
       await enqueueSnackbar({
         message:
-          error instanceof Error ? error.message : 'Failed to send message',
+          error instanceof Error
+            ? error.message
+            : 'Failed to send Slack message.',
         variant: 'error',
       });
       setSubmitting(false);
     }
   };
 
-  const handleCancel = () => {
-    setClosing(true);
-    unmountFrontComponent();
-    closeSidePanel();
-  };
-
-  if (closing) {
-    return null;
-  }
-
-  if (postedMessage) {
+  if (channelsLoading) {
     return (
-      <div style={STYLES.successOuter}>
-        <div style={STYLES.successContainer}>
-          <div style={STYLES.successCheck}>{'✓'}</div>
-          <span style={STYLES.successText}>
-            Sent to #{postedMessage.channelName}
-          </span>
-          <button
-            type="button"
-            style={STYLES.sendAnotherButton}
-            onClick={resetForm}
-          >
-            Send another
-          </button>
-          <button
-            type="button"
-            style={STYLES.closeButton}
-            onClick={handleCancel}
-          >
-            Close
-          </button>
+      <div style={styles.centeredState}>
+        <div style={styles.stateBlock}>
+          <h2 style={styles.stateTitle}>Loading channels…</h2>
+          <p style={styles.stateDescription}>
+            Fetching the list of Slack channels your bot can post to.
+          </p>
         </div>
       </div>
     );
   }
 
-  if (channelsLoading) {
+  if (channelsError !== null) {
     return (
-      <div style={STYLES.loadingOuter}>
-        <style>{'@keyframes spin{to{transform:rotate(360deg)}}'}</style>
-        <div style={STYLES.loadingContainer}>Loading channels...</div>
-      </div>
-    );
-  }
-
-  if (channelsError) {
-    return (
-      <div style={STYLES.errorOuter}>
-        <div style={STYLES.errorContainer}>
-          <p style={STYLES.errorText}>{channelsError}</p>
+      <div style={styles.centeredState}>
+        <div style={styles.stateBlock}>
+          <h2 style={styles.stateTitle}>Couldn't load channels</h2>
+          <p style={styles.stateError}>{channelsError}</p>
           <button
             type="button"
-            style={STYLES.retryButton}
+            style={{ ...styles.buttonBase, ...styles.secondaryButton }}
             onClick={fetchChannels}
           >
             Retry
@@ -551,94 +460,173 @@ const SendMessageForm = () => {
     );
   }
 
-  const canSubmit = channelId && messageText.trim() && !submitting;
+  if (channels.length === 0) {
+    return (
+      <div style={styles.centeredState}>
+        <div style={styles.stateBlock}>
+          <h2 style={styles.stateTitle}>No channels available</h2>
+          <p style={styles.stateDescription}>
+            The bot doesn't have access to any Slack channels yet. Invite it to
+            a channel and try again.
+          </p>
+          <button
+            type="button"
+            style={{ ...styles.buttonBase, ...styles.secondaryButton }}
+            onClick={fetchChannels}
+          >
+            Refresh
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (postedMessage !== null) {
+    return (
+      <div style={styles.container}>
+        <div style={styles.header}>
+          <div style={styles.headerTitleBlock}>
+            <h2 style={styles.pageTitle}>Message sent</h2>
+            <p style={styles.pageSubtitle}>
+              {`Posted to #${postedMessage.channelName}.`}
+            </p>
+          </div>
+        </div>
+        <div style={styles.body}>
+          <p style={styles.stateDescription}>
+            Your message is now visible in Slack.
+          </p>
+        </div>
+        <div style={styles.footer}>
+          <button
+            type="button"
+            style={{ ...styles.buttonBase, ...styles.secondaryButton }}
+            onClick={handleClose}
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            style={{ ...styles.buttonBase, ...styles.primaryButton }}
+            onClick={handleSendAnother}
+          >
+            Send another
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const trimmedMessage = messageText.trim();
+  const canSubmit = channelId !== '' && trimmedMessage !== '' && !submitting;
   const selectedChannel = channels.find((c) => c.id === channelId);
+  const channelHelperText =
+    selectedChannel === undefined
+      ? 'Pick a channel to post to.'
+      : selectedChannel.isMember
+      ? selectedChannel.isPrivate
+        ? 'Private channel · bot is a member.'
+        : 'Public channel · bot is a member.'
+      : 'Bot is not a member of this channel — it must be invited before it can post.';
 
   return (
-    <div style={STYLES.outer}>
-      <style>{'@keyframes spin{to{transform:rotate(360deg)}}'}</style>
-      <div style={STYLES.container}>
-        <div style={STYLES.topBar}>
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <div style={styles.headerTitleBlock}>
+          <h2 style={styles.pageTitle}>Send Slack message</h2>
+          <p style={styles.pageSubtitle}>
+            Post a message to any channel your bot has access to.
+          </p>
+        </div>
+      </div>
+
+      <div style={styles.body}>
+        <div style={styles.field}>
+          <label htmlFor="slack-channel-select" style={styles.label}>
+            Channel
+          </label>
           <select
+            id="slack-channel-select"
             value={channelId}
             onChange={onValueChange(setChannelId)}
-            style={STYLES.channelSelect}
+            style={styles.select}
+            disabled={submitting}
           >
-            <option value="">Select channel...</option>
+            <option value="" disabled>
+              Select a channel…
+            </option>
             {channels.map((channel) => (
               <option key={channel.id} value={channel.id}>
-                {channel.isPrivate ? '🔒' : '#'} {channel.name}
-                {channel.isMember ? '' : ' (not a member)'}
+                {formatChannelOptionLabel(channel)}
               </option>
             ))}
           </select>
+          <span style={styles.helperText}>{channelHelperText}</span>
         </div>
 
-        <div style={STYLES.chipsRow}>
-          <label style={STYLES.chip}>
-            <span style={STYLES.chipIcon}>{'¶'}</span>
-            <select
-              value={messageFormat}
-              onChange={onValueChange((v) =>
-                setMessageFormat(v as MessageFormat),
-              )}
-              style={INLINE_SELECT}
-            >
-              {FORMAT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+        <div style={styles.field}>
+          <label htmlFor="slack-message-format-select" style={styles.label}>
+            Format
           </label>
-          {selectedChannel !== undefined && !selectedChannel.isMember && (
-            <span
-              style={{
-                ...STYLES.chip,
-                color: COLOR.error,
-                borderColor: COLOR.error,
-                cursor: 'default',
-              }}
-            >
-              Bot is not a member of this channel
-            </span>
-          )}
+          <select
+            id="slack-message-format-select"
+            value={messageFormat}
+            onChange={onValueChange((value) =>
+              setMessageFormat(value as MessageFormat),
+            )}
+            style={styles.select}
+            disabled={submitting}
+          >
+            {FORMAT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <span style={styles.helperText}>
+            {messageFormat === 'markdown'
+              ? 'Markdown is rendered using Slack mrkdwn (bold, italics, code, links).'
+              : 'The message will be sent exactly as written, with no formatting.'}
+          </span>
         </div>
 
-        <div style={STYLES.body}>
+        <div style={styles.fieldGrowing}>
+          <label htmlFor="slack-message-textarea" style={styles.label}>
+            Message
+          </label>
           <textarea
+            id="slack-message-textarea"
             value={messageText}
             onInput={onValueChange(setMessageText)}
             onChange={onValueChange(setMessageText)}
-            style={STYLES.messageInput}
-            placeholder={
-              messageFormat === 'markdown'
-                ? 'Write your message... (markdown supported)'
-                : 'Write your message...'
-            }
+            placeholder="Write your message…"
+            style={styles.textarea}
+            disabled={submitting}
           />
         </div>
+      </div>
 
-        <div style={STYLES.actionBar}>
-          <button
-            type="button"
-            style={STYLES.cancelButton}
-            onClick={handleCancel}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            style={{
-              ...STYLES.sendButton,
-              ...(!canSubmit ? STYLES.sendButtonDisabled : {}),
-            }}
-            disabled={!canSubmit}
-            onClick={handleSubmit}
-          >
-            {submitting ? 'Sending...' : 'Send message'}
-          </button>
-        </div>
+      <div style={styles.footer}>
+        <button
+          type="button"
+          style={{ ...styles.buttonBase, ...styles.secondaryButton }}
+          onClick={handleClose}
+          disabled={submitting}
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          style={{
+            ...styles.buttonBase,
+            ...styles.primaryButton,
+            ...(canSubmit ? {} : styles.primaryButtonDisabled),
+          }}
+          onClick={handleSubmit}
+          disabled={!canSubmit}
+        >
+          {submitting ? 'Sending…' : 'Send message'}
+        </button>
       </div>
     </div>
   );
