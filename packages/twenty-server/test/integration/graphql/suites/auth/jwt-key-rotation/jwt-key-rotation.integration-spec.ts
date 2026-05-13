@@ -3,17 +3,22 @@ import { createHash, randomUUID } from 'crypto';
 import { isNonEmptyString } from '@sniptt/guards';
 import gql from 'graphql-tag';
 import * as jwt from 'jsonwebtoken';
+import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
+import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
   type AccessTokenJwtPayload,
+  type ApiKeyTokenJwtPayload,
+  type ApplicationAccessTokenJwtPayload,
+  type ApplicationRefreshTokenJwtPayload,
   JwtTokenTypeEnum,
   type LoginTokenJwtPayload,
   type RefreshTokenJwtPayload,
@@ -435,5 +440,244 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
           .token,
       ),
     ).toBe(true);
+  });
+});
+
+const generateApiKeyTokenMutation = async (
+  apiKeyId: string,
+  accessToken: string,
+) => {
+  const mutation = gql`
+    mutation GenerateApiKeyToken($apiKeyId: UUID!, $expiresAt: String!) {
+      generateApiKeyToken(apiKeyId: $apiKeyId, expiresAt: $expiresAt) {
+        token
+      }
+    }
+  `;
+
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+
+  return await makeMetadataAPIRequest(
+    { query: mutation, variables: { apiKeyId, expiresAt } },
+    accessToken,
+  );
+};
+
+const findManyApplicationsWithApiKey = async (apiKeyToken: string) => {
+  const query = gql`
+    query FindManyApplications {
+      findManyApplications {
+        id
+      }
+    }
+  `;
+
+  return await makeMetadataAPIRequest({ query, variables: {} }, apiKeyToken);
+};
+
+const renewApplicationTokenMutation = async (
+  applicationRefreshToken: string,
+  accessToken: string,
+) => {
+  const mutation = gql`
+    mutation RenewApplicationToken($applicationRefreshToken: String!) {
+      renewApplicationToken(applicationRefreshToken: $applicationRefreshToken) {
+        applicationAccessToken {
+          token
+        }
+        applicationRefreshToken {
+          token
+        }
+      }
+    }
+  `;
+
+  return await makeMetadataAPIRequest(
+    { query: mutation, variables: { applicationRefreshToken } },
+    accessToken,
+  );
+};
+
+describe('JWT Asymmetric Signing for seeded-workspace tokens (integration)', () => {
+  let seededCurrentKid: string;
+  let seededApiKeyId: string;
+  let seededWorkspaceId: string;
+  let seededApplicationId: string;
+
+  beforeAll(async () => {
+    const [{ id: currentKidRow }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."signingKey" WHERE "isCurrent" = true LIMIT 1`,
+    );
+
+    seededCurrentKid = currentKidRow;
+
+    const apiKeyPayload = jwt.decode(
+      API_KEY_ACCESS_TOKEN,
+    ) as ApiKeyTokenJwtPayload;
+
+    if (!isNonEmptyString(apiKeyPayload.jti)) {
+      throw new Error('Seeded API_KEY_ACCESS_TOKEN is missing a jti claim');
+    }
+
+    seededApiKeyId = apiKeyPayload.jti;
+    seededWorkspaceId = apiKeyPayload.workspaceId;
+
+    const { data: applicationsData } = await findManyApplications({
+      expectToFail: false,
+    });
+
+    const firstApplication = applicationsData.findManyApplications[0];
+
+    expect(firstApplication).toBeDefined();
+
+    seededApplicationId = firstApplication.id;
+  });
+
+  it('signs new API_KEY tokens with ES256 + kid and authenticates against the GraphQL API', async () => {
+    const response = await generateApiKeyTokenMutation(
+      seededApiKeyId,
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const apiKeyToken: string =
+      response.body.data?.generateApiKeyToken.token ?? '';
+
+    expect(isNonEmptyString(apiKeyToken)).toBe(true);
+
+    const decoded = decodeJwtCompleteOrThrow(apiKeyToken);
+
+    expect(decoded.header.alg).toBe('ES256');
+    expect(decoded.header.kid).toBe(seededCurrentKid);
+
+    const apiResponse = await findManyApplicationsWithApiKey(apiKeyToken);
+
+    expect(apiResponse.body.errors).toBeUndefined();
+    expect(apiResponse.body.data?.findManyApplications).toBeDefined();
+  });
+
+  it('verifies the seeded legacy HS256 no-kid API_KEY token via the legacy fallback', async () => {
+    const decoded = decodeJwtCompleteOrThrow(API_KEY_ACCESS_TOKEN);
+
+    expect(decoded.header.alg).toBe('HS256');
+    expect(decoded.header.kid).toBeUndefined();
+
+    const apiResponse = await findManyApplicationsWithApiKey(
+      API_KEY_ACCESS_TOKEN,
+    );
+
+    expect(apiResponse.body.errors).toBeUndefined();
+    expect(apiResponse.body.data?.findManyApplications).toBeDefined();
+  });
+
+  it('verifies a hand-crafted no-kid HS256 API_KEY token via the legacy fallback', async () => {
+    const forgedPayload = {
+      sub: seededWorkspaceId,
+      type: JwtTokenTypeEnum.API_KEY,
+      workspaceId: seededWorkspaceId,
+    };
+
+    const forgedToken = jwt.sign(
+      forgedPayload,
+      generateLegacyHs256Secret(JwtTokenTypeEnum.API_KEY, seededWorkspaceId),
+      { algorithm: 'HS256', expiresIn: '5m', jwtid: seededApiKeyId },
+    );
+
+    const decoded = decodeJwtCompleteOrThrow(forgedToken);
+
+    expect(decoded.header.alg).toBe('HS256');
+    expect(decoded.header.kid).toBeUndefined();
+
+    const apiResponse = await findManyApplicationsWithApiKey(forgedToken);
+
+    expect(apiResponse.body.errors).toBeUndefined();
+    expect(apiResponse.body.data?.findManyApplications).toBeDefined();
+  });
+
+  it('signs new APPLICATION_ACCESS + APPLICATION_REFRESH tokens with ES256 + kid via generateApplicationToken', async () => {
+    const { data, errors } = await generateApplicationToken({
+      applicationId: seededApplicationId,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+
+    const { applicationAccessToken, applicationRefreshToken } =
+      data.generateApplicationToken;
+
+    const decodedAccess = decodeJwtCompleteOrThrow(applicationAccessToken.token);
+    const decodedRefresh = decodeJwtCompleteOrThrow(
+      applicationRefreshToken.token,
+    );
+
+    expect(decodedAccess.header.alg).toBe('ES256');
+    expect(decodedAccess.header.kid).toBe(seededCurrentKid);
+    expect(decodedRefresh.header.alg).toBe('ES256');
+    expect(decodedRefresh.header.kid).toBe(seededCurrentKid);
+
+    const accessPayload = jwt.decode(
+      applicationAccessToken.token,
+    ) as ApplicationAccessTokenJwtPayload;
+
+    expect(accessPayload.type).toBe(JwtTokenTypeEnum.APPLICATION_ACCESS);
+    expect(accessPayload.workspaceId).toBe(seededWorkspaceId);
+    expect(accessPayload.applicationId).toBe(seededApplicationId);
+  });
+
+  it('round-trips a new ES256 APPLICATION_REFRESH token through renewApplicationToken', async () => {
+    const { data } = await generateApplicationToken({
+      applicationId: seededApplicationId,
+      expectToFail: false,
+    });
+
+    const response = await renewApplicationTokenMutation(
+      data.generateApplicationToken.applicationRefreshToken.token,
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const renewed = response.body.data?.renewApplicationToken;
+
+    expect(isNonEmptyString(renewed?.applicationAccessToken.token)).toBe(true);
+    expect(isNonEmptyString(renewed?.applicationRefreshToken.token)).toBe(true);
+
+    expect(
+      decodeJwtCompleteOrThrow(renewed.applicationAccessToken.token).header.alg,
+    ).toBe('ES256');
+  });
+
+  it('verifies a hand-crafted no-kid HS256 APPLICATION_REFRESH token via the legacy fallback (round-trip through renewApplicationToken)', async () => {
+    const forgedPayload: ApplicationRefreshTokenJwtPayload = {
+      sub: seededApplicationId,
+      type: JwtTokenTypeEnum.APPLICATION_REFRESH,
+      workspaceId: seededWorkspaceId,
+      applicationId: seededApplicationId,
+    };
+
+    const forgedToken = forgeLegacyHs256Token(
+      forgedPayload as unknown as Record<string, unknown> & {
+        type: JwtTokenTypeEnum;
+      },
+      seededWorkspaceId,
+    );
+
+    const decoded = decodeJwtCompleteOrThrow(forgedToken);
+
+    expect(decoded.header.alg).toBe('HS256');
+    expect(decoded.header.kid).toBeUndefined();
+
+    const response = await renewApplicationTokenMutation(
+      forgedToken,
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const renewed = response.body.data?.renewApplicationToken;
+
+    expect(isNonEmptyString(renewed?.applicationAccessToken.token)).toBe(true);
+    expect(isNonEmptyString(renewed?.applicationRefreshToken.token)).toBe(true);
   });
 });
