@@ -8,6 +8,8 @@ export class RenamePermissionFlagToRolePermissionFlagFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // The legacy permissionFlag table stores per-role grants (`roleId` + `flag`).
+    // Rename it to preserve those rows before creating the new permissionFlag catalog table.
     await queryRunner.query(
       `ALTER TABLE "core"."permissionFlag" RENAME TO "rolePermissionFlag"`,
     );
