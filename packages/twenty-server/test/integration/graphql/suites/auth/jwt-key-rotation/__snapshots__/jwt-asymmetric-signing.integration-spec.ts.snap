@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`JWT Asymmetric Signing & Key Rotation (integration) rejects a token signed by a revoked kid (publicKey present, revokedAt set) 1`] = `
+exports[`JWT Asymmetric Signing - new ES256 + kid implementation (integration) rejects a token signed by a revoked kid (publicKey present, revokedAt set) 1`] = `
 {
   "extensions": {
     "code": "UNAUTHENTICATED",
@@ -14,7 +14,7 @@ exports[`JWT Asymmetric Signing & Key Rotation (integration) rejects a token sig
 }
 `;
 
-exports[`JWT Asymmetric Signing & Key Rotation (integration) rejects a token whose kid was never registered without leaking a 500 1`] = `
+exports[`JWT Asymmetric Signing - new ES256 + kid implementation (integration) rejects a token whose kid was never registered without leaking a 500 1`] = `
 {
   "extensions": {
     "code": "UNAUTHENTICATED",

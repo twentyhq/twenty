@@ -126,7 +126,7 @@ export class FileCorePictureService {
       });
     }
 
-    const url = this.fileUrlService.signFileByIdUrl({
+    const url = await this.fileUrlService.signFileByIdUrl({
       fileId: savedFile.id,
       fileFolder: FileFolder.CorePicture,
       workspaceId: workspace.id,
@@ -159,7 +159,7 @@ export class FileCorePictureService {
       queryRunner,
     });
 
-    const url = this.fileUrlService.signFileByIdUrl({
+    const url = await this.fileUrlService.signFileByIdUrl({
       fileId: savedFile.id,
       workspaceId,
       fileFolder: FileFolder.CorePicture,

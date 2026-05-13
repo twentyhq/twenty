@@ -102,7 +102,7 @@ export class ConnectionProviderOAuthFlowService {
 
     const codeVerifier = usePkce ? generatePkceVerifier() : null;
 
-    const state = this.signState({
+    const state = await this.signState({
       sub: connectionProvider.id,
       type: JwtTokenTypeEnum.APP_OAUTH_STATE,
       connectionProviderId: connectionProvider.id,
@@ -196,14 +196,8 @@ export class ConnectionProviderOAuthFlowService {
     };
   }
 
-  private signState(payload: AppOAuthStateJwtPayload): string {
-    const secret = this.jwtWrapperService.generateAppSecret(
-      JwtTokenTypeEnum.APP_OAUTH_STATE,
-      payload.workspaceId,
-    );
-
-    return this.jwtWrapperService.sign(payload, {
-      secret,
+  private async signState(payload: AppOAuthStateJwtPayload): Promise<string> {
+    return this.jwtWrapperService.signAsyncOrThrow(payload, {
       expiresIn: STATE_JWT_EXPIRES_IN,
     });
   }

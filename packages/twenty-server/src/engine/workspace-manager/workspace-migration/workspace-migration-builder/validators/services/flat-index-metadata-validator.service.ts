@@ -15,6 +15,8 @@ import { IndexExceptionCode } from 'src/engine/metadata-modules/flat-index-metad
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
+import { isCompositeFieldDefaultValueCompatibleWithUniqueIndex } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/is-composite-field-default-value-compatible-with-unique-index.util';
 
 @Injectable()
 export class FlatIndexValidatorService {
@@ -147,8 +149,23 @@ export class FlatIndexValidatorService {
             }
 
             if (flatIndexToValidate.isUnique) {
+              const compositeType = isCompositeUniversalFlatFieldMetadata(
+                relatedFlatField,
+              )
+                ? compositeTypeDefinitions.get(relatedFlatField.type)
+                : undefined;
+
+              const canUseDefaultValueInUniqueIndex = isDefined(compositeType)
+                ? isCompositeFieldDefaultValueCompatibleWithUniqueIndex({
+                    fieldType:
+                      relatedFlatField.type as CompositeFieldMetadataType,
+                    compositeProperties: compositeType.properties,
+                    defaultValue: relatedFlatField.defaultValue,
+                  })
+                : !isDefined(relatedFlatField.defaultValue);
+
               if (
-                isDefined(relatedFlatField.defaultValue) &&
+                !canUseDefaultValueInUniqueIndex &&
                 relatedFlatField.isUnique
               ) {
                 const fieldName = relatedFlatField.name;
@@ -163,11 +180,9 @@ export class FlatIndexValidatorService {
 
               const isCompositeFieldWithNonIncludedUniqueConstraint =
                 isCompositeUniversalFlatFieldMetadata(relatedFlatField) &&
-                !compositeTypeDefinitions
-                  .get(relatedFlatField.type)
-                  ?.properties.some(
-                    (property) => property.isIncludedInUniqueConstraint,
-                  );
+                !compositeType?.properties.some(
+                  (property) => property.isIncludedInUniqueConstraint,
+                );
 
               if (
                 [
