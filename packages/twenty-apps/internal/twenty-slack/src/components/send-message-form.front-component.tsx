@@ -65,9 +65,15 @@ const readSerializedValue = (
     target?: { value?: string };
   };
 
-  if (typeof object.detail?.value === 'string') return object.detail.value;
-  if (typeof object.value === 'string') return object.value;
-  if (typeof object.target?.value === 'string') return object.target.value;
+  if (typeof object.detail?.value === 'string') {
+    return object.detail.value;
+  }
+  if (typeof object.value === 'string') {
+    return object.value;
+  }
+  if (typeof object.target?.value === 'string') {
+    return object.target.value;
+  }
 
   return undefined;
 };
