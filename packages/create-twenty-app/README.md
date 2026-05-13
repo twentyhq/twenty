@@ -36,7 +36,8 @@ The scaffolder will:
 | `--name <name>`                | Set the app name                            |
 | `--display-name <displayName>` | Set the display name                        |
 | `--description <description>`  | Set the description                         |
-| `--skip-docker`                | Skip Docker server setup and authentication |
+| `--skip-local-instance`        | Skip local Docker server setup              |
+| `--api-url <url>`              | Twenty instance URL for remote auth (OAuth) |
 
 By default (no flags), a minimal app is generated with core files and an integration test. Use `--example` to start from a richer example:
 

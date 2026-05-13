@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
 import { CreateAppCommand } from '@/create-app.command';
 import packageJson from '../package.json';
+import { isDefined } from 'twenty-shared/utils';
 
 const program = new Command(packageJson.name)
   .description('CLI tool to initialize a new Twenty application')
@@ -16,7 +17,11 @@ const program = new Command(packageJson.name)
   .option('-n, --name <name>', 'Application name')
   .option('-d, --display-name <displayName>', 'Application display name')
   .option('--description <description>', 'Application description')
-  .option('--skip-docker', 'Skip Docker server setup and authentication')
+  .option(
+    '--skip-local-instance',
+    'Skip local Docker server setup (use with --api-url for remote instances)',
+  )
+  .option('--api-url <apiUrl>', 'Twenty instance URL for remote authentication')
   .helpOption('-h, --help', 'Display this help message.')
   .action(
     async (
@@ -26,7 +31,8 @@ const program = new Command(packageJson.name)
         name?: string;
         displayName?: string;
         description?: string;
-        skipDocker?: boolean;
+        skipLocalInstance?: boolean;
+        apiUrl?: string;
       },
     ) => {
       if (directory && !/^[a-z0-9-]+$/.test(directory)) {
@@ -43,13 +49,17 @@ const program = new Command(packageJson.name)
         process.exit(1);
       }
 
+      const skipLocalInstance =
+        options?.skipLocalInstance || isDefined(options?.apiUrl);
+
       await new CreateAppCommand().execute({
         directory,
         example: options?.example,
         name: options?.name,
         displayName: options?.displayName,
         description: options?.description,
-        skipDocker: options?.skipDocker,
+        skipLocalInstance,
+        apiUrl: options?.apiUrl,
       });
     },
   );
