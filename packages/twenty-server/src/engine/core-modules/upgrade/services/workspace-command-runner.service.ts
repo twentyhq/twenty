@@ -149,24 +149,6 @@ export class WorkspaceCommandRunnerService {
         });
       }
 
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-
-      this.logger.error(
-        formatUpgradeLog({
-          message: `Workspace ${workspaceId} failed on ${name}: ${errorMessage}`,
-          event: 'workspace.failed',
-          fields: {
-            workspaceId,
-            command: name,
-            executedByVersion,
-            dryRun: options.dryRun ?? false,
-            error: errorMessage,
-          },
-        }),
-        error instanceof Error ? error.stack : undefined,
-      );
-
       throw error;
     }
   }
