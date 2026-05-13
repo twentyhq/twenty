@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -12,6 +13,12 @@ import {
   unique: true,
   where: '"isCurrent" = true',
 })
+// Signing keys are instance-scoped — the HKDF info is just "instance"
+// — so the envelope shape is enforced on every non-null privateKey row.
+@Check(
+  'CHK_signingKey_privateKey_encrypted',
+  `"privateKey" IS NULL OR "privateKey" LIKE 'enc:v2:%'`,
+)
 export class SigningKeyEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
