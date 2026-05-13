@@ -9,10 +9,11 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 const V2_ENVELOPE_REGEX = /^enc:v2:[0-9a-f]{8}:[A-Za-z0-9+/=]+$/;
 const CONSTRAINT_NAME = 'CHK_applicationVariable_value_encrypted';
@@ -35,9 +36,7 @@ describe('ApplicationVariable encryption (integration)', () => {
 
   beforeAll(async () => {
     dataSource = global.testDataSource;
-    secretEncryption = global.app.get(SecretEncryptionService, {
-      strict: false,
-    });
+    secretEncryption = buildSecretEncryptionServiceFromEnv();
 
     applicationUniversalIdentifier = crypto.randomUUID();
     const roleUniversalIdentifier = crypto.randomUUID();

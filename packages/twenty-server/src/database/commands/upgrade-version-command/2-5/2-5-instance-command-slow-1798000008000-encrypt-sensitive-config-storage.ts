@@ -1,10 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, IsNull, QueryRunner } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 
-import {
-  KeyValuePairEntity,
-  KeyValuePairType,
-} from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
@@ -13,6 +10,8 @@ import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { TypedReflect } from 'src/utils/typed-reflect';
+
+type SensitiveConfigRow = { id: string; value: unknown };
 
 @RegisteredInstanceCommand('2.5.0', 1798000008000, { type: 'slow' })
 export class EncryptSensitiveConfigStorageSlowInstanceCommand
@@ -36,20 +35,19 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand
       return;
     }
 
-    const repository = dataSource.getRepository(KeyValuePairEntity);
-
     for (const key of sensitiveStringKeys) {
-      const rows = await repository.find({
-        where: {
-          type: KeyValuePairType.CONFIG_VARIABLE,
-          userId: IsNull(),
-          workspaceId: IsNull(),
-          key,
-        },
-      });
+      const rows: SensitiveConfigRow[] = await dataSource.query(
+        `SELECT id, value
+           FROM "core"."keyValuePair"
+          WHERE type = $1
+            AND "userId" IS NULL
+            AND "workspaceId" IS NULL
+            AND key = $2`,
+        [KeyValuePairType.CONFIG_VARIABLE, key],
+      );
 
       for (const row of rows) {
-        const rawValue = row.value as unknown;
+        const rawValue = row.value;
 
         if (typeof rawValue !== 'string') {
           continue;
@@ -72,9 +70,11 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand
         const encrypted =
           this.secretEncryptionService.encryptVersioned(plaintext);
 
-        await repository.update(
-          { id: row.id },
-          { value: encrypted as unknown as JSON },
+        await dataSource.query(
+          `UPDATE "core"."keyValuePair"
+              SET value = to_jsonb($1::text)
+            WHERE id = $2`,
+          [encrypted, row.id],
         );
       }
     }
