@@ -86,20 +86,6 @@ export class WorkspaceEntityManager extends EntityManager {
     this.repositories = new Map();
   }
 
-  private async executeAndRelease({
-    queryRunner,
-    executor,
-  }: {
-    queryRunner: QueryRunner;
-    executor: EntityPersistExecutor;
-  }): Promise<void> {
-    try {
-      await executor.execute();
-    } finally {
-      await queryRunner.release();
-    }
-  }
-
   private get eventEmitterService(): WorkspaceEventEmitter {
     return this.connection.eventEmitterService;
   }
@@ -1284,25 +1270,24 @@ export class WorkspaceEntityManager extends EntityManager {
         updatedColumns,
       });
 
-      await this.executeAndRelease({
-        queryRunner: queryRunnerForEntityPersistExecutor,
-        executor: new EntityPersistExecutor(
-          this.connection,
-          queryRunnerForEntityPersistExecutor,
-          'save',
-          target,
-          formattedEntityOrEntities as ObjectLiteral[],
-          options as SaveOptions | (SaveOptions & { reload: false }),
-        ),
-      });
+      const result = await new EntityPersistExecutor(
+        this.connection,
+        queryRunnerForEntityPersistExecutor,
+        'save',
+        target,
+        formattedEntityOrEntities as ObjectLiteral[],
+        options as SaveOptions | (SaveOptions & { reload: false }),
+      )
+        .execute()
+        .then(() => formattedEntityOrEntities as Entity[])
+        // oxlint-disable-next-line @typescripttypescript/no-misused-promises
+        .finally(() => queryRunnerForEntityPersistExecutor.release());
 
       if (isDefined(filesFieldFileIds)) {
         await filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
-      const resultArray = Array.isArray(formattedEntityOrEntities)
-        ? (formattedEntityOrEntities as Entity[])
-        : [formattedEntityOrEntities as Entity];
+      const resultArray = Array.isArray(result) ? result : [result];
 
       let formattedResult = formatResult<Entity[]>(
         resultArray,
@@ -1506,20 +1491,21 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.flatFieldMetadataMaps,
     );
 
-    await this.executeAndRelease({
-      queryRunner: queryRunnerForEntityPersistExecutor,
-      executor: new EntityPersistExecutor(
-        this.connection,
-        queryRunnerForEntityPersistExecutor,
-        'remove',
-        target as string | undefined,
-        formattedEntity as ObjectLiteral,
-        options as RemoveOptions,
-      ),
-    });
+    const result = new EntityPersistExecutor(
+      this.connection,
+      queryRunnerForEntityPersistExecutor,
+      'remove',
+      target as string | undefined,
+      formattedEntity as ObjectLiteral,
+      options as RemoveOptions,
+    )
+      .execute()
+      .then(() => formattedEntity as Entity | Entity[])
+      // oxlint-disable-next-line @typescripttypescript/no-misused-promises
+      .finally(() => queryRunnerForEntityPersistExecutor.release());
 
     const formattedResult = formatResult<Entity[]>(
-      formattedEntity,
+      result,
       objectMetadataItem,
       this.internalContext.flatObjectMetadataMaps,
       this.internalContext.flatFieldMetadataMaps,
@@ -1654,20 +1640,21 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.flatFieldMetadataMaps,
     );
 
-    await this.executeAndRelease({
-      queryRunner: queryRunnerForEntityPersistExecutor,
-      executor: new EntityPersistExecutor(
-        this.connection,
-        queryRunnerForEntityPersistExecutor,
-        'soft-remove',
-        target,
-        formattedEntity as ObjectLiteral,
-        options as SaveOptions,
-      ),
-    });
+    const result = new EntityPersistExecutor(
+      this.connection,
+      queryRunnerForEntityPersistExecutor,
+      'soft-remove',
+      target,
+      formattedEntity as ObjectLiteral,
+      options as SaveOptions,
+    )
+      .execute()
+      .then(() => formattedEntity as Entity)
+      // oxlint-disable-next-line @typescripttypescript/no-misused-promises
+      .finally(() => queryRunnerForEntityPersistExecutor.release());
 
     const formattedResult = formatResult<Entity[]>(
-      formattedEntity,
+      result,
       objectMetadataItem,
       this.internalContext.flatObjectMetadataMaps,
       this.internalContext.flatFieldMetadataMaps,
@@ -1803,20 +1790,21 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.flatFieldMetadataMaps,
     );
 
-    await this.executeAndRelease({
-      queryRunner: queryRunnerForEntityPersistExecutor,
-      executor: new EntityPersistExecutor(
-        this.connection,
-        queryRunnerForEntityPersistExecutor,
-        'recover',
-        target,
-        formattedEntity as ObjectLiteral,
-        options as SaveOptions,
-      ),
-    });
+    const result = new EntityPersistExecutor(
+      this.connection,
+      queryRunnerForEntityPersistExecutor,
+      'recover',
+      target,
+      formattedEntity as ObjectLiteral,
+      options as SaveOptions,
+    )
+      .execute()
+      .then(() => formattedEntity as Entity)
+      // oxlint-disable-next-line @typescripttypescript/no-misused-promises
+      .finally(() => queryRunnerForEntityPersistExecutor.release());
 
     const formattedResult = formatResult<Entity[]>(
-      formattedEntity,
+      result,
       objectMetadataItem,
       this.internalContext.flatObjectMetadataMaps,
       this.internalContext.flatFieldMetadataMaps,
