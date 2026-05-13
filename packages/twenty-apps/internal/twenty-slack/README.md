@@ -33,7 +33,11 @@ Both routes require an authenticated Twenty user and use the same shared Slack c
 
 1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps)
    (dedicated to this Twenty app — do not reuse for other Twenty apps).
-2. **OAuth & Permissions** → **Bot Token Scopes** (minimum for these tools):
+2. **OAuth & Permissions** → **Bot Token Scopes** (minimum for these tools).
+   Twenty uses Slack’s **bot** OAuth (`oauth/v2/authorize` with `scope=…`). You
+   must add scopes here — not only under **User Token Scopes** — or Slack will
+   refuse install with *“doesn’t have a bot user to install”* until at least one
+   bot scope exists:
    - `chat:write`
    - `chat:write.public` (optional, if posting to channels the bot is not in)
    - `reactions:write`
