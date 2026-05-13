@@ -18,8 +18,6 @@ config({
   override: true,
 });
 
-// EMAIL_SMTP_USER is declared as a sensitive STRING config in
-// ConfigVariables, so the slow command's metadata scan picks it up.
 const SENSITIVE_STRING_KEY = 'EMAIL_SMTP_USER';
 
 describe('2-5 slow instance command 1798000008000 - EncryptSensitiveConfigStorageSlowInstanceCommand (integration)', () => {

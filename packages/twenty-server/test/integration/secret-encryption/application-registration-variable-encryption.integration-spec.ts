@@ -136,9 +136,6 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
     expect(variable.value).toBe(plaintext);
   });
 
-  // Read path must transparently fall back to legacy unprefixed CTR for rows
-  // persisted before the v2 migration ran. Seed the row directly via SQL
-  // because the API only writes v2 envelopes now.
   describe('legacy CTR fallback', () => {
     beforeAll(async () => {
       await dataSource.query(

@@ -12,9 +12,6 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const CONSTRAINT_NAME = 'CHK_applicationVariable_value_encrypted';
 const CONSTRAINT_EXPR = `"isSecret" = false OR "value" = '' OR "value" LIKE 'enc:v2:%'`;
 
-// Compute the masked display the live API will return for a given plaintext.
-// Mirrors SecretEncryptionService.maskDecryptedValue so the test verifies the
-// real decryption + masking path end-to-end.
 const buildExpectedMask = (plaintext: string): string => {
   const visibleCharsCount = Math.min(5, Math.floor(plaintext.length / 10));
 
@@ -41,8 +38,6 @@ describe('ApplicationVariable encryption (integration)', () => {
 
     applicationId = workspaceCustomApplicationId;
 
-    // Drop the CHECK constraint so we can seed legacy unprefixed CTR
-    // ciphertext that exists in pre-migration databases.
     await dataSource.query(
       `ALTER TABLE core."applicationVariable"
        DROP CONSTRAINT IF EXISTS "${CONSTRAINT_NAME}"`,
