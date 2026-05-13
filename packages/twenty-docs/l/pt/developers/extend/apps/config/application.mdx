@@ -32,7 +32,7 @@ export default defineApplication({
 Notas:
 
 * Os campos `universalIdentifier` são IDs determinísticos que você controla. Gere-os uma vez e mantenha-os estáveis entre sincronizações.
-* `applicationVariables` tornam-se variáveis de ambiente para suas funções e componentes de front-end (por exemplo, `DEFAULT_RECIPIENT_NAME` fica disponível como `process.env.DEFAULT_RECIPIENT_NAME`).
+* `applicationVariables` tornam-se variáveis de ambiente para suas funções e componentes de front-end. Em funções lógicas (no lado do servidor), elas ficam disponíveis como `process.env.VARIABLE_NAME`. Em componentes de front-end, use `getApplicationVariable('VARIABLE_NAME')` de `twenty-sdk/front-component`. Variáveis marcadas com `isSecret: true` são injetadas apenas em funções lógicas. Componentes de front-end recebem apenas variáveis não secretas.
 * O papel padrão é detectado automaticamente a partir do arquivo de definição de papel marcado com [`defineApplicationRole()`](/l/pt/developers/extend/apps/config/roles) — você não precisa referenciá-lo em `defineApplication()`.
 * As funções de pré-instalação e pós-instalação são detectadas automaticamente durante a construção do manifesto — você não precisa referenciá-las em `defineApplication()`.
 * Passar `defaultRoleUniversalIdentifier` explicitamente ainda é compatível para retrocompatibilidade, mas foi preterido em favor de `defineApplicationRole()`.

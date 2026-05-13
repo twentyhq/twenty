@@ -38,6 +38,7 @@ import { EncryptApplicationVariableSlowInstanceCommand } from 'src/database/comm
 import { EncryptApplicationRegistrationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000006000-encrypt-application-registration-variable';
 import { EncryptSigningKeyPrivateKeysSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000007000-encrypt-signing-key-private-keys';
 import { EncryptSensitiveConfigStorageSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000008000-encrypt-sensitive-config-storage';
+import { AddSubFieldNameToViewSortFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778502963794-add-sub-field-name-to-view-sort';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -78,4 +79,5 @@ export const INSTANCE_COMMANDS = [
   EncryptApplicationRegistrationVariableSlowInstanceCommand,
   EncryptSigningKeyPrivateKeysSlowInstanceCommand,
   EncryptSensitiveConfigStorageSlowInstanceCommand,
+  AddSubFieldNameToViewSortFastInstanceCommand,
 ];

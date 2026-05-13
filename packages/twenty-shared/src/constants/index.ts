@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from './AllowedFullNameSortSubfields';
 export { AUTO_SELECT_FAST_MODEL_ID } from './AutoSelectFastModelId';
 export { AUTO_SELECT_SMART_MODEL_ID } from './AutoSelectSmartModelId';
 export { BACKEND_BATCH_REQUEST_MAX_COUNT } from './BackendBatchRequestMaxCount';
@@ -17,6 +18,7 @@ export { CURRENCY_CODE_LABELS } from './CurrencyCodeLabels';
 export { DATE_TYPE_FORMAT } from './DateTypeFormat';
 export { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from './DefaultNumberOfGroupsLimit';
 export { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from './DefaultRelativeDateFilterValue';
+export { DEFAULT_VISIBLE_ADDRESS_SUBFIELDS } from './DefaultVisibleAddressSubfields';
 export { DOCUMENTATION_BASE_URL } from './DocumentationBaseUrl';
 export { DOCUMENTATION_DEFAULT_LANGUAGE } from './DocumentationDefaultLanguage';
 export { DOCUMENTATION_DEFAULT_PATH } from './DocumentationDefaultPath';

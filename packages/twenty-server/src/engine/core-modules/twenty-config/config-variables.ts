@@ -799,14 +799,6 @@ export class ConfigVariables {
   BILLING_USAGE_CAP_CLICKHOUSE_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BILLING_CONFIG,
-    description: 'Enable billing v2 for new workspaces at checkout',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_BILLING_V2_ENABLED_FOR_NEW_WORKSPACES = false;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Url for the frontend application',
     type: ConfigVariableType.STRING,

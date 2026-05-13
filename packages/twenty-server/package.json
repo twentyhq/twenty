@@ -90,7 +90,7 @@
     "axios": "^1.13.5",
     "axios-retry": "^4.5.0",
     "babel-plugin-module-resolver": "5.0.2",
-    "bcrypt": "5.1.1",
+    "bcrypt": "^6.0.0",
     "bullmq": "5.40.0",
     "bytes": "3.1.2",
     "cache-manager": "^5.4.0",

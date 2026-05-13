@@ -1,10 +1,10 @@
-import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CommandLogger } from 'src/database/commands/logger';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
+import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
 
 type RawUpgradeCommandOptions = {
   workspaceId?: Set<string>;
@@ -126,17 +126,30 @@ export class UpgradeCommand extends CommandRunner {
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
 
       this.logger.log(
-        chalk.blue(
-          [
-            'Initialized upgrade sequence:',
-            `- ${sequence.length} step(s)`,
-            ...sequence.map(
-              (step, index) =>
-                `  [${index}] ${step.kind} — ${step.name} (${step.version})`,
-            ),
-          ].join('\n   '),
-        ),
+        formatUpgradeLog({
+          humanMessage: `Initialized upgrade sequence: ${sequence.length} step(s)`,
+          event: 'sequence.initialized',
+          logFields: {
+            stepCount: sequence.length,
+            dryRun: options.dryRun ?? false,
+          },
+        }),
       );
+
+      for (const [index, step] of sequence.entries()) {
+        this.logger.verbose(
+          formatUpgradeLog({
+            humanMessage: `  [${index}] ${step.kind} — ${step.name} (${step.version})`,
+            event: 'sequence.step',
+            logFields: {
+              index,
+              kind: step.kind,
+              name: step.name,
+              version: step.version,
+            },
+          }),
+        );
+      }
 
       const { totalSuccesses, totalFailures } =
         await this.upgradeSequenceRunnerService.run({
@@ -150,9 +163,15 @@ export class UpgradeCommand extends CommandRunner {
         });
 
       this.logger.log(
-        chalk.blue(
-          `Upgrade summary: ${totalSuccesses} workspace(s) succeeded, ${totalFailures} workspace(s) failed`,
-        ),
+        formatUpgradeLog({
+          humanMessage: `Upgrade summary: ${totalSuccesses} workspace(s) succeeded, ${totalFailures} workspace(s) failed`,
+          event: 'summary',
+          logFields: {
+            totalSuccesses,
+            totalFailures,
+            dryRun: options.dryRun ?? false,
+          },
+        }),
       );
 
       if (totalFailures > 0) {
@@ -161,7 +180,15 @@ export class UpgradeCommand extends CommandRunner {
         );
       }
     } catch (error) {
-      this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      this.logger.error(
+        formatUpgradeLog({
+          humanMessage: `Upgrade failed: ${errorMessage}`,
+          event: 'aborted',
+        }),
+      );
       throw error;
     }
   }

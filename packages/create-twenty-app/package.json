@@ -1,6 +1,6 @@
 {
   "name": "create-twenty-app",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Command-line interface to create Twenty application",
   "main": "dist/cli.cjs",
   "bin": "dist/cli.cjs",
@@ -32,7 +32,6 @@
     "chalk": "^5.3.0",
     "commander": "^12.0.0",
     "fs-extra": "^11.2.0",
-    "inquirer": "^10.0.0",
     "lodash.camelcase": "^4.3.0",
     "lodash.kebabcase": "^4.1.1",
     "lodash.startcase": "^4.4.0",
@@ -43,7 +42,6 @@
     "@swc/core": "^1.15.11",
     "@swc/jest": "^0.2.39",
     "@types/fs-extra": "^11.0.0",
-    "@types/inquirer": "^9.0.0",
     "@types/jest": "^30.0.0",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.kebabcase": "^4.1.7",

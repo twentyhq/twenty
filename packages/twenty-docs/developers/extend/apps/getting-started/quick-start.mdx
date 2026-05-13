@@ -87,7 +87,7 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-This watches `src/`, rebuilds on every change, and syncs the result to the server. Edit a file, save, and within a second the server reflects the change. You'll see a live status panel in your terminal.
+This watches `src/`, rebuilds on every change, and syncs the result to the server. Edit a file, save, and within a few seconds the server reflects the change. You'll see a live status panel in your terminal.
 
 For more detailed output (build logs, sync requests, error traces), add `--verbose`.
 
@@ -128,11 +128,15 @@ yarn twenty dev --once
 | `yarn twenty dev` | Watches and re-syncs on every change. Runs until you stop it. | Interactive local development. |
 | `yarn twenty dev --once` | Single build + sync, exits `0` on success, `1` on failure. | CI, pre-commit hooks, AI agents, scripted workflows. |
 
-Both modes need a server in development mode and an authenticated remote.
+Both modes need an authenticated remote.
 
-<Warning>
-Dev mode is only available on Twenty instances running in development (`NODE_ENV=development`). Production instances reject dev sync requests — use `yarn twenty deploy` to deploy to production servers. See [Publishing](/developers/extend/apps/operations/publishing).
-</Warning>
+### Dev mode options
+
+| Flag | Description |
+|------|-------------|
+| `--once` | Build and sync once, then exit. |
+| `--debounceMs <ms>` | Set the file-change debounce delay in milliseconds (default: `2000`). |
+| `--verbose` / `--debug` | Show detailed build logs, sync requests, and error traces. |
 
 ---
 
