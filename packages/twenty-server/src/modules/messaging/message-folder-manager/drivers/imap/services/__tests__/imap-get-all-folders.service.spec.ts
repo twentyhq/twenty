@@ -160,7 +160,47 @@ describe('ImapGetAllFoldersService', () => {
       }
     });
 
-    it('should exclude \\Noselect sent folder from results and skip STATUS', async () => {
+    it('should store the full IMAP path (e.g. [Gmail]/Sent Mail) as externalId for namespaced sent folders', async () => {
+      // Gmail-style: special folders live under [Gmail]/ namespace
+      // mailbox.name === 'Sent Mail', mailbox.path === '[Gmail]/Sent Mail'
+      // The APPEND command needs the path, not the leaf name, or it gets TRYCREATE
+      const mailboxList = [
+        createMockMailbox({ path: 'INBOX' }),
+        createMockMailbox({
+          path: '[Gmail]/Sent Mail',
+          name: 'Sent Mail',
+          parentPath: '[Gmail]',
+        }),
+      ];
+
+      mockImapClient.list.mockResolvedValue(mailboxList);
+      mockImapClient.status.mockImplementation(async (path: string) => {
+        const uidMap: Record<string, bigint> = {
+          INBOX: BigInt(1),
+          '[Gmail]/Sent Mail': BigInt(2),
+        };
+
+        return { uidValidity: uidMap[path] } as any;
+      });
+
+      imapFindSentFolderService.findSentFolder.mockResolvedValue({
+        path: '[Gmail]/Sent Mail',
+        name: 'Sent Mail',
+      });
+
+      const result = await service.getAllMessageFolders(
+        CONNECTED_ACCOUNT,
+        MESSAGE_CHANNEL,
+      );
+
+      const sentFolder = result.find((f) => f.isSentFolder);
+
+      expect(sentFolder).toBeDefined();
+      // externalId should encode the full path so getImapFolderPath() returns '[Gmail]/Sent Mail'
+      expect(sentFolder?.externalId).toMatch(/^\[Gmail\]\/Sent Mail/);
+    });
+
+    it('should exclude \\\\Noselect sent folder from results and skip STATUS', async () => {
       const mailboxList = [
         createMockMailbox({ path: 'INBOX' }),
         createMockMailbox({
