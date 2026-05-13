@@ -22,8 +22,12 @@ export const resolveFieldMetadataStandardOverride = (
     return fieldMetadata[labelKey] ?? '';
   }
 
-  if (labelKey === 'icon' && isDefined(fieldMetadata.standardOverrides?.icon)) {
-    return fieldMetadata.standardOverrides.icon;
+  if (labelKey === 'icon') {
+    if (isDefined(fieldMetadata.standardOverrides?.icon)) {
+      return fieldMetadata.standardOverrides.icon;
+    }
+
+    return fieldMetadata.icon ?? '';
   }
 
   if (

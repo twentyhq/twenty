@@ -99,6 +99,29 @@ describe('resolveFieldMetadataStandardOverride', () => {
       );
 
       expect(result).toBe('override-icon');
+      expect(mockGenerateMessageId).not.toHaveBeenCalled();
+      expect(mockI18n._).not.toHaveBeenCalled();
+    });
+
+    it('should return original icon without trying to translate it when override is missing', () => {
+      const fieldMetadata = {
+        label: 'Standard Label',
+        description: 'Standard Description',
+        icon: 'default-icon',
+        isCustom: false,
+        standardOverrides: {},
+      };
+
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'icon',
+        'fr-FR',
+        mockI18n,
+      );
+
+      expect(result).toBe('default-icon');
+      expect(mockGenerateMessageId).not.toHaveBeenCalled();
+      expect(mockI18n._).not.toHaveBeenCalled();
     });
   });
 

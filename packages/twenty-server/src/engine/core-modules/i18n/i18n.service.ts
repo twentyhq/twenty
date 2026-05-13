@@ -1,4 +1,4 @@
-import { Injectable, type OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 
 import {
   type I18n,
@@ -42,6 +42,8 @@ import { messages as zhHantMessages } from 'src/engine/core-modules/i18n/locales
 
 @Injectable()
 export class I18nService implements OnModuleInit {
+  private readonly logger = new Logger(I18nService.name);
+
   private i18nInstancesMap: Record<keyof typeof APP_LOCALES, I18n> =
     {} as Record<keyof typeof APP_LOCALES, I18n>;
 
@@ -83,7 +85,15 @@ export class I18nService implements OnModuleInit {
     (
       Object.entries(messagesByLocale) as [keyof typeof APP_LOCALES, Messages][]
     ).forEach(([locale, messages]) => {
-      const localeI18n = setupI18n();
+      const localeI18n = setupI18n({
+        missing: (missingLocale, messageId) => {
+          this.logger.debug(
+            `Missing compiled translation message for locale ${missingLocale}: ${messageId}`,
+          );
+
+          return messageId;
+        },
+      });
 
       localeI18n.load(locale, messages);
       localeI18n.activate(locale);
