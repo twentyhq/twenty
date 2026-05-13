@@ -44,6 +44,14 @@ export const resolveFieldMetadataStandardOverride = (
 
   const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');
 
+  const isMessageCompiled =
+    !isDefined(i18nInstance.messages) ||
+    isDefined(i18nInstance.messages[messageId]);
+
+  if (!isMessageCompiled) {
+    return fieldMetadata[labelKey] ?? '';
+  }
+
   const translatedMessage = i18nInstance._(messageId);
 
   if (translatedMessage === messageId) {

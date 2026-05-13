@@ -385,6 +385,52 @@ describe('resolveFieldMetadataStandardOverride', () => {
 
       expect(result).toBe('Standard Label');
     });
+
+    it('should return original field value without calling i18n when message is not compiled', () => {
+      const fieldMetadata = {
+        label: 'Dynamic Field Label',
+        description: 'Standard Description',
+        icon: 'default-icon',
+        isCustom: false,
+        standardOverrides: undefined,
+      };
+
+      mockGenerateMessageId.mockReturnValue('missing.message.id');
+      mockI18n.messages = {};
+
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'label',
+        'fr-FR',
+        mockI18n,
+      );
+
+      expect(result).toBe('Dynamic Field Label');
+      expect(mockI18n._).not.toHaveBeenCalled();
+    });
+
+    it('should return original field value without calling i18n when message is not compiled', () => {
+      const fieldMetadata = {
+        label: 'Dynamic Field Label',
+        description: 'Standard Description',
+        icon: 'default-icon',
+        isCustom: false,
+        standardOverrides: undefined,
+      };
+
+      mockGenerateMessageId.mockReturnValue('missing.message.id');
+      mockI18n.messages = {};
+
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'label',
+        'fr-FR',
+        mockI18n,
+      );
+
+      expect(result).toBe('Dynamic Field Label');
+      expect(mockI18n._).not.toHaveBeenCalled();
+    });
   });
 
   describe('Priority order - Standard fields', () => {

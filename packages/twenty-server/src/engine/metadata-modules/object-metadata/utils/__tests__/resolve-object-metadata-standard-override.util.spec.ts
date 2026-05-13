@@ -503,6 +503,54 @@ describe('resolveObjectMetadataStandardOverride', () => {
 
       expect(result).toBe('Standard Label');
     });
+
+    it('should return original object value without calling i18n when message is not compiled', () => {
+      const objectMetadata = {
+        labelSingular: 'Dynamic Override Label',
+        labelPlural: 'Standard Labels',
+        description: 'Standard Description',
+        icon: 'default-icon',
+        isCustom: false,
+        standardOverrides: undefined,
+      };
+
+      mockGenerateMessageId.mockReturnValue('missing.message.id');
+      mockI18n.messages = {};
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'labelSingular',
+        'fr-FR',
+        mockI18n,
+      );
+
+      expect(result).toBe('Dynamic Override Label');
+      expect(mockI18n._).not.toHaveBeenCalled();
+    });
+
+    it('should return original object value without calling i18n when message is not compiled', () => {
+      const objectMetadata = {
+        labelSingular: 'Dynamic Override Label',
+        labelPlural: 'Standard Labels',
+        description: 'Standard Description',
+        icon: 'default-icon',
+        isCustom: false,
+        standardOverrides: undefined,
+      };
+
+      mockGenerateMessageId.mockReturnValue('missing.message.id');
+      mockI18n.messages = {};
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'labelSingular',
+        'fr-FR',
+        mockI18n,
+      );
+
+      expect(result).toBe('Dynamic Override Label');
+      expect(mockI18n._).not.toHaveBeenCalled();
+    });
   });
 
   describe('Priority order - Standard objects', () => {
