@@ -1,19 +1,15 @@
-export const ACCENT = '#16a34a';
-export const ACCENT_DIM = 'rgba(22, 163, 74, 0.25)';
+export const ACCENT = '#4A38F5';
+export const ACCENT_DIM = 'rgba(74, 56, 245, 0.25)';
+export const ACCENT_SECONDARY = '#7938B2';
 
 export const BAR_DATA = [
-  { label: 'Jan', value: 38 },
-  { label: 'Feb', value: 41 },
-  { label: 'Mar', value: 40 },
-  { label: 'Apr', value: 88 },
-  { label: 'May', value: 44 },
-  { label: 'Jun', value: 30 },
-  { label: 'Jul', value: 39 },
-  { label: 'Aug', value: 44 },
-  { label: 'Sep', value: 30 },
-  { label: 'Oct', value: 30 },
-  { label: 'Nov', value: 41 },
-  { label: 'Dec', value: 43 },
+  { label: 'Jan', value: 36, value2: 38 },
+  { label: 'Feb', value: 68, value2: 41 },
+  { label: 'Mar', value: 40, value2: 38 },
+  { label: 'Apr', value: 44, value2: 30 },
+  { label: 'May', value: 39, value2: 40 },
+  { label: 'Jun', value: 30, value2: 30 },
+  { label: 'Jul', value: 44, value2: 30 },
 ];
 
 export const DONUT_VALUE = 70;
