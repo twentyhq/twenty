@@ -126,9 +126,6 @@ export class GraphqlQueryParser {
       isForwardPagination,
     );
 
-    // Add LEFT JOINs for relation ordering. ensureRelationJoin dedupes against
-    // joins already on the builder, so filter-driven joins on the same
-    // relation don't collide with order-driven ones.
     for (const joinInfo of parseResult.relationJoins) {
       ensureRelationJoin(queryBuilder, objectNameSingular, joinInfo.joinAlias);
     }

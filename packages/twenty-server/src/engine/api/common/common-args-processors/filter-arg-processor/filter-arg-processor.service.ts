@@ -11,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { ALL_LEAF_FILTER_OPERATOR_NAMES } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/all-leaf-filter-operator-names.constant';
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
 import { validateAndTransformOperatorAndValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util';
 import {
@@ -41,19 +42,12 @@ function throwUseJoinColumnInstead(key: string): never {
   );
 }
 
-// A relation filter is treated as a traversal (`{ name: { eq: "X" } }`) when
-// at least one top-level key matches a field on the target object or is a
-// logical operator (`and`/`or`/`not`). Otherwise the value looks like a leaf
-// operator shape (`{ eq: "uuid" }`), which is invalid for relation traversal.
-const isRelationTraversalShape = ({
-  filterValue,
-  targetFieldIdByName,
-  targetFieldIdByJoinColumnName,
-}: {
-  filterValue: ObjectRecordFilter;
-  targetFieldIdByName: Record<string, string>;
-  targetFieldIdByJoinColumnName: Record<string, string>;
-}): boolean => {
+// True when the value is shaped like a per-field filter applied directly to a
+// relation by its name (`{ company: { eq: "<uuid>" } }`). Per-field operators
+// only apply to scalar fields, so this shape is rejected — callers should use
+// the FK join column (`{ companyId: { eq: ... } }`) or traverse into a target
+// field (`{ company: { name: { ... } } }`).
+const isLeafOperatorShape = (filterValue: unknown): boolean => {
   if (typeof filterValue !== 'object' || filterValue === null) {
     return false;
   }
@@ -64,13 +58,8 @@ const isRelationTraversalShape = ({
     return false;
   }
 
-  return keys.some(
-    (k) =>
-      k === 'and' ||
-      k === 'or' ||
-      k === 'not' ||
-      isDefined(targetFieldIdByName[k]) ||
-      isDefined(targetFieldIdByJoinColumnName[k]),
+  return keys.some((k) =>
+    (ALL_LEAF_FILTER_OPERATOR_NAMES as readonly string[]).includes(k),
   );
 };
 
@@ -149,11 +138,9 @@ export class FilterArgProcessorService {
         continue;
       }
 
-      // If the key resolves to a relation field accessed by name (not by FK
-      // column), branch into relation traversal so we recurse into the target
-      // object's metadata. This keeps `validateAndTransformFieldFilter` focused
-      // on scalar + composite fields and avoids casting between
-      // `ObjectRecordFilter` and the field-filter shape.
+      // A key that maps to a relation field by its name (not by its FK join
+      // column) becomes a relation traversal — the filter recurses into the
+      // target object's metadata.
       const fieldMetadataForRelation = this.resolveRelationFieldMetadataByName({
         key,
         fieldIdByName,
@@ -251,14 +238,16 @@ export class FilterArgProcessorService {
       );
     }
 
+    if (isLeafOperatorShape(filterValue)) {
+      throwUseJoinColumnInstead(key);
+    }
+
     const targetObjectMetadataId = fieldMetadata.relationTargetObjectMetadataId;
 
     if (
       !isDefined(flatObjectMetadataMaps) ||
       !isDefined(targetObjectMetadataId)
     ) {
-      // Can't resolve the target — fall back to the legacy guidance that
-      // points users at the FK column.
       throwUseJoinColumnInstead(key);
     }
 
@@ -272,29 +261,6 @@ export class FilterArgProcessorService {
       throwUseJoinColumnInstead(key);
     }
 
-    const {
-      fieldIdByName: targetFieldIdByName,
-      fieldIdByJoinColumnName: targetFieldIdByJoinColumnName,
-    } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      targetObjectMetadata,
-    );
-
-    // Distinguish between a relation-traversal filter
-    // (`{ name: { eq: "X" } }`) and the legacy leaf-operator shape
-    // (`{ eq: "uuid" }`). The latter is invalid against the target object's
-    // schema, so we surface the friendlier "use companyId instead" message
-    // before recursing.
-    if (
-      !isRelationTraversalShape({
-        filterValue,
-        targetFieldIdByName,
-        targetFieldIdByJoinColumnName,
-      })
-    ) {
-      throwUseJoinColumnInstead(key);
-    }
-
     if (depth >= MAX_RELATION_FILTER_DEPTH) {
       throw new CommonQueryRunnerException(
         `Relation filter nesting deeper than ${MAX_RELATION_FILTER_DEPTH} hop is not supported`,
@@ -304,6 +270,14 @@ export class FilterArgProcessorService {
         },
       );
     }
+
+    const {
+      fieldIdByName: targetFieldIdByName,
+      fieldIdByJoinColumnName: targetFieldIdByJoinColumnName,
+    } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      targetObjectMetadata,
+    );
 
     return this.validateAndTransformFilter(
       filterValue,
@@ -353,9 +327,10 @@ export class FilterArgProcessorService {
       );
     }
 
-    // ONE_TO_MANY (and other non-MANY_TO_ONE relation types) accessed by name
-    // get rejected with the legacy message — they don't have an FK column to
-    // suggest, and traversal isn't supported yet.
+    // Reject relation fields accessed by name when the relation type isn't
+    // supported by the traversal branch (currently anything other than
+    // MANY_TO_ONE). MANY_TO_ONE relations are handled before this path is
+    // reached, so they never land here.
     if (
       isDefined(fieldIdByName[key]) &&
       !isDefined(fieldIdByJoinColumnName[key]) &&

@@ -114,10 +114,10 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
       },
     };
 
-    // Expose the related object's filter input under the relation field name so
-    // callers can write `filter: { company: { name: { like: "%X%" } } }`. Only
-    // MANY_TO_ONE is supported for now — ONE_TO_MANY is handled by the early
-    // return above and would need EXISTS-subquery support to do correctly.
+    // Exposes the related object's filter input under the relation field name
+    // (`filter: { company: { name: { ... } } }`). Limited to MANY_TO_ONE
+    // because ONE_TO_MANY returned early above — reverse traversal requires
+    // EXISTS-subquery support that the query builder does not yet emit.
     if (
       isDefined(fieldMetadata.relationTargetObjectMetadataId) &&
       isDefined(context)

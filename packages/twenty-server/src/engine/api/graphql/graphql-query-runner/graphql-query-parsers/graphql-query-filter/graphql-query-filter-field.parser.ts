@@ -64,10 +64,10 @@ export class GraphqlQueryFilterFieldParser {
     isFirst = false,
     useDirectTableReference = false,
   ): void {
-    // Detect whether the caller addressed the field by its relation name (e.g.
-    // `company`) or by its FK column (`companyId`). Relation-name access is
-    // what triggers relation traversal; FK access keeps the existing scalar
-    // semantics.
+    // `fieldIdByName` resolves relation fields by their entity name
+    // (`company`); `fieldIdByJoinColumnName` resolves them by their FK column
+    // (`companyId`). The two have different semantics — only the former opts
+    // into relation traversal.
     const isAccessedByRelationName = isDefined(this.fieldIdByName[key]);
     const fieldMetadataId =
       this.fieldIdByName[`${key}`] || this.fieldIdByJoinColumnName[`${key}`];
@@ -185,15 +185,8 @@ export class GraphqlQueryFilterFieldParser {
 
     const joinAlias = fieldMetadata.name;
 
-    // LEFT JOIN against the outer query builder. ensureRelationJoin dedupes
-    // against joins that the order parser might already have added (e.g. when
-    // the same query also sorts by the same relation), so we don't trip
-    // TypeORM's duplicate-alias guard.
     ensureRelationJoin(outerQueryBuilder, parentAlias, joinAlias);
 
-    // Recurse via a child condition parser scoped to the target object. The
-    // child handles `and`/`or`/`not` inside the sub-filter naturally because
-    // it walks entries through the same parseKeyFilter dispatch the root uses.
     const childConditionParser = new GraphqlQueryFilterConditionParser(
       targetObjectMetadata,
       this.flatFieldMetadataMaps,
