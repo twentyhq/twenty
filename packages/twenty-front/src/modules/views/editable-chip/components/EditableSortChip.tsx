@@ -34,7 +34,10 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     primaryCompositeSubField: recordSort.subFieldName,
   });
 
-  const dropdownId = `sort-chip-${recordSort.fieldMetadataId}`;
+  // The id of the RecordSort row itself, not the field — fieldMetadataId
+  // can repeat across views/widgets and would collide on the shared
+  // dropdown-open atom.
+  const dropdownId = `sort-chip-${recordSort.id}`;
 
   const setDirection = (direction: ViewSortDirection) => {
     upsertRecordSort({ ...recordSort, direction });
