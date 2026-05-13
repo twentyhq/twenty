@@ -6,7 +6,6 @@ export type SocialSSOState = {
   workspaceInviteHash?: string;
   workspaceId?: string;
   billingCheckoutSessionState?: string;
-  workspacePersonalInviteToken?: string;
   action?: SocialSSOSignInUpActionType;
   locale?: keyof typeof APP_LOCALES;
   returnToPath?: string;
