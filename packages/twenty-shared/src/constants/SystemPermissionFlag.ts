@@ -1,4 +1,4 @@
-import { PermissionFlagType } from './PermissionFlagType';
+import type { PermissionFlagType } from './PermissionFlagType';
 
 export const SystemPermissionFlag = {
   API_KEYS_AND_WEBHOOKS: 'beb99803-9a0e-588d-9c4b-3dd14d9cdf21',
