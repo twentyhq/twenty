@@ -15,6 +15,7 @@ import {
   checkDockerRunning,
   ConfigService,
   DEV_API_KEY,
+  DEV_API_URL,
   getDockerInstallInstructions,
   isDockerInstalled,
   serverStart,
@@ -24,6 +25,8 @@ import { isDefined } from 'twenty-shared/utils';
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
 const IMAGE = 'twentycrm/twenty-app-dev:latest';
 
+export type AuthenticationMethod = 'oauth' | 'apiKey';
+
 type CreateAppOptions = {
   directory?: string;
   example?: string;
@@ -32,16 +35,30 @@ type CreateAppOptions = {
   description?: string;
   skipLocalInstance?: boolean;
   apiUrl?: string;
+  authenticationMethod?: AuthenticationMethod;
 };
 
 export class CreateAppCommand {
+  private stepCounter = 0;
+  private totalSteps = 0;
+
   async execute(options: CreateAppOptions = {}): Promise<void> {
     const { appName, appDisplayName, appDirectory, appDescription } =
       this.getAppInfos(options);
 
     try {
       const skipLocalInstance = options.skipLocalInstance ?? false;
-      const apiUrl = options.apiUrl;
+      const apiUrl = options.apiUrl ?? DEV_API_URL;
+      const authenticationMethod =
+        options.authenticationMethod ?? (skipLocalInstance ? 'oauth' : 'apiKey');
+
+      if (authenticationMethod === 'apiKey' && skipLocalInstance) {
+        throw new Error(
+          'API key authentication requires a local Docker instance. ' +
+            'Use --authentication-method oauth with --skip-local-instance, ' +
+            'or remove --skip-local-instance.',
+        );
+      }
 
       if (!skipLocalInstance && !isDockerInstalled()) {
         console.log(chalk.yellow('\n' + getDockerInstallInstructions() + '\n'));
@@ -50,10 +67,12 @@ export class CreateAppCommand {
 
       await this.validateDirectory(appDirectory);
 
-      const hasRemoteAuth = skipLocalInstance && isDefined(apiUrl);
-      const totalSteps = hasRemoteAuth ? 5 : skipLocalInstance ? 4 : 6;
+      this.totalSteps = this.computeTotalSteps({
+        skipLocalInstance,
+        authenticationMethod,
+      });
+      this.stepCounter = 0;
 
-      // Start pulling the Docker image in the background while we scaffold
       const dockerPullPromise =
         !skipLocalInstance && checkDockerRunning()
           ? this.pullImageInBackground()
@@ -61,11 +80,11 @@ export class CreateAppCommand {
 
       this.logPlan({ appName, appDisplayName, appDescription, appDirectory });
 
-      this.logStep(1, totalSteps, 'Creating project directory');
+      this.logNextStep('Creating project directory');
       await fs.ensureDir(appDirectory);
       this.logDetail(appDirectory);
 
-      this.logStep(2, totalSteps, 'Scaffolding project files');
+      this.logNextStep('Scaffolding project files');
 
       if (options.example) {
         const exampleSucceeded = await this.tryDownloadExample(
@@ -92,10 +111,10 @@ export class CreateAppCommand {
         });
       }
 
-      this.logStep(3, totalSteps, 'Installing dependencies');
+      this.logNextStep('Installing dependencies');
       await install(appDirectory, (message) => this.logDetail(message));
 
-      this.logStep(4, totalSteps, 'Initializing Git repository');
+      this.logNextStep('Initializing Git repository');
       const gitInitialized = await tryGitInit(appDirectory);
 
       if (gitInitialized) {
@@ -109,29 +128,22 @@ export class CreateAppCommand {
 
       console.log('');
 
-      let serverUrl: string | undefined;
       let authSucceeded = false;
 
       if (!skipLocalInstance) {
-        this.logStep(5, totalSteps, 'Starting Twenty server');
+        this.logNextStep('Starting Twenty server');
         const serverResult = await this.ensureDockerServer(dockerPullPromise);
 
-        serverUrl = serverResult.url;
-
-        if (isDefined(serverUrl)) {
-          this.logStep(6, totalSteps, 'Authenticating to local instance');
-          authSucceeded = await this.authenticateWithDevKey(serverUrl);
+        if (isDefined(serverResult.url)) {
+          this.logNextStep('Authenticating');
+          authSucceeded = await this.authenticateWithDevKey(serverResult.url);
         }
-      } else if (isDefined(apiUrl)) {
-        this.logStep(5, totalSteps, 'Authenticating to remote instance');
+      } else if (authenticationMethod === 'oauth') {
+        this.logNextStep('Authenticating');
         authSucceeded = await this.authenticateWithOAuth(apiUrl);
-
-        if (authSucceeded) {
-          serverUrl = apiUrl;
-        }
       }
 
-      this.logSuccess(appDirectory, serverUrl, authSucceeded);
+      this.logSuccess(appDirectory, apiUrl, authSucceeded);
     } catch (error) {
       console.error(
         chalk.red('\nCreate application failed:'),
@@ -139,6 +151,25 @@ export class CreateAppCommand {
       );
       process.exit(1);
     }
+  }
+
+  private computeTotalSteps({
+    skipLocalInstance,
+    authenticationMethod,
+  }: {
+    skipLocalInstance: boolean;
+    authenticationMethod: AuthenticationMethod;
+  }): number {
+    let steps = 4; // directory, scaffold, install, git
+
+    if (!skipLocalInstance) {
+      steps += 1; // start server
+      steps += 1; // authenticate with dev key
+    } else if (authenticationMethod === 'oauth') {
+      steps += 1; // authenticate with oauth
+    }
+
+    return steps;
   }
 
   private getAppInfos(options: CreateAppOptions): {
@@ -224,9 +255,11 @@ export class CreateAppCommand {
     console.log('');
   }
 
-  private logStep(step: number, total: number, title: string): void {
+  private logNextStep(title: string): void {
+    this.stepCounter++;
     console.log(
-      chalk.blue(`\n[${step}/${total}]`) + chalk.white(` ${title}...`),
+      chalk.blue(`\n[${this.stepCounter}/${this.totalSteps}]`) +
+        chalk.white(` ${title}...`),
     );
   }
 
@@ -280,11 +313,11 @@ export class CreateAppCommand {
     return {};
   }
 
-  private async authenticateWithDevKey(serverUrl: string): Promise<boolean> {
+  private async authenticateWithDevKey(apiUrl: string): Promise<boolean> {
     try {
       const result = await authLogin({
         apiKey: DEV_API_KEY,
-        apiUrl: serverUrl,
+        apiUrl,
         remote: 'local',
       });
 
@@ -307,7 +340,7 @@ export class CreateAppCommand {
     } catch {
       console.log(
         chalk.yellow(
-          '  Authentication failed. Run `yarn twenty remote add` manually.',
+          '  Authentication failed. Run `yarn twenty remote add --local` manually.',
         ),
       );
 
@@ -363,7 +396,7 @@ export class CreateAppCommand {
 
   private logSuccess(
     appDirectory: string,
-    serverUrl: string | undefined,
+    apiUrl: string,
     authSucceeded: boolean,
   ): void {
     const dirName = basename(appDirectory);
@@ -392,10 +425,8 @@ export class CreateAppCommand {
     console.log(chalk.cyan('     yarn twenty dev\n'));
     stepNumber++;
 
-    if (isDefined(serverUrl)) {
-      console.log(chalk.white(`  ${stepNumber}. Open your twenty instance`));
-      console.log(chalk.cyan(`     ${serverUrl}\n`));
-    }
+    console.log(chalk.white(`  ${stepNumber}. Open your twenty instance`));
+    console.log(chalk.cyan(`     ${apiUrl}\n`));
 
     console.log(
       chalk.gray(

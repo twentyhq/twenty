@@ -30,14 +30,15 @@ The scaffolder will:
 
 ## Options
 
-| Flag                           | Description                                 |
-| ------------------------------ | ------------------------------------------- |
-| `--example <name>`             | Initialize from an example                  |
-| `--name <name>`                | Set the app name                            |
-| `--display-name <displayName>` | Set the display name                        |
-| `--description <description>`  | Set the description                         |
-| `--skip-local-instance`        | Skip local Docker server setup              |
-| `--api-url <url>`              | Twenty instance URL for remote auth (OAuth) |
+| Flag                                    | Description                                                                  |
+| --------------------------------------- | ---------------------------------------------------------------------------- |
+| `--example <name>`                      | Initialize from an example                                                   |
+| `--name <name>`                         | Set the app name                                                             |
+| `--display-name <displayName>`          | Set the display name                                                         |
+| `--description <description>`           | Set the description                                                          |
+| `--skip-local-instance`                 | Skip local Docker server setup                                               |
+| `--api-url <url>`                       | Twenty instance URL (default: `http://localhost:2020`)                        |
+| `--authentication-method <method>`      | `oauth` or `apiKey` (default: `apiKey` for local, `oauth` for remote)        |
 
 By default (no flags), a minimal app is generated with core files and an integration test. Use `--example` to start from a richer example:
 

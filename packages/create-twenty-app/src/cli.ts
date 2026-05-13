@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
-import { CreateAppCommand } from '@/create-app.command';
+import { AuthenticationMethod, CreateAppCommand } from '@/create-app.command';
 import packageJson from '../package.json';
-import { isDefined } from 'twenty-shared/utils';
 
 const program = new Command(packageJson.name)
   .description('CLI tool to initialize a new Twenty application')
@@ -21,7 +20,14 @@ const program = new Command(packageJson.name)
     '--skip-local-instance',
     'Skip local Docker server setup (use with --api-url for remote instances)',
   )
-  .option('--api-url <apiUrl>', 'Twenty instance URL for remote authentication')
+  .option(
+    '--api-url <apiUrl>',
+    'Twenty instance URL (default: http://localhost:2020)',
+  )
+  .option(
+    '--authentication-method <method>',
+    'Authentication method: oauth or apiKey (default: apiKey for local, oauth for remote)',
+  )
   .helpOption('-h, --help', 'Display this help message.')
   .action(
     async (
@@ -33,6 +39,7 @@ const program = new Command(packageJson.name)
         description?: string;
         skipLocalInstance?: boolean;
         apiUrl?: string;
+        authenticationMethod?: AuthenticationMethod;
       },
     ) => {
       if (directory && !/^[a-z0-9-]+$/.test(directory)) {
@@ -49,8 +56,17 @@ const program = new Command(packageJson.name)
         process.exit(1);
       }
 
-      const skipLocalInstance =
-        options?.skipLocalInstance || isDefined(options?.apiUrl);
+      if (
+        options?.authenticationMethod &&
+        !['oauth', 'apiKey'].includes(options.authenticationMethod)
+      ) {
+        console.error(
+          chalk.red(
+            'Error: --authentication-method must be "oauth" or "apiKey".',
+          ),
+        );
+        process.exit(1);
+      }
 
       await new CreateAppCommand().execute({
         directory,
@@ -58,8 +74,9 @@ const program = new Command(packageJson.name)
         name: options?.name,
         displayName: options?.displayName,
         description: options?.description,
-        skipLocalInstance,
+        skipLocalInstance: options?.skipLocalInstance,
         apiUrl: options?.apiUrl,
+        authenticationMethod: options?.authenticationMethod,
       });
     },
   );
