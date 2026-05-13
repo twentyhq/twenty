@@ -21,11 +21,11 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-contex
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/utils/envelope.util';
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constants';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
-const CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX = `${ENVELOPE_V2_PREFIX}keyid:`;
+const CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}keyid:`;
 
 describe('ConnectionProviderOAuthFlowService', () => {
   let service: ConnectionProviderOAuthFlowService;

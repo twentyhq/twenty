@@ -28,11 +28,11 @@ export type ConnectedAccountVisibility = 'user' | 'workspace';
 @Index('IDX_CONNECTED_ACCOUNT_APPLICATION_ID', ['applicationId'])
 @Check(
   'CHK_connectedAccount_accessToken_encrypted',
-  `"accessToken" IS NULL OR "accessToken" LIKE 'enc:v_:%'`,
+  `"accessToken" IS NULL OR "accessToken" LIKE 'enc:v2:%'`,
 )
 @Check(
   'CHK_connectedAccount_refreshToken_encrypted',
-  `"refreshToken" IS NULL OR "refreshToken" LIKE 'enc:v_:%'`,
+  `"refreshToken" IS NULL OR "refreshToken" LIKE 'enc:v2:%'`,
 )
 export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')

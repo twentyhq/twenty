@@ -1,10 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import {
-  ENVELOPE_PREFIX,
-  parseEnvelope,
-} from 'src/engine/core-modules/secret-encryption/utils/envelope.util';
+  SecretEncryptionException,
+  SecretEncryptionExceptionCode,
+} from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { parseSecretEncryptionEnvelopeOrThrow } from 'src/engine/core-modules/secret-encryption/utils/parse-secret-encryption-envelope-or-throw.util';
 
 @Injectable()
 export class ConnectedAccountTokenEncryptionService {
@@ -17,10 +18,10 @@ export class ConnectedAccountTokenEncryptionService {
   ) {}
 
   encrypt(plaintext: string, workspaceId: string): string {
-    if (plaintext.startsWith(ENVELOPE_PREFIX)) {
-      throw new Error(
-        'ConnectedAccountTokenEncryptionService.encrypt received an already-prefixed value. ' +
-          'This indicates a double-encryption bug — the caller is encrypting ciphertext.',
+    if (this.looksLikeCiphertext(plaintext)) {
+      throw new SecretEncryptionException(
+        'ConnectedAccountTokenEncryptionService.encrypt received an already-encrypted envelope. This indicates a double-encryption bug — the caller is encrypting ciphertext.',
+        SecretEncryptionExceptionCode.ALREADY_ENCRYPTED,
       );
     }
 
@@ -40,14 +41,13 @@ export class ConnectedAccountTokenEncryptionService {
     return this.encrypt(plaintext, workspaceId);
   }
 
+  // v2.4.0 rollout-window tolerance: rows written before the encryption
+  // backfill ran may still be plaintext. Returning them as-is lets the slow
+  // command finish; once it has run everywhere this branch can throw.
   decrypt(ciphertext: string, workspaceId: string): string {
-    const parsed = parseEnvelope(ciphertext);
+    const parsed = parseSecretEncryptionEnvelopeOrThrow({ value: ciphertext });
 
     if (parsed.version === null) {
-      // v2.4.0 deployment-window tolerance: a column written before the
-      // encryption rollout might still hold raw plaintext. Returning it
-      // as-is lets the slow instance command finish backfilling. Once that
-      // command has run on every instance, this branch can throw.
       this.logger.warn(
         'Decrypted a legacy plaintext token. Expected during the rollout window until the slow instance command finishes backfilling.',
       );
@@ -87,5 +87,15 @@ export class ConnectedAccountTokenEncryptionService {
       encryptedAccessToken: this.encrypt(accessToken, workspaceId),
       encryptedRefreshToken: this.encryptNullable(refreshToken, workspaceId),
     };
+  }
+
+  private looksLikeCiphertext(value: string): boolean {
+    try {
+      const parsed = parseSecretEncryptionEnvelopeOrThrow({ value });
+
+      return parsed.version === 1 || parsed.version === 2;
+    } catch {
+      return false;
+    }
   }
 }

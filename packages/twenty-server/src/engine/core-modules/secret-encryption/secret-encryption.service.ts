@@ -4,15 +4,15 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 
-import { decryptAesCtrV1, encryptAesCtrV1 } from './utils/aes-ctr-v1.util';
-import { decryptAesGcmV2, encryptAesGcmV2 } from './utils/aes-gcm-v2.util';
-import { formatV2Envelope, parseEnvelope } from './utils/envelope.util';
-import { computeKeyId } from './utils/key-id.util';
-import {
-  resolveEncryptionKeys,
-  type ResolvedEncryptionKeys,
-} from './utils/key-resolution.util';
-import { pickKeyByKeyId } from './utils/pick-key-by-key-id.util';
+import { computeEncryptionKeyId } from './utils/compute-encryption-key-id.util';
+import { decryptAesCtrV1OrThrow } from './utils/decrypt-aes-ctr-v1-or-throw.util';
+import { decryptAesGcmV2OrThrow } from './utils/decrypt-aes-gcm-v2-or-throw.util';
+import { encryptAesCtrV1 } from './utils/encrypt-aes-ctr-v1.util';
+import { encryptAesGcmV2 } from './utils/encrypt-aes-gcm-v2.util';
+import { formatSecretEncryptionEnvelopeV2 } from './utils/format-secret-encryption-envelope-v2.util';
+import { parseSecretEncryptionEnvelopeOrThrow } from './utils/parse-secret-encryption-envelope-or-throw.util';
+import { pickEncryptionKeyByKeyIdOrThrow } from './utils/pick-encryption-key-by-key-id-or-throw.util';
+import { resolveEncryptionKeysOrThrow } from './utils/resolve-encryption-keys-or-throw.util';
 
 type VersionedOptions = {
   workspaceId?: string;
@@ -27,34 +27,31 @@ export class SecretEncryptionService {
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
   ) {}
 
-  private resolveKeys(): ResolvedEncryptionKeys {
-    return resolveEncryptionKeys(this.environmentConfigDriver);
-  }
-
-  // Legacy API — unchanged wire format (unprefixed CTR). Kept for the many
-  // consumers that have not yet migrated to the versioned envelope.
   public encrypt(value: string): string {
     if (!isDefined(value)) {
       return value;
     }
 
-    const { primary } = this.resolveKeys();
+    const { primary } = resolveEncryptionKeysOrThrow({
+      environmentConfigDriver: this.environmentConfigDriver,
+    });
 
-    return encryptAesCtrV1(value, primary);
+    return encryptAesCtrV1({ plaintext: value, rawKey: primary });
   }
 
+  // Legacy CTR has no integrity tag, so a wrong key silently returns garbage
+  // and the fallback can't be tried safely. Rotation of legacy rows requires
+  // migrating the consumer to the versioned envelope first.
   public decrypt(value: string): string {
     if (!isDefined(value)) {
       return value;
     }
 
-    // Legacy CTR has no integrity tag, so we cannot detect a wrong key and
-    // try the fallback — it would silently return garbage. Use primary only.
-    // To rotate CTR-encrypted data, migrate the consumer to the versioned
-    // envelope first (where keyId + auth tag make rotation safe).
-    const { primary } = this.resolveKeys();
+    const { primary } = resolveEncryptionKeysOrThrow({
+      environmentConfigDriver: this.environmentConfigDriver,
+    });
 
-    return decryptAesCtrV1(value, primary);
+    return decryptAesCtrV1OrThrow({ ciphertext: value, rawKey: primary });
   }
 
   public decryptAndMask({
@@ -77,19 +74,25 @@ export class SecretEncryptionService {
     return `${decryptedValue.slice(0, visibleCharsCount)}${mask}`;
   }
 
-  // Versioned-envelope API — produces enc:v2:<keyId>:<base64> using AES-GCM
-  // with an HKDF-derived per-context key. Decrypt handles v2, v1, and the
-  // legacy unprefixed format transparently.
   public encryptVersioned(value: string, opts: VersionedOptions = {}): string {
     if (!isDefined(value)) {
       return value;
     }
 
-    const { primary } = this.resolveKeys();
-    const payload = encryptAesGcmV2(value, primary, opts.workspaceId);
-    const keyId = computeKeyId(primary);
+    const { primary } = resolveEncryptionKeysOrThrow({
+      environmentConfigDriver: this.environmentConfigDriver,
+    });
+    const payloadBase64 = encryptAesGcmV2({
+      plaintext: value,
+      rawKey: primary,
+      workspaceId: opts.workspaceId,
+    });
+    const keyId = computeEncryptionKeyId({ rawKey: primary });
 
-    return formatV2Envelope(keyId, payload);
+    return formatSecretEncryptionEnvelopeV2({
+      keyId,
+      payloadBase64,
+    });
   }
 
   public decryptVersioned(value: string, opts: VersionedOptions = {}): string {
@@ -97,21 +100,33 @@ export class SecretEncryptionService {
       return value;
     }
 
-    const parsed = parseEnvelope(value);
+    const parsed = parseSecretEncryptionEnvelopeOrThrow({ value });
 
     if (parsed.version === 2) {
-      const key = pickKeyByKeyId(parsed.keyId, this.resolveKeys());
+      const keys = resolveEncryptionKeysOrThrow({
+        environmentConfigDriver: this.environmentConfigDriver,
+      });
+      const rawKey = pickEncryptionKeyByKeyIdOrThrow({
+        keyId: parsed.keyId,
+        keys,
+      });
 
-      return decryptAesGcmV2(parsed.payload, key, opts.workspaceId);
+      return decryptAesGcmV2OrThrow({
+        payloadBase64: parsed.payload,
+        rawKey,
+        workspaceId: opts.workspaceId,
+      });
     }
 
     if (parsed.version === 1) {
-      // v1 = legacy CTR (no integrity tag, no keyId). We cannot detect a
-      // wrong key, so we trust the primary. Rotation of v1 rows requires
-      // running the re-encrypt slow command first to convert them to v2.
-      const { primary } = this.resolveKeys();
+      const { primary } = resolveEncryptionKeysOrThrow({
+        environmentConfigDriver: this.environmentConfigDriver,
+      });
 
-      return decryptAesCtrV1(parsed.payload, primary);
+      return decryptAesCtrV1OrThrow({
+        ciphertext: parsed.payload,
+        rawKey: primary,
+      });
     }
 
     this.warnLegacyDecryptionOnce();

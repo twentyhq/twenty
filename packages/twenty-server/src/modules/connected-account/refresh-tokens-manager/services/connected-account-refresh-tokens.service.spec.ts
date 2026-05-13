@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
-import { ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/utils/envelope.util';
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constants';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   ConnectedAccountRefreshAccessTokenException,
@@ -17,7 +17,7 @@ import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-acc
 
 import { ConnectedAccountRefreshTokensService } from './connected-account-refresh-tokens.service';
 
-const FAKE_CIPHER_PREFIX = `${ENVELOPE_V2_PREFIX}keyid:`;
+const FAKE_CIPHER_PREFIX = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}keyid:`;
 
 describe('ConnectedAccountRefreshTokensService', () => {
   let service: ConnectedAccountRefreshTokensService;
