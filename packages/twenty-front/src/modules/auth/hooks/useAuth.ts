@@ -527,10 +527,6 @@ export const useAuth = () => {
         url.searchParams.set('workspaceId', workspacePublicData.id);
       }
 
-      // Forward the in-memory returnToPath through the SSO redirect chain so
-      // deep links like /authorize?... survive Google/Microsoft sign-in. The
-      // server packs it into the OAuth state and re-emits it on the redirect
-      // back to the frontend.
       const returnToPath = store.get(returnToPathState.atom);
 
       if (isNonEmptyString(returnToPath) && isValidReturnToPath(returnToPath)) {

@@ -10,11 +10,7 @@ import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
-import {
-  assertIsDefinedOrThrow,
-  isDefined,
-  isSafeUrl,
-} from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -778,9 +774,9 @@ export class AuthService {
       searchParams: {
         loginToken,
         ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
-        ...(returnToPath !== undefined &&
+        ...(typeof returnToPath === 'string' &&
         returnToPath.startsWith('/') &&
-        isSafeUrl(returnToPath)
+        !returnToPath.startsWith('//')
           ? { returnToPath }
           : {}),
       },
@@ -1007,9 +1003,9 @@ export class AuthService {
               targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
             }),
           }),
-          ...(returnToPath !== undefined &&
+          ...(typeof returnToPath === 'string' &&
           returnToPath.startsWith('/') &&
-          isSafeUrl(returnToPath)
+          !returnToPath.startsWith('//')
             ? { returnToPath }
             : {}),
         },
