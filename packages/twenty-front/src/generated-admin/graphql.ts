@@ -294,6 +294,7 @@ export type InstanceAndAllWorkspacesUpgradeStatus = {
   __typename?: 'InstanceAndAllWorkspacesUpgradeStatus';
   computedAt: Scalars['DateTime'];
   instanceUpgradeStatus: InstanceUpgradeStatus;
+  upToDateWorkspaceCount: Scalars['Int'];
   workspacesBehind: Array<WorkspaceUpgradeRef>;
   workspacesFailed: Array<WorkspaceUpgradeRef>;
 };
