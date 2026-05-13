@@ -35,7 +35,11 @@ describe('ConnectedAccount token encryption (integration)', () => {
   const seededRowIds: string[] = [];
 
   beforeAll(() => {
-    service = global.app.get(ConnectedAccountTokenEncryptionService);
+    // strict: false searches the whole module tree — the service is
+    // provided by a feature module that isn't on the root injector.
+    service = global.app.get(ConnectedAccountTokenEncryptionService, {
+      strict: false,
+    });
   });
 
   afterEach(async () => {
