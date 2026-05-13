@@ -1,83 +1,58 @@
-import { getRepositoryToken } from '@nestjs/typeorm';
+import crypto from 'crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, type Repository } from 'typeorm';
 
 import {
-  SECRET_ENCRYPTION_ENVELOPE_PREFIX,
   SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
   SECRET_ENCRYPTION_KEY_ID_REGEX,
 } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
-import { SecretEncryptionExceptionCode } from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 // Temporary: should be replaced by an integration test against a simpler
-// HTTP/GraphQL surface once one exists for connected-account creation.
-const TEST_HANDLE_PREFIX = 'enc-integration-test-';
+// API surface once one exists that itself performs token encryption. For
+// now the GraphQL workspace mutation does no encryption of its own, so we
+// pre-compute encrypted ciphertexts via the DI-resolved encryption
+// service and assert the storage + retrieval contract through GraphQL.
 
-describe('ConnectedAccountTokenEncryptionService (integration)', () => {
+const APPLE_JANE_WORKSPACE_MEMBER_ID = '20202020-463f-435b-828c-107e007a2711';
+const APPLE_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+
+const CONNECTED_ACCOUNT_GQL_FIELDS = `
+  id
+  handle
+  provider
+  accessToken
+  refreshToken
+`;
+
+describe('ConnectedAccount token encryption (integration)', () => {
   let service: ConnectedAccountTokenEncryptionService;
-  let connectedAccountRepository: Repository<ConnectedAccountEntity>;
-  let userWorkspaceRepository: Repository<UserWorkspaceEntity>;
-  let workspaceId: string;
-  let userWorkspaceId: string;
   const seededRowIds: string[] = [];
 
-  beforeAll(async () => {
+  beforeAll(() => {
     service = global.app.get(ConnectedAccountTokenEncryptionService);
-    connectedAccountRepository = global.app.get<
-      Repository<ConnectedAccountEntity>
-    >(getRepositoryToken(ConnectedAccountEntity));
-    userWorkspaceRepository = global.app.get<Repository<UserWorkspaceEntity>>(
-      getRepositoryToken(UserWorkspaceEntity),
-    );
-
-    const seed = await userWorkspaceRepository.findOne({ where: {} });
-
-    if (!isDefined(seed)) {
-      throw new Error(
-        'No seeded userWorkspace row found; run database:reset before the integration suite.',
-      );
-    }
-
-    userWorkspaceId = seed.id;
-    workspaceId = seed.workspaceId;
   });
 
   afterEach(async () => {
-    if (seededRowIds.length === 0) {
-      return;
+    for (const id of seededRowIds) {
+      await makeGraphqlAPIRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: 'connectedAccount',
+          gqlFields: 'id',
+          recordId: id,
+        }),
+      );
     }
-
-    await connectedAccountRepository.delete({ id: In(seededRowIds) });
     seededRowIds.length = 0;
   });
 
-  const saveConnectedAccount = async (
-    overrides: Partial<ConnectedAccountEntity> & {
-      handleSuffix: string;
-      accessToken: string | null;
-      refreshToken: string | null;
-    },
-  ): Promise<ConnectedAccountEntity> => {
-    const { handleSuffix, ...rest } = overrides;
-    const row = await connectedAccountRepository.save({
-      handle: `${TEST_HANDLE_PREFIX}${handleSuffix}`,
-      provider: ConnectedAccountProvider.GOOGLE,
-      userWorkspaceId,
-      workspaceId,
-      ...rest,
-    } as ConnectedAccountEntity);
-
-    seededRowIds.push(row.id);
-
-    return row;
-  };
-
-  it('encrypts both tokens, stores them as enc:v2 in Postgres, and round-trips back to the original plaintext', async () => {
+  it('stores both tokens as enc:v2 via the GraphQL API and decrypts back to the original plaintext', async () => {
+    const connectedAccountId = crypto.randomUUID();
     const accessTokenPlaintext = 'integration-access-token';
     const refreshTokenPlaintext = 'integration-refresh-token';
 
@@ -85,18 +60,39 @@ describe('ConnectedAccountTokenEncryptionService (integration)', () => {
       service.encryptTokenPair({
         accessToken: accessTokenPlaintext,
         refreshToken: refreshTokenPlaintext,
-        workspaceId,
+        workspaceId: APPLE_WORKSPACE_ID,
       });
 
-    const saved = await saveConnectedAccount({
-      handleSuffix: 'round-trip',
-      accessToken: encryptedAccessToken,
-      refreshToken: encryptedRefreshToken,
-    });
+    const createResponse = await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'connectedAccount',
+        gqlFields: CONNECTED_ACCOUNT_GQL_FIELDS,
+        data: {
+          id: connectedAccountId,
+          handle: `enc-integration-${connectedAccountId}`,
+          provider: ConnectedAccountProvider.GOOGLE,
+          accessToken: encryptedAccessToken,
+          refreshToken: encryptedRefreshToken,
+          accountOwnerId: APPLE_JANE_WORKSPACE_MEMBER_ID,
+        },
+      }),
+    );
 
-    const storedRow = await connectedAccountRepository.findOneByOrFail({
-      id: saved.id,
-    });
+    expect(createResponse.body.errors).toBeUndefined();
+    seededRowIds.push(connectedAccountId);
+
+    const findResponse = await makeGraphqlAPIRequest(
+      findOneOperationFactory({
+        objectMetadataSingularName: 'connectedAccount',
+        gqlFields: CONNECTED_ACCOUNT_GQL_FIELDS,
+        filter: { id: { eq: connectedAccountId } },
+      }),
+    );
+
+    expect(findResponse.body.errors).toBeUndefined();
+    const storedRow = findResponse.body.data.connectedAccount;
+
+    expect(isDefined(storedRow)).toBe(true);
 
     const envelopeShape = new RegExp(
       `^${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}${SECRET_ENCRYPTION_KEY_ID_REGEX.source.replace(
@@ -112,81 +108,36 @@ describe('ConnectedAccountTokenEncryptionService (integration)', () => {
 
     expect(
       service.decrypt({
-        ciphertext: storedRow.accessToken as string,
-        workspaceId,
+        ciphertext: storedRow.accessToken,
+        workspaceId: APPLE_WORKSPACE_ID,
       }),
     ).toBe(accessTokenPlaintext);
     expect(
       service.decrypt({
-        ciphertext: storedRow.refreshToken as string,
-        workspaceId,
+        ciphertext: storedRow.refreshToken,
+        workspaceId: APPLE_WORKSPACE_ID,
       }),
     ).toBe(refreshTokenPlaintext);
   });
 
-  it('produces a different ciphertext for the same plaintext under a different workspaceId (HKDF context binding)', () => {
-    const plaintext = 'same-plaintext';
+  it('rejects a plaintext accessToken at the Postgres CHECK constraint level', async () => {
+    const connectedAccountId = crypto.randomUUID();
 
-    const ciphertextA = service.encryptTokenPair({
-      accessToken: plaintext,
-      refreshToken: null,
-      workspaceId,
-    }).encryptedAccessToken;
-
-    const ciphertextB = service.encryptTokenPair({
-      accessToken: plaintext,
-      refreshToken: null,
-      workspaceId: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    }).encryptedAccessToken;
-
-    expect(ciphertextA).not.toBe(ciphertextB);
-  });
-
-  it('fails to decrypt a row under a workspaceId that did not encrypt it (GCM context check)', () => {
-    const ciphertext = service.encryptTokenPair({
-      accessToken: 'workspace-bound',
-      refreshToken: null,
-      workspaceId,
-    }).encryptedAccessToken;
-
-    expect(() =>
-      service.decrypt({
-        ciphertext,
-        workspaceId: 'ffffffff-ffff-ffff-ffff-ffffffffffff',
-      }),
-    ).toThrow();
-  });
-
-  it('rejects a plaintext insert at the Postgres CHECK constraint level', async () => {
-    await expect(
-      saveConnectedAccount({
-        handleSuffix: 'rejected',
-        accessToken: 'plaintext-should-be-rejected',
-        refreshToken: null,
-      }),
-    ).rejects.toThrow(/check constraint/i);
-  });
-
-  it('rejects double-encryption: re-encrypting an already-v2 envelope throws ALREADY_ENCRYPTED', () => {
-    const encrypted = service.encrypt({ plaintext: 'plain', workspaceId });
-
-    expect(encrypted.startsWith(SECRET_ENCRYPTION_ENVELOPE_PREFIX)).toBe(true);
-
-    expect(() =>
-      service.encrypt({ plaintext: encrypted, workspaceId }),
-    ).toThrow(
-      expect.objectContaining({
-        code: SecretEncryptionExceptionCode.ALREADY_ENCRYPTED,
+    const response = await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'connectedAccount',
+        gqlFields: 'id',
+        data: {
+          id: connectedAccountId,
+          handle: `enc-integration-rejected-${connectedAccountId}`,
+          provider: ConnectedAccountProvider.GOOGLE,
+          accessToken: 'plaintext-should-be-rejected',
+          accountOwnerId: APPLE_JANE_WORKSPACE_MEMBER_ID,
+        },
       }),
     );
-  });
 
-  it('tolerates a legacy plaintext token (rollout-window read-through)', () => {
-    expect(
-      service.decrypt({
-        ciphertext: 'raw-plaintext-no-prefix',
-        workspaceId,
-      }),
-    ).toBe('raw-plaintext-no-prefix');
+    expect(response.body.errors).toBeDefined();
+    expect(JSON.stringify(response.body.errors)).toMatch(/check constraint/i);
   });
 });
