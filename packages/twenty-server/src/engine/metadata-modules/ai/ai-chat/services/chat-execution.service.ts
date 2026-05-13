@@ -304,7 +304,7 @@ export class ChatExecutionService {
 
       const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
 
-      void this.aiBillingService.calculateAndBillUsage(
+      await this.aiBillingService.calculateAndBillUsage(
         registeredModel.modelId,
         { usage, cacheCreationTokens },
         workspace.id,
