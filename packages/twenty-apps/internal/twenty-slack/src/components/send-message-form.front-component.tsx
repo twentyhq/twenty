@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type CSSProperties,
+  type SyntheticEvent,
+} from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   closeSidePanel,
@@ -47,27 +53,33 @@ const FORMAT_OPTIONS: { value: MessageFormat; label: string }[] = [
   { value: 'markdown', label: 'Markdown' },
 ];
 
+const isMessageFormat = (value: string): value is MessageFormat =>
+  value === 'plain' || value === 'markdown';
+
 const readSerializedValue = (
-  e: React.SyntheticEvent<HTMLElement>,
+  event: SyntheticEvent<HTMLElement>,
 ): string | undefined => {
-  const obj = e as {
+  const object = event as {
     detail?: { value?: string };
     value?: string;
     target?: { value?: string };
   };
 
-  if (typeof obj.detail?.value === 'string') return obj.detail.value;
-  if (typeof obj.value === 'string') return obj.value;
-  if (typeof obj.target?.value === 'string') return obj.target.value;
+  if (typeof object.detail?.value === 'string') return object.detail.value;
+  if (typeof object.value === 'string') return object.value;
+  if (typeof object.target?.value === 'string') return object.target.value;
 
   return undefined;
 };
 
 const onValueChange =
-  (fn: (value: string) => void) => (e: React.SyntheticEvent<HTMLElement>) => {
-    const value = readSerializedValue(e);
+  (setValue: (value: string) => void) =>
+  (event: SyntheticEvent<HTMLElement>) => {
+    const value = readSerializedValue(event);
 
-    if (typeof value === 'string') fn(value);
+    if (typeof value === 'string') {
+      setValue(value);
+    }
   };
 
 const callAppRoute = async <TResponse,>(
@@ -95,6 +107,8 @@ const callAppRoute = async <TResponse,>(
   if (!response.ok) {
     const text = await response.text().catch(() => '');
 
+    let errorMessage: string | undefined;
+
     try {
       const parsed = JSON.parse(text) as {
         messages?: string[];
@@ -102,19 +116,17 @@ const callAppRoute = async <TResponse,>(
         error?: string;
       };
 
-      throw new Error(
-        parsed.messages?.[0] ??
-          parsed.message ??
-          parsed.error ??
-          `Request failed with status ${response.status}.`,
-      );
+      errorMessage = parsed.messages?.[0] ?? parsed.message ?? parsed.error;
     } catch {
-      throw new Error(
-        text.length > 0
-          ? text.slice(0, 200)
-          : `Request failed with status ${response.status}.`,
-      );
+      // Body is not JSON; fall through to raw text or status message.
     }
+
+    throw new Error(
+      errorMessage ??
+        (text.length > 0
+          ? text.slice(0, 200)
+          : `Request failed with status ${response.status}.`),
+    );
   }
 
   return response.json() as Promise<TResponse>;
@@ -136,7 +148,23 @@ const formatChannelOptionLabel = (channel: SlackChannel): string => {
   return `${prefix} ${channel.name}${suffix}`;
 };
 
-const getStyles = (): Record<string, React.CSSProperties> => ({
+const getChannelHelperText = (
+  selectedChannel: SlackChannel | undefined,
+): string => {
+  if (selectedChannel === undefined) {
+    return 'Pick a channel to post to.';
+  }
+
+  if (selectedChannel.isMember) {
+    return selectedChannel.isPrivate
+      ? 'Private channel · bot is a member.'
+      : 'Public channel · bot is a member.';
+  }
+
+  return 'Bot is not a member of this channel — it must be invited before it can post.';
+};
+
+const getStyles = (): Record<string, CSSProperties> => ({
   container: {
     fontFamily: themeCssVariables.font.family,
     fontSize: themeCssVariables.font.size.sm,
@@ -252,7 +280,7 @@ const getStyles = (): Record<string, React.CSSProperties> => ({
     fontFamily: themeCssVariables.font.family,
     fontWeight: themeCssVariables.font.weight.medium,
     cursor: 'pointer',
-    border: `1px solid transparent`,
+    border: '1px solid transparent',
     boxSizing: 'border-box',
   },
   secondaryButton: {
@@ -399,19 +427,19 @@ const SendMessageForm = () => {
             result.error ?? result.message ?? 'Failed to send Slack message.',
           variant: 'error',
         });
-        setSubmitting(false);
 
         return;
       }
 
-      const channel = channels.find((c) => c.id === channelId);
+      const channel = channels.find(
+        (channelItem) => channelItem.id === channelId,
+      );
 
       setPostedMessage({
         channelId,
         channelName: channel?.name ?? channelId,
         slackTs: result.slackTs,
       });
-      setSubmitting(false);
 
       await enqueueSnackbar({
         message: `Message sent to #${channel?.name ?? channelId}`,
@@ -425,6 +453,7 @@ const SendMessageForm = () => {
             : 'Failed to send Slack message.',
         variant: 'error',
       });
+    } finally {
       setSubmitting(false);
     }
   };
@@ -519,15 +548,10 @@ const SendMessageForm = () => {
 
   const trimmedMessage = messageText.trim();
   const canSubmit = channelId !== '' && trimmedMessage !== '' && !submitting;
-  const selectedChannel = channels.find((c) => c.id === channelId);
-  const channelHelperText =
-    selectedChannel === undefined
-      ? 'Pick a channel to post to.'
-      : selectedChannel.isMember
-      ? selectedChannel.isPrivate
-        ? 'Private channel · bot is a member.'
-        : 'Public channel · bot is a member.'
-      : 'Bot is not a member of this channel — it must be invited before it can post.';
+  const selectedChannel = channels.find(
+    (channelItem) => channelItem.id === channelId,
+  );
+  const channelHelperText = getChannelHelperText(selectedChannel);
 
   return (
     <div style={styles.container}>
@@ -571,9 +595,11 @@ const SendMessageForm = () => {
           <select
             id="slack-message-format-select"
             value={messageFormat}
-            onChange={onValueChange((value) =>
-              setMessageFormat(value as MessageFormat),
-            )}
+            onChange={onValueChange((value) => {
+              if (isMessageFormat(value)) {
+                setMessageFormat(value);
+              }
+            })}
             style={styles.select}
             disabled={submitting}
           >
