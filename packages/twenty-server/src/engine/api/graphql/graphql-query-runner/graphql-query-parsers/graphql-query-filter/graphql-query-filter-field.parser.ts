@@ -7,6 +7,7 @@ import {
 import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
+import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -26,12 +27,6 @@ import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/reposito
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
 
 const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
-
-// Cap relation-traversal nesting at the parser layer too. The arg processor
-// rejects this earlier with a user-facing message; this guard exists so the
-// query builder never gets invoked with a shape it can't translate (e.g. if
-// the parser is called from a non-validated code path).
-const MAX_RELATION_FILTER_DEPTH = 1;
 
 export class GraphqlQueryFilterFieldParser {
   private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;

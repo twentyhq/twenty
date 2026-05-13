@@ -11,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
 import { validateAndTransformOperatorAndValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util';
 import {
   CommonQueryRunnerException,
@@ -26,11 +27,52 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-// Cap relation-traversal nesting depth. The schema allows arbitrary depth
-// because filter inputs reference each other lazily, but the query builder
-// can only realistically handle a single hop today — joins are added against
-// the root alias only. Bump this when reverse joins / multi-hop are wired up.
-const MAX_RELATION_FILTER_DEPTH = 1;
+function throwUseJoinColumnInstead(key: string): never {
+  const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+    name: key,
+  });
+
+  throw new CommonQueryRunnerException(
+    `Cannot filter by relation field "${key}": use "${joinColumnName}" instead`,
+    CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+    {
+      userFriendlyMessage: msg`Invalid filter: use "${joinColumnName}" to filter by this relation field`,
+    },
+  );
+}
+
+// A relation filter is treated as a traversal (`{ name: { eq: "X" } }`) when
+// at least one top-level key matches a field on the target object or is a
+// logical operator (`and`/`or`/`not`). Otherwise the value looks like a leaf
+// operator shape (`{ eq: "uuid" }`), which is invalid for relation traversal.
+const isRelationTraversalShape = ({
+  filterValue,
+  targetFieldIdByName,
+  targetFieldIdByJoinColumnName,
+}: {
+  filterValue: ObjectRecordFilter;
+  targetFieldIdByName: Record<string, string>;
+  targetFieldIdByJoinColumnName: Record<string, string>;
+}): boolean => {
+  if (typeof filterValue !== 'object' || filterValue === null) {
+    return false;
+  }
+
+  const keys = Object.keys(filterValue);
+
+  if (keys.length === 0) {
+    return false;
+  }
+
+  return keys.some(
+    (k) =>
+      k === 'and' ||
+      k === 'or' ||
+      k === 'not' ||
+      isDefined(targetFieldIdByName[k]) ||
+      isDefined(targetFieldIdByJoinColumnName[k]),
+  );
+};
 
 @Injectable()
 export class FilterArgProcessorService {
@@ -107,34 +149,182 @@ export class FilterArgProcessorService {
         continue;
       }
 
+      // If the key resolves to a relation field accessed by name (not by FK
+      // column), branch into relation traversal so we recurse into the target
+      // object's metadata. This keeps `validateAndTransformFieldFilter` focused
+      // on scalar + composite fields and avoids casting between
+      // `ObjectRecordFilter` and the field-filter shape.
+      const fieldMetadataForRelation = this.resolveRelationFieldMetadataByName({
+        key,
+        fieldIdByName,
+        fieldIdByJoinColumnName,
+        flatFieldMetadataMaps,
+      });
+
+      if (isDefined(fieldMetadataForRelation)) {
+        transformedFilter[key] = this.validateAndTransformRelationFilter(
+          key,
+          value,
+          fieldMetadataForRelation,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          depth,
+        );
+        continue;
+      }
+
       transformedFilter[key] = this.validateAndTransformFieldFilter(
         key,
         value,
         flatObjectMetadata,
-        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         fieldIdByName,
         fieldIdByJoinColumnName,
-        depth,
       );
     }
 
     return transformedFilter;
   }
 
+  // Returns the field metadata if the key targets a relation by its name (not
+  // by its FK join column). Returns undefined otherwise — callers fall back to
+  // the scalar/composite path.
+  private resolveRelationFieldMetadataByName({
+    key,
+    fieldIdByName,
+    fieldIdByJoinColumnName,
+    flatFieldMetadataMaps,
+  }: {
+    key: string;
+    fieldIdByName: Record<string, string>;
+    fieldIdByJoinColumnName: Record<string, string>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  }):
+    | FlatFieldMetadata<
+        FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+      >
+    | undefined {
+    const resolvedByName = fieldIdByName[key];
+
+    if (!isDefined(resolvedByName) || isDefined(fieldIdByJoinColumnName[key])) {
+      return undefined;
+    }
+
+    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps<FlatFieldMetadata>(
+      {
+        flatEntityId: resolvedByName,
+        flatEntityMaps: flatFieldMetadataMaps,
+      },
+    );
+
+    if (!isDefined(fieldMetadata)) {
+      return undefined;
+    }
+
+    if (
+      isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION) ||
+      isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.MORPH_RELATION)
+    ) {
+      return fieldMetadata;
+    }
+
+    return undefined;
+  }
+
+  private validateAndTransformRelationFilter(
+    key: string,
+    filterValue: ObjectRecordFilter,
+    fieldMetadata: FlatFieldMetadata<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> | undefined,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    depth: number,
+  ): ObjectRecordFilter {
+    if (fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE) {
+      throw new CommonQueryRunnerException(
+        `Cannot filter by relation field "${key}"`,
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+        {
+          userFriendlyMessage: msg`Invalid filter: filtering by relation field "${key}" is not supported`,
+        },
+      );
+    }
+
+    const targetObjectMetadataId = fieldMetadata.relationTargetObjectMetadataId;
+
+    if (
+      !isDefined(flatObjectMetadataMaps) ||
+      !isDefined(targetObjectMetadataId)
+    ) {
+      // Can't resolve the target — fall back to the legacy guidance that
+      // points users at the FK column.
+      throwUseJoinColumnInstead(key);
+    }
+
+    const targetObjectMetadata =
+      findFlatEntityByIdInFlatEntityMaps<FlatObjectMetadata>({
+        flatEntityId: targetObjectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+    if (!isDefined(targetObjectMetadata)) {
+      throwUseJoinColumnInstead(key);
+    }
+
+    const {
+      fieldIdByName: targetFieldIdByName,
+      fieldIdByJoinColumnName: targetFieldIdByJoinColumnName,
+    } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      targetObjectMetadata,
+    );
+
+    // Distinguish between a relation-traversal filter
+    // (`{ name: { eq: "X" } }`) and the legacy leaf-operator shape
+    // (`{ eq: "uuid" }`). The latter is invalid against the target object's
+    // schema, so we surface the friendlier "use companyId instead" message
+    // before recursing.
+    if (
+      !isRelationTraversalShape({
+        filterValue,
+        targetFieldIdByName,
+        targetFieldIdByJoinColumnName,
+      })
+    ) {
+      throwUseJoinColumnInstead(key);
+    }
+
+    if (depth >= MAX_RELATION_FILTER_DEPTH) {
+      throw new CommonQueryRunnerException(
+        `Relation filter nesting deeper than ${MAX_RELATION_FILTER_DEPTH} hop is not supported`,
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+        {
+          userFriendlyMessage: msg`Relation filters can only traverse one relation deep`,
+        },
+      );
+    }
+
+    return this.validateAndTransformFilter(
+      filterValue,
+      targetObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      targetFieldIdByName,
+      targetFieldIdByJoinColumnName,
+      depth + 1,
+    );
+  }
+
   private validateAndTransformFieldFilter(
     key: string,
     filterValue: Record<string, unknown>,
     flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> | undefined,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     fieldIdByName: Record<string, string>,
     fieldIdByJoinColumnName: Record<string, string>,
-    depth: number,
   ): Record<string, unknown> {
-    const resolvedByName = fieldIdByName[key];
-    const resolvedByJoinColumn = fieldIdByJoinColumnName[key];
-    const fieldMetadataId = resolvedByName ?? resolvedByJoinColumn;
+    const fieldMetadataId = fieldIdByName[key] ?? fieldIdByJoinColumnName[key];
 
     if (!isDefined(fieldMetadataId)) {
       const nameSingular = flatObjectMetadata.nameSingular;
@@ -163,77 +353,18 @@ export class FilterArgProcessorService {
       );
     }
 
+    // ONE_TO_MANY (and other non-MANY_TO_ONE relation types) accessed by name
+    // get rejected with the legacy message — they don't have an FK column to
+    // suggest, and traversal isn't supported yet.
     if (
-      isDefined(resolvedByName) &&
-      !isDefined(resolvedByJoinColumn) &&
+      isDefined(fieldIdByName[key]) &&
+      !isDefined(fieldIdByJoinColumnName[key]) &&
       (isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION) ||
         isFlatFieldMetadataOfType(
           fieldMetadata,
           FieldMetadataType.MORPH_RELATION,
         ))
     ) {
-      // Relation accessed by name (e.g. `company` rather than `companyId`).
-      // A nested filter object means the caller wants to traverse the relation
-      // (e.g. `{ company: { name: { like: "%X%" } } }`). Recurse into the
-      // target object's metadata so each leaf still gets validated and
-      // value-coerced. Only MANY_TO_ONE is supported for now; ONE_TO_MANY
-      // would need EXISTS-subquery support downstream.
-      if (
-        fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE &&
-        isDefined(flatObjectMetadataMaps) &&
-        isDefined(fieldMetadata.relationTargetObjectMetadataId)
-      ) {
-        if (depth >= MAX_RELATION_FILTER_DEPTH) {
-          throw new CommonQueryRunnerException(
-            `Relation filter nesting deeper than ${MAX_RELATION_FILTER_DEPTH} hop is not supported`,
-            CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
-            {
-              userFriendlyMessage: msg`Relation filters can only traverse one relation deep`,
-            },
-          );
-        }
-
-        const targetObjectMetadata =
-          findFlatEntityByIdInFlatEntityMaps<FlatObjectMetadata>({
-            flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
-            flatEntityMaps: flatObjectMetadataMaps,
-          });
-
-        if (isDefined(targetObjectMetadata)) {
-          const {
-            fieldIdByName: targetFieldIdByName,
-            fieldIdByJoinColumnName: targetFieldIdByJoinColumnName,
-          } = buildFieldMapsFromFlatObjectMetadata(
-            flatFieldMetadataMaps,
-            targetObjectMetadata,
-          );
-
-          return this.validateAndTransformFilter(
-            filterValue as unknown as ObjectRecordFilter,
-            targetObjectMetadata,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-            targetFieldIdByName,
-            targetFieldIdByJoinColumnName,
-            depth + 1,
-          ) as unknown as Record<string, unknown>;
-        }
-      }
-
-      if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
-        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
-          name: key,
-        });
-
-        throw new CommonQueryRunnerException(
-          `Cannot filter by relation field "${key}": use "${joinColumnName}" instead`,
-          CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
-          {
-            userFriendlyMessage: msg`Invalid filter: use "${joinColumnName}" to filter by this relation field`,
-          },
-        );
-      }
-
       throw new CommonQueryRunnerException(
         `Cannot filter by relation field "${key}"`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,

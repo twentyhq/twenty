@@ -28,9 +28,33 @@ describe('Filter by relation field (e2e)', () => {
       objectMetadataPluralName: 'companies',
       gqlFields: 'id name',
       data: [
-        { id: TEST_COMPANY_IDS.AIRBNB, name: 'Airbnb' },
-        { id: TEST_COMPANY_IDS.STRIPE, name: 'Stripe' },
-        { id: TEST_COMPANY_IDS.NOTION, name: 'Notion' },
+        {
+          id: TEST_COMPANY_IDS.AIRBNB,
+          name: 'Airbnb',
+          // CURRENCY composite — used to check that filtering on a composite
+          // sub-field inside a relation traversal does not get mis-counted as
+          // a second depth hop.
+          annualRecurringRevenue: {
+            amountMicros: 50_000_000_000_000,
+            currencyCode: 'USD',
+          },
+        },
+        {
+          id: TEST_COMPANY_IDS.STRIPE,
+          name: 'Stripe',
+          annualRecurringRevenue: {
+            amountMicros: 10_000_000_000_000,
+            currencyCode: 'USD',
+          },
+        },
+        {
+          id: TEST_COMPANY_IDS.NOTION,
+          name: 'Notion',
+          annualRecurringRevenue: {
+            amountMicros: 5_000_000_000_000,
+            currencyCode: 'USD',
+          },
+        },
       ],
       upsert: true,
     });
@@ -255,6 +279,53 @@ describe('Filter by relation field (e2e)', () => {
 
     // Airbnb, Notion, Stripe all contain "i"; ascending order
     expect(companyNames).toEqual(['Airbnb', 'Airbnb', 'Notion', 'Stripe']);
+  });
+
+  it('should filter on a composite sub-field of the related object without tripping the depth cap', async () => {
+    // Person -> Company is one relation hop. annualRecurringRevenue is a
+    // CURRENCY composite on Company. Navigating into a composite property is
+    // NOT a second hop — the depth check must only count relation traversals,
+    // not composite sub-field access.
+    const queryData = {
+      query: gql`
+        query People($filter: PersonFilterInput) {
+          people(filter: $filter, first: 10) {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        filter: {
+          and: [
+            { id: { in: ALL_TEST_PERSON_IDS } },
+            {
+              company: {
+                annualRecurringRevenue: {
+                  amountMicros: { gte: 20_000_000_000_000 },
+                },
+              },
+            },
+          ],
+        },
+      },
+    };
+
+    const response = await makeGraphqlAPIRequest(queryData);
+
+    expect(response.body.errors).toBeUndefined();
+
+    const ids = response.body.data.people.edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+
+    // Only Airbnb (50M) is >= 20M; Stripe (10M) and Notion (5M) excluded.
+    expect(ids.sort()).toEqual(
+      [TEST_PERSON_IDS.AIRBNB_ENGINEER, TEST_PERSON_IDS.AIRBNB_DESIGNER].sort(),
+    );
   });
 
   it('should reject relation filters nested deeper than one hop', async () => {
