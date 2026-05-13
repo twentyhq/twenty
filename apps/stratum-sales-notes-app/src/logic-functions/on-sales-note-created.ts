@@ -6,12 +6,14 @@ import {
 } from 'twenty-sdk/logic-function';
 
 import { ON_SALES_NOTE_CREATED_LOGIC_FUNCTION_UID } from 'src/constants/universal-identifiers';
+import { inheritMeetingAttendees } from 'src/utils/inherit-meeting-attendees';
 import { linkCreatorAsAttendee } from 'src/utils/link-creator-as-attendee';
 
 // Shape of the relevant fields off a freshly-created salesNote. Only fields
 // we read need to be listed.
 type SalesNoteAfter = {
   ownerId?: string | null;
+  meetingId?: string | null;
 };
 
 type SalesNoteCreateEvent = DatabaseEventPayload<
@@ -116,7 +118,11 @@ const handler = async (
 
     const wmNode = wmResp?.workspaceMembers?.edges?.[0]?.node;
 
-    if (wmNode == null || typeof wmNode.id !== 'string' || wmNode.id.length === 0) {
+    if (
+      wmNode == null ||
+      typeof wmNode.id !== 'string' ||
+      wmNode.id.length === 0
+    ) {
       attendeeOutcome = {
         added: false,
         reason: `workspaceMember not found for id=${workspaceMemberId}`,
@@ -137,10 +143,39 @@ const handler = async (
     attendeeOutcome = { added: false, reason: `error: ${message}` };
   }
 
+  // v0.4.0 — if the salesNote was created with a meeting already linked
+  // (e.g. via the API or a future "+ Call report" button on the
+  // calendarEvent record page), inherit that meeting's matched attendees.
+  // Best-effort; failures here don't block the owner+creator-attendee
+  // patches already applied. inheritMeetingAttendees is idempotent and the
+  // creator-attendee step above is preserved (its existing-attendee check
+  // makes ordering safe).
+  const meetingId = after?.meetingId;
+  let meetingInherit:
+    | { added: number; skipped: number; reason?: string }
+    | undefined;
+
+  if (typeof meetingId === 'string' && meetingId.length > 0) {
+    try {
+      meetingInherit = await inheritMeetingAttendees(
+        client,
+        event.recordId,
+        meetingId,
+      );
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      meetingInherit = { added: 0, skipped: 0, reason: `error: ${message}` };
+    }
+  }
+
   // eslint-disable-next-line no-console
   console.error(
     `[on-sales-note-created] patched salesNoteId=${event.recordId} ownerId=${workspaceMemberId} attendeeAdded=${attendeeOutcome.added}` +
-      (attendeeOutcome.reason ? ` (${attendeeOutcome.reason})` : ''),
+      (attendeeOutcome.reason ? ` (${attendeeOutcome.reason})` : '') +
+      (meetingInherit
+        ? ` meetingInherit added=${meetingInherit.added} skipped=${meetingInherit.skipped}` +
+          (meetingInherit.reason ? ` (${meetingInherit.reason})` : '')
+        : ''),
   );
 
   return {
@@ -151,6 +186,7 @@ const handler = async (
     ...(attendeeOutcome.reason
       ? { attendeeSkipReason: attendeeOutcome.reason }
       : {}),
+    ...(meetingInherit ? { meetingInherit } : {}),
   };
 };
 

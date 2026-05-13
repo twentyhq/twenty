@@ -4,6 +4,7 @@ import {
   SALES_NOTE_BODY_FIELD_UID,
   SALES_NOTE_DETAILS_ATTENDEES_WIDGET_UID,
   SALES_NOTE_DETAILS_COMPANY_WIDGET_UID,
+  SALES_NOTE_DETAILS_MEETING_WIDGET_UID,
   SALES_NOTE_DETAILS_OPPORTUNITY_WIDGET_UID,
   SALES_NOTE_DETAILS_OWNER_WIDGET_UID,
   SALES_NOTE_DETAILS_STATUS_WIDGET_UID,
@@ -23,6 +24,7 @@ import {
   SALES_NOTE_TAB_SUMMARY_UID,
   SALES_NOTE_TAB_TASKS_UID,
   SALES_NOTE_TO_COMPANY_FIELD_UID,
+  SALES_NOTE_TO_MEETING_FIELD_UID,
   SALES_NOTE_TO_OPPORTUNITY_FIELD_UID,
   SALES_NOTE_TO_OWNER_FIELD_UID,
 } from 'src/constants/universal-identifiers';
@@ -101,6 +103,20 @@ export default definePageLayout({
           },
         },
         {
+          // v0.4.0 — Meeting picker. When set, on-sales-note-meeting-set
+          // (logic function) inherits the linked calendar event's matched
+          // attendees onto this Call Report.
+          universalIdentifier: SALES_NOTE_DETAILS_MEETING_WIDGET_UID,
+          title: 'Meeting',
+          type: 'FIELD',
+          gridPosition: { row: 4, column: 0, rowSpan: 1, columnSpan: 12 },
+          configuration: {
+            configurationType: 'FIELD',
+            fieldMetadataId: SALES_NOTE_TO_MEETING_FIELD_UID,
+            fieldDisplayMode: 'FIELD',
+          },
+        },
+        {
           // v0.2.7 — was a plain FIELD widget; replaced with a custom
           // FRONT_COMPONENT because Twenty's standard inline editor for an
           // O2M-junction relation only knows how to *create* a new
@@ -109,7 +125,7 @@ export default definePageLayout({
           universalIdentifier: SALES_NOTE_DETAILS_ATTENDEES_WIDGET_UID,
           title: 'Attendees',
           type: 'FRONT_COMPONENT',
-          gridPosition: { row: 4, column: 0, rowSpan: 1, columnSpan: 12 },
+          gridPosition: { row: 5, column: 0, rowSpan: 1, columnSpan: 12 },
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:

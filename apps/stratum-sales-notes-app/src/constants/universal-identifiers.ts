@@ -56,6 +56,8 @@ export const VIEW_FIELD_ATTENDEES_UID = 'c06b5af7-d1fc-408f-999f-839281f8f194';
 export const VIEW_FIELD_COMPANY_UID = '89dc6b63-6914-4038-96fa-ea84a2e537dd';
 export const VIEW_FIELD_OPPORTUNITY_UID =
   '46eae664-1f71-4d2f-b1ca-0a42148f026a';
+// v0.4.0 — Meeting field in the salesNote view (side-panel + index list).
+export const VIEW_FIELD_MEETING_UID = '58207015-a1ad-4d66-aec1-9de8db80f94e';
 
 // SELECT option ids (status)
 export const SALES_NOTE_STATUS_DRAFT_OPTION_ID =
@@ -90,6 +92,15 @@ export const SALES_NOTE_TO_OPPORTUNITY_FIELD_UID =
 export const OPPORTUNITY_TO_SALES_NOTES_FIELD_UID =
   '132243f6-7d72-4a69-a7e1-cfbe77339af9'; // O2M reverse on Opportunity
 
+// ─── salesNote → calendarEvent (meeting) ─────────────────────────────────────
+// v0.4.0 — manual link from a Call Report to the Outlook/Google calendar event
+// it was written for. When set, on-sales-note-meeting-set inherits the
+// meeting's matched calendar participants as salesNoteAttendees.
+export const SALES_NOTE_TO_MEETING_FIELD_UID =
+  'c8100d2b-7bfe-4561-b902-599dc2f11503'; // M2O on salesNote
+export const MEETING_TO_SALES_NOTES_FIELD_UID =
+  '8717c99b-648f-4d42-9bca-546891a1a4a4'; // O2M reverse on calendarEvent
+
 // ─── salesNote → WorkspaceMember (owner / sales rep) ─────────────────────────
 export const SALES_NOTE_TO_OWNER_FIELD_UID =
   '68035e58-9b77-4311-a268-59d2b207beaf'; // M2O on salesNote
@@ -99,14 +110,11 @@ export const OWNER_TO_SALES_NOTES_FIELD_UID =
 // ─── Page layout ─────────────────────────────────────────────────────────────
 export const SALES_NOTE_PAGE_LAYOUT_UID =
   '70431fc6-23b4-472c-a45e-57ccb2765ca9';
-export const SALES_NOTE_TAB_NOTES_UID =
-  'fcb2506b-1aef-4658-8dd4-e90fe6586e55';
+export const SALES_NOTE_TAB_NOTES_UID = 'fcb2506b-1aef-4658-8dd4-e90fe6586e55';
 export const SALES_NOTE_TAB_SUMMARY_UID =
   '7b5080bb-c86e-4cf1-95e3-2d4105ac22c9';
-export const SALES_NOTE_TAB_TASKS_UID =
-  'c5d78078-1e01-443b-8fc0-b84772727506';
-export const SALES_NOTE_TAB_FILES_UID =
-  '619dd077-c28b-4a14-b2f9-0343b3bfbd40';
+export const SALES_NOTE_TAB_TASKS_UID = 'c5d78078-1e01-443b-8fc0-b84772727506';
+export const SALES_NOTE_TAB_FILES_UID = '619dd077-c28b-4a14-b2f9-0343b3bfbd40';
 
 // v0.2.4 — first tab "Details" with a FIELDS widget so the relation/select
 // fields (owner, status, company, opportunity, attendees) are visible on
@@ -133,6 +141,9 @@ export const SALES_NOTE_DETAILS_OPPORTUNITY_WIDGET_UID =
   '70819203-a4b5-46de-9f70-819203a4b5c6';
 export const SALES_NOTE_DETAILS_ATTENDEES_WIDGET_UID =
   '819203a4-b5c6-47ef-a081-9203a4b5c6d7';
+// v0.4.0 — Meeting widget on the salesNote Details tab.
+export const SALES_NOTE_DETAILS_MEETING_WIDGET_UID =
+  '93121079-2c20-4cb0-bd99-0ec59dc80371';
 
 // v0.2.7 — custom front-component for the Attendees field. Twenty's standard
 // FIELD widget for an O2M-junction relation only knows how to *create a new
@@ -157,8 +168,7 @@ export const SALES_NOTE_FILES_WIDGET_UID =
 // ─── Front components ────────────────────────────────────────────────────────
 export const SALES_NOTE_SUMMARY_VIEWER_UID =
   'b17b0bd7-ec27-4e32-87f7-a193ba7a6c43';
-export const EXTRACT_TASKS_PANEL_UID =
-  'aaae6614-503e-47f6-b93d-de20c3058645';
+export const EXTRACT_TASKS_PANEL_UID = 'aaae6614-503e-47f6-b93d-de20c3058645';
 
 // ─── Skill ───────────────────────────────────────────────────────────────────
 export const SALES_NOTE_SUMMARIZATION_SKILL_UID =
@@ -186,6 +196,13 @@ export const VOICENOTES_WEBHOOK_LOGIC_FUNCTION_UID =
 // already has one (never overwrites).
 export const ON_SALES_NOTE_ATTENDEE_CREATED_LOGIC_FUNCTION_UID =
   'd7e3c8a1-4f29-4b7e-91d8-6c5a3b8e2f47';
+
+// v0.4.0 — when salesNote.meetingId is set (on update), inherit the linked
+// calendar event's matched participants as salesNoteAttendees. The create
+// path is handled inline by on-sales-note-created so the owner+meeting flow
+// can share a single mutation. See utils/inherit-meeting-attendees.ts.
+export const ON_SALES_NOTE_MEETING_SET_LOGIC_FUNCTION_UID =
+  '41ffaf29-b7ee-495f-b9a1-be3cde6f4dba';
 
 // ─── Front-components: "+ Sales note" buttons on standard records ───────────
 // v0.1.9 — pinned actions on Person / Company / Opportunity record detail
@@ -216,10 +233,11 @@ export const OPPORTUNITY_OBJECT_UID = '20202020-9549-49dd-b2b2-883999db8938';
 export const WORKSPACE_MEMBER_OBJECT_UID =
   '20202020-3319-4234-a34c-82d5c0e881a6';
 export const TASK_OBJECT_UID = '20202020-1ba1-48ba-bc83-ef7e5990ed10';
+// v0.4.0 — from packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+export const CALENDAR_EVENT_OBJECT_UID = '20202020-8f1d-4eef-9f85-0d1965e27221';
 
 // ─── Standard default page-layout UUIDs (well-known constants in upstream) ───
-export const DEFAULT_PERSON_LAYOUT_UID =
-  '20202020-a102-4002-8002-ae0a1ea11002';
+export const DEFAULT_PERSON_LAYOUT_UID = '20202020-a102-4002-8002-ae0a1ea11002';
 export const DEFAULT_COMPANY_LAYOUT_UID =
   '20202020-a101-4001-8001-c0aba11c0001';
 export const DEFAULT_OPPORTUNITY_LAYOUT_UID =

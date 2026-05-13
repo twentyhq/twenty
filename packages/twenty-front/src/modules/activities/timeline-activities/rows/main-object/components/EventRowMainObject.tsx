@@ -41,6 +41,7 @@ export const EventRowMainObject = ({
   labelIdentifierValue,
   event,
   mainObjectMetadataItem,
+  linkedObjectMetadataItem,
   createdAt,
 }: EventRowMainObjectProps) => {
   const [, eventAction] = event.name.split('.');
@@ -93,6 +94,26 @@ export const EventRowMainObject = ({
               <EventRowItem>{labelIdentifierValue}</EventRowItem>
               <EventRowItem variant="action">{t`was restored by`}</EventRowItem>
               <EventRowItem>{authorFullName}</EventRowItem>
+            </StyledRow>
+            <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
+          </StyledRowContainer>
+        </StyledMainContainer>
+      );
+    }
+    case 'linked': {
+      // Generic "X linked a <object> with <name>" row for any linked object
+      // that doesn't have its own dedicated renderer (calendarEvent, message,
+      // task, note all have one). Used by e.g. salesNote.linked from the
+      // SalesNoteAttendeeTimelineListener.
+      const linkedLabel =
+        linkedObjectMetadataItem?.labelSingular?.toLowerCase() ?? t`record`;
+      return (
+        <StyledMainContainer>
+          <StyledRowContainer>
+            <StyledRow>
+              <EventRowItem>{authorFullName}</EventRowItem>
+              <EventRowItem variant="action">{t`linked a ${linkedLabel} with`}</EventRowItem>
+              <EventRowItem>{labelIdentifierValue}</EventRowItem>
             </StyledRow>
             <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
           </StyledRowContainer>
