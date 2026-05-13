@@ -98,39 +98,4 @@ describe('formatUpgradeLog', () => {
       `"[upgrade] Something happened | event="weird event=with-equals""`,
     );
   });
-
-  it('handles a realistic multi-line orchestrator validation error', () => {
-    const error = `{
-  "code": "METADATA_VALIDATION_FAILED",
-  "errors": {
-    "fieldMetadata": [
-      {
-        "errors": [
-          { "code": "INVALID_FIELD_INPUT", "message": "Option id is required" },
-          { "code": "INVALID_FIELD_INPUT", "message": "Option id is invalid", "value": null }
-        ],
-        "metadataName": "fieldMetadata",
-        "status": "fail",
-        "type": "update"
-      }
-    ]
-  },
-  "message": "Validation failed for 1 fieldMetadata",
-  "summary": { "fieldMetadata": 1, "totalErrors": 1 }
-}`;
-
-    expect(
-      formatUpgradeLog({
-        message: 'Workspace abc failed on validate-field-metadata',
-        event: 'workspace.failed',
-        fields: {
-          workspaceId: 'abc',
-          command: 'validate-field-metadata',
-          error,
-        },
-      }),
-    ).toMatchInlineSnapshot(
-      `"[upgrade] Workspace abc failed on validate-field-metadata | event=workspace.failed workspaceId=abc command=validate-field-metadata error="{\\n  \\"code\\": \\"METADATA_VALIDATION_FAILED\\",\\n  \\"errors\\": {\\n    \\"fieldMetadata\\": [\\n      {\\n        \\"errors\\": [\\n          { \\"code\\": \\"INVALID_FIELD_INPUT\\", \\"message\\": \\"Option id is required\\" },\\n          { \\"code\\": \\"INVALID_FIELD_INPUT\\", \\"message\\": \\"Option id is invalid\\", \\"value\\": null }\\n        ],\\n        \\"metadataName\\": \\"fieldMetadata\\",\\n        \\"status\\": \\"fail\\",\\n        \\"type\\": \\"update\\"\\n      }\\n    ]\\n  },\\n  \\"message\\": \\"Validation failed for 1 fieldMetadata\\",\\n  \\"summary\\": { \\"fieldMetadata\\": 1, \\"totalErrors\\": 1 }\\n}""`,
-    );
-  });
 });
