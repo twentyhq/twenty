@@ -102,6 +102,7 @@ let sharedAccessPayload: AccessTokenJwtPayload;
 let sharedRefreshPayload: RefreshTokenJwtPayload;
 let sharedLoginPayload: LoginTokenJwtPayload;
 let sharedWorkspaceAgnosticPayload: WorkspaceAgnosticTokenJwtPayload;
+let sharedSubdomainUrl: string;
 let currentKid: string;
 
 describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
@@ -126,14 +127,14 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
       expectToFail: false,
     });
 
-    const subdomainUrl =
+    sharedSubdomainUrl =
       workspaceData.signUpInNewWorkspace.workspace.workspaceUrls.subdomainUrl;
 
     sharedLoginToken = workspaceData.signUpInNewWorkspace.loginToken.token;
 
     const { data: tokensData } = await getAuthTokensFromLoginToken({
       loginToken: sharedLoginToken,
-      origin: subdomainUrl,
+      origin: sharedSubdomainUrl,
       expectToFail: false,
     });
 
@@ -347,6 +348,7 @@ describe('JWT Asymmetric Signing & Key Rotation (integration)', () => {
 
     const { data, errors } = await getAuthTokensFromLoginToken({
       loginToken: forgedToken,
+      origin: sharedSubdomainUrl,
       expectToFail: false,
     });
 
