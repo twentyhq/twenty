@@ -304,7 +304,7 @@ export class ChatExecutionService {
 
       const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
 
-      await this.aiBillingService.calculateAndBillUsage(
+      void this.aiBillingService.calculateAndBillUsage(
         registeredModel.modelId,
         { usage, cacheCreationTokens },
         workspace.id,
@@ -315,7 +315,7 @@ export class ChatExecutionService {
 
       // billNativeWebSearchUsage short-circuits when count <= 0, so calling
       // unconditionally is safe regardless of whether native search fired.
-      await this.aiBillingService.billNativeWebSearchUsage(
+      void this.aiBillingService.billNativeWebSearchUsage(
         countNativeWebSearchCallsFromSteps(steps),
         workspace.id,
         userWorkspaceId,
