@@ -22,7 +22,7 @@ import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/d
 import { UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
-import { buildNonSecretEnvVar } from 'src/engine/metadata-modules/front-component/utils/build-non-secret-env-var';
+import { stripSecretFromApplicationVariables } from 'src/engine/metadata-modules/front-component/utils/strip-secret-from-application-variables';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
@@ -88,12 +88,14 @@ export class FrontComponentResolver {
       )
       .filter(isDefined);
 
-    const environmentVariables = buildNonSecretEnvVar(flatApplicationVariables);
+    const applicationVariables = stripSecretFromApplicationVariables(
+      flatApplicationVariables,
+    );
 
     return {
       ...dto,
       applicationTokenPair: tokenPair,
-      environmentVariables,
+      applicationVariables,
     };
   }
 

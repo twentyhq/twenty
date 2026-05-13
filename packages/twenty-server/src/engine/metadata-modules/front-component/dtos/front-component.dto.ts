@@ -77,5 +77,5 @@ export class FrontComponentDTO {
   applicationTokenPair?: ApplicationTokenPairDTO;
 
   @Field(() => GraphQLJSON, { nullable: true })
-  environmentVariables?: Record<string, string>;
+  applicationVariables?: Record<string, string>;
 }

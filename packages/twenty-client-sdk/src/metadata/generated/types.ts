@@ -707,7 +707,7 @@ export default {
             "applicationTokenPair": [
                 33
             ],
-            "environmentVariables": [
+            "applicationVariables": [
                 15
             ],
             "__typename": [

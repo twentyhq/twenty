@@ -1,5 +1,5 @@
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
-import { buildNonSecretEnvVar } from 'src/engine/metadata-modules/front-component/utils/build-non-secret-env-var';
+import { stripSecretFromApplicationVariables } from 'src/engine/metadata-modules/front-component/utils/strip-secret-from-application-variables';
 
 const makeFlatVariable = (
   overrides: Partial<FlatApplicationVariable>,
@@ -18,9 +18,9 @@ const makeFlatVariable = (
   ...overrides,
 });
 
-describe('buildNonSecretEnvVar', () => {
+describe('stripSecretFromApplicationVariables', () => {
   it('should return empty object for empty array', () => {
-    expect(buildNonSecretEnvVar([])).toEqual({});
+    expect(stripSecretFromApplicationVariables([])).toEqual({});
   });
 
   it('should include non-secret variables', () => {
@@ -29,7 +29,7 @@ describe('buildNonSecretEnvVar', () => {
       makeFlatVariable({ id: '2', key: 'DEBUG', value: 'true' }),
     ];
 
-    expect(buildNonSecretEnvVar(variables)).toEqual({
+    expect(stripSecretFromApplicationVariables(variables)).toEqual({
       PUBLIC_URL: 'https://example.com',
       DEBUG: 'true',
     });
@@ -47,7 +47,7 @@ describe('buildNonSecretEnvVar', () => {
       makeFlatVariable({ id: '3', key: 'DEBUG', value: 'true' }),
     ];
 
-    const result = buildNonSecretEnvVar(variables);
+    const result = stripSecretFromApplicationVariables(variables);
 
     expect(result).toEqual({
       PUBLIC_URL: 'https://example.com',
@@ -69,7 +69,7 @@ describe('buildNonSecretEnvVar', () => {
       }),
     ];
 
-    expect(buildNonSecretEnvVar(variables)).toEqual({
+    expect(stripSecretFromApplicationVariables(variables)).toEqual({
       NULL_VALUE: '',
       UNDEFINED_VALUE: '',
     });
@@ -83,7 +83,7 @@ describe('buildNonSecretEnvVar', () => {
       }),
     ];
 
-    expect(buildNonSecretEnvVar(variables)).toEqual({
+    expect(stripSecretFromApplicationVariables(variables)).toEqual({
       NUMBER_VALUE: '123',
     });
   });
@@ -99,6 +99,6 @@ describe('buildNonSecretEnvVar', () => {
       }),
     ];
 
-    expect(buildNonSecretEnvVar(variables)).toEqual({});
+    expect(stripSecretFromApplicationVariables(variables)).toEqual({});
   });
 });

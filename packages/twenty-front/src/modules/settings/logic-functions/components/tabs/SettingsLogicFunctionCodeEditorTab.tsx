@@ -23,13 +23,13 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   handleExecute,
   onChange,
   isTesting = false,
-  environmentVariableKeys,
+  applicationVariableKeys,
 }: {
   files: File[];
   handleExecute: () => void;
   onChange: (value: string) => void;
   isTesting?: boolean;
-  environmentVariableKeys?: string[];
+  applicationVariableKeys?: string[];
 }) => {
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -70,7 +70,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
           files={files}
           currentFilePath={activeTabId}
           onChange={(newCodeValue: string) => onChange(newCodeValue)}
-          environmentVariableKeys={environmentVariableKeys}
+          applicationVariableKeys={applicationVariableKeys}
         />
       )}
     </Section>

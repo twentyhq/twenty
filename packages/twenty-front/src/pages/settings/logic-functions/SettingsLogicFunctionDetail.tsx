@@ -44,7 +44,7 @@ export const SettingsLogicFunctionDetail = () => {
 
   const applicationName = data?.findOneApplication?.name;
 
-  const environmentVariableKeys =
+  const applicationVariableKeys =
     data?.findOneApplication?.applicationVariables?.map(
       (variable) => variable.key,
     ) ?? [];
@@ -157,7 +157,7 @@ export const SettingsLogicFunctionDetail = () => {
               handleExecute={handleTestFunction}
               onChange={onChange('sourceHandlerCode')}
               isTesting={isExecuting}
-              environmentVariableKeys={environmentVariableKeys}
+              applicationVariableKeys={applicationVariableKeys}
             />
           )}
           {isTriggersTab && (
