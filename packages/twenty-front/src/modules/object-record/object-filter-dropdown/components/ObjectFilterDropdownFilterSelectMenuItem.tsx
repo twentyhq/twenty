@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { isManyToOneRelationField } from '@/object-record/object-filter-dropdown/utils/isManyToOneRelationField';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -27,9 +28,12 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 
   const Icon = getIcon(fieldMetadataItemToSelect.icon);
 
-  const shouldShowSubMenu = isCompositeFieldType(
-    fieldMetadataItemToSelect.type,
-  );
+  // Composite fields open a sub-menu to pick a sub-field; MANY_TO_ONE relation
+  // fields open the same sub-menu pattern to pick a field on the target
+  // object (one-hop relation traversal).
+  const shouldShowSubMenu =
+    isCompositeFieldType(fieldMetadataItemToSelect.type) ||
+    isManyToOneRelationField(fieldMetadataItemToSelect);
 
   const handleClick = () => {
     resetSelectedItem();

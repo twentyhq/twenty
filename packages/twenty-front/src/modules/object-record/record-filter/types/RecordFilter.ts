@@ -23,6 +23,10 @@ export type RecordFilter = {
   operand: ViewFilterOperand;
   positionInRecordFilterGroup?: number | null;
   label: string;
+  // Composite sub-field name (e.g. 'firstName') OR, when the filter is a
+  // one-hop relation traversal, the target field's name on the related
+  // object cast to this type. The serializer checks `type === 'RELATION'`
+  // before interpreting it as a target field name.
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
   // RLS-specific: when set, filter compares against current user's field value
   rlsDynamicValue?: RLSDynamicValue | null;

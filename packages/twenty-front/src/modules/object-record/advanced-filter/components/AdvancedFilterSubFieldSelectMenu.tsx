@@ -12,11 +12,12 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
+import { isManyToOneRelationField } from '@/object-record/object-filter-dropdown/utils/isManyToOneRelationField';
 import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/IconNameBySubField';
+import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { areCompositeTypeSubFieldsFilterable } from '@/object-record/record-filter/utils/areCompositeTypeSubFieldsFilterable';
 import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeNonFilterableByAnySubField';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
-import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -59,7 +60,8 @@ export const AdvancedFilterSubFieldSelectMenu = ({
 
   const handleSelectFilter = (
     selectedFieldMetadataItem: FieldMetadataItem | null | undefined,
-    subFieldName?: CompositeFieldSubFieldName | null | undefined,
+    subFieldName?: string | null | undefined,
+    targetFieldMetadataItem?: FieldMetadataItem | null | undefined,
   ) => {
     if (!isDefined(selectedFieldMetadataItem)) {
       return;
@@ -69,6 +71,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
       fieldMetadataItemId: selectedFieldMetadataItem.id,
       recordFilterId,
       subFieldName,
+      targetFieldMetadataItem,
     });
 
     closeAdvancedFilterFieldSelectDropdown();
@@ -87,30 +90,53 @@ export const AdvancedFilterSubFieldSelectMenu = ({
     advancedFilterFieldSelectDropdownId,
   );
 
+  // For MANY_TO_ONE relations the sub-menu shows the target object's
+  // filterable fields. Fall back to an empty id so the hook stays
+  // unconditional when we're in composite mode.
+  const isRelationSubMenu =
+    objectFilterDropdownSubMenuFieldType === 'RELATION' &&
+    isDefined(fieldMetadataItemUsedInDropdown) &&
+    isManyToOneRelationField(fieldMetadataItemUsedInDropdown);
+
+  const targetObjectMetadataId = isRelationSubMenu
+    ? (fieldMetadataItemUsedInDropdown?.relation?.targetObjectMetadata.id ?? '')
+    : '';
+
+  const { filterableFieldMetadataItems: relationTargetFields } =
+    useFilterableFieldMetadataItems(targetObjectMetadataId);
+
   if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
     return null;
   }
 
-  const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
-    objectFilterDropdownSubMenuFieldType
-  ].subFields
-    .filter((subField) => subField.isFilterable === true)
-    .map((subField) => subField.subFieldName);
+  // Composite-only sub-fields. We narrow off the 'RELATION' sentinel so the
+  // SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS index stays valid.
+  const compositeSubMenuFieldType =
+    objectFilterDropdownSubMenuFieldType === 'RELATION'
+      ? null
+      : objectFilterDropdownSubMenuFieldType;
+
+  const subFieldNames = isDefined(compositeSubMenuFieldType)
+    ? SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[compositeSubMenuFieldType].subFields
+        .filter((subField) => subField.isFilterable === true)
+        .map((subField) => subField.subFieldName)
+    : [];
 
   const subFieldsAreFilterable =
+    !isRelationSubMenu &&
     isDefined(fieldMetadataItemUsedInDropdown) &&
     areCompositeTypeSubFieldsFilterable(fieldMetadataItemUsedInDropdown.type);
 
   const compositeFieldTypeIsFilterableByAnySubField =
+    !isRelationSubMenu &&
     isDefined(fieldMetadataItemUsedInDropdown) &&
     !isCompositeTypeNonFilterableByAnySubField(
       fieldMetadataItemUsedInDropdown.type,
     );
 
-  const selectableItemIdArray = [
-    '-1',
-    ...subFieldNames.map((subFieldName) => subFieldName),
-  ];
+  const selectableItemIdArray = isRelationSubMenu
+    ? ['-1', ...relationTargetFields.map((field) => field.id)]
+    : ['-1', ...subFieldNames.map((subFieldName) => subFieldName)];
 
   const fieldLabel = fieldMetadataItemUsedInDropdown?.label;
 
@@ -176,14 +202,49 @@ export const AdvancedFilterSubFieldSelectMenu = ({
                       );
                     }
                   }}
-                  text={getCompositeSubFieldLabel(
-                    objectFilterDropdownSubMenuFieldType,
-                    subFieldName,
-                  )}
+                  text={
+                    isDefined(compositeSubMenuFieldType)
+                      ? getCompositeSubFieldLabel(
+                          compositeSubMenuFieldType,
+                          subFieldName,
+                        )
+                      : ''
+                  }
                   LeftIcon={getIcon(
                     ICON_NAME_BY_SUB_FIELD[subFieldName] ??
                       fieldMetadataItemUsedInDropdown?.icon,
                   )}
+                />
+              </SelectableListItem>
+            ))}
+          {isRelationSubMenu &&
+            relationTargetFields.map((targetField, index) => (
+              <SelectableListItem
+                itemId={targetField.id}
+                key={`select-filter-${index}`}
+                onEnter={() => {
+                  handleSelectFilter(
+                    fieldMetadataItemUsedInDropdown,
+                    targetField.name,
+                    targetField,
+                  );
+                }}
+              >
+                <MenuItem
+                  focused={selectedItemId === targetField.id}
+                  key={`select-filter-${index}`}
+                  testId={`select-filter-relation-${index}`}
+                  onClick={() => {
+                    if (isDefined(fieldMetadataItemUsedInDropdown)) {
+                      handleSelectFilter(
+                        fieldMetadataItemUsedInDropdown,
+                        targetField.name,
+                        targetField,
+                      );
+                    }
+                  }}
+                  text={targetField.label}
+                  LeftIcon={getIcon(targetField.icon)}
                 />
               </SelectableListItem>
             ))}

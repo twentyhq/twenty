@@ -18,6 +18,10 @@ export type RecordFilter = {
   type: FilterableAndTSVectorFieldType;
   recordFilterGroupId?: string | null;
   operand: ViewFilterOperand;
+  // Composite sub-field name (e.g. 'firstName') OR, when the filter is a
+  // one-hop relation traversal, the target field's name on the related
+  // object cast to this type. The serializer checks `type === 'RELATION'`
+  // before interpreting it as a target field name.
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
 };
 

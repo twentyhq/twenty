@@ -94,7 +94,13 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
       advancedFilterFieldSelectDropdownId,
     );
 
-    if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
+    // The RELATION sentinel is only used by the filter dropdown's
+    // relation-traversal flow; the role-permissions UI only deals with
+    // composite sub-fields, so bail out early in that case.
+    if (
+      !isDefined(objectFilterDropdownSubMenuFieldType) ||
+      objectFilterDropdownSubMenuFieldType === 'RELATION'
+    ) {
       return null;
     }
 

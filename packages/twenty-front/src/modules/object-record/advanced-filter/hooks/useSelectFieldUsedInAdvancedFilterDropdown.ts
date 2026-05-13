@@ -1,3 +1,4 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
@@ -22,7 +23,14 @@ import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 type SelectFilterParams = {
   fieldMetadataItemId: string;
   recordFilterId: string;
-  subFieldName?: CompositeFieldSubFieldName | null | undefined;
+  // For composite fields this is the sub-field key (e.g. 'firstName').
+  // For relation traversal this is the target field's name on the related
+  // object (e.g. 'name' for `company.name`).
+  subFieldName?: string | null | undefined;
+  // Present when the user drilled into a relation and picked a field on
+  // the target object. The filter then operates on the target field's
+  // type/operand set rather than on the relation itself.
+  targetFieldMetadataItem?: FieldMetadataItem | null | undefined;
 };
 
 export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
@@ -62,6 +70,7 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     fieldMetadataItemId,
     recordFilterId,
     subFieldName,
+    targetFieldMetadataItem,
   }: SelectFilterParams) => {
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
 
@@ -85,7 +94,16 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       });
     }
 
-    const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
+    // Relation traversal: when the user picked a field on the target object,
+    // drive the filter off the target field's type so the operand picker and
+    // value editor behave as if they were filtering that field directly.
+    const isRelationTraversal = isDefined(targetFieldMetadataItem);
+
+    const effectiveFieldType = isRelationTraversal
+      ? targetFieldMetadataItem.type
+      : fieldMetadataItem.type;
+
+    const filterType = getFilterTypeFromFieldType(effectiveFieldType);
 
     const firstOperand = getRecordFilterOperands({
       filterType,
@@ -110,14 +128,16 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     );
 
     const isCompositeFilterOnAnySubField =
-      isCompositeFieldType(filterType) && !isDefined(subFieldName);
+      !isRelationTraversal &&
+      isCompositeFieldType(filterType) &&
+      !isDefined(subFieldName);
     const compositeFilterNonFilterableByAnySubField =
       isCompositeTypeNonFilterableByAnySubField(filterType);
 
     let subFieldNameForNonFilterableWithAny:
       | CompositeFieldSubFieldName
       | undefined
-      | null = subFieldName;
+      | null = subFieldName as CompositeFieldSubFieldName | null | undefined;
 
     if (
       isCompositeFilterOnAnySubField &&
@@ -127,8 +147,18 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
         getDefaultSubFieldNameForCompositeFilterableFieldType(filterType);
     }
 
-    const subFieldNameToUse =
-      subFieldName ?? subFieldNameForNonFilterableWithAny;
+    // For relation traversal, subFieldName is the target field's name (a free
+    // string). RecordFilter stores it under the composite sub-field type for
+    // compatibility — the serializer disambiguates via filter.type.
+    const subFieldNameToUse = (subFieldName ??
+      subFieldNameForNonFilterableWithAny) as
+      | CompositeFieldSubFieldName
+      | null
+      | undefined;
+
+    const label = isRelationTraversal
+      ? `${fieldMetadataItem.label} → ${targetFieldMetadataItem.label}`
+      : fieldMetadataItem.label;
 
     const newAdvancedFilter = {
       id: recordFilterId,
@@ -140,7 +170,7 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       positionInRecordFilterGroup:
         existingRecordFilter?.positionInRecordFilterGroup,
       type: filterType,
-      label: fieldMetadataItem.label,
+      label,
       subFieldName: subFieldNameToUse,
     } satisfies RecordFilter;
 

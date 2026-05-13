@@ -16,8 +16,12 @@ import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/co
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
+import {
+  type ObjectFilterDropdownSubMenuFieldType,
+  objectFilterDropdownSubMenuFieldTypeComponentState,
+} from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
+import { isManyToOneRelationField } from '@/object-record/object-filter-dropdown/utils/isManyToOneRelationField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -117,8 +121,19 @@ export const AdvancedFilterFieldSelectMenu = ({
       recordFilterId,
     });
 
-    if (isCompositeFilterableFieldType(filterType)) {
-      setObjectFilterDropdownSubMenuFieldType(filterType);
+    // Composite fields and MANY_TO_ONE relations both open a second-level
+    // dropdown: composites pick a sub-field, relations pick a field on the
+    // related object (one-hop traversal).
+    const shouldOpenSubMenu =
+      isCompositeFilterableFieldType(filterType) ||
+      isManyToOneRelationField(selectedFieldMetadataItem);
+
+    if (shouldOpenSubMenu) {
+      // Safe cast: shouldOpenSubMenu is only true for composite filterable
+      // types and MANY_TO_ONE relations — both subsets of the state's union.
+      setObjectFilterDropdownSubMenuFieldType(
+        filterType as ObjectFilterDropdownSubMenuFieldType,
+      );
 
       setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
       setObjectFilterDropdownIsSelectingCompositeField(true);

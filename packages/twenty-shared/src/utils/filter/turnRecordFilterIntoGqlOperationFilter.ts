@@ -106,6 +106,44 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
 
   const isSubFieldFilter = isNonEmptyString(subFieldName);
 
+  // Relation traversal: the record filter targets a field on the related
+  // object (e.g. `company.name`). The frontend already stored the target
+  // field's type on `recordFilter.type`, so we synthesize a field metadata
+  // for the target, recurse to build the inner filter, then wrap the result
+  // under the relation field's name to produce
+  // `{ relationName: { targetFieldName: { operator: value } } }`.
+  if (
+    correspondingFieldMetadataItem.type === FieldMetadataType.RELATION &&
+    isSubFieldFilter
+  ) {
+    const syntheticTargetFieldId = `__relation-traversal-target__${correspondingFieldMetadataItem.id}`;
+
+    const syntheticTargetField: FieldShared = {
+      id: syntheticTargetFieldId,
+      name: subFieldName,
+      type: recordFilter.type as FieldMetadataType,
+      label: subFieldName,
+    };
+
+    const innerFilter = turnRecordFilterIntoRecordGqlOperationFilter({
+      recordFilter: {
+        ...recordFilter,
+        fieldMetadataId: syntheticTargetFieldId,
+        subFieldName: null,
+      },
+      fieldMetadataItems: [...fieldMetadataItems, syntheticTargetField],
+      filterValueDependencies,
+    });
+
+    if (!isDefined(innerFilter)) {
+      return;
+    }
+
+    return {
+      [correspondingFieldMetadataItem.name]: innerFilter,
+    } as RecordGqlOperationFilter;
+  }
+
   const filterType = getFilterTypeFromFieldType(
     correspondingFieldMetadataItem.type,
   );
