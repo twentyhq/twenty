@@ -30,7 +30,12 @@ describe('Encryption backfill slow instance commands (integration)', () => {
 
   beforeAll(() => {
     dataSource = global.testDataSource;
-    secretEncryption = global.app.get(SecretEncryptionService);
+    // SecretEncryptionService lives behind SecretEncryptionModule (not
+    // globally exported), so a strict lookup from the root injector fails.
+    // `strict: false` walks the import graph to find the provider.
+    secretEncryption = global.app.get(SecretEncryptionService, {
+      strict: false,
+    });
   });
 
   describe('EncryptApplicationVariableSlowInstanceCommand', () => {
@@ -105,6 +110,7 @@ describe('Encryption backfill slow instance commands (integration)', () => {
 
       const command = global.app.get(
         EncryptApplicationVariableSlowInstanceCommand,
+        { strict: false },
       );
 
       await command.runDataMigration(dataSource);
@@ -200,6 +206,7 @@ describe('Encryption backfill slow instance commands (integration)', () => {
 
       const command = global.app.get(
         EncryptApplicationRegistrationVariableSlowInstanceCommand,
+        { strict: false },
       );
 
       await command.runDataMigration(dataSource);
@@ -264,6 +271,7 @@ describe('Encryption backfill slow instance commands (integration)', () => {
 
       const command = global.app.get(
         EncryptSigningKeyPrivateKeysSlowInstanceCommand,
+        { strict: false },
       );
 
       await command.runDataMigration(dataSource);
@@ -326,6 +334,7 @@ describe('Encryption backfill slow instance commands (integration)', () => {
 
       const command = global.app.get(
         EncryptSensitiveConfigStorageSlowInstanceCommand,
+        { strict: false },
       );
 
       await command.runDataMigration(dataSource);
