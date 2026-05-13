@@ -232,4 +232,56 @@ describe('ImapGetAllFoldersService', () => {
       },
     );
   });
+
+  describe('Gmail namespace handling', () => {
+    it('should store the full hierarchical path as name, not the leaf name', async () => {
+      const mailboxList = [
+        createMockMailbox({
+          path: 'INBOX',
+          name: 'INBOX',
+        }),
+        createMockMailbox({
+          path: '[Gmail]/Sent Mail',
+          name: 'Sent Mail',
+        }),
+        createMockMailbox({
+          path: '[Gmail]/All Mail',
+          name: 'All Mail',
+        }),
+      ];
+
+      mockImapClient.list.mockResolvedValue(mailboxList);
+      mockImapClient.status.mockImplementation(async (path: string) => {
+        const uidMap: Record<string, bigint> = {
+          INBOX: BigInt(1),
+          '[Gmail]/Sent Mail': BigInt(2),
+          '[Gmail]/All Mail': BigInt(3),
+        };
+
+        return { uidValidity: uidMap[path] } as any;
+      });
+
+      imapFindSentFolderService.findSentFolder.mockResolvedValue({
+        path: '[Gmail]/Sent Mail',
+        name: 'Sent Mail',
+      });
+
+      const result = await service.getAllMessageFolders(
+        CONNECTED_ACCOUNT,
+        MESSAGE_CHANNEL,
+      );
+
+      const sentFolder = result.find((f) => f.isSentFolder);
+
+      expect(sentFolder).toBeDefined();
+      expect(sentFolder?.name).toBe('[Gmail]/Sent Mail');
+      expect(sentFolder?.externalId).toBe('[Gmail]/Sent Mail:2');
+
+      const allMailFolder = result.find(
+        (f) => !f.isSentFolder && f.externalId?.includes('All Mail'),
+      );
+
+      expect(allMailFolder?.name).toBe('[Gmail]/All Mail');
+    });
+  });
 });

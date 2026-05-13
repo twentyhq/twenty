@@ -86,7 +86,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
 
       folders.push({
         externalId,
-        name: sentFolder.name,
+        name: sentFolder.path,
         isSynced: true,
         isSentFolder: true,
         parentFolderId: sentMailbox?.parentPath || null,
@@ -120,7 +120,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
 
       folders.push({
         externalId,
-        name: mailbox.name,
+        name: mailbox.path,
         isSynced,
         isSentFolder: false,
         parentFolderId: mailbox.parentPath || null,
