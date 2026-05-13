@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  JwtService,
-  type JwtSignOptions,
-  type JwtVerifyOptions,
-} from '@nestjs/jwt';
+import { JwtService, type JwtVerifyOptions } from '@nestjs/jwt';
 
 import { createHash } from 'crypto';
 
@@ -50,16 +46,6 @@ export class JwtWrapperService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly jwtKeyManagerService: JwtKeyManagerService,
   ) {}
-
-  /**
-   * @deprecated All production sign paths route through {@link signAsync}
-   * (ES256, rotatable signing keys). Legacy HS256 tokens are still accepted
-   * during verification indefinitely, but new sign call sites must not be
-   * introduced.
-   */
-  sign(payload: JwtPayload, options?: JwtSignOptions): string {
-    return this.jwtService.sign(payload, options);
-  }
 
   async signAsync(
     payload: JwtPayload,

@@ -37,7 +37,6 @@ describe('AccessTokenService', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            sign: jest.fn(),
             signAsync: jest.fn(),
             verifyJwtToken: jest.fn(),
             decode: jest.fn(),
