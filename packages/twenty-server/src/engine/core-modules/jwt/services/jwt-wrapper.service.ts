@@ -28,10 +28,7 @@ import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-k
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
 import { decodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
-import {
-  isAsymmetricJwtHeader,
-  isAsymmetricSigningEligible,
-} from 'src/engine/core-modules/jwt/utils/is-asymmetric-jwt-header.util';
+import { isAsymmetricJwtHeader } from 'src/engine/core-modules/jwt/utils/is-asymmetric-jwt-header.util';
 
 type ResolvedVerificationKey = {
   key: string;
@@ -68,13 +65,6 @@ export class JwtWrapperService {
     payload: JwtPayload,
     options: { expiresIn: string | number; jwtid?: string },
   ): Promise<string> {
-    if (!isAsymmetricSigningEligible(payload.type)) {
-      throw new AuthException(
-        `signAsync called with non-rotatable token type "${payload.type}"`,
-        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
-      );
-    }
-
     const signingKey = await this.jwtKeyManagerService.getCurrentSigningKey();
 
     if (!isDefined(signingKey)) {
@@ -111,9 +101,8 @@ export class JwtWrapperService {
     rawToken: string,
   ): Promise<ResolvedVerificationKey> {
     const header = decodeJwtHeader(rawToken);
-    const payload = decodeJwtPayload<JwtPayload>(rawToken);
 
-    if (isAsymmetricJwtHeader(header, payload)) {
+    if (isAsymmetricJwtHeader(header)) {
       const publicKeyPem =
         await this.jwtKeyManagerService.getValidPublicKeyPemById(header.kid);
 
@@ -126,6 +115,8 @@ export class JwtWrapperService {
 
       return { key: publicKeyPem, algorithm: JWT_ASYMMETRIC_ALGORITHM };
     }
+
+    const payload = decodeJwtPayload<JwtPayload>(rawToken);
 
     if (!isDefined(payload)) {
       throw new AuthException(
