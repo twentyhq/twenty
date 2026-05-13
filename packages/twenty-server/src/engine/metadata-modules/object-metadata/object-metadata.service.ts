@@ -594,28 +594,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    const commandMenuItemMigrationResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            commandMenuItem: {
-              flatEntityToCreate: [flatCommandMenuItemToCreate],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-          },
-          workspaceId,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-        },
-      );
-
-    if (commandMenuItemMigrationResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        commandMenuItemMigrationResult,
-        'Multiple validation errors occurred while creating command menu item',
-      );
-    }
+    const flatEntityOperationByMetadataNameForTwentyStandardApplication = {
+      commandMenuItem: {
+        flatEntityToCreate: [flatCommandMenuItemToCreate],
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      },
+    };
 
     if (isRecordPageLayoutEditingEnabled) {
       const flatRecordPageFieldsViewToCreate =
@@ -643,51 +628,53 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId,
         });
 
-      const pageLayoutMigrationResult =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-          {
-            allFlatEntityOperationByMetadataName: {
-              view: {
-                flatEntityToCreate: [flatRecordPageFieldsViewToCreate],
-                flatEntityToDelete: [],
-                flatEntityToUpdate: [],
-              },
-              viewField: {
-                flatEntityToCreate: flatRecordPageFieldsViewFieldsToCreate,
-                flatEntityToDelete: [],
-                flatEntityToUpdate: [],
-              },
-              pageLayout: {
-                flatEntityToCreate:
-                  flatDefaultRecordPageLayoutsToCreate.pageLayouts,
-                flatEntityToDelete: [],
-                flatEntityToUpdate: [],
-              },
-              pageLayoutTab: {
-                flatEntityToCreate:
-                  flatDefaultRecordPageLayoutsToCreate.pageLayoutTabs,
-                flatEntityToDelete: [],
-                flatEntityToUpdate: [],
-              },
-              pageLayoutWidget: {
-                flatEntityToCreate:
-                  flatDefaultRecordPageLayoutsToCreate.pageLayoutWidgets,
-                flatEntityToDelete: [],
-                flatEntityToUpdate: [],
-              },
-            },
-            workspaceId,
-            applicationUniversalIdentifier:
-              twentyStandardFlatApplication.universalIdentifier,
-          },
-        );
+      Object.assign(flatEntityOperationByMetadataNameForTwentyStandardApplication, {
+        view: {
+          flatEntityToCreate: [flatRecordPageFieldsViewToCreate],
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [],
+        },
+        viewField: {
+          flatEntityToCreate: flatRecordPageFieldsViewFieldsToCreate,
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [],
+        },
+        pageLayout: {
+          flatEntityToCreate: flatDefaultRecordPageLayoutsToCreate.pageLayouts,
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [],
+        },
+        pageLayoutTab: {
+          flatEntityToCreate:
+            flatDefaultRecordPageLayoutsToCreate.pageLayoutTabs,
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [],
+        },
+        pageLayoutWidget: {
+          flatEntityToCreate:
+            flatDefaultRecordPageLayoutsToCreate.pageLayoutWidgets,
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [],
+        },
+      });
+    }
 
-      if (pageLayoutMigrationResult.status === 'fail') {
-        throw new WorkspaceMigrationBuilderException(
-          pageLayoutMigrationResult,
-          'Multiple validation errors occurred while creating page layouts for object',
-        );
-      }
+    const twentyStandardApplicationMigrationResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName:
+            flatEntityOperationByMetadataNameForTwentyStandardApplication,
+          workspaceId,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (twentyStandardApplicationMigrationResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        twentyStandardApplicationMigrationResult,
+        'Multiple validation errors occurred while creating object additional metadata',
+      );
     }
 
     const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =

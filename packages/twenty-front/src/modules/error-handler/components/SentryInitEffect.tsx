@@ -34,6 +34,7 @@ export const SentryInitEffect = () => {
             browserTracingIntegration,
             replayIntegration,
             globalHandlersIntegration,
+            breadcrumbsIntegration,
           } = await import('@sentry/react');
 
           init({
@@ -43,6 +44,9 @@ export const SentryInitEffect = () => {
             integrations: [
               browserTracingIntegration({}),
               replayIntegration(),
+              breadcrumbsIntegration({
+                console: false,
+              }),
               globalHandlersIntegration({
                 onunhandledrejection: false, // handled in PromiseRejectionEffect
               }),
