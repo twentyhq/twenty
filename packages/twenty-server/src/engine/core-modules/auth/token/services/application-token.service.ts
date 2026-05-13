@@ -91,23 +91,26 @@ export class ApplicationTokenService {
       'APPLICATION_REFRESH_TOKEN_EXPIRES_IN',
     );
 
-    const applicationAccessToken = this.signApplicationToken({
-      workspaceId,
-      applicationId,
-      userWorkspaceId,
-      userId,
-      tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
-      expiresIn: accessTokenExpiresIn,
-    });
-
-    const applicationRefreshToken = this.signApplicationToken({
-      workspaceId,
-      applicationId,
-      userWorkspaceId,
-      userId,
-      tokenType: JwtTokenTypeEnum.APPLICATION_REFRESH,
-      expiresIn: refreshTokenExpiresIn,
-    });
+    const [applicationAccessToken, applicationRefreshToken] = await Promise.all(
+      [
+        this.signApplicationToken({
+          workspaceId,
+          applicationId,
+          userWorkspaceId,
+          userId,
+          tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+          expiresIn: accessTokenExpiresIn,
+        }),
+        this.signApplicationToken({
+          workspaceId,
+          applicationId,
+          userWorkspaceId,
+          userId,
+          tokenType: JwtTokenTypeEnum.APPLICATION_REFRESH,
+          expiresIn: refreshTokenExpiresIn,
+        }),
+      ],
+    );
 
     return { applicationAccessToken, applicationRefreshToken };
   }
@@ -229,7 +232,7 @@ export class ApplicationTokenService {
     );
   }
 
-  private signApplicationToken({
+  private async signApplicationToken({
     workspaceId,
     applicationId,
     userWorkspaceId,
@@ -245,7 +248,7 @@ export class ApplicationTokenService {
       | JwtTokenTypeEnum.APPLICATION_ACCESS
       | JwtTokenTypeEnum.APPLICATION_REFRESH;
     expiresIn: string;
-  }): AuthToken {
+  }): Promise<AuthToken> {
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     const jwtPayload:
@@ -260,11 +263,7 @@ export class ApplicationTokenService {
     };
 
     return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret: this.jwtWrapperService.generateAppSecret(
-          tokenType,
-          workspaceId,
-        ),
+      token: await this.jwtWrapperService.signAsyncOrThrow(jwtPayload, {
         expiresIn,
       }),
       expiresAt,

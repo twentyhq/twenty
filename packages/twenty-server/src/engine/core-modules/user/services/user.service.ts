@@ -141,11 +141,11 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       workspaceMembers.map((member) => [member.userId, member]),
     );
 
-    return new Map(
-      userIds.map((userId) => {
+    const entries = await Promise.all(
+      userIds.map(async (userId): Promise<[string, string | null]> => {
         const member = memberByUserId.get(userId);
         const memberSigned = isDefined(member)
-          ? this.workspaceMemberTranspiler.generateSignedAvatarUrl({
+          ? await this.workspaceMemberTranspiler.generateSignedAvatarUrl({
               workspaceId: workspace.id,
               workspaceMember: member,
             })
@@ -162,7 +162,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         }
 
         const fallbackSigned =
-          this.workspaceMemberTranspiler.generateSignedAvatarUrl({
+          await this.workspaceMemberTranspiler.generateSignedAvatarUrl({
             workspaceId: workspace.id,
             workspaceMember: { avatarUrl: fallbackAvatarUrl, id: userId },
           });
@@ -173,6 +173,8 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         ];
       }),
     );
+
+    return new Map(entries);
   }
 
   async loadWorkspaceMembersByUserIds({
