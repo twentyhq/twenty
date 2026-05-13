@@ -4,6 +4,7 @@ import { CheckIcon } from './Check';
 import { CodeIcon } from './Code';
 import { EditIcon } from './Edit';
 import { EyeIcon } from './Eye';
+import { LightbulbIcon } from './Lightbulb';
 import { SearchIcon } from './Search';
 import { TagIcon } from './Tag';
 import { UsersIcon } from './Users';
@@ -13,6 +14,7 @@ export { CheckIcon } from './Check';
 export { CodeIcon } from './Code';
 export { EditIcon } from './Edit';
 export { EyeIcon } from './Eye';
+export { LightbulbIcon } from './Lightbulb';
 export { SearchIcon } from './Search';
 export { TagIcon } from './Tag';
 export { UsersIcon } from './Users';
@@ -32,6 +34,7 @@ export const INFORMATIVE_ICONS: Record<
   code: CodeIcon,
   edit: EditIcon,
   eye: EyeIcon,
+  lightbulb: LightbulbIcon,
   search: SearchIcon,
   tag: TagIcon,
   users: UsersIcon,

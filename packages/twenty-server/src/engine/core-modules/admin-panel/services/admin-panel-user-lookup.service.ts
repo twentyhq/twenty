@@ -99,8 +99,9 @@ export class AdminPanelUserLookupService {
           activationStatus: userWorkspace.workspace.activationStatus,
           createdAt: userWorkspace.workspace.createdAt,
           logo:
-            this.fileUrlService.signWorkspaceLogoUrl(userWorkspace.workspace) ??
-            undefined,
+            (await this.fileUrlService.signWorkspaceLogoUrl(
+              userWorkspace.workspace,
+            )) ?? undefined,
           allowImpersonation: userWorkspace.workspace.allowImpersonation,
           workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
             subdomain: userWorkspace.workspace.subdomain,
@@ -182,7 +183,9 @@ export class AdminPanelUserLookupService {
       totalUsers: workspaceUsers.length,
       activationStatus: workspace.activationStatus,
       createdAt: workspace.createdAt,
-      logo: this.fileUrlService.signWorkspaceLogoUrl(workspace) ?? undefined,
+      logo:
+        (await this.fileUrlService.signWorkspaceLogoUrl(workspace)) ??
+        undefined,
       allowImpersonation: workspace.allowImpersonation,
       workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
         subdomain: workspace.subdomain,

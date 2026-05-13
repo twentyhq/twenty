@@ -132,7 +132,7 @@ export class MessageQueueExplorer implements OnModuleInit {
     }
   }
 
-  private async handleProcessorGroupCollection(
+  private handleProcessorGroupCollection(
     processorGroupCollection: ProcessorGroup[],
     queue: MessageQueueService,
     options?: MessageQueueWorkerOptions,

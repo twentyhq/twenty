@@ -14,6 +14,7 @@ import {
 import { type CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 
 @Injectable()
 export class ApplicationRegistrationVariableService {
@@ -25,19 +26,29 @@ export class ApplicationRegistrationVariableService {
     private readonly encryptionService: SecretEncryptionService,
   ) {}
 
-  async findVariables(
+  async findVariablesWithObfuscatedValues(
     applicationRegistrationId: string,
     workspaceId: string,
-  ): Promise<ApplicationRegistrationVariableEntity[]> {
+  ): Promise<ApplicationRegistrationVariableDTO[]> {
     await this.assertRegistrationOwnedByWorkspace(
       applicationRegistrationId,
       workspaceId,
     );
 
-    return this.variableRepository.find({
+    const variables = await this.variableRepository.find({
       where: { applicationRegistrationId },
       order: { key: 'ASC' },
     });
+
+    return variables.map((variable) => ({
+      ...variable,
+      isFilled: variable.isFilled,
+      value: variable.isFilled
+        ? variable.isSecret
+          ? '•••••••••••••'
+          : this.encryptionService.decrypt(variable.encryptedValue)
+        : null,
+    }));
   }
 
   async createVariable(

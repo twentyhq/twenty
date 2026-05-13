@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { Strategy } from 'passport-jwt';
+import { Strategy, type SecretOrKeyProvider } from 'passport-jwt';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -20,13 +20,13 @@ import {
   ApplicationAccessTokenJwtPayload,
   type AuthContext,
   type AuthContextUser,
-  FileTokenJwtPayloadLegacy,
   type JwtPayload,
   JwtTokenTypeEnum,
   type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { JWT_SUPPORTED_VERIFY_ALGORITHMS } from 'src/engine/core-modules/jwt/constants/jwt-algorithm.constant';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -44,36 +44,22 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {
-    const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
-    // @ts-expect-error legacy noImplicitAny
-    const secretOrKeyProviderFunction = async (_request, rawJwtToken, done) => {
-      try {
-        const decodedToken = jwtWrapperService.decode<
-          | FileTokenJwtPayloadLegacy
-          | AccessTokenJwtPayload
-          | WorkspaceAgnosticTokenJwtPayload
-        >(rawJwtToken);
-
-        const appSecretBody =
-          decodedToken.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
-            ? decodedToken.userId
-            : decodedToken.workspaceId;
-
-        const secret = jwtWrapperService.generateAppSecret(
-          decodedToken.type,
-          appSecretBody,
-        );
-
-        done(null, secret);
-      } catch (error) {
-        done(error, null);
-      }
+    const secretOrKeyProvider: SecretOrKeyProvider = (
+      _request,
+      rawJwtToken,
+      done,
+    ) => {
+      jwtWrapperService.resolveVerificationKey(rawJwtToken).then(
+        ({ key }) => done(null, key),
+        (error) => done(error, undefined),
+      );
     };
 
     super({
-      jwtFromRequest: jwtFromRequestFunction,
+      jwtFromRequest: jwtWrapperService.extractJwtFromRequest(),
       ignoreExpiration: false,
-      secretOrKeyProvider: secretOrKeyProviderFunction,
+      algorithms: [...JWT_SUPPORTED_VERIFY_ALGORITHMS],
+      secretOrKeyProvider,
     });
   }
 

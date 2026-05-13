@@ -8,9 +8,11 @@ on:
   pull_request_review:
     types: [submitted]
   issues:
-    types: [opened, assigned]
+    types: [opened]
   repository_dispatch:
     types: [claude-core-team-issues]
+
+permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number || github.event.client_payload.issue_number }}
@@ -19,17 +21,36 @@ concurrency:
 jobs:
   claude:
     if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude') && github.event.comment.user.type != 'Bot') ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude') && github.event.comment.user.type != 'Bot') ||
-      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude') && github.event.review.user.type != 'Bot') ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+      (
+        github.event_name == 'issue_comment' &&
+        contains(github.event.comment.body, '@claude') &&
+        github.event.comment.user.type != 'Bot' &&
+        contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+      ) ||
+      (
+        github.event_name == 'pull_request_review_comment' &&
+        contains(github.event.comment.body, '@claude') &&
+        github.event.comment.user.type != 'Bot' &&
+        contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+      ) ||
+      (
+        github.event_name == 'pull_request_review' &&
+        contains(github.event.review.body, '@claude') &&
+        github.event.review.user.type != 'Bot' &&
+        contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.review.author_association)
+      ) ||
+      (
+        github.event_name == 'issues' &&
+        github.event.action == 'opened' &&
+        (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')) &&
+        contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association)
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
       contents: write
       pull-requests: write
       issues: write
-      id-token: write
     services:
       postgres:
         image: postgres:16
@@ -50,14 +71,14 @@ jobs:
           - 6379:6379
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Run Claude Code
         id: claude-code
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@dde2242db6af13460b916652159b6ba19a598f30 # v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           additional_permissions: |
@@ -102,7 +123,6 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-      id-token: write
     services:
       postgres:
         image: postgres:16
@@ -122,14 +142,14 @@ jobs:
         ports:
           - 6379:6379
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Build prompt from dispatch payload
         id: prompt
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const p = context.payload.client_payload;
@@ -144,7 +164,7 @@ jobs:
             core.setOutput('issue_number', p.issue_number);
       - name: Run Claude Code
         id: claude
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@dde2242db6af13460b916652159b6ba19a598f30 # v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: ${{ steps.prompt.outputs.prompt }}
@@ -159,9 +179,16 @@ jobs:
             }
       - name: Dispatch response to ci-privileged
         if: always()
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          repository: twentyhq/ci-privileged
-          event-type: claude-cross-repo-response
-          client-payload: '{"repo": ${{ toJSON(steps.prompt.outputs.repo) }}, "issue_number": ${{ toJSON(steps.prompt.outputs.issue_number) }}, "run_id": ${{ toJSON(github.run_id) }}, "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          REPO: ${{ steps.prompt.outputs.repo }}
+          ISSUE_NUMBER: ${{ steps.prompt.outputs.issue_number }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            -f event_type=claude-cross-repo-response \
+            -f "client_payload[repo]=$REPO" \
+            -f "client_payload[issue_number]=$ISSUE_NUMBER" \
+            -f "client_payload[run_id]=$RUN_ID" \
+            -f "client_payload[run_url]=$RUN_URL"

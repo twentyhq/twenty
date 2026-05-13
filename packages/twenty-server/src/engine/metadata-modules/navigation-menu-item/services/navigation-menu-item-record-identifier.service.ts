@@ -121,7 +121,7 @@ export class NavigationMenuItemRecordIdentifierService {
       flatFieldMetadataMaps,
     );
 
-    const imageIdentifier = getRecordImageIdentifier({
+    const imageIdentifier = await getRecordImageIdentifier({
       record,
       flatObjectMetadata: objectMetadata,
       flatFieldMetadataMaps,

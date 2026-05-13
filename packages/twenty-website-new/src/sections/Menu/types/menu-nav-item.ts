@@ -1,6 +1,6 @@
 import type { MessageDescriptor } from '@lingui/core';
 
-export type MenuNavChildIcon = 'book' | 'code' | 'tag' | 'users';
+export type MenuNavChildIcon = 'book' | 'code' | 'lightbulb' | 'tag' | 'users';
 
 export type MenuNavChildPreview = {
   image: string;

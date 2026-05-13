@@ -37,16 +37,17 @@ const StyledBoardCard = styled.div<{
   }
 
   .checkbox-container {
+    max-width: 0;
     opacity: 0;
+    pointer-events: none;
     transition: all ease-in-out 160ms;
   }
 
-  &[data-selected='true'] .checkbox-container {
-    opacity: 1;
-  }
-
+  &[data-selected='true'] .checkbox-container,
   &:hover .checkbox-container {
+    max-width: ${themeCssVariables.spacing[6]};
     opacity: 1;
+    pointer-events: auto;
   }
 
   .compact-icon-container {

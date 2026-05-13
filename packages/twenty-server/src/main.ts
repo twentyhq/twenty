@@ -93,4 +93,4 @@ const bootstrap = async () => {
   await app.listen(twentyConfigService.get('NODE_PORT'));
 };
 
-bootstrap();
+void bootstrap();

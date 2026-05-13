@@ -29,12 +29,12 @@ runs:
         echo "packages/*/node_modules" >> $GITHUB_OUTPUT
         echo 'EOF' >> $GITHUB_OUTPUT
     - name: Setup Node.js and get yarn cache
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
         node-version: ${{ inputs.node-version }}
     - name: Restore node_modules
       id: cache-node-modules
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0 (restore)
       with:
         key: v4-${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-${{github.sha}}
         restore-keys: v4-${{ steps.globals.outputs.CACHE_KEY_PREFIX }}-
@@ -44,10 +44,13 @@ runs:
       shell: ${{ steps.globals.outputs.ACTION_SHELL }}
       run: |
         yarn config set enableHardenedMode true
+        yarn config set enableScripts false
         yarn --immutable --check-cache
+    # Fork PRs on pull_request already can't write to the base repo's cache (GitHub built-in).
+    # The fork guard is defense-in-depth for pull_request_target, which does have write access.
     - name: Save cache
-      if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-matched-key == '' }}
-      uses: actions/cache/save@v4
+      if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' && steps.cache-node-modules.outputs.cache-matched-key == '' && format('{0}', github.event.pull_request.head.repo.fork) != 'true' }}
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0 (save)
       with:
         key: ${{ steps.cache-node-modules.outputs.cache-primary-key }}
         path: ${{ steps.globals.outputs.PATH_TO_CACHE }}

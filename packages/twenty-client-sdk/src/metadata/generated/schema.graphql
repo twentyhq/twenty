@@ -1756,6 +1756,7 @@ enum FeatureFlagKey {
   IS_JUNCTION_RELATIONS_ENABLED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
   IS_BILLING_V2_ENABLED
+  IS_REST_METADATA_API_NEW_FORMAT_DIRECT
 }
 
 type WorkspaceUrls {
@@ -1965,6 +1966,18 @@ type PublicApplicationRegistration {
 
 type RotateClientSecret {
   clientSecret: String!
+}
+
+type ApplicationRegistrationVariableDTO {
+  id: UUID!
+  key: String!
+  value: String
+  description: String!
+  isSecret: Boolean!
+  isRequired: Boolean!
+  isFilled: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Relation {
@@ -3034,7 +3047,7 @@ type Query {
   findManyApplicationRegistrations: [ApplicationRegistration!]!
   findOneApplicationRegistration(id: String!): ApplicationRegistration!
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
-  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
+  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariableDTO!]!
   applicationRegistrationTarballUrl(id: String!): String
   currentUser: User!
   currentWorkspace: Workspace!
