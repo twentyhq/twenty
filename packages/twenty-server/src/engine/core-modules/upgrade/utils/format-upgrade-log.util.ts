@@ -40,8 +40,9 @@ export const formatUpgradeLog = ({
   const tailParts: string[] = [`event=${escapeLogValue(event)}`];
 
   for (const [key, value] of Object.entries(fields)) {
-    if (!isDefined(value)) continue;
-    tailParts.push(`${key}=${escapeLogValue(value)}`);
+    tailParts.push(
+      `${key}=${isDefined(value) ? escapeLogValue(value) : String(value)}`,
+    );
   }
 
   return `${UPGRADE_LOG_PREFIX} ${message} | ${tailParts.join(' ')}`;
