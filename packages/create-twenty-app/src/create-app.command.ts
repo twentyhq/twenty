@@ -66,7 +66,7 @@ export class CreateAppCommand {
 
     const authenticationMethod = skipLocalInstance
       ? 'oauth'
-      : options.authenticationMethod;
+      : (options.authenticationMethod ?? 'apiKey');
 
     try {
       await this.validateDirectory(appDirectory);
