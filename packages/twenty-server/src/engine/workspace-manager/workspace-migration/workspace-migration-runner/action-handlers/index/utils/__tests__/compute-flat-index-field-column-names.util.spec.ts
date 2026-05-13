@@ -30,12 +30,15 @@ describe('computeFlatIndexFieldColumnNames', () => {
         fieldMetadataId: phoneFieldMetadataId,
       } as FlatIndexFieldMetadata,
     ];
-
     expect(
       computeFlatIndexFieldColumnNames({
         flatIndexFieldMetadatas,
         flatFieldMetadataMaps,
       }),
-    ).toEqual(['phonePrimaryPhoneNumber', 'phonePrimaryPhoneCallingCode']);
+    ).toEqual([
+      'phonePrimaryPhoneNumber',
+      'phonePrimaryPhoneCountryCode',
+      'phonePrimaryPhoneCallingCode',
+    ]);
   });
 });
