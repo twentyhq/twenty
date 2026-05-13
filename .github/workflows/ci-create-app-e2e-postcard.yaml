@@ -107,7 +107,7 @@ jobs:
           create-twenty-app --version
           mkdir -p /tmp/e2e-test-workspace
           cd /tmp/e2e-test-workspace
-          create-twenty-app test-app --example postcard --display-name "Test postcard app" --description "E2E test postcard app" --skip-local-instance
+          create-twenty-app test-app --example postcard --display-name "Test postcard app" --description "E2E test postcard app" --api-url http://localhost:3000
 
       - name: Install scaffolded app dependencies
         run: |

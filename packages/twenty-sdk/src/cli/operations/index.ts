@@ -47,12 +47,6 @@ export { ConfigService } from '@/cli/utilities/config/config-service';
 // Constants
 export { DEV_API_KEY, DEV_API_URL } from '@/cli/constants/dev-api-key';
 
-// Docker install
-export {
-  getDockerInstallInstructions,
-  isDockerInstalled,
-} from '@/cli/utilities/server/docker-install';
-
 // Shared types and error codes
 export {
   APP_ERROR_CODES,

@@ -26,5 +26,8 @@ export const getDockerInstallInstructions = (): string => {
     `  Install Docker: ${url}`,
     '',
     '  Then run this command again.',
+    '',
+    '  Alternatively, connect to an existing Twenty instance:',
+    '  npx create-twenty-app@latest my-twenty-app --api-url <your-instance-url>',
   ].join('\n');
 };

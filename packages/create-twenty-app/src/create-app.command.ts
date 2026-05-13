@@ -16,11 +16,13 @@ import {
   ConfigService,
   DEV_API_KEY,
   DEV_API_URL,
-  getDockerInstallInstructions,
-  isDockerInstalled,
   serverStart,
 } from 'twenty-sdk/cli';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  getDockerInstallInstructions,
+  isDockerInstalled,
+} from '@/utils/docker-install';
 
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
 const IMAGE = 'twentycrm/twenty-app-dev:latest';
@@ -33,7 +35,6 @@ type CreateAppOptions = {
   name?: string;
   displayName?: string;
   description?: string;
-  skipLocalInstance?: boolean;
   apiUrl?: string;
   authenticationMethod?: AuthenticationMethod;
 };
@@ -46,31 +47,34 @@ export class CreateAppCommand {
     const { appName, appDisplayName, appDirectory, appDescription } =
       this.getAppInfos(options);
 
+    const apiUrl = options.apiUrl ?? DEV_API_URL;
+
+    const skipLocalInstance = apiUrl !== DEV_API_URL;
+
+    if (!skipLocalInstance && !isDockerInstalled()) {
+      console.log(chalk.yellow('\n' + getDockerInstallInstructions() + '\n'));
+      process.exit(1);
+    }
+
+    if (skipLocalInstance && options.authenticationMethod === 'apiKey') {
+      console.log(
+        chalk.yellow(
+          'API key authentication is only supported on a local Docker instance. Ignoring and switching to OAuth authentication.',
+        ),
+      );
+    }
+
+    const authenticationMethod = skipLocalInstance
+      ? 'oauth'
+      : options.authenticationMethod;
+
     try {
-      const skipLocalInstance = options.skipLocalInstance ?? false;
-      const apiUrl = options.apiUrl ?? DEV_API_URL;
-      const authenticationMethod =
-        options.authenticationMethod ?? (skipLocalInstance ? 'oauth' : 'apiKey');
-
-      if (authenticationMethod === 'apiKey' && skipLocalInstance) {
-        throw new Error(
-          'API key authentication requires a local Docker instance. ' +
-            'Use --authentication-method oauth with --skip-local-instance, ' +
-            'or remove --skip-local-instance.',
-        );
-      }
-
-      if (!skipLocalInstance && !isDockerInstalled()) {
-        console.log(chalk.yellow('\n' + getDockerInstallInstructions() + '\n'));
-        process.exit(1);
-      }
-
       await this.validateDirectory(appDirectory);
 
       this.totalSteps = this.computeTotalSteps({
         skipLocalInstance,
-        authenticationMethod,
       });
+
       this.stepCounter = 0;
 
       const dockerPullPromise =
@@ -81,7 +85,9 @@ export class CreateAppCommand {
       this.logPlan({ appName, appDisplayName, appDescription, appDirectory });
 
       this.logNextStep('Creating project directory');
+
       await fs.ensureDir(appDirectory);
+
       this.logDetail(appDirectory);
 
       this.logNextStep('Scaffolding project files');
@@ -112,9 +118,11 @@ export class CreateAppCommand {
       }
 
       this.logNextStep('Installing dependencies');
+
       await install(appDirectory, (message) => this.logDetail(message));
 
       this.logNextStep('Initializing Git repository');
+
       const gitInitialized = await tryGitInit(appDirectory);
 
       if (gitInitialized) {
@@ -129,21 +137,28 @@ export class CreateAppCommand {
       console.log('');
 
       let authSucceeded = false;
+      let resolvedApiUrl = apiUrl;
+      let serverReady = skipLocalInstance;
 
       if (!skipLocalInstance) {
         this.logNextStep('Starting Twenty server');
         const serverResult = await this.ensureDockerServer(dockerPullPromise);
 
         if (isDefined(serverResult.url)) {
-          this.logNextStep('Authenticating');
-          authSucceeded = await this.authenticateWithDevKey(serverResult.url);
+          resolvedApiUrl = serverResult.url;
+          serverReady = true;
         }
-      } else if (authenticationMethod === 'oauth') {
-        this.logNextStep('Authenticating');
-        authSucceeded = await this.authenticateWithOAuth(apiUrl);
       }
 
-      this.logSuccess(appDirectory, apiUrl, authSucceeded);
+      if (serverReady && authenticationMethod === 'oauth') {
+        this.logNextStep('Authenticating via OAuth');
+        authSucceeded = await this.authenticateWithOAuth(resolvedApiUrl);
+      } else if (serverReady && authenticationMethod === 'apiKey') {
+        this.logNextStep('Authenticating via API key');
+        authSucceeded = await this.authenticateWithDevKey(resolvedApiUrl);
+      }
+
+      this.logSuccess(appDirectory, resolvedApiUrl, authSucceeded);
     } catch (error) {
       console.error(
         chalk.red('\nCreate application failed:'),
@@ -155,19 +170,16 @@ export class CreateAppCommand {
 
   private computeTotalSteps({
     skipLocalInstance,
-    authenticationMethod,
   }: {
     skipLocalInstance: boolean;
-    authenticationMethod: AuthenticationMethod;
   }): number {
     let steps = 4; // directory, scaffold, install, git
 
     if (!skipLocalInstance) {
       steps += 1; // start server
-      steps += 1; // authenticate with dev key
-    } else if (authenticationMethod === 'oauth') {
-      steps += 1; // authenticate with oauth
     }
+
+    steps += 1; // authenticate (oauth or apiKey)
 
     return steps;
   }

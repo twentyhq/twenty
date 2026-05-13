@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
-import { AuthenticationMethod, CreateAppCommand } from '@/create-app.command';
+import {
+  type AuthenticationMethod,
+  CreateAppCommand,
+} from '@/create-app.command';
 import packageJson from '../package.json';
 
 const program = new Command(packageJson.name)
@@ -16,10 +19,6 @@ const program = new Command(packageJson.name)
   .option('-n, --name <name>', 'Application name')
   .option('-d, --display-name <displayName>', 'Application display name')
   .option('--description <description>', 'Application description')
-  .option(
-    '--skip-local-instance',
-    'Skip local Docker server setup (use with --api-url for remote instances)',
-  )
   .option(
     '--api-url <apiUrl>',
     'Twenty instance URL (default: http://localhost:2020)',
@@ -37,7 +36,6 @@ const program = new Command(packageJson.name)
         name?: string;
         displayName?: string;
         description?: string;
-        skipLocalInstance?: boolean;
         apiUrl?: string;
         authenticationMethod?: AuthenticationMethod;
       },
@@ -74,7 +72,6 @@ const program = new Command(packageJson.name)
         name: options?.name,
         displayName: options?.displayName,
         description: options?.description,
-        skipLocalInstance: options?.skipLocalInstance,
         apiUrl: options?.apiUrl,
         authenticationMethod: options?.authenticationMethod,
       });
