@@ -177,18 +177,18 @@ export class CleanerWorkspaceService {
 
     if (!dryRun) {
       for (const workspaceMember of workspaceMembers) {
+        await this.sendWarningEmail(
+          workspaceMember,
+          workspace.displayName,
+          daysSinceInactive,
+        );
+
         await this.userVarsService.set({
           userId: workspaceMember.userId,
           workspaceId: workspace.id,
           key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
           value: true,
         });
-
-        await this.sendWarningEmail(
-          workspaceMember,
-          workspace.displayName,
-          daysSinceInactive,
-        );
       }
     }
   }
