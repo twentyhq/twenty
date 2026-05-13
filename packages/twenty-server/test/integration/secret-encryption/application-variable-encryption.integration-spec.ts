@@ -181,6 +181,12 @@ describe('ApplicationVariable encryption (integration)', () => {
 
     afterAll(async () => {
       await dataSource.query(
+        `UPDATE core."applicationVariable"
+              SET "value" = ''
+            WHERE "applicationId" = $1 AND "key" = $2`,
+        [applicationId, LEGACY_VARIABLE_KEY],
+      );
+      await dataSource.query(
         `ALTER TABLE core."applicationVariable"
          ADD CONSTRAINT "${CONSTRAINT_NAME}" CHECK (${CONSTRAINT_EXPR})`,
       );

@@ -136,6 +136,8 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
   });
 
   describe('legacy CTR fallback', () => {
+    let legacyVariableId: string;
+
     beforeAll(async () => {
       await dataSource.query(
         `ALTER TABLE core."applicationRegistrationVariable"
@@ -145,13 +147,17 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
 
     afterAll(async () => {
       await dataSource.query(
+        `DELETE FROM core."applicationRegistrationVariable" WHERE id = $1`,
+        [legacyVariableId],
+      );
+      await dataSource.query(
         `ALTER TABLE core."applicationRegistrationVariable"
          ADD CONSTRAINT "${CONSTRAINT_NAME}" CHECK (${CONSTRAINT_EXPR})`,
       );
     });
 
     it('decrypts a legacy CTR-encrypted value through the live API', async () => {
-      const variableId = crypto.randomUUID();
+      legacyVariableId = crypto.randomUUID();
       const plaintext = 'legacy-ctr-registration-variable-secret';
 
       await dataSource.query(
@@ -160,7 +166,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
             "isSecret", "isRequired")
          VALUES ($1, $2, 'TEST_LEGACY_CTR_KEY', $3, false, false)`,
         [
-          variableId,
+          legacyVariableId,
           applicationRegistrationId,
           secretEncryption.encrypt(plaintext),
         ],
@@ -187,7 +193,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
 
       const variable =
         findResponse.body.data.findApplicationRegistrationVariables.find(
-          (v: { id: string }) => v.id === variableId,
+          (v: { id: string }) => v.id === legacyVariableId,
         );
 
       expect(variable).toBeDefined();
