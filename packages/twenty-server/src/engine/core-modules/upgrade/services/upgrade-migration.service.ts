@@ -219,11 +219,6 @@ export class UpgradeMigrationService {
       return new Map();
     }
 
-    // Two-level DISTINCT ON avoids the correlated subquery that pegged
-    // this query during upgrades. Inner DISTINCT ON (workspaceId, name)
-    // walks the (workspaceId, name, attempt) index to pick the max-attempt
-    // row per name; outer DISTINCT ON (workspaceId) then keeps the
-    // most-recent (by createdAt) row per workspace.
     const rows = await this.upgradeMigrationRepository.manager.query<
       Array<{
         workspaceId: string;
