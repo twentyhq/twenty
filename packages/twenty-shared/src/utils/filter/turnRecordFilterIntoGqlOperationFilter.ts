@@ -89,29 +89,25 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
 
   // Must run before the emptiness shortcut so an "is empty" filter on
   // `company.name` is evaluated against `Company.name`, not the FK column.
+  // If `relationTargetField` is missing the filter is dropped, not fed
+  // through the legacy relation-by-record path — that path parses `value`
+  // as a UUID list and would silently mishandle a target-field value like
+  // "Acme", risking broadening of destructive operations.
   if (
     correspondingFieldMetadataItem.type === FieldMetadataType.RELATION &&
-    isDefined(recordFilter.relationTargetFieldMetadataId)
+    isDefined(recordFilter.relationTargetField)
   ) {
-    const targetFieldMetadataItem = fieldMetadataItems.find(
-      (field) => field.id === recordFilter.relationTargetFieldMetadataId,
-    );
-
-    // Drop the filter rather than falling through to the legacy
-    // relation-by-record path: that path parses `value` as a UUID list,
-    // which would silently mishandle a target-field value like "Acme" and
-    // could broaden destructive operations to every record.
-    if (!isDefined(targetFieldMetadataItem)) {
-      return;
-    }
+    const targetField = recordFilter.relationTargetField;
 
     const innerFilter = turnRecordFilterIntoRecordGqlOperationFilter({
       recordFilter: {
         ...recordFilter,
-        fieldMetadataId: targetFieldMetadataItem.id,
-        relationTargetFieldMetadataId: null,
+        fieldMetadataId: targetField.id,
+        relationTargetField: null,
       },
-      fieldMetadataItems,
+      // Inject the target so the recursive lookup succeeds even when the
+      // caller only supplied the current object's fields.
+      fieldMetadataItems: [...fieldMetadataItems, targetField],
       filterValueDependencies,
     });
 

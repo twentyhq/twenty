@@ -1,6 +1,7 @@
 import { type FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import {
+  type FieldMetadataType,
   type FilterableAndTSVectorFieldType,
   type ViewFilterOperand,
 } from 'twenty-shared/types';
@@ -24,7 +25,16 @@ export type RecordFilter = {
   positionInRecordFilterGroup?: number | null;
   label: string;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
-  relationTargetFieldMetadataId?: string | null;
+  // Resolved at filter construction time (frontend mapping or chip edit) so
+  // the GraphQL builder doesn't need a cross-object field lookup. Null for
+  // non-relation filters; also null when the target field can no longer be
+  // resolved (e.g. it was deleted).
+  relationTargetField?: {
+    id: string;
+    name: string;
+    type: FieldMetadataType;
+    label: string;
+  } | null;
   rlsDynamicValue?: RLSDynamicValue | null;
 };
 

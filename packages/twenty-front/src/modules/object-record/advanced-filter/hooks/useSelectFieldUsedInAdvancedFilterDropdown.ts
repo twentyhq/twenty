@@ -151,8 +151,13 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       ? `${fieldMetadataItem.label} → ${relationTargetFieldMetadataItem.label}`
       : fieldMetadataItem.label;
 
-    const relationTargetFieldMetadataId = isRelationTraversal
-      ? relationTargetFieldMetadataItem.id
+    const relationTargetField = isRelationTraversal
+      ? {
+          id: relationTargetFieldMetadataItem.id,
+          name: relationTargetFieldMetadataItem.name,
+          type: relationTargetFieldMetadataItem.type,
+          label: relationTargetFieldMetadataItem.label,
+        }
       : null;
 
     const newAdvancedFilter = {
@@ -167,12 +172,12 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       type: filterType,
       label,
       subFieldName: subFieldNameToUse,
-      relationTargetFieldMetadataId,
+      relationTargetField,
     } satisfies RecordFilter;
 
     setSubFieldNameUsedInDropdown(subFieldNameToUse);
     setRelationTargetFieldMetadataIdUsedInDropdown(
-      relationTargetFieldMetadataId,
+      relationTargetField?.id ?? null,
     );
 
     setObjectFilterDropdownSearchInput('');

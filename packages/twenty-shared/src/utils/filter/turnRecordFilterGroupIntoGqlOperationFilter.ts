@@ -1,5 +1,6 @@
 import {
   type CompositeFieldSubFieldName,
+  type FieldMetadataType,
   type FilterableAndTSVectorFieldType,
   type PartialFieldMetadataItem,
   RecordFilterGroupLogicalOperator,
@@ -19,7 +20,12 @@ export type RecordFilter = {
   recordFilterGroupId?: string | null;
   operand: ViewFilterOperand;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
-  relationTargetFieldMetadataId?: string | null | undefined;
+  // Resolved at filter construction time so traversal doesn't need a
+  // cross-object field lookup downstream.
+  relationTargetField?:
+    | { id: string; name: string; type: FieldMetadataType; label: string }
+    | null
+    | undefined;
 };
 
 export type RecordFilterGroup = {

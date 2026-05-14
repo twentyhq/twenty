@@ -1,5 +1,4 @@
 import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -18,11 +17,6 @@ type ComputeContextStoreFiltersProps = {
   contextStoreFilters: RecordFilter[];
   contextStoreFilterGroups: RecordFilterGroup[];
   objectMetadataItem: EnrichedObjectMetadataItem;
-  // When relation-traversal filters are present, callers should pass the
-  // full cross-object field list so the target field can be resolved.
-  // Falls back to `objectMetadataItem.fields` for callers that never carry
-  // relation filters.
-  flattenedFieldMetadataItems?: FieldMetadataItem[];
   filterValueDependencies: RecordFilterValueDependencies;
   contextStoreAnyFieldFilterValue: string;
 };
@@ -32,14 +26,10 @@ export const computeContextStoreFilters = ({
   contextStoreFilters,
   contextStoreFilterGroups,
   objectMetadataItem,
-  flattenedFieldMetadataItems,
   filterValueDependencies,
   contextStoreAnyFieldFilterValue,
 }: ComputeContextStoreFiltersProps) => {
   let queryFilter: RecordGqlOperationFilter | undefined;
-
-  const fieldsForFilter =
-    flattenedFieldMetadataItems ?? objectMetadataItem?.fields ?? [];
 
   const { recordGqlOperationFilter: recordGqlFilterForAnyFieldFilter } =
     turnAnyFieldFilterIntoRecordGqlFilter({
@@ -52,7 +42,7 @@ export const computeContextStoreFilters = ({
       recordGqlFilterForAnyFieldFilter,
       computeRecordGqlOperationFilter({
         filterValueDependencies,
-        fields: fieldsForFilter,
+        fields: objectMetadataItem?.fields ?? [],
         recordFilters: contextStoreFilters,
         recordFilterGroups: contextStoreFilterGroups,
       }),
@@ -81,7 +71,7 @@ export const computeContextStoreFilters = ({
       },
       computeRecordGqlOperationFilter({
         filterValueDependencies,
-        fields: fieldsForFilter,
+        fields: objectMetadataItem?.fields ?? [],
         recordFilters: contextStoreFilters,
         recordFilterGroups: contextStoreFilterGroups,
       }),

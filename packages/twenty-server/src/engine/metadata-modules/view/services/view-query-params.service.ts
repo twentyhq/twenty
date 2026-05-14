@@ -99,8 +99,14 @@ export class ViewQueryParamsService {
           recordFilterGroupId: viewFilter.viewFilterGroupId,
           operand: viewFilter.operand,
           subFieldName: viewFilter.subFieldName,
-          relationTargetFieldMetadataId:
-            viewFilter.relationTargetFieldMetadataId,
+          relationTargetField: isDefined(relationTargetField)
+            ? {
+                id: relationTargetField.id,
+                name: relationTargetField.name,
+                type: relationTargetField.type,
+                label: relationTargetField.label,
+              }
+            : null,
         } as RecordFilter;
       })
       .filter(isDefined);
@@ -116,16 +122,10 @@ export class ViewQueryParamsService {
           : RecordFilterGroupLogicalOperator.AND,
     }));
 
-    const fieldIdsReferencedByFilters = recordFilters.flatMap((filter) =>
-      [filter.fieldMetadataId, filter.relationTargetFieldMetadataId].filter(
-        isDefined,
-      ),
-    );
-
-    const fields = Array.from(new Set(fieldIdsReferencedByFilters))
-      .map((fieldId) => {
+    const fields = recordFilters
+      .map((filter) => {
         const field = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldId,
+          flatEntityId: filter.fieldMetadataId,
           flatEntityMaps: flatFieldMetadataMaps,
         });
 

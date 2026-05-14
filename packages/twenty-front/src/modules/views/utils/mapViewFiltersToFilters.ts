@@ -29,15 +29,12 @@ export const mapViewFiltersToFilters = (
         return undefined;
       }
 
-      const relationTargetFieldMetadataId =
-        viewFilter.relationTargetFieldMetadataId ?? null;
-
       const relationTargetFieldMetadataItem = isDefined(
-        relationTargetFieldMetadataId,
+        viewFilter.relationTargetFieldMetadataId,
       )
         ? allFieldMetadataItems.find(
             (fieldMetadataItem) =>
-              fieldMetadataItem.id === relationTargetFieldMetadataId,
+              fieldMetadataItem.id === viewFilter.relationTargetFieldMetadataId,
           )
         : undefined;
 
@@ -69,7 +66,14 @@ export const mapViewFiltersToFilters = (
         label,
         type: filterType,
         subFieldName: viewFilter.subFieldName as CompositeFieldSubFieldName,
-        relationTargetFieldMetadataId,
+        relationTargetField: isDefined(relationTargetFieldMetadataItem)
+          ? {
+              id: relationTargetFieldMetadataItem.id,
+              name: relationTargetFieldMetadataItem.name,
+              type: relationTargetFieldMetadataItem.type,
+              label: relationTargetFieldMetadataItem.label,
+            }
+          : null,
       } satisfies RecordFilter;
     })
     .filter(isDefined);

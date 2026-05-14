@@ -125,7 +125,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         label: mockFieldMetadataItem.label,
         type: getFilterTypeFromFieldType(mockFieldMetadataItem.type),
         subFieldName: null,
-        relationTargetFieldMetadataId: null,
+        relationTargetField: null,
       } satisfies RecordFilter,
     ]);
   });
