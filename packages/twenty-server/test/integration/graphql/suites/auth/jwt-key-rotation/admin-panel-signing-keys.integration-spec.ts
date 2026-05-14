@@ -11,9 +11,25 @@ import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-
 import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 
 import {
+  type AccessTokenJwtPayload,
+  JwtTokenTypeEnum,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
+
+import {
   PREVIOUS_PRIVATE_KEY_PEM,
   PREVIOUS_PUBLIC_KEY_PEM,
 } from './jwt-key-rotation.fixture';
+
+const buildAccessTokenPayload = (payload: AccessTokenJwtPayload) => ({
+  sub: payload.sub,
+  userId: payload.userId,
+  workspaceId: payload.workspaceId,
+  workspaceMemberId: payload.workspaceMemberId,
+  userWorkspaceId: payload.userWorkspaceId,
+  authProvider: payload.authProvider,
+  isImpersonating: false,
+  type: JwtTokenTypeEnum.ACCESS,
+});
 
 const GET_SIGNING_KEYS = gql`
   query GetSigningKeys {
@@ -43,6 +59,59 @@ const REVOKE_SIGNING_KEY = gql`
 `;
 
 describe('Admin panel signing keys (integration)', () => {
+  let sharedAccessToken: string;
+  let sharedAccessPayload: AccessTokenJwtPayload;
+
+  beforeAll(async () => {
+    const uniqueEmail = `admin-signing-keys-${randomUUID()}@example.com`;
+
+    const { data: signUpData } = await signUp({
+      input: { email: uniqueEmail, password: 'Test123!@#' },
+      expectToFail: false,
+    });
+
+    const workspaceAgnosticToken =
+      signUpData.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    await global.testDataSource.query(
+      'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+      [uniqueEmail],
+    );
+
+    const { data: workspaceData } = await signUpInNewWorkspace({
+      accessToken: workspaceAgnosticToken,
+      expectToFail: false,
+    });
+
+    const subdomainUrl =
+      workspaceData.signUpInNewWorkspace.workspace.workspaceUrls.subdomainUrl;
+    const loginToken = workspaceData.signUpInNewWorkspace.loginToken.token;
+
+    const { data: tokensData } = await getAuthTokensFromLoginToken({
+      loginToken,
+      origin: subdomainUrl,
+      expectToFail: false,
+    });
+
+    sharedAccessToken =
+      tokensData.getAuthTokensFromLoginToken.tokens
+        .accessOrWorkspaceAgnosticToken.token;
+    sharedAccessPayload = jwt.decode(
+      sharedAccessToken,
+    ) as AccessTokenJwtPayload;
+  });
+
+  afterAll(async () => {
+    try {
+      await deleteUser({
+        accessToken: sharedAccessToken,
+        expectToFail: false,
+      });
+    } catch {
+      /* */
+    }
+  });
+
   it('exposes signing keys with current marker and a 7-day window', async () => {
     const response = await makeAdminPanelAPIRequest({
       query: GET_SIGNING_KEYS,
@@ -81,6 +150,21 @@ describe('Admin panel signing keys (integration)', () => {
       [obsoleteKid, PREVIOUS_PUBLIC_KEY_PEM],
     );
 
+    const tokenSignedByObsoleteKey = jwt.sign(
+      buildAccessTokenPayload(sharedAccessPayload),
+      PREVIOUS_PRIVATE_KEY_PEM,
+      { algorithm: 'ES256', keyid: obsoleteKid, expiresIn: '5m' },
+    );
+
+    const { data: userBeforeRevoke, errors: userBeforeRevokeErrors } =
+      await getCurrentUser({
+        accessToken: tokenSignedByObsoleteKey,
+        expectToFail: false,
+      });
+
+    expect(userBeforeRevokeErrors).toBeUndefined();
+    expect(userBeforeRevoke?.currentUser?.id).toBe(sharedAccessPayload.userId);
+
     const response = await makeAdminPanelAPIRequest({
       query: REVOKE_SIGNING_KEY,
       variables: { id: obsoleteKid },
@@ -100,15 +184,9 @@ describe('Admin panel signing keys (integration)', () => {
     expect(stillCurrentRows[0].isCurrent).toBe(true);
     expect(stillCurrentRows[0].revokedAt).toBeNull();
 
-    const tokenSignedByRevokedKey = jwt.sign(
-      { sub: 'irrelevant' },
-      PREVIOUS_PRIVATE_KEY_PEM,
-      { algorithm: 'ES256', keyid: obsoleteKid, expiresIn: '5m' },
-    );
-
     const { data: userAfterRevoke, errors: userAfterRevokeErrors } =
       await getCurrentUser({
-        accessToken: tokenSignedByRevokedKey,
+        accessToken: tokenSignedByObsoleteKey,
         expectToFail: true,
       });
 
