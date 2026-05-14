@@ -374,6 +374,8 @@ const EntityHeader = styled.div`
   align-items: center;
   display: flex;
   gap: 4px;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 const InnerCard = styled.div`
@@ -404,10 +406,14 @@ const EntityLabel = styled.span`
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const EntityMeta = styled.span`
   color: #b3b3b3;
+  flex-shrink: 0;
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;

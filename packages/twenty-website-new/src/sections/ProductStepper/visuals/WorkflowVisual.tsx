@@ -16,7 +16,6 @@ const COLOR_GRAY_BG = '#f9f9f9';
 type NodeDef = {
   badge?: string;
   dimmed?: boolean;
-  hasPill?: boolean;
   icon: 'playlist-add' | 'search' | 'repeat' | 'send' | 'reload' | 'plus';
   id: string;
   label: string;
@@ -64,7 +63,6 @@ const NODES: NodeDef[] = [
     labelColor: COLOR_AMBER,
     x: TRUNK_X,
     y: 168,
-    hasPill: true,
   },
   {
     id: 'email',
@@ -74,7 +72,6 @@ const NODES: NodeDef[] = [
     labelColor: COLOR_AMBER,
     x: RIGHT_X,
     y: 280,
-    hasPill: true,
   },
   {
     id: 'update',
@@ -277,25 +274,6 @@ const NodeCheck = styled.span<{ $bg: string; $visible: boolean }>`
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transition: opacity 0.3s;
   width: 12px;
-`;
-
-const NodePill = styled.span`
-  border: 1px solid ${COLOR_AMBER};
-  border-radius: 12px;
-  height: 10px;
-  overflow: hidden;
-  position: relative;
-  width: 20px;
-`;
-
-const PillFill = styled.span`
-  background: ${COLOR_AMBER};
-  border-radius: 100px;
-  height: 6px;
-  left: -7px;
-  position: absolute;
-  top: 1px;
-  width: 6px;
 `;
 
 const NodeName = styled.div<{ $dimmed?: boolean }>`
@@ -683,11 +661,6 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
                   <NodeType $color={node.labelColor}>{node.type}</NodeType>
                   {node.badge && (
                     <NodeBadge $color={node.labelColor}>{node.badge}</NodeBadge>
-                  )}
-                  {node.hasPill && (
-                    <NodePill>
-                      <PillFill />
-                    </NodePill>
                   )}
                   {node.badge && (
                     <NodeCheck $bg={checkBg} $visible={isActive}>
