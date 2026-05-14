@@ -368,14 +368,22 @@ export class SearchService {
     try {
       return await entityManager.manager.transaction(
         async (transactionManager) => {
-          await transactionManager.queryRunner.query(
+          const { queryRunner } = transactionManager;
+
+          if (!isDefined(queryRunner)) {
+            throw new Error(
+              'Expected queryRunner to be defined within transaction',
+            );
+          }
+
+          await queryRunner.query(
             `SELECT set_config('statement_timeout', $1, true)`,
             [String(timeoutMs)],
           );
 
           const queryBuilder = entityManager.createQueryBuilder(
             undefined,
-            transactionManager.queryRunner,
+            queryRunner,
           );
 
           const { flatObjectMetadataMaps } = entityManager.internalContext;
