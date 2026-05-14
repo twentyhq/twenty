@@ -100,11 +100,44 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
       return;
     }
 
+    const fieldsToUpdate = affectedFields.filter((field) => {
+      const compositeType = compositeTypeDefinitions.get(
+        field.type as FieldMetadataType,
+      );
+
+      if (!isDefined(compositeType)) {
+        return false;
+      }
+
+      for (const property of compositeType.properties) {
+        if (
+          !isDefined(field.defaultValue) ||
+          !(property.name in field.defaultValue)
+        ) {
+          this.logger.warn(
+            `Skipping composite field "${field.name}" (${field.id}) for workspace ${workspaceId}: defaultValue is missing key "${property.name}"`,
+          );
+
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    if (fieldsToUpdate.length === 0) {
+      this.logger.log(
+        `No composite fields to update for workspace ${workspaceId} after defaultValue-shape check, skipping`,
+      );
+
+      return;
+    }
+
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const backfillTargets: Array<{ tableName: string; columnName: string }> =
       [];
 
-    for (const field of affectedFields) {
+    for (const field of fieldsToUpdate) {
       const flatObjectMetadata =
         flatObjectMetadataMaps.byUniversalIdentifier[
           field.objectMetadataUniversalIdentifier
@@ -146,7 +179,7 @@ export class NormalizeCompositeFieldDefaultsCommand extends ActiveOrSuspendedWor
       }
     }
 
-    const fieldsByApplication = affectedFields.reduce<
+    const fieldsByApplication = fieldsToUpdate.reduce<
       Map<string, typeof affectedFields>
     >((acc, field) => {
       const key = field.applicationUniversalIdentifier;
