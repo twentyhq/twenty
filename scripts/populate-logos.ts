@@ -34,9 +34,21 @@ import { Client } from 'pg';
 // Config
 // ---------------------------------------------------------------------------
 
+// DB connection strings — read passwords from env vars at run-time so they
+// never get committed. Set these in your shell config (rotate via Railway):
+//   export TWENTY_UAT_DB_PASSWORD=$(railway variables --kv --service Postgres --environment uat | sed -n 's/^POSTGRES_PASSWORD=//p')
+//   export TWENTY_PROD_DB_PASSWORD=$(railway variables --kv --service Postgres --environment production | sed -n 's/^POSTGRES_PASSWORD=//p')
+const UAT_PW = process.env.TWENTY_UAT_DB_PASSWORD;
+const PROD_PW = process.env.TWENTY_PROD_DB_PASSWORD;
+if (!UAT_PW || !PROD_PW) {
+  console.error(
+    'Set TWENTY_UAT_DB_PASSWORD and TWENTY_PROD_DB_PASSWORD env vars (see top of file)',
+  );
+  process.exit(1);
+}
 const DB_URLS: Record<string, string> = {
-  uat: 'postgresql://postgres:sWhxWqTvZuXcTCcEBVwJIvOFjtvuxrmD@tramway.proxy.rlwy.net:58786/railway',
-  prod: 'postgresql://postgres:ZuTHNXJTWbxRDpOkGgIAUSEMQUZxVDzv@centerbeam.proxy.rlwy.net:44530/railway',
+  uat: `postgresql://postgres:${UAT_PW}@tramway.proxy.rlwy.net:58786/railway`,
+  prod: `postgresql://postgres:${PROD_PW}@centerbeam.proxy.rlwy.net:44530/railway`,
 };
 
 const WORKSPACE_SCHEMA = 'workspace_88pd7l5mqn69yo7kctctadczq';
