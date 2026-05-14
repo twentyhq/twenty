@@ -219,48 +219,60 @@ export class UpgradeMigrationService {
       return new Map();
     }
 
-    const migrations = await this.upgradeMigrationRepository
-      .createQueryBuilder('migration')
-      .select([
-        'migration.workspaceId',
-        'migration.name',
-        'migration.status',
-        'migration.executedByVersion',
-        'migration.errorMessage',
-        'migration.createdAt',
-        'migration.isInitial',
-      ])
-      .where({
-        workspaceId: In(workspaceIds),
-      })
-      .andWhere(
-        `migration.attempt = (
-          SELECT MAX(sub.attempt)
-          FROM core."upgradeMigration" sub
-          WHERE sub.name = migration.name
-          AND sub."workspaceId" = migration."workspaceId"
-        )`,
-      )
-      .orderBy('migration.workspaceId')
-      .addOrderBy('migration.createdAt', 'DESC')
-      .distinctOn(['migration.workspaceId'])
-      .getMany();
+    // Two-level DISTINCT ON avoids the correlated subquery that pegged
+    // this query during upgrades. Inner DISTINCT ON (workspaceId, name)
+    // walks the (workspaceId, name, attempt) index to pick the max-attempt
+    // row per name; outer DISTINCT ON (workspaceId) then keeps the
+    // most-recent (by createdAt) row per workspace.
+    const rows = await this.upgradeMigrationRepository.manager.query<
+      Array<{
+        workspaceId: string;
+        name: string;
+        status: UpgradeMigrationStatus;
+        executedByVersion: string;
+        errorMessage: string | null;
+        createdAt: Date;
+        isInitial: boolean;
+      }>
+    >(
+      `
+        SELECT DISTINCT ON (latest_per_name."workspaceId")
+          latest_per_name."workspaceId",
+          latest_per_name.name,
+          latest_per_name.status,
+          latest_per_name."executedByVersion",
+          latest_per_name."errorMessage",
+          latest_per_name."createdAt",
+          latest_per_name."isInitial"
+        FROM (
+          SELECT DISTINCT ON ("workspaceId", name)
+            "workspaceId",
+            name,
+            status,
+            "executedByVersion",
+            "errorMessage",
+            "createdAt",
+            "isInitial"
+          FROM core."upgradeMigration"
+          WHERE "workspaceId" = ANY($1)
+          ORDER BY "workspaceId", name, attempt DESC
+        ) latest_per_name
+        ORDER BY latest_per_name."workspaceId", latest_per_name."createdAt" DESC
+      `,
+      [workspaceIds],
+    );
 
     const cursors = new Map<string, WorkspaceLastAttemptedCommand>();
 
-    for (const migration of migrations) {
-      if (migration.workspaceId === null) {
-        continue;
-      }
-
-      cursors.set(migration.workspaceId, {
-        workspaceId: migration.workspaceId,
-        name: migration.name,
-        status: migration.status,
-        executedByVersion: migration.executedByVersion,
-        errorMessage: migration.errorMessage,
-        createdAt: migration.createdAt,
-        isInitial: migration.isInitial,
+    for (const row of rows) {
+      cursors.set(row.workspaceId, {
+        workspaceId: row.workspaceId,
+        name: row.name,
+        status: row.status,
+        executedByVersion: row.executedByVersion,
+        errorMessage: row.errorMessage,
+        createdAt: row.createdAt,
+        isInitial: row.isInitial,
       });
     }
 
