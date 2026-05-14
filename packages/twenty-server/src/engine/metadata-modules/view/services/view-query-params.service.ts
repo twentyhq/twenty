@@ -82,14 +82,25 @@ export class ViewQueryParamsService {
 
         if (!field) return null;
 
+        const relationTargetField = isDefined(
+          viewFilter.relationTargetFieldMetadataId,
+        )
+          ? findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: viewFilter.relationTargetFieldMetadataId,
+              flatEntityMaps: flatFieldMetadataMaps,
+            })
+          : null;
+
         return {
           id: viewFilter.id,
           fieldMetadataId: viewFilter.fieldMetadataId,
           value: viewFilter.value ?? '',
-          type: field.type,
+          type: relationTargetField?.type ?? field.type,
           recordFilterGroupId: viewFilter.viewFilterGroupId,
           operand: viewFilter.operand,
           subFieldName: viewFilter.subFieldName,
+          relationTargetFieldMetadataId:
+            viewFilter.relationTargetFieldMetadataId,
         } as RecordFilter;
       })
       .filter(isDefined);
@@ -105,10 +116,16 @@ export class ViewQueryParamsService {
           : RecordFilterGroupLogicalOperator.AND,
     }));
 
-    const fields = recordFilters
-      .map((filter) => {
+    const fieldIdsReferencedByFilters = recordFilters.flatMap((filter) =>
+      [filter.fieldMetadataId, filter.relationTargetFieldMetadataId].filter(
+        isDefined,
+      ),
+    );
+
+    const fields = Array.from(new Set(fieldIdsReferencedByFilters))
+      .map((fieldId) => {
         const field = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: filter.fieldMetadataId,
+          flatEntityId: fieldId,
           flatEntityMaps: flatFieldMetadataMaps,
         });
 

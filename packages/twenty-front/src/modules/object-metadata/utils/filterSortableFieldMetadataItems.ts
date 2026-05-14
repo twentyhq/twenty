@@ -1,7 +1,10 @@
 import { SORTABLE_FIELD_METADATA_TYPES } from '@/object-metadata/constants/SortableFieldMetadataTypes';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
-import { type FieldMetadataType, type RelationType } from '~/generated-metadata/graphql';
+import {
+  type FieldMetadataType,
+  type RelationType,
+} from '~/generated-metadata/graphql';
 
 type SortableFieldInput = {
   isSystem?: boolean | null;
