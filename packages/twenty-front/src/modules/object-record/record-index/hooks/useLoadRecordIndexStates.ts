@@ -2,6 +2,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
@@ -129,9 +130,13 @@ export const useLoadRecordIndexStates = () => {
         .filter(isDefined);
 
       const allFilterableFields = getFilterableFields(objectMetadataItem);
+      const flattenedFieldMetadataItems = store.get(
+        flattenedFieldMetadataItemsSelector,
+      );
       const recordFilters = mapViewFiltersToFilters(
         view.viewFilters,
         allFilterableFields,
+        flattenedFieldMetadataItems,
       );
 
       const recordFilterGroups = mapViewFilterGroupsToRecordFilterGroups(
@@ -141,6 +146,7 @@ export const useLoadRecordIndexStates = () => {
       const contextStoreFilters = mapViewFiltersToFilters(
         view.viewFilters,
         filterableFieldMetadataItems,
+        flattenedFieldMetadataItems,
       );
 
       let recordIndexGroupFieldMetadataItemValue = undefined;

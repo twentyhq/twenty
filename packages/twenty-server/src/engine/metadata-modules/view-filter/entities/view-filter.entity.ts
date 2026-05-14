@@ -71,8 +71,10 @@ export class ViewFilterEntity
   @Column({ nullable: true, type: 'uuid', default: null })
   relationTargetFieldMetadataId: string | null;
 
-  // ON DELETE SET NULL — if the target field is deleted the filter survives
-  // and falls back to relation-by-record semantics rather than being lost.
+  // ON DELETE SET NULL keeps the row when the target field is deleted, but
+  // the operand/value stay shaped for the original target. The load path
+  // therefore drops any filter where `relationTargetFieldMetadataId` has
+  // become null after a non-null persisted value (deferred to caller).
   @ManyToOne(() => FieldMetadataEntity, {
     onDelete: 'SET NULL',
     nullable: true,
