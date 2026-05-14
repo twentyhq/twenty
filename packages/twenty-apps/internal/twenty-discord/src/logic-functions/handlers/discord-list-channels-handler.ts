@@ -6,6 +6,7 @@ import {
   type DiscordListChannelsResultChannel,
 } from 'src/logic-functions/types/discord-list-channels-output.type';
 import { discordApiRequest } from 'src/logic-functions/utils/discord-api-request';
+import { fetchDiscordGuilds } from 'src/logic-functions/utils/fetch-discord-guilds';
 import { getDiscordBotToken } from 'src/logic-functions/utils/get-discord-bot-token';
 
 const GUILD_TEXT_CHANNEL_TYPE = 0;
@@ -22,11 +23,6 @@ type DiscordChannelResponse = {
   type: number;
   parent_id: string | null;
   position: number;
-};
-
-type DiscordGuildResponse = {
-  id: string;
-  name: string;
 };
 
 const buildFailureResult = (error: string): DiscordListChannelsResult => ({
@@ -49,11 +45,7 @@ const resolveGuildId = async ({
     return { ok: true, guildId: trimmed };
   }
 
-  const guildsResult = await discordApiRequest<DiscordGuildResponse[]>({
-    botToken,
-    method: 'GET',
-    path: '/users/@me/guilds',
-  });
+  const guildsResult = await fetchDiscordGuilds(botToken);
 
   if (!guildsResult.ok) {
     return { ok: false, error: guildsResult.errorMessage };
