@@ -44,7 +44,16 @@ export const buildMutationQueryBuilder = ({
     return filteredQueryBuilder;
   }
 
-  const idSubQueryBuilder = filteredQueryBuilder.select(`${alias}.id`);
+  // The subquery is a SELECT — TypeORM auto-injects `deletedAt IS NULL` for
+  // SELECT queries on entities with a soft-delete column, but the mutation
+  // builders (update / soft-delete / delete / restore) don't. Without
+  // `.withDeleted()` here the subquery would silently drop already-deleted
+  // rows, breaking `restoreMany` outright and breaking the event-select
+  // round-trip on `deleteMany` (the post-mutation "after" select would
+  // re-filter the freshly soft-deleted row out of its own response).
+  const idSubQueryBuilder = filteredQueryBuilder
+    .select(`${alias}.id`)
+    .withDeleted();
 
   return repository
     .createQueryBuilder(alias)
