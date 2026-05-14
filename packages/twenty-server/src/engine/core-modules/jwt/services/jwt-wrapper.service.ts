@@ -204,7 +204,10 @@ export class JwtWrapperService {
     algorithm: ResolvedVerificationKey['algorithm'],
     header: ReturnType<typeof decodeJwtHeader>,
   ): Promise<void> {
-    if (algorithm === JWT_ASYMMETRIC_ALGORITHM && isAsymmetricJwtHeader(header)) {
+    if (
+      algorithm === JWT_ASYMMETRIC_ALGORITHM &&
+      isAsymmetricJwtHeader(header)
+    ) {
       await this.signingKeyVerifyCounterService.recordVerify(header.kid);
 
       return;
