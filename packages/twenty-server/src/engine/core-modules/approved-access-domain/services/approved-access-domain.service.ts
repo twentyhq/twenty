@@ -22,6 +22,8 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
+import { isAsymmetricJwtHeader } from 'src/engine/core-modules/jwt/utils/is-asymmetric-jwt-header.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -144,6 +146,13 @@ export class ApprovedAccessDomainService {
   private async verifyValidationTokenOrThrow(
     validationToken: string,
   ): Promise<ApprovedAccessDomainJwtPayload> {
+    if (!isAsymmetricJwtHeader(decodeJwtHeader(validationToken))) {
+      throw new ApprovedAccessDomainException(
+        'Invalid approved access domain validation token',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+      );
+    }
+
     let payload: ApprovedAccessDomainJwtPayload;
 
     try {
