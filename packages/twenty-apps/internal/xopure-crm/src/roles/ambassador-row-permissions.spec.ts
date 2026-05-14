@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { RowLevelPermissionPredicateGroupLogicalOperator } from 'twenty-sdk/define';
 
 import ambassadorManagerRole from './ambassador-manager.role';
 import ambassadorRepRole from './ambassador-rep.role';
@@ -78,7 +77,7 @@ describe('ambassador row permissions', () => {
         AMBASSADOR_OBJECT_PERMISSIONS.map((permission) =>
           expect.objectContaining({
             objectUniversalIdentifier: permission.objectUniversalIdentifier,
-            logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+            logicalOperator: 'OR',
           }),
         ),
       ),

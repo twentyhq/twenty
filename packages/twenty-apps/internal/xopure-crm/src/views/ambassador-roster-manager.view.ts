@@ -11,9 +11,9 @@ export default defineView({
   icon: 'IconUsers',
   position: 1,
   fields: [
-    { universalIdentifier: 'dc35a6b7-c890-5f12-de23-4f5a6b7c8d9e', fieldMetadataUniversalIdentifier: XOPURE_AMBASSADOR_NAME_FIELD_ID, position: 0, isVisible: true, size: 220 },
-    { universalIdentifier: 'ed46b7c8-d901-5023-ef34-5a6b7c8d9e0f', fieldMetadataUniversalIdentifier: XOPURE_AMBASSADOR_LEVEL_FIELD_ID, position: 1, isVisible: true, size: 160 },
-    { universalIdentifier: 'fe57c8d9-e012-5134-fa45-6b7c8d9e0f1a', fieldMetadataUniversalIdentifier: XOPURE_AMBASSADOR_STATUS_FIELD_ID, position: 2, isVisible: true, size: 160 },
+    { universalIdentifier: '5e8ef718-d045-4138-bc0b-0ec3c873caf3', fieldMetadataUniversalIdentifier: XOPURE_AMBASSADOR_NAME_FIELD_ID, position: 0, isVisible: true, size: 220 },
+    { universalIdentifier: '80f56d75-a788-45d9-a41e-f83a965032be', fieldMetadataUniversalIdentifier: XOPURE_AMBASSADOR_LEVEL_FIELD_ID, position: 1, isVisible: true, size: 160 },
+    { universalIdentifier: '68eec3c7-9250-4d7f-9827-df442bb7024d', fieldMetadataUniversalIdentifier: XOPURE_AMBASSADOR_STATUS_FIELD_ID, position: 2, isVisible: true, size: 160 },
     { universalIdentifier: '0f68d9e0-f123-5245-ab56-7c8d9e0f1a2b', fieldMetadataUniversalIdentifier: AMBASSADOR_WORKSPACE_MEMBER_FIELD_ID, position: 3, isVisible: true, size: 200 },
     { universalIdentifier: '1a79e0f1-a234-5356-bc67-8d9e0f1a2b3c', fieldMetadataUniversalIdentifier: AMBASSADOR_MANAGER_WORKSPACE_MEMBER_FIELD_ID, position: 4, isVisible: true, size: 200 },
   ],

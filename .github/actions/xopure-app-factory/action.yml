@@ -1,0 +1,53 @@
+name: XOPure App Factory
+description: Orchestrate Twenty app generation/build/deploy/install from a spec
+
+inputs:
+  spec-path:
+    description: Path to app-factory JSON spec
+    required: true
+  cwd:
+    description: Optional working directory override passed to orchestrator
+    required: false
+    default: ''
+
+outputs:
+  result-path:
+    description: Path to JSON pipeline result artifact
+    value: ${{ steps.orchestrate.outputs.result_path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: yarn
+        cache-dependency-path: 'yarn.lock'
+
+    - name: Install dependencies
+      shell: bash
+      run: yarn install --immutable
+
+    - name: Run app-factory orchestrator
+      id: orchestrate
+      shell: bash
+      run: |
+        set +e
+        RESULT_PATH=".twenty-output/xopure-app-factory-result.json"
+        mkdir -p .twenty-output
+
+        if [ -n "${{ inputs.cwd }}" ]; then
+          yarn --cwd packages/twenty-apps/internal/xopure-crm app-factory --spec "${{ inputs.spec-path }}" --cwd "${{ inputs.cwd }}" > "$RESULT_PATH"
+        else
+          yarn --cwd packages/twenty-apps/internal/xopure-crm app-factory --spec "${{ inputs.spec-path }}" > "$RESULT_PATH"
+        fi
+
+        EXIT_CODE=$?
+        echo "result_path=$RESULT_PATH" >> "$GITHUB_OUTPUT"
+        echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+        exit $EXIT_CODE

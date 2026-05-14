@@ -11,9 +11,9 @@ export default defineView({
   icon: 'IconReceiptDollar',
   position: 3,
   fields: [
-    { universalIdentifier: '2b8a0f1a-b345-5467-cd78-9e0f1a2b3c4d', fieldMetadataUniversalIdentifier: XOPURE_COMMISSION_NAME_FIELD_ID, position: 0, isVisible: true, size: 220 },
-    { universalIdentifier: '3c9b1a2b-c456-5578-de89-0f1a2b3c4d5e', fieldMetadataUniversalIdentifier: XOPURE_COMMISSION_STATUS_FIELD_ID, position: 1, isVisible: true, size: 160 },
-    { universalIdentifier: '4d0c2b3c-d567-5689-ef90-1a2b3c4d5e6f', fieldMetadataUniversalIdentifier: COMMISSION_ASSIGNED_AMBASSADOR_FIELD_ID, position: 2, isVisible: true, size: 200 },
-    { universalIdentifier: '5e1d3c4d-e678-5790-fa01-2b3c4d5e6f7a', fieldMetadataUniversalIdentifier: COMMISSION_SUPERVISOR_FIELD_ID, position: 3, isVisible: true, size: 200 },
+    { universalIdentifier: 'c86154ce-d727-4b08-9ff9-aa13d933de38', fieldMetadataUniversalIdentifier: XOPURE_COMMISSION_NAME_FIELD_ID, position: 0, isVisible: true, size: 220 },
+    { universalIdentifier: 'fff66914-53cb-4b51-8091-9875c59f23c5', fieldMetadataUniversalIdentifier: XOPURE_COMMISSION_STATUS_FIELD_ID, position: 1, isVisible: true, size: 160 },
+    { universalIdentifier: '74ec00b2-18e0-4b01-ba50-10d89a4a4695', fieldMetadataUniversalIdentifier: COMMISSION_ASSIGNED_AMBASSADOR_FIELD_ID, position: 2, isVisible: true, size: 200 },
+    { universalIdentifier: '9c68950b-a37e-474c-a848-a5f7631d00f8', fieldMetadataUniversalIdentifier: COMMISSION_SUPERVISOR_FIELD_ID, position: 3, isVisible: true, size: 200 },
   ],
 });

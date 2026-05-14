@@ -1,6 +1,4 @@
 import {
-  RowLevelPermissionPredicateGroupLogicalOperator,
-  RowLevelPermissionPredicateOperand,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
   type RoleConfig,
   type RowLevelPermissionPredicateConfig,
@@ -50,6 +48,9 @@ const currentWorkspaceMemberRelationValue = {
   isCurrentWorkspaceMemberSelected: true,
   selectedRecordIds: [],
 };
+
+const ROW_LEVEL_PERMISSION_PREDICATE_OPERAND_IS = 'IS';
+const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_LOGICAL_OPERATOR_OR = 'OR';
 
 const AMBASSADOR_RESTRICTED_OBJECTS: AmbassadorRestrictedObject[] = [
   {
@@ -159,7 +160,7 @@ const buildCurrentWorkspaceMemberPredicate = ({
 }): RowLevelPermissionPredicateConfig => ({
   objectUniversalIdentifier,
   fieldUniversalIdentifier,
-  operand: RowLevelPermissionPredicateOperand.IS,
+  operand: ROW_LEVEL_PERMISSION_PREDICATE_OPERAND_IS,
   value: currentWorkspaceMemberRelationValue,
   rowLevelPermissionPredicateGroupUniversalIdentifier,
   positionInRowLevelPermissionPredicateGroup,
@@ -182,7 +183,7 @@ export const AMBASSADOR_MANAGER_ROW_LEVEL_PERMISSION_PREDICATE_GROUPS: RowLevelP
     }) => ({
       universalIdentifier: managerPredicateGroupUniversalIdentifier,
       objectUniversalIdentifier,
-      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+      logicalOperator: ROW_LEVEL_PERMISSION_PREDICATE_GROUP_LOGICAL_OPERATOR_OR,
     }),
   );
 

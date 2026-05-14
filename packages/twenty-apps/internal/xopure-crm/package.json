@@ -16,6 +16,8 @@
   "packageManager": "yarn@4.9.2",
   "scripts": {
     "twenty": "twenty",
+    "app-factory": "cd ../../../.. && yarn tsx packages/twenty-apps/internal/xopure-crm/src/app-factory/cli/orchestrator-cli.ts",
+    "app-factory:pip3r": "cd ../../../.. && yarn tsx packages/twenty-apps/internal/xopure-crm/src/app-factory/plugin/pip3r-plugin.ts",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "test": "vitest run",

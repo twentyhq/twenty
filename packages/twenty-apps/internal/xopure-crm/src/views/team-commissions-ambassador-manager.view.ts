@@ -11,7 +11,7 @@ export default defineView({
   position: 2,
   fields: [
     { universalIdentifier: '13a4b5c6-d7e8-4998-b070-defa45678901', fieldMetadataUniversalIdentifier: XOPURE_COMMISSION_NAME_FIELD_ID, position: 0, isVisible: true, size: 220 },
-    { universalIdentifier: '24b5c6d7-e8f9-4008-c180-efab56789012', fieldMetadataUniversalIdentifier: XOPURE_COMMISSION_STATUS_FIELD_ID, position: 1, isVisible: true, size: 160 },
-    { universalIdentifier: '35c6d7e8-f9a0-4118-d290-fgab67890123', fieldMetadataUniversalIdentifier: COMMISSION_SUPERVISOR_FIELD_ID, position: 2, isVisible: true, size: 200 },
+    { universalIdentifier: '49893ccf-fbe8-48fe-99fd-f3e8503e2736', fieldMetadataUniversalIdentifier: XOPURE_COMMISSION_STATUS_FIELD_ID, position: 1, isVisible: true, size: 160 },
+    { universalIdentifier: '33da2e23-be2c-44cf-a240-afaea33912ac', fieldMetadataUniversalIdentifier: COMMISSION_SUPERVISOR_FIELD_ID, position: 2, isVisible: true, size: 200 },
   ],
 });

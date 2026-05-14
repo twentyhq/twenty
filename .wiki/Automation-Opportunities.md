@@ -6,6 +6,34 @@ Analysis of high-signal combinations among existing tools, endpoints, templates,
 
 **Work within existing SDK surface. No Twenty source modifications unless minimal, durable, and survives upstream updates.**
 
+## Current Implementation Status (XOPure)
+
+Implemented in `packages/twenty-apps/internal/xopure-crm` with zero Twenty core patches:
+
+- Shared core:
+  - `src/app-factory/core/app-factory-spec.ts`
+  - `src/app-factory/core/spec-validation.ts`
+  - `src/app-factory/core/generator.ts`
+  - `src/app-factory/core/pipeline.ts`
+- Standalone CLI:
+  - `src/app-factory/cli/orchestrator-cli.ts`
+  - script: `yarn --cwd packages/twenty-apps/internal/xopure-crm app-factory --spec <path>`
+- pip3r bridge:
+  - `src/app-factory/plugin/pip3r-plugin.ts`
+  - script: `printf '<json>' | yarn --cwd packages/twenty-apps/internal/xopure-crm app-factory:pip3r`
+- In-app route adapter:
+  - `src/logic-functions/xopure-app-factory-orchestrator.ts`
+  - route: `POST /xopure/app-factory/orchestrate`
+  - feature flag: `XOPURE_APP_FACTORY_ENABLED=true`
+- CI adapter:
+  - `.github/actions/xopure-app-factory/action.yml`
+  - `.github/workflows/ci-xopure-app-factory.yaml`
+
+Verified locally:
+- unit tests for core + CLI parser pass
+- targeted typecheck passes for new files
+- dry-run pipeline returns successful JSON through CLI and pip3r adapters
+
 ## Architecture: No-Mod Meta-App Pipeline
 
 The entire programmatic pipeline works today without any patches. Here's why:
