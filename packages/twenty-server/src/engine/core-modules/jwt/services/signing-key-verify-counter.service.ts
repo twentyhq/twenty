@@ -12,6 +12,14 @@ import {
   SIGNING_KEY_USAGE_WINDOW_DAYS,
 } from 'src/engine/core-modules/jwt/constants/signing-key-usage.constant';
 
+// Note: this counter intentionally uses CacheStorageService directly rather
+// than MetricsCacheService. MetricsCacheService is built around Redis sets
+// keyed by a fixed MetricsKeys enum, dedup-by-eventId, 15s buckets and a
+// minutes-scale window. Per-kid signing key usage needs the opposite:
+// raw integer counters (incrBy), 1-day buckets over a 7-day window, and a
+// dynamic key suffix per kid. We'll generalize MetricsCacheService into a
+// reusable "bucketed raw counter" primitive once a second caller needs the
+// same shape.
 @Injectable()
 export class SigningKeyVerifyCounterService {
   private readonly logger = new Logger(SigningKeyVerifyCounterService.name);
