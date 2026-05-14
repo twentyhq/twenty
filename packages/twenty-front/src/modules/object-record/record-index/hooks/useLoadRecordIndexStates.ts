@@ -131,7 +131,7 @@ export const useLoadRecordIndexStates = () => {
 
       const allFilterableFields = getFilterableFields(objectMetadataItem);
       const flattenedFieldMetadataItems = store.get(
-        flattenedFieldMetadataItemsSelector,
+        flattenedFieldMetadataItemsSelector.atom,
       );
       const recordFilters = mapViewFiltersToFilters(
         view.viewFilters,

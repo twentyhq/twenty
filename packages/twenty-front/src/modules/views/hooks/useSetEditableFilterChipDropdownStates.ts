@@ -67,7 +67,7 @@ export const useSetEditableFilterChipDropdownStates = () => {
             recordFilterId: recordFilter.id,
           }),
         }),
-        recordFilter.relationTargetFieldMetadataId,
+        recordFilter.relationTargetFieldMetadataId ?? null,
       );
     },
     [store, filterableFieldMetadataItems],
