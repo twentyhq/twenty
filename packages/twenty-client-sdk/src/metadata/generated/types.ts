@@ -707,6 +707,9 @@ export default {
             "applicationTokenPair": [
                 33
             ],
+            "applicationVariables": [
+                15
+            ],
             "__typename": [
                 1
             ]
@@ -1579,6 +1582,9 @@ export default {
             ],
             "direction": [
                 67
+            ],
+            "subFieldName": [
+                1
             ],
             "viewId": [
                 3
@@ -3116,7 +3122,7 @@ export default {
                 1
             ]
         },
-        "BillingMeteredProductUsage": {
+        "BillingResourceCreditUsage": {
             "productKey": [
                 137
             ],
@@ -5977,7 +5983,7 @@ export default {
             "listPlans": [
                 150
             ],
-            "getMeteredProductsUsage": [
+            "getResourceCreditUsage": [
                 149
             ],
             "findWorkspaceInvitations": [
@@ -7228,7 +7234,7 @@ export default {
             "cancelSwitchBillingInterval": [
                 152
             ],
-            "setMeteredSubscriptionPrice": [
+            "setResourceCreditSubscriptionPrice": [
                 152,
                 {
                     "priceId": [
@@ -7240,7 +7246,7 @@ export default {
             "endSubscriptionTrialPeriod": [
                 148
             ],
-            "cancelSwitchMeteredPrice": [
+            "cancelSwitchResourceCreditPrice": [
                 152
             ],
             "deleteWorkspaceInvitation": [
@@ -9219,6 +9225,9 @@ export default {
             "direction": [
                 67
             ],
+            "subFieldName": [
+                1
+            ],
             "viewId": [
                 3
             ],
@@ -9240,6 +9249,9 @@ export default {
         "UpdateViewSortInputUpdates": {
             "direction": [
                 67
+            ],
+            "subFieldName": [
+                1
             ],
             "__typename": [
                 1

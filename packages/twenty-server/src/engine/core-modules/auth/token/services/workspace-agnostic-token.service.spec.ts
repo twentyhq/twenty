@@ -24,10 +24,9 @@ describe('WorkspaceAgnosticToken', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            sign: jest.fn(),
-            verify: jest.fn(),
+            signAsyncOrThrow: jest.fn(),
+            verifyJwtToken: jest.fn(),
             decode: jest.fn(),
-            generateAppSecret: jest.fn().mockReturnValue('mocked-secret'),
           },
         },
         {
@@ -71,7 +70,9 @@ describe('WorkspaceAgnosticToken', () => {
 
         return undefined;
       });
-      jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      jest
+        .spyOn(jwtWrapperService, 'signAsyncOrThrow')
+        .mockResolvedValue(mockToken);
       jest
         .spyOn(userRepository, 'findOne')
         .mockResolvedValue(mockUser as UserEntity);
@@ -91,17 +92,14 @@ describe('WorkspaceAgnosticToken', () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId },
       });
-      expect(jwtWrapperService.sign).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         {
           authProvider: AuthProviderEnum.Password,
           sub: userId,
           userId: userId,
           type: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
         },
-        expect.objectContaining({
-          secret: 'mocked-secret',
-          expiresIn: mockExpiresIn,
-        }),
+        { expiresIn: mockExpiresIn },
       );
     });
 
@@ -143,7 +141,9 @@ describe('WorkspaceAgnosticToken', () => {
       } as unknown as UserEntity;
 
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockPayload);
-      jest.spyOn(jwtWrapperService, 'verify').mockReturnValue({});
+      jest
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
+        .mockResolvedValue(mockPayload);
       jest
         .spyOn(userRepository, 'findOne')
         .mockResolvedValue(mockUser as UserEntity);
@@ -153,13 +153,8 @@ describe('WorkspaceAgnosticToken', () => {
       expect(result.user).toMatchObject({
         id: userId,
       });
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(mockToken);
       expect(jwtWrapperService.decode).toHaveBeenCalledWith(mockToken);
-      expect(jwtWrapperService.verify).toHaveBeenCalledWith(
-        mockToken,
-        expect.objectContaining({
-          secret: 'mocked-secret',
-        }),
-      );
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId },
       });
@@ -168,9 +163,9 @@ describe('WorkspaceAgnosticToken', () => {
     it('should throw an error if token verification fails', async () => {
       const mockToken = 'invalid-token';
 
-      jest.spyOn(jwtWrapperService, 'verify').mockImplementation(() => {
-        throw new Error('Invalid token');
-      });
+      jest
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
+        .mockRejectedValue(new Error('Invalid token'));
 
       await expect(service.validateToken(mockToken)).rejects.toThrow(
         AuthException,
@@ -187,8 +182,29 @@ describe('WorkspaceAgnosticToken', () => {
       };
 
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockPayload);
-      jest.spyOn(jwtWrapperService, 'verify').mockReturnValue({});
+      jest
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
+        .mockResolvedValue(mockPayload);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
+
+      await expect(service.validateToken(mockToken)).rejects.toThrow(
+        AuthException,
+      );
+    });
+
+    it('should reject a valid token that is not of WORKSPACE_AGNOSTIC type', async () => {
+      const mockToken = 'valid-but-wrong-type-token';
+      const userId = 'user-id';
+      const mockPayload = {
+        sub: userId,
+        userId: userId,
+        type: JwtTokenTypeEnum.ACCESS,
+      };
+
+      jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockPayload);
+      jest
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
+        .mockResolvedValue(mockPayload);
 
       await expect(service.validateToken(mockToken)).rejects.toThrow(
         AuthException,

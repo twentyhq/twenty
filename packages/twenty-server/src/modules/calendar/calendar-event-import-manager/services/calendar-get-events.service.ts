@@ -36,6 +36,7 @@ export class CalendarGetCalendarEventsService {
       | 'id'
       | 'connectionParameters'
       | 'handle'
+      | 'workspaceId'
     >,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {

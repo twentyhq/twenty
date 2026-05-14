@@ -85,7 +85,9 @@ describe('AiBillingService', () => {
         {
           provide: BillingUsageService,
           useValue: {
-            decrementAvailableCredits: jest.fn().mockResolvedValue(undefined),
+            decrementAvailableCreditsInCache: jest
+              .fn()
+              .mockResolvedValue(undefined),
           },
         },
         {
@@ -350,8 +352,8 @@ describe('AiBillingService', () => {
   });
 
   describe('calculateAndBillUsage', () => {
-    it('should calculate cost and emit billing event when model exists', () => {
-      service.calculateAndBillUsage(
+    it('should calculate cost and emit billing event when model exists', async () => {
+      await service.calculateAndBillUsage(
         'gpt-4o',
         { usage: mockTokenUsage },
         'workspace-1',

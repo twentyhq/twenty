@@ -9,4 +9,5 @@ export type SocialSSOState = {
   workspacePersonalInviteToken?: string;
   action?: SocialSSOSignInUpActionType;
   locale?: keyof typeof APP_LOCALES;
+  returnToPath?: string;
 };

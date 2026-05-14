@@ -45,6 +45,7 @@ export type InstanceAndAllWorkspacesUpgradeStatus = {
   instanceUpgradeStatus: InstanceUpgradeStatus;
   workspacesBehind: WorkspaceUpgradeRef[];
   workspacesFailed: WorkspaceUpgradeRef[];
+  upToDateWorkspaceCount: number;
   computedAt: Date;
 };
 
@@ -144,12 +145,17 @@ export class UpgradeStatusService {
       return this.refreshInstanceAndAllWorkspacesStatus();
     }
 
-    const [instanceUpgradeStatus, behindWorkspaceIds, failedWorkspaceIds] =
-      await Promise.all([
-        this.getInstanceStatus(),
-        this.upgradeStatusCacheService.getBehindWorkspaceIds(),
-        this.upgradeStatusCacheService.getFailedWorkspaceIds(),
-      ]);
+    const [
+      instanceUpgradeStatus,
+      behindWorkspaceIds,
+      failedWorkspaceIds,
+      upToDateWorkspaceCount,
+    ] = await Promise.all([
+      this.getInstanceStatus(),
+      this.upgradeStatusCacheService.getBehindWorkspaceIds(),
+      this.upgradeStatusCacheService.getFailedWorkspaceIds(),
+      this.upgradeStatusCacheService.getUpToDateWorkspaceCount(),
+    ]);
 
     const workspaceNamesById = await this.loadWorkspaceNamesById([
       ...behindWorkspaceIds,
@@ -166,6 +172,7 @@ export class UpgradeStatusService {
         failedWorkspaceIds,
         workspaceNamesById,
       ),
+      upToDateWorkspaceCount,
       computedAt,
     };
   }
@@ -180,6 +187,7 @@ export class UpgradeStatusService {
 
     const workspacesBehind: WorkspaceUpgradeRef[] = [];
     const workspacesFailed: WorkspaceUpgradeRef[] = [];
+    let upToDateWorkspaceCount = 0;
 
     for (const workspaceStatus of workspaceStatuses) {
       const workspaceRef: WorkspaceUpgradeRef = {
@@ -191,6 +199,8 @@ export class UpgradeStatusService {
         workspacesBehind.push(workspaceRef);
       } else if (workspaceStatus.health === UpgradeHealthEnum.FAILED) {
         workspacesFailed.push(workspaceRef);
+      } else if (workspaceStatus.health === UpgradeHealthEnum.UP_TO_DATE) {
+        upToDateWorkspaceCount++;
       }
     }
 
@@ -199,6 +209,7 @@ export class UpgradeStatusService {
     await this.upgradeStatusCacheService.write({
       behindWorkspaceIds: workspacesBehind.map((workspace) => workspace.id),
       failedWorkspaceIds: workspacesFailed.map((workspace) => workspace.id),
+      upToDateWorkspaceCount,
       computedAt,
     });
 
@@ -206,6 +217,7 @@ export class UpgradeStatusService {
       instanceUpgradeStatus,
       workspacesBehind,
       workspacesFailed,
+      upToDateWorkspaceCount,
       computedAt,
     };
   }

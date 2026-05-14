@@ -1,20 +1,27 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 
+import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { type PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { categorizeRecords } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/categorize-records.util';
 
 describe('categorizeRecords', () => {
-  const conflictingFields = [
-    { baseField: 'id', fullPath: 'id', column: 'id' },
+  const conflictingFieldGroups: ConflictingFieldGroup[] = [
+    {
+      baseField: 'id',
+      conflictingProperties: [{ fullPath: 'id', column: 'id' }],
+    },
     {
       baseField: 'uniqueText',
-      fullPath: 'uniqueText',
-      column: 'uniqueText',
+      conflictingProperties: [{ fullPath: 'uniqueText', column: 'uniqueText' }],
     },
     {
       baseField: 'emailsField',
-      fullPath: 'emailsField.primaryEmail',
-      column: 'emailsFieldPrimaryEmail',
+      conflictingProperties: [
+        {
+          fullPath: 'emailsField.primaryEmail',
+          column: 'emailsFieldPrimaryEmail',
+        },
+      ],
     },
   ];
 
@@ -39,7 +46,7 @@ describe('categorizeRecords', () => {
 
     const { recordsToInsert, recordsToUpdate } = categorizeRecords(
       records,
-      conflictingFields,
+      conflictingFieldGroups,
       existingRecords,
     );
 
@@ -56,7 +63,7 @@ describe('categorizeRecords', () => {
 
     const { recordsToInsert, recordsToUpdate } = categorizeRecords(
       records,
-      conflictingFields,
+      conflictingFieldGroups,
       existingRecords,
     );
 
@@ -88,7 +95,7 @@ describe('categorizeRecords', () => {
 
     const { recordsToInsert, recordsToUpdate } = categorizeRecords(
       records,
-      conflictingFields,
+      conflictingFieldGroups,
       existingRecords,
     );
 

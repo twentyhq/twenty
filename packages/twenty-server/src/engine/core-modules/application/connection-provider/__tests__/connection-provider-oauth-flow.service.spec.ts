@@ -13,6 +13,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
@@ -21,11 +22,11 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-contex
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import {
-  CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
-  ConnectedAccountTokenEncryptionService,
-} from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+
+const FAKE_CIPHER_PREFIX = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}keyid:`;
 
 describe('ConnectionProviderOAuthFlowService', () => {
   let service: ConnectionProviderOAuthFlowService;
@@ -34,9 +35,8 @@ describe('ConnectionProviderOAuthFlowService', () => {
     getClientCredentials: jest.Mock;
   };
   let jwtWrapperService: {
-    sign: jest.Mock;
+    signAsyncOrThrow: jest.Mock;
     verifyJwtToken: jest.Mock;
-    generateAppSecret: jest.Mock;
   };
   let secureHttpClientService: { createSsrfSafeFetch: jest.Mock };
   let connectedAccountRepository: {
@@ -80,9 +80,8 @@ describe('ConnectionProviderOAuthFlowService', () => {
       })),
     };
     jwtWrapperService = {
-      sign: jest.fn(),
+      signAsyncOrThrow: jest.fn(),
       verifyJwtToken: jest.fn(),
-      generateAppSecret: jest.fn(() => 'derived-secret'),
     };
     secureHttpClientService = { createSsrfSafeFetch: jest.fn() };
     connectedAccountRepository = {
@@ -127,12 +126,12 @@ describe('ConnectionProviderOAuthFlowService', () => {
               }: {
                 accessToken: string;
                 refreshToken: string | null;
+                workspaceId: string;
               }) => ({
-                encryptedAccessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${accessToken})`,
-                encryptedRefreshToken:
-                  refreshToken === null
-                    ? null
-                    : `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${refreshToken})`,
+                encryptedAccessToken: `${FAKE_CIPHER_PREFIX}CIPHER(${accessToken})`,
+                encryptedRefreshToken: isDefined(refreshToken)
+                  ? `${FAKE_CIPHER_PREFIX}CIPHER(${refreshToken})`
+                  : null,
               }),
             ),
           },
@@ -147,7 +146,9 @@ describe('ConnectionProviderOAuthFlowService', () => {
 
   describe('startAuthorizationFlow', () => {
     it('builds the provider authorization URL with the workspace + visibility context signed into state', async () => {
-      jwtWrapperService.sign.mockReturnValue('signed-state-token');
+      jwtWrapperService.signAsyncOrThrow.mockResolvedValue(
+        'signed-state-token',
+      );
 
       const { authorizationUrl } = await service.startAuthorizationFlow({
         connectionProvider: baseProvider,
@@ -176,7 +177,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
       expect(url.searchParams.has('code_challenge')).toBe(false);
 
       // signed payload carries workspace identity for the callback to use
-      expect(jwtWrapperService.sign).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         expect.objectContaining({
           type: JwtTokenTypeEnum.APP_OAUTH_STATE,
           workspaceId: 'workspace-1',
@@ -184,12 +185,12 @@ describe('ConnectionProviderOAuthFlowService', () => {
           visibility: 'user',
           reconnectingConnectedAccountId: null,
         }),
-        expect.objectContaining({ secret: 'derived-secret' }),
+        expect.objectContaining({ expiresIn: expect.any(String) }),
       );
     });
 
     it('emits PKCE challenge params when usePkce is enabled', async () => {
-      jwtWrapperService.sign.mockReturnValue('signed-state');
+      jwtWrapperService.signAsyncOrThrow.mockResolvedValue('signed-state');
 
       const { authorizationUrl } = await service.startAuthorizationFlow({
         connectionProvider: {
@@ -247,7 +248,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
           },
         });
         // No state JWT signed, no upstream URL built.
-        expect(jwtWrapperService.sign).not.toHaveBeenCalled();
+        expect(jwtWrapperService.signAsyncOrThrow).not.toHaveBeenCalled();
       });
 
       it('throws FORBIDDEN when reconnecting an id that belongs to a different provider in the same workspace', async () => {
@@ -269,7 +270,7 @@ describe('ConnectionProviderOAuthFlowService', () => {
           workspaceId: 'workspace-1',
           connectionProviderId: 'provider-1',
         });
-        jwtWrapperService.sign.mockReturnValue('state');
+        jwtWrapperService.signAsyncOrThrow.mockResolvedValue('state');
 
         const { authorizationUrl } = await service.startAuthorizationFlow({
           ...validateArgs,
@@ -279,11 +280,11 @@ describe('ConnectionProviderOAuthFlowService', () => {
         expect(new URL(authorizationUrl).searchParams.get('state')).toBe(
           'state',
         );
-        expect(jwtWrapperService.sign).toHaveBeenCalled();
+        expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalled();
       });
 
       it('skips the lookup entirely when reconnectingConnectedAccountId is null', async () => {
-        jwtWrapperService.sign.mockReturnValue('state');
+        jwtWrapperService.signAsyncOrThrow.mockResolvedValue('state');
 
         await service.startAuthorizationFlow({
           ...validateArgs,
@@ -344,8 +345,8 @@ describe('ConnectionProviderOAuthFlowService', () => {
       expect(connectedAccountRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           provider: ConnectedAccountProvider.APP,
-          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(new_access)`,
-          refreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(new_refresh)`,
+          accessToken: `${FAKE_CIPHER_PREFIX}CIPHER(new_access)`,
+          refreshToken: `${FAKE_CIPHER_PREFIX}CIPHER(new_refresh)`,
           connectionProviderId: 'provider-1',
           applicationId: 'app-1',
           workspaceId: 'workspace-1',
@@ -372,8 +373,8 @@ describe('ConnectionProviderOAuthFlowService', () => {
       expect(connectedAccountRepository.update).toHaveBeenCalledWith(
         { id: 'existing-account-id', workspaceId: 'workspace-1' },
         expect.objectContaining({
-          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(new_access)`,
-          refreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(new_refresh)`,
+          accessToken: `${FAKE_CIPHER_PREFIX}CIPHER(new_access)`,
+          refreshToken: `${FAKE_CIPHER_PREFIX}CIPHER(new_refresh)`,
           authFailedAt: null,
           visibility: 'user',
         }),

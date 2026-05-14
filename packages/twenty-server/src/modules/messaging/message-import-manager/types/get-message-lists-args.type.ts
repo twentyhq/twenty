@@ -16,6 +16,7 @@ export type GetMessageListsArgs = {
     | 'id'
     | 'handle'
     | 'connectionParameters'
+    | 'workspaceId'
   >;
   messageFolders: MessageFolder[];
 };

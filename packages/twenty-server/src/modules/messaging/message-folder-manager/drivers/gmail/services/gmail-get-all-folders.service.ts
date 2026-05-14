@@ -28,7 +28,12 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
   async getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'provider' | 'refreshToken' | 'accessToken' | 'id' | 'handle'
+      | 'provider'
+      | 'refreshToken'
+      | 'accessToken'
+      | 'id'
+      | 'handle'
+      | 'workspaceId'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<DiscoveredMessageFolder[]> {

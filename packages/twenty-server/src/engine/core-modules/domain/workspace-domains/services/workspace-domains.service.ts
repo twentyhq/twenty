@@ -11,6 +11,7 @@ import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 @Injectable()
 export class WorkspaceDomainsService {
@@ -73,11 +74,14 @@ export class WorkspaceDomainsService {
 
     if (workspaces.length > 1) {
       Logger.warn(
-        ` ${workspaces.length} workspaces found in database. In single-workspace mode, there should be only one workspace. Apple seed workspace will be used as fallback if it found.`,
+        `${workspaces.length} workspaces found in database. In single-workspace mode, there should be only one workspace. The Apple seed workspace will be used as fallback if present.`,
       );
     }
 
-    const foundWorkspace = workspaces[0];
+    const foundWorkspace =
+      workspaces.find(
+        (workspace) => workspace.id === SEED_APPLE_WORKSPACE_ID,
+      ) ?? workspaces[0];
 
     assertIsDefinedOrThrow(foundWorkspace, WorkspaceNotFoundDefaultError);
 

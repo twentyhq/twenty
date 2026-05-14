@@ -53,6 +53,14 @@ export class ImapSmtpCaldavService {
       },
     });
 
+    // ImapFlow is EventEmitter — missing 'error' listener crashes process on socket timeout.
+    client.on('error', (error) => {
+      this.logger.error(
+        `IMAP test connection error for ${handle}: ${error.message}`,
+        error.stack,
+      );
+    });
+
     try {
       await client.connect();
 

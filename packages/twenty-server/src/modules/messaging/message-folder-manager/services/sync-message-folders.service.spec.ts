@@ -49,6 +49,7 @@ const createMockMessageChannel = (
     accessToken: 'mock-access-token',
     refreshToken: 'mock-refresh-token',
     connectionParameters: {},
+    workspaceId: 'workspace-123',
   },
   messageFolders: overrides.messageFolders ?? [],
   visibility: MessageChannelVisibility.SHARE_EVERYTHING,

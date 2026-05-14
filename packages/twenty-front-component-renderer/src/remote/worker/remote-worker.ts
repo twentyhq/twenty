@@ -91,6 +91,13 @@ const render: WorkerExports['render'] = async (
   document.body.append(root);
   installStyleBridge(root);
 
+  if (isDefined(renderContext.applicationVariables)) {
+    setWorkerEnv({
+      applicationVariables: JSON.stringify(renderContext.applicationVariables),
+    });
+  }
+
+  // System variables are set after application variables so they cannot be overridden
   if (isDefined(renderContext.apiUrl)) {
     setWorkerEnv({
       TWENTY_API_URL: renderContext.apiUrl,

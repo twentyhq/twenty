@@ -1,11 +1,10 @@
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
-import {
-  CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
-  ConnectedAccountTokenEncryptionService,
-} from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 const BACKFILL_BATCH_SIZE = 500;
 
@@ -14,11 +13,17 @@ const ACCESS_TOKEN_CHECK_CONSTRAINT_NAME =
 const REFRESH_TOKEN_CHECK_CONSTRAINT_NAME =
   'CHK_connectedAccount_refreshToken_encrypted';
 
+const V2_ENCRYPTED_LIKE_PATTERN = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}%`;
+
 type ConnectedAccountTokenRow = {
   id: string;
+  workspaceId: string;
   accessToken: string | null;
   refreshToken: string | null;
 };
+
+const isPlaintext = (value: string | null): value is string =>
+  isDefined(value) && !value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX);
 
 @RegisteredInstanceCommand('2.5.0', 1798000004000, { type: 'slow' })
 export class EncryptConnectedAccountTokensSlowInstanceCommand
@@ -29,14 +34,11 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
   ) {}
 
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    // Cursor + prefix-filter on the SELECT makes the loop both bounded in
-    // memory and idempotent: re-runs after a partial failure skip rows that
-    // were already encrypted on a prior pass.
     let cursor = '00000000-0000-0000-0000-000000000000';
 
     while (true) {
       const rows: ConnectedAccountTokenRow[] = await dataSource.query(
-        `SELECT id, "accessToken", "refreshToken"
+        `SELECT id, "workspaceId", "accessToken", "refreshToken"
            FROM "core"."connectedAccount"
           WHERE id > $1
             AND (
@@ -45,11 +47,7 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
             )
           ORDER BY id
           LIMIT $3`,
-        [
-          cursor,
-          `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}%`,
-          BACKFILL_BATCH_SIZE,
-        ],
+        [cursor, V2_ENCRYPTED_LIKE_PATTERN, BACKFILL_BATCH_SIZE],
       );
 
       if (rows.length === 0) {
@@ -59,28 +57,23 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
       for (const row of rows) {
         const sets: string[] = [];
         const params: unknown[] = [row.id];
-        if (
-          row.accessToken !== null &&
-          !row.accessToken.startsWith(CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX)
-        ) {
+
+        if (isPlaintext(row.accessToken)) {
           params.push(
-            this.connectedAccountTokenEncryptionService.encrypt(
-              row.accessToken,
-            ),
+            this.connectedAccountTokenEncryptionService.encrypt({
+              plaintext: row.accessToken,
+              workspaceId: row.workspaceId,
+            }),
           );
           sets.push(`"accessToken" = $${params.length}`);
         }
 
-        if (
-          row.refreshToken !== null &&
-          !row.refreshToken.startsWith(
-            CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
-          )
-        ) {
+        if (isPlaintext(row.refreshToken)) {
           params.push(
-            this.connectedAccountTokenEncryptionService.encrypt(
-              row.refreshToken,
-            ),
+            this.connectedAccountTokenEncryptionService.encrypt({
+              plaintext: row.refreshToken,
+              workspaceId: row.workspaceId,
+            }),
           );
           sets.push(`"refreshToken" = $${params.length}`);
         }
@@ -105,20 +98,20 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
        ADD CONSTRAINT "${ACCESS_TOKEN_CHECK_CONSTRAINT_NAME}"
-       CHECK ("accessToken" IS NULL OR "accessToken" LIKE '${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}%')`,
+       CHECK ("accessToken" IS NULL OR "accessToken" LIKE '${V2_ENCRYPTED_LIKE_PATTERN}')`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
        ADD CONSTRAINT "${REFRESH_TOKEN_CHECK_CONSTRAINT_NAME}"
-       CHECK ("refreshToken" IS NULL OR "refreshToken" LIKE '${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}%')`,
+       CHECK ("refreshToken" IS NULL OR "refreshToken" LIKE '${V2_ENCRYPTED_LIKE_PATTERN}')`,
     );
   }
 
+  // Deliberately do NOT decrypt rows on rollback — re-introducing plaintext
+  // tokens to the database would be a security regression. Dropping the
+  // CHECK constraints is enough; ConnectedAccountTokenEncryptionService can
+  // still read the encrypted columns whether or not the constraints exist.
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Deliberately do NOT decrypt rows on rollback — re-introducing plaintext
-    // tokens to the database would be a security regression. Dropping the
-    // CHECK constraints is enough; ConnectedAccountTokenEncryptionService can
-    // still read the encrypted columns whether or not the constraints exist.
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
        DROP CONSTRAINT IF EXISTS "${REFRESH_TOKEN_CHECK_CONSTRAINT_NAME}"`,

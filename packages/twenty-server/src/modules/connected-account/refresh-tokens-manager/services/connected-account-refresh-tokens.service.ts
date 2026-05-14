@@ -66,14 +66,15 @@ export class ConnectedAccountRefreshTokensService {
       }
 
       return {
-        accessToken:
-          this.connectedAccountTokenEncryptionService.decrypt(
-            encryptedAccessToken,
-          ),
+        accessToken: this.connectedAccountTokenEncryptionService.decrypt({
+          ciphertext: encryptedAccessToken,
+          workspaceId,
+        }),
         refreshToken: isDefined(encryptedRefreshToken)
-          ? this.connectedAccountTokenEncryptionService.decrypt(
-              encryptedRefreshToken,
-            )
+          ? this.connectedAccountTokenEncryptionService.decrypt({
+              ciphertext: encryptedRefreshToken,
+              workspaceId,
+            })
           : null,
       };
     }
@@ -90,9 +91,10 @@ export class ConnectedAccountRefreshTokensService {
     );
 
     const decryptedRefreshTokenForRefreshCall =
-      this.connectedAccountTokenEncryptionService.decrypt(
-        encryptedRefreshToken,
-      );
+      this.connectedAccountTokenEncryptionService.decrypt({
+        ciphertext: encryptedRefreshToken,
+        workspaceId,
+      });
 
     const connectedAccountTokens = await this.refreshTokens(
       connectedAccount,
@@ -106,6 +108,7 @@ export class ConnectedAccountRefreshTokensService {
     } = this.connectedAccountTokenEncryptionService.encryptTokenPair({
       accessToken: connectedAccountTokens.accessToken,
       refreshToken: connectedAccountTokens.refreshToken,
+      workspaceId,
     });
 
     const authContext = buildSystemAuthContext(workspaceId);

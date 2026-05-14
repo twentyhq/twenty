@@ -7,15 +7,15 @@ import { CheckServerOrchestratorStep } from '@/cli/utilities/dev/orchestrator/st
 import { GenerateApiClientOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/generate-api-client-orchestrator-step';
 import { RegisterAppOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/register-app-orchestrator-step';
 import {
-  StartWatchersOrchestratorStep,
   type FileBuiltEvent,
+  StartWatchersOrchestratorStep,
 } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
 import { SyncApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { emptyDir, ensureDir } from '@/cli/utilities/file/fs-utils';
 import path from 'path';
-import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 
 export type DevModeOrchestratorOptions = {
   state: OrchestratorState;
@@ -42,7 +42,7 @@ export class DevModeOrchestrator {
   private startWatchersStep: StartWatchersOrchestratorStep;
 
   constructor(options: DevModeOrchestratorOptions) {
-    this.debounceMs = options.debounceMs ?? 200;
+    this.debounceMs = options.debounceMs ?? 2_000;
     this.state = options.state;
     this.verbose = options.verbose ?? false;
 
