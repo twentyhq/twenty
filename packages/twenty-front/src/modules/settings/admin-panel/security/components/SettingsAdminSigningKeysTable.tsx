@@ -9,7 +9,6 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useQuery } from '@apollo/client/react';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,24 +21,11 @@ import {
   type SigningKeyDto,
 } from '~/generated-admin/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { beautifyExactDate, beautifyExactDateTime } from '~/utils/date-utils';
 
 const REVOKE_MODAL_ID = 'revoke-signing-key-modal';
 
 const SIGNING_KEYS_GRID_TEMPLATE_COLUMNS = '2fr 88px 96px 96px 88px';
-
-const StyledKeyCellContent = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-  overflow: hidden;
-`;
-
-const StyledOverflowingTextContainer = styled.div`
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-`;
 
 const EM_DASH = '\u2014';
 
@@ -60,22 +46,6 @@ const getStatusTag = (
   }
 
   return { text: t`Active`, color: 'gray' };
-};
-
-const formatTimestamp = (value: string | null | undefined): string => {
-  if (!isDefined(value)) {
-    return EM_DASH;
-  }
-
-  return new Date(value).toLocaleString();
-};
-
-const formatDate = (value: string | null | undefined): string => {
-  if (!isDefined(value)) {
-    return EM_DASH;
-  }
-
-  return new Date(value).toLocaleDateString();
 };
 
 export const SettingsAdminSigningKeysTable = () => {
@@ -132,38 +102,33 @@ export const SettingsAdminSigningKeysTable = () => {
           {signingKeys.map((signingKey) => {
             const status = getStatusTag(signingKey);
             const isRevoked = isDefined(signingKey.revokedAt);
-            const tooltipContent = t`Created on ${formatTimestamp(signingKey.createdAt)}`;
 
             return (
               <TableRow
                 key={signingKey.id}
                 gridTemplateColumns={SIGNING_KEYS_GRID_TEMPLATE_COLUMNS}
               >
-                <TableCell overflow="hidden">
-                  <StyledKeyCellContent>
-                    <StyledOverflowingTextContainer>
-                      <OverflowingTextWithTooltip
-                        text={signingKey.id}
-                        tooltipContent={tooltipContent}
-                        alwaysShowTooltip
-                      />
-                    </StyledOverflowingTextContainer>
-                    <Button
-                      Icon={IconCopy}
-                      size="small"
-                      variant="tertiary"
-                      ariaLabel={t`Copy key ID`}
-                      onClick={() =>
-                        copyToClipboard(signingKey.id, t`Key ID copied`)
-                      }
-                    />
-                  </StyledKeyCellContent>
+                <TableCell overflow="hidden" gap={themeCssVariables.spacing[1]}>
+                  <OverflowingTextWithTooltip
+                    text={signingKey.id}
+                    tooltipContent={t`Created on ${beautifyExactDateTime(signingKey.createdAt)}`}
+                    alwaysShowTooltip
+                  />
+                  <Button
+                    Icon={IconCopy}
+                    size="small"
+                    variant="tertiary"
+                    ariaLabel={t`Copy key ID`}
+                    onClick={() =>
+                      copyToClipboard(signingKey.id, t`Key ID copied`)
+                    }
+                  />
                 </TableCell>
                 <TableCell>
                   {isDefined(signingKey.revokedAt) ? (
                     <OverflowingTextWithTooltip
-                      text={formatDate(signingKey.revokedAt)}
-                      tooltipContent={t`Revoked on ${formatTimestamp(signingKey.revokedAt)}`}
+                      text={beautifyExactDate(signingKey.revokedAt)}
+                      tooltipContent={t`Revoked on ${beautifyExactDateTime(signingKey.revokedAt)}`}
                       alwaysShowTooltip
                     />
                   ) : (
@@ -196,15 +161,11 @@ export const SettingsAdminSigningKeysTable = () => {
           })}
           <TableRow gridTemplateColumns={SIGNING_KEYS_GRID_TEMPLATE_COLUMNS}>
             <TableCell overflow="hidden">
-              <StyledKeyCellContent>
-                <StyledOverflowingTextContainer>
-                  <OverflowingTextWithTooltip
-                    text={t`Legacy (HS256)`}
-                    tooltipContent={t`Legacy HS256 verifications across all tokens`}
-                    alwaysShowTooltip
-                  />
-                </StyledOverflowingTextContainer>
-              </StyledKeyCellContent>
+              <OverflowingTextWithTooltip
+                text={t`Legacy (HS256)`}
+                tooltipContent={t`Legacy HS256 verifications across all tokens`}
+                alwaysShowTooltip
+              />
             </TableCell>
             <TableCell>{EM_DASH}</TableCell>
             <TableCell>
