@@ -89,12 +89,17 @@ export const buildHeadlessCommandContextApi = ({
       ? (currentWorkspaceMember?.timeZone ?? systemTimeZone)
       : systemTimeZone;
 
+  const flattenedFieldMetadataItems = objectMetadataItems.flatMap(
+    (item: EnrichedObjectMetadataItem) => item.fields,
+  );
+
   const graphqlFilter = isDefined(objectMetadataItem)
     ? computeContextStoreFilters({
         contextStoreTargetedRecordsRule: targetedRecordsRule,
         contextStoreFilters: filters,
         contextStoreFilterGroups: filterGroups,
         objectMetadataItem,
+        flattenedFieldMetadataItems,
         filterValueDependencies: {
           currentWorkspaceMemberId: currentWorkspaceMember?.id,
           timeZone: userTimezone,

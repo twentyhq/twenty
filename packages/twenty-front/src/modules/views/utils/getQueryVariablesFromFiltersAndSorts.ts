@@ -21,8 +21,16 @@ export const getQueryVariablesFromFiltersAndSorts = ({
   objectMetadataItems?: EnrichedObjectMetadataItem[];
   filterValueDependencies: RecordFilterValueDependencies;
 }) => {
+  const fieldsAcrossObjects = objectMetadataItems.flatMap(
+    (item) => item.fields,
+  );
+  const fieldsForFilter =
+    fieldsAcrossObjects.length > 0
+      ? fieldsAcrossObjects
+      : (objectMetadataItem?.fields ?? []);
+
   const filter = computeRecordGqlOperationFilter({
-    fields: objectMetadataItem?.fields ?? [],
+    fields: fieldsForFilter,
     filterValueDependencies,
     recordFilterGroups,
     recordFilters,

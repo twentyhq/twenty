@@ -97,27 +97,31 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       (field) => field.id === recordFilter.relationTargetFieldMetadataId,
     );
 
-    if (isDefined(targetFieldMetadataItem)) {
-      const innerFilter = turnRecordFilterIntoRecordGqlOperationFilter({
-        recordFilter: {
-          ...recordFilter,
-          fieldMetadataId: targetFieldMetadataItem.id,
-          relationTargetFieldMetadataId: null,
-        },
-        fieldMetadataItems,
-        filterValueDependencies,
-      });
-
-      if (!isDefined(innerFilter)) {
-        return;
-      }
-
-      return {
-        [correspondingFieldMetadataItem.name]: innerFilter,
-      } as RecordGqlOperationFilter;
+    // Drop the filter rather than falling through to the legacy
+    // relation-by-record path: that path parses `value` as a UUID list,
+    // which would silently mishandle a target-field value like "Acme" and
+    // could broaden destructive operations to every record.
+    if (!isDefined(targetFieldMetadataItem)) {
+      return;
     }
-    // Target not in fieldMetadataItems — fall through to legacy
-    // relation-by-record matching.
+
+    const innerFilter = turnRecordFilterIntoRecordGqlOperationFilter({
+      recordFilter: {
+        ...recordFilter,
+        fieldMetadataId: targetFieldMetadataItem.id,
+        relationTargetFieldMetadataId: null,
+      },
+      fieldMetadataItems,
+      filterValueDependencies,
+    });
+
+    if (!isDefined(innerFilter)) {
+      return;
+    }
+
+    return {
+      [correspondingFieldMetadataItem.name]: innerFilter,
+    } as RecordGqlOperationFilter;
   }
 
   const shouldComputeEmptinessFilter = checkIfShouldComputeEmptinessFilter({
