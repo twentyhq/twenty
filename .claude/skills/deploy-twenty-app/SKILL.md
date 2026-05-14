@@ -41,13 +41,13 @@ apps/stratum-quote-app/          ← our only app so far
 Node 24 is required. The system node is older; use nvm:
 
 ```bash
-export PATH='/home/clive/.nvm/versions/node/v24.14.0/bin:$PATH'
+export PATH='/home/clive/.nvm/versions/node/v24.15.0/bin:$PATH'
 ```
 
 Prefix every `yarn twenty` command with this export, or use the wrapper:
 
 ```bash
-bash -c "export PATH='/home/clive/.nvm/versions/node/v24.14.0/bin:\$PATH' && cd apps/stratum-quote-app && yarn twenty <command> --remote uat"
+bash -c "export PATH='/home/clive/.nvm/versions/node/v24.15.0/bin:\$PATH' && cd apps/stratum-quote-app && yarn twenty <command> --remote uat"
 ```
 
 The remote auth is stored in `~/.twenty/config.json` (API key for UAT, set earlier).
@@ -272,7 +272,7 @@ output, so you can confirm at a glance that the new bundle actually went up.
 
 ```bash
 # Edit package.json version first, then:
-bash -c "export PATH='/home/clive/.nvm/versions/node/v24.14.0/bin:\$PATH' && \
+bash -c "export PATH='/home/clive/.nvm/versions/node/v24.15.0/bin:\$PATH' && \
   cd /home/clive/_Projects/stratum/twenty/source/apps/stratum-quote-app && \
   yarn twenty deploy --remote uat"
 ```
@@ -287,14 +287,17 @@ The deploy command:
 
 ### 5. Install (first time only)
 
-The app does not self-install. A workspace admin must install it via the UI:
+```bash
+bash -c "export PATH='/home/clive/.nvm/versions/node/v24.15.0/bin:\$PATH' && \
+  cd /home/clive/_Projects/stratum/twenty/source/apps/<app-name> && \
+  yarn twenty install --remote uat"
+```
 
-1. Open UAT → **Settings → Applications**
-2. Look under **"Your Apps"** (may require a hard-refresh)
-3. Click the app → **"Install on this workspace"**
+Expected output ends with `✓ Application installed`.
 
-`yarn twenty install --remote uat` requires OAuth auth and currently returns Forbidden
-when using an API key token — use the UI instead.
+(Verified working with the api-key auth on 2026-05-13 — earlier versions of
+this skill claimed CLI install required OAuth, but it works now. UI fallback:
+Settings → Applications → Your Apps → "Install on this workspace".)
 
 ### 6. Flush metadata cache
 
@@ -318,10 +321,20 @@ workspace's installed `core."frontComponent"` record is **NOT** refreshed automa
 
 **After every deploy that changes front component code, you must reinstall:**
 
-1. Settings → Applications → Stratum Quote UI → **Uninstall**
-2. **Reinstall** from the same screen
-3. Re-run migration 014 (the `frontComponent` id changes on every reinstall)
-4. Flush cache
+```bash
+bash -c "export PATH='/home/clive/.nvm/versions/node/v24.15.0/bin:\$PATH' && \
+  cd /home/clive/_Projects/stratum/twenty/source/apps/<app-name> && \
+  yarn twenty uninstall --remote uat --yes && \
+  yarn twenty install --remote uat"
+```
+
+The `--yes` flag on uninstall skips the interactive "Are you sure?" prompt.
+
+Then:
+1. (For stratum-quote-app only) Re-run migration 014 — the `frontComponent` id changes on every reinstall
+2. Flush cache (step 6)
+
+UI fallback if CLI fails: Settings → Applications → app → Uninstall + Reinstall.
 
 To confirm whether a redeploy took effect, query the DB:
 ```sql

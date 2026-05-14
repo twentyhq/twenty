@@ -3,7 +3,7 @@
     "postgres": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://postgres:sWhxWqTvZuXcTCcEBVwJIvOFjtvuxrmD@tramway.proxy.rlwy.net:58786/railway"],
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://postgres:${TWENTY_UAT_DB_PASSWORD}@tramway.proxy.rlwy.net:58786/railway"],
       "env": {}
     },
     "playwright": {
