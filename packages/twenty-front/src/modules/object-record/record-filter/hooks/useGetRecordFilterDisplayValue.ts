@@ -156,7 +156,7 @@ export const useGetRecordFilterDisplayValue = () => {
       }
 
       const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
-        recordFilter.fieldMetadataId,
+        recordFilter.relationTargetField?.id ?? recordFilter.fieldMetadataId,
       );
 
       const fieldMetadataItemOptions = fieldMetadataItem.options;
