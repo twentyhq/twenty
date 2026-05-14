@@ -145,6 +145,15 @@ export const SALES_NOTE_DETAILS_ATTENDEES_WIDGET_UID =
 export const SALES_NOTE_DETAILS_MEETING_WIDGET_UID =
   '93121079-2c20-4cb0-bd99-0ec59dc80371';
 
+// v0.4.4 — Custom front-component for the Meeting picker. Twenty's standard
+// FIELD widget for a M2O relation goes through the universal Search service,
+// which hardcodes calendarEvent in OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS
+// and excludes it from picker results (channel-visibility leak guard).
+// Bypass with a bespoke search-and-pick component, same pattern as
+// attendees-editor handling Twenty's missing M2M-junction picker.
+export const MEETING_PICKER_FRONT_COMPONENT_UID =
+  'b6d93546-d04f-4f95-a67c-6f232194e9c7';
+
 // v0.2.7 — custom front-component for the Attendees field. Twenty's standard
 // FIELD widget for an O2M-junction relation only knows how to *create a new
 // junction record*, not "pick an existing Person to link as an attendee".

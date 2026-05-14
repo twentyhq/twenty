@@ -1,6 +1,7 @@
 import {
   ATTENDEES_EDITOR_FRONT_COMPONENT_UID,
   EXTRACT_TASKS_PANEL_UID,
+  MEETING_PICKER_FRONT_COMPONENT_UID,
   SALES_NOTE_BODY_FIELD_UID,
   SALES_NOTE_DETAILS_ATTENDEES_WIDGET_UID,
   SALES_NOTE_DETAILS_COMPANY_WIDGET_UID,
@@ -24,7 +25,6 @@ import {
   SALES_NOTE_TAB_SUMMARY_UID,
   SALES_NOTE_TAB_TASKS_UID,
   SALES_NOTE_TO_COMPANY_FIELD_UID,
-  SALES_NOTE_TO_MEETING_FIELD_UID,
   SALES_NOTE_TO_OPPORTUNITY_FIELD_UID,
   SALES_NOTE_TO_OWNER_FIELD_UID,
 } from 'src/constants/universal-identifiers';
@@ -103,17 +103,22 @@ export default definePageLayout({
           },
         },
         {
-          // v0.4.0 — Meeting picker. When set, on-sales-note-meeting-set
-          // (logic function) inherits the linked calendar event's matched
-          // attendees onto this Call Report.
+          // v0.4.4 — Custom Meeting picker (front-component). Was a plain
+          // FIELD widget in v0.4.0 but Twenty's standard M2O relation picker
+          // routes through the universal Search service, which excludes
+          // calendarEvent via OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS
+          // (channel-visibility leak guard). The bespoke picker queries
+          // calendarEvents directly; on select it writes
+          // salesNote.meetingId, which fires on-sales-note-meeting-set to
+          // inherit the meeting's matched attendees.
           universalIdentifier: SALES_NOTE_DETAILS_MEETING_WIDGET_UID,
           title: 'Meeting',
-          type: 'FIELD',
+          type: 'FRONT_COMPONENT',
           gridPosition: { row: 4, column: 0, rowSpan: 1, columnSpan: 12 },
           configuration: {
-            configurationType: 'FIELD',
-            fieldMetadataId: SALES_NOTE_TO_MEETING_FIELD_UID,
-            fieldDisplayMode: 'FIELD',
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              MEETING_PICKER_FRONT_COMPONENT_UID,
           },
         },
         {
