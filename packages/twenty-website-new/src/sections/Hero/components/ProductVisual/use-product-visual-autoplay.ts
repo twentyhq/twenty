@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useAppPreviewState } from '@/sections/AppPreview/Shell/use-app-preview-state';
 import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
@@ -30,17 +30,11 @@ export function useProductVisualAutoplay() {
     workspaceNav,
   } = useAppPreviewState(visual);
 
-  const displayPage = useMemo(() => {
-    if (
-      activePage === null ||
-      activePage === undefined ||
-      activePage.type !== 'table'
-    ) {
-      return activePage;
-    }
+  let displayPage = activePage;
+  if (activePage !== null && activePage !== undefined && activePage.type === 'table') {
     const title = activePage.header?.title;
     if (companyAdded && title === 'All Companies') {
-      return {
+      displayPage = {
         ...activePage,
         header: {
           ...activePage.header,
@@ -48,9 +42,8 @@ export function useProductVisualAutoplay() {
         },
         rows: [NEW_COMPANY_ROW, ...activePage.rows],
       };
-    }
-    if (personAdded && title === 'All People') {
-      return {
+    } else if (personAdded && title === 'All People') {
+      displayPage = {
         ...activePage,
         header: {
           ...activePage.header,
@@ -59,8 +52,7 @@ export function useProductVisualAutoplay() {
         rows: [NEW_PERSON_ROW, ...activePage.rows],
       };
     }
-    return activePage;
-  }, [activePage, companyAdded, personAdded]);
+  }
 
   useEffect(() => {
     const option = PROMPT_OPTIONS[selectedOption];
