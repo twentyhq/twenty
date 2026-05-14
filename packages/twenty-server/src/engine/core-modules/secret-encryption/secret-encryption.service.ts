@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
@@ -8,10 +7,6 @@ import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/d
 import { computeEncryptionKeyId } from './utils/compute-encryption-key-id.util';
 import { decryptAesCtrOrThrow } from './utils/decrypt-aes-ctr-or-throw.util';
 import { decryptAesGcmV2OrThrow } from './utils/decrypt-aes-gcm-v2-or-throw.util';
-import {
-  decryptLegacyAesCbcOrThrow,
-  isLegacyAesCbcCiphertext,
-} from './utils/decrypt-legacy-aes-cbc.util';
 import { encryptAesCtr } from './utils/encrypt-aes-ctr.util';
 import { encryptAesGcmV2 } from './utils/encrypt-aes-gcm-v2.util';
 import { formatSecretEncryptionEnvelopeV2 } from './utils/format-secret-encryption-envelope-v2.util';
@@ -21,16 +16,12 @@ import { resolveEncryptionKeysOrThrow } from './utils/resolve-encryption-keys-or
 
 type VersionedOptions = {
   workspaceId?: string;
-  // TODO: remove `legacyAesCbcPurpose` once the 2.5 cross-upgrade window
-  // closes and every TOTP secret row has been backfilled to enc:v2.
-  legacyAesCbcPurpose?: string;
 };
 
 @Injectable()
 export class SecretEncryptionService {
   private readonly logger = new Logger(SecretEncryptionService.name);
   private hasLoggedLegacyCtrDecryption = false;
-  private hasLoggedLegacyCbcDecryption = false;
 
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
@@ -148,30 +139,6 @@ export class SecretEncryptionService {
       });
     }
 
-    // TODO: drop this branch (and `hasLoggedLegacyCbcDecryption` /
-    // `warnLegacyCbcDecryptionOnce`) once the 2.5 cross-upgrade window
-    // closes and every TOTP secret row has been backfilled to enc:v2.
-    if (
-      isNonEmptyString(opts.legacyAesCbcPurpose) &&
-      isLegacyAesCbcCiphertext(value)
-    ) {
-      const appSecret = this.environmentConfigDriver.get('APP_SECRET');
-
-      if (!isNonEmptyString(appSecret)) {
-        throw new Error(
-          'Cannot decrypt legacy AES-CBC ciphertext: APP_SECRET is not configured.',
-        );
-      }
-
-      this.warnLegacyCbcDecryptionOnce();
-
-      return decryptLegacyAesCbcOrThrow({
-        ciphertext: value,
-        appSecret,
-        purpose: opts.legacyAesCbcPurpose,
-      });
-    }
-
     this.warnLegacyCtrDecryptionOnce();
 
     return this.decrypt(value);
@@ -185,17 +152,6 @@ export class SecretEncryptionService {
     this.hasLoggedLegacyCtrDecryption = true;
     this.logger.warn(
       'Decrypted a legacy unprefixed AES-CTR ciphertext. These rows should be re-encrypted into the enc:v2 envelope in a follow-up migration.',
-    );
-  }
-
-  private warnLegacyCbcDecryptionOnce(): void {
-    if (this.hasLoggedLegacyCbcDecryption) {
-      return;
-    }
-
-    this.hasLoggedLegacyCbcDecryption = true;
-    this.logger.warn(
-      'Decrypted a legacy AES-CBC ciphertext (ivHex:dataHex). These rows should be re-encrypted into the enc:v2 envelope by the matching slow upgrade command.',
     );
   }
 }

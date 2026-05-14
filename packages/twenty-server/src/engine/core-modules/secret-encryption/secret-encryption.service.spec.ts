@@ -1,7 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { createCipheriv, createHash, randomBytes } from 'crypto';
-
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 
 import { SecretEncryptionService } from './secret-encryption.service';
@@ -235,55 +233,6 @@ describe('SecretEncryptionService', () => {
           mask,
         }),
       ).toBeUndefined();
-    });
-  });
-
-  describe('decryptVersioned legacy AES-CBC fallback', () => {
-    const buildLegacyAesCbcCiphertext = ({
-      plaintext,
-      appSecret,
-      purpose,
-    }: {
-      plaintext: string;
-      appSecret: string;
-      purpose: string;
-    }): string => {
-      const appSecretHex = createHash('sha256')
-        .update(`${appSecret}${purpose}KEY_ENCRYPTION_KEY`)
-        .digest('hex');
-      const key = createHash('sha256')
-        .update(appSecretHex)
-        .digest()
-        .subarray(0, 32);
-      const iv = randomBytes(16);
-      const cipher = createCipheriv('aes-256-cbc', key, iv);
-      const encrypted = Buffer.concat([
-        cipher.update(plaintext, 'utf8'),
-        cipher.final(),
-      ]);
-
-      return `${iv.toString('hex')}:${encrypted.toString('hex')}`;
-    };
-
-    it('decrypts legacy AES-CBC ciphertext when legacyAesCbcPurpose is provided', () => {
-      const plaintext = 'KVKFKRCPNZQUYMLXOVYDSKLMNBVCXZ';
-      const purpose = 'user-id-workspace-id-otp-secret';
-      const ciphertext = buildLegacyAesCbcCiphertext({
-        plaintext,
-        appSecret: mockAppSecret,
-        purpose,
-      });
-
-      expect(
-        service.decryptVersioned(ciphertext, { legacyAesCbcPurpose: purpose }),
-      ).toBe(plaintext);
-    });
-
-    it('falls through to legacy AES-CTR when legacyAesCbcPurpose is omitted', () => {
-      const plaintext = 'CTR-FALLBACK-PLAINTEXT';
-      const ctrCiphertext = service.encrypt(plaintext);
-
-      expect(service.decryptVersioned(ctrCiphertext)).toBe(plaintext);
     });
   });
 });

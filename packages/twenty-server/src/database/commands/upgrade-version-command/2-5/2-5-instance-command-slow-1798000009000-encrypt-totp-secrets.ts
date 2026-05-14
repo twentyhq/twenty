@@ -3,6 +3,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
@@ -26,6 +27,7 @@ export class EncryptTotpSecretsSlowInstanceCommand
 {
   constructor(
     private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly simpleSecretEncryptionUtil: SimpleSecretEncryptionUtil,
   ) {}
 
   async runDataMigration(dataSource: DataSource): Promise<void> {
@@ -49,12 +51,9 @@ export class EncryptTotpSecretsSlowInstanceCommand
       }
 
       for (const row of rows) {
-        const plaintext = this.secretEncryptionService.decryptVersioned(
+        const plaintext = await this.simpleSecretEncryptionUtil.decryptSecret(
           row.secret,
-          {
-            workspaceId: row.workspaceId,
-            legacyAesCbcPurpose: `${row.userId}${row.workspaceId}otp-secret`,
-          },
+          `${row.userId}${row.workspaceId}otp-secret`,
         );
 
         if (!isDefined(plaintext)) {
