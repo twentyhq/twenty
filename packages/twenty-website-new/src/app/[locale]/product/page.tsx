@@ -98,11 +98,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
           i18n.locale as AppLocale,
         )}
       />
-      <link
-        as="fetch"
-        href="/illustrations/product/hero/hero.glb"
-        rel="preload"
-      />
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
