@@ -1,6 +1,6 @@
 {
   "name": "create-twenty-app",
-  "version": "2.4.2",
+  "version": "2.5.0",
   "description": "Command-line interface to create Twenty application",
   "main": "dist/cli.cjs",
   "bin": "dist/cli.cjs",
