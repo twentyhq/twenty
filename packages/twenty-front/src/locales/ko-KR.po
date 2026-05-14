@@ -236,10 +236,10 @@ msgstr "{agentLabel} 에이전트 역할"
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{fieldLabel}의 {aggregateLabel}"
 
-#. js-lingui-id: LTvJAf
+#. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
-msgid "{appName} wants to access your account"
-msgstr "{appName}이(가) 귀하의 계정에 액세스하려고 합니다"
+msgid "{appName} would like to:"
+msgstr ""
 
 #. js-lingui-id: y9covz
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -803,10 +803,10 @@ msgstr ""
 msgid "Access Key ID"
 msgstr "액세스 키 ID"
 
-#. js-lingui-id: o0Ci6l
+#. js-lingui-id: CrjDqe
 #: src/pages/auth/Authorize.tsx
-msgid "Access workspace data"
-msgstr "워크스페이스 데이터에 접근"
+msgid "Access your workspace data"
+msgstr ""
 
 #. js-lingui-id: c2UA7k
 #: src/pages/settings/ai/components/SettingsAiMCP.tsx
@@ -3808,6 +3808,11 @@ msgstr "역할 업데이트 확인"
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Confirm upgrade"
 msgstr "업그레이드 확인"
+
+#. js-lingui-id: LOM1MR
+#: src/pages/auth/Authorize.tsx
+msgid "Connect {appName} to your account"
+msgstr ""
 
 #. js-lingui-id: mFiwDA
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
