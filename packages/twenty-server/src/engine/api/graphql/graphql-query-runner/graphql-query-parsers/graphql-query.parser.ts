@@ -20,7 +20,7 @@ import {
   GraphqlQuerySelectedFieldsParser,
   type GraphqlQuerySelectedFieldsResult,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
-import { ensureRelationJoin } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/ensure-relation-join.util';
+import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -127,7 +127,11 @@ export class GraphqlQueryParser {
     );
 
     for (const joinInfo of parseResult.relationJoins) {
-      ensureRelationJoin(queryBuilder, objectNameSingular, joinInfo.joinAlias);
+      addRelationJoinAliasToQueryBuilder({
+        queryBuilder,
+        parentAlias: objectNameSingular,
+        relationName: joinInfo.joinAlias,
+      });
     }
 
     queryBuilder.orderBy(parseResult.orderBy);

@@ -2,9 +2,6 @@ import gql from 'graphql-tag';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-// Distinct ID prefix (cccc / dddd) so this suite doesn't collide with
-// order-by-relation-field.integration-spec.ts when both run against the
-// shared workspace database.
 const TEST_COMPANY_IDS = {
   AIRBNB: '20202020-cccc-4000-8000-000000000001',
   STRIPE: '20202020-cccc-4000-8000-000000000002',
@@ -19,7 +16,18 @@ const TEST_PERSON_IDS = {
   UNAFFILIATED: '20202020-dddd-4000-8000-000000000005',
 };
 
+const TEST_ROCKET_IDS = {
+  FALCON: '20202020-cccc-4000-8000-100000000001',
+  STARSHIP: '20202020-cccc-4000-8000-100000000002',
+};
+
+const TEST_PET_IDS = {
+  FALCON_PET: '20202020-dddd-4000-8000-100000000001',
+  STARSHIP_PET: '20202020-dddd-4000-8000-100000000002',
+};
+
 const ALL_TEST_PERSON_IDS = Object.values(TEST_PERSON_IDS);
+const ALL_TEST_PET_IDS = Object.values(TEST_PET_IDS);
 
 describe('Filter by relation field (e2e)', () => {
   beforeAll(async () => {
@@ -31,9 +39,6 @@ describe('Filter by relation field (e2e)', () => {
         {
           id: TEST_COMPANY_IDS.AIRBNB,
           name: 'Airbnb',
-          // CURRENCY composite — used to check that filtering on a composite
-          // sub-field inside a relation traversal does not get mis-counted as
-          // a second depth hop.
           annualRecurringRevenue: {
             amountMicros: 50_000_000_000_000,
             currencyCode: 'USD',
@@ -96,6 +101,40 @@ describe('Filter by relation field (e2e)', () => {
     });
 
     await makeGraphqlAPIRequest(createPeople);
+
+    const createRockets = createManyOperationFactory({
+      objectMetadataSingularName: 'rocket',
+      objectMetadataPluralName: 'rockets',
+      gqlFields: 'id name',
+      data: [
+        { id: TEST_ROCKET_IDS.FALCON, name: 'FilterFalcon' },
+        { id: TEST_ROCKET_IDS.STARSHIP, name: 'FilterStarship' },
+      ],
+      upsert: true,
+    });
+
+    await makeGraphqlAPIRequest(createRockets);
+
+    const createPets = createManyOperationFactory({
+      objectMetadataSingularName: 'pet',
+      objectMetadataPluralName: 'pets',
+      gqlFields: 'id',
+      data: [
+        {
+          id: TEST_PET_IDS.FALCON_PET,
+          name: 'FilterFalconPet',
+          polymorphicOwnerRocketId: TEST_ROCKET_IDS.FALCON,
+        },
+        {
+          id: TEST_PET_IDS.STARSHIP_PET,
+          name: 'FilterStarshipPet',
+          polymorphicOwnerRocketId: TEST_ROCKET_IDS.STARSHIP,
+        },
+      ],
+      upsert: true,
+    });
+
+    await makeGraphqlAPIRequest(createPets);
   });
 
   it('should filter people by company name (exact match)', async () => {
@@ -236,9 +275,6 @@ describe('Filter by relation field (e2e)', () => {
   });
 
   it('should combine a relation filter with an order-by on the same relation (join dedupe)', async () => {
-    // Both the filter and the orderBy traverse `person.company`. Without the
-    // shared join registry both paths would call leftJoin('person.company',
-    // 'company') and TypeORM would throw "Duplicate alias 'company'".
     const queryData = {
       query: gql`
         query People(
@@ -282,10 +318,6 @@ describe('Filter by relation field (e2e)', () => {
   });
 
   it('should filter on a composite sub-field of the related object without tripping the depth cap', async () => {
-    // Person -> Company is one relation hop. annualRecurringRevenue is a
-    // CURRENCY composite on Company. Navigating into a composite property is
-    // NOT a second hop — the depth check must only count relation traversals,
-    // not composite sub-field access.
     const queryData = {
       query: gql`
         query People($filter: PersonFilterInput) {
@@ -343,9 +375,6 @@ describe('Filter by relation field (e2e)', () => {
       `,
       variables: {
         filter: {
-          // person → company → accountOwner is a depth-2 traversal (two
-          // MANY_TO_ONE hops); the arg processor caps depth at 1 and should
-          // reject this before the SQL builder ever sees it.
           company: {
             accountOwner: {
               name: { firstName: { eq: 'Anything' } },
@@ -359,5 +388,39 @@ describe('Filter by relation field (e2e)', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors.length).toBeGreaterThan(0);
+  });
+
+  it('should filter pets by a MORPH_RELATION target field (rocket name)', async () => {
+    const queryData = {
+      query: gql`
+        query Pets($filter: PetFilterInput) {
+          pets(filter: $filter, first: 10) {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        filter: {
+          and: [
+            { id: { in: ALL_TEST_PET_IDS } },
+            { polymorphicOwnerRocket: { name: { eq: 'FilterFalcon' } } },
+          ],
+        },
+      },
+    };
+
+    const response = await makeGraphqlAPIRequest(queryData);
+
+    expect(response.body.errors).toBeUndefined();
+
+    const ids = response.body.data.pets.edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+
+    expect(ids).toEqual([TEST_PET_IDS.FALCON_PET]);
   });
 });

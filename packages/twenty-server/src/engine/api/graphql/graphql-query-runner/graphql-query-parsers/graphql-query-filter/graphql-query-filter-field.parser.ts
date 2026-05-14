@@ -8,11 +8,12 @@ import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
+import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { ensureRelationJoin } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/ensure-relation-join.util';
+import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -64,11 +65,7 @@ export class GraphqlQueryFilterFieldParser {
     isFirst = false,
     useDirectTableReference = false,
   ): void {
-    // `fieldIdByName` resolves relation fields by their entity name
-    // (`company`); `fieldIdByJoinColumnName` resolves them by their FK column
-    // (`companyId`). The two have different semantics — only the former opts
-    // into relation traversal.
-    const isAccessedByRelationName = isDefined(this.fieldIdByName[key]);
+    const isFilterKeyARelation = isDefined(this.fieldIdByName[key]);
     const fieldMetadataId =
       this.fieldIdByName[`${key}`] || this.fieldIdByJoinColumnName[`${key}`];
 
@@ -82,7 +79,7 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     if (
-      isAccessedByRelationName &&
+      isFilterKeyARelation &&
       isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
       fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
     ) {
@@ -139,8 +136,7 @@ export class GraphqlQueryFilterFieldParser {
     outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
     parentAlias: string,
     fieldMetadata: FlatFieldMetadata,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-    filterValue: any,
+    filterValue: Partial<ObjectRecordFilter>,
     isFirst: boolean,
   ): void {
     if (this.depth >= MAX_RELATION_FILTER_DEPTH) {
@@ -185,7 +181,11 @@ export class GraphqlQueryFilterFieldParser {
 
     const joinAlias = fieldMetadata.name;
 
-    ensureRelationJoin(outerQueryBuilder, parentAlias, joinAlias);
+    addRelationJoinAliasToQueryBuilder({
+      queryBuilder: outerQueryBuilder,
+      parentAlias,
+      relationName: joinAlias,
+    });
 
     const childConditionParser = new GraphqlQueryFilterConditionParser(
       targetObjectMetadata,
@@ -195,7 +195,7 @@ export class GraphqlQueryFilterFieldParser {
     );
 
     const subBrackets = new Brackets((subQb) => {
-      childConditionParser.populateBrackets(
+      childConditionParser.applyFilterEntriesToWhereBrackets(
         subQb,
         outerQueryBuilder,
         joinAlias,

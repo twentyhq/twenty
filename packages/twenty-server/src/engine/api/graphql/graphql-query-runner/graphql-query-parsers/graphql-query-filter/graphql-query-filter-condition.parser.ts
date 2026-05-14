@@ -44,16 +44,17 @@ export class GraphqlQueryFilterConditionParser {
 
     return queryBuilder.where(
       new Brackets((qb) => {
-        this.populateBrackets(qb, queryBuilder, objectNameSingular, filter);
+        this.applyFilterEntriesToWhereBrackets(
+          qb,
+          queryBuilder,
+          objectNameSingular,
+          filter,
+        );
       }),
     );
   }
 
-  // Walks the entries of a filter object into an already-opened Brackets.
-  // Public so the field parser can recurse for relation traversal — the
-  // outer query builder is threaded through so JOINs can still be added
-  // even though we're inside a Brackets closure.
-  public populateBrackets(
+  public applyFilterEntriesToWhereBrackets(
     innerQueryBuilder: WhereExpressionBuilder,
     outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
     objectNameSingular: string,

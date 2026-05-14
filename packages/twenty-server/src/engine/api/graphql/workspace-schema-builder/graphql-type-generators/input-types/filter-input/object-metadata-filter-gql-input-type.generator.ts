@@ -40,7 +40,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
   public buildAndStore(
     flatObjectMetadata: FlatObjectMetadata,
     fields: FlatFieldMetadata[],
-    context?: SchemaGenerationContext,
+    context: SchemaGenerationContext,
   ) {
     const inputType = new GraphQLInputObjectType({
       name: `${pascalCase(flatObjectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.Filter.toString()}Input`,
@@ -66,7 +66,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
     objectNameSingular: string,
     fields: FlatFieldMetadata[],
     inputType: GraphQLInputObjectType,
-    context?: SchemaGenerationContext,
+    context: SchemaGenerationContext,
   ): GraphQLInputFieldConfigMap {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
