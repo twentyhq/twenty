@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { google } from 'googleapis';
+import { type gmail_v1, google } from 'googleapis';
 
 import { MessageFolderImportPolicy } from 'twenty-shared/types';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -29,6 +29,7 @@ export class GmailGetMessageListService {
   ) {}
 
   private async getMessageListWithoutCursor(
+    gmailClient: gmail_v1.Gmail,
     connectedAccount: Pick<
       ConnectedAccountEntity,
       | 'provider'
@@ -42,17 +43,12 @@ export class GmailGetMessageListService {
       MessageFolderEntity,
       'name' | 'externalId' | 'isSynced' | 'parentFolderId'
     >[],
-    messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
+    messageChannel: Pick<
+      MessageChannelEntity,
+      'messageFolderImportPolicy' | 'syncCursor'
+    >,
+    folderId?: string,
   ): Promise<GetMessageListsResponse> {
-    const oAuth2Client =
-      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
-        connectedAccount,
-      );
-    const gmailClient = google.gmail({
-      version: 'v1',
-      auth: oAuth2Client,
-    });
-
     let pageToken: string | undefined;
     let hasMoreMessages = true;
 
@@ -107,10 +103,10 @@ export class GmailGetMessageListService {
       return [
         {
           messageExternalIds,
-          nextSyncCursor: '',
+          nextSyncCursor: folderId ? (messageChannel.syncCursor ?? '') : '',
           previousSyncCursor: '',
           messageExternalIdsToDelete: [],
-          folderId: undefined,
+          folderId,
         },
       ];
     }
@@ -140,7 +136,7 @@ export class GmailGetMessageListService {
         nextSyncCursor,
         previousSyncCursor: '',
         messageExternalIdsToDelete: [],
-        folderId: undefined,
+        folderId,
       },
     ];
   }
@@ -174,8 +170,33 @@ export class GmailGetMessageListService {
       auth: oAuth2Client,
     });
 
+    const folderBackfillsToRun =
+      messageChannel.messageFolderImportPolicy ===
+        MessageFolderImportPolicy.SELECTED_FOLDERS &&
+      isNonEmptyString(messageChannel.syncCursor)
+        ? messageFolders.filter(
+            (folder) => folder.isSynced && folder.syncCursor === '',
+          )
+        : [];
+
+    const folderBackfillMessageLists = await Promise.all(
+      folderBackfillsToRun.map((folder) =>
+        this.getMessageListWithoutCursor(
+          gmailClient,
+          connectedAccount,
+          messageFolders.map((messageFolder) => ({
+            ...messageFolder,
+            isSynced: messageFolder.id === folder.id,
+          })),
+          messageChannel,
+          folder.id,
+        ),
+      ),
+    );
+
     if (!isNonEmptyString(messageChannel.syncCursor)) {
       return this.getMessageListWithoutCursor(
+        gmailClient,
         connectedAccount,
         messageFolders,
         messageChannel,
@@ -199,6 +220,7 @@ export class GmailGetMessageListService {
     }
 
     return [
+      ...folderBackfillMessageLists.flat(),
       {
         messageExternalIds: messagesAdded,
         messageExternalIdsToDelete: messagesDeleted,

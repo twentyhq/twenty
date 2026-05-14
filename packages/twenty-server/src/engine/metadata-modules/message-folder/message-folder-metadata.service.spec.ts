@@ -155,10 +155,15 @@ describe('MessageFolderMetadataService', () => {
     );
     expect(transactionManager.update).toHaveBeenNthCalledWith(
       2,
+      MessageFolderEntity,
+      { id: In(['folder-1']), workspaceId: 'workspace-id' },
+      { syncCursor: '' },
+    );
+    expect(transactionManager.update).toHaveBeenNthCalledWith(
+      3,
       MessageChannelEntity,
       { id: In(['google-channel']), workspaceId: 'workspace-id' },
       {
-        syncCursor: '',
         syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
         syncStageStartedAt: null,
       },
@@ -225,10 +230,15 @@ describe('MessageFolderMetadataService', () => {
     );
     expect(transactionManager.update).toHaveBeenNthCalledWith(
       2,
+      MessageFolderEntity,
+      { id: In(['folder-1']), workspaceId: 'workspace-id' },
+      { syncCursor: '' },
+    );
+    expect(transactionManager.update).toHaveBeenNthCalledWith(
+      3,
       MessageChannelEntity,
       { id: In(['google-channel']), workspaceId: 'workspace-id' },
       {
-        syncCursor: '',
         syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
         syncStageStartedAt: null,
       },

@@ -31,6 +31,7 @@ const createMockFolder = (
 describe('GmailGetMessageListService', () => {
   let service: GmailGetMessageListService;
   let oAuth2ClientManagerService: OAuth2ClientManagerService;
+  let gmailGetHistoryService: GmailGetHistoryService;
 
   const mockConnectedAccount: Pick<
     ConnectedAccountEntity,
@@ -82,6 +83,9 @@ describe('GmailGetMessageListService', () => {
     );
     oAuth2ClientManagerService = module.get<OAuth2ClientManagerService>(
       OAuth2ClientManagerService,
+    );
+    gmailGetHistoryService = module.get<GmailGetHistoryService>(
+      GmailGetHistoryService,
     );
   });
 
@@ -338,6 +342,153 @@ describe('GmailGetMessageListService', () => {
 
       expect(result).toEqual([]);
       expect(mockGmailClient.users.messages.list).not.toHaveBeenCalled();
+    });
+
+    it('should run a targeted folder backfill without clearing the channel cursor', async () => {
+      const mockGmailClient = {
+        users: {
+          messages: {
+            list: jest.fn().mockResolvedValue({
+              data: {
+                messages: [{ id: 'backfill-message' }],
+                nextPageToken: undefined,
+              },
+            }),
+            get: jest.fn().mockResolvedValue({
+              data: {
+                historyId: 'folder-history-id',
+              },
+            }),
+          },
+        },
+      };
+
+      jest.spyOn(google, 'gmail').mockReturnValue(mockGmailClient as never);
+      (
+        oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
+      ).mockResolvedValue({});
+      (gmailGetHistoryService.getHistory as jest.Mock).mockResolvedValue({
+        history: [{ id: 'history-entry' }],
+        historyId: 'channel-history-id',
+      });
+      (
+        gmailGetHistoryService.getMessageIdsFromHistory as jest.Mock
+      ).mockResolvedValue({
+        messagesAdded: ['incremental-message'],
+        messagesDeleted: [],
+      });
+
+      const result = await service.getMessageLists({
+        messageChannel: {
+          syncCursor: 'existing-channel-history-id',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
+        connectedAccount: mockConnectedAccount,
+        messageFolders: [
+          createMockFolder({
+            id: 'folder-inbox',
+            name: 'INBOX',
+            externalId: 'INBOX',
+            isSynced: true,
+            syncCursor: 'already-backfilled',
+          }),
+          createMockFolder({
+            id: 'folder-work',
+            name: 'Work',
+            externalId: 'Label_work',
+            isSynced: true,
+            syncCursor: '',
+          }),
+        ],
+      });
+
+      expect(result).toEqual([
+        {
+          messageExternalIds: ['backfill-message'],
+          messageExternalIdsToDelete: [],
+          previousSyncCursor: '',
+          nextSyncCursor: 'folder-history-id',
+          folderId: 'folder-work',
+        },
+        {
+          messageExternalIds: ['incremental-message'],
+          messageExternalIdsToDelete: [],
+          previousSyncCursor: 'existing-channel-history-id',
+          nextSyncCursor: 'channel-history-id',
+          folderId: undefined,
+        },
+      ]);
+      expect(mockGmailClient.users.messages.list).toHaveBeenCalledWith(
+        expect.objectContaining({
+          q: expect.stringContaining('label:work'),
+        }),
+      );
+      expect(mockGmailClient.users.messages.list).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          q: expect.stringContaining('label:inbox'),
+        }),
+      );
+      expect(gmailGetHistoryService.getHistory).toHaveBeenCalledWith(
+        mockGmailClient,
+        'existing-channel-history-id',
+      );
+    });
+
+    it('should mark an empty targeted folder backfill with the existing channel cursor', async () => {
+      const mockGmailClient = {
+        users: {
+          messages: {
+            list: jest.fn().mockResolvedValue({
+              data: {
+                messages: [],
+                nextPageToken: undefined,
+              },
+            }),
+          },
+        },
+      };
+
+      jest.spyOn(google, 'gmail').mockReturnValue(mockGmailClient as never);
+      (
+        oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
+      ).mockResolvedValue({});
+      (gmailGetHistoryService.getHistory as jest.Mock).mockResolvedValue({
+        history: [],
+        historyId: 'channel-history-id',
+      });
+      (
+        gmailGetHistoryService.getMessageIdsFromHistory as jest.Mock
+      ).mockResolvedValue({
+        messagesAdded: [],
+        messagesDeleted: [],
+      });
+
+      const result = await service.getMessageLists({
+        messageChannel: {
+          syncCursor: 'existing-channel-history-id',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+        },
+        connectedAccount: mockConnectedAccount,
+        messageFolders: [
+          createMockFolder({
+            id: 'folder-work',
+            name: 'Work',
+            externalId: 'Label_work',
+            isSynced: true,
+            syncCursor: '',
+          }),
+        ],
+      });
+
+      expect(result[0]).toEqual({
+        messageExternalIds: [],
+        messageExternalIdsToDelete: [],
+        previousSyncCursor: '',
+        nextSyncCursor: 'existing-channel-history-id',
+        folderId: 'folder-work',
+      });
     });
   });
 

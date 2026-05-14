@@ -180,8 +180,8 @@ export class MessageFolderMetadataService {
     workspaceId: string;
     data: Partial<MessageFolderEntity>;
   }): Promise<MessageFolderDTO> {
-    const googleMessageChannelIdsToReset =
-      await this.findGoogleMessageChannelIdsForEnabledFolders({
+    const googleFolderBackfillTargets =
+      await this.findGoogleFolderBackfillTargetsForEnabledFolders({
         ids: [id],
         workspaceId,
         data,
@@ -194,9 +194,9 @@ export class MessageFolderMetadataService {
         data as Record<string, unknown>,
       );
 
-      await this.resetGoogleMessageChannelCursor(
+      await this.markGoogleFolderBackfillPending(
         transactionManager,
-        googleMessageChannelIdsToReset,
+        googleFolderBackfillTargets,
         {
           workspaceId,
         },
@@ -215,8 +215,8 @@ export class MessageFolderMetadataService {
     workspaceId: string;
     data: Partial<MessageFolderEntity>;
   }): Promise<MessageFolderDTO[]> {
-    const googleMessageChannelIdsToReset =
-      await this.findGoogleMessageChannelIdsForEnabledFolders({
+    const googleFolderBackfillTargets =
+      await this.findGoogleFolderBackfillTargetsForEnabledFolders({
         ids,
         workspaceId,
         data,
@@ -229,9 +229,9 @@ export class MessageFolderMetadataService {
         data as Record<string, unknown>,
       );
 
-      await this.resetGoogleMessageChannelCursor(
+      await this.markGoogleFolderBackfillPending(
         transactionManager,
-        googleMessageChannelIdsToReset,
+        googleFolderBackfillTargets,
         {
           workspaceId,
         },
@@ -241,7 +241,7 @@ export class MessageFolderMetadataService {
     return this.repository.find({ where: { id: In(ids), workspaceId } });
   }
 
-  private async findGoogleMessageChannelIdsForEnabledFolders({
+  private async findGoogleFolderBackfillTargetsForEnabledFolders({
     ids,
     workspaceId,
     data,
@@ -249,9 +249,12 @@ export class MessageFolderMetadataService {
     ids: string[];
     workspaceId: string;
     data: Partial<MessageFolderEntity>;
-  }): Promise<string[]> {
+  }): Promise<{
+    messageChannelIds: string[];
+    messageFolderIds: string[];
+  }> {
     if (data.isSynced !== true || ids.length === 0) {
-      return [];
+      return { messageChannelIds: [], messageFolderIds: [] };
     }
 
     const newlyEnabledFolders = await this.repository.find({
@@ -263,7 +266,7 @@ export class MessageFolderMetadataService {
       ...new Set(newlyEnabledFolders.map((folder) => folder.messageChannelId)),
     ];
 
-    const googleMessageChannelIds = await Promise.all(
+    const googleTargets = await Promise.all(
       messageChannelIds.map(async (messageChannelId) => {
         const messageChannel =
           await this.messageChannelMetadataService.findById({
@@ -272,7 +275,7 @@ export class MessageFolderMetadataService {
           });
 
         if (!messageChannel) {
-          return null;
+          return { messageChannelId: null, messageFolderIds: [] };
         }
 
         const connectedAccount =
@@ -281,29 +284,54 @@ export class MessageFolderMetadataService {
             workspaceId,
           });
 
-        return connectedAccount?.provider === ConnectedAccountProvider.GOOGLE
-          ? messageChannel.id
-          : null;
+        if (connectedAccount?.provider !== ConnectedAccountProvider.GOOGLE) {
+          return { messageChannelId: null, messageFolderIds: [] };
+        }
+
+        return {
+          messageChannelId: messageChannel.id,
+          messageFolderIds: newlyEnabledFolders
+            .filter((folder) => folder.messageChannelId === messageChannel.id)
+            .map((folder) => folder.id),
+        };
       }),
     );
 
-    return googleMessageChannelIds.filter((id) => id !== null);
+    return {
+      messageChannelIds: googleTargets
+        .map((target) => target.messageChannelId)
+        .filter((id) => id !== null),
+      messageFolderIds: googleTargets.flatMap(
+        (target) => target.messageFolderIds,
+      ),
+    };
   }
 
-  private async resetGoogleMessageChannelCursor(
+  private async markGoogleFolderBackfillPending(
     transactionManager: EntityManager,
-    messageChannelIds: string[],
+    {
+      messageChannelIds,
+      messageFolderIds,
+    }: {
+      messageChannelIds: string[];
+      messageFolderIds: string[];
+    },
     { workspaceId }: { workspaceId: string },
   ): Promise<void> {
-    if (messageChannelIds.length === 0) {
+    if (messageChannelIds.length === 0 || messageFolderIds.length === 0) {
       return;
     }
+
+    await transactionManager.update(
+      MessageFolderEntity,
+      { id: In(messageFolderIds), workspaceId },
+      { syncCursor: '' },
+    );
 
     await transactionManager.update(
       MessageChannelEntity,
       { id: In(messageChannelIds), workspaceId },
       {
-        syncCursor: '',
         syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
         syncStageStartedAt: null,
       },
