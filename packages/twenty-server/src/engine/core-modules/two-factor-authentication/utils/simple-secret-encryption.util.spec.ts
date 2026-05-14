@@ -48,7 +48,9 @@ describe('SimpleSecretEncryptionUtil', () => {
           useValue: {
             generateAppSecret: jest
               .fn()
-              .mockImplementation((_type, purpose) => `${mockAppSecret}-${purpose}`),
+              .mockImplementation(
+                (_type, purpose) => `${mockAppSecret}-${purpose}`,
+              ),
           },
         },
       ],
