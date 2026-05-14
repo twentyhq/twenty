@@ -210,13 +210,13 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     }
 
     const targetInputType = this.gqlTypesStorage.getGqlTypeByKey(
-      computeObjectMetadataInputTypeKey(targetObjectMetadata.nameSingular, kind),
+      computeObjectMetadataInputTypeKey(
+        targetObjectMetadata.nameSingular,
+        kind,
+      ),
     );
 
-    if (
-      !isDefined(targetInputType) ||
-      !isInputObjectType(targetInputType)
-    ) {
+    if (!isDefined(targetInputType) || !isInputObjectType(targetInputType)) {
       return {};
     }
 
