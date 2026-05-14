@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build App Features"
+  short_description: "Add entities to an existing Twenty app."
+  default_prompt: "Use $build-app-features to add objects, fields, logic functions, views, roles, or app entities to a Twenty app."

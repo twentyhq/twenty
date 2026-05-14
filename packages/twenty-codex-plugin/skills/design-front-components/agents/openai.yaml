@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Front Components"
+  short_description: "Design polished Twenty front components."
+  default_prompt: "Use $design-front-components to design or improve the UI of a Twenty app front component."

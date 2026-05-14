@@ -1,12 +1,14 @@
 # Twenty Codex Plugin
 
-This plugin packages the official Twenty app creation workflow, Twenty documentation MCP server, Twenty workspace MCP setup, readable CRM record retrieval, and app listing asset guidance for Codex.
+This plugin packages the official Twenty app creation workflow, Twenty app feature-building guidance, front component design guidance, Twenty documentation MCP server, Twenty workspace MCP setup, readable CRM record retrieval, and app listing asset guidance for Codex.
 
 This workspace package is the source of the repo-local Codex plugin. The repo-local marketplace entry points directly to this package.
 
 ## Included Skills
 
-- **Create Twenty App** (`create-an-app`): scaffold, run, and troubleshoot a Twenty app with `create-twenty-app`.
+- **Create Twenty App** (`create-an-app`): scaffold a new Twenty app with `create-twenty-app`.
+- **Build App Features** (`build-app-features`): add objects, fields, logic functions, roles, views, layouts, skills, agents, and other app entities.
+- **Design Front Components** (`design-front-components`): design and polish Twenty front component UIs.
 - **Set Up Twenty MCP** (`setup-mcp`): collect a workspace URL, normalize the MCP endpoint, configure Codex, and guide OAuth login.
 - **Prepare App Listing** (`app-readme-and-visuals`): prepare a Twenty app README, marketplace metadata, logo, screenshots, and public visual assets.
 - **Retrieve Workspace Data** (`retrieve-and-present-data`): retrieve Twenty MCP, CRM, app, or workspace records and present them as readable Markdown.
@@ -17,7 +19,10 @@ This workspace package is the source of the repo-local Codex plugin. The repo-lo
 
 ## MCP Setup
 
-The plugin ships only the public Twenty documentation MCP URL. Marketplace users should use the setup skill or helper to configure their own Twenty workspace endpoint in their private Codex MCP config.
+The plugin works in two layers:
+
+- The bundled `twenty-docs` MCP server works immediately and lets Codex search public Twenty documentation.
+- Workspace data access is intentionally user-specific. Each user should use the setup skill or helper to add their own Twenty workspace MCP endpoint to their private Codex MCP config.
 
 Do not add workspace-specific MCP URLs to this package. Workspace MCP URLs are user-specific and belong in the local Codex MCP configuration created by the setup helper.
 
@@ -50,6 +55,8 @@ myworkspace.localhost:3001   -> http://myworkspace.localhost:3001/mcp   name: tw
 ## App Declaration
 
 Codex app declarations require a ChatGPT-created app or connector id. The plugin can reference that id, but it cannot create one from an MCP URL by itself.
+
+For that reason, this package does not ship a default `.app.json`. A bundled app declaration would either point to the wrong workspace or expose an app id that is not valid for each user's ChatGPT Developer Mode setup. Keep app declarations local until there is an official shared Twenty connector id.
 
 After creating the Twenty app in ChatGPT Developer Mode with your workspace MCP URL, add `packages/twenty-codex-plugin/.app.json`:
 

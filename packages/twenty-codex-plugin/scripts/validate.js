@@ -33,6 +33,7 @@ const isAllowedDocumentationHost = (hostname) => {
     host === 'your-twenty-server.com' ||
     host === 'twenty.com' ||
     host === 'docs.twenty.com' ||
+    host === 'www.docker.com' ||
     host === 'github.com' ||
     host === 'www.w3.org' ||
     host.endsWith('.example')
