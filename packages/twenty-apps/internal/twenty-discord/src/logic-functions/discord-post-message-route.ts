@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import type { RoutePayload } from 'twenty-sdk/define';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
@@ -6,14 +7,25 @@ import { discordPostMessageHandler } from 'src/logic-functions/handlers/discord-
 
 const handler = async (event: RoutePayload) => {
   const body = event.body as Record<string, unknown> | null;
-  const channelId = body?.channelId as string | undefined;
-  const messageText = body?.messageText as string | undefined;
+  const rawChannelId = body?.channelId;
+  const rawMessageText = body?.messageText;
 
-  if (!channelId || !messageText) {
+  if (typeof rawChannelId !== 'string' || typeof rawMessageText !== 'string') {
     return {
       success: false,
       message: 'Failed to post Discord message',
-      error: 'Both `channelId` and `messageText` are required.',
+      error: '`channelId` and `messageText` must be strings.',
+    };
+  }
+
+  const channelId = rawChannelId.trim();
+  const messageText = rawMessageText.trim();
+
+  if (!isNonEmptyString(channelId) || !isNonEmptyString(messageText)) {
+    return {
+      success: false,
+      message: 'Failed to post Discord message',
+      error: '`channelId` and `messageText` are required.',
     };
   }
 
