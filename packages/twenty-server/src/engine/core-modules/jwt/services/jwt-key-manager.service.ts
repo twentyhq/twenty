@@ -63,6 +63,48 @@ export class JwtKeyManagerService {
     return this.coreEntityCacheService.get('signingKeyPublicKey', id);
   }
 
+  async listSigningKeys(): Promise<SigningKeyEntity[]> {
+    return this.signingKeyRepository.find({
+      order: { isCurrent: 'DESC', createdAt: 'DESC' },
+    });
+  }
+
+  async revokeSigningKey(id: string): Promise<SigningKeyEntity> {
+    if (!isNonEmptyString(id) || !isValidUuid(id)) {
+      throw new JwtKeyManagerException(
+        `Invalid signing key id: ${id}`,
+        JwtKeyManagerExceptionCode.SIGNING_KEY_NOT_FOUND,
+      );
+    }
+
+    const existing = await this.signingKeyRepository.findOne({ where: { id } });
+
+    if (!isDefined(existing)) {
+      throw new JwtKeyManagerException(
+        `Signing key not found: ${id}`,
+        JwtKeyManagerExceptionCode.SIGNING_KEY_NOT_FOUND,
+      );
+    }
+
+    if (isDefined(existing.revokedAt)) {
+      return existing;
+    }
+
+    await this.signingKeyRepository.update(
+      { id },
+      {
+        revokedAt: new Date(),
+        isCurrent: false,
+        privateKey: null,
+      },
+    );
+
+    await this.coreEntityCacheService.invalidate('signingKeyPublicKey', id);
+    this.currentSigningKeyPromise = null;
+
+    return this.signingKeyRepository.findOneByOrFail({ id });
+  }
+
   private async loadOrCreateCurrentSigningKey(): Promise<CurrentSigningKey | null> {
     try {
       const existing = await this.findCurrentSigningKeyRow();
