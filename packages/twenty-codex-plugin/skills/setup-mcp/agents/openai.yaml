@@ -1,4 +1,0 @@
-interface:
-  display_name: "Set Up Twenty MCP"
-  short_description: "Connect Codex to a Twenty workspace MCP server."
-  default_prompt: "Use $setup-mcp to connect Codex to a Twenty workspace MCP server."

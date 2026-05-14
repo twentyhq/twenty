@@ -31,6 +31,7 @@ const isAllowedDocumentationHost = (hostname) => {
     host === 'myworkspace.twenty.com' ||
     host === 'myworkspace.customdomain.com' ||
     host === 'your-twenty-server.com' ||
+    host === 'app.twenty.com' ||
     host === 'twenty.com' ||
     host === 'docs.twenty.com' ||
     host === 'www.docker.com' ||
@@ -103,6 +104,10 @@ const assertJsonMetadata = () => {
 
   if (!packageJson?.files?.includes('.mcp.json')) {
     fail('package.json files must include .mcp.json for the public docs MCP server');
+  }
+
+  if (!packageJson?.files?.includes('references')) {
+    fail('package.json files must include references for shared plugin guidance');
   }
 
   if (pluginJson?.mcpServers !== './.mcp.json') {
@@ -205,11 +210,38 @@ const assertNoBundledMcpConfig = () => {
 
 const assertSkills = () => {
   const skillsRoot = path.join(pluginRoot, 'skills');
+  const expectedCanonicalSkills = [
+    'create-app',
+    'develop-app',
+    'manage-app',
+    'publish-app',
+    'use-twenty-mcp',
+  ];
+  const legacySkillDirectories = [
+    'app-readme-and-visuals',
+    'build-app-features',
+    'create-an-app',
+    'design-front-components',
+    'retrieve-and-present-data',
+    'setup-mcp',
+  ];
   const skillDirectories = fs
     .readdirSync(skillsRoot, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
     .sort();
+
+  for (const skillName of expectedCanonicalSkills) {
+    if (!skillDirectories.includes(skillName)) {
+      fail(`canonical skill is missing: ${skillName}`);
+    }
+  }
+
+  for (const skillName of legacySkillDirectories) {
+    if (skillDirectories.includes(skillName)) {
+      fail(`legacy skill directory must be transferred out of skills/: ${skillName}`);
+    }
+  }
 
   for (const skillName of skillDirectories) {
     const skillPath = path.join(skillsRoot, skillName, 'SKILL.md');
@@ -268,6 +300,27 @@ const assertSkills = () => {
   }
 };
 
+const assertReferences = () => {
+  const requiredReferences = [
+    'references/design/front-component-ui.md',
+    'references/develop-app/app-structure-and-cli.md',
+    'references/develop-app/data-model.md',
+    'references/develop-app/logic.md',
+    'references/develop-app/layout.md',
+    'references/publish-app/prepare-for-app-store.md',
+    'references/use-twenty-mcp/setup.md',
+    'references/use-twenty-mcp/result-formatting.md',
+  ];
+
+  for (const relativePath of requiredReferences) {
+    const absolutePath = path.join(pluginRoot, relativePath);
+
+    if (!fs.existsSync(absolutePath)) {
+      fail(`required reference is missing: ${relativePath}`);
+    }
+  }
+};
+
 const assertSetupHelper = () => {
   const setupScript = path.join(pluginRoot, 'scripts', 'setup-mcp.sh');
   const syntaxCheck = spawnSync('bash', ['-n', setupScript], { encoding: 'utf8' });
@@ -297,6 +350,7 @@ const assertSetupHelper = () => {
 assertJsonMetadata();
 assertNoBundledMcpConfig();
 assertSkills();
+assertReferences();
 assertSetupHelper();
 
 if (failures.length > 0) {

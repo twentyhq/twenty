@@ -1,17 +1,29 @@
 # Twenty Codex Plugin
 
-This plugin packages the official Twenty app creation workflow, Twenty app feature-building guidance, front component design guidance, Twenty documentation MCP server, Twenty workspace MCP setup, readable CRM record retrieval, and app listing asset guidance for Codex.
+This plugin packages the official Twenty app creation workflow, app operations tooling, app development guidance, publish-facing asset guidance, Twenty documentation MCP server, Twenty workspace MCP setup, and readable CRM record retrieval for Codex.
 
 This workspace package is the source of the repo-local Codex plugin. The repo-local marketplace entry points directly to this package.
 
 ## Included Skills
 
-- **Create Twenty App** (`create-an-app`): scaffold a new Twenty app with `create-twenty-app`.
-- **Build App Features** (`build-app-features`): add objects, fields, logic functions, roles, views, layouts, skills, agents, and other app entities.
-- **Design Front Components** (`design-front-components`): design and polish Twenty front component UIs.
-- **Set Up Twenty MCP** (`setup-mcp`): collect a workspace URL, normalize the MCP endpoint, configure Codex, and guide OAuth login.
-- **Prepare App Listing** (`app-readme-and-visuals`): prepare a Twenty app README, marketplace metadata, logo, screenshots, and public visual assets.
-- **Retrieve Workspace Data** (`retrieve-and-present-data`): retrieve Twenty MCP, CRM, app, or workspace records and present them as readable Markdown.
+- **Create App** (`create-app`): scaffold a new Twenty app with `create-twenty-app`.
+- **Manage App** (`manage-app`): manage and troubleshoot remotes, authentication, dev sync, builds, deploys, logs, function execution, uninstall, and CI/CD for an existing Twenty app.
+- **Develop App** (`develop-app`): add objects, fields, logic functions, roles, views, layouts, skills, agents, connection providers, and front component registrations.
+- **Publish App** (`publish-app`): prepare a Twenty app README, marketplace metadata, logo, screenshots, and public visual assets.
+- **Use Twenty MCP** (`use-twenty-mcp`): configure Twenty MCP, retrieve workspace records, and present results as readable Markdown.
+
+The canonical workflow names are the five skills above.
+
+## Included References
+
+- `references/design/front-component-ui.md`: front component UI guidance.
+- `references/develop-app/app-structure-and-cli.md`: app checks, CLI usage, and app structure.
+- `references/develop-app/data-model.md`: objects, fields, relations, roles, and permissions.
+- `references/develop-app/logic.md`: logic functions, skills, agents, and connection providers.
+- `references/develop-app/layout.md`: views, navigation, page layouts, tabs, and front component placement.
+- `references/publish-app/prepare-for-app-store.md`: README, marketplace metadata, logos, screenshots, and public assets.
+- `references/use-twenty-mcp/setup.md`: workspace MCP URL normalization and OAuth setup.
+- `references/use-twenty-mcp/result-formatting.md`: readable Twenty MCP result formatting.
 
 ## Included MCP Servers
 

@@ -1,5 +1,5 @@
 ---
-name: build-app-features
+name: develop-app
 description: Use when the user wants to add or modify Twenty app entities inside an existing Twenty app.
 ---
 
@@ -16,9 +16,9 @@ Use this when the user wants to add or modify app entities in an existing Twenty
 
 # Boundaries
 
-Do not scaffold a new app here. Use `create-an-app` first when the app does not exist.
+Do not scaffold a new app here. Use `create-app` first when the app does not exist.
 
-Do not provide detailed visual design guidance for front components. Use `design-front-components` for UI layout, styling, states, and polish.
+Do not provide detailed visual design guidance for front components. Use `references/design/front-component-ui.md` for UI layout, styling, states, and polish.
 
 # Workflow
 
@@ -29,7 +29,7 @@ test -f package.json
 test -f src/application-config.ts
 ```
 
-If the app is missing, use `create-an-app`.
+If the app is missing, use `create-app`.
 
 Prefer the app CLI for new entities:
 
@@ -47,6 +47,6 @@ Use the official Twenty docs or local SDK source when exact entity fields, impor
 
 # Handoffs
 
-Use `design-front-components` when the entity work turns into front component UI design.
+Use `references/design/front-component-ui.md` when the entity work turns into front component UI design.
 
-Use `app-readme-and-visuals` when the task turns into README, marketplace copy, screenshots, logos, or listing assets.
+Use `publish-app` when the task turns into README, marketplace copy, screenshots, logos, or listing assets.

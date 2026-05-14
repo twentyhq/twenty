@@ -1,7 +1,7 @@
 {
   "name": "twenty-codex-plugin",
   "version": "0.1.1",
-  "description": "Codex plugin for Twenty app development, docs search, workspace MCP setup, app listing assets, and readable CRM record retrieval.",
+  "description": "Codex plugin for creating, managing, developing, publishing, and querying Twenty apps through Codex.",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
@@ -12,6 +12,7 @@
     ".codex-plugin",
     ".mcp.json",
     "assets",
+    "references",
     "scripts",
     "skills",
     "README.md"

@@ -1,5 +1,5 @@
 ---
-name: create-an-app
+name: create-app
 description: Use when the user wants to create or scaffold a new Twenty app
 ---
 
@@ -66,6 +66,6 @@ Finally open the app in the browser. The default URL is `http://localhost:2020/`
 
 # Next Steps
 
-Use `build-app-features` when the user wants to add objects, fields, logic functions, roles, views, navigation, page layouts, skills, agents, or front component registrations.
+Use `develop-app` when the user wants to add objects, fields, logic functions, roles, views, navigation, page layouts, skills, agents, or front component registrations.
 
-Use `design-front-components` when the user wants to design or improve the UI of a Twenty front component.
+Use `references/design/front-component-ui.md` when the user wants to design or improve the UI of a Twenty front component.

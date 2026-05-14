@@ -1,4 +1,0 @@
-interface:
-  display_name: "Prepare App Listing"
-  short_description: "Prepare Twenty app listing assets."
-  default_prompt: "Use $app-readme-and-visuals to prepare app listing assets for a Twenty app."
