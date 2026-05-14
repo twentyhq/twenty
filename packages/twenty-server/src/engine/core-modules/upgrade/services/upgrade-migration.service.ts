@@ -21,12 +21,29 @@ export type WorkspaceLastAttemptedCommand = {
   isInitial: boolean;
 };
 
+// Postgres caps a single statement at 65,535 bind parameters (16-bit count in
+// the wire protocol). `UpgradeMigrationEntity` has 6 user-provided columns
+// per row, so a multi-row INSERT overflows at ~10,920 rows. Cap the per-batch
+// row count well below that so we stay safe even if columns are added later.
+const UPGRADE_MIGRATION_SAVE_BATCH_SIZE = 1000;
+
 @Injectable()
 export class UpgradeMigrationService {
   constructor(
     @InjectRepository(UpgradeMigrationEntity)
     private readonly upgradeMigrationRepository: Repository<UpgradeMigrationEntity>,
   ) {}
+
+  private async saveInChunks(
+    repository: Repository<UpgradeMigrationEntity>,
+    rows: Array<Partial<UpgradeMigrationEntity>>,
+  ): Promise<void> {
+    for (let cursor = 0; cursor < rows.length; cursor += UPGRADE_MIGRATION_SAVE_BATCH_SIZE) {
+      await repository.save(
+        rows.slice(cursor, cursor + UPGRADE_MIGRATION_SAVE_BATCH_SIZE),
+      );
+    }
+  }
 
   async getInferredVersion(commandName?: string): Promise<string | null> {
     if (isDefined(commandName)) {
@@ -95,7 +112,7 @@ export class UpgradeMigrationService {
         where: { name, workspaceId: IsNull() },
       });
 
-      await repository.save([
+      await this.saveInChunks(repository, [
         {
           name,
           status,
@@ -134,7 +151,7 @@ export class UpgradeMigrationService {
       });
     }
 
-    await repository.save(rows);
+    await this.saveInChunks(repository, rows);
   }
 
   async markAsWorkspaceInitial({
