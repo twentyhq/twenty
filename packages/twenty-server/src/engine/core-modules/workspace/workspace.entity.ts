@@ -29,7 +29,6 @@ import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/em
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { PostgresCredentialsEntity } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -179,12 +178,6 @@ export class WorkspaceEntity {
 
   @Column({ type: 'timestamptz', nullable: true })
   suspendedAt: Date | null;
-
-  @OneToMany(
-    () => PostgresCredentialsEntity,
-    (postgresCredentials) => postgresCredentials.workspace,
-  )
-  allPostgresCredentials: Relation<PostgresCredentialsEntity[]>;
 
   @OneToMany(
     () => WorkspaceSSOIdentityProviderEntity,

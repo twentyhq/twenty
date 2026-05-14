@@ -2455,11 +2455,9 @@ export type Mutation = {
   destroyViewFilterGroup: Scalars['Boolean'];
   destroyViewGroup: ViewGroup;
   destroyViewSort: Scalars['Boolean'];
-  disablePostgresProxy: PostgresCredentials;
   duplicateDashboard: DuplicatedDashboard;
   editSSOIdentityProvider: EditSso;
   emailPasswordResetLink: EmailPasswordResetLink;
-  enablePostgresProxy: PostgresCredentials;
   endSubscriptionTrialPeriod: BillingEndTrialPeriod;
   evaluateAgentTurn: AgentTurnEvaluation;
   executeOneLogicFunction: LogicFunctionExecutionResult;
@@ -4030,14 +4028,6 @@ export type PlaceDetailsResult = {
   street?: Maybe<Scalars['String']>;
 };
 
-export type PostgresCredentials = {
-  __typename?: 'PostgresCredentials';
-  id: Scalars['UUID'];
-  password: Scalars['String'];
-  user: Scalars['String'];
-  workspaceId: Scalars['UUID'];
-};
-
 export type PublicApplicationRegistration = {
   __typename?: 'PublicApplicationRegistration';
   id: Scalars['UUID'];
@@ -4161,7 +4151,6 @@ export type Query = {
   getPageLayoutWidget: PageLayoutWidget;
   getPageLayoutWidgets: Array<PageLayoutWidget>;
   getPageLayouts: Array<PageLayout>;
-  getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceData;
   getPublicWorkspaceDataById: PublicWorkspaceDataSummary;
   getResourceCreditUsage: Array<BillingResourceCreditUsage>;
