@@ -5999,6 +5999,23 @@ msgstr "Relasieskep-betaling word vereis"
 msgid "Relation field target metadata not found"
 msgstr "Doelmetadata vir relasieveld nie gevind nie"
 
+#. js-lingui-id: HmNKeM
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Relation filter is misconfigured"
+msgstr ""
+
+#. js-lingui-id: 1RF4/e
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Relation filter is not supported here"
+msgstr ""
+
+#. js-lingui-id: L8AY9P
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Relation filters can only traverse one relation deep"
+msgstr ""
+
 #. js-lingui-id: 83atrc
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
