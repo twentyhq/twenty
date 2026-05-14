@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, Repository } from 'typeorm';
 
-import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  MessageChannelSyncStage,
+  MessageFolderPendingSyncAction,
+} from 'twenty-shared/types';
 
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
@@ -175,10 +179,21 @@ export class MessageFolderMetadataService {
     workspaceId: string;
     data: Partial<MessageFolderEntity>;
   }): Promise<MessageFolderDTO> {
+    const googleMessageChannelIdsToReset =
+      await this.findGoogleMessageChannelIdsForEnabledFolders({
+        ids: [id],
+        workspaceId,
+        data,
+      });
+
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
     );
+
+    await this.resetGoogleMessageChannelCursor(googleMessageChannelIdsToReset, {
+      workspaceId,
+    });
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
@@ -192,12 +207,91 @@ export class MessageFolderMetadataService {
     workspaceId: string;
     data: Partial<MessageFolderEntity>;
   }): Promise<MessageFolderDTO[]> {
+    const googleMessageChannelIdsToReset =
+      await this.findGoogleMessageChannelIdsForEnabledFolders({
+        ids,
+        workspaceId,
+        data,
+      });
+
     await this.repository.update(
       { id: In(ids), workspaceId },
       data as Record<string, unknown>,
     );
 
+    await this.resetGoogleMessageChannelCursor(googleMessageChannelIdsToReset, {
+      workspaceId,
+    });
+
     return this.repository.find({ where: { id: In(ids), workspaceId } });
+  }
+
+  private async findGoogleMessageChannelIdsForEnabledFolders({
+    ids,
+    workspaceId,
+    data,
+  }: {
+    ids: string[];
+    workspaceId: string;
+    data: Partial<MessageFolderEntity>;
+  }): Promise<string[]> {
+    if (data.isSynced !== true || ids.length === 0) {
+      return [];
+    }
+
+    const newlyEnabledFolders = await this.repository.find({
+      where: { id: In(ids), workspaceId, isSynced: false },
+      select: ['id', 'messageChannelId'],
+    });
+
+    const messageChannelIds = [
+      ...new Set(newlyEnabledFolders.map((folder) => folder.messageChannelId)),
+    ];
+
+    const googleMessageChannelIds = await Promise.all(
+      messageChannelIds.map(async (messageChannelId) => {
+        const messageChannel =
+          await this.messageChannelMetadataService.findById({
+            id: messageChannelId,
+            workspaceId,
+          });
+
+        if (!messageChannel) {
+          return null;
+        }
+
+        const connectedAccount =
+          await this.connectedAccountMetadataService.findById({
+            id: messageChannel.connectedAccountId,
+            workspaceId,
+          });
+
+        return connectedAccount?.provider === ConnectedAccountProvider.GOOGLE
+          ? messageChannel.id
+          : null;
+      }),
+    );
+
+    return googleMessageChannelIds.filter((id) => id !== null);
+  }
+
+  private async resetGoogleMessageChannelCursor(
+    messageChannelIds: string[],
+    { workspaceId }: { workspaceId: string },
+  ): Promise<void> {
+    await Promise.all(
+      messageChannelIds.map((messageChannelId) =>
+        this.messageChannelMetadataService.update({
+          id: messageChannelId,
+          workspaceId,
+          data: {
+            syncCursor: '',
+            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+            syncStageStartedAt: null,
+          },
+        }),
+      ),
+    );
   }
 
   async delete({
