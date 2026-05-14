@@ -9,31 +9,25 @@ export class AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."viewFilter" ADD COLUMN IF NOT EXISTS "relationTargetFieldMetadataId" uuid`,
+      `ALTER TABLE "core"."viewFilter" ADD "relationTargetFieldMetadataId" uuid`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."viewFilter"
-       ADD CONSTRAINT "FK_VIEW_FILTER_RELATION_TARGET_FIELD_METADATA_ID"
-       FOREIGN KEY ("relationTargetFieldMetadataId")
-       REFERENCES "core"."fieldMetadata"("id")
-       ON DELETE SET NULL`,
+      `CREATE INDEX "IDX_VIEW_FILTER_RELATION_TARGET_FIELD_METADATA_ID" ON "core"."viewFilter" ("relationTargetFieldMetadataId") WHERE "relationTargetFieldMetadataId" IS NOT NULL`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_VIEW_FILTER_RELATION_TARGET_FIELD_METADATA_ID"
-       ON "core"."viewFilter" ("relationTargetFieldMetadataId")
-       WHERE "relationTargetFieldMetadataId" IS NOT NULL`,
+      `ALTER TABLE "core"."viewFilter" ADD CONSTRAINT "FK_dbe259395cbd9a54c1c17d12b0b" FOREIGN KEY ("relationTargetFieldMetadataId") REFERENCES "core"."fieldMetadata"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `DROP INDEX IF EXISTS "core"."IDX_VIEW_FILTER_RELATION_TARGET_FIELD_METADATA_ID"`,
+      `ALTER TABLE "core"."viewFilter" DROP CONSTRAINT "FK_dbe259395cbd9a54c1c17d12b0b"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."viewFilter" DROP CONSTRAINT IF EXISTS "FK_VIEW_FILTER_RELATION_TARGET_FIELD_METADATA_ID"`,
+      `DROP INDEX "core"."IDX_VIEW_FILTER_RELATION_TARGET_FIELD_METADATA_ID"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."viewFilter" DROP COLUMN IF EXISTS "relationTargetFieldMetadataId"`,
+      `ALTER TABLE "core"."viewFilter" DROP COLUMN "relationTargetFieldMetadataId"`,
     );
   }
 }
