@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import type { AppPreviewConfig } from '@/sections/AppPreview';
 import { useAppPreviewState } from '@/sections/AppPreview/Shell/use-app-preview-state';
-import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 
 import {
   NEW_COMPANY_ROW,
@@ -9,9 +9,7 @@ import {
   PROMPT_OPTIONS,
 } from './product-visual.data';
 
-const visual = APP_PREVIEW_DATA.visual;
-
-export function useProductVisualAutoplay() {
+export function useProductVisualAutoplay(visual: AppPreviewConfig) {
   const [selectedOption, setSelectedOption] = useState<number>(0);
   const [streamedText, setStreamedText] = useState('');
   const [streamComplete, setStreamComplete] = useState(false);
@@ -31,7 +29,11 @@ export function useProductVisualAutoplay() {
   } = useAppPreviewState(visual);
 
   let displayPage = activePage;
-  if (activePage !== null && activePage !== undefined && activePage.type === 'table') {
+  if (
+    activePage !== null &&
+    activePage !== undefined &&
+    activePage.type === 'table'
+  ) {
     const title = activePage.header?.title;
     if (companyAdded && title === 'All Companies') {
       displayPage = {

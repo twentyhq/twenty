@@ -120,9 +120,7 @@ export const PROMPT_OPTIONS = [
       </svg>
     ),
     label: 'Set up a workflow',
-    navSteps: [
-      { at: 0.45, target: 'Create company when adding a new person' },
-    ],
+    navSteps: [{ at: 0.45, target: 'Create company when adding a new person' }],
     response:
       'Creating an automation: when a new person is added, automatically create their company record and link them. Setting the trigger and actions now... Workflow is active and ready to run.',
   },

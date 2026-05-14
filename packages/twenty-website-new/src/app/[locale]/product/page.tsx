@@ -132,7 +132,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             variant="contained"
           />
         </Hero.Cta>
-        <Hero.ProductVisual />
+        <Hero.ProductVisual visual={APP_PREVIEW_DATA.visual} />
       </Hero.Root>
 
       <TrustedBy.Root
