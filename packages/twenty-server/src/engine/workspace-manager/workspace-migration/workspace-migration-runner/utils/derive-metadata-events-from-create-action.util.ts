@@ -69,6 +69,9 @@ const deriveAllMetadataEventsFromCreateAction = (
 
       return [objectEvent, ...fieldEvents];
     }
+    case 'applicationVariable': {
+      return [];
+    }
     case 'view':
     case 'viewField':
     case 'viewGroup':

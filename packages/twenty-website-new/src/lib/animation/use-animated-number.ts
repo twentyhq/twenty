@@ -13,7 +13,7 @@ import {
 } from './animated-number';
 import { createAnimationFrameLoop } from './animation-frame-loop';
 
-export type UseAnimatedNumberOptions = {
+type UseAnimatedNumberOptions = {
   disabled?: boolean;
   durationMs?: number;
   easing?: AnimatedNumberEasing;

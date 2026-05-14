@@ -13,6 +13,8 @@ import {
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 
 type SanitizeRawUpdateFieldInputArgs = {
@@ -44,6 +46,17 @@ export const sanitizeRawUpdateFieldInput = ({
         id: v4(),
         ...option,
       }));
+
+  if (
+    updatedEditableFieldProperties.defaultValue !== undefined &&
+    isCompositeFieldMetadataType(existingFlatFieldMetadata.type)
+  ) {
+    updatedEditableFieldProperties.defaultValue =
+      nullifyEmptyCompositeDefaultValue({
+        defaultValue: updatedEditableFieldProperties.defaultValue,
+        fieldType: existingFlatFieldMetadata.type,
+      });
+  }
 
   if (!isStandardField || isSystemBuild) {
     return {

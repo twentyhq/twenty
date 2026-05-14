@@ -39,7 +39,7 @@ export class FilesFieldQueryResultGetterHandler
       const signedFilesFieldValue: SignedFileOutput[] = [];
 
       for (const file of filesFieldValue) {
-        const url = this.fileUrlService.signFileByIdUrl({
+        const url = await this.fileUrlService.signFileByIdUrl({
           fileId: file.fileId,
           workspaceId,
           fileFolder: FileFolder.FilesField,

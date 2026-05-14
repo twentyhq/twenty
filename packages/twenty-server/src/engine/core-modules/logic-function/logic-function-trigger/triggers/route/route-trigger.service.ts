@@ -50,10 +50,8 @@ export class RouteTriggerService {
   }> {
     const host = `${request.protocol}://${request.get('host')}`;
 
-    const workspace =
-      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
-        host,
-      );
+    const { workspace, publicDomain } =
+      await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(host);
 
     assertIsDefinedOrThrow(
       workspace,
@@ -63,11 +61,15 @@ export class RouteTriggerService {
       ),
     );
 
+    // App-scoped public domain → restrict matches to that app's logic functions.
+    const applicationId = publicDomain?.applicationId ?? null;
+
     const logicFunctionsWithHttpRouteTrigger =
       await this.logicFunctionRepository.find({
         where: {
           workspaceId: workspace.id,
           httpRouteTriggerSettings: Not(IsNull()),
+          ...(isDefined(applicationId) ? { applicationId } : {}),
         },
       });
 
@@ -167,6 +169,7 @@ export class RouteTriggerService {
     const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
 
     let userWorkspaceId: string | null = null;
+    let userId: string | null = null;
 
     if (httpRouteSettings?.isAuthRequired) {
       const authContext = await this.validateWorkspaceFromRequest({
@@ -175,6 +178,7 @@ export class RouteTriggerService {
       });
 
       userWorkspaceId = authContext.userWorkspaceId ?? null;
+      userId = authContext.user?.id ?? null;
     }
 
     const event = buildLogicFunctionEvent({
@@ -191,6 +195,8 @@ export class RouteTriggerService {
         logicFunctionId: logicFunction.id,
         workspaceId: logicFunction.workspaceId,
         payload: event,
+        ...(userId ? { userId } : {}),
+        ...(userWorkspaceId ? { userWorkspaceId } : {}),
       });
     } catch (error) {
       if (error instanceof RouteTriggerException) {

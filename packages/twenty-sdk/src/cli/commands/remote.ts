@@ -41,13 +41,7 @@ const authenticate = async (
 const runOAuthWithApiKeyFallback = async (
   apiUrl: string,
 ): Promise<AuthMethod> => {
-  await inquirer.prompt([
-    {
-      type: 'input',
-      name: 'confirm',
-      message: 'Press Enter to open the browser for authentication...',
-    },
-  ]);
+  console.log(chalk.gray('Opening browser for authentication...'));
 
   const oauthResult = await authLoginOAuth({ apiUrl });
 

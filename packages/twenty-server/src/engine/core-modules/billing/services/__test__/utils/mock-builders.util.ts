@@ -45,16 +45,17 @@ export const buildBillingPriceEntity = ({
       metadata: {
         planKey,
         productKey: isMetered
-          ? BillingProductKey.WORKFLOW_NODE_EXECUTION
+          ? BillingProductKey.RESOURCE_CREDIT
           : BillingProductKey.BASE_PRODUCT,
         priceUsageBased: isMetered
           ? BillingUsageType.METERED
           : BillingUsageType.LICENSED,
       },
     },
-    ...(isMetered && tiers
+    ...(isMetered
       ? {
-          tiers,
+          metadata: { credit_amount: '1000' },
+          ...(tiers ? { tiers } : {}),
         }
       : {}),
   }) as BillingPriceEntity | BillingMeterPrice;
@@ -86,7 +87,7 @@ export const arrangeBillingSubscriptionRepositoryFindOneOrFail = (
     planKey?: BillingPlanKey;
     interval?: SubscriptionInterval;
     licensedPriceId?: string;
-    meteredPriceId?: string;
+    resourceCreditPriceId?: string;
     seats?: number;
     workspaceId?: string;
     stripeSubscriptionId?: string;
@@ -100,7 +101,7 @@ export const arrangeBillingSubscriptionRepositoryFindOneOrFail = (
 export const arrangeBillingPriceRepositoryFindOneOrFail = (
   billingPriceRepository: jest.Mocked<Repository<BillingPriceEntity>>,
   priceIdToPriceMap: Record<string, BillingPriceEntity | BillingMeterPrice>,
-) =>
+) => {
   jest
     .spyOn(billingPriceRepository, 'findOneOrFail')
     .mockImplementation(async (criteria: unknown) => {
@@ -113,6 +114,42 @@ export const arrangeBillingPriceRepositoryFindOneOrFail = (
 
       return {} as BillingPriceEntity;
     });
+
+  jest
+    .spyOn(billingPriceRepository, 'find')
+    .mockImplementation(async (criteria?: unknown) => {
+      const where = (criteria as { where?: { stripePriceId?: unknown } })
+        ?.where;
+      const stripePriceIdCondition = where?.stripePriceId;
+
+      const resolveStripePriceIds = (cond: unknown): string[] => {
+        if (typeof cond === 'string') {
+          return [cond];
+        }
+        if (
+          cond &&
+          typeof cond === 'object' &&
+          'value' in cond &&
+          (cond as { value: unknown }).value !== undefined
+        ) {
+          const value = (cond as { value: string | string[] }).value;
+
+          return Array.isArray(value) ? value : [value];
+        }
+
+        return [];
+      };
+
+      const stripePriceIds = resolveStripePriceIds(stripePriceIdCondition);
+
+      return stripePriceIds
+        .map((stripePriceId) => priceIdToPriceMap[stripePriceId])
+        .filter(
+          (entity): entity is BillingPriceEntity =>
+            entity !== null && entity !== undefined,
+        );
+    });
+};
 
 export const arrangeStripeSubscriptionScheduleServiceLoadSubscriptionSchedule =
   (
@@ -159,13 +196,13 @@ export const arrangeBillingSubscriptionPhaseServiceToPhaseUpdateParams = (
 
 export const buildSchedulePhase = ({
   licensedPriceId,
-  meteredPriceId,
+  resourceCreditPriceId,
   seats = 1,
   startDate = Math.floor(Date.now() / 1000),
   endDate = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
 }: {
   licensedPriceId: string;
-  meteredPriceId: string;
+  resourceCreditPriceId: string;
   seats?: number;
   startDate?: number;
   endDate?: number;
@@ -175,6 +212,6 @@ export const buildSchedulePhase = ({
     end_date: endDate,
     items: [
       { price: licensedPriceId, quantity: seats },
-      { price: meteredPriceId },
+      { price: resourceCreditPriceId, quantity: 1 },
     ],
   }) as Stripe.SubscriptionSchedule.Phase;

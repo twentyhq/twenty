@@ -896,7 +896,6 @@
         "inputCostPerMillionTokens": 0.25,
         "outputCostPerMillionTokens": 1.5,
         "cachedInputCostPerMillionTokens": 0.025,
-        "cacheCreationCostPerMillionTokens": 1,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
@@ -938,12 +937,6 @@
         "inputCostPerMillionTokens": 0.5,
         "outputCostPerMillionTokens": 3,
         "cachedInputCostPerMillionTokens": 0.05,
-        "longContextCost": {
-          "inputCostPerMillionTokens": 0.5,
-          "outputCostPerMillionTokens": 3,
-          "thresholdTokens": 200000,
-          "cachedInputCostPerMillionTokens": 0.05
-        },
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
@@ -1046,6 +1039,18 @@
         "supportsReasoning": true
       },
       {
+        "name": "gemini-3.1-flash-lite",
+        "label": "Gemini 3.1 Flash Lite",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.25,
+        "outputCostPerMillionTokens": 1.5,
+        "cachedInputCostPerMillionTokens": 0.025,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true
+      },
+      {
         "name": "gemini-2.5-flash-preview-04-17",
         "label": "Gemini 2.5 Flash Preview 04-17",
         "modelFamily": "GEMINI",
@@ -1085,7 +1090,7 @@
         "modelFamily": "GEMINI",
         "inputCostPerMillionTokens": 0.1,
         "outputCostPerMillionTokens": 0.4,
-        "cachedInputCostPerMillionTokens": 0.025,
+        "cachedInputCostPerMillionTokens": 0.01,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],

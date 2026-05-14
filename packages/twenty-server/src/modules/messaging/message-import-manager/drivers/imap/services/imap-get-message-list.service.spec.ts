@@ -38,6 +38,7 @@ describe('ImapGetMessageListService', () => {
     | 'id'
     | 'handle'
     | 'connectionParameters'
+    | 'workspaceId'
   > = {
     id: 'connected-account-id',
     provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
@@ -45,6 +46,7 @@ describe('ImapGetMessageListService', () => {
     refreshToken: 'refresh-token',
     handle: 'test@example.com',
     connectionParameters: {},
+    workspaceId: 'workspace-id',
   };
 
   const mockImapClient = {

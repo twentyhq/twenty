@@ -20,6 +20,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "evaluationInputs",
     ],
   },
+  "applicationVariable": {
+    "propertiesToCompare": [
+      "key",
+      "description",
+      "isSecret",
+    ],
+    "propertiesToStringify": [],
+  },
   "commandMenuItem": {
     "propertiesToCompare": [
       "label",
@@ -375,6 +383,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   "viewSort": {
     "propertiesToCompare": [
       "direction",
+      "subFieldName",
       "fieldMetadataUniversalIdentifier",
       "viewUniversalIdentifier",
       "deletedAt",

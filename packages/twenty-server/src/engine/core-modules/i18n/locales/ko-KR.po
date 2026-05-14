@@ -471,6 +471,11 @@ msgstr "색인 메타데이터 오류가 발생했습니다."
 msgid "An index must contain at least one field"
 msgstr "인덱스에는 적어도 하나의 필드가 있어야 합니다"
 
+#. js-lingui-id: KvWKJI
+#: src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception.ts
+msgid "An internal error occurred while handling encrypted data."
+msgstr ""
+
 #. js-lingui-id: SOp/Vw
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
@@ -553,6 +558,11 @@ msgstr ""
 msgid "Application is not installed in this workspace. Install it first."
 msgstr ""
 
+#. js-lingui-id: t77Ey9
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "Application not found in this workspace."
+msgstr ""
+
 #. js-lingui-id: ltvmAF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -587,6 +597,26 @@ msgstr "애플리케이션 등록 변수를 찾을 수 없음."
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application upgrade failed."
 msgstr "응용 프로그램 업그레이드에 실패했습니다."
+
+#. js-lingui-id: 5MJQ4s
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key is required"
+msgstr ""
+
+#. js-lingui-id: K+YEBR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key must be unique"
+msgstr ""
+
+#. js-lingui-id: e6tjp1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable not found"
+msgstr ""
 
 #. js-lingui-id: 9qtW5o
 #: src/engine/core-modules/application/application-variable/application-variable.exception.ts
@@ -2094,6 +2124,16 @@ msgstr "이메일 도메인 설정 오류."
 msgid "Email domain not found."
 msgstr "이메일 도메인을 찾을 수 없음."
 
+#. js-lingui-id: DCoI0W
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
+msgid "Email group"
+msgstr ""
+
+#. js-lingui-id: MhPwKU
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Email group is not configured on this server."
+msgstr ""
+
 #. js-lingui-id: m9fD11
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Email is already verified."
@@ -2767,6 +2807,11 @@ msgstr "파일"
 msgid "Files field is not supported for unique fields"
 msgstr "고유 필드에서는 Files 필드를 지원하지 않습니다."
 
+#. js-lingui-id: 4GaFCQ
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "First friendly message"
+msgstr ""
+
 #. js-lingui-id: ylQd2j
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
@@ -3181,6 +3226,11 @@ msgstr "잘못된 에이전트 입력입니다."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid aggregate fields parameter."
 msgstr "잘못된 집계 필드 매개변수입니다."
+
+#. js-lingui-id: 56bSD0
+#: src/engine/core-modules/application/application-variable/application-variable.exception.ts
+msgid "Invalid application variable input."
+msgstr ""
 
 #. js-lingui-id: KNrRpL
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -4315,6 +4365,12 @@ msgstr "로직 함수를 찾을 수 없음."
 msgid "Logic function with same universal identifier already exists"
 msgstr "같은 범용 식별자를 가진 로직 함수가 이미 존재합니다"
 
+#. js-lingui-id: Mwvtvf
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/build-metadata-validation-error-payload.util.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Many validation errors"
+msgstr ""
+
 #. js-lingui-id: hg6l4j
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
@@ -4614,7 +4670,9 @@ msgid "Metadata"
 msgstr ""
 
 #. js-lingui-id: PslTPV
-#: src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/build-metadata-validation-error-payload.util.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Metadata validation failed"
 msgstr "메타데이터 유효성 검사 실패"
 
@@ -5223,6 +5281,11 @@ msgstr "요청된 스코프 중 하나 이상이 유효하지 않음."
 msgid "Ongoing"
 msgstr ""
 
+#. js-lingui-id: XLn1DI
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Only error"
+msgstr ""
+
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
@@ -5367,6 +5430,11 @@ msgstr "열거형 필드에 옵션이 필요합니다."
 #. js-lingui-id: /IX/7x
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Other"
+msgstr ""
+
+#. js-lingui-id: 4romcD
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Other error"
 msgstr ""
 
 #. js-lingui-id: O0Z2Xr
@@ -5931,6 +5999,23 @@ msgstr "관계 생성 페이로드가 필요합니다."
 msgid "Relation field target metadata not found"
 msgstr "관계 필드 대상 메타데이터를 찾을 수 없습니다."
 
+#. js-lingui-id: HmNKeM
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Relation filter is misconfigured"
+msgstr ""
+
+#. js-lingui-id: 1RF4/e
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Relation filter is not supported here"
+msgstr ""
+
+#. js-lingui-id: L8AY9P
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Relation filters can only traverse one relation deep"
+msgstr ""
+
 #. js-lingui-id: 83atrc
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
@@ -6033,6 +6118,11 @@ msgstr "역할은 편집할 수 없습니다."
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "역할에는 최소 하나의 대상이 있어야 합니다."
+
+#. js-lingui-id: BEtj6u
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Role name is invalid"
+msgstr ""
 
 #. js-lingui-id: MvTCyk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -7292,6 +7382,11 @@ msgstr "이 역할은 편집할 수 없습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "이 역할은 시스템 역할이기 때문에 수정할 수 없습니다. 사용자 정의 역할만 편집할 수 있습니다."
+
+#. js-lingui-id: nzveUr
+#: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
+msgid "This role cannot be modified."
+msgstr ""
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -8624,6 +8719,11 @@ msgstr "뷰를 생성하려면 WorkspaceId가 필요합니다."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgid "WorkspaceMember"
+msgstr ""
+
+#. js-lingui-id: 9RXJsb
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Would not reach this"
 msgstr ""
 
 #. js-lingui-id: VddeYt

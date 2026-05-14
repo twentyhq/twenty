@@ -44,6 +44,7 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = ({
     case 'objectPermission':
     case 'fieldPermission':
     case 'webhook':
+    case 'applicationVariable':
     case 'connectionProvider': {
       const flatEntityToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow<
         MetadataFlatEntity<typeof flatAction.metadataName>

@@ -1,0 +1,69 @@
+---
+title: Skills & Agenten
+description: Definieren Sie KI-Skills und Agenten für Ihre App.
+icon: robot
+---
+
+<Warning>
+  Skills und Agenten befinden sich derzeit in der Alpha-Phase. Die Funktion ist funktionsfähig, entwickelt sich jedoch noch weiter.
+</Warning>
+
+Apps können KI-Funktionen definieren, die im Arbeitsbereich verfügbar sind — wiederverwendbare Skill-Anweisungen und Agenten mit benutzerdefinierten System-Prompts.
+
+<AccordionGroup>
+<Accordion title="defineSkill" description="Skills für KI-Agenten definieren">
+
+Skills definieren wiederverwendbare Anweisungen und Fähigkeiten, die KI-Agenten in Ihrem Arbeitsbereich verwenden können. Verwenden Sie `defineSkill()`, um Skills mit eingebauter Validierung zu definieren:
+
+```ts src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Hauptpunkte:
+* `name` ist eine eindeutige Kennung (als Zeichenfolge) für den Skill (kebab-case empfohlen).
+* `label` ist der menschenlesbare Anzeigename, der in der UI angezeigt wird.
+* `content` enthält die Skill-Anweisungen — dies ist der Text, den der KI-Agent verwendet.
+* `icon` (optional) legt das in der UI angezeigte Symbol fest.
+* `description` (optional) liefert zusätzlichen Kontext zum Zweck des Skills.
+
+</Accordion>
+<Accordion title="defineAgent" description="KI-Agenten mit benutzerdefinierten Prompts definieren">
+
+Agenten sind KI-Assistenten, die innerhalb Ihres Arbeitsbereichs leben. Verwenden Sie `defineAgent()`, um Agenten mit einem benutzerdefinierten System-Prompt zu erstellen:
+
+```ts src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'Helps the sales team draft outreach emails and research prospects',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+});
+```
+
+Hauptpunkte:
+* `name` ist eine eindeutige Kennung (als Zeichenfolge) für den Agenten (kebab-case empfohlen).
+* `label` ist der in der UI angezeigte Anzeigename.
+* `prompt` ist der System-Prompt, der das Verhalten des Agenten definiert.
+* `description` (optional) liefert Kontext dazu, was der Agent tut.
+* `icon` (optional) legt das in der UI angezeigte Symbol fest.
+* `modelId` (optional) überschreibt das vom Agenten verwendete Standard-KI-Modell.
+
+</Accordion>
+</AccordionGroup>

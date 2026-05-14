@@ -82,8 +82,8 @@ describe('ConfigStorageService', () => {
         {
           provide: SecretEncryptionService,
           useValue: {
-            decrypt: jest.fn((value) => value),
-            encrypt: jest.fn((value) => value),
+            decryptVersioned: jest.fn((value) => value),
+            encryptVersioned: jest.fn((value) => value),
           },
         },
       ],
@@ -198,7 +198,7 @@ describe('ConfigStorageService', () => {
       const result = await service.get(key);
 
       expect(result).toBe(originalValue);
-      expect(secretEncryptionService.decrypt).toHaveBeenCalledWith(
+      expect(secretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
         encryptedValue,
       );
     });
@@ -399,7 +399,7 @@ describe('ConfigStorageService', () => {
         workspaceId: null,
         type: KeyValuePairType.CONFIG_VARIABLE,
       });
-      expect(secretEncryptionService.encrypt).toHaveBeenCalledWith(
+      expect(secretEncryptionService.encryptVersioned).toHaveBeenCalledWith(
         convertedValue,
       );
     });
@@ -570,7 +570,7 @@ describe('ConfigStorageService', () => {
       expect(result.get('NORMAL_CONFIG' as keyof ConfigVariables)).toBe(
         'normal-value',
       );
-      expect(secretEncryptionService.decrypt).toHaveBeenCalledWith(
+      expect(secretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
         'sensitive-value',
       );
     });

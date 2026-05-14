@@ -110,6 +110,9 @@ const deriveAllMetadataEventsFromUpdateAction = ({
 
       return [deleteIndexMetadataEvent, createIndexMetadataEvent];
     }
+    case 'applicationVariable': {
+      return [];
+    }
     case 'fieldMetadata':
     case 'objectMetadata':
     case 'view':

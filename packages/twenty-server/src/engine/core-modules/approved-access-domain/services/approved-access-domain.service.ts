@@ -63,7 +63,7 @@ export class ApprovedAccessDomainService {
 
     const link = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
-      pathname: getSettingsPath(SettingsPath.Domains),
+      pathname: getSettingsPath(SettingsPath.WorkspaceMembersPage),
       searchParams: {
         wtdId: approvedAccessDomain.id,
         validationToken: this.generateUniqueHash(approvedAccessDomain),
@@ -74,17 +74,19 @@ export class ApprovedAccessDomainService {
       throw new Error(`Sender ${sender.id} has an empty userEmail`);
     }
 
+    const logo = isDefined(workspace.logoFileId)
+      ? await this.fileUrlService.signFileByIdUrl({
+          fileId: workspace.logoFileId,
+          workspaceId: workspace.id,
+          fileFolder: FileFolder.CorePicture,
+        })
+      : undefined;
+
     const emailTemplate = SendApprovedAccessDomainValidation({
       link: link.toString(),
       workspace: {
         name: workspace.displayName,
-        logo: isDefined(workspace.logoFileId)
-          ? this.fileUrlService.signFileByIdUrl({
-              fileId: workspace.logoFileId,
-              workspaceId: workspace.id,
-              fileFolder: FileFolder.CorePicture,
-            })
-          : undefined,
+        logo,
       },
       domain: approvedAccessDomain.domain,
       sender: {

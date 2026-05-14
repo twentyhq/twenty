@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { GenerateInstanceCommandCommand } from 'src/database/commands/generate-instance-command.command';
@@ -8,6 +9,7 @@ import { InstallPreInstalledAppsCommand } from 'src/database/commands/install-pr
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
 import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list-and-delete-orphaned-workspace-entities.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
+import { RebuildApplicationDefaultDepsCommand } from 'src/database/commands/rebuild-application-default-deps.command';
 import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-commands.command';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
@@ -16,13 +18,9 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/stale-registration-cleanup.module';
-import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
-import { RebuildApplicationDefaultDepsCommand } from 'src/database/commands/rebuild-application-default-deps.command';
-import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { EnforceUsageCapCronCommand } from 'src/engine/core-modules/billing/crons/commands/enforce-usage-cap.cron.command';
+import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/enterprise-key-validation.cron.command';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanup/event-log-cleanup.module';
@@ -38,6 +36,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceCleanerModule } from 'src/engine/workspace-manager/workspace-cleaner/workspace-cleaner.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -96,7 +95,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     ListOrphanedWorkspaceEntitiesCommand,
     EnterpriseKeyValidationCronCommand,
     GenerateApiKeyCommand,
-    EnforceUsageCapCronCommand,
     UpgradeStatusCommand,
     RebuildApplicationDefaultDepsCommand,
     InstallPreInstalledAppsCommand,

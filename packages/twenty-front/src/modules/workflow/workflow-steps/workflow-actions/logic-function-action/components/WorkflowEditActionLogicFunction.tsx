@@ -213,6 +213,9 @@ export const WorkflowEditActionLogicFunction = ({
           <>
             <WorkflowEditActionCodeFields
               functionInput={testInput}
+              inputSchema={
+                logicFunction?.workflowActionTriggerSettings?.inputSchema
+              }
               onInputChange={handleTestInputChange}
               readonly={actionOptions.readonly}
             />
@@ -237,6 +240,9 @@ export const WorkflowEditActionLogicFunction = ({
             {hasInputFields ? (
               <WorkflowEditActionCodeFields
                 functionInput={functionInput}
+                inputSchema={
+                  logicFunction?.workflowActionTriggerSettings?.inputSchema
+                }
                 readonly={actionOptions.readonly}
                 onInputChange={handleInputChange}
                 VariablePicker={WorkflowVariablePicker}

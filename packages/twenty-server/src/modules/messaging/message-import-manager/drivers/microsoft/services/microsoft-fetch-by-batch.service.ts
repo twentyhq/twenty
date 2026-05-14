@@ -14,7 +14,7 @@ export class MicrosoftFetchByBatchService {
     messageIds: string[],
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'accessToken' | 'refreshToken' | 'id' | 'provider'
+      'accessToken' | 'refreshToken' | 'id' | 'provider' | 'workspaceId'
     >,
   ): Promise<{
     messageIdsByBatch: string[][];

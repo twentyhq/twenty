@@ -1,0 +1,102 @@
+---
+title: Seitenlayouts
+description: Passen Sie Detailseiten von Datensätzen an – Tabs, Widgets und die Stellen, an denen Frontend-Komponenten gerendert werden – mithilfe von `definePageLayout` und `definePageLayoutTab`.
+icon: table-columns
+---
+
+Ein **Seitenlayout** steuert, wie die Detailseite eines Datensatzes angeordnet ist: welche Tabs angezeigt werden und welche Widgets sie enthalten. Verwenden Sie `definePageLayout()`, um ein Layout für ein Objekt zu deklarieren, das Sie besitzen, oder `definePageLayoutTab()`, um einen einzelnen Tab zu einem Layout hinzuzufügen, das bereits existiert (Ihr eigenes oder ein standardmäßiges Twenty-Layout).
+
+| Anwendungsfall                                                                                  | Entität               |
+| ----------------------------------------------------------------------------------------------- | --------------------- |
+| Definieren Sie das gesamte Layout für die Datensatzseite eines Objekts, das Sie besitzen        | `definePageLayout`    |
+| Fügen Sie einem vorhandenen Layout einen Tab hinzu (Ihr eigenes Objekt oder ein Standardlayout) | `definePageLayoutTab` |
+
+## definePageLayout
+
+Verwenden Sie dies, wenn Sie die gesamte Detailseite besitzen – typischerweise für ein benutzerdefiniertes Objekt, das Sie selbst definiert haben.
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+### Hauptpunkte
+
+* `type` ist typischerweise `'RECORD_PAGE'`, um die Detailansicht eines bestimmten Objekts anzupassen.
+* `objectUniversalIdentifier` gibt an, auf welches Objekt dieses Layout angewendet wird.
+* Jeder `tab` definiert einen Abschnitt der Seite mit `title`, `position` und `layoutMode` (`CANVAS` für ein freies Layout).
+* Jedes `widget` innerhalb eines Tabs kann eine [Frontend-Komponente](/l/de/developers/extend/apps/layout/front-components), eine Relationenliste oder andere eingebaute Widget-Typen rendern.
+* `position` auf Tabs steuert deren Reihenfolge. Verwenden Sie höhere Werte (z. B. 50), um benutzerdefinierte Tabs hinter den integrierten zu platzieren.
+
+## definePageLayoutTab
+
+Verwenden Sie dies, wenn Sie nur einen Tab zu einem vorhandenen Layout **hinzufügen** möchten – zum Beispiel einen Analytics-Tab auf der standardmäßigen Company-Seite oder einen KI-Zusammenfassungs-Tab, der an das Layout Ihres eigenen Objekts angehängt ist.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+### Hauptpunkte
+
+* `pageLayoutUniversalIdentifier` ist **erforderlich** und muss auf ein Seitenlayout verweisen, das zum Installationszeitpunkt bereits existiert – entweder ein standardmäßiges Twenty-Layout oder eines, das von Ihrer eigenen App definiert wurde. App-übergreifende Verweise auf Layouts, die einer anderen installierten App gehören, werden derzeit nicht unterstützt. Wenn das übergeordnete Layout fehlt, schlägt die Installation mit einem eindeutigen Validierungsfehler fehl.
+* `widgets` sind ausschließlich auf diesen Tab beschränkt – sie verweisen auf [Frontend-Komponenten](/l/de/developers/extend/apps/layout/front-components), Ansichten usw., genau wie Widgets, die inline in `definePageLayout` definiert sind.
+* `position` steuert die Reihenfolge im Zielseitenlayout relativ zu den vorhandenen Registerkarten. Wählen Sie einen Wert, der Ihre Registerkarte relativ zu integrierten Registerkarten an die gewünschte Position bringt.
+* Verwenden Sie dies anstelle von `definePageLayout`, wenn Sie einem vorhandenen Layout nur etwas hinzufügen möchten. Verwenden Sie `definePageLayout`, wenn Sie das gesamte Layout besitzen.

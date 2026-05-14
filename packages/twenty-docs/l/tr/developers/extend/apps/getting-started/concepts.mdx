@@ -1,0 +1,101 @@
+---
+title: Kavramlar
+description: Twenty uygulamalarının nasıl çalıştığı — varlık modeli, korumalı alan (sandboxing) ve kurulum yaşam döngüsü.
+icon: sitemap
+---
+
+Twenty uygulamaları, çalışma alanınızı özel nesneler, mantık, UI bileşenleri ve yapay zekâ yetenekleriyle genişleten TypeScript paketleridir. Tam korumalı alan ve izin kontrolleriyle Twenty platformunda çalışırlar.
+
+## Uygulamalar nasıl çalışır
+
+Bir uygulama, `twenty-sdk` paketindeki `defineEntity()` işlevleri kullanılarak bildirilen **varlıklar** koleksiyonudur. SDK, bu bildirimleri derleme sırasında AST analiziyle algılar ve bir **manifest** üretir — uygulamanızın bir çalışma alanına neler eklediğinin eksiksiz bir açıklaması. Bu işlevler, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
+
+```
+your-app/
+├── src/
+│   ├── application-config.ts    ← defineApplication (required, one per app)
+│   ├── roles/                   ← defineRole
+│   ├── objects/                 ← defineObject
+│   ├── fields/                  ← defineField
+│   ├── logic-functions/         ← defineLogicFunction
+│   ├── front-components/        ← defineFrontComponent
+│   ├── skills/                  ← defineSkill
+│   ├── agents/                  ← defineAgent
+│   ├── views/                   ← defineView
+│   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   └── page-layouts/            ← definePageLayout
+├── public/                      ← Static assets (images, icons)
+└── package.json
+```
+
+<Note>
+  **Dosya organizasyonu size kalmış.** Varlık algılama AST tabanlıdır — dosyanın nerede bulunduğundan bağımsız olarak SDK `export default defineEntity(...)` çağrılarını bulur. Yukarıdaki klasör yapısı bir gelenektir, zorunluluk değildir.
+</Note>
+
+## Varlık türleri
+
+| Varlık                   | Amaç                                                     | Belgeler                                                                       |
+| ------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **Uygulama**             | Uygulama kimliği, varsayılan rol, değişkenler            | [Uygulama Yapılandırması](/l/tr/developers/extend/apps/config/application)          |
+| **Rol**                  | Nesneler ve alanlar üzerindeki izin kümeleri             | [Roller ve İzinler](/l/tr/developers/extend/apps/config/roles)                      |
+| **Nesne**                | Alanlara sahip özel kayıt türleri                        | [Nesneler](/l/tr/developers/extend/apps/data/objects)                               |
+| **Alan**                 | Diğer uygulamalardaki nesnelere alan ekleyin             | [Nesneleri Genişletme](/l/tr/developers/extend/apps/data/extending-objects)         |
+| **İlişki**               | Nesneler arasındaki çift yönlü bağlantılar               | [İlişkiler](/l/tr/developers/extend/apps/data/relations)                            |
+| **Mantık İşlevi**        | Tetikleyicilerle sunucu tarafı TypeScript                | [Mantıksal İşlevler](/l/tr/developers/extend/apps/logic/logic-functions)            |
+| **Beceri**               | Yeniden kullanılabilir yapay zekâ temsilcisi yönergeleri | [Beceriler ve Temsilciler](/l/tr/developers/extend/apps/logic/skills-and-agents)    |
+| **Temsilci**             | Özel istemlere sahip yapay zekâ asistanları              | [Beceriler ve Temsilciler](/l/tr/developers/extend/apps/logic/skills-and-agents)    |
+| **Bağlantı Sağlayıcısı** | Üçüncü taraf API'ler için OAuth kimlik bilgileri         | [Bağlantılar](/l/tr/developers/extend/apps/logic/connections)                       |
+| **Görünüm**              | Önceden yapılandırılmış kayıt listesi görünümleri        | [Görünümler](/l/tr/developers/extend/apps/layout/views)                             |
+| **Gezinme Menüsü Öğesi** | Özel kenar çubuğu öğeleri                                | [Gezinme Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/navigation-menu-items) |
+| **Sayfa Düzeni**         | Bir kaydın ayrıntı sayfasındaki sekmeler ve widget'lar   | [Sayfa Düzenleri](/l/tr/developers/extend/apps/layout/page-layouts)                 |
+| **Ön Uç Bileşeni**       | Twenty içinde korumalı alandaki React kullanıcı arayüzü  | [Ön Uç Bileşenleri](/l/tr/developers/extend/apps/layout/front-components)           |
+| **Komut Menüsü Öğesi**   | Hızlı işlemler ve Cmd+K girdileri                        | [Komut Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/command-menu-items)      |
+
+## Korumalı alan
+
+* **Mantık işlevleri** sunucuda yalıtılmış Node.js işlemlerinde çalışır. Verilere yalnızca, kapsamı uygulamanın rol izinleriyle sınırlandırılmış tipli API istemcisi üzerinden erişirler.
+* **Ön uç bileşenleri**, Remote DOM kullanan Web Worker'larda çalışır — ana sayfadan yalıtılmıştır ancak yerel DOM öğelerini (iframe'ler değil) oluşturur. Twenty ile mesaj iletimi yapan bir ana makine API'si aracılığıyla iletişim kurarlar.
+* **İzinler**, API düzeyinde uygulanır. Çalışma zamanı belirteci (`TWENTY_APP_ACCESS_TOKEN`), `defineApplication()` içinde tanımlanan rolden türetilir.
+
+## Uygulama yaşam döngüsü
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Development                                             │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
+├─────────────────────────────────────────────────────────┤
+│ Build & Deploy                                          │
+│   yarn twenty build → yarn twenty deploy                │
+├─────────────────────────────────────────────────────────┤
+│ Install flow                                            │
+│   upload → [pre-install] → metadata migration →         │
+│   generate SDK → [post-install]                         │
+├─────────────────────────────────────────────────────────┤
+│ Publish                                                 │
+│   npm publish → appears in Twenty marketplace           │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **`yarn twenty dev`** — kaynak dosyalarınızı izler ve bağlı bir Twenty sunucusuna değişiklikleri canlı olarak senkronize eder. Şema değiştiğinde tipli API istemcisi otomatik olarak yeniden oluşturulur.
+* **`yarn twenty build`** — TypeScript'i derler, mantık işlevlerini ve ön uç bileşenlerini esbuild ile paketler ve bir manifest üretir.
+* **Kurulum öncesi/sonrası kancaları** — kurulum sırasında çalışan isteğe bağlı işlevler. Ayrıntılar için [Kurulum Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
+
+## Sonraki adımlar
+
+<CardGroup cols={2}>
+  <Card title="Yapılandırma" icon="screwdriver-wrench" href="/l/tr/developers/extend/apps/config/overview">
+    Uygulama kimliği, varsayılan rol ve kurulum kancaları.
+  </Card>
+  <Card title="Veri" icon="database" href="/l/tr/developers/extend/apps/data/overview">
+    Nesneler, alanlar ve çift yönlü ilişkiler.
+  </Card>
+  <Card title="Mantık" icon="bolt" href="/l/tr/developers/extend/apps/logic/overview">
+    Mantık işlevleri, beceriler, temsilciler ve OAuth bağlantıları.
+  </Card>
+  <Card title="Düzen" icon="table-columns" href="/l/tr/developers/extend/apps/layout/overview">
+    Görünümler, gezinme, sayfa düzenleri, ön uç bileşenleri.
+  </Card>
+  <Card title="İşlemler" icon="rocket" href="/l/tr/developers/extend/apps/operations/overview">
+    CLI, test, uzak depolar, CI ve uygulamanızı yayımlama.
+  </Card>
+</CardGroup>

@@ -250,29 +250,35 @@ export class AgentChatStreamingService {
       userWorkspaceId,
     );
 
-    return allMessages
-      .filter((message) => message.status !== AgentMessageStatus.QUEUED)
-      .map((message) => ({
+    const filteredMessages = allMessages.filter(
+      (message) => message.status !== AgentMessageStatus.QUEUED,
+    );
+
+    return Promise.all(
+      filteredMessages.map(async (message) => ({
         id: message.id,
         role: message.role as 'user' | 'assistant' | 'system',
-        parts: mapDBPartsToUIMessageParts(message.parts ?? []).map((part) => {
-          if (isExtendedFileUIPart(part as Record<string, unknown>)) {
-            const filePart = part as ExtendedFileUIPart;
+        parts: await Promise.all(
+          mapDBPartsToUIMessageParts(message.parts ?? []).map(async (part) => {
+            if (isExtendedFileUIPart(part as Record<string, unknown>)) {
+              const filePart = part as ExtendedFileUIPart;
 
-            return {
-              ...filePart,
-              url: this.fileUrlService.signFileByIdUrl({
-                fileId: filePart.fileId,
-                workspaceId,
-                fileFolder: FileFolder.AgentChat,
-              }),
-            } as ExtendedFileUIPart;
-          }
+              return {
+                ...filePart,
+                url: await this.fileUrlService.signFileByIdUrl({
+                  fileId: filePart.fileId,
+                  workspaceId,
+                  fileFolder: FileFolder.AgentChat,
+                }),
+              } as ExtendedFileUIPart;
+            }
 
-          return part;
-        }),
+            return part;
+          }),
+        ),
         createdAt: message.createdAt,
-      }));
+      })),
+    );
   }
 
   private async buildFilePartsFromIds(

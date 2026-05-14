@@ -102,6 +102,7 @@ export class UpgradeStatusCommand extends CommandRunner {
         ...this.formatSummary(instanceStatus, groupedWorkspaceUpgradeStatuses),
       );
 
+      // oxlint-disable-next-line no-console
       console.log(lines.join('\n'));
     } catch (error) {
       this.logger.error(

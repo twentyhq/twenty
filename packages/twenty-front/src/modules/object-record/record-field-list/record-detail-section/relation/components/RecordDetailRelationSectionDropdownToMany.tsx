@@ -14,7 +14,6 @@ import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-fie
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
-import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
@@ -36,7 +35,11 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationGqlFieldJoinColumnName,
+  CustomError,
+  isDefined,
+} from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -288,9 +291,11 @@ export const RecordDetailRelationSectionDropdownToMany = ({
           sourceObjectMetadata: objectMetadataItem,
         });
 
-        const targetJoinColumnName = getJoinColumnName(targetField.settings);
+        const targetJoinColumnName = computeRelationGqlFieldJoinColumnName({
+          name: targetField.name,
+        });
 
-        if (!sourceJoinColumnName || !targetJoinColumnName) {
+        if (!sourceJoinColumnName) {
           return;
         }
 

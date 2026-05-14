@@ -2,8 +2,7 @@ import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
 import { Container } from '@/design-system/components';
-import { Menu } from '@/sections/Menu/components';
-import type { MenuDataType } from '@/sections/Menu/types';
+import { Menu, type MenuDataType } from '@/sections/Menu';
 import { theme } from '@/theme';
 
 const PageSection = styled.section`

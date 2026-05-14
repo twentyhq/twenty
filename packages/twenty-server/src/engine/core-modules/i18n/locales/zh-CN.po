@@ -471,6 +471,11 @@ msgstr "发生索引元数据错误。"
 msgid "An index must contain at least one field"
 msgstr "索引中必须至少包含一个字段"
 
+#. js-lingui-id: KvWKJI
+#: src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception.ts
+msgid "An internal error occurred while handling encrypted data."
+msgstr ""
+
 #. js-lingui-id: SOp/Vw
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
@@ -553,6 +558,11 @@ msgstr ""
 msgid "Application is not installed in this workspace. Install it first."
 msgstr "此工作区未安装该应用。请先安装它。"
 
+#. js-lingui-id: t77Ey9
+#: src/engine/core-modules/public-domain/public-domain.exception.ts
+msgid "Application not found in this workspace."
+msgstr ""
+
 #. js-lingui-id: ltvmAF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -587,6 +597,26 @@ msgstr "未找到应用程序注册变量。"
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application upgrade failed."
 msgstr "应用程序升级失败。"
+
+#. js-lingui-id: 5MJQ4s
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key is required"
+msgstr ""
+
+#. js-lingui-id: K+YEBR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key must be unique"
+msgstr ""
+
+#. js-lingui-id: e6tjp1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable not found"
+msgstr ""
 
 #. js-lingui-id: 9qtW5o
 #: src/engine/core-modules/application/application-variable/application-variable.exception.ts
@@ -2094,6 +2124,16 @@ msgstr "电子邮件域配置错误。"
 msgid "Email domain not found."
 msgstr "未找到电子邮件域。"
 
+#. js-lingui-id: DCoI0W
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
+msgid "Email group"
+msgstr ""
+
+#. js-lingui-id: MhPwKU
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Email group is not configured on this server."
+msgstr ""
+
 #. js-lingui-id: m9fD11
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Email is already verified."
@@ -2767,6 +2807,11 @@ msgstr "文件"
 msgid "Files field is not supported for unique fields"
 msgstr "唯一字段不支持 Files 字段类型"
 
+#. js-lingui-id: 4GaFCQ
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "First friendly message"
+msgstr ""
+
 #. js-lingui-id: ylQd2j
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
@@ -3181,6 +3226,11 @@ msgstr "代理输入无效。"
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid aggregate fields parameter."
 msgstr "聚合字段参数无效。"
+
+#. js-lingui-id: 56bSD0
+#: src/engine/core-modules/application/application-variable/application-variable.exception.ts
+msgid "Invalid application variable input."
+msgstr ""
 
 #. js-lingui-id: KNrRpL
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -4315,6 +4365,12 @@ msgstr "未找到逻辑函数。"
 msgid "Logic function with same universal identifier already exists"
 msgstr "具有相同通用标识符的逻辑函数已存在"
 
+#. js-lingui-id: Mwvtvf
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/build-metadata-validation-error-payload.util.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Many validation errors"
+msgstr ""
+
 #. js-lingui-id: hg6l4j
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
@@ -4614,7 +4670,9 @@ msgid "Metadata"
 msgstr ""
 
 #. js-lingui-id: PslTPV
-#: src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/build-metadata-validation-error-payload.util.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Metadata validation failed"
 msgstr "元数据验证失败"
 
@@ -5223,6 +5281,11 @@ msgstr "一个或多个请求的作用域无效。"
 msgid "Ongoing"
 msgstr ""
 
+#. js-lingui-id: XLn1DI
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Only error"
+msgstr ""
+
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
@@ -5367,6 +5430,11 @@ msgstr "枚举字段需要选项"
 #. js-lingui-id: /IX/7x
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Other"
+msgstr ""
+
+#. js-lingui-id: 4romcD
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Other error"
 msgstr ""
 
 #. js-lingui-id: O0Z2Xr
@@ -5931,6 +5999,23 @@ msgstr "关系创建请求负载是必需的"
 msgid "Relation field target metadata not found"
 msgstr "未找到关系字段的目标元数据"
 
+#. js-lingui-id: HmNKeM
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Relation filter is misconfigured"
+msgstr ""
+
+#. js-lingui-id: 1RF4/e
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Relation filter is not supported here"
+msgstr ""
+
+#. js-lingui-id: L8AY9P
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Relation filters can only traverse one relation deep"
+msgstr ""
+
 #. js-lingui-id: 83atrc
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
@@ -6033,6 +6118,11 @@ msgstr "角色不可编辑"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "角色必须至少有一个目标。"
+
+#. js-lingui-id: BEtj6u
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Role name is invalid"
+msgstr ""
 
 #. js-lingui-id: MvTCyk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -7292,6 +7382,11 @@ msgstr "此角色无法编辑。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "此角色无法修改，因为它是系统角色。只有自定义角色可以编辑。"
+
+#. js-lingui-id: nzveUr
+#: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
+msgid "This role cannot be modified."
+msgstr ""
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -8624,6 +8719,11 @@ msgstr "需要WorkspaceId才能创建视图。"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgid "WorkspaceMember"
+msgstr ""
+
+#. js-lingui-id: 9RXJsb
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Would not reach this"
 msgstr ""
 
 #. js-lingui-id: VddeYt

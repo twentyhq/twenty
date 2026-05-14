@@ -37,6 +37,7 @@ describe('MicrosoftGetMessageListService', () => {
     | 'id'
     | 'handle'
     | 'connectionParameters'
+    | 'workspaceId'
   > = {
     id: 'connected-account-id',
     provider: ConnectedAccountProvider.MICROSOFT,
@@ -44,6 +45,7 @@ describe('MicrosoftGetMessageListService', () => {
     refreshToken: 'refresh-token',
     handle: 'test@outlook.com',
     connectionParameters: {},
+    workspaceId: 'workspace-id',
   };
 
   const createMockMicrosoftClient = () => ({

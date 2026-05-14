@@ -3,6 +3,7 @@ import {
   type InputSchema,
   type InputSchemaProperty,
 } from '@/workflow/types/InputSchema';
+import { isNonEmptyString } from '@sniptt/guards';
 
 const convertProperty = (jsonSchema: InputJsonSchema): InputSchemaProperty => {
   const property: InputSchemaProperty = { type: 'unknown' };
@@ -44,6 +45,14 @@ const convertProperty = (jsonSchema: InputJsonSchema): InputSchemaProperty => {
     property.enum = jsonSchema.enum.filter(
       (value): value is string => typeof value === 'string',
     );
+  }
+
+  if (jsonSchema.multiline === true) {
+    property.multiline = true;
+  }
+
+  if (isNonEmptyString(jsonSchema.label)) {
+    property.label = jsonSchema.label;
   }
 
   return property;

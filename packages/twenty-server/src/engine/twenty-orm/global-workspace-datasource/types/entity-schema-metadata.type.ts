@@ -19,6 +19,7 @@ export type EntitySchemaFieldMetadata<
   | 'type'
   | 'settings'
   | 'isNullable'
+  | 'isUnique'
   | 'defaultValue'
   | 'options'
   | 'objectMetadataId'
@@ -73,6 +74,7 @@ export const buildEntitySchemaMetadataMaps = (
       type: field.type,
       settings: field.settings,
       isNullable: field.isNullable,
+      isUnique: field.isUnique,
       defaultValue: field.defaultValue,
       options: field.options,
       objectMetadataId: field.objectMetadataId,

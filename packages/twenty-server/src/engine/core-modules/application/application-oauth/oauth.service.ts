@@ -334,7 +334,7 @@ export class OAuthService {
 
     try {
       const payload =
-        this.applicationTokenService.validateApplicationRefreshToken(
+        await this.applicationTokenService.validateApplicationRefreshToken(
           refreshToken,
         );
 
@@ -409,7 +409,9 @@ export class OAuthService {
     // We validate the token to log that revocation was requested.
     try {
       const payload =
-        this.applicationTokenService.validateApplicationRefreshToken(token);
+        await this.applicationTokenService.validateApplicationRefreshToken(
+          token,
+        );
 
       this.logger.log(
         `Token revocation requested for application ${payload.applicationId}`,
@@ -448,7 +450,7 @@ export class OAuthService {
     }
 
     try {
-      this.applicationTokenService.validateApplicationRefreshToken(token);
+      await this.applicationTokenService.validateApplicationRefreshToken(token);
 
       const decoded = this.applicationTokenService.decodeToken(token);
 
@@ -483,7 +485,9 @@ export class OAuthService {
       // Try as access token (with signature verification)
       try {
         const payload =
-          this.applicationTokenService.validateApplicationAccessToken(token);
+          await this.applicationTokenService.validateApplicationAccessToken(
+            token,
+          );
 
         const application = await this.applicationRepository.findOne({
           where: { id: payload.applicationId },
@@ -586,7 +590,8 @@ export class OAuthService {
     return this.applicationService.create({
       universalIdentifier: applicationRegistration.universalIdentifier,
       name: applicationRegistration.name,
-      version: '0.0.0',
+      description: `OAuth application registered as "${applicationRegistration.name}"`,
+      version: applicationRegistration.latestAvailableVersion ?? '1.0.0',
       sourcePath: 'oauth-install',
       applicationRegistrationId: applicationRegistration.id,
       workspaceId,

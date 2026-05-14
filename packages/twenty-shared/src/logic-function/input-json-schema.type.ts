@@ -15,4 +15,6 @@ export type InputJsonSchema = {
   additionalProperties?: boolean | InputJsonSchema;
   minimum?: number;
   maximum?: number;
+  multiline?: boolean;
+  label?: string;
 };

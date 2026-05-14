@@ -43,7 +43,6 @@ export enum JwtTokenTypeEnum {
   LOGIN = 'LOGIN',
   FILE = 'FILE',
   API_KEY = 'API_KEY',
-  POSTGRES_PROXY = 'POSTGRES_PROXY',
   REMOTE_SERVER = 'REMOTE_SERVER',
   KEY_ENCRYPTION_KEY = 'KEY_ENCRYPTION_KEY',
   APPLICATION_ACCESS = 'APPLICATION_ACCESS',
@@ -138,10 +137,6 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   impersonatedUserWorkspaceId?: string;
 };
 
-export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: JwtTokenTypeEnum.POSTGRES_PROXY;
-};
-
 export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.APP_OAUTH_STATE;
   workspaceId: string;
@@ -170,5 +165,4 @@ export type JwtPayload =
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
   | FileTokenJwtPayloadLegacy
-  | PostgresProxyTokenJwtPayload
   | AppOAuthStateJwtPayload;

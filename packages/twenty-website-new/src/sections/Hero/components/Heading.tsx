@@ -21,13 +21,13 @@ const HeadingContainer = styled.div`
   }
 `;
 
-export type HeroHeadingProps = HeadingProps & {
+type HeroHeadingProps = HeadingProps & {
   children?: ReactNode;
   page: Page;
 };
 
 export function Heading({
-  as,
+  as = 'h1',
   children,
   className,
   page,

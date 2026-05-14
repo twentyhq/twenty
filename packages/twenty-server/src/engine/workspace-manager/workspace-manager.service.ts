@@ -5,13 +5,6 @@ import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  GenerateSdkClientJob,
-  GenerateSdkClientJobData,
-} from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -37,8 +30,6 @@ export class WorkspaceManagerService {
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly applicationService: ApplicationService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   public async init({
@@ -83,33 +74,12 @@ export class WorkspaceManagerService {
       `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
     );
 
-    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
+    const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
         },
       );
-
-    await Promise.all([
-      this.messageQueueService.add<GenerateSdkClientJobData>(
-        GenerateSdkClientJob.name,
-        {
-          workspaceId,
-          applicationId: twentyStandardFlatApplication.id,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-        },
-      ),
-      this.messageQueueService.add<GenerateSdkClientJobData>(
-        GenerateSdkClientJob.name,
-        {
-          workspaceId,
-          applicationId: workspaceCustomFlatApplication.id,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-        },
-      ),
-    ]);
 
     await this.setupDefaultRoles({
       workspaceId,

@@ -1,0 +1,192 @@
+---
+title: 连接
+description: 通过 OAuth 让你的应用代表用户在第三方服务中执行操作。
+icon: plug
+---
+
+连接是用户为外部服务（Linear、GitHub、Slack 等）持有的凭据。 你的应用声明**如何**获取这些凭据——即**连接提供程序**——并在运行时使用它们向第三方 API 发起认证调用。
+
+目前仅支持 OAuth 2.0。 将来的凭据类型（个人访问令牌、API 密钥、基本身份验证）将接入相同的接口——已经使用 `defineConnectionProvider({ type: 'oauth', ... })` 的应用将无需迁移。
+
+<AccordionGroup>
+
+<Accordion title="defineConnectionProvider" description="声明你的应用如何获取连接">
+
+连接提供程序描述了你的应用所需的 OAuth 握手流程。 用户在你的应用设置中点击"添加连接"，完成提供方的授权同意页面后，会在其工作区中创建一条 `ConnectedAccount` 行。
+
+一个可用的配置需要**两个文件**——连接提供程序，以及在 `defineApplication` 上与之匹配、用于保存 OAuth 客户端凭据的 `serverVariables` 声明。
+
+```ts src/connection-providers/linear-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+export default defineConnectionProvider({
+  universalIdentifier: '9c7d1f5e-6a0b-4d44-be0c-3f8b5a9d4e6f',
+  name: 'linear',
+  displayName: 'Linear',
+  icon: 'IconBrandLinear',
+  type: 'oauth',
+  oauth: {
+    authorizationEndpoint: 'https://linear.app/oauth/authorize',
+    tokenEndpoint: 'https://api.linear.app/oauth/token',
+    scopes: ['read', 'write'],
+    // These must match keys in `defineApplication.serverVariables` below.
+    clientIdVariable: 'LINEAR_CLIENT_ID',
+    clientSecretVariable: 'LINEAR_CLIENT_SECRET',
+    // Optional: defaults to 'json'. Some providers (Linear, Slack) want
+    // 'form-urlencoded' for the token request.
+    tokenRequestContentType: 'form-urlencoded',
+    // Optional: defaults to true. Disable only if the provider rejects PKCE.
+    usePkce: false,
+    // Optional: extra query params on the authorize URL.
+    // authorizationParams: { prompt: 'consent' },
+    // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
+    // revokeEndpoint: 'https://example.com/oauth/revoke',
+  },
+});
+```
+
+```ts src/application.config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'Linear',
+  description: 'Connect Linear to Twenty.',
+  // OAuth client credentials live on the app registration (one OAuth app per
+  // Twenty server, configured by the admin) — not per-workspace. Declare them
+  // as serverVariables so the admin can fill them in once for all installs.
+  serverVariables: {
+    LINEAR_CLIENT_ID: {
+      description: 'OAuth client ID from your Linear OAuth application.',
+      isSecret: false,
+      isRequired: true,
+    },
+    LINEAR_CLIENT_SECRET: {
+      description: 'OAuth client secret from your Linear OAuth application.',
+      isSecret: true,
+      isRequired: true,
+    },
+  },
+});
+```
+
+关键点：
+
+* `name` 是在 `listConnections({ providerName })` 中使用的唯一标识符字符串（短横线命名（kebab-case），必须匹配 `^[a-z][a-z0-9-]*$`）。
+* `displayName` 会显示在每个应用的设置选项卡以及 AI 工具列表中。
+* `clientIdVariable` / `clientSecretVariable` 是**名称**，而不是值——它们必须与 `defineApplication.serverVariables` 中声明的键匹配。 实际的 `client_id` 和 `client_secret` 由服务器管理员通过应用注册 UI 输入，绝不会提交到你的仓库。
+* 请使用 `serverVariables`（而非 `applicationVariables`）——OAuth 凭据是服务器范围的，并且每个 Twenty 服务器只配置一个 OAuth 应用。
+* 在两个 `serverVariables` 都填写之前，每个应用的设置选项卡会显示"需要服务器管理员"的提示，并且"添加连接"按钮将被禁用。
+* `type: 'oauth'` 是目前唯一受支持的取值。 该判别器具备前向兼容性：未来的类型（`'pat'`、`'api-key'` 等） 将会与 `oauth` 并列新增子配置块。
+
+你的提供方需要加入白名单的 OAuth 回调 URL 为：
+
+```
+https://<your-twenty-server>/apps/oauth/callback
+```
+
+</Accordion>
+
+<Accordion title="listConnections / getConnection" description="在逻辑函数中使用连接">
+
+在逻辑函数处理器内，`listConnections({ providerName })` 会返回此应用针对给定提供方的 `ConnectedAccount` 行，并附带已刷新的访问令牌。
+
+```ts src/logic-functions/handlers/create-linear-issue-handler.ts
+import { listConnections } from 'twenty-sdk/logic-function';
+
+export const createLinearIssueHandler = async (input: {
+  teamId?: string;
+  title?: string;
+}) => {
+  if (!input.teamId || !input.title) {
+    return { success: false, error: 'teamId and title are required' };
+  }
+
+  const connections = await listConnections({ providerName: 'linear' });
+
+  // Workspace-shared credentials win when present; fall back to the first
+  // user-visibility one. For HTTP-route triggers you typically pick the
+  // request user's connection via event.userWorkspaceId instead.
+  const connection =
+    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
+
+  if (!connection) {
+    return {
+      success: false,
+      error:
+        'Linear is not connected. Open the app settings and click "Add connection".',
+    };
+  }
+
+  // Use connection.accessToken to call the third-party API.
+  const response = await fetch('https://api.linear.app/graphql', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${connection.accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `mutation { issueCreate(input: { teamId: "${input.teamId}", title: "${input.title}" }) { success } }`,
+    }),
+  });
+
+  return { success: response.ok };
+};
+```
+
+每个连接包含：
+
+| 字段                | 描述                                                   |
+| ----------------- | ---------------------------------------------------- |
+| `id`              | 唯一的行 id；传给 `getConnection(id)` 以重新获取单个连接             |
+| `visibility`      | `'user'`（仅对单个工作区成员私有）或 `'workspace'`（与所有成员共享）        |
+| `scopes`          | 上游提供方授予的 OAuth 权限（不同于 `visibility`——两者不相关）           |
+| `userWorkspaceId` | 所有者的 userWorkspace id——在 HTTP 路由触发器中用于选择"请求用户的连接"很有用 |
+| `accessToken`     | 最新的 OAuth 访问令牌（若已过期会自动刷新）                            |
+| `name` / `handle` | 连接的显示名称（在 OAuth 回调时自动生成，用户可重命名）                      |
+| `authFailedAt`    | 当最近一次刷新失败时会设置；用户必须重新连接                               |
+
+关键点：
+
+* 传入 `{ providerName }` 以按提供方筛选；省略它则可获取此应用在所有提供方上的全部连接。
+* 服务器会在返回前透明地刷新访问令牌。 你的处理器始终会拿到可用的令牌（或已设置 `authFailedAt`）。
+* `getConnection(id)` 是获取单行记录的对应方法。
+
+</Accordion>
+
+<Accordion title="按用户与工作区共享的可见性" description="用户如何在私有与共享凭据之间进行选择">
+
+当用户点击"添加连接"时，系统会提示其选择可见性：
+
+* **仅限我**——该凭据仅对连接的用户私有。 代表其调用的任何逻辑函数（带有 `isAuthRequired: true` 的 HTTP 路由触发器）都可以看到它；Cron 触发器和数据库事件则不可。
+* **工作区共享**——任何工作区成员都可以使用该凭据。 Cron / 数据库触发器也可以使用它，因为它们没有请求用户。
+
+为每个处理器使用合适的类型：
+
+```ts
+// HTTP-route trigger — prefer the request user's own connection.
+const conn =
+  connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
+  connections.find((c) => c.visibility === 'workspace');
+
+// Cron trigger — no request user; only shared credentials are sensible.
+const conn = connections.find((c) => c.visibility === 'workspace');
+```
+
+每个（用户、提供方）允许有多个连接，因此同一用户可以同时拥有"个人 Linear"和"工作 Linear"。
+
+</Accordion>
+
+<Accordion title="一次性提供方设置" description="在第三方服务中注册你的 OAuth 应用">
+
+对于每个连接提供方，服务器管理员需要先在第三方注册一个 OAuth 应用。
+
+1. 前往提供方的开发者设置（例如 https://linear.app/settings/api/applications/new）。
+2. 将**Redirect URI** 设置为 `\<SERVER_URL>/apps/oauth/callback`。
+3. 复制生成的**Client ID**和**Client Secret**。
+4. 以服务器管理员身份在 Twenty 中打开已安装的应用 → 在相应的 `serverVariables` 上设置这些值。
+5. 之后，工作区成员可以在每个应用的**连接**部分添加连接。
+
+</Accordion>
+
+</AccordionGroup>
