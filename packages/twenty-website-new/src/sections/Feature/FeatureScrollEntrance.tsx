@@ -3,39 +3,32 @@
 import { css } from '@linaria/core';
 import { useEffect, useRef, useState } from 'react';
 
-const STAGGER_DELAY_MS = 120;
-const VIEWPORT_THRESHOLD = 0.15;
+const STAGGER_DELAY_MS = 0;
+const VIEWPORT_THRESHOLD = 0.1;
 
 const entranceBaseClassName = css`
-  transition:
-    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.6s ease;
 
   @media (prefers-reduced-motion: reduce) {
     opacity: 1 !important;
-    transform: none !important;
     transition: none !important;
   }
 `;
 
 const hiddenDropClassName = css`
   opacity: 0;
-  transform: translateY(60px) rotate(2deg);
 `;
 
 const hiddenFromLeftClassName = css`
   opacity: 0;
-  transform: translateX(-40px) translateY(30px) rotate(-3deg);
 `;
 
 const hiddenFromRightClassName = css`
   opacity: 0;
-  transform: translateX(40px) translateY(30px) rotate(3deg);
 `;
 
 const visibleClassName = css`
   opacity: 1;
-  transform: translateX(0) translateY(0) rotate(0deg);
 `;
 
 function getHiddenClassName(index: number): string {
