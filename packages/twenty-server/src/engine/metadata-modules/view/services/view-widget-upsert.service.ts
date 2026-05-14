@@ -730,11 +730,14 @@ export class ViewWidgetUpsertService {
           const {
             fieldMetadataUniversalIdentifier,
             viewFilterGroupUniversalIdentifier,
+            relationTargetFieldMetadataUniversalIdentifier,
           } = resolveEntityRelationUniversalIdentifiers({
             metadataName: 'viewFilter',
             foreignKeyValues: {
               fieldMetadataId: inputFilter.fieldMetadataId,
               viewFilterGroupId: inputFilter.viewFilterGroupId,
+              relationTargetFieldMetadataId:
+                inputFilter.relationTargetFieldMetadataId,
             },
             flatEntityMaps: {
               flatFieldMetadataMaps,
@@ -756,6 +759,9 @@ export class ViewWidgetUpsertService {
               existingFilter.positionInViewFilterGroup,
             subFieldName:
               inputFilter.subFieldName ?? existingFilter.subFieldName,
+            relationTargetFieldMetadataId:
+              inputFilter.relationTargetFieldMetadataId ?? null,
+            relationTargetFieldMetadataUniversalIdentifier,
             updatedAt: now,
           });
         }
