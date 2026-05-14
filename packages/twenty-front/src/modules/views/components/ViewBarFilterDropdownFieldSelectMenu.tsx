@@ -57,17 +57,17 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
     useAtomComponentState(objectFilterDropdownSearchInputComponentState);
 
   const {
-    selectableHiddenFieldMetadataItems,
-    selectableVisibleFieldMetadataItems,
+    selectableStandardFieldMetadataItems,
+    selectableCustomFieldMetadataItems,
   } = useFilterDropdownSelectableFieldMetadataItems();
 
   const { closeDropdown } = useCloseDropdown();
 
   const selectableFieldMetadataItemIds = [
-    ...selectableVisibleFieldMetadataItems.map(
+    ...selectableStandardFieldMetadataItems.map(
       (fieldMetadataItem) => fieldMetadataItem.id,
     ),
-    ...selectableHiddenFieldMetadataItems.map(
+    ...selectableCustomFieldMetadataItems.map(
       (fieldMetadataItem) => fieldMetadataItem.id,
     ),
     VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH,
@@ -75,16 +75,16 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
   ];
 
   const shouldShowSeparator =
-    selectableVisibleFieldMetadataItems.length > 0 &&
-    selectableHiddenFieldMetadataItems.length > 0;
+    selectableStandardFieldMetadataItems.length > 0 &&
+    selectableCustomFieldMetadataItems.length > 0;
 
   const hasSelectableItems =
-    selectableVisibleFieldMetadataItems.length > 0 ||
-    selectableHiddenFieldMetadataItems.length > 0;
+    selectableStandardFieldMetadataItems.length > 0 ||
+    selectableCustomFieldMetadataItems.length > 0;
 
-  const shouldShowVisibleFields =
-    selectableVisibleFieldMetadataItems.length > 0;
-  const shouldShowHiddenFields = selectableHiddenFieldMetadataItems.length > 0;
+  const shouldShowStandardFields =
+    selectableStandardFieldMetadataItems.length > 0;
+  const shouldShowCustomFields = selectableCustomFieldMetadataItems.length > 0;
 
   const { t } = useLingui();
 
@@ -114,15 +114,15 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
           selectableListInstanceId={FILTER_FIELD_LIST_ID}
           focusId={ViewBarFilterDropdownIds.MAIN}
         >
-          {shouldShowVisibleFields && (
+          {shouldShowStandardFields && (
             <>
-              <DropdownMenuSectionLabel label={t`Visible fields`} />
+              <DropdownMenuSectionLabel label={t`Standard fields`} />
               <DropdownMenuItemsContainer scrollable={false}>
-                {selectableVisibleFieldMetadataItems.map(
-                  (visibleFieldMetadataItem) => (
+                {selectableStandardFieldMetadataItems.map(
+                  (standardFieldMetadataItem) => (
                     <ViewBarFilterDropdownFieldSelectMenuItem
-                      key={visibleFieldMetadataItem.id}
-                      fieldMetadataItemToSelect={visibleFieldMetadataItem}
+                      key={standardFieldMetadataItem.id}
+                      fieldMetadataItemToSelect={standardFieldMetadataItem}
                     />
                   ),
                 )}
@@ -130,15 +130,15 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
             </>
           )}
           {shouldShowSeparator && <DropdownMenuSeparator />}
-          {shouldShowHiddenFields && (
+          {shouldShowCustomFields && (
             <>
-              <DropdownMenuSectionLabel label={t`Hidden fields`} />
+              <DropdownMenuSectionLabel label={t`Custom fields`} />
               <DropdownMenuItemsContainer scrollable={false}>
-                {selectableHiddenFieldMetadataItems.map(
-                  (hiddenFieldMetadataItem) => (
+                {selectableCustomFieldMetadataItems.map(
+                  (customFieldMetadataItem) => (
                     <ViewBarFilterDropdownFieldSelectMenuItem
-                      key={hiddenFieldMetadataItem.id}
-                      fieldMetadataItemToSelect={hiddenFieldMetadataItem}
+                      key={customFieldMetadataItem.id}
+                      fieldMetadataItemToSelect={customFieldMetadataItem}
                     />
                   ),
                 )}

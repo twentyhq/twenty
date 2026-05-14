@@ -31,28 +31,18 @@ export const useFilterDropdownSelectableFieldMetadataItems = () => {
         .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()),
     );
 
-  const selectableVisibleFieldMetadataItems =
+  const selectableStandardFieldMetadataItems =
     filteredSearchInputFieldMetadataItems
-      .sort((a, b) => {
-        return (
-          visibleFieldMetadataItemIds.indexOf(a.id) -
-          visibleFieldMetadataItemIds.indexOf(b.id)
-        );
-      })
-      .filter((fieldMetadataItem) =>
-        visibleFieldMetadataItemIds.includes(fieldMetadataItem.id),
-      );
+      .filter((item) => !item.isCustom)
+      .sort((a, b) => a.label.localeCompare(b.label));
 
-  const selectableHiddenFieldMetadataItems =
+  const selectableCustomFieldMetadataItems =
     filteredSearchInputFieldMetadataItems
-      .sort((a, b) => a.label.localeCompare(b.label))
-      .filter(
-        (fieldMetadataItem) =>
-          !visibleFieldMetadataItemIds.includes(fieldMetadataItem.id),
-      );
+      .filter((item) => item.isCustom)
+      .sort((a, b) => a.label.localeCompare(b.label));
 
   return {
-    selectableVisibleFieldMetadataItems,
-    selectableHiddenFieldMetadataItems,
+    selectableStandardFieldMetadataItems,
+    selectableCustomFieldMetadataItems,
   };
 };
