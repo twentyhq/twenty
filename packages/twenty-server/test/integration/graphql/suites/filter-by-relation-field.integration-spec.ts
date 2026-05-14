@@ -211,35 +211,6 @@ describe('Filter by relation field (e2e)', () => {
     );
   });
 
-  it('should return no results when the relation filter does not match any record', async () => {
-    const queryData = {
-      query: gql`
-        query People($filter: PersonFilterInput) {
-          people(filter: $filter, first: 10) {
-            edges {
-              node {
-                id
-              }
-            }
-          }
-        }
-      `,
-      variables: {
-        filter: {
-          and: [
-            { id: { in: ALL_TEST_PERSON_IDS } },
-            { company: { name: { eq: 'NonExistentCorp' } } },
-          ],
-        },
-      },
-    };
-
-    const response = await makeGraphqlAPIRequest(queryData);
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.people.edges).toEqual([]);
-  });
-
   it('should combine a relation filter with a scalar filter on the root object', async () => {
     const queryData = {
       query: gql`

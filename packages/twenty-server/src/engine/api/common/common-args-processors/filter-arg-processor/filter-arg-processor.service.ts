@@ -305,28 +305,6 @@ export class FilterArgProcessorService {
       );
     }
 
-    // Reject relation fields accessed by name when the relation type isn't
-    // supported by the traversal branch (currently anything other than
-    // MANY_TO_ONE). MANY_TO_ONE relations are handled before this path is
-    // reached, so they never land here.
-    if (
-      isDefined(fieldIdByName[key]) &&
-      !isDefined(fieldIdByJoinColumnName[key]) &&
-      (isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION) ||
-        isFlatFieldMetadataOfType(
-          fieldMetadata,
-          FieldMetadataType.MORPH_RELATION,
-        ))
-    ) {
-      throw new CommonQueryRunnerException(
-        `Cannot filter by relation field "${key}"`,
-        CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
-        {
-          userFriendlyMessage: msg`Invalid filter: filtering by relation field "${key}" is not supported`,
-        },
-      );
-    }
-
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
       return this.validateAndTransformCompositeFieldFilter(
         fieldMetadata,
