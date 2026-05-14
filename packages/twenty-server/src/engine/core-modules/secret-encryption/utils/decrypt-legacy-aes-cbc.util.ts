@@ -1,13 +1,13 @@
+// TODO: delete this file once the 2.5 cross-upgrade window closes and every
+// `core.twoFactorAuthenticationMethod.secret` row is known to be in the
+// `enc:v2:` envelope. Also drop `legacyAesCbcPurpose` from SecretEncryptionService
+// and the call sites in TwoFactorAuthenticationService and the matching slow
+// instance command.
 import { createDecipheriv, createHash } from 'crypto';
 
 const LEGACY_AES_CBC_KEY_LENGTH_BYTES = 32;
 const LEGACY_AES_CBC_IV_LENGTH_BYTES = 16;
 
-// Reproduces the SimpleSecretEncryptionUtil pre-migration derivation byte-for-byte:
-//   appSecretHex = sha256(APP_SECRET + purpose + 'KEY_ENCRYPTION_KEY').digest('hex')
-//   key          = sha256(appSecretHex).digest().slice(0, 32)
-// `purpose` is caller-defined (TOTP used `${userId}${workspaceId}otp-secret`) so the
-// helper stays decoupled from the specific call site that minted the legacy row.
 const deriveLegacyAesCbcKey = ({
   appSecret,
   purpose,

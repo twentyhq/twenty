@@ -28,10 +28,9 @@ import { OTPStatus } from './strategies/otp/otp.constants';
 
 const PENDING_METHOD_REUSE_WINDOW_MS = 60 * 60 * 1000;
 
-// Reproduced verbatim from the pre-migration SimpleSecretEncryptionUtil call
-// site so SecretEncryptionService can re-derive the legacy AES-CBC key for
-// rows minted before the encryption rotation. Don't change unless every
-// pre-migration row has already been backfilled to enc:v2.
+// TODO: delete this helper and stop passing `legacyAesCbcPurpose` below once
+// the 2.5 cross-upgrade window closes and every TOTP secret row has been
+// backfilled to enc:v2.
 const buildLegacyTotpCbcPurpose = (
   userId: string,
   workspaceId: string,

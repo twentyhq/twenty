@@ -21,10 +21,8 @@ import { resolveEncryptionKeysOrThrow } from './utils/resolve-encryption-keys-or
 
 type VersionedOptions = {
   workspaceId?: string;
-  // Caller-supplied context that lets us recover the legacy AES-CBC key for
-  // rows minted before the encryption rotation. Required only when a known
-  // caller (e.g. the TOTP service) may still be reading pre-migration rows
-  // shaped as `${ivHex}:${ciphertextHex}` (see decrypt-legacy-aes-cbc.util).
+  // TODO: remove `legacyAesCbcPurpose` once the 2.5 cross-upgrade window
+  // closes and every TOTP secret row has been backfilled to enc:v2.
   legacyAesCbcPurpose?: string;
 };
 
@@ -150,6 +148,9 @@ export class SecretEncryptionService {
       });
     }
 
+    // TODO: drop this branch (and `hasLoggedLegacyCbcDecryption` /
+    // `warnLegacyCbcDecryptionOnce`) once the 2.5 cross-upgrade window
+    // closes and every TOTP secret row has been backfilled to enc:v2.
     if (
       isNonEmptyString(opts.legacyAesCbcPurpose) &&
       isLegacyAesCbcCiphertext(value)

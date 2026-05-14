@@ -28,12 +28,6 @@ export class EncryptTotpSecretsSlowInstanceCommand
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  // Re-encrypts every TOTP secret into the versioned envelope bound to the
-  // row's workspaceId. Pre-migration rows are stored as
-  // `${ivHex}:${ciphertextHex}` with a key derived from
-  // `sha256(APP_SECRET + userId + workspaceId + 'otp-secret' + 'KEY_ENCRYPTION_KEY')`;
-  // we recover the userId via a join on `core.userWorkspace` and pass it as
-  // `legacyAesCbcPurpose` so `decryptVersioned` can read it.
   async runDataMigration(dataSource: DataSource): Promise<void> {
     let cursor = '00000000-0000-0000-0000-000000000000';
 
@@ -92,10 +86,6 @@ export class EncryptTotpSecretsSlowInstanceCommand
     );
   }
 
-  // Deliberately do NOT decrypt rows on rollback — re-introducing plaintext
-  // TOTP secrets to the database would be a security regression. Dropping
-  // the CHECK constraint is enough; TwoFactorAuthenticationService can still
-  // read the encrypted column whether or not the constraint exists.
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."twoFactorAuthenticationMethod"

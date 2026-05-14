@@ -5,8 +5,6 @@ import {
   isLegacyAesCbcCiphertext,
 } from 'src/engine/core-modules/secret-encryption/utils/decrypt-legacy-aes-cbc.util';
 
-// Mirrors SimpleSecretEncryptionUtil.encryptSecret pre-migration logic so the
-// fixtures here are guaranteed to match what production rows on `main` look like.
 const encryptLegacyAesCbc = ({
   plaintext,
   appSecret,
@@ -65,8 +63,6 @@ describe('decryptLegacyAesCbcOrThrow', () => {
       purpose: OTP_PURPOSE,
     });
 
-    // CBC with a wrong key may throw on padding or produce garbage; both
-    // are acceptable — the contract is "never returns the original".
     let recovered: string | undefined;
 
     try {
