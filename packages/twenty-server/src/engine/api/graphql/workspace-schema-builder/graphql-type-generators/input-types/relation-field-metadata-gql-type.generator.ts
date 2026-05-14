@@ -180,10 +180,9 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     });
   }
 
-  // Looks up the related object's pre-built input type (filter / orderBy /
-  // groupBy) and returns it as a single-entry map keyed by the relation
-  // field's GraphQL name — or an empty map when any lookup misses, so the
-  // caller can splat it next to its own fields.
+  // Returns a single-entry map keyed by the relation field's GraphQL name,
+  // or an empty map when any lookup misses — callers splat it alongside
+  // their own fields.
   private getTargetRelationInputField({
     fieldMetadata,
     context,

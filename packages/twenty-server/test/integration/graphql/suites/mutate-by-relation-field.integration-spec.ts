@@ -6,9 +6,8 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 
-// Distinct ID prefix (eeee / ffff) so this suite doesn't collide with
-// filter-by-relation-field.integration-spec.ts when both run against the
-// shared workspace database.
+// Distinct ID prefix (eeee / ffff) from filter-by-relation-field.integration-
+// spec.ts so the two suites can share the workspace database without colliding.
 const TEST_COMPANY_IDS = {
   AIRBNB: '20202020-eeee-4000-8000-000000000001',
   STRIPE: '20202020-eeee-4000-8000-000000000002',
@@ -25,13 +24,9 @@ const TEST_PERSON_IDS = {
 
 const ALL_TEST_PERSON_IDS = Object.values(TEST_PERSON_IDS);
 
-// updateMany / deleteMany / destroyMany / restoreMany all build a SELECT
-// query builder, apply the filter to it, and morph it into UPDATE / DELETE
-// (etc.). Relation-traversal filters add LEFT JOINs that TypeORM drops at
-// morph time, which used to leave the WHERE clause referencing a phantom
-// alias. The mutation runners now wrap the filter as an `id IN (SELECT id
-// ...)` subquery so the joins survive — this suite verifies that contract
-// for each of the four mutations.
+// Each of the four many-record mutations must support relation-traversal
+// filters: the join survives into the generated UPDATE / DELETE / SoftDelete /
+// Restore SQL via an `id IN (subquery)` rewrite.
 describe('Mutate by relation field (e2e)', () => {
   const resetFixtures = async () => {
     const createCompanies = createManyOperationFactory({
@@ -91,8 +86,7 @@ describe('Mutate by relation field (e2e)', () => {
   };
 
   beforeEach(async () => {
-    // Each test mutates state — destroy any leftovers from a previous test
-    // then re-create the canonical fixtures.
+    // Each test mutates state, so wipe + reseed before every one.
     await makeGraphqlAPIRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'person',
@@ -159,7 +153,6 @@ describe('Mutate by relation field (e2e)', () => {
       ),
     );
 
-    // Both Airbnb people get the new city.
     expect(cityByPersonId[TEST_PERSON_IDS.AIRBNB_ENGINEER]).toEqual(
       'Updated City',
     );
@@ -167,8 +160,8 @@ describe('Mutate by relation field (e2e)', () => {
       'Updated City',
     );
 
-    // Other rows must be untouched — proves the join didn't widen the
-    // mutation past the intended set.
+    // Non-Airbnb rows must stay untouched — the JOIN must not widen the
+    // mutation past the filter.
     expect(cityByPersonId[TEST_PERSON_IDS.STRIPE_ENGINEER]).toEqual(
       'Original City',
     );
@@ -203,7 +196,6 @@ describe('Mutate by relation field (e2e)', () => {
     expect(deletedPeople[0].id).toEqual(TEST_PERSON_IDS.NOTION_ENGINEER);
     expect(deletedPeople[0].deletedAt).toBeTruthy();
 
-    // Verify the rest are still live.
     const findOperation = findManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
@@ -227,8 +219,8 @@ describe('Mutate by relation field (e2e)', () => {
   });
 
   it('should restoreMany via a relation traversal filter', async () => {
-    // Soft-delete first via a scalar filter (no traversal) so the restore
-    // case is the only one exercising the traversal path.
+    // Soft-delete via a scalar filter so restore is the only step exercising
+    // the traversal path.
     const deleteOperation = deleteManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
@@ -274,8 +266,8 @@ describe('Mutate by relation field (e2e)', () => {
       expect(person.deletedAt).toBeNull();
     });
 
-    // The Stripe engineer was also soft-deleted but doesn't match the
-    // traversal filter, so it must remain deleted.
+    // The Stripe engineer was soft-deleted too but doesn't match the
+    // company filter — must remain deleted.
     const findStripe = findManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
@@ -310,8 +302,8 @@ describe('Mutate by relation field (e2e)', () => {
     expect(destroyedPeople).toHaveLength(1);
     expect(destroyedPeople[0].id).toEqual(TEST_PERSON_IDS.STRIPE_ENGINEER);
 
-    // The Stripe engineer should be gone even when querying with deletedAt
-    // filter (destroy is a hard-delete).
+    // destroy is a hard-delete — the row must be gone even when querying
+    // with a deletedAt filter.
     const findOperation = findManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
@@ -328,9 +320,8 @@ describe('Mutate by relation field (e2e)', () => {
   });
 
   it('should keep scalar-only mutations working unchanged', async () => {
-    // No relation traversal — the builder helper should keep emitting the
-    // existing direct-WHERE SQL (no IN-subquery wrap). Behavior must match
-    // what the pre-PR code path produced.
+    // Pins the no-traversal branch of the mutation builder helper: scalar
+    // filters keep emitting a direct WHERE without the IN-subquery wrap.
     const updateOperation = updateManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',

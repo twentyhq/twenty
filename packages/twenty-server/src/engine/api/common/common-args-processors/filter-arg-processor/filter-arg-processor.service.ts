@@ -116,9 +116,6 @@ export class FilterArgProcessorService {
         continue;
       }
 
-      // A key that maps to a relation field by its name (not by its FK join
-      // column) becomes a relation traversal — the filter recurses into the
-      // target object's metadata.
       const fieldMetadataForRelation = this.resolveRelationFieldMetadataByName({
         key,
         fieldIdByName,
@@ -151,9 +148,6 @@ export class FilterArgProcessorService {
     return transformedFilter;
   }
 
-  // Returns the field metadata if the key targets a relation by its name (not
-  // by its FK join column). Returns undefined otherwise — callers fall back to
-  // the scalar/composite path.
   private resolveRelationFieldMetadataByName({
     key,
     fieldIdByName,

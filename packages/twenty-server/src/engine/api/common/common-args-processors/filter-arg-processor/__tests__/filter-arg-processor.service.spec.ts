@@ -282,10 +282,8 @@ describe('FilterArgProcessorService', () => {
   });
 
   describe('relation traversal', () => {
-    // Builds a minimal two-object fixture: a `source` object with a
-    // MANY_TO_ONE `target` relation, and a `target` object that holds a
-    // CURRENCY composite field plus a TEXT field. Returns the maps and
-    // metadata needed to drive process() through the relation branch.
+    // `source` has a MANY_TO_ONE `target` relation; `target` carries a
+    // CURRENCY composite and a TEXT field.
     const createRelationFixture = () => {
       const sourceObjectId = 'source-obj-id';
       const targetObjectId = 'target-obj-id';
@@ -426,9 +424,8 @@ describe('FilterArgProcessorService', () => {
     });
 
     it('should surface a field-not-found error when a relation filter uses an operator key as if it were a target field', () => {
-      // `{ target: { eq: "<uuid>" } }` recurses into the target object's
-      // metadata and fails the same way a composite filter does when given
-      // a non-existent sub-field — by reporting which lookup actually failed.
+      // `{ target: { eq: ... } }` recurses into the target object's
+      // metadata and fails like any unknown field on that object.
       const {
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,

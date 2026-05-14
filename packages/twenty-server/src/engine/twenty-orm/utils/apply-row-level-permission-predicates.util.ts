@@ -90,10 +90,8 @@ const applyObjectRecordFilterToQueryBuilder = <T extends ObjectLiteral>({
     return;
   }
 
-  // Generic T narrows to a concrete entity type, but parseKeyFilter only needs
-  // the join surface — cast back up to ObjectLiteral so the recursive call
-  // sites match the field parser's signature without forcing the whole
-  // wrapper chain to be generic.
+  // parseKeyFilter only uses the join surface, so widen back to ObjectLiteral
+  // here rather than threading the concrete T through every recursive call.
   const outerQueryBuilderAsObjectLiteral =
     queryBuilder as WorkspaceSelectQueryBuilder<ObjectLiteral>;
 

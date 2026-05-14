@@ -363,11 +363,9 @@ describe('Filter by relation field (e2e)', () => {
   });
 
   it('should not widen the root query when a relation block contains a deletedAt filter', async () => {
-    // The deletedAt scanner used to recurse into every nested object and
-    // trip on a related entity's deletedAt, calling withDeleted() on the
-    // root builder and silently returning soft-deleted root rows. The
-    // scanner now only recurses into and / or / not — relation-traversal
-    // blocks must not widen the root.
+    // A deletedAt nested inside a relation block belongs to the related
+    // entity — it must not call `withDeleted()` on the root builder and
+    // surface soft-deleted root rows.
     const liveId = '20202020-dddd-4000-8000-000000000098';
     const softDeletedId = '20202020-dddd-4000-8000-000000000099';
 

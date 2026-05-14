@@ -13,20 +13,11 @@ type BuildMutationQueryBuilderArgs = {
   commonQueryParser: GraphqlQueryParser;
 };
 
-// Returns a WorkspaceSelectQueryBuilder that the caller can morph into
-// .update() / .softDelete() / .delete() / .restore().
-//
-// Relation-traversal filters add LEFT JOINs to the builder, but TypeORM
-// drops join attributes when morphing a SelectQueryBuilder into an
-// UPDATE/DELETE/SoftDelete/Restore builder — the generated SQL has no FROM
-// entry for the joined alias and Postgres throws. To keep the joins in scope,
-// we rewrite the filter as a self-referencing `id IN (SELECT id FROM ... JOIN
-// ... WHERE ...)` subquery on the mutation builder. The subquery is a
-// self-contained SELECT so its joins survive into the final SQL untouched.
-//
-// When the filter doesn't traverse any relation, the join attributes list is
-// empty and we hand back the directly-filtered builder — same SQL the
-// existing code path would have produced.
+// TypeORM drops join attributes when a SelectQueryBuilder is morphed into
+// UPDATE / DELETE / SoftDelete / Restore — the generated SQL would reference
+// an alias without a FROM entry and Postgres would throw. When the filter
+// adds joins we rewrite it as `id IN (SELECT id FROM ... JOIN ... WHERE ...)`
+// so the joins live inside a self-contained subquery.
 export const buildMutationQueryBuilder = ({
   repository,
   alias,
@@ -44,13 +35,10 @@ export const buildMutationQueryBuilder = ({
     return filteredQueryBuilder;
   }
 
-  // The subquery is a SELECT — TypeORM auto-injects `deletedAt IS NULL` for
-  // SELECT queries on entities with a soft-delete column, but the mutation
-  // builders (update / soft-delete / delete / restore) don't. Without
-  // `.withDeleted()` here the subquery would silently drop already-deleted
-  // rows, breaking `restoreMany` outright and breaking the event-select
-  // round-trip on `deleteMany` (the post-mutation "after" select would
-  // re-filter the freshly soft-deleted row out of its own response).
+  // TypeORM auto-injects `deletedAt IS NULL` for SELECT-typed queries but
+  // not for mutation-typed ones, so the subquery (a SELECT) must opt out to
+  // mirror the semantics of the mutation it feeds — otherwise `restoreMany`
+  // would never find soft-deleted rows.
   const idSubQueryBuilder = filteredQueryBuilder
     .select(`${alias}.id`)
     .withDeleted();
