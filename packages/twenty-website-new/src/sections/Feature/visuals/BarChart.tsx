@@ -160,12 +160,17 @@ type BarChartProps = {
   data: BarDatum[];
 };
 
-const Y_TICKS = [0, 10, 20, 30, 40, 50];
+const Y_TICK_COUNT = 5;
 
 export function BarChart({ active, data }: BarChartProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const allValues = data.flatMap((datum) => [datum.value, datum.value2]);
   const maxValue = Math.max(...allValues) * 1.05;
+  const tickStep = Math.ceil(maxValue / Y_TICK_COUNT);
+  const yTicks = Array.from(
+    { length: Y_TICK_COUNT + 1 },
+    (_, i) => i * tickStep,
+  );
 
   return (
     <Panel>
@@ -174,7 +179,7 @@ export function BarChart({ active, data }: BarChartProps) {
         <ChartBody>
           <YAxisTitle>Values</YAxisTitle>
           <YAxis>
-            {[...Y_TICKS].reverse().map((tick) => (
+            {[...yTicks].reverse().map((tick) => (
               <YLabel key={tick}>{tick === 0 ? '0' : `${tick}K`}</YLabel>
             ))}
           </YAxis>
