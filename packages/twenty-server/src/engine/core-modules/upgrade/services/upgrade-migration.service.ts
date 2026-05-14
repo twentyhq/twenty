@@ -21,10 +21,6 @@ export type WorkspaceLastAttemptedCommand = {
   isInitial: boolean;
 };
 
-// Postgres caps a single statement at 65,535 bind parameters (16-bit count in
-// the wire protocol). `UpgradeMigrationEntity` has 6 user-provided columns
-// per row, so a multi-row INSERT overflows at ~10,920 rows. Cap the per-batch
-// row count well below that so we stay safe even if columns are added later.
 const UPGRADE_MIGRATION_SAVE_BATCH_SIZE = 1000;
 
 @Injectable()
