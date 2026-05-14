@@ -35,6 +35,7 @@ export class MessagingGetMessagesService {
       | 'handleAliases'
       | 'userWorkspaceId'
       | 'connectionParameters'
+      | 'workspaceId'
     >,
     messageChannel: Pick<
       MessageChannelEntity,

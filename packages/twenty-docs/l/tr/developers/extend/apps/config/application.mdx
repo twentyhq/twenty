@@ -32,7 +32,7 @@ export default defineApplication({
 Notlar:
 
 * `universalIdentifier` alanları, size ait deterministik kimliklerdir. Bunları bir kez oluşturun ve senkronizasyonlar boyunca kararlı tutun.
-* `applicationVariables`, fonksiyonlarınız ve ön uç bileşenleriniz için ortam değişkenlerine dönüşür (örn. `DEFAULT_RECIPIENT_NAME`, `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
+* `applicationVariables`, fonksiyonlarınız ve ön bileşenleriniz için ortam değişkenlerine dönüşür. Mantık fonksiyonlarında (sunucu tarafında), `process.env.VARIABLE_NAME` olarak kullanılabilirler. Ön bileşenlerde, `twenty-sdk/front-component` içindeki `getApplicationVariable('VARIABLE_NAME')` fonksiyonunu kullanın. `isSecret: true` ile işaretlenen değişkenler yalnızca mantık fonksiyonlarına enjekte edilir. Ön bileşenler yalnızca gizli olmayan değişkenleri alır.
 * Varsayılan rol, [`defineApplicationRole()`](/l/tr/developers/extend/apps/config/roles) ile işaretlenmiş rol dosyasından otomatik olarak algılanır — onu `defineApplication()` içinden belirtmenize gerek yoktur.
 * Kurulum öncesi ve kurulum sonrası fonksiyonlar manifest derlemesi sırasında otomatik olarak algılanır — bunlara `defineApplication()` içinde referans vermeniz gerekmez.
 * Geriye dönük uyumluluk için `defaultRoleUniversalIdentifier` değerini açıkça geçmek hâlâ desteklenmektedir, ancak `defineApplicationRole()` lehine kullanımdan kaldırılmıştır.

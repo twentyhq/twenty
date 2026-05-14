@@ -10,13 +10,10 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
+import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { Not, Raw, Repository } from 'typeorm';
 
 export type BillingCapEvaluation =
@@ -42,9 +39,8 @@ type BatchUsageSumRow = {
 export class BillingUsageCapService {
   constructor(
     private readonly clickHouseService: ClickHouseService,
-    private readonly meteredCreditService: MeteredCreditService,
+    private readonly resourceCreditService: ResourceCreditService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
   ) {}
@@ -86,99 +82,10 @@ export class BillingUsageCapService {
     return result;
   }
 
-  evaluateCapBatch(
-    subscriptions: BillingSubscriptionEntity[],
-    usageByWorkspace: Map<string, number>,
-    creditBalanceByCustomer: Map<string, number>,
-  ): Map<string, BillingCapEvaluation> {
-    const results = new Map<string, BillingCapEvaluation>();
-
-    for (const subscription of subscriptions) {
-      const meteredPricingInfo =
-        this.meteredCreditService.extractMeteredPricingInfoFromSubscription(
-          subscription,
-        );
-
-      if (!meteredPricingInfo) {
-        results.set(subscription.id, {
-          skipped: true,
-          reason: 'no-metered-item',
-        });
-        continue;
-      }
-
-      const usage = usageByWorkspace.get(subscription.workspaceId) ?? 0;
-      const creditBalance =
-        creditBalanceByCustomer.get(subscription.stripeCustomerId) ?? 0;
-      const allowance = meteredPricingInfo.tierCap + creditBalance;
-
-      results.set(subscription.id, {
-        skipped: false,
-        hasReachedCap: usage >= allowance,
-        usage,
-        allowance,
-        tierCap: meteredPricingInfo.tierCap,
-        creditBalance,
-      });
-    }
-
-    return results;
-  }
-
-  // V2 path — uses extractResourceCreditPricingInfo (productKey === RESOURCE_CREDIT)
-  // instead of extractMeteredPricingInfoFromSubscription (productKey === WORKFLOW_NODE_EXECUTION)
-  evaluateCapBatchV2(
-    subscriptions: BillingSubscriptionEntity[],
-    usageByWorkspace: Map<string, number>,
-    creditBalanceByCustomer: Map<string, number>,
-  ): Map<string, BillingCapEvaluation> {
-    const results = new Map<string, BillingCapEvaluation>();
-
-    for (const subscription of subscriptions) {
-      const resourceCreditPricingInfo =
-        this.meteredCreditService.extractResourceCreditPricingInfo(
-          subscription,
-        );
-
-      if (!resourceCreditPricingInfo) {
-        results.set(subscription.id, {
-          skipped: true,
-          reason: 'no-metered-item',
-        });
-        continue;
-      }
-
-      const usage = usageByWorkspace.get(subscription.workspaceId) ?? 0;
-      const creditBalance =
-        creditBalanceByCustomer.get(subscription.stripeCustomerId) ?? 0;
-      const allowance = resourceCreditPricingInfo.tierCap + creditBalance;
-
-      results.set(subscription.id, {
-        skipped: false,
-        hasReachedCap: usage >= allowance,
-        usage,
-        allowance,
-        tierCap: resourceCreditPricingInfo.tierCap,
-        creditBalance,
-      });
-    }
-
-    return results;
-  }
-
   async setSubscriptionItemHasReachedCap(
     workspaceId: string,
     hasReachedCap: boolean,
   ): Promise<void> {
-    const isV2 = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_BILLING_V2_ENABLED,
-      workspaceId,
-    );
-
-    const productKey = isV2
-      ? BillingProductKey.RESOURCE_CREDIT
-      : BillingProductKey.WORKFLOW_NODE_EXECUTION;
-
     const billingSubscriptionItems =
       await this.billingSubscriptionItemRepository.find({
         where: {
@@ -189,7 +96,7 @@ export class BillingUsageCapService {
           billingProduct: {
             metadata: Raw((alias) => `${alias} @> :metadata::jsonb`, {
               metadata: JSON.stringify({
-                productKey,
+                productKey: BillingProductKey.RESOURCE_CREDIT,
               }),
             }),
           },

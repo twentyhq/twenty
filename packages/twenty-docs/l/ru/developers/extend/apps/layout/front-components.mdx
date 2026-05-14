@@ -239,6 +239,38 @@ export default defineFrontComponent({
 | `useFrontComponentId()`                       | `string`            | ID этого экземпляра компонента                                               |
 | `useFrontComponentExecutionContext(selector)` | различается         | Доступ к полному контексту выполнения с помощью функции-селектора            |
 
+## Переменные приложения
+
+Переменные приложения, определенные в [`defineApplication()`](/l/ru/developers/extend/apps/config/application) с `isSecret: false`, доступны внутри фронтенд-компонентов через утилиту `getApplicationVariable`:
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+Секретные переменные (`isSecret: true`) **не** доступны фронтенд-компонентам. Они доступны только в [логических функциях](/l/ru/developers/extend/apps/logic/logic-functions), которые выполняются на стороне сервера. Это предотвращает отправку в браузер конфиденциальных значений, таких как ключи API.
+</Warning>
+
+Следующие системные переменные всегда доступны через `process.env`:
+
+| Переменная                | Описание                                                                      |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | Базовый URL API Twenty                                                        |
+| `TWENTY_APP_ACCESS_TOKEN` | Краткоживущий токен с областью действия, ограниченной ролью вашего приложения |
+
 ## API взаимодействия с хостом
 
 Компоненты фронтенда могут вызывать навигацию, модальные окна и уведомления с помощью функций из `twenty-sdk`:

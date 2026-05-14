@@ -76,6 +76,13 @@ export class AiBillingService {
       (billingInput.usage.outputTokens ?? 0) +
       (billingInput.cacheCreationTokens ?? 0);
 
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingUsageService.decrementAvailableCreditsInCache({
+        workspaceId,
+        usedCredits: creditsUsedMicro,
+      });
+    }
+
     await this.emitAiTokenUsageEvent(
       workspaceId,
       creditsUsedMicro,
@@ -85,6 +92,29 @@ export class AiBillingService {
       agentId,
       userWorkspaceId,
     );
+  }
+
+  async decrementAndCheckAvailableCredits(
+    modelId: ModelId,
+    billingInput: BillingUsageInput,
+    workspaceId: string,
+  ): Promise<{ hasNoMoreAvailableCredits: boolean }> {
+    if (!this.billingService.isBillingEnabled()) {
+      return { hasNoMoreAvailableCredits: false };
+    }
+
+    const costInDollars = this.calculateCost(modelId, billingInput);
+    const creditsUsedMicro = Math.round(
+      convertDollarsToBillingCredits(costInDollars),
+    );
+
+    const remainingCredits =
+      await this.billingUsageService.decrementAvailableCreditsInCache({
+        workspaceId,
+        usedCredits: creditsUsedMicro,
+      });
+
+    return { hasNoMoreAvailableCredits: remainingCredits <= 0 };
   }
 
   async billNativeWebSearchUsage(
@@ -117,7 +147,7 @@ export class AiBillingService {
 
       periodStart = currentPeriodStart;
 
-      await this.billingUsageService.decrementAvailableCredits({
+      await this.billingUsageService.decrementAvailableCreditsInCache({
         workspaceId,
         usedCredits: creditsUsedMicro,
       });
@@ -140,7 +170,7 @@ export class AiBillingService {
     );
   }
 
-  private async emitAiTokenUsageEvent(
+  async emitAiTokenUsageEvent(
     workspaceId: string,
     creditsUsedMicro: number,
     totalTokens: number,
@@ -159,11 +189,6 @@ export class AiBillingService {
       ]);
 
       periodStart = currentPeriodStart;
-
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: creditsUsedMicro,
-      });
     }
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(

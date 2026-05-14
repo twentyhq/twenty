@@ -471,6 +471,11 @@ msgstr "Сталася помилка метаданих індексу."
 msgid "An index must contain at least one field"
 msgstr "Індекс повинен містити принаймні одне поле"
 
+#. js-lingui-id: KvWKJI
+#: src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception.ts
+msgid "An internal error occurred while handling encrypted data."
+msgstr ""
+
 #. js-lingui-id: SOp/Vw
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."

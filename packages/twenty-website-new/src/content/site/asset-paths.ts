@@ -71,6 +71,7 @@ export const SHARED_PEOPLE_AVATAR_URLS = {
   reidHoffman: '/images/shared/people/avatars/reid-hoffman.webp',
   roelofBotha: '/images/shared/people/avatars/roelof-botha.webp',
   ryanRoslansky: '/images/shared/people/avatars/ryan-roslansky.webp',
+  samAltman: '/images/shared/people/avatars/sam-altman.webp',
   steveAnavi: '/images/shared/people/avatars/steve-anavi.webp',
   stewartButterfield: '/images/shared/people/avatars/stewart-butterfield.webp',
   sundarPichai: '/images/shared/people/avatars/sundar-pichai.webp',

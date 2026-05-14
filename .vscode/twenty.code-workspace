@@ -43,6 +43,46 @@
     {
       "name": "packages/twenty-e2e-testing",
       "path": "../packages/twenty-e2e-testing"
+    },
+    {
+      "name": "packages/twenty-docs",
+      "path": "../packages/twenty-docs"
+    },
+    {
+      "name": "packages/create-twenty-app",
+      "path": "../packages/create-twenty-app"
+    },
+    {
+      "name": "packages/twenty-apps",
+      "path": "../packages/twenty-apps"
+    },
+    {
+      "name": "packages/twenty-claude-skills",
+      "path": "../packages/twenty-claude-skills"
+    },
+    {
+      "name": "packages/twenty-cli",
+      "path": "../packages/twenty-cli"
+    },
+    {
+      "name": "packages/twenty-client-sdk",
+      "path": "../packages/twenty-client-sdk"
+    },
+    {
+      "name": "packages/twenty-companion",
+      "path": "../packages/twenty-companion"
+    },
+    {
+      "name": "packages/twenty-front-component-renderer",
+      "path": "../packages/twenty-front-component-renderer"
+    },
+    {
+      "name": "packages/twenty-sdk",
+      "path": "../packages/twenty-sdk"
+    },
+    {
+      "name": "packages/twenty-website-new",
+      "path": "../packages/twenty-website-new"
     }
   ],
   "settings": {

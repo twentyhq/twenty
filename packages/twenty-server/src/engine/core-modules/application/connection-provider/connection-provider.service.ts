@@ -53,7 +53,7 @@ export class ConnectionProviderService {
       variables.map((v) => [
         v.key,
         v.encryptedValue
-          ? this.secretEncryptionService.decrypt(v.encryptedValue)
+          ? this.secretEncryptionService.decryptVersioned(v.encryptedValue)
           : '',
       ]),
     );

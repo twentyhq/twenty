@@ -24,21 +24,25 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
-import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
-import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
+import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
+import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
+import {
+  extractCacheCreationTokens,
+  extractCacheCreationTokensFromSteps,
+} from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -222,14 +226,35 @@ export class AgentAsyncExecutorService {
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
+      let hasNoMoreAvailableCredits = false;
+
       const textResponse = await generateText({
         system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
         tools,
         model: registeredModel.model,
         prompt: userPrompt,
-        stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
+        stopWhen: (step) =>
+          stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
+          hasNoMoreAvailableCredits,
         providerOptions,
         experimental_telemetry: AI_TELEMETRY_CONFIG,
+        onStepFinish: async (step) => {
+          const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+            await this.aiBillingService.decrementAndCheckAvailableCredits(
+              registeredModel.modelId,
+              {
+                usage: step.usage,
+                cacheCreationTokens: extractCacheCreationTokens(
+                  step.providerMetadata,
+                ),
+              },
+              workspaceId,
+            );
+
+          if (stepHasNoMoreAvailableCredits) {
+            hasNoMoreAvailableCredits = true;
+          }
+        },
         experimental_repairToolCall: async ({
           toolCall,
           tools: toolsForRepair,
@@ -265,6 +290,7 @@ export class AgentAsyncExecutorService {
           usage: textResponse.usage,
           cacheCreationTokens,
           nativeWebSearchCallCount,
+          hasNoMoreAvailableCredits,
         };
       }
 
@@ -278,6 +304,23 @@ export class AgentAsyncExecutorService {
                  Please generate the structured output based on the execution results and context above.`,
         output: Output.object({ schema: jsonSchema(agentSchema) }),
         experimental_telemetry: AI_TELEMETRY_CONFIG,
+        onStepFinish: async (step) => {
+          const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+            await this.aiBillingService.decrementAndCheckAvailableCredits(
+              registeredModel.modelId,
+              {
+                usage: step.usage,
+                cacheCreationTokens: extractCacheCreationTokens(
+                  step.providerMetadata,
+                ),
+              },
+              workspaceId,
+            );
+
+          if (stepHasNoMoreAvailableCredits) {
+            hasNoMoreAvailableCredits = true;
+          }
+        },
       });
 
       accumulatedUsage = mergeLanguageModelUsage(
@@ -297,6 +340,7 @@ export class AgentAsyncExecutorService {
         usage: accumulatedUsage,
         cacheCreationTokens,
         nativeWebSearchCallCount,
+        hasNoMoreAvailableCredits,
       };
     } catch (error) {
       if (error instanceof AiException) {
@@ -307,10 +351,24 @@ export class AgentAsyncExecutorService {
         AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     } finally {
-      void this.aiBillingService.calculateAndBillUsage(
-        agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
-        { usage: accumulatedUsage, cacheCreationTokens },
+      const modelId = agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID;
+      const costInDollars = this.aiBillingService.calculateCost(modelId, {
+        usage: accumulatedUsage,
+        cacheCreationTokens,
+      });
+      const creditsUsedMicro = Math.round(
+        convertDollarsToBillingCredits(costInDollars),
+      );
+      const totalTokens =
+        (accumulatedUsage.inputTokens ?? 0) +
+        (accumulatedUsage.outputTokens ?? 0) +
+        cacheCreationTokens;
+
+      void this.aiBillingService.emitAiTokenUsageEvent(
         workspaceId,
+        creditsUsedMicro,
+        totalTokens,
+        modelId,
         operationType,
         agent?.id ?? null,
         userWorkspaceId,

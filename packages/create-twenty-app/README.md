@@ -25,18 +25,19 @@ yarn twenty dev
 The scaffolder will:
 
 1. Create a new project with TypeScript, linting, tests, and a preconfigured `twenty` CLI
-2. Optionally start a local Twenty server (Docker)
-3. Open the browser for OAuth authentication
+2. Start a local Twenty server via Docker (pulls the latest image automatically)
+3. Authenticate with the development API key
 
 ## Options
 
-| Flag                           | Description                             |
-| ------------------------------ | --------------------------------------- |
-| `--example <name>`             | Initialize from an example              |
-| `--name <name>`                | Set the app name (skips the prompt)     |
-| `--display-name <displayName>` | Set the display name (skips the prompt) |
-| `--description <description>`  | Set the description (skips the prompt)  |
-| `--skip-local-instance`        | Skip the local server setup prompt      |
+| Flag                               | Description                                                           |
+| ---------------------------------- | --------------------------------------------------------------------- |
+| `--example <name>`                 | Initialize from an example                                            |
+| `--name <name>`                    | Set the app name                                                      |
+| `--display-name <displayName>`     | Set the display name                                                  |
+| `--description <description>`      | Set the description                                                   |
+| `--api-url <url>`                  | Twenty instance URL (default: `http://localhost:2020`)                |
+| `--authentication-method <method>` | `oauth` or `apiKey` (default: `apiKey` for local, `oauth` for remote) |
 
 By default (no flags), a minimal app is generated with core files and an integration test. Use `--example` to start from a richer example:
 
@@ -57,7 +58,7 @@ Full documentation is available at **[docs.twenty.com/developers/extend/apps](ht
 ## Troubleshooting
 
 - Server not starting: check Docker is running (`docker info`), then try `yarn twenty server logs`.
-- Auth not working: make sure you are logged in to Twenty in the browser, then run `yarn twenty remote add`.
+- Auth not working: run `yarn twenty remote add --local` to re-authenticate.
 - Types not generated: ensure `yarn twenty dev` is running — it auto-generates the typed client.
 
 ## Contributing
