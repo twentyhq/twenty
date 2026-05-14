@@ -72,11 +72,11 @@ Your content here...
 - `package.json` - Package dependencies and scripts (`docs:generate`, `docs:generate-navigation-template`, …).
 - `project.json` - Nx workspace configuration
 
-## 📦 Build validation
+## 📦 Validation
 
 ```bash
 # Validate the documentation build
-npx nx run twenty-docs:build
+npx nx run twenty-docs:validate
 ```
 
 ## 🔗 Links

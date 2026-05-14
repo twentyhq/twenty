@@ -12,7 +12,7 @@
         "command": "mintlify dev"
       }
     },
-    "build": {
+    "validate": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
