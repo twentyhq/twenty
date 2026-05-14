@@ -340,7 +340,10 @@ describe('ConnectedAccountRefreshTokensService', () => {
       });
       expect(
         connectedAccountTokenEncryptionService.decrypt,
-      ).toHaveBeenCalledWith(mockEncryptedAccessToken);
+      ).toHaveBeenCalledWith({
+        ciphertext: mockEncryptedAccessToken,
+        workspaceId: mockWorkspaceId,
+      });
       expect(
         appOAuthRefreshAccessTokenService.refreshTokens,
       ).not.toHaveBeenCalled();
