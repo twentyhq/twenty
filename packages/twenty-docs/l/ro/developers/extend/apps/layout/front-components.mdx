@@ -239,6 +239,38 @@ Hook-uri disponibile:
 | `useFrontComponentId()`                       | `string`            | ID-ul acestei instanțe de componentă                                                |
 | `useFrontComponentExecutionContext(selector)` | variază             | Accesați întregul context de execuție cu o funcție selector                         |
 
+## Variabile de aplicație
+
+Variabilele de aplicație definite în [`defineApplication()`](/l/ro/developers/extend/apps/config/application) cu `isSecret: false` sunt disponibile în componentele de interfață prin utilitarul `getApplicationVariable`:
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+Variabilele secrete (`isSecret: true`) **nu** sunt expuse componentelor de interfață. Acestea sunt disponibile doar în [funcțiile logice](/l/ro/developers/extend/apps/logic/logic-functions), care rulează pe server. Acest lucru împiedică trimiterea către browser a valorilor sensibile, cum ar fi cheile API.
+</Warning>
+
+Următoarele variabile de sistem sunt întotdeauna disponibile prin `process.env`:
+
+| Variabilă                 | Descriere                                                |
+| ------------------------- | -------------------------------------------------------- |
+| `TWENTY_API_URL`          | URL de bază al API-ului Twenty                           |
+| `TWENTY_APP_ACCESS_TOKEN` | Token cu durată scurtă, limitat la rolul aplicației dvs. |
+
 ## API-ul de comunicare cu gazda
 
 Componentele front-end pot declanșa navigare, ferestre modale și notificări folosind funcții din `twenty-sdk`:

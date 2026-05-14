@@ -239,6 +239,38 @@ Available hooks:
 | `useFrontComponentId()` | `string` | This component instance's ID |
 | `useFrontComponentExecutionContext(selector)` | varies | Access the full execution context with a selector function |
 
+## Application variables
+
+Application variables defined in [`defineApplication()`](/developers/extend/apps/config/application) with `isSecret: false` are available inside front components via the `getApplicationVariable` utility:
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+Secret variables (`isSecret: true`) are **not** exposed to front components. They are only available in [logic functions](/developers/extend/apps/logic/logic-functions), which run server-side. This prevents sensitive values like API keys from being sent to the browser.
+</Warning>
+
+The following system variables are always available via `process.env`:
+
+| Variable | Description |
+|----------|-------------|
+| `TWENTY_API_URL` | Base URL of the Twenty API |
+| `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to your app's role |
+
 ## Host communication API
 
 Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:

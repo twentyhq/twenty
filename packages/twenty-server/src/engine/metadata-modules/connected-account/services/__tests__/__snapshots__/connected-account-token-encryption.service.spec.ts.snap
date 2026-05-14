@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`ConnectedAccountTokenEncryptionService encrypt should throw when given an already-prefixed value 1`] = `"ConnectedAccountTokenEncryptionService.encrypt received an already-prefixed value. This indicates a double-encryption bug — the caller is encrypting ciphertext."`;
-
-exports[`ConnectedAccountTokenEncryptionService encryptTokenPair should throw when accessToken is already encrypted 1`] = `"ConnectedAccountTokenEncryptionService.encrypt received an already-prefixed value. This indicates a double-encryption bug — the caller is encrypting ciphertext."`;

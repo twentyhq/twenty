@@ -28,7 +28,6 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
-import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -56,7 +55,6 @@ export class BillingSubscriptionService {
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingSubscriptionEntity>,
-    private readonly meteredCreditService: MeteredCreditService,
     private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
@@ -250,10 +248,6 @@ export class BillingSubscriptionService {
     await this.billingSubscriptionItemRepository.update(
       { stripeSubscriptionId: updatedSubscription.id },
       { hasReachedCurrentPeriodCap: false },
-    );
-
-    await this.meteredCreditService.recreateBillingAlertForSubscription(
-      billingSubscription,
     );
 
     return {

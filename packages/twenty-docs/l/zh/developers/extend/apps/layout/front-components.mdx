@@ -239,6 +239,38 @@ export default defineFrontComponent({
 | `useFrontComponentId()`                       | `string`          | 此组件实例的 ID                             |
 | `useFrontComponentExecutionContext(selector)` | 因情况而异             | 使用选择器函数访问完整的执行上下文                     |
 
+## 应用程序变量
+
+在 [`defineApplication()`](/l/zh/developers/extend/apps/config/application) 中定义、且 `isSecret: false` 的应用程序变量，可以通过 `getApplicationVariable` 实用工具在前端组件中使用：
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+机密变量（`isSecret: true`）**不会**暴露给前端组件。 它们仅在服务器端运行的 [逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions) 中可用。 这可以防止诸如 API 密钥之类的敏感值被发送到浏览器。
+</Warning>
+
+以下系统变量始终可以通过 `process.env` 获取：
+
+| 变量                        | 描述                 |
+| ------------------------- | ------------------ |
+| `TWENTY_API_URL`          | Twenty API 的基础 URL |
+| `TWENTY_APP_ACCESS_TOKEN` | 限定在你的应用角色范围内的短期令牌  |
+
 ## 宿主通信 API
 
 前端组件可以使用来自 `twenty-sdk` 的函数触发导航、模态框和通知：

@@ -471,6 +471,11 @@ msgstr "색인 메타데이터 오류가 발생했습니다."
 msgid "An index must contain at least one field"
 msgstr "인덱스에는 적어도 하나의 필드가 있어야 합니다"
 
+#. js-lingui-id: KvWKJI
+#: src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception.ts
+msgid "An internal error occurred while handling encrypted data."
+msgstr ""
+
 #. js-lingui-id: SOp/Vw
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."

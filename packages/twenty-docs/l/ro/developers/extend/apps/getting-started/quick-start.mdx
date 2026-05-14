@@ -87,7 +87,7 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-Aceasta monitorizează `src/`, reconstruiește la fiecare modificare și sincronizează rezultatul pe server. Editați un fișier, salvați, iar în decurs de o secundă serverul reflectă modificarea. Veți vedea în terminal un panou de stare în timp real.
+Aceasta monitorizează `src/`, reconstruiește la fiecare modificare și sincronizează rezultatul pe server. Editați un fișier, salvați, iar în câteva secunde serverul reflectă modificarea. Veți vedea în terminal un panou de stare în timp real.
 
 Pentru o ieșire mai detaliată (jurnale de build, cereri de sincronizare, urme ale erorilor), adăugați `--verbose`.
 
@@ -128,11 +128,15 @@ yarn twenty dev --once
 | `yarn twenty dev`        | Monitorizează și resincronizează la fiecare modificare. Rulează până când îl opriți. | Dezvoltare locală interactivă.                                  |
 | `yarn twenty dev --once` | Un singur build + sync, iese cu `0` la succes, `1` la eșec.                          | CI, hook-uri pre-commit, agenți AI, fluxuri de lucru scriptate. |
 
-Ambele moduri necesită un server în modul de dezvoltare și un remote autentificat.
+Ambele moduri necesită o conexiune la distanță autentificată.
 
-<Warning>
-Modul de dezvoltare este disponibil doar pe instanțele Twenty care rulează în modul development (`NODE_ENV=development`). Instanțele de producție resping cererile de sincronizare din modul de dezvoltare — folosiți `yarn twenty deploy` pentru a implementa pe serverele de producție. Consultați [Publicarea](/l/ro/developers/extend/apps/operations/publishing).
-</Warning>
+### Opțiuni pentru modul de dezvoltare
+
+| Opțiune                               | Descriere                                                                                        |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `--once`                              | Construiește și sincronizează o singură dată, apoi iese.                                         |
+| `--debounceMs \<ms>` | Setează întârzierea de debounce pentru modificarea fișierului în milisecunde (implicit: `2000`). |
+| `--verbose` / `--debug`               | Afișează jurnale detaliate de construire, cereri de sincronizare și urme ale erorilor.           |
 
 ---
 

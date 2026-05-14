@@ -239,6 +239,38 @@ Kullanılabilir hook'lar:
 | `useFrontComponentId()`                       | `string`             | Bu bileşen örneğinin ID'si                                                 |
 | `useFrontComponentExecutionContext(selector)` | değişir              | Bir seçici işlevle tam yürütme bağlamına erişin                            |
 
+## Uygulama değişkenleri
+
+`isSecret: false` ile [`defineApplication()`](/l/tr/developers/extend/apps/config/application) içinde tanımlanan uygulama değişkenleri, `getApplicationVariable` yardımcı işlevi aracılığıyla ön uç bileşenleri içinde kullanılabilir:
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+Gizli değişkenler (`isSecret: true`) ön uç bileşenlere açıklanmaz. Bunlar yalnızca sunucu tarafında çalışan [mantık işlevlerinde](/l/tr/developers/extend/apps/logic/logic-functions) kullanılabilir. Bu, API anahtarları gibi hassas değerlerin tarayıcıya gönderilmesini engeller.
+</Warning>
+
+Aşağıdaki sistem değişkenleri her zaman `process.env` aracılığıyla kullanılabilir:
+
+| Değişken                  | Açıklama                                                  |
+| ------------------------- | --------------------------------------------------------- |
+| `TWENTY_API_URL`          | Twenty API'nin temel URL'si                               |
+| `TWENTY_APP_ACCESS_TOKEN` | Uygulamanızın rolüyle sınırlanan kısa ömürlü bir belirteç |
+
 ## Host iletişim API'si
 
 Ön uç bileşenleri, `twenty-sdk`'deki işlevleri kullanarak gezinmeyi, modalları ve bildirimleri tetikleyebilir:

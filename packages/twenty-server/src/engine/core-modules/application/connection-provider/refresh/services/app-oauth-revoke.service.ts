@@ -44,9 +44,10 @@ export class AppOAuthRevokeService {
 
     try {
       const decryptedAccessToken =
-        this.connectedAccountTokenEncryptionService.decrypt(
-          connectedAccount.accessToken,
-        );
+        this.connectedAccountTokenEncryptionService.decrypt({
+          ciphertext: connectedAccount.accessToken,
+          workspaceId: connectedAccount.workspaceId,
+        });
 
       const response = await this.secureHttpClientService.createSsrfSafeFetch()(
         revokeEndpoint,

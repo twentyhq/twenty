@@ -3,21 +3,18 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { useGetNextResourceCreditPrice } from '@/settings/billing/hooks/useGetNextResourceCreditPrice';
-import { useGetNextMeteredBillingPrice } from '@/settings/billing/hooks/useGetNextMeteredBillingPrice';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FeatureFlagKey,
   PermissionFlagType,
-  SetMeteredSubscriptionPriceDocument,
+  SetResourceCreditSubscriptionPriceDocument,
   SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
@@ -33,12 +30,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   const { endTrialPeriod, isLoading: isEndTrialLoading } =
     useEndSubscriptionTrialPeriod();
 
-  const isV2 = useIsFeatureEnabled(FeatureFlagKey.IS_BILLING_V2_ENABLED);
-
-  const nextMeteredBillingPrice = useGetNextMeteredBillingPrice();
-  const nextResourceCreditPrice = useGetNextResourceCreditPrice();
-
-  const nextPrice = isV2 ? nextResourceCreditPrice : nextMeteredBillingPrice;
+  const nextPrice = useGetNextResourceCreditPrice();
 
   const { formatNumber } = useNumberFormat();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -47,9 +39,8 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
     currentWorkspaceState,
   );
 
-  const [setMeteredSubscriptionPrice, { loading: isUpgrading }] = useMutation(
-    SetMeteredSubscriptionPriceDocument,
-  );
+  const [setResourceCreditSubscriptionPrice, { loading: isUpgrading }] =
+    useMutation(SetResourceCreditSubscriptionPriceDocument);
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToManageBilling } =
     usePermissionFlagMap();
@@ -60,34 +51,15 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
-  const nextTierCredits = isDefined(nextPrice)
-    ? isV2
-      ? formatNumber(
-          (nextPrice as typeof nextResourceCreditPrice)?.creditAmount ?? 0,
-          {
-            abbreviate: true,
-            decimals: 2,
-          },
-        )
-      : formatNumber(
-          (nextPrice as typeof nextMeteredBillingPrice)?.tiers?.[0]?.upTo ?? 0,
-          {
-            abbreviate: true,
-            decimals: 2,
-          },
-        )
+  const nextResourceCreditsAmount = isDefined(nextPrice)
+    ? formatNumber(nextPrice.creditAmount ?? 0, {
+        abbreviate: true,
+        decimals: 2,
+      })
     : null;
 
-  const nextTierPrice = isDefined(nextPrice)
-    ? isV2
-      ? formatNumber(
-          ((nextPrice as typeof nextResourceCreditPrice)?.unitAmount ?? 0) /
-            100,
-        )
-      : formatNumber(
-          ((nextPrice as typeof nextMeteredBillingPrice)?.tiers?.[0]
-            ?.flatAmount ?? 0) / 100,
-        )
+  const nextResourceCreditPrice = isDefined(nextPrice)
+    ? formatNumber((nextPrice.unitAmount ?? 0) / 100)
     : null;
 
   const nextTierInterval = isDefined(nextPrice)
@@ -99,7 +71,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   const message = isTrialing
     ? t`You've hit your usage limit. Subscribe for more usage.`
     : isDefined(nextPrice)
-      ? t`You've hit your usage limit. \nUpgrade to ${nextTierCredits} credits for $${nextTierPrice}/${nextTierInterval}.`
+      ? t`You've hit your usage limit. \nUpgrade to ${nextResourceCreditsAmount} credits for $${nextResourceCreditPrice}/${nextTierInterval}.`
       : t`You've hit your usage limit. \nReach to our support team to upgrade.`;
 
   const buttonTitle = isTrialing
@@ -117,21 +89,21 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   const handleUpgradeConfirm = async () => {
     if (!isDefined(nextPrice)) return;
     try {
-      const { data } = await setMeteredSubscriptionPrice({
+      const { data } = await setResourceCreditSubscriptionPrice({
         variables: { priceId: nextPrice.stripePriceId },
       });
       if (
         isDefined(
-          data?.setMeteredSubscriptionPrice.currentBillingSubscription,
+          data?.setResourceCreditSubscriptionPrice.currentBillingSubscription,
         ) &&
         isDefined(currentWorkspace)
       ) {
         setCurrentWorkspace({
           ...currentWorkspace,
           currentBillingSubscription:
-            data.setMeteredSubscriptionPrice.currentBillingSubscription,
+            data.setResourceCreditSubscriptionPrice.currentBillingSubscription,
           billingSubscriptions:
-            data.setMeteredSubscriptionPrice.billingSubscriptions,
+            data.setResourceCreditSubscriptionPrice.billingSubscriptions,
         });
       }
       enqueueSuccessSnackBar({ message: t`Credit plan upgraded.` });
@@ -166,7 +138,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
         <ConfirmationModal
           modalInstanceId={AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID}
           title={t`Get more credits`}
-          subtitle={t`Upgrade to ${nextTierCredits} credits for $${nextTierPrice}/${nextTierInterval}.`}
+          subtitle={t`Upgrade to ${nextResourceCreditsAmount} credits for $${nextResourceCreditPrice}/${nextTierInterval}.`}
           onConfirmClick={handleUpgradeConfirm}
           confirmButtonText={t`Upgrade`}
           confirmButtonAccent="blue"

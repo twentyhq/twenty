@@ -42,7 +42,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
       input: {
         defaultValue: {
           firstName: "'Jane'",
-          lastName: "''",
+          lastName: null,
         },
       },
     },
@@ -51,10 +51,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
     title: 'full name field default value with empty values',
     context: {
       input: {
-        defaultValue: {
-          firstName: "''",
-          lastName: "''",
-        },
+        defaultValue: null,
       },
     },
   },

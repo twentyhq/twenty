@@ -38,8 +38,12 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
-import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import {
+  extractCacheCreationTokens,
+  extractCacheCreationTokensFromSteps,
+} from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
@@ -48,9 +52,9 @@ import {
   type ExtractedFile,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import {
-  injectCacheBreakpoint,
   getCacheProviderOptions,
   getCallLevelCacheProviderOptions,
+  injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-cache-breakpoint.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -72,6 +76,7 @@ export type ChatExecutionOptions = {
 export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   modelConfig: AiModelConfig;
+  hasNoMoreAvailableCredits: () => boolean;
 };
 
 @Injectable()
@@ -262,7 +267,9 @@ export class ChatExecutionService {
 
     const modelMessages = pruningResult.messages;
 
-    const billUsageFromSteps = async (steps: StepResult<ToolSet>[]) => {
+    let hasNoMoreAvailableCredits = false;
+
+    const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce<LanguageModelUsage>(
         (acc, step) => ({
           inputTokens: (acc.inputTokens ?? 0) + (step.usage.inputTokens ?? 0),
@@ -303,11 +310,24 @@ export class ChatExecutionService {
       );
 
       const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
+      const totalTokens =
+        (usage.inputTokens ?? 0) +
+        (usage.outputTokens ?? 0) +
+        cacheCreationTokens;
 
-      await this.aiBillingService.calculateAndBillUsage(
+      const costInDollars = this.aiBillingService.calculateCost(
         registeredModel.modelId,
         { usage, cacheCreationTokens },
+      );
+      const creditsUsedMicro = Math.round(
+        convertDollarsToBillingCredits(costInDollars),
+      );
+
+      await this.aiBillingService.emitAiTokenUsageEvent(
         workspace.id,
+        creditsUsedMicro,
+        totalTokens,
+        registeredModel.modelId,
         UsageOperationType.AI_CHAT_TOKEN,
         null,
         userWorkspaceId,
@@ -327,7 +347,8 @@ export class ChatExecutionService {
       messages: [systemMessage, ...modelMessages],
       tools: activeTools,
       abortSignal,
-      stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
+      stopWhen: (step) =>
+        stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) || hasNoMoreAvailableCredits,
       experimental_telemetry: AI_TELEMETRY_CONFIG,
       providerOptions: getCallLevelCacheProviderOptions(
         registeredModel.sdkPackage,
@@ -335,8 +356,25 @@ export class ChatExecutionService {
       prepareStep: ({ messages }) => ({
         messages: injectCacheBreakpoint(messages, registeredModel.sdkPackage),
       }),
+      onStepFinish: async (step) => {
+        const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+          await this.aiBillingService.decrementAndCheckAvailableCredits(
+            registeredModel.modelId,
+            {
+              usage: step.usage,
+              cacheCreationTokens: extractCacheCreationTokens(
+                step.providerMetadata,
+              ),
+            },
+            workspace.id,
+          );
+
+        if (stepHasNoMoreAvailableCredits) {
+          hasNoMoreAvailableCredits = true;
+        }
+      },
       onAbort: async ({ steps }) => {
-        await billUsageFromSteps(steps);
+        await emitTurnUsageEvent(steps);
       },
       experimental_repairToolCall: async ({
         toolCall,
@@ -363,7 +401,7 @@ export class ChatExecutionService {
 
     Promise.all([stream.usage, stream.steps])
       .then(async ([, steps]) => {
-        await billUsageFromSteps(steps);
+        await emitTurnUsageEvent(steps);
       })
       .catch((error) => {
         if (error?.name === 'AbortError') {
@@ -375,6 +413,7 @@ export class ChatExecutionService {
     return {
       stream,
       modelConfig,
+      hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
     };
   }
 

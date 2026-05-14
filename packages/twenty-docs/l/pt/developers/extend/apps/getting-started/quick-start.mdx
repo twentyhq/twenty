@@ -87,7 +87,7 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-Isso monitora `src/`, recompila a cada alteração e sincroniza o resultado com o servidor. Edite um arquivo, salve e, em um segundo, o servidor refletirá a alteração. Você verá um painel de status em tempo real no seu terminal.
+Isso monitora `src/`, recompila a cada alteração e sincroniza o resultado com o servidor. Edite um arquivo, salve e, em alguns segundos, o servidor refletirá a alteração. Você verá um painel de status em tempo real no seu terminal.
 
 Para uma saída mais detalhada (logs de build, solicitações de sincronização, rastros de erro), adicione `--verbose`.
 
@@ -128,11 +128,15 @@ yarn twenty dev --once
 | `yarn twenty dev`        | Monitora e ressincroniza a cada alteração. Fica em execução até você interrompê-lo.                                              | Desenvolvimento local interativo.                                                |
 | `yarn twenty dev --once` | Executa uma única compilação + sincronização e, em seguida, encerra com o código `0` em caso de sucesso ou `1` em caso de falha. | Scripts, CI, hooks de pre-commit, agentes de IA e fluxos de trabalho com script. |
 
-Ambos os modos precisam de um servidor em modo de desenvolvimento e de um remoto autenticado.
+Ambos os modos precisam de um remoto autenticado.
 
-<Warning>
-O modo de desenvolvimento só está disponível em instâncias do Twenty em modo de desenvolvimento (`NODE_ENV=development`). Instâncias de produção rejeitam solicitações de sincronização de desenvolvimento — use `yarn twenty deploy` para implantar em servidores de produção. Veja [Publicação](/l/pt/developers/extend/apps/operations/publishing).
-</Warning>
+### Opções do modo de desenvolvimento
+
+| Opção                                 | Descrição                                                                                         |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `--once`                              | Compila e sincroniza uma vez e, em seguida, sai.                                                  |
+| `--debounceMs \<ms>` | Define o atraso de debounce para alterações de arquivo em milissegundos (padrão: `2000`).         |
+| `--verbose` / `--debug`               | Mostra registros detalhados de compilação, solicitações de sincronização e rastreamentos de erro. |
 
 ---
 
