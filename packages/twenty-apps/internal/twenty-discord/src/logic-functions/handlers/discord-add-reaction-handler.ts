@@ -17,27 +17,19 @@ export const discordAddReactionHandler = async (
     };
   }
 
+  const channelId = parameters.channelId.trim();
+  const messageId = parameters.messageId.trim();
   const emoji = parameters.emoji.trim();
 
-  if (emoji.length === 0) {
-    return {
-      success: false,
-      message: 'Failed to add Discord reaction',
-      error: 'An emoji value is required.',
-    };
-  }
-
+  const encodedChannelId = encodeURIComponent(channelId);
+  const encodedMessageId = encodeURIComponent(messageId);
   const encodedEmoji = encodeURIComponent(emoji);
 
   try {
     const result = await discordApiRequest({
       botToken: tokenResult.botToken,
       method: 'PUT',
-      path: `/channels/${encodeURIComponent(
-        parameters.channelId,
-      )}/messages/${encodeURIComponent(
-        parameters.messageId,
-      )}/reactions/${encodedEmoji}/@me`,
+      path: `/channels/${encodedChannelId}/messages/${encodedMessageId}/reactions/${encodedEmoji}/@me`,
     });
 
     if (!result.ok) {
@@ -51,8 +43,8 @@ export const discordAddReactionHandler = async (
     return {
       success: true,
       message: `Reaction "${emoji}" added to the message.`,
-      messageId: parameters.messageId,
-      channelId: parameters.channelId,
+      messageId,
+      channelId,
     };
   } catch (error) {
     return discordToolFailure('Failed to add Discord reaction', error);
