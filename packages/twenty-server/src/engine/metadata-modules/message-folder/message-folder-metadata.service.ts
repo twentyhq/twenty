@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 
 import {
   ConnectedAccountProvider,
@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/types';
 
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import {
@@ -186,13 +187,20 @@ export class MessageFolderMetadataService {
         data,
       });
 
-    await this.repository.update(
-      { id, workspaceId },
-      data as Record<string, unknown>,
-    );
+    await this.repository.manager.transaction(async (transactionManager) => {
+      await transactionManager.update(
+        MessageFolderEntity,
+        { id, workspaceId },
+        data as Record<string, unknown>,
+      );
 
-    await this.resetGoogleMessageChannelCursor(googleMessageChannelIdsToReset, {
-      workspaceId,
+      await this.resetGoogleMessageChannelCursor(
+        transactionManager,
+        googleMessageChannelIdsToReset,
+        {
+          workspaceId,
+        },
+      );
     });
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
@@ -214,13 +222,20 @@ export class MessageFolderMetadataService {
         data,
       });
 
-    await this.repository.update(
-      { id: In(ids), workspaceId },
-      data as Record<string, unknown>,
-    );
+    await this.repository.manager.transaction(async (transactionManager) => {
+      await transactionManager.update(
+        MessageFolderEntity,
+        { id: In(ids), workspaceId },
+        data as Record<string, unknown>,
+      );
 
-    await this.resetGoogleMessageChannelCursor(googleMessageChannelIdsToReset, {
-      workspaceId,
+      await this.resetGoogleMessageChannelCursor(
+        transactionManager,
+        googleMessageChannelIdsToReset,
+        {
+          workspaceId,
+        },
+      );
     });
 
     return this.repository.find({ where: { id: In(ids), workspaceId } });
@@ -276,21 +291,22 @@ export class MessageFolderMetadataService {
   }
 
   private async resetGoogleMessageChannelCursor(
+    transactionManager: EntityManager,
     messageChannelIds: string[],
     { workspaceId }: { workspaceId: string },
   ): Promise<void> {
-    await Promise.all(
-      messageChannelIds.map((messageChannelId) =>
-        this.messageChannelMetadataService.update({
-          id: messageChannelId,
-          workspaceId,
-          data: {
-            syncCursor: '',
-            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-            syncStageStartedAt: null,
-          },
-        }),
-      ),
+    if (messageChannelIds.length === 0) {
+      return;
+    }
+
+    await transactionManager.update(
+      MessageChannelEntity,
+      { id: In(messageChannelIds), workspaceId },
+      {
+        syncCursor: '',
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+        syncStageStartedAt: null,
+      },
     );
   }
 

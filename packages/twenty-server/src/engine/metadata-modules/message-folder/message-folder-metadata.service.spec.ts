@@ -9,6 +9,7 @@ import {
 import { In } from 'typeorm';
 
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MessageFolderMetadataService } from 'src/engine/metadata-modules/message-folder/message-folder-metadata.service';
@@ -19,6 +20,12 @@ describe('MessageFolderMetadataService', () => {
     find: jest.Mock;
     findOne: jest.Mock;
     findOneOrFail: jest.Mock;
+    manager: {
+      transaction: jest.Mock;
+    };
+    update: jest.Mock;
+  };
+  let transactionManager: {
     update: jest.Mock;
   };
   let messageChannelMetadataService: {
@@ -31,10 +38,16 @@ describe('MessageFolderMetadataService', () => {
   };
 
   beforeEach(async () => {
+    transactionManager = {
+      update: jest.fn().mockResolvedValue(undefined),
+    };
     messageFolderRepository = {
       find: jest.fn(),
       findOne: jest.fn(),
       findOneOrFail: jest.fn(),
+      manager: {
+        transaction: jest.fn((callback) => callback(transactionManager)),
+      },
       update: jest.fn().mockResolvedValue(undefined),
     };
     messageChannelMetadataService = {
@@ -134,20 +147,23 @@ describe('MessageFolderMetadataService', () => {
       },
       select: ['id', 'messageChannelId'],
     });
-    expect(messageChannelMetadataService.update).toHaveBeenCalledTimes(1);
-    expect(messageChannelMetadataService.update).toHaveBeenCalledWith({
-      id: 'google-channel',
-      workspaceId: 'workspace-id',
-      data: {
+    expect(transactionManager.update).toHaveBeenNthCalledWith(
+      1,
+      MessageFolderEntity,
+      { id: In(['folder-1', 'folder-2']), workspaceId: 'workspace-id' },
+      { isSynced: true },
+    );
+    expect(transactionManager.update).toHaveBeenNthCalledWith(
+      2,
+      MessageChannelEntity,
+      { id: In(['google-channel']), workspaceId: 'workspace-id' },
+      {
         syncCursor: '',
         syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
         syncStageStartedAt: null,
       },
-    });
-    expect(messageFolderRepository.update).toHaveBeenCalledWith(
-      { id: In(['folder-1', 'folder-2']), workspaceId: 'workspace-id' },
-      { isSynced: true },
     );
+    expect(messageChannelMetadataService.update).not.toHaveBeenCalled();
   });
 
   it('does not reset channel cursors when folders are disabled', async () => {
@@ -166,7 +182,9 @@ describe('MessageFolderMetadataService', () => {
 
     expect(messageChannelMetadataService.findById).not.toHaveBeenCalled();
     expect(messageChannelMetadataService.update).not.toHaveBeenCalled();
-    expect(messageFolderRepository.update).toHaveBeenCalledWith(
+    expect(transactionManager.update).toHaveBeenCalledTimes(1);
+    expect(transactionManager.update).toHaveBeenCalledWith(
+      MessageFolderEntity,
       { id: In(['folder-1']), workspaceId: 'workspace-id' },
       { isSynced: false },
     );
@@ -199,18 +217,22 @@ describe('MessageFolderMetadataService', () => {
       data: { isSynced: true },
     });
 
-    expect(messageChannelMetadataService.update).toHaveBeenCalledWith({
-      id: 'google-channel',
-      workspaceId: 'workspace-id',
-      data: {
+    expect(transactionManager.update).toHaveBeenNthCalledWith(
+      1,
+      MessageFolderEntity,
+      { id: 'folder-1', workspaceId: 'workspace-id' },
+      { isSynced: true },
+    );
+    expect(transactionManager.update).toHaveBeenNthCalledWith(
+      2,
+      MessageChannelEntity,
+      { id: In(['google-channel']), workspaceId: 'workspace-id' },
+      {
         syncCursor: '',
         syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
         syncStageStartedAt: null,
       },
-    });
-    expect(messageFolderRepository.update).toHaveBeenCalledWith(
-      { id: 'folder-1', workspaceId: 'workspace-id' },
-      { isSynced: true },
     );
+    expect(messageChannelMetadataService.update).not.toHaveBeenCalled();
   });
 });
