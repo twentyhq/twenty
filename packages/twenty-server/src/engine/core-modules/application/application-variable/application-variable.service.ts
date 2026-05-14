@@ -32,9 +32,10 @@ export class ApplicationVariableEntityService {
       return '';
     }
 
-    return this.secretEncryptionService.decryptAndMask({
+    return this.secretEncryptionService.decryptAndMaskVersioned({
       value: applicationVariable.value,
       mask: SECRET_APPLICATION_VARIABLE_MASK,
+      workspaceId: applicationVariable.workspaceId,
     });
   }
 
@@ -60,7 +61,9 @@ export class ApplicationVariableEntityService {
     }
 
     const encryptedValue = existingVariable.isSecret
-      ? this.secretEncryptionService.encrypt(plainTextValue)
+      ? this.secretEncryptionService.encryptVersioned(plainTextValue, {
+          workspaceId,
+        })
       : plainTextValue;
 
     await this.applicationVariableRepository.update(

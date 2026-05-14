@@ -231,9 +231,9 @@ msgstr ""
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr ""
 
-#. js-lingui-id: LTvJAf
+#. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
-msgid "{appName} wants to access your account"
+msgid "{appName} would like to:"
 msgstr ""
 
 #. js-lingui-id: y9covz
@@ -798,9 +798,9 @@ msgstr ""
 msgid "Access Key ID"
 msgstr ""
 
-#. js-lingui-id: o0Ci6l
+#. js-lingui-id: CrjDqe
 #: src/pages/auth/Authorize.tsx
-msgid "Access workspace data"
+msgid "Access your workspace data"
 msgstr ""
 
 #. js-lingui-id: c2UA7k
@@ -3802,6 +3802,11 @@ msgstr ""
 #. js-lingui-id: DDbn3x
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Confirm upgrade"
+msgstr ""
+
+#. js-lingui-id: LOM1MR
+#: src/pages/auth/Authorize.tsx
+msgid "Connect {appName} to your account"
 msgstr ""
 
 #. js-lingui-id: mFiwDA

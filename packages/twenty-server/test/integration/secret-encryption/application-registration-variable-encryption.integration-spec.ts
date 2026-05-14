@@ -1,22 +1,28 @@
+import crypto from 'crypto';
+
 import gql from 'graphql-tag';
 import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 
-// Real integration test for the legacy CTR encryption path: drive the
-// full create/read/delete lifecycle through the GraphQL API and peek
-// into Postgres mid-test to verify the stored value is ciphertext.
-// applicationRegistrationVariable uses SecretEncryptionService.encrypt
-// (unprefixed CTR), the same legacy path as applicationVariable and
-// every other non-connected-account encrypted column.
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
+import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+
+const V2_ENVELOPE_REGEX = /^enc:v2:[0-9a-f]{8}:[A-Za-z0-9+/=]+$/;
+const CONSTRAINT_NAME =
+  'CHK_applicationRegistrationVariable_encryptedValue_encrypted';
+const CONSTRAINT_EXPR = `"encryptedValue" = '' OR "encryptedValue" LIKE 'enc:v2:%'`;
 
 describe('ApplicationRegistrationVariable encryption (integration)', () => {
   let dataSource: DataSource;
+  let secretEncryption: SecretEncryptionService;
   let applicationRegistrationId: string;
 
   beforeAll(async () => {
     dataSource = global.testDataSource;
+    secretEncryption = buildSecretEncryptionServiceFromEnv();
 
     const createRegistrationResponse = await makeMetadataAPIRequest({
       query: gql`
@@ -62,7 +68,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
   });
 
   it('encrypts the value on the API write path, persists ciphertext in Postgres, and decrypts back via the API read path', async () => {
-    const plaintext = 'this-is-a-legacy-ctr-secret-value';
+    const plaintext = 'this-is-a-v2-encrypted-secret-value';
 
     const createVariableResponse = await makeMetadataAPIRequest({
       query: gql`
@@ -77,7 +83,7 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
       variables: {
         input: {
           applicationRegistrationId,
-          key: 'TEST_LEGACY_PLAIN',
+          key: 'TEST_V2_KEY',
           value: plaintext,
           isSecret: false,
         },
@@ -93,11 +99,11 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
       [variableId],
     );
 
-    // The legacy CTR envelope is base64(IV || ciphertext) — no enc: prefix.
-    // Two invariants: the column does NOT contain the plaintext, and the
-    // value looks like a base64 blob (proving encryption actually ran).
     expect(dbRow.encryptedValue).not.toContain(plaintext);
-    expect(dbRow.encryptedValue).toMatch(/^[A-Za-z0-9+/]+={0,2}$/);
+    expect(
+      dbRow.encryptedValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX),
+    ).toBe(true);
+    expect(dbRow.encryptedValue).toMatch(V2_ENVELOPE_REGEX);
 
     const findResponse = await makeMetadataAPIRequest({
       query: gql`
@@ -126,9 +132,73 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
 
     expect(variable).toBeDefined();
     expect(variable.isSecret).toBe(false);
-    // For non-secret variables the resolver decrypts and returns the
-    // plaintext directly — proves the legacy CTR encrypt + decrypt
-    // round-trip works end-to-end via the live API.
     expect(variable.value).toBe(plaintext);
+  });
+
+  describe('legacy CTR fallback', () => {
+    let legacyVariableId: string;
+
+    beforeAll(async () => {
+      await dataSource.query(
+        `ALTER TABLE core."applicationRegistrationVariable"
+         DROP CONSTRAINT IF EXISTS "${CONSTRAINT_NAME}"`,
+      );
+    });
+
+    afterAll(async () => {
+      await dataSource.query(
+        `DELETE FROM core."applicationRegistrationVariable" WHERE id = $1`,
+        [legacyVariableId],
+      );
+      await dataSource.query(
+        `ALTER TABLE core."applicationRegistrationVariable"
+         ADD CONSTRAINT "${CONSTRAINT_NAME}" CHECK (${CONSTRAINT_EXPR})`,
+      );
+    });
+
+    it('decrypts a legacy CTR-encrypted value through the live API', async () => {
+      legacyVariableId = crypto.randomUUID();
+      const plaintext = 'legacy-ctr-registration-variable-secret';
+
+      await dataSource.query(
+        `INSERT INTO core."applicationRegistrationVariable"
+           (id, "applicationRegistrationId", "key", "encryptedValue",
+            "isSecret", "isRequired")
+         VALUES ($1, $2, 'TEST_LEGACY_CTR_KEY', $3, false, false)`,
+        [
+          legacyVariableId,
+          applicationRegistrationId,
+          secretEncryption.encrypt(plaintext),
+        ],
+      );
+
+      const findResponse = await makeMetadataAPIRequest({
+        query: gql`
+          query FindLegacyCtrVariablesForEncryptionTest(
+            $applicationRegistrationId: String!
+          ) {
+            findApplicationRegistrationVariables(
+              applicationRegistrationId: $applicationRegistrationId
+            ) {
+              id
+              value
+              isSecret
+            }
+          }
+        `,
+        variables: { applicationRegistrationId },
+      });
+
+      expect(findResponse.body.errors).toBeUndefined();
+
+      const variable =
+        findResponse.body.data.findApplicationRegistrationVariables.find(
+          (v: { id: string }) => v.id === legacyVariableId,
+        );
+
+      expect(variable).toBeDefined();
+      expect(variable.isSecret).toBe(false);
+      expect(variable.value).toBe(plaintext);
+    });
   });
 });

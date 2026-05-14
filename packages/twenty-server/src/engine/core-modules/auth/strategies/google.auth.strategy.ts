@@ -29,7 +29,6 @@ export type GoogleRequest = Omit<
     picture: string | null;
     locale?: keyof typeof APP_LOCALES | null;
     workspaceInviteHash?: string;
-    workspacePersonalInviteToken?: string;
     action: SocialSSOSignInUpActionType;
     workspaceId?: string;
     billingCheckoutSessionState?: string;
@@ -57,7 +56,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
         billingCheckoutSessionState: req.query.billingCheckoutSessionState,
-        workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
         action: req.query.action,
         locale: req.query.locale,
         returnToPath: req.query.returnToPath,
@@ -94,7 +92,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       lastName: name?.familyName,
       picture: photos?.[0]?.value ?? null,
       workspaceInviteHash: state?.workspaceInviteHash,
-      workspacePersonalInviteToken: state?.workspacePersonalInviteToken,
       workspaceId: state?.workspaceId,
       billingCheckoutSessionState: state?.billingCheckoutSessionState,
       action: state?.action ?? 'list-available-workspaces',

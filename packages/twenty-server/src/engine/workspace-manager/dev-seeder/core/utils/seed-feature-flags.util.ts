@@ -50,16 +50,6 @@ export const seedFeatureFlags = async ({
         workspaceId: workspaceId,
         value: true,
       },
-      {
-        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
     ])
     .execute();
 };

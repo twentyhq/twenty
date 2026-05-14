@@ -102,7 +102,7 @@ const restoreEncryptionCheckConstraints = async (
   );
 };
 
-describe('EncryptConnectedAccountTokensSlowInstanceCommand (integration)', () => {
+describe('2-5 slow instance command 1798000004000 - EncryptConnectedAccountTokensSlowInstanceCommand (integration)', () => {
   let dataSource: DataSource;
   let secretEncryptionService: SecretEncryptionService;
   let connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService;

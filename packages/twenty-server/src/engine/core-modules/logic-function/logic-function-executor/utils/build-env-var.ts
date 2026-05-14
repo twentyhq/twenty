@@ -12,7 +12,9 @@ export const buildEnvVar = (
 
       acc[flatApplicationVariable.key] =
         flatApplicationVariable.isSecret && isNonEmptyString(value)
-          ? secretEncryptionService.decrypt(value)
+          ? secretEncryptionService.decryptVersioned(value, {
+              workspaceId: flatApplicationVariable.workspaceId,
+            })
           : value;
 
       return acc;

@@ -46,14 +46,10 @@ import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/Ta
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  FeatureFlagKey,
-  type PageLayoutType,
-} from '~/generated-metadata/graphql';
+import { type PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -111,10 +107,6 @@ export const PageLayoutTabList = ({
 }: PageLayoutTabListProps) => {
   const { getIcon } = useIcons();
   const { t } = useLingui();
-
-  const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
-  );
 
   const tabsWithIcons: SingleTabProps[] = tabs.map((tab) => ({
     id: tab.id,
@@ -266,10 +258,7 @@ export const PageLayoutTabList = ({
     (tabId: string) => {
       const shouldOpenSettings =
         isPageLayoutInEditMode &&
-        shouldEnableTabEditingFeatures(
-          pageLayoutType,
-          isRecordPageGlobalEditionEnabled,
-        );
+        shouldEnableTabEditingFeatures(pageLayoutType);
 
       if (shouldOpenSettings && activeTabId === tabId) {
         openTabSettings(tabId);
@@ -284,7 +273,6 @@ export const PageLayoutTabList = ({
     },
     [
       isPageLayoutInEditMode,
-      isRecordPageGlobalEditionEnabled,
       pageLayoutType,
       activeTabId,
       isTabSettingsOpen,
@@ -297,10 +285,7 @@ export const PageLayoutTabList = ({
     (tabId: string) => {
       const shouldOpenSettings =
         isPageLayoutInEditMode &&
-        shouldEnableTabEditingFeatures(
-          pageLayoutType,
-          isRecordPageGlobalEditionEnabled,
-        );
+        shouldEnableTabEditingFeatures(pageLayoutType);
 
       if (shouldOpenSettings && activeTabId === tabId) {
         openTabSettings(tabId);
@@ -316,7 +301,6 @@ export const PageLayoutTabList = ({
     },
     [
       isPageLayoutInEditMode,
-      isRecordPageGlobalEditionEnabled,
       pageLayoutType,
       activeTabId,
       isTabSettingsOpen,

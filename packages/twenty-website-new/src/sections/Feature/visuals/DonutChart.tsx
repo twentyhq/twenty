@@ -92,7 +92,7 @@ export function DonutChart({ active, value }: DonutChartProps) {
 
   return (
     <Panel>
-      <PanelTitle>Conversion rate</PanelTitle>
+      <PanelTitle>Widget name</PanelTitle>
       <ChartArea>
         <svg height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} width={SIZE}>
           <circle
