@@ -48,6 +48,7 @@ export enum JwtTokenTypeEnum {
   APPLICATION_ACCESS = 'APPLICATION_ACCESS',
   APPLICATION_REFRESH = 'APPLICATION_REFRESH',
   APP_OAUTH_STATE = 'APP_OAUTH_STATE',
+  APPROVED_ACCESS_DOMAIN = 'APPROVED_ACCESS_DOMAIN',
 }
 
 type CommonPropertiesJwtPayload = {
@@ -154,6 +155,13 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   codeVerifier: string | null;
 };
 
+export type ApprovedAccessDomainJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.APPROVED_ACCESS_DOMAIN;
+  workspaceId: string;
+  approvedAccessDomainId: string;
+  domain: string;
+};
+
 export type JwtPayload =
   | AccessTokenJwtPayload
   | ApiKeyTokenJwtPayload
@@ -165,4 +173,5 @@ export type JwtPayload =
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
   | FileTokenJwtPayloadLegacy
-  | AppOAuthStateJwtPayload;
+  | AppOAuthStateJwtPayload
+  | ApprovedAccessDomainJwtPayload;

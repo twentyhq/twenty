@@ -1,7 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
@@ -16,16 +14,28 @@ import {
   ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
 import { approvedAccessDomainValidator } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.validate';
+import {
+  type ApprovedAccessDomainJwtPayload,
+  JwtTokenTypeEnum,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkDomain } from 'src/utils/is-work-email';
 
+// Long enough that an invited domain validator has time to click the link
+// across a weekend, short enough that abandoned invitations don't linger
+// forever in mailboxes. Workspace admins can always re-issue.
+const APPROVED_ACCESS_DOMAIN_TOKEN_EXPIRES_IN = '7d';
+
 @Injectable()
 export class ApprovedAccessDomainService {
+  private readonly logger = new Logger(ApprovedAccessDomainService.name);
+
   constructor(
     @InjectRepository(ApprovedAccessDomainEntity)
     private readonly approvedAccessDomainRepository: Repository<ApprovedAccessDomainEntity>,
@@ -33,6 +43,7 @@ export class ApprovedAccessDomainService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUrlService: FileUrlService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 
   async sendApprovedAccessDomainValidationEmail(
@@ -66,7 +77,10 @@ export class ApprovedAccessDomainService {
       pathname: getSettingsPath(SettingsPath.WorkspaceMembersPage),
       searchParams: {
         wtdId: approvedAccessDomain.id,
-        validationToken: this.generateUniqueHash(approvedAccessDomain),
+        validationToken: await this.mintValidationToken({
+          approvedAccessDomain,
+          workspaceId: workspace.id,
+        }),
       },
     });
 
@@ -111,19 +125,55 @@ export class ApprovedAccessDomainService {
     });
   }
 
-  private generateUniqueHash(
-    approvedAccessDomain: ApprovedAccessDomainEntity,
-  ): string {
-    return crypto
-      .createHash('sha256')
-      .update(
-        JSON.stringify({
-          id: approvedAccessDomain.id,
-          domain: approvedAccessDomain.domain,
-          key: this.twentyConfigService.get('APP_SECRET'),
-        }),
-      )
-      .digest('hex');
+  private async mintValidationToken({
+    approvedAccessDomain,
+    workspaceId,
+  }: {
+    approvedAccessDomain: ApprovedAccessDomainEntity;
+    workspaceId: string;
+  }): Promise<string> {
+    return this.jwtWrapperService.signAsyncOrThrow(
+      {
+        sub: approvedAccessDomain.id,
+        type: JwtTokenTypeEnum.APPROVED_ACCESS_DOMAIN,
+        workspaceId,
+        approvedAccessDomainId: approvedAccessDomain.id,
+        domain: approvedAccessDomain.domain,
+      },
+      { expiresIn: APPROVED_ACCESS_DOMAIN_TOKEN_EXPIRES_IN },
+    );
+  }
+
+  private async verifyValidationTokenOrThrow(
+    validationToken: string,
+  ): Promise<ApprovedAccessDomainJwtPayload> {
+    let payload: ApprovedAccessDomainJwtPayload;
+
+    try {
+      payload = (await this.jwtWrapperService.verifyJwtToken(
+        validationToken,
+      )) as ApprovedAccessDomainJwtPayload;
+    } catch (error) {
+      this.logger.warn(
+        `Rejected approved-access-domain validation token: ${
+          error instanceof Error ? error.message : 'unknown reason'
+        }`,
+      );
+
+      throw new ApprovedAccessDomainException(
+        'Invalid approved access domain validation token',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+      );
+    }
+
+    if (payload.type !== JwtTokenTypeEnum.APPROVED_ACCESS_DOMAIN) {
+      throw new ApprovedAccessDomainException(
+        'Invalid approved access domain validation token',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+      );
+    }
+
+    return payload;
   }
 
   async validateApprovedAccessDomain({
@@ -133,12 +183,31 @@ export class ApprovedAccessDomainService {
     validationToken: string;
     approvedAccessDomainId: string;
   }) {
+    const payload = await this.verifyValidationTokenOrThrow(validationToken);
+
+    if (payload.approvedAccessDomainId !== approvedAccessDomainId) {
+      throw new ApprovedAccessDomainException(
+        'Invalid approved access domain validation token',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+      );
+    }
+
     const approvedAccessDomain =
       await this.approvedAccessDomainRepository.findOneBy({
         id: approvedAccessDomainId,
       });
 
     approvedAccessDomainValidator.assertIsDefinedOrThrow(approvedAccessDomain);
+
+    if (
+      payload.domain !== approvedAccessDomain.domain ||
+      payload.workspaceId !== approvedAccessDomain.workspaceId
+    ) {
+      throw new ApprovedAccessDomainException(
+        'Invalid approved access domain validation token',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+      );
+    }
 
     if (approvedAccessDomain.isValidated) {
       throw new ApprovedAccessDomainException(
@@ -147,16 +216,6 @@ export class ApprovedAccessDomainService {
         {
           userFriendlyMessage: msg`Approved access domain has already been validated`,
         },
-      );
-    }
-
-    const isHashValid =
-      this.generateUniqueHash(approvedAccessDomain) === validationToken;
-
-    if (!isHashValid) {
-      throw new ApprovedAccessDomainException(
-        'Invalid approved access domain validation token',
-        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
       );
     }
 
