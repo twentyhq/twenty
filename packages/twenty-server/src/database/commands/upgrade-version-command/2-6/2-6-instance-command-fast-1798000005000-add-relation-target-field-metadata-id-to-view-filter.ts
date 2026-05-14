@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.5.0', 1798000005000)
+@RegisteredInstanceCommand('2.6.0', 1798000005000)
 export class AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand
   implements FastInstanceCommand
 {
