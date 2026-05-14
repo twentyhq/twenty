@@ -1,5 +1,6 @@
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -17,6 +18,14 @@ import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 
 @Index(['userWorkspaceId', 'strategy'], { unique: true })
 @Entity({ name: 'twoFactorAuthenticationMethod', schema: 'core' })
+// Mirrors the SQL constraint added by the 2.5 slow instance command that
+// backfills TOTP secrets to the enc:v2 envelope. The keyId portion is not
+// constrained so future ENCRYPTION_KEY rotations do not require a DDL
+// migration.
+@Check(
+  'CHK_twoFactorAuthenticationMethod_secret_encrypted',
+  `"secret" LIKE 'enc:v2:%'`,
+)
 export class TwoFactorAuthenticationMethodEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

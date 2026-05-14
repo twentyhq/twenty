@@ -7,7 +7,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -57,7 +57,7 @@ describe('TwoFactorAuthenticationService', () => {
   let service: TwoFactorAuthenticationService;
   let repository: any;
   let userWorkspaceService: any;
-  let simpleSecretEncryptionUtil: any;
+  let secretEncryptionService: any;
 
   const mockUser = { id: 'user_123', email: 'test@example.com' };
   const workspace = { id: 'ws_123', displayName: 'Test Workspace' };
@@ -87,10 +87,10 @@ describe('TwoFactorAuthenticationService', () => {
           },
         },
         {
-          provide: SimpleSecretEncryptionUtil,
+          provide: SecretEncryptionService,
           useValue: {
-            encryptSecret: jest.fn(),
-            decryptSecret: jest.fn(),
+            encryptVersioned: jest.fn(),
+            decryptVersioned: jest.fn(),
           },
         },
       ],
@@ -104,8 +104,8 @@ describe('TwoFactorAuthenticationService', () => {
     );
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
-    simpleSecretEncryptionUtil = module.get<SimpleSecretEncryptionUtil>(
-      SimpleSecretEncryptionUtil,
+    secretEncryptionService = module.get<SecretEncryptionService>(
+      SecretEncryptionService,
     );
 
     jest.clearAllMocks();
@@ -171,9 +171,7 @@ describe('TwoFactorAuthenticationService', () => {
     it('should initiate configuration for a new user', async () => {
       repository.findOne.mockResolvedValue(null);
 
-      simpleSecretEncryptionUtil.encryptSecret.mockResolvedValue(
-        encryptedSecret,
-      );
+      secretEncryptionService.encryptVersioned.mockReturnValue(encryptedSecret);
 
       const uri = await service.initiateStrategyConfiguration(
         mockUser.id,
@@ -185,9 +183,9 @@ describe('TwoFactorAuthenticationService', () => {
       expect(uri).toBe(
         'otpauth://totp/test@example.com?secret=RAW_OTP_SECRET&issuer=Twenty%20-%20Test%20Workspace',
       );
-      expect(simpleSecretEncryptionUtil.encryptSecret).toHaveBeenCalledWith(
+      expect(secretEncryptionService.encryptVersioned).toHaveBeenCalledWith(
         rawSecret,
-        mockUser.id + workspace.id + 'otp-secret',
+        { workspaceId: workspace.id },
       );
       expect(repository.save).toHaveBeenCalledWith({
         id: undefined,
@@ -226,9 +224,7 @@ describe('TwoFactorAuthenticationService', () => {
       };
 
       repository.findOne.mockResolvedValue(existingMethod);
-      simpleSecretEncryptionUtil.encryptSecret.mockResolvedValue(
-        encryptedSecret,
-      );
+      secretEncryptionService.encryptVersioned.mockReturnValue(encryptedSecret);
 
       const uri = await service.initiateStrategyConfiguration(
         mockUser.id,
@@ -283,9 +279,8 @@ describe('TwoFactorAuthenticationService', () => {
       };
 
       repository.findOne.mockResolvedValue(existingMethod);
-      simpleSecretEncryptionUtil.decryptSecret.mockResolvedValue(rawSecret);
+      secretEncryptionService.decryptVersioned.mockReturnValue(rawSecret);
 
-      // Mock authenticator.keyuri to return a URI
       const expectedUri =
         'otpauth://totp/test@example.com?secret=RAW_OTP_SECRET&issuer=Twenty%20-%20Test%20Workspace';
 
@@ -297,9 +292,12 @@ describe('TwoFactorAuthenticationService', () => {
       );
 
       expect(uri).toBe(expectedUri);
-      expect(simpleSecretEncryptionUtil.decryptSecret).toHaveBeenCalledWith(
+      expect(secretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
         encryptedSecret,
-        mockUser.id + workspace.id + 'otp-secret',
+        {
+          workspaceId: workspace.id,
+          legacyAesCbcPurpose: `${mockUser.id}${workspace.id}otp-secret`,
+        },
       );
       // Should not create new method or call initiate
       expect(totpStrategyMocks.initiate).not.toHaveBeenCalled();
@@ -307,7 +305,6 @@ describe('TwoFactorAuthenticationService', () => {
     });
 
     it('should create new method when existing pending method is too old', async () => {
-      // Create a method that was created 2 hours ago (outside 1 hour window)
       const oldTime = new Date(Date.now() - 2 * 60 * 60 * 1000);
       const existingMethod = {
         id: 'existing_method_id',
@@ -317,9 +314,7 @@ describe('TwoFactorAuthenticationService', () => {
       };
 
       repository.findOne.mockResolvedValue(existingMethod);
-      simpleSecretEncryptionUtil.encryptSecret.mockResolvedValue(
-        encryptedSecret,
-      );
+      secretEncryptionService.encryptVersioned.mockReturnValue(encryptedSecret);
 
       const uri = await service.initiateStrategyConfiguration(
         mockUser.id,
@@ -346,7 +341,6 @@ describe('TwoFactorAuthenticationService', () => {
     });
 
     it('should throw error when decryption of existing method fails', async () => {
-      // Create a recent method but decryption will fail
       const recentTime = new Date(Date.now() - 5 * 60 * 1000);
       const existingMethod = {
         id: 'existing_method_id',
@@ -358,11 +352,10 @@ describe('TwoFactorAuthenticationService', () => {
       repository.findOne.mockResolvedValue(existingMethod);
       const decryptionError = new Error('Decryption failed');
 
-      simpleSecretEncryptionUtil.decryptSecret.mockRejectedValue(
-        decryptionError,
-      );
+      secretEncryptionService.decryptVersioned.mockImplementation(() => {
+        throw decryptionError;
+      });
 
-      // Should throw the decryption error instead of silently handling it
       await expect(
         service.initiateStrategyConfiguration(
           mockUser.id,
@@ -372,7 +365,6 @@ describe('TwoFactorAuthenticationService', () => {
         ),
       ).rejects.toThrow(decryptionError);
 
-      // Should not save anything since we errored out
       expect(repository.save).not.toHaveBeenCalled();
     });
 
@@ -381,13 +373,11 @@ describe('TwoFactorAuthenticationService', () => {
         id: 'existing_method_id',
         status: 'PENDING',
         secret: encryptedSecret,
-        createdAt: null, // No timestamp
+        createdAt: null,
       };
 
       repository.findOne.mockResolvedValue(existingMethod);
-      simpleSecretEncryptionUtil.encryptSecret.mockResolvedValue(
-        encryptedSecret,
-      );
+      secretEncryptionService.encryptVersioned.mockReturnValue(encryptedSecret);
 
       const uri = await service.initiateStrategyConfiguration(
         mockUser.id,
@@ -426,7 +416,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should successfully validate a valid token', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      simpleSecretEncryptionUtil.decryptSecret.mockResolvedValue(rawSecret);
+      secretEncryptionService.decryptVersioned.mockReturnValue(rawSecret);
 
       totpStrategyMocks.validate.mockReturnValue({
         isValid: true,
@@ -454,7 +444,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should throw if the token is invalid', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      simpleSecretEncryptionUtil.decryptSecret.mockResolvedValue(rawSecret);
+      secretEncryptionService.decryptVersioned.mockReturnValue(rawSecret);
       totpStrategyMocks.validate.mockReturnValue({
         isValid: false,
         context: mock2FAMethod,
@@ -517,9 +507,9 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should handle secret decryption errors', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      simpleSecretEncryptionUtil.decryptSecret.mockRejectedValue(
-        new Error('Secret decryption failed'),
-      );
+      secretEncryptionService.decryptVersioned.mockImplementation(() => {
+        throw new Error('Secret decryption failed');
+      });
 
       await expect(
         service.validateStrategy(
@@ -544,7 +534,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should successfully verify and return success', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      simpleSecretEncryptionUtil.decryptSecret.mockResolvedValue(rawSecret);
+      secretEncryptionService.decryptVersioned.mockReturnValue(rawSecret);
 
       totpStrategyMocks.validate.mockReturnValue({
         isValid: true,
@@ -573,7 +563,7 @@ describe('TwoFactorAuthenticationService', () => {
 
     it('should throw if the token is invalid', async () => {
       repository.findOne.mockResolvedValue(mock2FAMethod);
-      simpleSecretEncryptionUtil.decryptSecret.mockResolvedValue(rawSecret);
+      secretEncryptionService.decryptVersioned.mockReturnValue(rawSecret);
       totpStrategyMocks.validate.mockReturnValue({
         isValid: false,
         context: mock2FAMethod,

@@ -10,11 +10,11 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
-import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -28,6 +28,15 @@ import { OTPStatus } from './strategies/otp/otp.constants';
 
 const PENDING_METHOD_REUSE_WINDOW_MS = 60 * 60 * 1000;
 
+// Reproduced verbatim from the pre-migration SimpleSecretEncryptionUtil call
+// site so SecretEncryptionService can re-derive the legacy AES-CBC key for
+// rows minted before the encryption rotation. Don't change unless every
+// pre-migration row has already been backfilled to enc:v2.
+const buildLegacyTotpCbcPurpose = (
+  userId: string,
+  workspaceId: string,
+): string => `${userId}${workspaceId}otp-secret`;
+
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class TwoFactorAuthenticationService {
@@ -35,18 +44,8 @@ export class TwoFactorAuthenticationService {
     @InjectRepository(TwoFactorAuthenticationMethodEntity)
     private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethodEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly simpleSecretEncryptionUtil: SimpleSecretEncryptionUtil,
+    private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
-
-  /**
-   * Generates encryption key for OTP secret based on user and workspace identifiers.
-   */
-  private generateOtpSecretEncryptionKey(
-    userId: string,
-    workspaceId: string,
-  ): string {
-    return userId + workspaceId + 'otp-secret';
-  }
 
   /**
    * Validates two-factor authentication requirements for a workspace.
@@ -114,11 +113,13 @@ export class TwoFactorAuthenticationService {
       Date.now() - existing2FAMethod.createdAt.getTime() <
         PENDING_METHOD_REUSE_WINDOW_MS
     ) {
-      const existingSecret =
-        await this.simpleSecretEncryptionUtil.decryptSecret(
-          existing2FAMethod.secret,
-          this.generateOtpSecretEncryptionKey(userId, workspaceId),
-        );
+      const existingSecret = this.secretEncryptionService.decryptVersioned(
+        existing2FAMethod.secret,
+        {
+          workspaceId,
+          legacyAesCbcPurpose: buildLegacyTotpCbcPurpose(userId, workspaceId),
+        },
+      );
 
       const issuer = `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`;
       const reuseUri = authenticator.keyuri(userEmail, issuer, existingSecret);
@@ -133,9 +134,9 @@ export class TwoFactorAuthenticationService {
       `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`,
     );
 
-    const encryptedSecret = await this.simpleSecretEncryptionUtil.encryptSecret(
+    const encryptedSecret = this.secretEncryptionService.encryptVersioned(
       context.secret,
-      this.generateOtpSecretEncryptionKey(userId, workspaceId),
+      { workspaceId },
     );
 
     await this.twoFactorAuthenticationMethodRepository.save({
@@ -181,9 +182,12 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    const originalSecret = await this.simpleSecretEncryptionUtil.decryptSecret(
+    const originalSecret = this.secretEncryptionService.decryptVersioned(
       userTwoFactorAuthenticationMethod.secret,
-      this.generateOtpSecretEncryptionKey(userId, workspaceId),
+      {
+        workspaceId,
+        legacyAesCbcPurpose: buildLegacyTotpCbcPurpose(userId, workspaceId),
+      },
     );
 
     const otpContext = {
