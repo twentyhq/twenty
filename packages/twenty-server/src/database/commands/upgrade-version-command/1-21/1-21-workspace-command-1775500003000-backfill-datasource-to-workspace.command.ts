@@ -35,11 +35,6 @@ export class BackfillDatasourceToWorkspaceCommand extends ActiveOrSuspendedWorks
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    // Explicitly select only the columns this command needs.
-    // A bare findOne emits SELECT on every column declared on WorkspaceEntity,
-    // which breaks cross-version upgrades whenever a newer column has been added
-    // to the entity but its DB column is only created by a later instance command
-    // in the upgrade sequence.
     const workspace = await this.workspaceRepository.findOne({
       select: ['id', 'databaseSchema'],
       where: { id: workspaceId },
