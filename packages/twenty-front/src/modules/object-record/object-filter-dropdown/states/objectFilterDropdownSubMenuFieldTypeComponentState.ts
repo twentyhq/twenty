@@ -2,8 +2,6 @@ import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/ob
 import { type CompositeFilterableFieldType } from '@/object-record/record-filter/types/CompositeFilterableFieldType';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-// Sentinel for the relation-traversal mode of the shared sub-menu state,
-// distinguished from `CompositeFilterableFieldType`.
 export const RELATION_SUB_MENU_FIELD_TYPE = 'RELATION' as const;
 
 export type ObjectFilterDropdownSubMenuFieldType =

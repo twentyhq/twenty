@@ -87,8 +87,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     return;
   }
 
-  // Relation traversal: the filter applies to a field on the related object.
-  // Run this BEFORE the emptiness shortcut so an "is empty" filter on
+  // Must run before the emptiness shortcut so an "is empty" filter on
   // `company.name` is evaluated against `Company.name`, not the FK column.
   if (
     correspondingFieldMetadataItem.type === FieldMetadataType.RELATION &&
@@ -117,8 +116,8 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         [correspondingFieldMetadataItem.name]: innerFilter,
       } as RecordGqlOperationFilter;
     }
-    // Target field not in the provided fieldMetadataItems — fall through to
-    // the legacy relation-by-record path so the filter still works.
+    // Target not in fieldMetadataItems — fall through to legacy
+    // relation-by-record matching.
   }
 
   const shouldComputeEmptinessFilter = checkIfShouldComputeEmptinessFilter({

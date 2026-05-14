@@ -25,10 +25,6 @@ type SelectFilterParams = {
   fieldMetadataItemId: string;
   recordFilterId: string;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
-  // When the user drilled into a MANY_TO_ONE relation and picked a field on
-  // the target object, this carries that target field. The stored filter
-  // then operates against the target field's type (so operand picker /
-  // value input reflect the target, not the relation itself).
   relationTargetFieldMetadataItem?: FieldMetadataItem | null | undefined;
 };
 
@@ -155,6 +151,10 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       ? `${fieldMetadataItem.label} → ${relationTargetFieldMetadataItem.label}`
       : fieldMetadataItem.label;
 
+    const relationTargetFieldMetadataId = isRelationTraversal
+      ? relationTargetFieldMetadataItem.id
+      : null;
+
     const newAdvancedFilter = {
       id: recordFilterId,
       fieldMetadataId: fieldMetadataItem.id,
@@ -167,14 +167,12 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       type: filterType,
       label,
       subFieldName: subFieldNameToUse,
-      relationTargetFieldMetadataId: isRelationTraversal
-        ? relationTargetFieldMetadataItem.id
-        : null,
+      relationTargetFieldMetadataId,
     } satisfies RecordFilter;
 
     setSubFieldNameUsedInDropdown(subFieldNameToUse);
     setRelationTargetFieldMetadataIdUsedInDropdown(
-      isRelationTraversal ? relationTargetFieldMetadataItem.id : null,
+      relationTargetFieldMetadataId,
     );
 
     setObjectFilterDropdownSearchInput('');

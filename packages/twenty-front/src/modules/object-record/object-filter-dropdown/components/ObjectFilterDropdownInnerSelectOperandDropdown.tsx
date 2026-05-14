@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth';
@@ -44,22 +42,13 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
 
-  // For relation traversal the operand list must match the target field's
-  // type, not the relation field's. Looked up through the global metadata
-  // store so it works across objects.
-  const effectiveFieldMetadataItem = useMemo(
-    () =>
-      isDefined(relationTargetFieldMetadataIdUsedInDropdown)
-        ? getFieldMetadataItemByIdOrThrow(
-            relationTargetFieldMetadataIdUsedInDropdown,
-          ).fieldMetadataItem
-        : fieldMetadataItemUsedInDropdown,
-    [
-      relationTargetFieldMetadataIdUsedInDropdown,
-      fieldMetadataItemUsedInDropdown,
-      getFieldMetadataItemByIdOrThrow,
-    ],
-  );
+  const effectiveFieldMetadataItem = isDefined(
+    relationTargetFieldMetadataIdUsedInDropdown,
+  )
+    ? getFieldMetadataItemByIdOrThrow(
+        relationTargetFieldMetadataIdUsedInDropdown,
+      ).fieldMetadataItem
+    : fieldMetadataItemUsedInDropdown;
 
   const operandsForFilterType = isDefined(effectiveFieldMetadataItem)
     ? getRecordFilterOperands({

@@ -19,9 +19,6 @@ export type RecordFilter = {
   recordFilterGroupId?: string | null;
   operand: ViewFilterOperand;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
-  // For one-hop relation traversal: when `fieldMetadataId` references a
-  // MANY_TO_ONE relation field, this is the metadata id of the field on the
-  // target object whose value the filter compares against. Null otherwise.
   relationTargetFieldMetadataId?: string | null | undefined;
 };
 

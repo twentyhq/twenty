@@ -15,9 +15,6 @@ import { type ViewFilter } from '@/views/types/ViewFilter';
 export const mapViewFiltersToFilters = (
   viewFilters: ViewFilter[] | GqlViewFilter[],
   availableFieldMetadataItems: FieldMetadataItem[],
-  // All field metadata items across every object, used to resolve relation
-  // traversal targets that live on a different object than the source field.
-  // Defaults to `availableFieldMetadataItems` for non-traversal callers.
   allFieldMetadataItems: FieldMetadataItem[] = availableFieldMetadataItems,
 ): RecordFilter[] => {
   return viewFilters
@@ -32,12 +29,8 @@ export const mapViewFiltersToFilters = (
         return undefined;
       }
 
-      // The codegen-generated `GqlViewFilter` and the local `ViewFilter`
-      // type don't both expose this field; `in` narrows safely across both.
       const relationTargetFieldMetadataId =
-        'relationTargetFieldMetadataId' in viewFilter
-          ? (viewFilter.relationTargetFieldMetadataId ?? null)
-          : null;
+        viewFilter.relationTargetFieldMetadataId ?? null;
 
       const relationTargetFieldMetadataItem = isDefined(
         relationTargetFieldMetadataId,
@@ -48,9 +41,6 @@ export const mapViewFiltersToFilters = (
           )
         : undefined;
 
-      // For relation traversal, the operand picker / value input must match
-      // the target field's type, and the label must reflect both hops so the
-      // filter is recognizable in the UI (e.g. "Company → Name").
       const filterType = isDefined(relationTargetFieldMetadataItem)
         ? getFilterTypeFromFieldType(relationTargetFieldMetadataItem.type)
         : getFilterTypeFromFieldType(availableFieldMetadataItem.type);

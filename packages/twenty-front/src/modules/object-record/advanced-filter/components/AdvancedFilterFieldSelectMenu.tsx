@@ -22,7 +22,7 @@ import {
   objectFilterDropdownSubMenuFieldTypeComponentState,
 } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
-import { isManyToOneRelationField } from '@/object-record/object-filter-dropdown/utils/isManyToOneRelationField';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -122,23 +122,21 @@ export const AdvancedFilterFieldSelectMenu = ({
       recordFilterId,
     });
 
-    const isRelationDrillDown = isManyToOneRelationField(
-      selectedFieldMetadataItem,
-    );
-    const isCompositeDrillDown = isCompositeFilterableFieldType(filterType);
+    const subMenuType: ObjectFilterDropdownSubMenuFieldType | null =
+      isManyToOneRelationField(selectedFieldMetadataItem)
+        ? RELATION_SUB_MENU_FIELD_TYPE
+        : isCompositeFilterableFieldType(filterType)
+          ? filterType
+          : null;
 
-    if (isCompositeDrillDown || isRelationDrillDown) {
-      const subMenuType = (
-        isRelationDrillDown ? RELATION_SUB_MENU_FIELD_TYPE : filterType
-      ) as ObjectFilterDropdownSubMenuFieldType;
-
-      setObjectFilterDropdownSubMenuFieldType(subMenuType);
-
-      setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
-      setObjectFilterDropdownIsSelectingCompositeField(true);
-    } else {
+    if (subMenuType === null) {
       closeAdvancedFilterFieldSelectDropdown();
+      return;
     }
+
+    setObjectFilterDropdownSubMenuFieldType(subMenuType);
+    setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
+    setObjectFilterDropdownIsSelectingCompositeField(true);
   };
 
   const shouldShowVisibleFields = visibleFieldMetadataItems.length > 0;

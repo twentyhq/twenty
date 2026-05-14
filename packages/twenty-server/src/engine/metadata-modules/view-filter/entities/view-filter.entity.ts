@@ -64,17 +64,13 @@ export class ViewFilterEntity
   @Column({ nullable: true, type: 'text', default: null })
   subFieldName: string | null;
 
-  // Stable pointer to a field on the related object for one-hop relation
-  // traversal filters: when `fieldMetadataId` is a MANY_TO_ONE relation, this
-  // is the field on the target object whose value is being compared. Null for
-  // direct-field and composite-sub-field filters.
   @Column({ nullable: true, type: 'uuid', default: null })
   relationTargetFieldMetadataId: string | null;
 
-  // ON DELETE SET NULL keeps the row when the target field is deleted, but
-  // the operand/value stay shaped for the original target. The load path
-  // therefore drops any filter where `relationTargetFieldMetadataId` has
-  // become null after a non-null persisted value (deferred to caller).
+  // ON DELETE SET NULL keeps the row when the target field is deleted: the
+  // load path drops any filter where relationTargetFieldMetadataId was set
+  // but is now null, because operand/value are still shaped for the original
+  // target.
   @ManyToOne(() => FieldMetadataEntity, {
     onDelete: 'SET NULL',
     nullable: true,
