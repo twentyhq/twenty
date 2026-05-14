@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, type QueryRunner, Repository } from 'typeorm';
 
@@ -29,21 +30,6 @@ export class UpgradeMigrationService {
     @InjectRepository(UpgradeMigrationEntity)
     private readonly upgradeMigrationRepository: Repository<UpgradeMigrationEntity>,
   ) {}
-
-  private async saveInChunks(
-    repository: Repository<UpgradeMigrationEntity>,
-    rows: Array<Partial<UpgradeMigrationEntity>>,
-  ): Promise<void> {
-    for (
-      let cursor = 0;
-      cursor < rows.length;
-      cursor += UPGRADE_MIGRATION_SAVE_BATCH_SIZE
-    ) {
-      await repository.save(
-        rows.slice(cursor, cursor + UPGRADE_MIGRATION_SAVE_BATCH_SIZE),
-      );
-    }
-  }
 
   async getInferredVersion(commandName?: string): Promise<string | null> {
     if (isDefined(commandName)) {
@@ -112,7 +98,7 @@ export class UpgradeMigrationService {
         where: { name, workspaceId: IsNull() },
       });
 
-      await this.saveInChunks(repository, [
+      const instanceRows = [
         {
           name,
           status,
@@ -129,7 +115,14 @@ export class UpgradeMigrationService {
           workspaceId,
           errorMessage,
         })),
-      ]);
+      ];
+
+      for (const batch of chunk(
+        instanceRows,
+        UPGRADE_MIGRATION_SAVE_BATCH_SIZE,
+      )) {
+        await repository.save(batch);
+      }
 
       return;
     }
@@ -151,7 +144,9 @@ export class UpgradeMigrationService {
       });
     }
 
-    await this.saveInChunks(repository, rows);
+    for (const batch of chunk(rows, UPGRADE_MIGRATION_SAVE_BATCH_SIZE)) {
+      await repository.save(batch);
+    }
   }
 
   async markAsWorkspaceInitial({
