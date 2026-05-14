@@ -14,7 +14,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
-import { IconCopy } from 'twenty-ui/display';
+import { IconCopy, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -25,13 +25,20 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const REVOKE_MODAL_ID = 'revoke-signing-key-modal';
 
-const SIGNING_KEYS_GRID_TEMPLATE_COLUMNS = '2fr 1fr 1fr 110px 130px 110px';
+const SIGNING_KEYS_GRID_TEMPLATE_COLUMNS = '2fr 88px 96px 96px 88px';
 
-const StyledMonoText = styled.span`
-  font-family: ${themeCssVariables.code.font.family}, monospace;
+const StyledKeyCellContent = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+`;
+
+const StyledOverflowingTextContainer = styled.div`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const EM_DASH = '\u2014';
@@ -61,6 +68,14 @@ const formatTimestamp = (value: string | null | undefined): string => {
   }
 
   return new Date(value).toLocaleString();
+};
+
+const formatDate = (value: string | null | undefined): string => {
+  if (!isDefined(value)) {
+    return EM_DASH;
+  }
+
+  return new Date(value).toLocaleDateString();
 };
 
 export const SettingsAdminSigningKeysTable = () => {
@@ -107,41 +122,54 @@ export const SettingsAdminSigningKeysTable = () => {
         <TableBody>
           <TableRow gridTemplateColumns={SIGNING_KEYS_GRID_TEMPLATE_COLUMNS}>
             <TableHeader>{t`Key ID`}</TableHeader>
-            <TableHeader>{t`Created at`}</TableHeader>
-            <TableHeader>{t`Revoked at`}</TableHeader>
+            <TableHeader>{t`Revoked`}</TableHeader>
             <TableHeader>{t`Status`}</TableHeader>
             <TableHeader align="right">
-              {t`Verifications (last ${verifyWindowDays}d)`}
+              {t`Uses (last ${verifyWindowDays}d)`}
             </TableHeader>
             <TableHeader />
           </TableRow>
           {signingKeys.map((signingKey) => {
             const status = getStatusTag(signingKey);
             const isRevoked = isDefined(signingKey.revokedAt);
+            const tooltipContent = t`Created on ${formatTimestamp(signingKey.createdAt)}`;
 
             return (
               <TableRow
                 key={signingKey.id}
                 gridTemplateColumns={SIGNING_KEYS_GRID_TEMPLATE_COLUMNS}
               >
-                <TableCell
-                  title={signingKey.id}
-                  overflow="hidden"
-                  gap={themeCssVariables.spacing[1]}
-                >
-                  <StyledMonoText>{signingKey.id}</StyledMonoText>
-                  <Button
-                    Icon={IconCopy}
-                    size="small"
-                    variant="tertiary"
-                    ariaLabel={t`Copy key ID`}
-                    onClick={() =>
-                      copyToClipboard(signingKey.id, t`Key ID copied`)
-                    }
-                  />
+                <TableCell overflow="hidden">
+                  <StyledKeyCellContent>
+                    <StyledOverflowingTextContainer>
+                      <OverflowingTextWithTooltip
+                        text={signingKey.id}
+                        tooltipContent={tooltipContent}
+                        alwaysShowTooltip
+                      />
+                    </StyledOverflowingTextContainer>
+                    <Button
+                      Icon={IconCopy}
+                      size="small"
+                      variant="tertiary"
+                      ariaLabel={t`Copy key ID`}
+                      onClick={() =>
+                        copyToClipboard(signingKey.id, t`Key ID copied`)
+                      }
+                    />
+                  </StyledKeyCellContent>
                 </TableCell>
-                <TableCell>{formatTimestamp(signingKey.createdAt)}</TableCell>
-                <TableCell>{formatTimestamp(signingKey.revokedAt)}</TableCell>
+                <TableCell>
+                  {isDefined(signingKey.revokedAt) ? (
+                    <OverflowingTextWithTooltip
+                      text={formatDate(signingKey.revokedAt)}
+                      tooltipContent={t`Revoked on ${formatTimestamp(signingKey.revokedAt)}`}
+                      alwaysShowTooltip
+                    />
+                  ) : (
+                    EM_DASH
+                  )}
+                </TableCell>
                 <TableCell>
                   <Tag text={status.text} color={status.color} />
                 </TableCell>
@@ -167,10 +195,17 @@ export const SettingsAdminSigningKeysTable = () => {
             );
           })}
           <TableRow gridTemplateColumns={SIGNING_KEYS_GRID_TEMPLATE_COLUMNS}>
-            <TableCell title={t`Legacy HS256 verifications`} overflow="hidden">
-              <StyledMonoText>{t`Legacy (HS256)`}</StyledMonoText>
+            <TableCell overflow="hidden">
+              <StyledKeyCellContent>
+                <StyledOverflowingTextContainer>
+                  <OverflowingTextWithTooltip
+                    text={t`Legacy (HS256)`}
+                    tooltipContent={t`Legacy HS256 verifications across all tokens`}
+                    alwaysShowTooltip
+                  />
+                </StyledOverflowingTextContainer>
+              </StyledKeyCellContent>
             </TableCell>
-            <TableCell>{EM_DASH}</TableCell>
             <TableCell>{EM_DASH}</TableCell>
             <TableCell>
               <Tag text={t`Legacy`} color="gray" />

@@ -65,7 +65,7 @@ export class JwtKeyManagerService {
 
   async listSigningKeys(): Promise<SigningKeyEntity[]> {
     return this.signingKeyRepository.find({
-      order: { isCurrent: 'DESC', createdAt: 'DESC' },
+      order: { createdAt: 'DESC' },
     });
   }
 
