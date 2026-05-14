@@ -1,7 +1,7 @@
 import { type DiscordAddReactionInput } from 'src/logic-functions/types/discord-add-reaction-input.type';
 import { type DiscordToolResult } from 'src/logic-functions/types/discord-tool-result.type';
+import { buildDiscordFailureResult } from 'src/logic-functions/utils/build-discord-failure-result';
 import { discordApiRequest } from 'src/logic-functions/utils/discord-api-request';
-import { discordToolFailure } from 'src/logic-functions/utils/discord-tool-failure';
 import { getDiscordBotToken } from 'src/logic-functions/utils/get-discord-bot-token';
 
 export const discordAddReactionHandler = async (
@@ -47,6 +47,6 @@ export const discordAddReactionHandler = async (
       channelId,
     };
   } catch (error) {
-    return discordToolFailure('Failed to add Discord reaction', error);
+    return buildDiscordFailureResult('Failed to add Discord reaction', error);
   }
 };

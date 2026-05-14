@@ -1,6 +1,6 @@
 import { type DiscordToolResult } from 'src/logic-functions/types/discord-tool-result.type';
 
-export const discordToolFailure = (
+export const buildDiscordFailureResult = (
   message: string,
   error: unknown,
 ): DiscordToolResult => ({

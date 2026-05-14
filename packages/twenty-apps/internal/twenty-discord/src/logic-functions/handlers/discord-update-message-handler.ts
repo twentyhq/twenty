@@ -1,7 +1,7 @@
 import { type DiscordToolResult } from 'src/logic-functions/types/discord-tool-result.type';
 import { type DiscordUpdateMessageInput } from 'src/logic-functions/types/discord-update-message-input.type';
+import { buildDiscordFailureResult } from 'src/logic-functions/utils/build-discord-failure-result';
 import { discordApiRequest } from 'src/logic-functions/utils/discord-api-request';
-import { discordToolFailure } from 'src/logic-functions/utils/discord-tool-failure';
 import { getDiscordBotToken } from 'src/logic-functions/utils/get-discord-bot-token';
 
 type DiscordMessageResponse = {
@@ -26,7 +26,9 @@ export const discordUpdateMessageHandler = async (
     const result = await discordApiRequest<DiscordMessageResponse>({
       botToken: tokenResult.botToken,
       method: 'PATCH',
-      path: `/channels/${encodeURIComponent(parameters.channelId)}/messages/${encodeURIComponent(parameters.messageId)}`,
+      path: `/channels/${encodeURIComponent(
+        parameters.channelId,
+      )}/messages/${encodeURIComponent(parameters.messageId)}`,
       body: { content: parameters.newMessageText },
     });
 
@@ -45,6 +47,6 @@ export const discordUpdateMessageHandler = async (
       channelId: result.data.channel_id,
     };
   } catch (error) {
-    return discordToolFailure('Failed to update Discord message', error);
+    return buildDiscordFailureResult('Failed to update Discord message', error);
   }
 };

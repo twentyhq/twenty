@@ -1,7 +1,7 @@
 import { type DiscordDeleteMessageInput } from 'src/logic-functions/types/discord-delete-message-input.type';
 import { type DiscordToolResult } from 'src/logic-functions/types/discord-tool-result.type';
+import { buildDiscordFailureResult } from 'src/logic-functions/utils/build-discord-failure-result';
 import { discordApiRequest } from 'src/logic-functions/utils/discord-api-request';
-import { discordToolFailure } from 'src/logic-functions/utils/discord-tool-failure';
 import { getDiscordBotToken } from 'src/logic-functions/utils/get-discord-bot-token';
 
 export const discordDeleteMessageHandler = async (
@@ -21,7 +21,9 @@ export const discordDeleteMessageHandler = async (
     const result = await discordApiRequest({
       botToken: tokenResult.botToken,
       method: 'DELETE',
-      path: `/channels/${encodeURIComponent(parameters.channelId)}/messages/${encodeURIComponent(parameters.messageId)}`,
+      path: `/channels/${encodeURIComponent(
+        parameters.channelId,
+      )}/messages/${encodeURIComponent(parameters.messageId)}`,
     });
 
     if (!result.ok) {
@@ -39,6 +41,6 @@ export const discordDeleteMessageHandler = async (
       channelId: parameters.channelId,
     };
   } catch (error) {
-    return discordToolFailure('Failed to delete Discord message', error);
+    return buildDiscordFailureResult('Failed to delete Discord message', error);
   }
 };

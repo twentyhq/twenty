@@ -2,8 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type DiscordPostMessageInput } from 'src/logic-functions/types/discord-post-message-input.type';
 import { type DiscordToolResult } from 'src/logic-functions/types/discord-tool-result.type';
+import { buildDiscordFailureResult } from 'src/logic-functions/utils/build-discord-failure-result';
 import { discordApiRequest } from 'src/logic-functions/utils/discord-api-request';
-import { discordToolFailure } from 'src/logic-functions/utils/discord-tool-failure';
 import { getDiscordBotToken } from 'src/logic-functions/utils/get-discord-bot-token';
 
 type DiscordMessageResponse = {
@@ -56,6 +56,6 @@ export const discordPostMessageHandler = async (
       channelId: result.data.channel_id,
     };
   } catch (error) {
-    return discordToolFailure('Failed to post Discord message', error);
+    return buildDiscordFailureResult('Failed to post Discord message', error);
   }
 };
