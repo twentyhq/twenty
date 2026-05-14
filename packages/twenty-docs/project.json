@@ -14,10 +14,9 @@
     },
     "build": {
       "executor": "nx:run-commands",
-      "outputs": ["{projectRoot}/.mintlify"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "mintlify build"
+        "command": "mintlify validate"
       }
     },
     "lint": {},
