@@ -34,7 +34,11 @@ export class UpgradeMigrationService {
     repository: Repository<UpgradeMigrationEntity>,
     rows: Array<Partial<UpgradeMigrationEntity>>,
   ): Promise<void> {
-    for (let cursor = 0; cursor < rows.length; cursor += UPGRADE_MIGRATION_SAVE_BATCH_SIZE) {
+    for (
+      let cursor = 0;
+      cursor < rows.length;
+      cursor += UPGRADE_MIGRATION_SAVE_BATCH_SIZE
+    ) {
       await repository.save(
         rows.slice(cursor, cursor + UPGRADE_MIGRATION_SAVE_BATCH_SIZE),
       );
