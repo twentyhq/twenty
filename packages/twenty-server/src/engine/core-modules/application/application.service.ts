@@ -82,6 +82,7 @@ export class ApplicationService {
     const workspace = isDefined(workspaceInput)
       ? workspaceInput
       : await this.workspaceRepository.findOne({
+          select: ['id', 'workspaceCustomApplicationId'],
           where: {
             id: workspaceId,
           },
