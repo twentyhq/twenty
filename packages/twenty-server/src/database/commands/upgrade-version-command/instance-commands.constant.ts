@@ -20,6 +20,7 @@ import { AddProviderExecutedToAgentMessagePartFastInstanceCommand } from 'src/da
 import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-slow-1795000002000-backfill-page-layout-widget-position';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
+import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
 import { AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777308014234-add-upgrade-migration-workspace-id-index';
 import { AddDeletedAtToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777682000000-add-deleted-at-to-agent-chat-thread';
 import { ConnectionProviderSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777896012579-connection-provider-syncable-entity';
@@ -58,6 +59,7 @@ export const INSTANCE_COMMANDS = [
   AddGlobalObjectContextToCommandMenuItemAvailabilityTypeFastInstanceCommand,
   AddPageLayoutIdToCommandMenuItemFastInstanceCommand,
   AddConditionalAvailabilityExpressionToPageLayoutWidgetFastInstanceCommand,
+  AddSubFieldNameToViewSortEarlyFastInstanceCommand,
   AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand,
   AddIsPreInstalledToApplicationRegistrationFastInstanceCommand,
   AddProviderExecutedToAgentMessagePartFastInstanceCommand,
