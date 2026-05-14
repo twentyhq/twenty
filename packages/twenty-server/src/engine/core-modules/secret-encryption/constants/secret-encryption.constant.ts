@@ -9,8 +9,5 @@ export const SECRET_ENCRYPTION_DERIVED_KEY_LENGTH = 32;
 export const SECRET_ENCRYPTION_HKDF_INFO_PREFIX = 'twenty:enc:v2:';
 export const SECRET_ENCRYPTION_INSTANCE_CONTEXT = 'instance';
 
-// Domain-separated HKDF info prefix for non-encryption uses of ENCRYPTION_KEY
-// (e.g. HMAC for express-session cookie signing). Different prefix than the
-// AEAD subkey so keys can never collide across purposes.
 export const INSTANCE_HMAC_HKDF_INFO_PREFIX = 'twenty:hmac:v1:';
 export const INSTANCE_HMAC_DERIVED_KEY_LENGTH = 32;

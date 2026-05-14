@@ -27,9 +27,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkDomain } from 'src/utils/is-work-email';
 
-// Long enough that an invited domain validator has time to click the link
-// across a weekend, short enough that abandoned invitations don't linger
-// forever in mailboxes. Workspace admins can always re-issue.
 const APPROVED_ACCESS_DOMAIN_TOKEN_EXPIRES_IN = '7d';
 
 @Injectable()

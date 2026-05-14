@@ -7,16 +7,9 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 
 const SESSION_COOKIE_HMAC_PURPOSE = 'session-cookie';
 
-// Pre-ENCRYPTION_KEY-rotation deployments signed session cookies with
-// sha256(APP_SECRET || 'SESSION_STORE_SECRET'). The legacy slot lets cookies
-// minted before this rollout keep verifying for the remainder of their
-// 30-minute lifetime, after which they refresh under the new signature.
 const buildLegacySessionSecret = (appSecret: string) =>
   createHash('sha256').update(`${appSecret}SESSION_STORE_SECRET`).digest('hex');
 
-// TODO: drop the legacy APP_SECRET-derived slot once the 2.5 cross-upgrade
-// window closes and any session cookie minted with the SHA-based secret has
-// expired (maxAge: 30 minutes).
 export const resolveSessionCookieSecretsOrThrow = ({
   twentyConfigService,
 }: {
