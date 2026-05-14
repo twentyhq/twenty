@@ -86,18 +86,16 @@ export class JwtKeyManagerService {
       );
     }
 
-    if (isDefined(existing.revokedAt)) {
-      return existing;
+    if (!isDefined(existing.revokedAt)) {
+      await this.signingKeyRepository.update(
+        { id },
+        {
+          revokedAt: new Date(),
+          isCurrent: false,
+          privateKey: null,
+        },
+      );
     }
-
-    await this.signingKeyRepository.update(
-      { id },
-      {
-        revokedAt: new Date(),
-        isCurrent: false,
-        privateKey: null,
-      },
-    );
 
     await this.coreEntityCacheService.invalidate('signingKeyPublicKey', id);
     this.currentSigningKeyPromise = null;

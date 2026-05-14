@@ -671,7 +671,7 @@ export type RetryJobsResponse = {
 export type SigningKeyDto = {
   __typename?: 'SigningKeyDTO';
   createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
+  id: Scalars['UUID'];
   isCurrent: Scalars['Boolean'];
   publicKey: Scalars['String'];
   revokedAt?: Maybe<Scalars['DateTime']>;

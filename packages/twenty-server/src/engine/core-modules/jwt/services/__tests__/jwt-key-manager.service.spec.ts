@@ -83,7 +83,7 @@ describe('JwtKeyManagerService - revokeSigningKey', () => {
     expect(result).toBe(revoked);
   });
 
-  it('is idempotent on an already revoked key', async () => {
+  it('skips the database update when already revoked, but still invalidates the public-key cache', async () => {
     const id = randomUUID();
     const alreadyRevoked = {
       id,
@@ -96,11 +96,17 @@ describe('JwtKeyManagerService - revokeSigningKey', () => {
     };
 
     signingKeyRepositoryMock.findOne.mockResolvedValueOnce(alreadyRevoked);
+    signingKeyRepositoryMock.findOneByOrFail.mockResolvedValueOnce(
+      alreadyRevoked,
+    );
 
     const result = await service.revokeSigningKey(id);
 
     expect(signingKeyRepositoryMock.update).not.toHaveBeenCalled();
-    expect(coreEntityCacheServiceMock.invalidate).not.toHaveBeenCalled();
+    expect(coreEntityCacheServiceMock.invalidate).toHaveBeenCalledWith(
+      'signingKeyPublicKey',
+      id,
+    );
     expect(result).toBe(alreadyRevoked);
   });
 

@@ -134,6 +134,7 @@ export const SettingsAdminSigningKeysTable = () => {
                     Icon={IconCopy}
                     size="small"
                     variant="tertiary"
+                    ariaLabel={t`Copy key ID`}
                     onClick={() =>
                       copyToClipboard(signingKey.id, t`Key ID copied`)
                     }

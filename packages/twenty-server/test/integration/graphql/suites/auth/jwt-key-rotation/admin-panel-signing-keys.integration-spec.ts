@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 
 import { gql } from 'graphql-tag';
+import * as jwt from 'jsonwebtoken';
 import { decodeJwtCompleteOrThrow } from 'test/integration/graphql/utils/decode-jwt-complete-or-throw.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
@@ -8,6 +9,11 @@ import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+
+import {
+  PREVIOUS_PRIVATE_KEY_PEM,
+  PREVIOUS_PUBLIC_KEY_PEM,
+} from './jwt-key-rotation.fixture';
 
 const GET_SIGNING_KEYS = gql`
   query GetSigningKeys {
@@ -61,7 +67,7 @@ describe('Admin panel signing keys (integration)', () => {
     expect(typeof payload.legacyVerifyCountInWindow).toBe('number');
   });
 
-  it('revokes a non-current signing key and keeps the existing current key active', async () => {
+  it('revokes a non-current signing key, keeps the current key active, and rejects tokens signed with the revoked kid', async () => {
     const seededRow = await global.testDataSource.query(
       `SELECT "id" FROM core."signingKey" WHERE "isCurrent" = true LIMIT 1`,
     );
@@ -72,10 +78,7 @@ describe('Admin panel signing keys (integration)', () => {
     await global.testDataSource.query(
       `INSERT INTO core."signingKey" ("id", "publicKey", "privateKey", "isCurrent")
        VALUES ($1, $2, NULL, false)`,
-      [
-        obsoleteKid,
-        '-----BEGIN PUBLIC KEY-----\nNOOP\n-----END PUBLIC KEY-----\n',
-      ],
+      [obsoleteKid, PREVIOUS_PUBLIC_KEY_PEM],
     );
 
     const response = await makeAdminPanelAPIRequest({
@@ -96,6 +99,21 @@ describe('Admin panel signing keys (integration)', () => {
 
     expect(stillCurrentRows[0].isCurrent).toBe(true);
     expect(stillCurrentRows[0].revokedAt).toBeNull();
+
+    const tokenSignedByRevokedKey = jwt.sign(
+      { sub: 'irrelevant' },
+      PREVIOUS_PRIVATE_KEY_PEM,
+      { algorithm: 'ES256', keyid: obsoleteKid, expiresIn: '5m' },
+    );
+
+    const { data: userAfterRevoke, errors: userAfterRevokeErrors } =
+      await getCurrentUser({
+        accessToken: tokenSignedByRevokedKey,
+        expectToFail: true,
+      });
+
+    expect(userAfterRevoke?.currentUser).toBeFalsy();
+    expect(userAfterRevokeErrors).toBeDefined();
 
     await global.testDataSource.query(
       `DELETE FROM core."signingKey" WHERE "id" = $1`,

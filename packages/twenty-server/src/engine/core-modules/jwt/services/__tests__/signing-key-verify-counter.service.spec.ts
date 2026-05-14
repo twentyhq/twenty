@@ -92,4 +92,18 @@ describe('SigningKeyVerifyCounterService', () => {
 
     await expect(service.recordVerify('kid-1')).resolves.toBeUndefined();
   });
+
+  it('returns 0 when reading a single identifier and the cache storage throws', async () => {
+    cacheStorageMock.mget.mockRejectedValueOnce(new Error('redis is down'));
+
+    await expect(service.getCountInWindow('kid-1')).resolves.toBe(0);
+  });
+
+  it('returns zeroed counts when bulk reading and the cache storage throws', async () => {
+    cacheStorageMock.mget.mockRejectedValueOnce(new Error('redis is down'));
+
+    const counts = await service.getCountsInWindow(['kid-1', 'kid-2']);
+
+    expect(counts).toEqual({ 'kid-1': 0, 'kid-2': 0 });
+  });
 });

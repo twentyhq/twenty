@@ -1,8 +1,10 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType()
 export class SigningKeyDTO {
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field()
@@ -11,7 +13,7 @@ export class SigningKeyDTO {
   @Field()
   isCurrent: boolean;
 
-  @Field()
+  @Field(() => Date)
   createdAt: Date;
 
   @Field(() => Date, { nullable: true })

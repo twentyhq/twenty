@@ -44,12 +44,23 @@ export class SigningKeyVerifyCounterService {
     now: number = Date.now(),
   ): Promise<number> {
     const keys = this.buildBucketKeysInWindow(identifier, now);
-    const values = await this.cacheStorage.mget<number | string>(keys);
 
-    return values.reduce<number>(
-      (accumulator, value) => accumulator + this.toCount(value),
-      0,
-    );
+    try {
+      const values = await this.cacheStorage.mget<number | string>(keys);
+
+      return values.reduce<number>(
+        (accumulator, value) => accumulator + this.toCount(value),
+        0,
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to read signing key verify counts for identifier=${identifier}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      return 0;
+    }
   }
 
   async getCountsInWindow(
@@ -78,12 +89,20 @@ export class SigningKeyVerifyCounterService {
       }
     }
 
-    const values = await this.cacheStorage.mget<number | string>(allKeys);
+    try {
+      const values = await this.cacheStorage.mget<number | string>(allKeys);
 
-    for (let index = 0; index < values.length; index++) {
-      const owner = keyOwners[index];
+      for (let index = 0; index < values.length; index++) {
+        const owner = keyOwners[index];
 
-      counts[owner] += this.toCount(values[index]);
+        counts[owner] += this.toCount(values[index]);
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Failed to read signing key verify counts: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
     }
 
     return counts;
