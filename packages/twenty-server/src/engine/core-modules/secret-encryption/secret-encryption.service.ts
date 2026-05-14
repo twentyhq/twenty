@@ -21,7 +21,7 @@ type VersionedOptions = {
 @Injectable()
 export class SecretEncryptionService {
   private readonly logger = new Logger(SecretEncryptionService.name);
-  private hasLoggedLegacyDecryption = false;
+  private hasLoggedLegacyCtrDecryption = false;
 
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
@@ -139,19 +139,19 @@ export class SecretEncryptionService {
       });
     }
 
-    this.warnLegacyDecryptionOnce();
+    this.warnLegacyCtrDecryptionOnce();
 
     return this.decrypt(value);
   }
 
-  private warnLegacyDecryptionOnce(): void {
-    if (this.hasLoggedLegacyDecryption) {
+  private warnLegacyCtrDecryptionOnce(): void {
+    if (this.hasLoggedLegacyCtrDecryption) {
       return;
     }
 
-    this.hasLoggedLegacyDecryption = true;
+    this.hasLoggedLegacyCtrDecryption = true;
     this.logger.warn(
-      'Decrypted a legacy unprefixed ciphertext. These rows should be re-encrypted into the enc:v2 envelope in a follow-up migration.',
+      'Decrypted a legacy unprefixed AES-CTR ciphertext. These rows should be re-encrypted into the enc:v2 envelope in a follow-up migration.',
     );
   }
 }
