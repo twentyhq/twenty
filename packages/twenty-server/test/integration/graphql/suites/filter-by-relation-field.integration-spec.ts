@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 const TEST_COMPANY_IDS = {
@@ -388,6 +389,70 @@ describe('Filter by relation field (e2e)', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors.length).toBeGreaterThan(0);
+  });
+
+  it('should not widen the root query when a relation block contains a deletedAt filter', async () => {
+    // The deletedAt scanner used to recurse into every nested object and
+    // trip on a related entity's deletedAt, calling withDeleted() on the
+    // root builder and silently returning soft-deleted root rows. The
+    // scanner now only recurses into and / or / not — relation-traversal
+    // blocks must not widen the root.
+    const liveId = '20202020-dddd-4000-8000-000000000098';
+    const softDeletedId = '20202020-dddd-4000-8000-000000000099';
+
+    await makeGraphqlAPIRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        data: [
+          { id: liveId, companyId: TEST_COMPANY_IDS.AIRBNB },
+          { id: softDeletedId, companyId: TEST_COMPANY_IDS.AIRBNB },
+        ],
+        upsert: true,
+      }),
+    );
+
+    await makeGraphqlAPIRequest(
+      deleteManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        filter: { id: { in: [softDeletedId] } },
+      }),
+    );
+
+    const queryData = {
+      query: gql`
+        query People($filter: PersonFilterInput) {
+          people(filter: $filter, first: 10) {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        filter: {
+          and: [
+            { id: { in: [liveId, softDeletedId] } },
+            { company: { deletedAt: { is: 'NULL' } } },
+          ],
+        },
+      },
+    };
+
+    const response = await makeGraphqlAPIRequest(queryData);
+
+    expect(response.body.errors).toBeUndefined();
+
+    const ids = response.body.data.people.edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+
+    expect(ids).toEqual([liveId]);
   });
 
   it('should filter pets by a MORPH_RELATION target field (rocket name)', async () => {

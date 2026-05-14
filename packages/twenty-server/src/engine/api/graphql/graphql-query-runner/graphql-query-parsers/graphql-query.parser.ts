@@ -101,12 +101,17 @@ export class GraphqlQueryParser {
         return true;
       }
 
-      if (typeof value === 'object' && value !== null) {
-        if (
-          this.checkForDeletedAtFilter(value as FindOptionsWhere<ObjectLiteral>)
-        ) {
-          return true;
-        }
+      // Only recurse into boolean-operator wrappers (and / or / not) — those
+      // are transparent w.r.t. which entity owns a deletedAt. Composite
+      // sub-field and relation-traversal nesting refers to a different
+      // entity's deletedAt, which must not widen the root query.
+      if (
+        (key === 'and' || key === 'or' || key === 'not') &&
+        typeof value === 'object' &&
+        value !== null &&
+        this.checkForDeletedAtFilter(value as FindOptionsWhere<ObjectLiteral>)
+      ) {
+        return true;
       }
     }
 
