@@ -11,7 +11,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { ALL_LEAF_FILTER_OPERATOR_NAMES } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/all-leaf-filter-operator-names.constant';
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
 import { validateAndTransformOperatorAndValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util';
 import {
@@ -41,27 +40,6 @@ function throwUseJoinColumnInstead(key: string): never {
     },
   );
 }
-
-// True when the value is shaped like a per-field filter applied directly to a
-// relation by its name (`{ company: { eq: "<uuid>" } }`). Per-field operators
-// only apply to scalar fields, so this shape is rejected — callers should use
-// the FK join column (`{ companyId: { eq: ... } }`) or traverse into a target
-// field (`{ company: { name: { ... } } }`).
-const isLeafOperatorShape = (filterValue: unknown): boolean => {
-  if (typeof filterValue !== 'object' || filterValue === null) {
-    return false;
-  }
-
-  const keys = Object.keys(filterValue);
-
-  if (keys.length === 0) {
-    return false;
-  }
-
-  return keys.some((k) =>
-    (ALL_LEAF_FILTER_OPERATOR_NAMES as readonly string[]).includes(k),
-  );
-};
 
 @Injectable()
 export class FilterArgProcessorService {
@@ -238,7 +216,7 @@ export class FilterArgProcessorService {
       );
     }
 
-    if (isLeafOperatorShape(filterValue)) {
+    if (typeof filterValue !== 'object' || filterValue === null) {
       throwUseJoinColumnInstead(key);
     }
 

@@ -425,9 +425,10 @@ describe('FilterArgProcessorService', () => {
       });
     });
 
-    it('should reject a relation accessed by name with a leaf-operator value shape', () => {
-      // `{ target: { eq: "<uuid>" } }` is invalid — leaf operators only apply
-      // to scalar fields. The error guides the caller to the FK column.
+    it('should surface a field-not-found error when a relation filter uses an operator key as if it were a target field', () => {
+      // `{ target: { eq: "<uuid>" } }` recurses into the target object's
+      // metadata and fails the same way a composite filter does when given
+      // a non-existent sub-field — by reporting which lookup actually failed.
       const {
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
@@ -441,6 +442,23 @@ describe('FilterArgProcessorService', () => {
           },
           flatObjectMetadata: sourceObjectMetadata,
           flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        }),
+      ).toThrow(/targetObject doesn't have any "eq" field/);
+    });
+
+    it('should fall back to the FK-column hint when no object metadata maps are available', () => {
+      // Without object metadata maps the recursion can't resolve the target,
+      // so the only useful guidance left is "use the FK column".
+      const { flatFieldMetadataMaps, sourceObjectMetadata } =
+        createRelationFixture();
+
+      expect(() =>
+        filterArgProcessorService.process({
+          filter: {
+            target: { name: { eq: 'Anything' } },
+          },
+          flatObjectMetadata: sourceObjectMetadata,
           flatFieldMetadataMaps,
         }),
       ).toThrow(/use "targetId" instead/);
