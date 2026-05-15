@@ -88,9 +88,9 @@ export const AdvancedFilterSubFieldSelectMenu = ({
       recordFilterId,
       subFieldName,
       relationTargetFieldMetadataItem,
-      // The field-select dropdown is closing here and the next value picker
-      // (driven by the target's type) sets up its own focus when opened.
-      skipFocusPush: isDefined(relationTargetFieldMetadataItem),
+      // The value picker that opens next is for a sub-field or target
+      // field, not the source — its dropdown manages its own focus.
+      skipFocusPush: true,
     });
 
     closeAdvancedFilterFieldSelectDropdown();

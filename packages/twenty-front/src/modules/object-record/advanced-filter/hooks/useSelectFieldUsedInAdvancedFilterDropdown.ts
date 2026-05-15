@@ -26,9 +26,9 @@ type SelectFilterParams = {
   recordFilterId: string;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
   relationTargetFieldMetadataItem?: FieldMetadataItem | null | undefined;
-  // Set when the next step opens its own dropdown with a different focusId
-  // (e.g. the relation-traversal sub-menu) — pushing the source field id on
-  // the focus stack would override that dropdown's hotkey scope.
+  // Set when the next step is another dropdown that manages its own focus
+  // (e.g. composite or relation-traversal sub-menus). The default push of
+  // the source field id on the focus stack would shadow it.
   skipFocusPush?: boolean;
 };
 

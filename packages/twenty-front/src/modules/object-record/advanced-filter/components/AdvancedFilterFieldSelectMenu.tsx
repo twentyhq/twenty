@@ -124,12 +124,13 @@ export const AdvancedFilterFieldSelectMenu = ({
           ? filterType
           : null;
 
-    // The relation sub-menu uses its own focusId for selectable navigation;
-    // pushing the source field id on the focus stack would shadow it.
+    // Sub-menus (composite or relation traversal) drive their own focus
+    // scope; pushing the source field id on the focus stack would shadow
+    // their selectable list hotkeys.
     selectFieldUsedInAdvancedFilterDropdown({
       fieldMetadataItemId: selectedFieldMetadataItem.id,
       recordFilterId,
-      skipFocusPush: subMenuType === RELATION_SUB_MENU_FIELD_TYPE,
+      skipFocusPush: subMenuType !== null,
     });
 
     if (subMenuType === null) {
