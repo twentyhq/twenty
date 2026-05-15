@@ -107,10 +107,16 @@ export class ViewQueryParamsService {
           : RecordFilterGroupLogicalOperator.AND,
     }));
 
-    const fields = recordFilters
-      .map((filter) => {
+    const filterFieldMetadataIds = recordFilters.flatMap((filter) =>
+      isDefined(filter.relationTargetFieldMetadataId)
+        ? [filter.fieldMetadataId, filter.relationTargetFieldMetadataId]
+        : [filter.fieldMetadataId],
+    );
+
+    const fields = filterFieldMetadataIds
+      .map((fieldMetadataId) => {
         const field = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: filter.fieldMetadataId,
+          flatEntityId: fieldMetadataId,
           flatEntityMaps: flatFieldMetadataMaps,
         });
 

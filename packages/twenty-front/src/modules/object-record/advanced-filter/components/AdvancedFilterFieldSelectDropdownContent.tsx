@@ -12,15 +12,17 @@ type AdvancedFilterFieldSelectDropdownContentProps = {
 export const AdvancedFilterFieldSelectDropdownContent = ({
   recordFilterId,
 }: AdvancedFilterFieldSelectDropdownContentProps) => {
-  const isSelectingCompositeField = useAtomComponentStateValue(
-    objectFilterDropdownIsSelectingCompositeFieldComponentState,
-  );
+  const objectFilterDropdownIsSelectingCompositeField =
+    useAtomComponentStateValue(
+      objectFilterDropdownIsSelectingCompositeFieldComponentState,
+    );
 
-  const isSelectingRelationTargetField = useAtomComponentStateValue(
-    objectFilterDropdownIsSelectingRelationTargetFieldComponentState,
-  );
+  const objectFilterDropdownIsSelectingRelationTargetField =
+    useAtomComponentStateValue(
+      objectFilterDropdownIsSelectingRelationTargetFieldComponentState,
+    );
 
-  if (isSelectingRelationTargetField) {
+  if (objectFilterDropdownIsSelectingRelationTargetField) {
     return (
       <AdvancedFilterRelationTargetFieldSelectMenu
         recordFilterId={recordFilterId}
@@ -28,7 +30,7 @@ export const AdvancedFilterFieldSelectDropdownContent = ({
     );
   }
 
-  if (isSelectingCompositeField) {
+  if (objectFilterDropdownIsSelectingCompositeField) {
     return (
       <AdvancedFilterCompositeSubFieldSelectMenu
         recordFilterId={recordFilterId}

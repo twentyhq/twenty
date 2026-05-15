@@ -1,4 +1,5 @@
-import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth';
 import { useApplyObjectFilterDropdownOperand } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownOperand';
@@ -15,6 +16,7 @@ import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/Dropdow
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 
@@ -39,15 +41,24 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
       relationTargetFieldMetadataIdUsedInDropdownComponentState,
     );
 
-  const { getFieldMetadataItemByIdOrThrow } =
-    useGetFieldMetadataItemByIdOrThrow();
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+
+  // The target field may have been deleted from the workspace since the
+  // filter was saved — return null and let the parent skip rendering
+  // rather than throwing.
+  const relationTargetFieldMetadataItem = isDefined(
+    relationTargetFieldMetadataIdUsedInDropdown,
+  )
+    ? getFieldMetadataItemById({
+        fieldMetadataId: relationTargetFieldMetadataIdUsedInDropdown,
+        objectMetadataItems,
+      }).fieldMetadataItem
+    : null;
 
   const effectiveFieldMetadataItem = isDefined(
     relationTargetFieldMetadataIdUsedInDropdown,
   )
-    ? getFieldMetadataItemByIdOrThrow(
-        relationTargetFieldMetadataIdUsedInDropdown,
-      ).fieldMetadataItem
+    ? relationTargetFieldMetadataItem
     : fieldMetadataItemUsedInDropdown;
 
   const operandsForFilterType = isDefined(effectiveFieldMetadataItem)

@@ -35,9 +35,10 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const setIsSelectingRelationTargetField = useSetAtomComponentState(
-    objectFilterDropdownIsSelectingRelationTargetFieldComponentState,
-  );
+  const setObjectFilterDropdownIsSelectingRelationTargetField =
+    useSetAtomComponentState(
+      objectFilterDropdownIsSelectingRelationTargetFieldComponentState,
+    );
 
   const { closeAdvancedFilterFieldSelectDropdown } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
@@ -72,7 +73,7 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
   }
 
   const handleSubMenuBack = () => {
-    setIsSelectingRelationTargetField(false);
+    setObjectFilterDropdownIsSelectingRelationTargetField(false);
   };
 
   const handleSelectTargetField = (
@@ -100,7 +101,7 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
       });
     }
 
-    setIsSelectingRelationTargetField(false);
+    setObjectFilterDropdownIsSelectingRelationTargetField(false);
     closeAdvancedFilterFieldSelectDropdown();
   };
 
