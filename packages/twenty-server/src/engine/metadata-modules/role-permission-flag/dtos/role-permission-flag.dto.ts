@@ -4,7 +4,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ObjectType('PermissionFlag')
+@ObjectType('RolePermissionFlag')
 export class RolePermissionFlagDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   id: string;
