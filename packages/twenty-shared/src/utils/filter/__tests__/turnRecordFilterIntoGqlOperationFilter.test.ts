@@ -919,4 +919,92 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       expect(result).toHaveProperty('recordId.in');
     });
   });
+
+  describe('relation traversal', () => {
+    // The dispatcher should wrap the inner filter under the relation source
+    // field's GraphQL key and build it against the target field's type
+    // (not the relation FK's type).
+    it('should nest filter under source field name when target field is set', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter('f-relation', RecordFilterOperand.CONTAINS, 'Acme'),
+          relationTargetFieldMetadataId: 'f-text',
+        } as RecordFilter,
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({ company: { name: { ilike: '%Acme%' } } });
+    });
+
+    // If the target field is no longer in fieldMetadataItems (e.g. it was
+    // deleted from the workspace), dropping the filter is the safe path —
+    // the alternative would silently interpret the text value as a UUID
+    // list against the relation FK.
+    it('should return undefined when target field is not found', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter('f-relation', RecordFilterOperand.CONTAINS, 'Acme'),
+          relationTargetFieldMetadataId: 'nonexistent-target',
+        } as RecordFilter,
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toBeUndefined();
+    });
+
+    // Emptiness operands must check the target column on the related
+    // object rather than the FK column on the source record.
+    it('should apply IS_EMPTY against the target field, not the relation FK', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter('f-relation', RecordFilterOperand.IS_EMPTY, ''),
+          relationTargetFieldMetadataId: 'f-text',
+        } as RecordFilter,
+        fieldMetadataItems: fields,
+      });
+
+      // Without traversal, the RELATION case would have produced a filter
+      // on `companyId`; here we expect the emptiness check to fall on
+      // `company.name` instead.
+      expect(result).toEqual({
+        company: { or: [{ name: { ilike: '' } }, { name: { is: 'NULL' } }] },
+      });
+    });
+
+    // The target field's per-type switch must run, so number/select/etc.
+    // targets behave like a direct filter on that field — verified here
+    // with a SELECT target.
+    it('should dispatch to target type switch (SELECT target)', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter('f-relation', RecordFilterOperand.IS, '["ACTIVE"]'),
+          relationTargetFieldMetadataId: 'f-select',
+        } as RecordFilter,
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({ company: { status: { in: ['ACTIVE'] } } });
+    });
+
+    // Without a relationTargetFieldMetadataId the dispatcher must fall
+    // through to the direct builder — preserving the filter-by-record-id
+    // behaviour on the relation FK.
+    it('should keep relation filter-by-id behaviour when no target field is set', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-relation',
+          RecordFilterOperand.IS,
+          '["550e8400-e29b-41d4-a716-446655440000"]',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toHaveProperty('companyId.in');
+    });
+  });
 });
