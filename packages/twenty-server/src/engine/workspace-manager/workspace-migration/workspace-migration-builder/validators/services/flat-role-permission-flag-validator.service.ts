@@ -81,7 +81,9 @@ export class FlatRolePermissionFlagValidatorService {
     }
 
     if (
-      isDefined(flatRolePermissionFlagToValidate.permissionFlagUniversalIdentifier)
+      isDefined(
+        flatRolePermissionFlagToValidate.permissionFlagUniversalIdentifier,
+      )
     ) {
       const referencedPermissionFlag = findFlatEntityByUniversalIdentifier({
         universalIdentifier:
