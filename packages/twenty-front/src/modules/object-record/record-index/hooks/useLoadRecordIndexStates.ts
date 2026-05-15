@@ -31,7 +31,6 @@ import { hasInitializedCurrentRecordFieldsComponentFamilyState } from '@/views/s
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { hasInitializedCurrentRecordSortsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordSortsComponentFamilyState';
 import { type View } from '@/views/types/View';
-import { getFilterableFields } from '@/views/utils/getFilterableFields';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
@@ -129,13 +128,11 @@ export const useLoadRecordIndexStates = () => {
         .map(mapViewFieldToRecordField)
         .filter(isDefined);
 
-      const allFilterableFields = getFilterableFields(objectMetadataItem);
       const flattenedFieldMetadataItems = store.get(
         flattenedFieldMetadataItemsSelector.atom,
       );
       const recordFilters = mapViewFiltersToFilters(
         view.viewFilters,
-        allFilterableFields,
         flattenedFieldMetadataItems,
       );
 
@@ -145,7 +142,6 @@ export const useLoadRecordIndexStates = () => {
 
       const contextStoreFilters = mapViewFiltersToFilters(
         view.viewFilters,
-        filterableFieldMetadataItems,
         flattenedFieldMetadataItems,
       );
 

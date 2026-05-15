@@ -82,7 +82,7 @@ export const AdvancedFilterValueInput = ({
     setObjectFilterDropdownCurrentRecordFilter(recordFilter);
     setFieldMetadataItemIdUsedInDropdown(recordFilter.fieldMetadataId);
     setRelationTargetFieldMetadataIdUsedInDropdown(
-      recordFilter.relationTargetField?.id ?? null,
+      recordFilter.relationTargetFieldMetadataId ?? null,
     );
   };
 

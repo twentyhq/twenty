@@ -82,31 +82,16 @@ export class ViewQueryParamsService {
 
         if (!field) return null;
 
-        const relationTargetField = isDefined(
-          viewFilter.relationTargetFieldMetadataId,
-        )
-          ? findFlatEntityByIdInFlatEntityMaps({
-              flatEntityId: viewFilter.relationTargetFieldMetadataId,
-              flatEntityMaps: flatFieldMetadataMaps,
-            })
-          : null;
-
         return {
           id: viewFilter.id,
           fieldMetadataId: viewFilter.fieldMetadataId,
           value: viewFilter.value ?? '',
-          type: relationTargetField?.type ?? field.type,
+          type: field.type,
           recordFilterGroupId: viewFilter.viewFilterGroupId,
           operand: viewFilter.operand,
           subFieldName: viewFilter.subFieldName,
-          relationTargetField: isDefined(relationTargetField)
-            ? {
-                id: relationTargetField.id,
-                name: relationTargetField.name,
-                type: relationTargetField.type,
-                label: relationTargetField.label,
-              }
-            : null,
+          relationTargetFieldMetadataId:
+            viewFilter.relationTargetFieldMetadataId ?? null,
         } as RecordFilter;
       })
       .filter(isDefined);

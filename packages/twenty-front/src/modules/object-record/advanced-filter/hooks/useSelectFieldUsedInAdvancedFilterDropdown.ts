@@ -15,8 +15,6 @@ import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeNonFilterableByAnySubField';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
@@ -26,10 +24,6 @@ type SelectFilterParams = {
   recordFilterId: string;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
   relationTargetFieldMetadataItem?: FieldMetadataItem | null | undefined;
-  // Set when the next step is another dropdown that manages its own focus
-  // (e.g. composite or relation-traversal sub-menus). The default push of
-  // the source field id on the focus stack would shadow it.
-  skipFocusPush?: boolean;
 };
 
 export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
@@ -48,8 +42,6 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
-
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
@@ -75,7 +67,6 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     recordFilterId,
     subFieldName,
     relationTargetFieldMetadataItem,
-    skipFocusPush,
   }: SelectFilterParams) => {
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
 
@@ -84,20 +75,6 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
 
     if (!isDefined(fieldMetadataItem)) {
       return;
-    }
-
-    if (
-      skipFocusPush !== true &&
-      (fieldMetadataItem.type === 'RELATION' ||
-        fieldMetadataItem.type === 'SELECT')
-    ) {
-      pushFocusItemToFocusStack({
-        focusId: fieldMetadataItem.id,
-        component: {
-          type: FocusComponentType.DROPDOWN,
-          instanceId: fieldMetadataItem.id,
-        },
-      });
     }
 
     const isRelationTraversal = isDefined(relationTargetFieldMetadataItem);
@@ -157,13 +134,8 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       ? `${fieldMetadataItem.label} → ${relationTargetFieldMetadataItem.label}`
       : fieldMetadataItem.label;
 
-    const relationTargetField = isRelationTraversal
-      ? {
-          id: relationTargetFieldMetadataItem.id,
-          name: relationTargetFieldMetadataItem.name,
-          type: relationTargetFieldMetadataItem.type,
-          label: relationTargetFieldMetadataItem.label,
-        }
+    const relationTargetFieldMetadataId = isRelationTraversal
+      ? relationTargetFieldMetadataItem.id
       : null;
 
     const newAdvancedFilter = {
@@ -178,12 +150,12 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       type: filterType,
       label,
       subFieldName: subFieldNameToUse,
-      relationTargetField,
+      relationTargetFieldMetadataId,
     } satisfies RecordFilter;
 
     setSubFieldNameUsedInDropdown(subFieldNameToUse);
     setRelationTargetFieldMetadataIdUsedInDropdown(
-      relationTargetField?.id ?? null,
+      relationTargetFieldMetadataId,
     );
 
     setObjectFilterDropdownSearchInput('');

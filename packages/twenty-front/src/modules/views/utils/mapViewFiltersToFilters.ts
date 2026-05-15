@@ -14,25 +14,24 @@ import { type ViewFilter } from '@/views/types/ViewFilter';
 
 export const mapViewFiltersToFilters = (
   viewFilters: ViewFilter[] | GqlViewFilter[],
-  availableFieldMetadataItems: FieldMetadataItem[],
-  allFieldMetadataItems: FieldMetadataItem[] = availableFieldMetadataItems,
+  fieldMetadataItems: FieldMetadataItem[],
 ): RecordFilter[] => {
   return viewFilters
     .map((viewFilter) => {
-      const availableFieldMetadataItem = availableFieldMetadataItems.find(
+      const sourceFieldMetadataItem = fieldMetadataItems.find(
         (fieldMetadataItem) =>
           fieldMetadataItem.id === viewFilter.fieldMetadataId,
       );
 
-      if (!isDefined(availableFieldMetadataItem)) {
-        // Todo: we we don't throw an error yet as we have race condition on view change
+      if (!isDefined(sourceFieldMetadataItem)) {
+        // Todo: we don't throw an error yet as we have race condition on view change
         return undefined;
       }
 
       const relationTargetFieldMetadataItem = isDefined(
         viewFilter.relationTargetFieldMetadataId,
       )
-        ? allFieldMetadataItems.find(
+        ? fieldMetadataItems.find(
             (fieldMetadataItem) =>
               fieldMetadataItem.id === viewFilter.relationTargetFieldMetadataId,
           )
@@ -40,13 +39,13 @@ export const mapViewFiltersToFilters = (
 
       const filterType = isDefined(relationTargetFieldMetadataItem)
         ? getFilterTypeFromFieldType(relationTargetFieldMetadataItem.type)
-        : getFilterTypeFromFieldType(availableFieldMetadataItem.type);
+        : getFilterTypeFromFieldType(sourceFieldMetadataItem.type);
 
-      const label = isSystemSearchVectorField(availableFieldMetadataItem.name)
+      const label = isSystemSearchVectorField(sourceFieldMetadataItem.name)
         ? 'Search'
         : isDefined(relationTargetFieldMetadataItem)
-          ? `${availableFieldMetadataItem.label} → ${relationTargetFieldMetadataItem.label}`
-          : availableFieldMetadataItem.label;
+          ? `${sourceFieldMetadataItem.label} → ${relationTargetFieldMetadataItem.label}`
+          : sourceFieldMetadataItem.label;
 
       const operand = viewFilter.operand;
 
@@ -66,14 +65,8 @@ export const mapViewFiltersToFilters = (
         label,
         type: filterType,
         subFieldName: viewFilter.subFieldName as CompositeFieldSubFieldName,
-        relationTargetField: isDefined(relationTargetFieldMetadataItem)
-          ? {
-              id: relationTargetFieldMetadataItem.id,
-              name: relationTargetFieldMetadataItem.name,
-              type: relationTargetFieldMetadataItem.type,
-              label: relationTargetFieldMetadataItem.label,
-            }
-          : null,
+        relationTargetFieldMetadataId:
+          viewFilter.relationTargetFieldMetadataId ?? null,
       } satisfies RecordFilter;
     })
     .filter(isDefined);

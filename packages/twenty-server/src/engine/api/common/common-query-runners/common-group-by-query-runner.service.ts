@@ -222,34 +222,17 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         );
       }
 
-      const relationTargetField = isDefined(
-        viewFilter.relationTargetFieldMetadataId,
-      )
-        ? findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: viewFilter.relationTargetFieldMetadataId,
-            flatEntityMaps: flatFieldMetadataMaps,
-          })
-        : null;
-
       return {
         id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
         value: convertViewFilterValueToString(viewFilter.value),
-        type: getFilterTypeFromFieldType(
-          relationTargetField?.type ?? fieldMetadata.type,
-        ),
+        type: getFilterTypeFromFieldType(fieldMetadata.type),
         operand: viewFilter.operand,
         recordFilterGroupId: viewFilter.viewFilterGroupId,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
         subFieldName: viewFilter.subFieldName as CompositeFieldSubFieldName,
-        relationTargetField: isDefined(relationTargetField)
-          ? {
-              id: relationTargetField.id,
-              name: relationTargetField.name,
-              type: relationTargetField.type,
-              label: relationTargetField.label,
-            }
-          : null,
+        relationTargetFieldMetadataId:
+          viewFilter.relationTargetFieldMetadataId ?? null,
       };
     });
 

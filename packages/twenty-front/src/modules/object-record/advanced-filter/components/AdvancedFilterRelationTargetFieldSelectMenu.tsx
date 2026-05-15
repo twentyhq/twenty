@@ -1,0 +1,151 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
+import { useSelectFieldUsedInAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useSelectFieldUsedInAdvancedFilterDropdown';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { objectFilterDropdownIsSelectingRelationTargetFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingRelationTargetFieldComponentState';
+import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { isDefined } from 'twenty-shared/utils';
+import { IconChevronLeft, useIcons } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
+
+type AdvancedFilterRelationTargetFieldSelectMenuProps = {
+  recordFilterId: string;
+};
+
+export const AdvancedFilterRelationTargetFieldSelectMenu = ({
+  recordFilterId,
+}: AdvancedFilterRelationTargetFieldSelectMenuProps) => {
+  const { getIcon } = useIcons();
+
+  const sourceFieldMetadataItem = useAtomComponentSelectorValue(
+    fieldMetadataItemUsedInDropdownComponentSelector,
+  );
+
+  const setIsSelectingRelationTargetField = useSetAtomComponentState(
+    objectFilterDropdownIsSelectingRelationTargetFieldComponentState,
+  );
+
+  const { closeAdvancedFilterFieldSelectDropdown } =
+    useAdvancedFilterFieldSelectDropdown(recordFilterId);
+
+  const { selectFieldUsedInAdvancedFilterDropdown } =
+    useSelectFieldUsedInAdvancedFilterDropdown();
+
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+
+  const { advancedFilterFieldSelectDropdownId } =
+    useAdvancedFilterFieldSelectDropdown(recordFilterId);
+
+  const selectedItemId = useAtomComponentStateValue(
+    selectedItemIdComponentState,
+    advancedFilterFieldSelectDropdownId,
+  );
+
+  const targetObjectMetadataId =
+    isDefined(sourceFieldMetadataItem) &&
+    isManyToOneRelationField(sourceFieldMetadataItem)
+      ? sourceFieldMetadataItem.relation.targetObjectMetadata.id
+      : null;
+
+  const { filterableFieldMetadataItems: relationTargetFields } =
+    useFilterableFieldMetadataItems(targetObjectMetadataId ?? '');
+
+  if (
+    !isDefined(sourceFieldMetadataItem) ||
+    !isManyToOneRelationField(sourceFieldMetadataItem)
+  ) {
+    return null;
+  }
+
+  const handleSubMenuBack = () => {
+    setIsSelectingRelationTargetField(false);
+  };
+
+  const handleSelectTargetField = (
+    relationTargetFieldMetadataItem: FieldMetadataItem,
+  ) => {
+    selectFieldUsedInAdvancedFilterDropdown({
+      fieldMetadataItemId: sourceFieldMetadataItem.id,
+      recordFilterId,
+      relationTargetFieldMetadataItem,
+    });
+
+    // Leaf RELATION/SELECT target fields open a value picker keyed by the
+    // target field id — push it on the focus stack so the picker's
+    // keyboard hotkeys are active when it opens.
+    if (
+      relationTargetFieldMetadataItem.type === 'RELATION' ||
+      relationTargetFieldMetadataItem.type === 'SELECT'
+    ) {
+      pushFocusItemToFocusStack({
+        focusId: relationTargetFieldMetadataItem.id,
+        component: {
+          type: FocusComponentType.DROPDOWN,
+          instanceId: relationTargetFieldMetadataItem.id,
+        },
+      });
+    }
+
+    setIsSelectingRelationTargetField(false);
+    closeAdvancedFilterFieldSelectDropdown();
+  };
+
+  const selectableItemIdArray = relationTargetFields.map((field) => field.id);
+
+  return (
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={handleSubMenuBack}
+            Icon={IconChevronLeft}
+          />
+        }
+      >
+        {sourceFieldMetadataItem.label}
+      </DropdownMenuHeader>
+      <DropdownMenuItemsContainer>
+        <SelectableList
+          focusId={advancedFilterFieldSelectDropdownId}
+          selectableItemIdArray={selectableItemIdArray}
+          selectableListInstanceId={advancedFilterFieldSelectDropdownId}
+        >
+          {relationTargetFields.map((targetField, index) => (
+            <SelectableListItem
+              itemId={targetField.id}
+              key={`select-filter-relation-${index}`}
+              onEnter={() => {
+                handleSelectTargetField(targetField);
+              }}
+            >
+              <MenuItem
+                focused={selectedItemId === targetField.id}
+                key={`select-filter-relation-${index}`}
+                testId={`select-filter-relation-${index}`}
+                onClick={() => {
+                  handleSelectTargetField(targetField);
+                }}
+                text={targetField.label}
+                LeftIcon={getIcon(targetField.icon)}
+              />
+            </SelectableListItem>
+          ))}
+        </SelectableList>
+      </DropdownMenuItemsContainer>
+    </DropdownContent>
+  );
+};

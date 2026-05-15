@@ -1,16 +1,6 @@
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { isDefined } from 'twenty-shared/utils';
-
-import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { AdvancedFilterRelationSubMenu } from '@/object-record/advanced-filter/components/AdvancedFilterRelationSubMenu';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 import { useSelectFieldUsedInAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useSelectFieldUsedInAdvancedFilterDropdown';
-import { RELATION_SUB_MENU_FIELD_TYPE } from '@/object-record/object-filter-dropdown/constants/RelationSubMenuFieldType';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
@@ -23,21 +13,26 @@ import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/Com
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-type AdvancedFilterSubFieldSelectMenuProps = {
+type AdvancedFilterCompositeSubFieldSelectMenuProps = {
   recordFilterId: string;
 };
 
-export const AdvancedFilterSubFieldSelectMenu = ({
+export const AdvancedFilterCompositeSubFieldSelectMenu = ({
   recordFilterId,
-}: AdvancedFilterSubFieldSelectMenuProps) => {
+}: AdvancedFilterCompositeSubFieldSelectMenuProps) => {
   const { getIcon } = useIcons();
 
   const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
@@ -63,20 +58,14 @@ export const AdvancedFilterSubFieldSelectMenu = ({
   const handleSelectFilter = ({
     fieldMetadataItem,
     subFieldName,
-    relationTargetFieldMetadataItem,
   }: {
     fieldMetadataItem: FieldMetadataItem;
     subFieldName?: CompositeFieldSubFieldName | null;
-    relationTargetFieldMetadataItem?: FieldMetadataItem | null;
   }) => {
     selectFieldUsedInAdvancedFilterDropdown({
       fieldMetadataItemId: fieldMetadataItem.id,
       recordFilterId,
       subFieldName,
-      relationTargetFieldMetadataItem,
-      // The value picker that opens next is for a sub-field or target
-      // field, not the source — its dropdown manages its own focus.
-      skipFocusPush: true,
     });
 
     closeAdvancedFilterFieldSelectDropdown();
@@ -99,35 +88,8 @@ export const AdvancedFilterSubFieldSelectMenu = ({
     return null;
   }
 
-  if (
-    objectFilterDropdownSubMenuFieldType === RELATION_SUB_MENU_FIELD_TYPE &&
-    isDefined(fieldMetadataItemUsedInDropdown) &&
-    isManyToOneRelationField(fieldMetadataItemUsedInDropdown)
-  ) {
-    return (
-      <AdvancedFilterRelationSubMenu
-        recordFilterId={recordFilterId}
-        relationFieldMetadataItem={fieldMetadataItemUsedInDropdown}
-        targetObjectMetadataId={
-          fieldMetadataItemUsedInDropdown.relation.targetObjectMetadata.id
-        }
-        onBack={handleSubMenuBack}
-        onSelectTargetField={handleSelectFilter}
-      />
-    );
-  }
-
-  const compositeSubMenuFieldType =
-    objectFilterDropdownSubMenuFieldType === RELATION_SUB_MENU_FIELD_TYPE
-      ? null
-      : objectFilterDropdownSubMenuFieldType;
-
-  if (!isDefined(compositeSubMenuFieldType)) {
-    return null;
-  }
-
   const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
-    compositeSubMenuFieldType
+    objectFilterDropdownSubMenuFieldType
   ].subFields
     .filter((subField) => subField.isFilterable === true)
     .map((subField) => subField.subFieldName);
@@ -216,7 +178,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
                     });
                   }}
                   text={getCompositeSubFieldLabel(
-                    compositeSubMenuFieldType,
+                    objectFilterDropdownSubMenuFieldType,
                     subFieldName,
                   )}
                   LeftIcon={getIcon(

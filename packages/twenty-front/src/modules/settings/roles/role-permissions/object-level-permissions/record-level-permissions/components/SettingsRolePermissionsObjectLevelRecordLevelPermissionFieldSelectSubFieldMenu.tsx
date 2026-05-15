@@ -13,7 +13,6 @@ import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-f
 import { useSelectFieldUsedInAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useSelectFieldUsedInAdvancedFilterDropdown';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import { RELATION_SUB_MENU_FIELD_TYPE } from '@/object-record/object-filter-dropdown/constants/RelationSubMenuFieldType';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/IconNameBySubField';
@@ -95,10 +94,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
       advancedFilterFieldSelectDropdownId,
     );
 
-    if (
-      !isDefined(objectFilterDropdownSubMenuFieldType) ||
-      objectFilterDropdownSubMenuFieldType === RELATION_SUB_MENU_FIELD_TYPE
-    ) {
+    if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
       return null;
     }
 

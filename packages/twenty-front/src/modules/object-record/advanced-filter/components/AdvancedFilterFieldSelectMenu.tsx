@@ -16,9 +16,8 @@ import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/co
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import { RELATION_SUB_MENU_FIELD_TYPE } from '@/object-record/object-filter-dropdown/constants/RelationSubMenuFieldType';
+import { objectFilterDropdownIsSelectingRelationTargetFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingRelationTargetFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
-import { type ObjectFilterDropdownSubMenuFieldType } from '@/object-record/record-filter/types/ObjectFilterDropdownSubMenuFieldType';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -26,6 +25,8 @@ import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/h
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
@@ -102,9 +103,16 @@ export const AdvancedFilterFieldSelectMenu = ({
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
     );
 
+  const [, setObjectFilterDropdownIsSelectingRelationTargetField] =
+    useAtomComponentState(
+      objectFilterDropdownIsSelectingRelationTargetFieldComponentState,
+    );
+
   const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
     fieldMetadataItemIdUsedInDropdownComponentState,
   );
+
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const handleFieldMetadataItemSelect = (
     selectedFieldMetadataItem: FieldMetadataItem,
@@ -115,30 +123,50 @@ export const AdvancedFilterFieldSelectMenu = ({
       selectedFieldMetadataItem.type,
     );
 
-    const subMenuType: ObjectFilterDropdownSubMenuFieldType | null =
-      isManyToOneRelationField(selectedFieldMetadataItem)
-        ? RELATION_SUB_MENU_FIELD_TYPE
-        : isCompositeFilterableFieldType(filterType)
-          ? filterType
-          : null;
+    const isRelationTraversalField = isManyToOneRelationField(
+      selectedFieldMetadataItem,
+    );
 
-    // Sub-menus (composite or relation traversal) drive their own focus
-    // scope; pushing the source field id on the focus stack would shadow
-    // their selectable list hotkeys.
+    const compositeSubMenuFieldType =
+      !isRelationTraversalField && isCompositeFilterableFieldType(filterType)
+        ? filterType
+        : null;
+
     selectFieldUsedInAdvancedFilterDropdown({
       fieldMetadataItemId: selectedFieldMetadataItem.id,
       recordFilterId,
-      skipFocusPush: subMenuType !== null,
     });
 
-    if (subMenuType === null) {
-      closeAdvancedFilterFieldSelectDropdown();
+    if (isRelationTraversalField) {
+      setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
+      setObjectFilterDropdownIsSelectingRelationTargetField(true);
       return;
     }
 
-    setObjectFilterDropdownSubMenuFieldType(subMenuType);
-    setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
-    setObjectFilterDropdownIsSelectingCompositeField(true);
+    if (compositeSubMenuFieldType !== null) {
+      setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
+      setObjectFilterDropdownSubMenuFieldType(compositeSubMenuFieldType);
+      setObjectFilterDropdownIsSelectingCompositeField(true);
+      return;
+    }
+
+    // Leaf RELATION/SELECT fields open a value picker keyed by the source
+    // field id — push it on the focus stack so the picker's keyboard
+    // hotkeys are active when it opens.
+    if (
+      selectedFieldMetadataItem.type === 'RELATION' ||
+      selectedFieldMetadataItem.type === 'SELECT'
+    ) {
+      pushFocusItemToFocusStack({
+        focusId: selectedFieldMetadataItem.id,
+        component: {
+          type: FocusComponentType.DROPDOWN,
+          instanceId: selectedFieldMetadataItem.id,
+        },
+      });
+    }
+
+    closeAdvancedFilterFieldSelectDropdown();
   };
 
   const shouldShowVisibleFields = visibleFieldMetadataItems.length > 0;

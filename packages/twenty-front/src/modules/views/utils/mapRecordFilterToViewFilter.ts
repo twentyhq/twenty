@@ -13,6 +13,7 @@ export const mapRecordFilterToViewFilter = (
     positionInViewFilterGroup: recordFilter.positionInRecordFilterGroup,
     viewFilterGroupId: recordFilter.recordFilterGroupId,
     subFieldName: recordFilter.subFieldName,
-    relationTargetFieldMetadataId: recordFilter.relationTargetField?.id ?? null,
+    relationTargetFieldMetadataId:
+      recordFilter.relationTargetFieldMetadataId ?? null,
   };
 };

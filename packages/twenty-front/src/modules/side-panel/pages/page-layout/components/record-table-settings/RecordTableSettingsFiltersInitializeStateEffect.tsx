@@ -1,5 +1,4 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -7,7 +6,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type View } from '@/views/types/View';
-import { getFilterableFields } from '@/views/utils/getFilterableFields';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useEffect, useState } from 'react';
@@ -15,12 +13,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableSettingsFiltersInitializeStateEffectProps = {
   view: View;
-  objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const RecordTableSettingsFiltersInitializeStateEffect = ({
   view,
-  objectMetadataItem,
 }: RecordTableSettingsFiltersInitializeStateEffectProps) => {
   const setCurrentRecordFilters = useSetAtomComponentState(
     currentRecordFiltersComponentState,
@@ -60,10 +56,8 @@ export const RecordTableSettingsFiltersInitializeStateEffect = ({
       return;
     }
 
-    const filterableFields = getFilterableFields(objectMetadataItem);
     const recordFilters = mapViewFiltersToFilters(
       view.viewFilters,
-      filterableFields,
       flattenedFieldMetadataItems,
     );
 
@@ -78,7 +72,6 @@ export const RecordTableSettingsFiltersInitializeStateEffect = ({
     setHasInitializedFilters(true);
   }, [
     view,
-    objectMetadataItem,
     flattenedFieldMetadataItems,
     hasInitializedFilters,
     stateAlreadyHasFilters,

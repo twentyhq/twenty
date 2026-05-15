@@ -24,6 +24,8 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
@@ -89,6 +91,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
       fieldMetadataItemIdUsedInDropdownComponentState,
     );
 
+    const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+
     const handleFieldSelect = (
       selectedFieldMetadataItem: FieldMetadataItem,
     ) => {
@@ -102,13 +106,31 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
         setObjectFilterDropdownSubMenuFieldType(filterType);
         setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
         setObjectFilterDropdownIsSelectingCompositeField(true);
-      } else {
-        selectFieldUsedInAdvancedFilterDropdown({
-          fieldMetadataItemId: selectedFieldMetadataItem.id,
-          recordFilterId,
-        });
-        closeAdvancedFilterFieldSelectDropdown();
+        return;
       }
+
+      selectFieldUsedInAdvancedFilterDropdown({
+        fieldMetadataItemId: selectedFieldMetadataItem.id,
+        recordFilterId,
+      });
+
+      // RELATION/SELECT leaf fields open a value picker keyed by the
+      // source field id — push it on the focus stack so the picker's
+      // keyboard hotkeys are active when it opens.
+      if (
+        selectedFieldMetadataItem.type === FieldMetadataType.RELATION ||
+        selectedFieldMetadataItem.type === FieldMetadataType.SELECT
+      ) {
+        pushFocusItemToFocusStack({
+          focusId: selectedFieldMetadataItem.id,
+          component: {
+            type: FocusComponentType.DROPDOWN,
+            instanceId: selectedFieldMetadataItem.id,
+          },
+        });
+      }
+
+      closeAdvancedFilterFieldSelectDropdown();
     };
 
     const selectableItemIdArray = filteredFieldMetadataItems.map(
