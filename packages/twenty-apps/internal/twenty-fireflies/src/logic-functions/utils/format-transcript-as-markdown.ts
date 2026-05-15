@@ -1,0 +1,53 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { type FirefliesTranscript } from 'src/logic-functions/types/fireflies-transcript.type';
+
+const UNKNOWN_SPEAKER_LABEL = 'Speaker';
+
+export const formatTranscriptAsMarkdown = (
+  transcript: FirefliesTranscript,
+): string => {
+  const sentences = transcript.sentences ?? [];
+
+  if (sentences.length === 0) {
+    return '_Fireflies returned no transcript content for this meeting._';
+  }
+
+  const lines: string[] = [];
+  let currentSpeaker: string | null = null;
+  let currentLines: string[] = [];
+
+  const flush = () => {
+    if (currentLines.length === 0) {
+      return;
+    }
+
+    const speakerLabel = isDefined(currentSpeaker)
+      ? currentSpeaker
+      : UNKNOWN_SPEAKER_LABEL;
+
+    lines.push(`**${speakerLabel}:** ${currentLines.join(' ')}`);
+    currentLines = [];
+  };
+
+  for (const sentence of sentences) {
+    const text = sentence.text.trim();
+
+    if (text.length === 0) {
+      continue;
+    }
+
+    const speaker = sentence.speaker_name?.trim() ?? null;
+
+    if (speaker !== currentSpeaker) {
+      flush();
+      currentSpeaker = speaker;
+    }
+
+    currentLines.push(text);
+  }
+
+  flush();
+
+  return lines.join('\n\n');
+};
