@@ -3,10 +3,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { type FlatPermissionFlagMaps } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag-maps.type';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
 
 const buildFlatRolePermissionFlag = (
@@ -15,7 +11,11 @@ const buildFlatRolePermissionFlag = (
   ({
     id: 'role-permission-flag-id',
     roleId: 'role-id',
+    workspaceId: 'workspace-id',
+    applicationId: 'application-id',
+    applicationUniversalIdentifier: 'application-universal-id',
     permissionFlagUniversalIdentifier: 'permission-flag-universal-id',
+    flag: PermissionFlagType.WORKSPACE,
     ...overrides,
   }) as FlatRolePermissionFlag;
 
@@ -60,8 +60,8 @@ describe('fromFlatRolePermissionFlagToRolePermissionFlagDto', () => {
     });
   });
 
-  it('throws a permissions exception when the permission flag is missing', () => {
-    expect(() =>
+  it('falls back to the legacy flag column when the catalog is missing the entry', () => {
+    expect(
       fromFlatRolePermissionFlagToRolePermissionFlagDto(
         buildFlatRolePermissionFlag(),
         {
@@ -70,11 +70,10 @@ describe('fromFlatRolePermissionFlagToRolePermissionFlagDto', () => {
           universalIdentifiersByApplicationId: {},
         },
       ),
-    ).toThrow(
-      new PermissionsException(
-        'Permission flag permission-flag-universal-id not found',
-        PermissionsExceptionCode.PERMISSION_NOT_FOUND,
-      ),
-    );
+    ).toEqual({
+      id: 'role-permission-flag-id',
+      roleId: 'role-id',
+      flag: PermissionFlagType.WORKSPACE,
+    });
   });
 });
