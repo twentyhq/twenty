@@ -49,19 +49,24 @@ Follow these steps for a manual setup.
 
 2. **Generate Secret Tokens**
 
-    Run the following command to generate a unique random string:
+    Generate **two** independent random strings — one for `APP_SECRET` (signs session cookies, fallback for legacy JWTs) and one for `ENCRYPTION_KEY` (encrypts secrets at rest):
+
     ```bash
-    openssl rand -base64 32
+    openssl rand -base64 32  # value for APP_SECRET
+    openssl rand -base64 32  # value for ENCRYPTION_KEY
     ```
-    **Important:** Keep this value secret / do not share it.
+    **Important:** Keep both values secret / do not share them. Losing `ENCRYPTION_KEY` means losing access to every secret stored in the database (OAuth tokens, application variables, TOTP secrets, etc.).
 
 3. **Update the `.env`**
 
-    Replace the placeholder value in your .env file with the generated token:
+    Replace the placeholder values in your .env file with the generated tokens:
 
     ```ini
     APP_SECRET=first_random_string
+    ENCRYPTION_KEY=second_random_string
     ```
+
+    See the [Key rotation guide](/developers/self-host/capabilities/key-rotation) for instructions on rotating either of these values without downtime.
 
 4. **Set the Postgres Password**
 
