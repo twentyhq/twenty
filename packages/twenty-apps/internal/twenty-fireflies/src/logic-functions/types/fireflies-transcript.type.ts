@@ -14,5 +14,5 @@ export type FirefliesTranscript = {
   sentences: FirefliesTranscriptSentence[] | null;
   calendar_id?: string | null;
   cal_id?: string | null;
-  calendar_provider?: string | null;
+  calendar_type?: string | null;
 };

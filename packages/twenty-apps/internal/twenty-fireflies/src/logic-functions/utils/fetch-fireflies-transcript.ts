@@ -15,7 +15,7 @@ const TRANSCRIPT_QUERY = `
       organizer_email
       calendar_id
       cal_id
-      calendar_provider
+      calendar_type
       sentences {
         speaker_name
         text
@@ -54,5 +54,5 @@ export const fetchFirefliesTranscript = async ({
     };
   }
 
-  return { ok: true, data: result.data.transcript };
+  return { ok: true, status: result.status, data: result.data.transcript };
 };
