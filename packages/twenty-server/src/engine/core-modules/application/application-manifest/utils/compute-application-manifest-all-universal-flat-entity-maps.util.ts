@@ -3,6 +3,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
+import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
@@ -60,6 +62,56 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
       universalFlatEntityMapsToMutate:
         allUniversalFlatEntityMaps.flatObjectMetadataMaps,
     });
+
+    // Inject the 8 standard system fields (id / createdAt / createdBy /
+    // deletedAt / position / searchVector / updatedAt / updatedBy) into
+    // the manifest-derived TO map. The runtime attaches the same set to
+    // every custom object on creation; without these here, the diff
+    // sees `FROM = { …system fields }` and `TO = { }` and either tries
+    // to delete (rejected by the deletion validator) or update them
+    // (rejected by `FIELD_MUTATION_NOT_ALLOWED` once any property
+    // drifts — e.g. after NormalizeCompositeFieldDefaultsCommand).
+    //
+    // universalIdentifiers are derived deterministically via v5 from
+    // `${objectMetadataUniversalIdentifier}/${name}` so they line up
+    // byte-for-byte with the rows the workspace already has (post the
+    // matching 2-5 refactor-system-field-universal-identifiers migration).
+    //
+    // If the manifest already declares a field with one of the system
+    // names (e.g. an app trying to override `id` with a TEXT type), we
+    // intentionally skip the injection so the existing
+    // `validateObjectMetadataSystemFieldsIntegrity` validator still gets
+    // to surface the mistake as `INVALID_SYSTEM_FIELD`.
+    // `skipNameField: true` because the manifest is responsible for
+    // declaring the label-identifier field itself.
+    const fieldNamesDeclaredInObjectManifest = new Set(
+      objectManifest.fields.map((field) => field.name),
+    );
+    const defaultFlatFieldsForObject =
+      buildDefaultFlatFieldMetadatasForCustomObject({
+        flatObjectMetadata: {
+          applicationUniversalIdentifier,
+          universalIdentifier: flatObjectMetadata.universalIdentifier,
+        },
+        skipNameField: true,
+      });
+
+    const systemFlatFieldMetadatasToInject: UniversalFlatFieldMetadata[] =
+      Object.values(defaultFlatFieldsForObject.fields);
+
+    for (const systemFlatFieldMetadata of systemFlatFieldMetadatasToInject) {
+      if (
+        fieldNamesDeclaredInObjectManifest.has(systemFlatFieldMetadata.name)
+      ) {
+        continue;
+      }
+
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: systemFlatFieldMetadata,
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatFieldMetadataMaps,
+      });
+    }
 
     for (const fieldManifest of objectManifest.fields) {
       const enrichedFieldManifest =
