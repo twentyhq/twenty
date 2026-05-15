@@ -15,7 +15,7 @@ export class AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand
       `CREATE INDEX "IDX_VIEW_FILTER_RELATION_TARGET_FIELD_METADATA_ID" ON "core"."viewFilter" ("relationTargetFieldMetadataId") WHERE "relationTargetFieldMetadataId" IS NOT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."viewFilter" ADD CONSTRAINT "FK_dbe259395cbd9a54c1c17d12b0b" FOREIGN KEY ("relationTargetFieldMetadataId") REFERENCES "core"."fieldMetadata"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."viewFilter" ADD CONSTRAINT "FK_dbe259395cbd9a54c1c17d12b0b" FOREIGN KEY ("relationTargetFieldMetadataId") REFERENCES "core"."fieldMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
   }
 
