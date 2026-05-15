@@ -44,6 +44,7 @@ export const registerCommands = (program: Command): void => {
       '-o, --once',
       'Build and sync once, then exit (useful for CI, scripts, and pre-commit hooks)',
     )
+    .option('--debounceMs <ms>', 'Debounce in ms (default: 2 000)')
     .option('-v, --verbose', 'Show detailed logs')
     .option('-d, --debug', 'Show detailed logs (alias for --verbose)')
     .action(async (appPath, options) => {
@@ -59,6 +60,9 @@ export const registerCommands = (program: Command): void => {
       const commonOptions = {
         appPath: formatPath(appPath),
         verbose: options.verbose || options.debug,
+        debounceMs: options.debounceMs
+          ? parseInt(options.debounceMs, 10)
+          : undefined,
       };
 
       if (options.once) {

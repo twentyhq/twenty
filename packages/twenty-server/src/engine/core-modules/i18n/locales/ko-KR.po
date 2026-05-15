@@ -471,6 +471,11 @@ msgstr "색인 메타데이터 오류가 발생했습니다."
 msgid "An index must contain at least one field"
 msgstr "인덱스에는 적어도 하나의 필드가 있어야 합니다"
 
+#. js-lingui-id: KvWKJI
+#: src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception.ts
+msgid "An internal error occurred while handling encrypted data."
+msgstr ""
+
 #. js-lingui-id: SOp/Vw
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "An invitation has already been sent to this email."
@@ -5993,6 +5998,23 @@ msgstr "관계 생성 페이로드가 필요합니다."
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Relation field target metadata not found"
 msgstr "관계 필드 대상 메타데이터를 찾을 수 없습니다."
+
+#. js-lingui-id: HmNKeM
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Relation filter is misconfigured"
+msgstr ""
+
+#. js-lingui-id: 1RF4/e
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Relation filter is not supported here"
+msgstr ""
+
+#. js-lingui-id: L8AY9P
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Relation filters can only traverse one relation deep"
+msgstr ""
 
 #. js-lingui-id: 83atrc
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

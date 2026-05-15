@@ -3,6 +3,7 @@ import { SettingsAdminHealthStatusListCard } from '@/settings/admin-panel/health
 import { SettingsAdminUpgradeStatusListCard } from '@/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard';
 import { SettingsAdminMaintenanceMode } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode';
 import { SettingsAdminMaintenanceModeFetchEffect } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceModeFetchEffect';
+import { SettingsAdminSigningKeysTable } from '@/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -60,6 +61,13 @@ export const SettingsAdminHealthStatus = () => {
           <SettingsAdminUpgradeStatusListCard upgradeStatus={upgradeStatus} />
         </Section>
       )}
+      <Section>
+        <H2Title
+          title={t`Signing Keys`}
+          description={t`Asymmetric public keys used to sign and verify access tokens. Revoking a key immediately invalidates every JWT signed with it.`}
+        />
+        <SettingsAdminSigningKeysTable />
+      </Section>
       <SettingsAdminMaintenanceMode />
     </>
   );

@@ -66,7 +66,7 @@ export function Flow({ body, children, eyebrow, steps }: FlowProps) {
     }),
   );
 
-  const images = steps.map((step) => step.image);
+  const stepVisuals = steps.map(({ visual }) => ({ visual }));
 
   return (
     <StyledSection ref={scrollContainerRef}>
@@ -86,7 +86,7 @@ export function Flow({ body, children, eyebrow, steps }: FlowProps) {
           onMobileStepIndexChange={setMobileStepIndex}
           steps={contentSteps}
         />
-        <Visual activeStepIndex={activeStepIndex} images={images} />
+        <Visual activeStepIndex={activeStepIndex} stepVisuals={stepVisuals} />
       </Grid>
     </StyledSection>
   );

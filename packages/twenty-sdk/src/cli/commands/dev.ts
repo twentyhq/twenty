@@ -12,6 +12,7 @@ export type AppDevOptions = {
   appPath?: string;
   headless?: boolean;
   verbose?: boolean;
+  debounceMs?: number;
 };
 
 export class AppDevCommand {
@@ -60,6 +61,7 @@ export class AppDevCommand {
     this.orchestrator = new DevModeOrchestrator({
       state: orchestratorState,
       verbose: options.verbose,
+      debounceMs: options.debounceMs,
     });
 
     await this.orchestrator.start();

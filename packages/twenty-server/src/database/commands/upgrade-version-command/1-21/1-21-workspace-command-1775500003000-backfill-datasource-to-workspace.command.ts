@@ -36,6 +36,7 @@ export class BackfillDatasourceToWorkspaceCommand extends ActiveOrSuspendedWorks
     const isDryRun = options.dryRun ?? false;
 
     const workspace = await this.workspaceRepository.findOne({
+      select: ['id', 'databaseSchema'],
       where: { id: workspaceId },
     });
 

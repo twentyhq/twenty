@@ -9,6 +9,7 @@ import {
 
 export const JwtKeyManagerExceptionCode = appendCommonExceptionCode({
   INVALID_PRIVATE_KEY: 'INVALID_PRIVATE_KEY',
+  SIGNING_KEY_NOT_FOUND: 'SIGNING_KEY_NOT_FOUND',
 } as const);
 
 const getJwtKeyManagerExceptionUserFriendlyMessage = (
@@ -16,6 +17,7 @@ const getJwtKeyManagerExceptionUserFriendlyMessage = (
 ): MessageDescriptor => {
   switch (code) {
     case JwtKeyManagerExceptionCode.INVALID_PRIVATE_KEY:
+    case JwtKeyManagerExceptionCode.SIGNING_KEY_NOT_FOUND:
     case JwtKeyManagerExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:

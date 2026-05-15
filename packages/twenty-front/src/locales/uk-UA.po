@@ -236,10 +236,10 @@ msgstr "Роль агента {agentLabel}"
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} {fieldLabel}"
 
-#. js-lingui-id: LTvJAf
+#. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
-msgid "{appName} wants to access your account"
-msgstr "{appName} хоче отримати доступ до вашого облікового запису"
+msgid "{appName} would like to:"
+msgstr ""
 
 #. js-lingui-id: y9covz
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
@@ -265,11 +265,6 @@ msgstr "{contextStoreNumberOfSelectedRecords} вибрано"
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
 msgstr "{count, plural, one {Наприклад, {0}{1} для {count} десяткової} few {Наприклад, {2}{3} для {count} десяткових} many {Наприклад, {2}{3} для {count} десяткових} other {Наприклад, {2}{3} для {count} десяткових}}"
-
-#. js-lingui-id: aTq2js
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "{credits} Credits - ${price}"
-msgstr "{credits} кредитів - ${price}"
 
 #. js-lingui-id: q8RNNe
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -808,10 +803,10 @@ msgstr ""
 msgid "Access Key ID"
 msgstr "Ідентифікатор ключа доступу"
 
-#. js-lingui-id: o0Ci6l
+#. js-lingui-id: CrjDqe
 #: src/pages/auth/Authorize.tsx
-msgid "Access workspace data"
-msgstr "Доступ до даних робочого простору"
+msgid "Access your workspace data"
+msgstr ""
 
 #. js-lingui-id: c2UA7k
 #: src/pages/settings/ai/components/SettingsAiMCP.tsx
@@ -927,6 +922,7 @@ msgstr "Активація..."
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Active"
@@ -1326,6 +1322,7 @@ msgstr "Додано до чорного списку"
 #: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "Address 1"
 msgstr "Адреса 1"
 
@@ -1333,6 +1330,7 @@ msgstr "Адреса 1"
 #: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "Address 2"
 msgstr "Адреса 2"
 
@@ -2332,6 +2330,7 @@ msgstr "за зростанням"
 
 #. js-lingui-id: nYD/Cq
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
+#: src/modules/views/editable-chip/components/EditableSortChip.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -2414,6 +2413,11 @@ msgstr "Призначення"
 #. js-lingui-id: d/bvvp
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "Assistant"
+msgstr ""
+
+#. js-lingui-id: 4H6WHS
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
+msgid "Asymmetric public keys used to sign and verify access tokens. Revoking a key immediately invalidates every JWT signed with it."
 msgstr ""
 
 #. js-lingui-id: UHs3Ds
@@ -3044,16 +3048,6 @@ msgstr "Скасувати перемикання інтервалу"
 msgid "Cancel interval switching?"
 msgstr "Скасувати перемикання інтервалу?"
 
-#. js-lingui-id: /Dmw1h
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel metered tier switching"
-msgstr "Скасувати перемикання тарифу з лічильником"
-
-#. js-lingui-id: Q/chGD
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Cancel metered tier switching?"
-msgstr "Скасувати перемикання тарифу з лічильником?"
-
 #. js-lingui-id: rRK/Lf
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
@@ -3367,6 +3361,7 @@ msgstr "Виберіть вашу пробну версію"
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "City"
 msgstr "Місто"
 
@@ -3795,11 +3790,6 @@ msgstr "Налаштовано"
 msgid "Confirm"
 msgstr "Підтвердити"
 
-#. js-lingui-id: qmnX/6
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Confirm changing your current credit plan."
-msgstr "Підтвердьте зміну вашого поточного кредитного плану."
-
 #. js-lingui-id: q2rgqr
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 msgid "Confirm changing your current resource credit allocation."
@@ -3812,7 +3802,6 @@ msgstr "Підтвердьте видалення ролі {roleName}? Це не
 
 #. js-lingui-id: kZkFSm
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "Підтвердити пониження"
 
@@ -3823,9 +3812,13 @@ msgstr "Підтвердити оновлення ролі"
 
 #. js-lingui-id: DDbn3x
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm upgrade"
 msgstr "Підтвердити оновлення"
+
+#. js-lingui-id: LOM1MR
+#: src/pages/auth/Authorize.tsx
+msgid "Connect {appName} to your account"
+msgstr ""
 
 #. js-lingui-id: mFiwDA
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
@@ -4060,6 +4053,11 @@ msgstr "Копіювати команди"
 msgid "Copy invitation link"
 msgstr "Скопіювати посилання на запрошення"
 
+#. js-lingui-id: 4jdeR0
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+msgid "Copy key ID"
+msgstr ""
+
 #. js-lingui-id: y1eoq1
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Copy link"
@@ -4128,7 +4126,6 @@ msgid "Core Objects"
 msgstr "Основні об'єкти"
 
 #. js-lingui-id: I99Miw
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Cost"
 msgstr "Вартість"
@@ -4136,11 +4133,6 @@ msgstr "Вартість"
 #. js-lingui-id: Z9Z9PX
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 msgid "Cost per 1M tokens"
-msgstr ""
-
-#. js-lingui-id: HUPoL8
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "Cost per Extra Credits"
 msgstr ""
 
 #. js-lingui-id: 3X5ngu
@@ -4225,6 +4217,7 @@ msgstr "Підрахунок унікальних значень"
 #: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "Country"
 msgstr "Країна"
 
@@ -4389,6 +4382,12 @@ msgstr ""
 msgid "Created by"
 msgstr "Створено"
 
+#. js-lingui-id: t3sqJR
+#. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+msgid "Created on {0}"
+msgstr ""
+
 #. js-lingui-id: fR16ki
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Creating your data model..."
@@ -4424,11 +4423,6 @@ msgstr "Споживання кредитів з часом."
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credit pack switching has been cancelled."
 msgstr ""
-
-#. js-lingui-id: Efny36
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Credit Plan"
-msgstr "План кредитування"
 
 #. js-lingui-id: qtEx+T
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
@@ -4543,6 +4537,7 @@ msgstr "Код валюти"
 #. js-lingui-id: Hp1l6f
 #: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 msgid "Current"
 msgstr "Зараз"
 
@@ -5331,6 +5326,7 @@ msgstr "за спаданням"
 
 #. js-lingui-id: Cko536
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
+#: src/modules/views/editable-chip/components/EditableSortChip.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -5560,8 +5556,6 @@ msgstr ""
 #. js-lingui-id: LE8J+K
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Downgrade"
 msgstr "Понижити"
 
@@ -6560,11 +6554,6 @@ msgstr ""
 msgid "Error while cancelling interval switching."
 msgstr "Помилка при скасуванні перемикання інтервалу."
 
-#. js-lingui-id: a1gs9Y
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Error while cancelling metered tier switching."
-msgstr "Помилка при скасуванні перемикання тарифу з лічильником."
-
 #. js-lingui-id: FS6DQK
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling plan switching."
@@ -6888,11 +6877,6 @@ msgstr ""
 msgid "Expression"
 msgstr "Вираз"
 
-#. js-lingui-id: uE7S0L
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "Extra Credits Used"
-msgstr "Додаткові використані кредити"
-
 #. js-lingui-id: 7Bj3x9
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -7046,6 +7030,11 @@ msgstr "Не вдалося видалити провайдера"
 msgid "Failed to retry jobs. Please try again later."
 msgstr "Не вдалося повторити завдання. Будь ласка, спробуйте пізніше."
 
+#. js-lingui-id: 70UyPr
+#: src/modules/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey.ts
+msgid "Failed to revoke signing key. Please try again later."
+msgstr ""
+
 #. js-lingui-id: farFvy
 #: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
 msgid "Failed to save layout customization"
@@ -7110,11 +7099,6 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Failed to update model selection mode"
 msgstr "Не вдалося оновити режим вибору моделі"
-
-#. js-lingui-id: HnBqPY
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Failed to update price."
-msgstr "Не вдалося оновити ціну."
 
 #. js-lingui-id: J7vly7
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
@@ -7482,6 +7466,11 @@ msgstr "Перші 2 рядки"
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 5 lines"
 msgstr "Перші 5 рядків"
+
+#. js-lingui-id: V1EGGU
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
+msgid "First name"
+msgstr ""
 
 #. js-lingui-id: kODvZJ
 #: src/pages/onboarding/CreateProfile.tsx
@@ -8907,6 +8896,16 @@ msgstr "Канбан"
 msgid "Key"
 msgstr "Ключ"
 
+#. js-lingui-id: wCSQOc
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+msgid "Key ID"
+msgstr ""
+
+#. js-lingui-id: Gtjqi6
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+msgid "Key ID copied"
+msgstr ""
+
 #. js-lingui-id: VOAmkS
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Key/Value"
@@ -9062,6 +9061,7 @@ msgstr "Останнє повідомлення {lastMessageSentAtFormatted}"
 
 #. js-lingui-id: 1ZaQUH
 #: src/modules/settings/members/components/MemberNameFields.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "Last name"
 msgstr ""
 
@@ -9121,6 +9121,11 @@ msgstr "Остання дата"
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version"
 msgstr "Остання версія"
+
+#. js-lingui-id: Q7hYLw
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
+msgid "Latitude"
+msgstr ""
 
 #. js-lingui-id: ZEP8tT
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -9212,6 +9217,21 @@ msgstr "Залиште порожнім, якщо вам не потрібно �
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Leave workspace"
 msgstr "Залишити робочий простір"
+
+#. js-lingui-id: Sn1jT8
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+msgid "Legacy"
+msgstr ""
+
+#. js-lingui-id: CpT2ez
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+msgid "Legacy (HS256)"
+msgstr ""
+
+#. js-lingui-id: KZ7vMS
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+msgid "Legacy HS256 verifications across all tokens"
+msgstr ""
 
 #. js-lingui-id: MP1v+1
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -9498,6 +9518,11 @@ msgstr "Вийти"
 #: src/modules/logic-functions/components/LogicFunctionLogs.tsx
 msgid "Logs"
 msgstr "Журнали"
+
+#. js-lingui-id: FJBbw5
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
+msgid "Longitude"
+msgstr ""
 
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
@@ -9809,11 +9834,6 @@ msgstr "Метадані"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Metadata file generation failed"
 msgstr "Не вдалося згенерувати файл метаданих"
-
-#. js-lingui-id: onCJJ6
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Metered tier switching has been cancelled."
-msgstr "Перемикання тарифу з лічильником скасовано."
 
 #. js-lingui-id: fiPesM
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -11169,7 +11189,6 @@ msgstr "Кількість десяткових розрядів"
 
 #. js-lingui-id: tYOaY8
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
 msgstr "Кількість нових кредитів виділяється кожен {recurringInterval}"
 
@@ -12046,7 +12065,6 @@ msgstr "Будь ласка, виберіть принаймні один об'�
 
 #. js-lingui-id: 8YnlGz
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
 msgstr "Будь ласка, спершу розпочніть свою підписку"
 
@@ -12125,6 +12143,7 @@ msgstr ""
 
 #. js-lingui-id: OKJUcC
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "Postcode"
 msgstr "Поштовий код"
 
@@ -12174,11 +12193,6 @@ msgstr "Попередній"
 #: src/modules/ai/utils/groupThreadsByDate.ts
 msgid "Previous 7 days"
 msgstr ""
-
-#. js-lingui-id: jmc+FY
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-msgid "Price updated."
-msgstr "Ціну оновлено."
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -13097,10 +13111,32 @@ msgstr "Значення результату"
 msgid "reverse alphabetical"
 msgstr "у зворотному порядку за абеткою"
 
+#. js-lingui-id: GXsAby
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
+msgid "Revoke"
+msgstr ""
+
+#. js-lingui-id: rJrWw4
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
+msgid "Revoke signing key"
+msgstr ""
+
+#. js-lingui-id: xGiT1z
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+msgid "Revoked"
+msgstr ""
+
 #. js-lingui-id: GG37FL
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "Revoked for this object"
 msgstr "Скасовано для цього об'єкта"
+
+#. js-lingui-id: lrTLOv
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
+msgid "Revoking this key will invalidate every JWT signed with it. Users with active tokens signed by this key will be logged out."
+msgstr ""
 
 #. js-lingui-id: NP5Nbf
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
@@ -14219,6 +14255,16 @@ msgstr "Зареєструватися"
 msgid "Sign-up is temporarily unavailable during maintenance."
 msgstr ""
 
+#. js-lingui-id: X1zsRT
+#: src/modules/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey.ts
+msgid "Signing key revoked"
+msgstr ""
+
+#. js-lingui-id: Gzr66P
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
+msgid "Signing Keys"
+msgstr ""
+
 #. js-lingui-id: BZdVGR
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Single edit"
@@ -14569,6 +14615,7 @@ msgstr "Почато процес підтвердження"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
+#: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 msgid "State"
 msgstr "Стан"
 
@@ -14584,6 +14631,7 @@ msgstr "Стан"
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -15406,6 +15454,11 @@ msgstr "Це зв’язок із зв’язувальним об’єктом"
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "This is required to enable manual row reordering."
 msgstr "Це необхідно, щоб увімкнути ручне переставлення рядків."
+
+#. js-lingui-id: xrVx9A
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
+msgid "This is the current signing key. Revoking it will invalidate every JWT signed with it and users may need to sign in again. A new signing key will be generated automatically on the next request."
+msgstr ""
 
 #. js-lingui-id: yLvOxg
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -16318,8 +16371,6 @@ msgstr "Оновлення"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "Upgrade"
@@ -16364,9 +16415,9 @@ msgstr ""
 msgid "Upgrade to {latestAvailableVersion}"
 msgstr "Оновити до {latestAvailableVersion}"
 
-#. js-lingui-id: tLOGrv
+#. js-lingui-id: Kutw4+
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid "Upgrade to {nextTierCredits} credits for ${nextTierPrice}/{nextTierInterval}."
+msgid "Upgrade to {nextResourceCreditsAmount} credits for ${nextResourceCreditPrice}/{nextTierInterval}."
 msgstr ""
 
 #. js-lingui-id: ggd+Ee
@@ -16608,6 +16659,11 @@ msgstr "Використання користувача"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Users"
 msgstr "Користувачі"
+
+#. js-lingui-id: UIOjSC
+#: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
+msgid "Uses (last {verifyWindowDays}d)"
+msgstr ""
 
 #. js-lingui-id: mnudjQ
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -17547,11 +17603,6 @@ msgstr ""
 msgid "You have scheduled a credit pack change. Do you want to cancel it?"
 msgstr ""
 
-#. js-lingui-id: M2lYgq
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "You have scheduled a metered tier change. Do you want to cancel it?"
-msgstr "Ви запланували зміну тарифу з лічильником. Ви бажаєте скасувати її?"
-
 #. js-lingui-id: z8eKS7
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "you will be charged ${enterprisePrice} per user per month"
@@ -17589,11 +17640,11 @@ msgid ""
 "Reach to our support team to upgrade."
 msgstr ""
 
-#. js-lingui-id: UUaKVD
+#. js-lingui-id: /fksQo
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid ""
 "You've hit your usage limit. \n"
-"Upgrade to {nextTierCredits} credits for ${nextTierPrice}/{nextTierInterval}."
+"Upgrade to {nextResourceCreditsAmount} credits for ${nextResourceCreditPrice}/{nextTierInterval}."
 msgstr ""
 
 #. js-lingui-id: yZ0wRS

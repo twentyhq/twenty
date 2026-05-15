@@ -49,6 +49,9 @@ export class ViewSortEntity extends SyncableEntity {
   })
   direction: ViewSortDirection;
 
+  @Column({ nullable: true, type: 'varchar' })
+  subFieldName?: string | null;
+
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
 

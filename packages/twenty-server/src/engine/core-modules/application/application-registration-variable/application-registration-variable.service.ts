@@ -46,7 +46,7 @@ export class ApplicationRegistrationVariableService {
       value: variable.isFilled
         ? variable.isSecret
           ? '•••••••••••••'
-          : this.encryptionService.decrypt(variable.encryptedValue)
+          : this.encryptionService.decryptVersioned(variable.encryptedValue)
         : null,
     }));
   }
@@ -60,7 +60,7 @@ export class ApplicationRegistrationVariableService {
       workspaceId,
     );
 
-    const encryptedValue = this.encryptionService.encrypt(input.value);
+    const encryptedValue = this.encryptionService.encryptVersioned(input.value);
 
     const variable = this.variableRepository.create({
       applicationRegistrationId: input.applicationRegistrationId,
@@ -98,7 +98,9 @@ export class ApplicationRegistrationVariableService {
     const updateData: Record<string, unknown> = {};
 
     if (isDefined(update.value)) {
-      updateData.encryptedValue = this.encryptionService.encrypt(update.value);
+      updateData.encryptedValue = this.encryptionService.encryptVersioned(
+        update.value,
+      );
     }
 
     if (isDefined(update.resetValue) && update.resetValue) {

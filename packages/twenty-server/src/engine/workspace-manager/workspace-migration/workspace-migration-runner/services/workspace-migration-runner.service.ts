@@ -110,6 +110,14 @@ export class WorkspaceMigrationRunnerService {
       );
     }
 
+    if (flatMapsKeysSet.has('flatApplicationVariableMaps')) {
+      asyncOperations.push(
+        this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'applicationVariableMaps',
+        ]),
+      );
+    }
+
     return asyncOperations;
   }
 

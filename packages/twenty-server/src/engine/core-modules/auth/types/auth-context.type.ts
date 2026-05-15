@@ -43,12 +43,12 @@ export enum JwtTokenTypeEnum {
   LOGIN = 'LOGIN',
   FILE = 'FILE',
   API_KEY = 'API_KEY',
-  POSTGRES_PROXY = 'POSTGRES_PROXY',
   REMOTE_SERVER = 'REMOTE_SERVER',
   KEY_ENCRYPTION_KEY = 'KEY_ENCRYPTION_KEY',
   APPLICATION_ACCESS = 'APPLICATION_ACCESS',
   APPLICATION_REFRESH = 'APPLICATION_REFRESH',
   APP_OAUTH_STATE = 'APP_OAUTH_STATE',
+  APPROVED_ACCESS_DOMAIN = 'APPROVED_ACCESS_DOMAIN',
 }
 
 type CommonPropertiesJwtPayload = {
@@ -138,10 +138,6 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   impersonatedUserWorkspaceId?: string;
 };
 
-export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: JwtTokenTypeEnum.POSTGRES_PROXY;
-};
-
 export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.APP_OAUTH_STATE;
   workspaceId: string;
@@ -159,6 +155,13 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   codeVerifier: string | null;
 };
 
+export type ApprovedAccessDomainJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.APPROVED_ACCESS_DOMAIN;
+  workspaceId: string;
+  approvedAccessDomainId: string;
+  domain: string;
+};
+
 export type JwtPayload =
   | AccessTokenJwtPayload
   | ApiKeyTokenJwtPayload
@@ -170,5 +173,5 @@ export type JwtPayload =
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
   | FileTokenJwtPayloadLegacy
-  | PostgresProxyTokenJwtPayload
-  | AppOAuthStateJwtPayload;
+  | AppOAuthStateJwtPayload
+  | ApprovedAccessDomainJwtPayload;
