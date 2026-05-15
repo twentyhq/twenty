@@ -5,7 +5,6 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 
-import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -70,14 +69,23 @@ export class SigningKeyVerifyCounterService
     await this.flush();
 
     const bucketIds = [...kids, LEGACY_BUCKET_ID];
-    const allKeys = bucketIds.flatMap((bucketId) =>
+    const keysByBucket = bucketIds.map((bucketId) =>
       this.buildBucketKeysInWindow(bucketId),
     );
 
-    let values: (number | string | undefined)[];
+    let valuesByBucket: (number | undefined)[][];
 
     try {
-      values = await this.cacheStorage.mget<number | string>(allKeys);
+      const flatValues = await this.cacheStorage.mget<number>(
+        keysByBucket.flat(),
+      );
+
+      valuesByBucket = bucketIds.map((_, bucketIndex) =>
+        flatValues.slice(
+          bucketIndex * WINDOW_DAYS,
+          (bucketIndex + 1) * WINDOW_DAYS,
+        ),
+      );
     } catch (error) {
       this.logger.warn(
         `Failed to read signing key verify counts: ${
@@ -85,31 +93,21 @@ export class SigningKeyVerifyCounterService
         }`,
       );
 
-      return {
-        byKid: Object.fromEntries(kids.map((kid) => [kid, 0])),
-        legacyCount: 0,
-        windowDays: WINDOW_DAYS,
-      };
+      valuesByBucket = bucketIds.map(() => []);
     }
 
-    const countsByBucketId = new Map<string, number>(
-      bucketIds.map((bucketId) => [bucketId, 0]),
-    );
-
-    for (let index = 0; index < values.length; index++) {
-      const owner = bucketIds[Math.floor(index / WINDOW_DAYS)];
-
-      countsByBucketId.set(
-        owner,
-        (countsByBucketId.get(owner) ?? 0) + this.toCount(values[index]),
+    const sumWindow = (windowValues: (number | undefined)[]): number =>
+      windowValues.reduce<number>(
+        (total, value) =>
+          isDefined(value) && Number.isFinite(value) ? total + value : total,
+        0,
       );
-    }
 
     return {
       byKid: Object.fromEntries(
-        kids.map((kid) => [kid, countsByBucketId.get(kid) ?? 0]),
+        kids.map((kid, kidIndex) => [kid, sumWindow(valuesByBucket[kidIndex])]),
       ),
-      legacyCount: countsByBucketId.get(LEGACY_BUCKET_ID) ?? 0,
+      legacyCount: sumWindow(valuesByBucket[bucketIds.length - 1]),
       windowDays: WINDOW_DAYS,
     };
   }
@@ -165,20 +163,6 @@ export class SigningKeyVerifyCounterService
         `Failed to flush ${failedCount}/${entries.length} signing key verify bucket(s); re-buffered for next flush`,
       );
     }
-  }
-
-  private toCount(value: number | string | undefined): number {
-    if (!isDefined(value)) {
-      return 0;
-    }
-
-    if (isNumber(value)) {
-      return Number.isFinite(value) ? value : 0;
-    }
-
-    const parsed = Number(value);
-
-    return Number.isFinite(parsed) ? parsed : 0;
   }
 
   private buildBucketKey(bucketId: string, timestamp: number): string {
