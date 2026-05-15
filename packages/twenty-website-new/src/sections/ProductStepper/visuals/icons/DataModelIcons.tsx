@@ -1,23 +1,14 @@
-const ICON_PROPS = {
-  fill: 'none',
-  height: 12,
-  stroke: 'currentColor',
-  strokeLinecap: 'round' as const,
-  strokeLinejoin: 'round' as const,
-  strokeWidth: 1.5,
-  viewBox: '0 0 24 24',
-  width: 12,
-};
-
-const ICON_SM_PROPS = {
-  ...ICON_PROPS,
-  height: 9,
-  strokeWidth: 2,
-  width: 9,
-};
-
 export const IconBuilding = () => (
-  <svg {...ICON_PROPS}>
+  <svg
+    fill="none"
+    height={12}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={1.5}
+    viewBox="0 0 24 24"
+    width={12}
+  >
     <path d="M3 21l18 0" />
     <path d="M5 21v-14l8 -4v18" />
     <path d="M19 21v-10l-6 -4" />
@@ -29,14 +20,32 @@ export const IconBuilding = () => (
 );
 
 export const IconUser = () => (
-  <svg {...ICON_PROPS}>
+  <svg
+    fill="none"
+    height={12}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={1.5}
+    viewBox="0 0 24 24"
+    width={12}
+  >
     <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
     <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
   </svg>
 );
 
 export const IconApps = () => (
-  <svg {...ICON_PROPS}>
+  <svg
+    fill="none"
+    height={12}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={1.5}
+    viewBox="0 0 24 24"
+    width={12}
+  >
     <path d="M4 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
     <path d="M14 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
     <path d="M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
@@ -45,14 +54,32 @@ export const IconApps = () => (
 );
 
 export const IconTag = () => (
-  <svg {...ICON_PROPS}>
+  <svg
+    fill="none"
+    height={12}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={1.5}
+    viewBox="0 0 24 24"
+    width={12}
+  >
     <path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
     <path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z" />
   </svg>
 );
 
 export const IconTarget = () => (
-  <svg {...ICON_PROPS}>
+  <svg
+    fill="none"
+    height={12}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={1.5}
+    viewBox="0 0 24 24"
+    width={12}
+  >
     <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
     <path d="M12 7a5 5 0 1 0 5 5" />
     <path d="M13 3.055a9 9 0 1 0 7.941 7.945" />
@@ -62,14 +89,32 @@ export const IconTarget = () => (
 );
 
 export const IconChevronDown = () => (
-  <svg {...ICON_PROPS}>
+  <svg
+    fill="none"
+    height={12}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={1.5}
+    viewBox="0 0 24 24"
+    width={12}
+  >
     <path d="M6 9l6 -6" />
     <path d="M6 9l-6 -6" />
   </svg>
 );
 
 export const IconBuildingSm = () => (
-  <svg {...ICON_SM_PROPS}>
+  <svg
+    fill="none"
+    height={9}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={2}
+    viewBox="0 0 24 24"
+    width={9}
+  >
     <path d="M3 21l18 0" />
     <path d="M5 21v-14l8 -4v18" />
     <path d="M19 21v-10l-6 -4" />
@@ -81,7 +126,16 @@ export const IconBuildingSm = () => (
 );
 
 export const IconUsersSm = () => (
-  <svg {...ICON_SM_PROPS} strokeWidth={1.8}>
+  <svg
+    fill="none"
+    height={9}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={1.8}
+    viewBox="0 0 24 24"
+    width={9}
+  >
     <path d="M9 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
     <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
     <path d="M16 3.13a4 4 0 0 1 0 7.75" />
@@ -90,7 +144,16 @@ export const IconUsersSm = () => (
 );
 
 export const IconTargetSm = () => (
-  <svg {...ICON_SM_PROPS}>
+  <svg
+    fill="none"
+    height={9}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={2}
+    viewBox="0 0 24 24"
+    width={9}
+  >
     <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
     <path d="M12 7a5 5 0 1 0 5 5" />
     <path d="M13 3.055a9 9 0 1 0 7.941 7.945" />
@@ -100,7 +163,16 @@ export const IconTargetSm = () => (
 );
 
 export const IconUserScreenSm = () => (
-  <svg {...ICON_SM_PROPS} strokeWidth={1.8}>
+  <svg
+    fill="none"
+    height={9}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={1.8}
+    viewBox="0 0 24 24"
+    width={9}
+  >
     <path d="M19.03 17.818a3 3 0 0 0 1.97 -2.818v-8a3 3 0 0 0 -3 -3h-12a3 3 0 0 0 -3 3v8c0 1.317 .85 2.436 2.03 2.84" />
     <path d="M10 14a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
     <path d="M8 21a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2" />
@@ -108,7 +180,16 @@ export const IconUserScreenSm = () => (
 );
 
 export const IconUserSm = () => (
-  <svg {...ICON_SM_PROPS}>
+  <svg
+    fill="none"
+    height={9}
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={2}
+    viewBox="0 0 24 24"
+    width={9}
+  >
     <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
     <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
   </svg>

@@ -1,8 +1,8 @@
-import type { WorkflowIconName } from '../icons/workflow-icons';
+import type { WorkflowIconName } from '../icons/WorkflowIcons';
 
-const COLOR_GREEN = '#30a46c';
+export const COLOR_GREEN = '#30a46c';
 const COLOR_AMBER = '#946800';
-const COLOR_GRAY = '#999';
+export const COLOR_GRAY = '#999';
 
 export const COLOR_TEAL_BG = '#e7f9f5';
 export const COLOR_GRAY_BG = '#f9f9f9';

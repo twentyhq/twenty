@@ -1,4 +1,4 @@
-import type { LayoutFieldIconType } from '../icons/layout-icons';
+import type { LayoutFieldIconType } from '../icons/LayoutIcons';
 
 export type FieldDef = {
   icon: LayoutFieldIconType;

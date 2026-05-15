@@ -11,7 +11,7 @@ import {
   IconUserSm,
   IconUsersSm,
   IconTargetSm,
-} from '../icons/data-model-icons';
+} from '../icons/DataModelIcons';
 
 const COLOR_INDIGO_BG = '#d9e2fc';
 const COLOR_INDIGO_BORDER = '#c6d4f9';

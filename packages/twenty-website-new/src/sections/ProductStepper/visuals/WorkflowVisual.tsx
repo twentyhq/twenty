@@ -1,13 +1,16 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { StepperVisualProps } from '../types';
 
+import { AppPreviewShell, ShellCanvas, ShellSvgLayer } from './AppPreviewShell';
 import {
   ANIMATION_SEQUENCE,
+  COLOR_GRAY,
   COLOR_GRAY_BG,
+  COLOR_GREEN,
   COLOR_TEAL_BG,
   EDGES,
   NODE_HEIGHT,
@@ -15,119 +18,16 @@ import {
   NODES,
   STEP_INTERVAL_MS,
 } from './data/workflow.data';
-import { CheckIcon, NodeIcon } from './icons/workflow-icons';
+import { DrawEdge } from './DrawEdge';
+import { CheckIcon, NodeIcon } from './icons/WorkflowIcons';
 import {
-  STEPPER_BG,
-  STEPPER_BORDER_MEDIUM,
   STEPPER_BORDER_STRONG,
-  STEPPER_BORDER_SUBTLE,
   STEPPER_CARD_BG,
-  STEPPER_FONT,
-  STEPPER_HEADER_BG,
-  STEPPER_HEADER_BORDER,
-  STEPPER_SHADOW_SM,
   STEPPER_TEXT,
   STEPPER_TEXT_MUTED,
   STEPPER_TEXT_TERTIARY,
   STEPPER_TINT,
 } from './stepper-visual-tokens';
-
-const COLOR_GREEN = '#30a46c';
-const COLOR_GRAY = '#999';
-
-const Wrapper = styled.div`
-  background: ${STEPPER_BG};
-  border-radius: 2px;
-  box-shadow: ${STEPPER_SHADOW_SM};
-  display: flex;
-  flex-direction: column;
-  font-family: ${STEPPER_FONT};
-  height: 92%;
-  margin-left: auto;
-  margin-top: auto;
-  overflow: hidden;
-  width: 88%;
-`;
-
-const Header = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 4px;
-  height: 30px;
-  padding: 0 10px;
-`;
-
-const HeaderLogo = styled.span`
-  align-items: center;
-  background: ${STEPPER_HEADER_BG};
-  border: 1px solid ${STEPPER_HEADER_BORDER};
-  border-radius: 3px;
-  color: ${STEPPER_TEXT};
-  display: flex;
-  height: 14px;
-  justify-content: center;
-  width: 14px;
-`;
-
-const HeaderTitle = styled.span`
-  color: ${STEPPER_TEXT};
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.4;
-  padding: 0 2px;
-`;
-
-const HeaderActions = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 8px;
-  margin-left: auto;
-`;
-
-const HeaderBtn = styled.span`
-  align-items: center;
-  border: 1px solid ${STEPPER_BORDER_MEDIUM};
-  border-radius: 4px;
-  color: ${STEPPER_TEXT_MUTED};
-  display: flex;
-  height: 22px;
-  justify-content: center;
-  width: 22px;
-`;
-
-const HeaderCmdBtn = styled.span`
-  align-items: center;
-  border: 1px solid ${STEPPER_BORDER_SUBTLE};
-  border-radius: 4px;
-  color: ${STEPPER_TEXT_TERTIARY};
-  display: flex;
-  font-size: 12px;
-  font-weight: 500;
-  gap: 4px;
-  height: 22px;
-  padding: 0 6px;
-`;
-
-const Canvas = styled.div`
-  background: white;
-  border: 1px solid ${STEPPER_BORDER_MEDIUM};
-  border-radius: 8px;
-  flex: 1;
-  margin: 0 10px 10px;
-  min-height: 0;
-  overflow: hidden;
-  position: relative;
-  user-select: none;
-`;
-
-const SvgLayer = styled.svg`
-  height: 100%;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  width: 100%;
-`;
 
 const NodeCard = styled.div`
   align-items: center;
@@ -171,13 +71,7 @@ const NodeLabelRow = styled.div`
   height: 13px;
 `;
 
-const NodeType = styled.span<{ $color: string }>`
-  color: ${({ $color }) => $color};
-  font-size: 10px;
-  font-weight: 600;
-`;
-
-const NodeBadge = styled.span<{ $color: string }>`
+const NodeLabel = styled.span<{ $color: string }>`
   color: ${({ $color }) => $color};
   font-size: 10px;
   font-weight: 600;
@@ -246,24 +140,21 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stepRef = useRef(0);
 
-  const handlePointerDown = useCallback(
-    (nodeId: string, event: React.PointerEvent) => {
-      event.preventDefault();
-      (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-      const pos = positions[nodeId];
-      dragStartRef.current = {
-        nodeId,
-        startX: event.clientX,
-        startY: event.clientY,
-        posX: pos.x,
-        posY: pos.y,
-      };
-      setDragging(nodeId);
-    },
-    [positions],
-  );
+  const handlePointerDown = (nodeId: string, event: React.PointerEvent) => {
+    event.preventDefault();
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    const pos = positions[nodeId];
+    dragStartRef.current = {
+      nodeId,
+      startX: event.clientX,
+      startY: event.clientY,
+      posX: pos.x,
+      posY: pos.y,
+    };
+    setDragging(nodeId);
+  };
 
-  const handlePointerMove = useCallback((event: React.PointerEvent) => {
+  const handlePointerMove = (event: React.PointerEvent) => {
     if (!dragStartRef.current) return;
     const { nodeId, startX, startY, posX, posY } = dragStartRef.current;
     const dx = event.clientX - startX;
@@ -272,12 +163,12 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
       ...prev,
       [nodeId]: { x: posX + dx, y: posY + dy },
     }));
-  }, []);
+  };
 
-  const handlePointerUp = useCallback(() => {
+  const handlePointerUp = () => {
     dragStartRef.current = null;
     setDragging(null);
-  }, []);
+  };
 
   useEffect(() => {
     if (!active) {
@@ -308,87 +199,27 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
   }, [active]);
 
   return (
-    <Wrapper style={{ opacity: active ? 1 : 0.7, transition: 'opacity 0.3s' }}>
-      <Header>
-        <HeaderLogo>
-          <svg fill="none" height="9" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="9">
-            <path d="M10 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-            <path d="M19.5 13a2 2 0 1 0 0 4a2 2 0 0 0 0 -4" />
-            <path d="M4.5 13a2 2 0 1 0 0 4a2 2 0 0 0 0 -4" />
-            <path d="M12 7v4" />
-            <path d="M6.5 13l5.5 -2l5.5 2" />
-          </svg>
-        </HeaderLogo>
-        <HeaderTitle>Workflow Runs</HeaderTitle>
-        <HeaderActions>
-          <HeaderBtn>
-            <svg fill="none" height="14" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="14">
-              <path d="M6 15l6 -6l6 6" />
-            </svg>
-          </HeaderBtn>
-          <HeaderBtn>
-            <svg fill="none" height="14" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="14">
-              <path d="M6 9l6 6l6 -6" />
-            </svg>
-          </HeaderBtn>
-          <HeaderCmdBtn>
-            <svg fill="none" height="12" stroke="#666" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="12">
-              <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-              <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-              <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-            </svg>
-            ⌘K
-          </HeaderCmdBtn>
-        </HeaderActions>
-      </Header>
-
-      <Canvas onPointerMove={handlePointerMove} onPointerUp={handlePointerUp}>
-        <SvgLayer>
+    <AppPreviewShell active={active} title="Workflow Runs">
+      <ShellCanvas
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+      >
+        <ShellSvgLayer>
           {EDGES.map((edge) => {
             const fromPos = positions[edge.from];
             const toPos = positions[edge.to];
             if (!fromPos || !toPos) return null;
-            const from = getNodeCenter(fromPos);
-            const to = getNodeCenter(toPos);
-            const isHighlighted =
-              activeNodes.has(edge.from) && activeNodes.has(edge.to);
-            const color = isHighlighted ? STEPPER_BORDER_STRONG : STEPPER_BORDER_MEDIUM;
-
-            const dx = Math.abs(to.x - from.x);
-            const dy = Math.abs(to.y - from.y);
-
-            let pathD: string;
-            let startX = from.x;
-            let startY = from.y;
-            let endX = to.x;
-            let endY = to.y;
-
-            if (dx < 30) {
-              const avgX = (from.x + to.x) / 2;
-              startX = avgX;
-              endX = avgX;
-              pathD = `M${avgX},${from.y} L${avgX},${to.y}`;
-            } else if (dy < 30) {
-              const avgY = (from.y + to.y) / 2;
-              startY = avgY;
-              endY = avgY;
-              pathD = `M${from.x},${avgY} L${to.x},${avgY}`;
-            } else {
-              pathD = `M${from.x},${from.y} L${from.x},${to.y} L${to.x},${to.y}`;
-            }
-
             return (
-              <g key={`${edge.from}-${edge.to}`}>
-                <path
-                  d={pathD}
-                  fill="none"
-                  stroke={color}
-                  strokeWidth={0.75}
-                  style={{ transition: 'stroke 0.3s' }}
-                />
-                <circle cx={startX} cy={startY} fill={color} r={2.5} />
-                <circle cx={endX} cy={endY} fill={color} r={2.5} />
-              </g>
+              <DrawEdge
+                key={`${edge.from}-${edge.to}`}
+                circleR={2.5}
+                from={getNodeCenter(fromPos)}
+                highlighted={
+                  activeNodes.has(edge.from) && activeNodes.has(edge.to)
+                }
+                id={`${edge.from}-${edge.to}`}
+                to={getNodeCenter(toPos)}
+              />
             );
           })}
 
@@ -440,7 +271,7 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
               </g>
             );
           })()}
-        </SvgLayer>
+        </ShellSvgLayer>
 
         {NODES.map((node) => {
           const pos = positions[node.id];
@@ -463,9 +294,9 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
               </NodeIconBox>
               <NodeRight>
                 <NodeLabelRow>
-                  <NodeType $color={node.labelColor}>{node.type}</NodeType>
+                  <NodeLabel $color={node.labelColor}>{node.type}</NodeLabel>
                   {node.badge && (
-                    <NodeBadge $color={node.labelColor}>{node.badge}</NodeBadge>
+                    <NodeLabel $color={node.labelColor}>{node.badge}</NodeLabel>
                   )}
                   {node.badge && (
                     <NodeCheck $bg={checkBg} $visible={isActive}>
@@ -487,7 +318,7 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
         >
           iteration 2/3
         </IterationLabel>
-      </Canvas>
-    </Wrapper>
+      </ShellCanvas>
+    </AppPreviewShell>
   );
 }
