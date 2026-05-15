@@ -117,17 +117,20 @@ export const AdvancedFilterFieldSelectMenu = ({
       selectedFieldMetadataItem.type,
     );
 
-    selectFieldUsedInAdvancedFilterDropdown({
-      fieldMetadataItemId: selectedFieldMetadataItem.id,
-      recordFilterId,
-    });
-
     const subMenuType: ObjectFilterDropdownSubMenuFieldType | null =
       isManyToOneRelationField(selectedFieldMetadataItem)
         ? RELATION_SUB_MENU_FIELD_TYPE
         : isCompositeFilterableFieldType(filterType)
           ? filterType
           : null;
+
+    // The relation sub-menu uses its own focusId for selectable navigation;
+    // pushing the source field id on the focus stack would shadow it.
+    selectFieldUsedInAdvancedFilterDropdown({
+      fieldMetadataItemId: selectedFieldMetadataItem.id,
+      recordFilterId,
+      skipFocusPush: subMenuType === RELATION_SUB_MENU_FIELD_TYPE,
+    });
 
     if (subMenuType === null) {
       closeAdvancedFilterFieldSelectDropdown();

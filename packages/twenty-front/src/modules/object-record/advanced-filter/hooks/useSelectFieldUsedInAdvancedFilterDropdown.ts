@@ -26,6 +26,10 @@ type SelectFilterParams = {
   recordFilterId: string;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
   relationTargetFieldMetadataItem?: FieldMetadataItem | null | undefined;
+  // Set when the next step opens its own dropdown with a different focusId
+  // (e.g. the relation-traversal sub-menu) — pushing the source field id on
+  // the focus stack would override that dropdown's hotkey scope.
+  skipFocusPush?: boolean;
 };
 
 export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
@@ -71,6 +75,7 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     recordFilterId,
     subFieldName,
     relationTargetFieldMetadataItem,
+    skipFocusPush,
   }: SelectFilterParams) => {
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
 
@@ -82,8 +87,9 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     }
 
     if (
-      fieldMetadataItem.type === 'RELATION' ||
-      fieldMetadataItem.type === 'SELECT'
+      skipFocusPush !== true &&
+      (fieldMetadataItem.type === 'RELATION' ||
+        fieldMetadataItem.type === 'SELECT')
     ) {
       pushFocusItemToFocusStack({
         focusId: fieldMetadataItem.id,
