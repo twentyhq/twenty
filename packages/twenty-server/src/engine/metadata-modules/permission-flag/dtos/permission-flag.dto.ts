@@ -40,7 +40,7 @@ export class PermissionFlagDTO {
   @IsString()
   @IsOptional()
   @Field(() => String, { nullable: true })
-  iconKey: string | null;
+  icon: string | null;
 
   @HideField()
   workspaceId: string;

@@ -30,7 +30,7 @@ export class PermissionFlagEntity extends SyncableEntity {
   description: string | null;
 
   @Column({ nullable: true, type: 'varchar' })
-  iconKey: string | null;
+  icon: string | null;
 
   @OneToMany(
     () => RolePermissionFlagEntity,

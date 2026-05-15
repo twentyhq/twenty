@@ -20,7 +20,7 @@ const buildFlatDefinition = (
     key: 'TEST_FLAG',
     label: 'Test Flag',
     description: 'A flag for tests',
-    iconKey: 'IconTest',
+    icon: 'IconTest',
     workspaceId: 'workspace-id',
     applicationId: '00000000-0000-0000-0000-000000000aaa',
     applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000aaa',

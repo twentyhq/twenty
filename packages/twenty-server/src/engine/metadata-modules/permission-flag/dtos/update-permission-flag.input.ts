@@ -26,7 +26,7 @@ export class UpdatePermissionFlagInputUpdates {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
-  iconKey?: string;
+  icon?: string;
 }
 
 @InputType()

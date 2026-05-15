@@ -16,10 +16,10 @@ export const fromCreatePermissionFlagInputToFlatPermissionFlagToCreate = ({
 }): FlatPermissionFlag => {
   const now = new Date().toISOString();
 
-  const { key, label, description, iconKey } =
+  const { key, label, description, icon } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       createPermissionFlagInput,
-      ['key', 'label', 'description', 'iconKey'],
+      ['key', 'label', 'description', 'icon'],
     );
 
   const id = createPermissionFlagInput.id ?? v4();
@@ -32,7 +32,7 @@ export const fromCreatePermissionFlagInputToFlatPermissionFlagToCreate = ({
     key,
     label,
     description: description ?? null,
-    iconKey: iconKey ?? null,
+    icon: icon ?? null,
     workspaceId,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,

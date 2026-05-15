@@ -3,5 +3,5 @@ import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/fla
 export const FLAT_PERMISSION_FLAG_EDITABLE_PROPERTIES = [
   'label',
   'description',
-  'iconKey',
+  'icon',
 ] as const satisfies MetadataEntityPropertyName<'permissionFlag'>[];

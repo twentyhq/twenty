@@ -34,5 +34,5 @@ export class CreatePermissionFlagInput {
   @IsString()
   @IsOptional()
   @Field({ nullable: true })
-  iconKey?: string;
+  icon?: string;
 }

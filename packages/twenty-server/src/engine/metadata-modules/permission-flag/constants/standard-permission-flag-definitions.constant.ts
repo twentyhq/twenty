@@ -8,12 +8,12 @@ export type StandardPermissionFlagDefinition = {
   universalIdentifier: string;
   label: string;
   description: string | null;
-  iconKey: string | null;
+  icon: string | null;
 };
 
 type StandardPermissionFlagMetadata = Pick<
   StandardPermissionFlagDefinition,
-  'label' | 'description' | 'iconKey'
+  'label' | 'description' | 'icon'
 >;
 
 const STANDARD_PERMISSION_FLAG_METADATA: Record<
@@ -23,127 +23,127 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
   [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: {
     label: 'API Keys & Webhooks',
     description: 'Manage API keys and webhooks',
-    iconKey: 'IconCode',
+    icon: 'IconCode',
   },
   [PermissionFlagType.WORKSPACE]: {
     label: 'Workspace',
     description: 'Set global workspace preferences',
-    iconKey: 'IconSettings',
+    icon: 'IconSettings',
   },
   [PermissionFlagType.WORKSPACE_MEMBERS]: {
     label: 'Users',
     description: 'Add or remove users',
-    iconKey: 'IconUsers',
+    icon: 'IconUsers',
   },
   [PermissionFlagType.ROLES]: {
     label: 'Roles',
     description: 'Define user roles and access levels',
-    iconKey: 'IconLockOpen',
+    icon: 'IconLockOpen',
   },
   [PermissionFlagType.DATA_MODEL]: {
     label: 'Data Model',
     description: 'Edit data structure and fields',
-    iconKey: 'IconHierarchy',
+    icon: 'IconHierarchy',
   },
   [PermissionFlagType.SECURITY]: {
     label: 'Security',
     description: 'Manage security policies',
-    iconKey: 'IconKey',
+    icon: 'IconKey',
   },
   [PermissionFlagType.WORKFLOWS]: {
     label: 'Workflows',
     description: 'Manage workflows',
-    iconKey: 'IconSettingsAutomation',
+    icon: 'IconSettingsAutomation',
   },
   [PermissionFlagType.IMPERSONATE]: {
     label: 'Impersonate',
     description: 'Impersonate workspace users',
-    iconKey: 'IconSpy',
+    icon: 'IconSpy',
   },
   [PermissionFlagType.SSO_BYPASS]: {
     label: 'SSO Bypass',
     description: 'Enable bypass options',
-    iconKey: 'IconShield',
+    icon: 'IconShield',
   },
   [PermissionFlagType.APPLICATIONS]: {
     label: 'Applications',
     description: 'Install and manage applications',
-    iconKey: 'IconApps',
+    icon: 'IconApps',
   },
   [PermissionFlagType.MARKETPLACE_APPS]: {
     label: 'Marketplace Apps',
     description: 'Browse and install marketplace apps',
-    iconKey: 'IconShoppingBag',
+    icon: 'IconShoppingBag',
   },
   [PermissionFlagType.LAYOUTS]: {
     label: 'Layouts',
     description: 'Customize page layouts and UI structure',
-    iconKey: 'IconLayoutSidebarRightCollapse',
+    icon: 'IconLayoutSidebarRightCollapse',
   },
   [PermissionFlagType.BILLING]: {
     label: 'Billing',
     description: 'Manage billing and subscriptions',
-    iconKey: 'IconCreditCard',
+    icon: 'IconCreditCard',
   },
   [PermissionFlagType.AI_SETTINGS]: {
     label: 'AI',
     description: 'Create and configure AI agents',
-    iconKey: 'IconSparkles',
+    icon: 'IconSparkles',
   },
   [PermissionFlagType.AI]: {
     label: 'Ask AI',
     description: 'Chat with AI agents and use AI features',
-    iconKey: 'IconSparkles',
+    icon: 'IconSparkles',
   },
   [PermissionFlagType.VIEWS]: {
     label: 'Manage Views',
     description: 'Create, edit, and delete workspace views',
-    iconKey: 'IconTable',
+    icon: 'IconTable',
   },
   [PermissionFlagType.UPLOAD_FILE]: {
     label: 'Upload Files',
     description: 'Allow uploading files and attachments',
-    iconKey: 'IconFileUpload',
+    icon: 'IconFileUpload',
   },
   [PermissionFlagType.DOWNLOAD_FILE]: {
     label: 'Download Files',
     description: 'Allow downloading files and attachments',
-    iconKey: 'IconDownload',
+    icon: 'IconDownload',
   },
   [PermissionFlagType.SEND_EMAIL_TOOL]: {
     label: 'Send Email',
     description: 'Send emails via connected accounts',
-    iconKey: 'IconMail',
+    icon: 'IconMail',
   },
   [PermissionFlagType.HTTP_REQUEST_TOOL]: {
     label: 'HTTP Request',
     description: 'Make HTTP requests to external APIs',
-    iconKey: 'IconApi',
+    icon: 'IconApi',
   },
   [PermissionFlagType.CODE_INTERPRETER_TOOL]: {
     label: 'Code Interpreter',
     description: 'Run code to analyze files and data',
-    iconKey: 'IconCode',
+    icon: 'IconCode',
   },
   [PermissionFlagType.IMPORT_CSV]: {
     label: 'Import CSV',
     description: 'Allow importing data from CSV files',
-    iconKey: 'IconFileImport',
+    icon: 'IconFileImport',
   },
   [PermissionFlagType.EXPORT_CSV]: {
     label: 'Export CSV',
     description: 'Allow exporting data to CSV files',
-    iconKey: 'IconFileExport',
+    icon: 'IconFileExport',
   },
   [PermissionFlagType.CONNECTED_ACCOUNTS]: {
     label: 'Sync Account',
     description: 'Sync email and calendar accounts',
-    iconKey: 'IconAt',
+    icon: 'IconAt',
   },
   [PermissionFlagType.PROFILE_INFORMATION]: {
     label: 'Edit Profile',
     description: 'Edit own profile information',
-    iconKey: 'IconUser',
+    icon: 'IconUser',
   },
 };
 

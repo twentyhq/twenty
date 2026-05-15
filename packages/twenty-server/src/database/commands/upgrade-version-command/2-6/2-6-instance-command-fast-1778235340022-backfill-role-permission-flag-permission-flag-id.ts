@@ -14,9 +14,9 @@ const standardPermissionFlagValues = STANDARD_PERMISSION_FLAG_DEFINITIONS.map(
         ? 'NULL'
         : `'${sqlString(definition.description)}'`
     }, ${
-      definition.iconKey === null
+      definition.icon === null
         ? 'NULL'
-        : `'${sqlString(definition.iconKey)}'`
+        : `'${sqlString(definition.icon)}'`
     })`,
 ).join(', ');
 
@@ -47,7 +47,7 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         "key",
         "label",
         "description",
-        "iconKey",
+        "icon",
         "createdAt",
         "updatedAt"
       )
@@ -59,7 +59,7 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         standardPermissionFlag."key",
         standardPermissionFlag."label",
         standardPermissionFlag."description",
-        standardPermissionFlag."iconKey",
+        standardPermissionFlag."icon",
         now(),
         now()
       FROM "core"."workspace" workspace
@@ -74,7 +74,7 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         "key",
         "label",
         "description",
-        "iconKey"
+        "icon"
       )
       ON CONFLICT ("key", "workspaceId") DO NOTHING`,
     );
@@ -88,7 +88,7 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         "key",
         "label",
         "description",
-        "iconKey",
+        "icon",
         "createdAt",
         "updatedAt"
       )
