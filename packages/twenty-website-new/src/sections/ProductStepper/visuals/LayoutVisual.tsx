@@ -201,7 +201,11 @@ export function LayoutVisual({ active }: StepperVisualProps) {
         <ActionBtn>✎ Edit actions</ActionBtn>
       </ActionsBar>
 
-      <RightPanel onPointerMove={handleDragMove} onPointerUp={handleDragEnd}>
+      <RightPanel
+        onPointerCancel={handleDragEnd}
+        onPointerMove={handleDragMove}
+        onPointerUp={handleDragEnd}
+      >
         <RPHeader>
           <RPBackBtn>
             <ChevLeft />

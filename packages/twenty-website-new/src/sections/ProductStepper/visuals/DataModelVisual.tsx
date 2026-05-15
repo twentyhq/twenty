@@ -235,6 +235,7 @@ export function DataModelVisual({ active }: StepperVisualProps) {
   return (
     <AppPreviewShell active={active} title="Data model">
       <ShellCanvas
+        onPointerCancel={handlePointerUp}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
       >

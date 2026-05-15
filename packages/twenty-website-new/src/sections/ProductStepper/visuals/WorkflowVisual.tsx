@@ -170,6 +170,7 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
   return (
     <AppPreviewShell active={active} title="Workflow Runs">
       <ShellCanvas
+        onPointerCancel={handlePointerUp}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
       >
