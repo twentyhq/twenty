@@ -91,7 +91,8 @@ export const AdvancedFilterFieldSelectMenu = ({
     advancedFilterFieldSelectDropdownId,
   );
 
-  const { applyAdvancedFilterSourceField } = useApplyAdvancedFilterSourceField();
+  const { applyAdvancedFilterSourceField } =
+    useApplyAdvancedFilterSourceField();
 
   const [, setObjectFilterDropdownSubMenuFieldType] = useAtomComponentState(
     objectFilterDropdownSubMenuFieldTypeComponentState,

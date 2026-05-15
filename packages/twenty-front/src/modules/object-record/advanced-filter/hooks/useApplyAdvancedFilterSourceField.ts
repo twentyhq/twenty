@@ -66,9 +66,7 @@ export const useApplyAdvancedFilterSourceField = () => {
   }: ApplyAdvancedFilterSourceFieldParams) => {
     setFieldMetadataItemIdUsedInDropdown(sourceFieldMetadataItem.id);
 
-    const filterType = getFilterTypeFromFieldType(
-      sourceFieldMetadataItem.type,
-    );
+    const filterType = getFilterTypeFromFieldType(sourceFieldMetadataItem.type);
 
     // Composite types that aren't filterable across "any subfield" need a
     // concrete subfield to produce a valid filter — pick a default so the
