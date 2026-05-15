@@ -16,11 +16,9 @@ import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/co
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import {
-  type ObjectFilterDropdownSubMenuFieldType,
-  RELATION_SUB_MENU_FIELD_TYPE,
-  objectFilterDropdownSubMenuFieldTypeComponentState,
-} from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
+import { RELATION_SUB_MENU_FIELD_TYPE } from '@/object-record/object-filter-dropdown/constants/RelationSubMenuFieldType';
+import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
+import { type ObjectFilterDropdownSubMenuFieldType } from '@/object-record/record-filter/types/ObjectFilterDropdownSubMenuFieldType';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';

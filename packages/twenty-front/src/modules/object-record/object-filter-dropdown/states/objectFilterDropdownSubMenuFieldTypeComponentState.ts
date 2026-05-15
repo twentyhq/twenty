@@ -1,12 +1,6 @@
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { type CompositeFilterableFieldType } from '@/object-record/record-filter/types/CompositeFilterableFieldType';
+import { type ObjectFilterDropdownSubMenuFieldType } from '@/object-record/record-filter/types/ObjectFilterDropdownSubMenuFieldType';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
-
-export const RELATION_SUB_MENU_FIELD_TYPE = 'RELATION' as const;
-
-export type ObjectFilterDropdownSubMenuFieldType =
-  | CompositeFilterableFieldType
-  | typeof RELATION_SUB_MENU_FIELD_TYPE;
 
 export const objectFilterDropdownSubMenuFieldTypeComponentState =
   createAtomComponentState<ObjectFilterDropdownSubMenuFieldType | null>({
