@@ -16,13 +16,18 @@ const StyledTableRows = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledClickableRow = styled.div`
-  > * {
-    &:hover {
-      background-color: ${themeCssVariables.background.transparent.light};
-      cursor: pointer;
-    }
-  }
+const StyledRowWrapper = styled.div<{ clickable: boolean }>`
+  ${({ clickable }) =>
+    clickable
+      ? `
+        > * {
+          &:hover {
+            background-color: ${themeCssVariables.background.transparent.light};
+            cursor: pointer;
+          }
+        }
+      `
+      : ''}
 `;
 
 const StyledFooter = styled.div`
@@ -80,7 +85,7 @@ export const SettingsTableListSection = <
         </TableRow>
         <StyledTableRows>
           {items.map((item) => (
-            <StyledClickableRow key={item.id}>
+            <StyledRowWrapper key={item.id} clickable={Boolean(onRowClick)}>
               <TableRow
                 gridAutoColumns={gridAutoColumns}
                 onClick={onRowClick ? () => onRowClick(item) : undefined}
@@ -91,7 +96,7 @@ export const SettingsTableListSection = <
                   </TableCell>
                 ))}
               </TableRow>
-            </StyledClickableRow>
+            </StyledRowWrapper>
           ))}
         </StyledTableRows>
       </Table>

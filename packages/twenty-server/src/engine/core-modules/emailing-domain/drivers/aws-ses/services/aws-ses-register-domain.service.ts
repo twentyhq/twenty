@@ -5,10 +5,11 @@ import {
   CreateConfigurationSetEventDestinationCommand,
   CreateContactListCommand,
   CreateTenantResourceAssociationCommand,
+  GetConfigurationSetCommand,
+  NotFoundException,
   PutEmailIdentityMailFromAttributesCommand,
+  type SESv2Client,
 } from '@aws-sdk/client-sesv2';
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
 
 import { AWS_SES_EVENT_BUS_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-event-bus-name.constant';
@@ -35,6 +36,56 @@ export class AwsSesRegisterDomainService {
   ): Promise<void> {
     const sesClient = this.awsSesClientProvider.getSESClient();
 
+    const isWorkspaceAlreadyRegistered = await this.isWorkspaceRegistered(
+      sesClient,
+      input.configurationSetName,
+    );
+
+    if (!isWorkspaceAlreadyRegistered) {
+      await this.registerWorkspaceResources(sesClient, input, config);
+    }
+
+    await sesClient.send(
+      new PutEmailIdentityMailFromAttributesCommand({
+        EmailIdentity: input.domain,
+        MailFromDomain: `${AWS_SES_MAIL_FROM_SUBDOMAIN}.${input.domain}`,
+        BehaviorOnMxFailure: 'USE_DEFAULT_VALUE',
+      }),
+    );
+
+    this.logger.log(
+      `Registered domain ${input.domain} on tenant ${input.tenantName}`,
+    );
+  }
+
+  private async isWorkspaceRegistered(
+    sesClient: SESv2Client,
+    configurationSetName: string,
+  ): Promise<boolean> {
+    try {
+      await sesClient.send(
+        new GetConfigurationSetCommand({
+          ConfigurationSetName: configurationSetName,
+        }),
+      );
+
+      return true;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return false;
+      }
+      throw error;
+    }
+  }
+
+  private async registerWorkspaceResources(
+    sesClient: SESv2Client,
+    input: RegisterDomainInput,
+    config: AwsSesDriverConfig,
+  ): Promise<void> {
+    const eventBusArn = `arn:aws:events:${config.region}:${config.accountId}:event-bus/${AWS_SES_EVENT_BUS_NAME}`;
+    const configurationSetArn = `arn:aws:ses:${config.region}:${config.accountId}:configuration-set/${input.configurationSetName}`;
+
     await sesClient.send(
       new CreateConfigurationSetCommand({
         ConfigurationSetName: input.configurationSetName,
@@ -44,8 +95,6 @@ export class AwsSesRegisterDomainService {
         Tags: [{ Key: 'managed-by', Value: 'twenty' }],
       }),
     );
-
-    const eventBusArn = `arn:aws:events:${config.region}:${config.accountId}:event-bus/${AWS_SES_EVENT_BUS_NAME}`;
 
     await sesClient.send(
       new CreateConfigurationSetEventDestinationCommand({
@@ -82,27 +131,11 @@ export class AwsSesRegisterDomainService {
       }),
     );
 
-    const configurationSetArn = `arn:aws:ses:${config.region}:${config.accountId}:configuration-set/${input.configurationSetName}`;
-
     await sesClient.send(
       new CreateTenantResourceAssociationCommand({
         TenantName: input.tenantName,
         ResourceArn: configurationSetArn,
       }),
-    );
-
-    if (isNonEmptyString(AWS_SES_MAIL_FROM_SUBDOMAIN)) {
-      await sesClient.send(
-        new PutEmailIdentityMailFromAttributesCommand({
-          EmailIdentity: input.domain,
-          MailFromDomain: `${AWS_SES_MAIL_FROM_SUBDOMAIN}.${input.domain}`,
-          BehaviorOnMxFailure: 'USE_DEFAULT_VALUE',
-        }),
-      );
-    }
-
-    this.logger.log(
-      `Registered domain ${input.domain} on tenant ${input.tenantName}`,
     );
   }
 }

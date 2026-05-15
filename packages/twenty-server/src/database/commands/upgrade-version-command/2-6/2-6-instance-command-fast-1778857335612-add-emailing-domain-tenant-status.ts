@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.5.0', 1778856385628)
+@RegisteredInstanceCommand('2.6.0', 1778857335612)
 export class AddEmailingDomainTenantStatusFastInstanceCommand
   implements FastInstanceCommand
 {

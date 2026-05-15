@@ -3,6 +3,8 @@ import {
   CreateConfigurationSetEventDestinationCommand,
   CreateContactListCommand,
   CreateTenantResourceAssociationCommand,
+  GetConfigurationSetCommand,
+  NotFoundException,
   PutEmailIdentityMailFromAttributesCommand,
 } from '@aws-sdk/client-sesv2';
 
@@ -25,6 +27,12 @@ describe('AwsSesRegisterDomainService', () => {
     contactListName: 'twenty-workspace-ws1',
   };
 
+  const buildNotFound = () =>
+    new NotFoundException({
+      $metadata: { httpStatusCode: 404 },
+      message: 'Configuration set not found.',
+    });
+
   const setUp = () => {
     const send = jest.fn();
     const clientProvider = {
@@ -35,7 +43,38 @@ describe('AwsSesRegisterDomainService', () => {
     return { service, send };
   };
 
-  it('should issue all setup commands in sequence', async () => {
+  it('issues every workspace + domain setup command when the configuration set does not yet exist', async () => {
+    const { service, send } = setUp();
+
+    send.mockImplementation(async (command) => {
+      if (command instanceof GetConfigurationSetCommand) {
+        throw buildNotFound();
+      }
+
+      return {};
+    });
+
+    await service.registerDomain(input, config);
+
+    const commandTypes = send.mock.calls.map(
+      ([command]) => command.constructor.name,
+    );
+
+    expect(commandTypes).toEqual([
+      GetConfigurationSetCommand.name,
+      CreateConfigurationSetCommand.name,
+      CreateConfigurationSetEventDestinationCommand.name,
+      CreateContactListCommand.name,
+      CreateTenantResourceAssociationCommand.name,
+      PutEmailIdentityMailFromAttributesCommand.name,
+    ]);
+  });
+
+  // The configuration set, event destination, contact list, and tenant
+  // association are all workspace-scoped, so a second domain on the same
+  // workspace must not re-issue their creates. Only the per-domain MAIL FROM
+  // configuration runs every time.
+  it('skips the workspace-scoped creates when the configuration set already exists', async () => {
     const { service, send } = setUp();
 
     send.mockResolvedValue({});
@@ -47,15 +86,12 @@ describe('AwsSesRegisterDomainService', () => {
     );
 
     expect(commandTypes).toEqual([
-      CreateConfigurationSetCommand.name,
-      CreateConfigurationSetEventDestinationCommand.name,
-      CreateContactListCommand.name,
-      CreateTenantResourceAssociationCommand.name,
+      GetConfigurationSetCommand.name,
       PutEmailIdentityMailFromAttributesCommand.name,
     ]);
   });
 
-  it('should configure custom MAIL FROM using the bounce subdomain', async () => {
+  it('configures custom MAIL FROM using the bounce subdomain', async () => {
     const { service, send } = setUp();
 
     send.mockResolvedValue({});
@@ -74,12 +110,15 @@ describe('AwsSesRegisterDomainService', () => {
     });
   });
 
-  it('should propagate AWS errors to the caller', async () => {
+  // A non-NotFound failure on the existence probe is a real error (e.g. IAM,
+  // throttling) and must surface to the caller rather than being silently
+  // treated as "not registered".
+  it('propagates non-NotFound AWS errors raised by the existence probe', async () => {
     const { service, send } = setUp();
     const fatalError = new Error('Boom');
 
     send.mockImplementation(async (command) => {
-      if (command instanceof CreateConfigurationSetCommand) {
+      if (command instanceof GetConfigurationSetCommand) {
         throw fatalError;
       }
 

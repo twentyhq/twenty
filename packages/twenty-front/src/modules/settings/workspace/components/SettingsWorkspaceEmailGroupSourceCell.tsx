@@ -26,12 +26,12 @@ type SettingsWorkspaceEmailGroupSourceCellProps = {
 export const SettingsWorkspaceEmailGroupSourceCell = ({
   item,
 }: SettingsWorkspaceEmailGroupSourceCellProps) => {
-  const sourceHandle = item.connectedAccount?.handle ?? item.handle;
+  const sourceHandle = item.connectedAccount?.handle;
 
   return (
     <StyledNameCell>
       <IconMail size={16} />
-      <StyledHandle>{sourceHandle}</StyledHandle>
+      <StyledHandle>{sourceHandle ?? '—'}</StyledHandle>
     </StyledNameCell>
   );
 };
