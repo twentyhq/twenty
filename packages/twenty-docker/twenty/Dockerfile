@@ -197,7 +197,7 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
  && rm /tmp/s6-overlay-*.tar.xz
 
 RUN apk add --no-cache \
-    postgresql16 postgresql16-contrib \
+    postgresql18 postgresql18-contrib \
     redis \
     curl jq su-exec
 
