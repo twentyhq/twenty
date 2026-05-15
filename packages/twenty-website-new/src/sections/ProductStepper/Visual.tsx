@@ -1,13 +1,20 @@
-import type { ImageType } from '@/design-system/components/Image';
+'use client';
+
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import NextImage from 'next/image';
+import type { ComponentType } from 'react';
+
+import type { StepperVisualProps } from './types';
 import { StepperVisualFrame } from './StepperVisualFrame';
+
+type StepVisual = {
+  visual: ComponentType<StepperVisualProps>;
+};
 
 type ProductStepperVisualProps = {
   activeStepIndex: number;
-  images: ImageType[];
+  stepVisuals: StepVisual[];
 };
 
 const PRODUCT_STEPPER_BACKGROUND = '/images/product/stepper/background.webp';
@@ -41,19 +48,30 @@ const VisualFrame = styled.div`
   }
 `;
 
-const slideImageClassName = css`
-  object-fit: contain;
-  object-position: center;
+const slideClassName = css`
+  inset: 0;
   opacity: 0;
+  pointer-events: none;
+  position: absolute;
   transition: opacity 0.4s ease;
 
   &[data-active='true'] {
     opacity: 1;
+    pointer-events: auto;
   }
 `;
 
-export function Visual({ activeStepIndex, images }: ProductStepperVisualProps) {
-  if (!images || images.length === 0) {
+const visualWrapperClassName = css`
+  display: flex;
+  height: 100%;
+  width: 100%;
+`;
+
+export function Visual({
+  activeStepIndex,
+  stepVisuals,
+}: ProductStepperVisualProps) {
+  if (!stepVisuals || stepVisuals.length === 0) {
     return null;
   }
 
@@ -64,19 +82,20 @@ export function Visual({ activeStepIndex, images }: ProductStepperVisualProps) {
           backgroundSrc={PRODUCT_STEPPER_BACKGROUND}
           shapeSrc={PRODUCT_STEPPER_SHAPE}
         >
-          {images.map((image, index) => {
-            if (!image) return null;
+          {stepVisuals.map((step, index) => {
+            const isActive = index === activeStepIndex;
+            const VisualComponent = step.visual;
 
             return (
-              <NextImage
-                key={`${image.src}-${index}`}
-                alt={image.alt}
-                className={slideImageClassName}
-                data-active={String(index === activeStepIndex)}
-                fill
-                sizes="(min-width: 921px) 50vw, 100vw"
-                src={image.src}
-              />
+              <div
+                key={index}
+                className={slideClassName}
+                data-active={String(isActive)}
+              >
+                <div className={visualWrapperClassName}>
+                  <VisualComponent active={isActive} />
+                </div>
+              </div>
             );
           })}
         </StepperVisualFrame>

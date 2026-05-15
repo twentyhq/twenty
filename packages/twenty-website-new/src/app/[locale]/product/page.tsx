@@ -29,6 +29,9 @@ import {
   ProductStepper,
   type ProductStepperStepType,
 } from '@/sections/ProductStepper';
+import { DataModelVisual } from '@/sections/ProductStepper/visuals/DataModelVisual';
+import { WorkflowVisual } from '@/sections/ProductStepper/visuals/WorkflowVisual';
+import { LayoutVisual } from '@/sections/ProductStepper/visuals/LayoutVisual';
 import { Tabs } from '@/sections/Tabs';
 import { ThreeCards } from '@/sections/ThreeCards';
 import { theme } from '@/theme';
@@ -58,10 +61,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <HeadingPart fontFamily="sans">{i18n._(msg`Data model`)}</HeadingPart>
       ),
       body: msg`Add objects and fields`,
-      image: {
-        src: '/images/product/stepper/step-one.webp',
-        alt: 'Twenty data model: add objects and fields',
-      },
+      visual: DataModelVisual,
     },
     {
       icon: 'check',
@@ -69,10 +69,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <HeadingPart fontFamily="sans">{i18n._(msg`Automation`)}</HeadingPart>
       ),
       body: msg`Create a workflow`,
-      image: {
-        src: '/images/product/stepper/step-two.webp',
-        alt: 'Twenty automation: create a workflow',
-      },
+      visual: WorkflowVisual,
     },
     {
       icon: 'eye',
@@ -80,10 +77,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <HeadingPart fontFamily="sans">{i18n._(msg`Layout`)}</HeadingPart>
       ),
       body: msg`Tailor record pages, menus, and views`,
-      image: {
-        src: '/images/product/stepper/step-three.webp',
-        alt: 'Twenty layout: record pages, menus, and views',
-      },
+      visual: LayoutVisual,
     },
   ];
 

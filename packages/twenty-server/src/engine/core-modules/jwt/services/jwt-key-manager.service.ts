@@ -21,6 +21,7 @@ export type CurrentSigningKey = {
 };
 
 const UNIQUE_VIOLATION_PG_CODE = '23505';
+const CURRENT_SIGNING_KEY_LOCAL_TTL_MS = 60 * 1000;
 
 @Injectable()
 export class JwtKeyManagerService {
@@ -28,6 +29,7 @@ export class JwtKeyManagerService {
 
   private currentSigningKeyPromise: Promise<CurrentSigningKey | null> | null =
     null;
+  private currentSigningKeyCachedAt = 0;
 
   constructor(
     @InjectRepository(SigningKeyEntity)
@@ -37,8 +39,13 @@ export class JwtKeyManagerService {
   ) {}
 
   async getCurrentSigningKey(): Promise<CurrentSigningKey | null> {
-    if (this.currentSigningKeyPromise === null) {
+    const isLocalCacheExpired =
+      Date.now() - this.currentSigningKeyCachedAt >
+      CURRENT_SIGNING_KEY_LOCAL_TTL_MS;
+
+    if (!isDefined(this.currentSigningKeyPromise) || isLocalCacheExpired) {
       this.currentSigningKeyPromise = this.loadOrCreateCurrentSigningKey();
+      this.currentSigningKeyCachedAt = Date.now();
     }
 
     try {
@@ -46,11 +53,13 @@ export class JwtKeyManagerService {
 
       if (!isDefined(result)) {
         this.currentSigningKeyPromise = null;
+        this.currentSigningKeyCachedAt = 0;
       }
 
       return result;
     } catch (error) {
       this.currentSigningKeyPromise = null;
+      this.currentSigningKeyCachedAt = 0;
       throw error;
     }
   }
@@ -61,6 +70,47 @@ export class JwtKeyManagerService {
     }
 
     return this.coreEntityCacheService.get('signingKeyPublicKey', id);
+  }
+
+  async listSigningKeys(): Promise<SigningKeyEntity[]> {
+    return this.signingKeyRepository.find({
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async revokeSigningKey(id: string): Promise<SigningKeyEntity> {
+    if (!isNonEmptyString(id) || !isValidUuid(id)) {
+      throw new JwtKeyManagerException(
+        `Invalid signing key id: ${id}`,
+        JwtKeyManagerExceptionCode.SIGNING_KEY_NOT_FOUND,
+      );
+    }
+
+    const existing = await this.signingKeyRepository.findOne({ where: { id } });
+
+    if (!isDefined(existing)) {
+      throw new JwtKeyManagerException(
+        `Signing key not found: ${id}`,
+        JwtKeyManagerExceptionCode.SIGNING_KEY_NOT_FOUND,
+      );
+    }
+
+    if (!isDefined(existing.revokedAt)) {
+      await this.signingKeyRepository.update(
+        { id },
+        {
+          revokedAt: new Date(),
+          isCurrent: false,
+          privateKey: null,
+        },
+      );
+    }
+
+    await this.coreEntityCacheService.invalidate('signingKeyPublicKey', id);
+    this.currentSigningKeyPromise = null;
+    this.currentSigningKeyCachedAt = 0;
+
+    return this.signingKeyRepository.findOneByOrFail({ id });
   }
 
   private async loadOrCreateCurrentSigningKey(): Promise<CurrentSigningKey | null> {

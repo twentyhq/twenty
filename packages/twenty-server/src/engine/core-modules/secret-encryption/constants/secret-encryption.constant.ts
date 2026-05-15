@@ -8,3 +8,6 @@ export const SECRET_ENCRYPTION_GCM_TAG_LENGTH = 16;
 export const SECRET_ENCRYPTION_DERIVED_KEY_LENGTH = 32;
 export const SECRET_ENCRYPTION_HKDF_INFO_PREFIX = 'twenty:enc:v2:';
 export const SECRET_ENCRYPTION_INSTANCE_CONTEXT = 'instance';
+
+export const INSTANCE_HMAC_HKDF_INFO_PREFIX = 'twenty:hmac:v1:';
+export const INSTANCE_HMAC_DERIVED_KEY_LENGTH = 32;
