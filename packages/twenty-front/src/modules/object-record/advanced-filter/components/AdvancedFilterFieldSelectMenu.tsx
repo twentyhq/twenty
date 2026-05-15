@@ -131,11 +131,11 @@ export const AdvancedFilterFieldSelectMenu = ({
         ? filterType
         : null;
 
-    applyAdvancedFilterSourceField({
-      sourceFieldMetadataItem: selectedFieldMetadataItem,
-      recordFilterId,
-    });
-
+    // For sub-menu paths (composite or relation traversal) we only stage
+    // the source field in the dropdown state and open the sub-menu —
+    // upsertRecordFilter happens in the sub-menu's hook once the user
+    // makes the final choice. Otherwise navigating back from the sub-menu
+    // would leave an orphan partial filter in the chip list.
     if (isRelationTraversalField) {
       setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
       setObjectFilterDropdownIsSelectingRelationTargetField(true);
@@ -148,6 +148,11 @@ export const AdvancedFilterFieldSelectMenu = ({
       setObjectFilterDropdownIsSelectingCompositeField(true);
       return;
     }
+
+    applyAdvancedFilterSourceField({
+      sourceFieldMetadataItem: selectedFieldMetadataItem,
+      recordFilterId,
+    });
 
     // Leaf RELATION/SELECT fields open a value picker keyed by the source
     // field id — push it on the focus stack so the picker's keyboard
