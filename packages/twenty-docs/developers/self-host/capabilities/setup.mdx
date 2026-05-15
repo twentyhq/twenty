@@ -53,7 +53,7 @@ Twenty uses two env-only encryption keys:
 
 | Variable | Purpose | Required |
 | --- | --- | --- |
-| `ENCRYPTION_KEY` | Primary key used to encrypt secrets at rest (OAuth tokens, application variables, signing-key private keys, TOTP secrets, sensitive config values). | Yes |
+| `ENCRYPTION_KEY` | Primary key used to encrypt secrets at rest (OAuth tokens, application variables, signing-key private keys, TOTP secrets, sensitive config values). | Yes for new installs (legacy installs may instead rely on `APP_SECRET` — see below) |
 | `FALLBACK_ENCRYPTION_KEY` | Verification-only key. Set during a rotation to the *previous* `ENCRYPTION_KEY` so existing rows remain decryptable. | Only during rotation |
 
 For backward compatibility, if `ENCRYPTION_KEY` is unset, Twenty falls back to `APP_SECRET` for at-rest encryption — matching the legacy behaviour for older deployments. New installs should always set a dedicated `ENCRYPTION_KEY`.
