@@ -10,9 +10,30 @@ ready for AI agents and workflows to act on.
 1. Fireflies records and transcribes your Zoom / Meet / Teams / phone call.
 2. When the transcript is ready, Fireflies fires a webhook to this app.
 3. This app fetches the full transcript via the Fireflies GraphQL API.
-4. It finds the matching `CalendarEvent` in Twenty (by meeting URL or by start
-   time window) and writes the transcript into a new **Transcript** field on
-   that event.
+4. It finds the matching `CalendarEvent` in Twenty and writes the transcript
+   into a new **Transcript** field on that event.
+
+### How a transcript is matched to a CalendarEvent
+
+The matcher tries two provider-ID strategies in priority order and stops at
+the first hit:
+
+1. **Provider-native event ID** — Fireflies' `calendar_id` /
+   `calendar_event_uid` is matched against
+   `CalendarChannelEventAssociation.eventExternalId`. Covers events synced
+   into Twenty from Google Calendar (including individual instances of
+   recurring events).
+2. **iCalUID** — Fireflies' `calendar_id` is matched against
+   `CalendarEvent.iCalUid`. Covers events synced from Outlook / CalDAV,
+   where Fireflies returns the RFC 5545 iCalUID directly.
+
+Both identifiers are populated by Twenty's calendar drivers on every synced
+CalendarEvent, so any meeting that's been pulled in via Google / Outlook /
+CalDAV calendar sync will match exactly. The matcher does **not** fall back
+to fuzzy URL matching — if the transcript can't be tied to a synced calendar
+event, the call is treated as an orphan and skipped (see
+[Limitations](#limitations) below). This avoids silently writing transcripts
+to the wrong event.
 
 No clicking out to Fireflies to read what was said — every meeting in Twenty
 now carries its own transcript.
@@ -58,7 +79,7 @@ What this connector intentionally does **not** support in v1:
 |---|---|---|
 | Webhook returns `Fireflies is not configured` | `FIREFLIES_API_KEY` not set | Admin: paste the API key in **Settings → Applications → Fireflies → Settings** |
 | Webhook returns `Invalid webhook signature` | `FIREFLIES_WEBHOOK_SECRET` mismatch between Fireflies and Twenty | Re-copy the signing secret from the Fireflies webhook configuration and paste it into the Twenty app settings |
-| Webhook returns `skipped: No CalendarEvent matched` | Call had no matching event in Twenty (orphan), or the meeting URL on the event doesn't include the Fireflies meeting ID | Ensure the calendar event exists in Twenty (Google / Outlook calendar sync), and that its conference link matches the URL Fireflies has |
+| Webhook returns `skipped: No CalendarEvent matched the transcript by external ID or iCalUid` | The meeting was never on a synced calendar in Twenty, or the workspace has no Google/Outlook/CalDAV calendar connection set up | Connect the relevant calendar provider in **Settings → Accounts** so the calendar event lands in Twenty with `eventExternalId` and `iCalUid` populated. Manually-created CalendarEvents are intentionally not matched in v1 |
 | Transcript appears empty | Fireflies returned no sentences (call too short, audio failed) | Check the call in the Fireflies dashboard; nothing this app can do |
 | Fireflies API errors with `401` | API key wrong, rotated, or revoked | Generate a new key in Fireflies → Integrations → Fireflies API → Regenerate, then update `FIREFLIES_API_KEY` |
 
