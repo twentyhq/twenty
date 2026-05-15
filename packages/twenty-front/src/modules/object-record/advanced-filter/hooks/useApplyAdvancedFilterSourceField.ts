@@ -71,14 +71,12 @@ export const useApplyAdvancedFilterSourceField = () => {
     // Composite types that aren't filterable across "any subfield" need a
     // concrete subfield to produce a valid filter — pick a default so the
     // initial state is usable before the user drills into the sub-menu.
-    let defaultSubFieldName: CompositeFieldSubFieldName | null = null;
-    if (
+    const defaultSubFieldName: CompositeFieldSubFieldName | null =
       isCompositeFieldType(filterType) &&
       isCompositeTypeNonFilterableByAnySubField(filterType)
-    ) {
-      defaultSubFieldName =
-        getDefaultSubFieldNameForCompositeFilterableFieldType(filterType);
-    }
+        ? (getDefaultSubFieldNameForCompositeFilterableFieldType(filterType) ??
+          null)
+        : null;
 
     const firstOperand = getRecordFilterOperands({
       filterType,
