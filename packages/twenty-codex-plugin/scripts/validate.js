@@ -102,6 +102,10 @@ const assertJsonMetadata = () => {
   const mcpJson = readJson('packages/twenty-codex-plugin/.mcp.json');
   const marketplaceJson = readJson('.agents/plugins/marketplace.json');
 
+  if (packageJson?.version !== pluginJson?.version) {
+    fail('package.json version must match .codex-plugin/plugin.json version');
+  }
+
   if (!packageJson?.files?.includes('.mcp.json')) {
     fail('package.json files must include .mcp.json for the public docs MCP server');
   }
@@ -321,6 +325,51 @@ const assertReferences = () => {
   }
 };
 
+const assertTwentyMcpFormattingContract = () => {
+  const skillPath = path.join(
+    pluginRoot,
+    'skills/use-twenty-mcp/SKILL.md',
+  );
+  const resultFormattingPath = path.join(
+    pluginRoot,
+    'references/use-twenty-mcp/result-formatting.md',
+  );
+  const skill = readText(skillPath);
+  const formatting = readText(resultFormattingPath);
+
+  const requiredSkillFragments = [
+    '# Output Contract',
+    'If the tool output includes `recordReferences`',
+    'MUST link each display name back to Twenty',
+    '{workspaceOrigin}/object/{objectNameSingular}/{recordId}',
+    'Never show unlinked record names',
+  ];
+
+  for (const fragment of requiredSkillFragments) {
+    if (!skill.includes(fragment)) {
+      fail(
+        `use-twenty-mcp/SKILL.md is missing formatting contract fragment: ${fragment}`,
+      );
+    }
+  }
+
+  const requiredFormattingFragments = [
+    '## Workspace Origin',
+    'derive the origin from it by removing the trailing `/mcp`',
+    'If `recordReferences` and workspace origin are both available',
+    'the first record-name column or record heading MUST link the display name',
+    'For recent companies with `recordReferences`, link the company name',
+  ];
+
+  for (const fragment of requiredFormattingFragments) {
+    if (!formatting.includes(fragment)) {
+      fail(
+        `result-formatting.md is missing record-link guidance fragment: ${fragment}`,
+      );
+    }
+  }
+};
+
 const assertSetupHelper = () => {
   const setupScript = path.join(pluginRoot, 'scripts', 'setup-mcp.sh');
   const syntaxCheck = spawnSync('bash', ['-n', setupScript], { encoding: 'utf8' });
@@ -351,6 +400,7 @@ assertJsonMetadata();
 assertNoBundledMcpConfig();
 assertSkills();
 assertReferences();
+assertTwentyMcpFormattingContract();
 assertSetupHelper();
 
 if (failures.length > 0) {

@@ -1,6 +1,6 @@
 ---
 name: retrieve-and-present-data
-description: Use when the user asks to retrieve, list, search, inspect, compare, summarize, or present Twenty MCP, CRM, app, or workspace records in chat, especially "most recent" records, "latest records", requests to make records readable, complaints about technical or unreadable dates, links to original records, avatars, favicons, domain icons, tables, JSON-like tool outputs, ISO/RFC3339 timestamps, UUIDs, raw field names, nested objects, money values, booleans, or nullable fields. Retrieve the relevant data and convert technical output into concise, readable, user-friendly English Markdown with clear labels, record links, visual identifiers, and locale-aware values.
+description: Use when retrieving or presenting Twenty MCP, CRM, app, or workspace records in chat. Convert raw tool output, dates, IDs, links, icons, nested fields, money, booleans, and nulls into concise, readable Markdown.
 ---
 
 # Retrieve Workspace Data
@@ -25,12 +25,21 @@ Use the selected connected Twenty MCP server when it is available:
 get_tool_catalog -> learn_tools -> execute_tool
 ```
 
-- Discover the relevant object, fields, filters, and sort options instead of guessing exact API names.
-- Retrieve only the fields needed for the answer, plus the fields needed for ordering or disambiguation.
-- For "latest", "most recent", or "recent" requests, include the relevant timestamp field used for sorting.
-- If the user asks for a broad list, apply a practical limit and state how many records are shown.
-- If required context is missing and cannot be discovered from the tools, ask one concise clarifying question.
-- If no Twenty MCP tools are available, use the Set Up Twenty MCP (`setup-mcp`) skill rather than inventing workspace data.
+- Discover object, field, filter, and sort names before querying.
+- Retrieve only answer, ordering, and disambiguation fields.
+- For "latest", "most recent", or "recent" requests, show the timestamp used for sorting.
+- Limit broad lists and state how many records are shown.
+- Ask one clarifying question only when tools cannot supply required context.
+- If no Twenty MCP tools are available, use `setup-mcp`; do not invent workspace data.
+
+## Workspace Origin
+
+Record links need a workspace origin, such as `https://example.twenty.com` or `http://workspace.localhost:3001`.
+
+- If the user provides the workspace URL, use that origin after removing any trailing `/mcp`.
+- If the selected MCP server URL is visible, derive the origin from it by removing the trailing `/mcp`.
+- If the selected MCP server is configured locally but the URL is not in context, inspect that exact server configuration before formatting linked records.
+- If the origin is still unknown, do not invent a hostname. Explain that direct record links need the workspace URL.
 
 ## Response Shape
 
@@ -49,10 +58,11 @@ Use English labels and prose. Keep user-provided names, record values, emails, U
 Link records back to their original Twenty context whenever the workspace origin and record identity are known.
 
 - Build record links with the Twenty show-page path: `/object/:objectNameSingular/:objectRecordId`.
-- For absolute links, combine the workspace origin with that path, for example `https://example.twenty.com/object/person/record-id`.
+- For absolute links, combine the workspace origin with that path: `{workspaceOrigin}/object/{objectNameSingular}/{recordId}`.
 - Preserve the workspace scheme and port for local workspaces, for example `http://workspace.localhost:3001/object/person/record-id`.
 - Use `recordReferences` from MCP responses when available to get `objectNameSingular`, `recordId`, and `displayName`.
 - If `recordReferences` is missing, use the record's `id` and the object name from the tool that returned it.
+- If `recordReferences` and workspace origin are both available, the first record-name column or record heading MUST link the display name. Do not output unlinked record names in that case.
 - Prefer linking the record display name in tables and summaries instead of adding a raw ID column.
 - When showing records from multiple workspaces, generate links with each record's own workspace origin.
 - If the workspace origin is unknown, do not invent a hostname. Add a compact `Record` column with the object name and record ID, or say that direct links need the workspace URL.
@@ -153,6 +163,16 @@ I found 5 recent opportunities, sorted by last updated date.
 | :---: | :--- | :--- | ---: | :--- |
 | ![Acme icon](https://example.com/favicon.ico) | [Acme renewal](https://example.twenty.com/object/opportunity/record-id-1) | Negotiation | EUR 12,450 | May 5, 2026, 11:43 AM |
 | ![Globex icon](https://globex.example/favicon.ico) | [Globex expansion](https://example.twenty.com/object/opportunity/record-id-2) | Discovery | EUR 8,000 | May 4, 2026, 4:10 PM |
+```
+
+For recent companies with `recordReferences`, link the company name:
+
+```markdown
+I found 5 recent companies, sorted by Created.
+
+| Company | Domain | Created |
+| :--- | :--- | :--- |
+| [Acme](https://workspace.example/object/company/00000000-0000-0000-0000-000000000001) | [acme.example](https://acme.example) | May 5, 2026, 11:43 AM |
 ```
 
 Use a labelled block for one important record:

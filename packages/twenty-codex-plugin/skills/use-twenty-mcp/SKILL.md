@@ -1,6 +1,6 @@
 ---
 name: use-twenty-mcp
-description: Use when the user wants Codex to connect to an existing Twenty workspace through MCP to interact with workspace data.
+description: Use when the user wants Codex to connect to an existing Twenty workspace through MCP, retrieve or inspect workspace records and metadata, or present Twenty CRM data as readable Markdown with formatted dates, values, record links, and compact tables instead of raw API output.
 ---
 
 # What It Is
@@ -19,4 +19,15 @@ Use `../../references/use-twenty-mcp/setup.md` for workspace URL normalization, 
 
 # Retrieval
 
-Use `../../references/use-twenty-mcp/result-formatting.md` for selecting the right Twenty MCP workspace, querying records, building record links, formatting dates and values, and presenting readable Markdown instead of raw API output.
+Before retrieving, listing, searching, summarizing, or presenting workspace records, read `../../references/use-twenty-mcp/result-formatting.md`.
+
+Apply that reference when selecting the right Twenty MCP workspace, querying records, building record links, formatting dates and values, and presenting readable Markdown instead of raw API output.
+
+# Output Contract
+
+Before the final answer for retrieved workspace records:
+
+- If the tool output includes `recordReferences`, the first record-name column or record heading MUST link each display name back to Twenty.
+- Build links as `{workspaceOrigin}/object/{objectNameSingular}/{recordId}` using the selected workspace origin and the returned `recordReferences`.
+- If the workspace origin is not known, resolve it from the selected MCP server URL when possible. If it still cannot be resolved, state that direct record links need the workspace URL instead of inventing a host.
+- Never show unlinked record names in a record table when `recordReferences` and the workspace origin are available.

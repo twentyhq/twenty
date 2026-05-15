@@ -1,6 +1,6 @@
 {
   "name": "twenty-codex-plugin",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Codex plugin for creating, managing, developing, publishing, and querying Twenty apps through Codex.",
   "private": true,
   "license": "AGPL-3.0",
