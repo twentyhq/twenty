@@ -22,12 +22,19 @@ export type CurrentSigningKey = {
 
 const UNIQUE_VIOLATION_PG_CODE = '23505';
 
+// In-process cache lifetime for the current signing key. Bounded so that a
+// revocation issued on another pod is picked up here within ~1min without
+// requiring a restart (the cross-pod public-key cache for `verify` already
+// invalidates immediately via CoreEntityCacheService).
+const CURRENT_SIGNING_KEY_LOCAL_TTL_MS = 60 * 1000;
+
 @Injectable()
 export class JwtKeyManagerService {
   private readonly logger = new Logger(JwtKeyManagerService.name);
 
   private currentSigningKeyPromise: Promise<CurrentSigningKey | null> | null =
     null;
+  private currentSigningKeyCachedAt = 0;
 
   constructor(
     @InjectRepository(SigningKeyEntity)
@@ -37,8 +44,13 @@ export class JwtKeyManagerService {
   ) {}
 
   async getCurrentSigningKey(): Promise<CurrentSigningKey | null> {
-    if (this.currentSigningKeyPromise === null) {
+    const isLocalCacheExpired =
+      Date.now() - this.currentSigningKeyCachedAt >
+      CURRENT_SIGNING_KEY_LOCAL_TTL_MS;
+
+    if (this.currentSigningKeyPromise === null || isLocalCacheExpired) {
       this.currentSigningKeyPromise = this.loadOrCreateCurrentSigningKey();
+      this.currentSigningKeyCachedAt = Date.now();
     }
 
     try {
@@ -46,11 +58,13 @@ export class JwtKeyManagerService {
 
       if (!isDefined(result)) {
         this.currentSigningKeyPromise = null;
+        this.currentSigningKeyCachedAt = 0;
       }
 
       return result;
     } catch (error) {
       this.currentSigningKeyPromise = null;
+      this.currentSigningKeyCachedAt = 0;
       throw error;
     }
   }
@@ -99,6 +113,7 @@ export class JwtKeyManagerService {
 
     await this.coreEntityCacheService.invalidate('signingKeyPublicKey', id);
     this.currentSigningKeyPromise = null;
+    this.currentSigningKeyCachedAt = 0;
 
     return this.signingKeyRepository.findOneByOrFail({ id });
   }

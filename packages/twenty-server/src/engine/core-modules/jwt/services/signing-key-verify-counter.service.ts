@@ -1,4 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  type OnModuleDestroy,
+  type OnModuleInit,
+} from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -7,50 +12,72 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import {
   SIGNING_KEY_USAGE_BUCKET_DURATION_MS,
+  SIGNING_KEY_USAGE_FLUSH_INTERVAL_MS,
   SIGNING_KEY_USAGE_REDIS_KEY_PREFIX,
   SIGNING_KEY_USAGE_TTL_MS,
   SIGNING_KEY_USAGE_WINDOW_DAYS,
 } from 'src/engine/core-modules/jwt/constants/signing-key-usage.constant';
 
-// Note: this counter intentionally uses CacheStorageService directly rather
-// than MetricsCacheService. MetricsCacheService is built around Redis sets
-// keyed by a fixed MetricsKeys enum, dedup-by-eventId, 15s buckets and a
-// minutes-scale window. Per-kid signing key usage needs the opposite:
-// raw integer counters (incrBy), 1-day buckets over a 7-day window, and a
-// dynamic key suffix per kid. We'll generalize MetricsCacheService into a
-// reusable "bucketed raw counter" primitive once a second caller needs the
-// same shape.
+// Per-kid signing key usage is recorded on every successful JWT verify, i.e.
+// once per authenticated request. To keep that hot path cheap we buffer
+// increments in memory per pod and flush them to Redis every
+// SIGNING_KEY_USAGE_FLUSH_INTERVAL_MS instead of issuing INCR + EXPIRE on every
+// verify. Trade-off: the admin UI count can be up to ~30s stale, but the
+// `getCountInWindow` / `getCountsInWindow` reads always flush first so they
+// reflect the local pod's pending increments immediately.
+//
+// We intentionally use CacheStorageService directly rather than
+// MetricsCacheService: that one is built around Redis sets keyed by a fixed
+// MetricsKeys enum (dedup-by-eventId, 15s buckets, minutes-scale window).
+// Per-kid signing key usage needs the opposite shape: raw integer counters,
+// 1-day buckets over a 7-day window, and a dynamic key suffix per kid. We'll
+// generalize MetricsCacheService into a reusable "bucketed raw counter"
+// primitive once a second caller needs the same shape.
 @Injectable()
-export class SigningKeyVerifyCounterService {
+export class SigningKeyVerifyCounterService
+  implements OnModuleInit, OnModuleDestroy
+{
   private readonly logger = new Logger(SigningKeyVerifyCounterService.name);
+
+  private pendingCounts = new Map<string, number>();
+  private flushIntervalHandle: NodeJS.Timeout | null = null;
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineMetrics)
     private readonly cacheStorage: CacheStorageService,
   ) {}
 
-  async recordVerify(
-    identifier: string,
-    now: number = Date.now(),
-  ): Promise<void> {
-    try {
-      const key = this.buildBucketKey(identifier, now);
+  onModuleInit() {
+    this.flushIntervalHandle = setInterval(() => {
+      void this.flush();
+    }, SIGNING_KEY_USAGE_FLUSH_INTERVAL_MS);
 
-      await this.cacheStorage.incrBy(key, 1);
-      await this.cacheStorage.expire(key, SIGNING_KEY_USAGE_TTL_MS);
-    } catch (error) {
-      this.logger.warn(
-        `Failed to record signing key verify for identifier=${identifier}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
+    if (isDefined(this.flushIntervalHandle.unref)) {
+      this.flushIntervalHandle.unref();
     }
+  }
+
+  async onModuleDestroy() {
+    if (isDefined(this.flushIntervalHandle)) {
+      clearInterval(this.flushIntervalHandle);
+      this.flushIntervalHandle = null;
+    }
+
+    await this.flush();
+  }
+
+  recordVerify(identifier: string, now: number = Date.now()): void {
+    const key = this.buildBucketKey(identifier, now);
+
+    this.pendingCounts.set(key, (this.pendingCounts.get(key) ?? 0) + 1);
   }
 
   async getCountInWindow(
     identifier: string,
     now: number = Date.now(),
   ): Promise<number> {
+    await this.flush();
+
     const keys = this.buildBucketKeysInWindow(identifier, now);
 
     try {
@@ -85,6 +112,8 @@ export class SigningKeyVerifyCounterService {
       return counts;
     }
 
+    await this.flush();
+
     const allKeys: string[] = [];
     const keyOwners: string[] = [];
 
@@ -114,6 +143,40 @@ export class SigningKeyVerifyCounterService {
     }
 
     return counts;
+  }
+
+  private async flush(): Promise<void> {
+    if (this.pendingCounts.size === 0) {
+      return;
+    }
+
+    // Atomically swap the buffer so concurrent recordVerify() calls keep
+    // accumulating into a fresh map while we drain the snapshot.
+    const snapshot = this.pendingCounts;
+
+    this.pendingCounts = new Map();
+
+    try {
+      await Promise.all(
+        Array.from(snapshot.entries()).map(async ([key, increment]) => {
+          await this.cacheStorage.incrBy(key, increment);
+          await this.cacheStorage.expire(key, SIGNING_KEY_USAGE_TTL_MS);
+        }),
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to flush signing key verify counters; re-buffering ${snapshot.size} bucket(s) for next flush: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      for (const [key, increment] of snapshot) {
+        this.pendingCounts.set(
+          key,
+          (this.pendingCounts.get(key) ?? 0) + increment,
+        );
+      }
+    }
   }
 
   private toCount(value: number | string | undefined): number {

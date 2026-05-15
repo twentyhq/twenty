@@ -10,7 +10,6 @@ import {
   IconApps,
   IconHeart,
   IconKey,
-  IconLock,
   IconSettings2,
   IconSparkles,
   IconVariable,
@@ -52,12 +51,6 @@ export const SettingsAdminContent = () => {
       id: SETTINGS_ADMIN_TABS.HEALTH_STATUS,
       title: t`Health`,
       Icon: IconHeart,
-      disabled: !canAccessFullAdminPanel,
-    },
-    {
-      id: SETTINGS_ADMIN_TABS.SECURITY,
-      title: t`Security`,
-      Icon: IconLock,
       disabled: !canAccessFullAdminPanel,
     },
     ...(!isBillingEnabled

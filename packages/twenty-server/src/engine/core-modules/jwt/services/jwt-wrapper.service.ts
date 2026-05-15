@@ -149,7 +149,7 @@ export class JwtWrapperService {
         algorithms: [algorithm],
       });
 
-      void this.recordVerifyForAlgorithm(algorithm, header);
+      this.recordVerifyForAlgorithm(algorithm, header);
 
       return verified;
     } catch (error) {
@@ -171,7 +171,7 @@ export class JwtWrapperService {
               { ...options, algorithms: [JWT_LEGACY_ALGORITHM] },
             );
 
-            void this.recordVerifyForAlgorithm(JWT_LEGACY_ALGORITHM, header);
+            this.recordVerifyForAlgorithm(JWT_LEGACY_ALGORITHM, header);
 
             return verified;
           } catch {
@@ -200,20 +200,20 @@ export class JwtWrapperService {
     return ExtractJwt.fromAuthHeaderAsBearerToken();
   }
 
-  private async recordVerifyForAlgorithm(
+  private recordVerifyForAlgorithm(
     algorithm: ResolvedVerificationKey['algorithm'],
     header: ReturnType<typeof decodeJwtHeader>,
-  ): Promise<void> {
+  ): void {
     if (
       algorithm === JWT_ASYMMETRIC_ALGORITHM &&
       isAsymmetricJwtHeader(header)
     ) {
-      await this.signingKeyVerifyCounterService.recordVerify(header.kid);
+      this.signingKeyVerifyCounterService.recordVerify(header.kid);
 
       return;
     }
 
-    await this.signingKeyVerifyCounterService.recordVerify(
+    this.signingKeyVerifyCounterService.recordVerify(
       LEGACY_SIGNING_KEY_USAGE_IDENTIFIER,
     );
   }

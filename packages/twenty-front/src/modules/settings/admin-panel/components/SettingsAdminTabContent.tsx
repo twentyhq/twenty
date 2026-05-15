@@ -5,7 +5,6 @@ import { SettingsAdminConfigVariables } from '@/settings/admin-panel/config-vari
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
 import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
 import { SettingsAdminHealthStatus } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatus';
-import { SettingsAdminSecurity } from '@/settings/admin-panel/security/components/SettingsAdminSecurity';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -33,8 +32,6 @@ export const SettingsAdminTabContent = () => {
       return <SettingsAdminConfigVariables />;
     case SETTINGS_ADMIN_TABS.HEALTH_STATUS:
       return <SettingsAdminHealthStatus />;
-    case SETTINGS_ADMIN_TABS.SECURITY:
-      return <SettingsAdminSecurity />;
     case SETTINGS_ADMIN_TABS.ENTERPRISE:
       return (
         <Suspense fallback={<SettingsSkeletonLoader />}>

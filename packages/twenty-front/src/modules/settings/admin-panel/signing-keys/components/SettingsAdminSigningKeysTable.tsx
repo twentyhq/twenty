@@ -1,6 +1,6 @@
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { SettingsAdminRevokeSigningKeyConfirmationModal } from '@/settings/admin-panel/security/components/SettingsAdminRevokeSigningKeyConfirmationModal';
-import { useRevokeSigningKey } from '@/settings/admin-panel/security/hooks/useRevokeSigningKey';
+import { SettingsAdminRevokeSigningKeyConfirmationModal } from '@/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal';
+import { useRevokeSigningKey } from '@/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -21,7 +21,10 @@ import {
   type SigningKeyDto,
 } from '~/generated-admin/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { beautifyExactDate, beautifyExactDateTime } from '~/utils/date-utils';
+import {
+  beautifyExactDateTime,
+  beautifyPastDateRelativeToNow,
+} from '~/utils/date-utils';
 
 const REVOKE_MODAL_ID = 'revoke-signing-key-modal';
 
@@ -127,8 +130,10 @@ export const SettingsAdminSigningKeysTable = () => {
                 <TableCell>
                   {isDefined(signingKey.revokedAt) ? (
                     <OverflowingTextWithTooltip
-                      text={beautifyExactDate(signingKey.revokedAt)}
-                      tooltipContent={t`Revoked on ${beautifyExactDateTime(signingKey.revokedAt)}`}
+                      text={beautifyPastDateRelativeToNow(signingKey.revokedAt)}
+                      tooltipContent={beautifyExactDateTime(
+                        signingKey.revokedAt,
+                      )}
                       alwaysShowTooltip
                     />
                   ) : (
