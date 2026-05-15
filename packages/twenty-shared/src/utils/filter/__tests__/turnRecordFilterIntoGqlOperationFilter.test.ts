@@ -920,7 +920,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
     });
   });
 
-  describe('relation traversal', () => {
+  describe('relation traversal (one-hop)', () => {
     // The dispatcher should wrap the inner filter under the relation source
     // field's GraphQL key and build it against the target field's type
     // (not the relation FK's type).
