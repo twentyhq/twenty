@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
-import { useSelectFieldUsedInAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useSelectFieldUsedInAdvancedFilterDropdown';
+import { useApplyAdvancedFilterRelationTargetField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterRelationTargetField';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownIsSelectingRelationTargetFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingRelationTargetFieldComponentState';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
@@ -43,8 +43,8 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
   const { closeAdvancedFilterFieldSelectDropdown } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-  const { selectFieldUsedInAdvancedFilterDropdown } =
-    useSelectFieldUsedInAdvancedFilterDropdown();
+  const { applyAdvancedFilterRelationTargetField } =
+    useApplyAdvancedFilterRelationTargetField();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -79,10 +79,10 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
   const handleSelectTargetField = (
     relationTargetFieldMetadataItem: FieldMetadataItem,
   ) => {
-    selectFieldUsedInAdvancedFilterDropdown({
-      fieldMetadataItemId: sourceFieldMetadataItem.id,
-      recordFilterId,
+    applyAdvancedFilterRelationTargetField({
+      sourceFieldMetadataItem,
       relationTargetFieldMetadataItem,
+      recordFilterId,
     });
 
     // Leaf RELATION/SELECT target fields open a value picker keyed by the

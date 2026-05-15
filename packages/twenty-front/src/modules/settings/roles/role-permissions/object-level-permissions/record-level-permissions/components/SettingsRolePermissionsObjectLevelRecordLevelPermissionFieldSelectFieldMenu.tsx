@@ -7,7 +7,7 @@ import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedFilterFieldSelectSearchInput } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
-import { useSelectFieldUsedInAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useSelectFieldUsedInAdvancedFilterDropdown';
+import { useApplyAdvancedFilterSourceField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
@@ -75,8 +75,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
       advancedFilterFieldSelectDropdownId,
     );
 
-    const { selectFieldUsedInAdvancedFilterDropdown } =
-      useSelectFieldUsedInAdvancedFilterDropdown();
+    const { applyAdvancedFilterSourceField } =
+      useApplyAdvancedFilterSourceField();
 
     const [, setObjectFilterDropdownSubMenuFieldType] = useAtomComponentState(
       objectFilterDropdownSubMenuFieldTypeComponentState,
@@ -109,8 +109,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
         return;
       }
 
-      selectFieldUsedInAdvancedFilterDropdown({
-        fieldMetadataItemId: selectedFieldMetadataItem.id,
+      applyAdvancedFilterSourceField({
+        sourceFieldMetadataItem: selectedFieldMetadataItem,
         recordFilterId,
       });
 

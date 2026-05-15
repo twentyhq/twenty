@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
-import { useSelectFieldUsedInAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useSelectFieldUsedInAdvancedFilterDropdown';
+import { useApplyAdvancedFilterCompositeSubField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterCompositeSubField';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
@@ -52,8 +52,8 @@ export const AdvancedFilterCompositeSubFieldSelectMenu = ({
   const { closeAdvancedFilterFieldSelectDropdown } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-  const { selectFieldUsedInAdvancedFilterDropdown } =
-    useSelectFieldUsedInAdvancedFilterDropdown();
+  const { applyAdvancedFilterCompositeSubField } =
+    useApplyAdvancedFilterCompositeSubField();
 
   const handleSelectFilter = ({
     fieldMetadataItem,
@@ -62,10 +62,10 @@ export const AdvancedFilterCompositeSubFieldSelectMenu = ({
     fieldMetadataItem: FieldMetadataItem;
     subFieldName?: CompositeFieldSubFieldName | null;
   }) => {
-    selectFieldUsedInAdvancedFilterDropdown({
-      fieldMetadataItemId: fieldMetadataItem.id,
+    applyAdvancedFilterCompositeSubField({
+      sourceFieldMetadataItem: fieldMetadataItem,
+      subFieldName: subFieldName ?? null,
       recordFilterId,
-      subFieldName,
     });
 
     closeAdvancedFilterFieldSelectDropdown();
