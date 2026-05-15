@@ -1,7 +1,6 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
-  IsBoolean,
   IsDateString,
   IsIn,
   IsNotEmpty,
@@ -51,22 +50,6 @@ export class PermissionFlagDTO {
   @IsIn(PERMISSION_FLAG_PERMISSION_TYPES)
   @Field(() => String)
   permissionType: PermissionFlagPermissionType;
-
-  @IsBoolean()
-  @Field()
-  isRelevantForAgents: boolean;
-
-  @IsBoolean()
-  @Field()
-  isRelevantForUsers: boolean;
-
-  @IsBoolean()
-  @Field()
-  isRelevantForApiKeys: boolean;
-
-  @IsBoolean()
-  @Field()
-  isCustom: boolean;
 
   @HideField()
   workspaceId: string;

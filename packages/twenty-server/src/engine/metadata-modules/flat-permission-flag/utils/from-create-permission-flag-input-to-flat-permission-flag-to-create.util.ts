@@ -34,11 +34,6 @@ export const fromCreatePermissionFlagInputToFlatPermissionFlagToCreate = ({
     description: description ?? null,
     iconKey: iconKey ?? null,
     permissionType: createPermissionFlagInput.permissionType,
-    isRelevantForAgents: createPermissionFlagInput.isRelevantForAgents ?? false,
-    isRelevantForUsers: createPermissionFlagInput.isRelevantForUsers ?? false,
-    isRelevantForApiKeys:
-      createPermissionFlagInput.isRelevantForApiKeys ?? false,
-    isCustom: true,
     workspaceId,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,

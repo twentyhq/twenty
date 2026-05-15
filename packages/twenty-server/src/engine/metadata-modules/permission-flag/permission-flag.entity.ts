@@ -36,18 +36,6 @@ export class PermissionFlagEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'varchar' })
   permissionType: PermissionFlagPermissionType;
 
-  @Column({ nullable: false, type: 'boolean', default: false })
-  isRelevantForAgents: boolean;
-
-  @Column({ nullable: false, type: 'boolean', default: false })
-  isRelevantForUsers: boolean;
-
-  @Column({ nullable: false, type: 'boolean', default: false })
-  isRelevantForApiKeys: boolean;
-
-  @Column({ nullable: false, type: 'boolean', default: false })
-  isCustom: boolean;
-
   @OneToMany(
     () => RolePermissionFlagEntity,
     (rolePermissionFlag) => rolePermissionFlag.permissionFlag,

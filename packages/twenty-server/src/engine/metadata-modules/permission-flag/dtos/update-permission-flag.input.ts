@@ -2,7 +2,6 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
-  IsBoolean,
   IsIn,
   IsNotEmpty,
   IsOptional,
@@ -38,21 +37,6 @@ export class UpdatePermissionFlagInputUpdates {
   @IsIn(PERMISSION_FLAG_PERMISSION_TYPES)
   @Field(() => String, { nullable: true })
   permissionType?: PermissionFlagPermissionType;
-
-  @IsOptional()
-  @IsBoolean()
-  @Field({ nullable: true })
-  isRelevantForAgents?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  @Field({ nullable: true })
-  isRelevantForUsers?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  @Field({ nullable: true })
-  isRelevantForApiKeys?: boolean;
 }
 
 @InputType()

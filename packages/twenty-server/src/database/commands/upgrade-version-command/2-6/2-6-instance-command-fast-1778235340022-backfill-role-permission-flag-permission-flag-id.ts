@@ -1,5 +1,4 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -19,14 +18,8 @@ const standardPermissionFlagValues = STANDARD_PERMISSION_FLAG_DEFINITIONS.map(
       definition.iconKey === null
         ? 'NULL'
         : `'${sqlString(definition.iconKey)}'`
-    }, '${definition.permissionType}', ${definition.isRelevantForAgents}, ${
-      definition.isRelevantForUsers
-    }, ${definition.isRelevantForApiKeys}, ${definition.isCustom})`,
+    }, '${definition.permissionType}')`,
 ).join(', ');
-
-const builtInPermissionFlagKeys = Object.values(PermissionFlagType)
-  .map((flag) => `'${sqlString(flag)}'`)
-  .join(', ');
 
 const toolPermissionFlagKeys = TOOL_PERMISSION_FLAGS.map(
   (flag) => `'${sqlString(flag)}'`,
@@ -61,10 +54,6 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         "description",
         "iconKey",
         "permissionType",
-        "isRelevantForAgents",
-        "isRelevantForUsers",
-        "isRelevantForApiKeys",
-        "isCustom",
         "createdAt",
         "updatedAt"
       )
@@ -78,10 +67,6 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         standardPermissionFlag."description",
         standardPermissionFlag."iconKey",
         standardPermissionFlag."permissionType",
-        standardPermissionFlag."isRelevantForAgents",
-        standardPermissionFlag."isRelevantForUsers",
-        standardPermissionFlag."isRelevantForApiKeys",
-        standardPermissionFlag."isCustom",
         now(),
         now()
       FROM "core"."workspace" workspace
@@ -97,11 +82,7 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         "label",
         "description",
         "iconKey",
-        "permissionType",
-        "isRelevantForAgents",
-        "isRelevantForUsers",
-        "isRelevantForApiKeys",
-        "isCustom"
+        "permissionType"
       )
       ON CONFLICT ("key", "workspaceId") DO NOTHING`,
     );
@@ -117,10 +98,6 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         "description",
         "iconKey",
         "permissionType",
-        "isRelevantForAgents",
-        "isRelevantForUsers",
-        "isRelevantForApiKeys",
-        "isCustom",
         "createdAt",
         "updatedAt"
       )
@@ -141,10 +118,6 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
             THEN 'tool'
           ELSE 'settings'
         END,
-        true,
-        true,
-        true,
-        rolePermissionFlag."flag" NOT IN (${builtInPermissionFlagKeys}),
         now(),
         now()
       FROM (
