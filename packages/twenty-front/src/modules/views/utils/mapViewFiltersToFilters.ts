@@ -37,6 +37,18 @@ export const mapViewFiltersToFilters = (
           )
         : undefined;
 
+      // A relation-traversal filter is meaningful only if both ends
+      // resolve — drop it otherwise (same race-condition handling as the
+      // source field above) instead of rendering a chip whose filterType
+      // and label fall back to the relation source, since the dispatcher
+      // would silently drop the GraphQL filter anyway.
+      if (
+        isDefined(viewFilter.relationTargetFieldMetadataId) &&
+        !isDefined(relationTargetFieldMetadataItem)
+      ) {
+        return undefined;
+      }
+
       const filterType = isDefined(relationTargetFieldMetadataItem)
         ? getFilterTypeFromFieldType(relationTargetFieldMetadataItem.type)
         : getFilterTypeFromFieldType(sourceFieldMetadataItem.type);
