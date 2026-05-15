@@ -13,6 +13,6 @@ export type FirefliesTranscript = {
   organizer_email: string | null;
   sentences: FirefliesTranscriptSentence[] | null;
   calendar_id?: string | null;
-  calendar_event_uid?: string | null;
+  cal_id?: string | null;
   calendar_provider?: string | null;
 };

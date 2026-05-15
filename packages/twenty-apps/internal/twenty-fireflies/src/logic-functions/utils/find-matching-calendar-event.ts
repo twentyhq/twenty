@@ -87,7 +87,7 @@ export const findMatchingCalendarEvent = async ({
 > => {
   const externalIdCandidates = [
     transcript.calendar_id,
-    transcript.calendar_event_uid,
+    transcript.cal_id,
   ].filter(isNonEmptyString);
 
   if (externalIdCandidates.length > 0) {

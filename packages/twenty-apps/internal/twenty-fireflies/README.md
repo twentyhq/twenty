@@ -18,11 +18,11 @@ ready for AI agents and workflows to act on.
 The matcher tries two provider-ID strategies in priority order and stops at
 the first hit:
 
-1. **Provider-native event ID** — Fireflies' `calendar_id` /
-   `calendar_event_uid` is matched against
-   `CalendarChannelEventAssociation.eventExternalId`. Covers events synced
-   into Twenty from Google Calendar (including individual instances of
-   recurring events).
+1. **Provider-native event ID** — Fireflies' `calendar_id` / `cal_id` is
+   matched against `CalendarChannelEventAssociation.eventExternalId`. Covers
+   events synced into Twenty from Google Calendar (including individual
+   instances of recurring events, where Fireflies returns the per-instance
+   id with timestamp on `cal_id`).
 2. **iCalUID** — Fireflies' `calendar_id` is matched against
    `CalendarEvent.iCalUid`. Covers events synced from Outlook / CalDAV,
    where Fireflies returns the RFC 5545 iCalUID directly.

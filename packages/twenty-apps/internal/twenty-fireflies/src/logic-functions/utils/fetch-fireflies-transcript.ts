@@ -14,7 +14,7 @@ const TRANSCRIPT_QUERY = `
       participants
       organizer_email
       calendar_id
-      calendar_event_uid
+      cal_id
       calendar_provider
       sentences {
         speaker_name
