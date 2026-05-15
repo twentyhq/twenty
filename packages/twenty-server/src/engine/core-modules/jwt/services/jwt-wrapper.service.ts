@@ -20,7 +20,6 @@ import {
   JWT_ASYMMETRIC_ALGORITHM,
   JWT_LEGACY_ALGORITHM,
 } from 'src/engine/core-modules/jwt/constants/jwt-algorithm.constant';
-import { LEGACY_SIGNING_KEY_USAGE_IDENTIFIER } from 'src/engine/core-modules/jwt/constants/signing-key-usage.constant';
 import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-key-manager.service';
 import { SigningKeyVerifyCounterService } from 'src/engine/core-modules/jwt/services/signing-key-verify-counter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -208,14 +207,12 @@ export class JwtWrapperService {
       algorithm === JWT_ASYMMETRIC_ALGORITHM &&
       isAsymmetricJwtHeader(header)
     ) {
-      this.signingKeyVerifyCounterService.recordVerify(header.kid);
+      this.signingKeyVerifyCounterService.recordKidVerify(header.kid);
 
       return;
     }
 
-    this.signingKeyVerifyCounterService.recordVerify(
-      LEGACY_SIGNING_KEY_USAGE_IDENTIFIER,
-    );
+    this.signingKeyVerifyCounterService.recordLegacyVerify();
   }
 
   private extractAppSecretBody(payload: JwtPayload): string | undefined {

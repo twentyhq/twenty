@@ -11,13 +11,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import {
-  SIGNING_KEY_USAGE_BUCKET_DURATION_MS,
-  SIGNING_KEY_USAGE_FLUSH_INTERVAL_MS,
-  SIGNING_KEY_USAGE_REDIS_KEY_PREFIX,
-  SIGNING_KEY_USAGE_TTL_MS,
-  SIGNING_KEY_USAGE_WINDOW_DAYS,
-} from 'src/engine/core-modules/jwt/constants/signing-key-usage.constant';
+
+const WINDOW_DAYS = 7;
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const BUCKET_TTL_MS = (WINDOW_DAYS + 1) * ONE_DAY_MS;
+const FLUSH_INTERVAL_MS = 30 * 1000;
+const REDIS_KEY_PREFIX = 'signing-key-verifies';
+const LEGACY_BUCKET_ID = 'legacy';
+
+export type SigningKeyUsage = {
+  byKid: Record<string, number>;
+  legacyCount: number;
+  windowDays: number;
+};
 
 @Injectable()
 export class SigningKeyVerifyCounterService
@@ -36,7 +42,7 @@ export class SigningKeyVerifyCounterService
   onModuleInit() {
     this.flushIntervalHandle = setInterval(() => {
       void this.flush();
-    }, SIGNING_KEY_USAGE_FLUSH_INTERVAL_MS);
+    }, FLUSH_INTERVAL_MS);
 
     if (isDefined(this.flushIntervalHandle.unref)) {
       this.flushIntervalHandle.unref();
@@ -52,83 +58,66 @@ export class SigningKeyVerifyCounterService
     await this.flush();
   }
 
-  recordVerify(identifier: string, now: number = Date.now()): void {
-    const key = this.buildBucketKey(identifier, now);
-
-    this.pendingCounts.set(key, (this.pendingCounts.get(key) ?? 0) + 1);
+  recordKidVerify(kid: string): void {
+    this.increment(kid);
   }
 
-  async getCountInWindow(
-    identifier: string,
-    now: number = Date.now(),
-  ): Promise<number> {
-    await this.flush();
-
-    const keys = this.buildBucketKeysInWindow(identifier, now);
-
-    try {
-      const values = await this.cacheStorage.mget<number | string>(keys);
-
-      return values.reduce<number>(
-        (accumulator, value) => accumulator + this.toCount(value),
-        0,
-      );
-    } catch (error) {
-      this.logger.warn(
-        `Failed to read signing key verify counts for identifier=${identifier}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-
-      return 0;
-    }
+  recordLegacyVerify(): void {
+    this.increment(LEGACY_BUCKET_ID);
   }
 
-  async getCountsInWindow(
-    identifiers: string[],
-    now: number = Date.now(),
-  ): Promise<Record<string, number>> {
-    const counts: Record<string, number> = {};
-
-    for (const identifier of identifiers) {
-      counts[identifier] = 0;
-    }
-
-    if (identifiers.length === 0) {
-      return counts;
-    }
-
+  async getUsageInWindow(kids: string[]): Promise<SigningKeyUsage> {
     await this.flush();
 
-    const allKeys: string[] = [];
-    const keyOwners: string[] = [];
+    const bucketIds = [...kids, LEGACY_BUCKET_ID];
+    const allKeys = bucketIds.flatMap((bucketId) =>
+      this.buildBucketKeysInWindow(bucketId),
+    );
 
-    for (const identifier of identifiers) {
-      const keys = this.buildBucketKeysInWindow(identifier, now);
-
-      for (const key of keys) {
-        allKeys.push(key);
-        keyOwners.push(identifier);
-      }
-    }
+    let values: (number | string | undefined)[];
 
     try {
-      const values = await this.cacheStorage.mget<number | string>(allKeys);
-
-      for (let index = 0; index < values.length; index++) {
-        const owner = keyOwners[index];
-
-        counts[owner] += this.toCount(values[index]);
-      }
+      values = await this.cacheStorage.mget<number | string>(allKeys);
     } catch (error) {
       this.logger.warn(
         `Failed to read signing key verify counts: ${
           error instanceof Error ? error.message : String(error)
         }`,
       );
+
+      return {
+        byKid: Object.fromEntries(kids.map((kid) => [kid, 0])),
+        legacyCount: 0,
+        windowDays: WINDOW_DAYS,
+      };
     }
 
-    return counts;
+    const countsByBucketId = new Map<string, number>(
+      bucketIds.map((bucketId) => [bucketId, 0]),
+    );
+
+    for (let index = 0; index < values.length; index++) {
+      const owner = bucketIds[Math.floor(index / WINDOW_DAYS)];
+
+      countsByBucketId.set(
+        owner,
+        (countsByBucketId.get(owner) ?? 0) + this.toCount(values[index]),
+      );
+    }
+
+    return {
+      byKid: Object.fromEntries(
+        kids.map((kid) => [kid, countsByBucketId.get(kid) ?? 0]),
+      ),
+      legacyCount: countsByBucketId.get(LEGACY_BUCKET_ID) ?? 0,
+      windowDays: WINDOW_DAYS,
+    };
+  }
+
+  private increment(bucketId: string): void {
+    const key = this.buildBucketKey(bucketId, Date.now());
+
+    this.pendingCounts.set(key, (this.pendingCounts.get(key) ?? 0) + 1);
   }
 
   private async flush(): Promise<void> {
@@ -167,7 +156,7 @@ export class SigningKeyVerifyCounterService
 
     await Promise.allSettled(
       incrementedKeys.map((key) =>
-        this.cacheStorage.expire(key, SIGNING_KEY_USAGE_TTL_MS),
+        this.cacheStorage.expire(key, BUCKET_TTL_MS),
       ),
     );
 
@@ -192,26 +181,19 @@ export class SigningKeyVerifyCounterService
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  private getBucketStartMs(timestamp: number): number {
-    return (
-      Math.floor(timestamp / SIGNING_KEY_USAGE_BUCKET_DURATION_MS) *
-      SIGNING_KEY_USAGE_BUCKET_DURATION_MS
-    );
+  private buildBucketKey(bucketId: string, timestamp: number): string {
+    const bucketStart = Math.floor(timestamp / ONE_DAY_MS) * ONE_DAY_MS;
+
+    return `${REDIS_KEY_PREFIX}:${bucketId}:${bucketStart}`;
   }
 
-  private buildBucketKey(identifier: string, timestamp: number): string {
-    return `${SIGNING_KEY_USAGE_REDIS_KEY_PREFIX}:${identifier}:${this.getBucketStartMs(timestamp)}`;
-  }
-
-  private buildBucketKeysInWindow(identifier: string, now: number): string[] {
-    const currentBucketStart = this.getBucketStartMs(now);
+  private buildBucketKeysInWindow(bucketId: string): string[] {
+    const currentBucketStart = Math.floor(Date.now() / ONE_DAY_MS) * ONE_DAY_MS;
 
     return Array.from(
-      { length: SIGNING_KEY_USAGE_WINDOW_DAYS },
+      { length: WINDOW_DAYS },
       (_, index) =>
-        `${SIGNING_KEY_USAGE_REDIS_KEY_PREFIX}:${identifier}:${
-          currentBucketStart - index * SIGNING_KEY_USAGE_BUCKET_DURATION_MS
-        }`,
+        `${REDIS_KEY_PREFIX}:${bucketId}:${currentBucketStart - index * ONE_DAY_MS}`,
     );
   }
 }
