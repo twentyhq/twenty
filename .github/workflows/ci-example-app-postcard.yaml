@@ -23,9 +23,11 @@ jobs:
         packages/twenty-sdk/**
         packages/twenty-client-sdk/**
         packages/twenty-shared/**
+        packages/twenty-server/**
         !packages/twenty-sdk/package.json
         !packages/twenty-client-sdk/package.json
         !packages/twenty-shared/package.json
+        !packages/twenty-server/package.json
 
   example-app-postcard:
     needs: changed-files-check
@@ -82,6 +84,31 @@ jobs:
       - name: Run integration tests
         working-directory: packages/twenty-apps/examples/postcard
         run: npx vitest run
+
+      - name: Configure remote for SDK CLI
+        run: |
+          mkdir -p ~/.twenty
+          cat > ~/.twenty/config.json <<EOF
+          {
+            "version": 1,
+            "remotes": {
+              "target": {
+                "apiUrl": "${TWENTY_API_URL}",
+                "apiKey": "${TWENTY_API_KEY}",
+                "accessToken": "${TWENTY_API_KEY}"
+              }
+            },
+            "defaultRemote": "target"
+          }
+          EOF
+
+      - name: Deploy postcard app (registry install path)
+        working-directory: packages/twenty-apps/examples/postcard
+        run: node ${{ github.workspace }}/packages/twenty-sdk/dist/cli.cjs deploy --remote target
+
+      - name: Install postcard app (registry install path)
+        working-directory: packages/twenty-apps/examples/postcard
+        run: node ${{ github.workspace }}/packages/twenty-sdk/dist/cli.cjs install --remote target
 
   ci-example-app-postcard-status-check:
     if: always() && !cancelled()
