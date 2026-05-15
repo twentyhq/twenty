@@ -1,13 +1,12 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import type { StepperVisualProps } from '../types';
 
 import { AppPreviewShell, ShellCanvas, ShellSvgLayer } from './AppPreviewShell';
 import {
-  ANIMATION_SEQUENCE,
   COLOR_GRAY,
   COLOR_GRAY_BG,
   COLOR_GREEN,
@@ -16,7 +15,6 @@ import {
   NODE_HEIGHT,
   NODE_WIDTH,
   NODES,
-  STEP_INTERVAL_MS,
 } from './data/workflow.data';
 import { DrawEdge } from './DrawEdge';
 import { CheckIcon, NodeIcon } from './icons/WorkflowIcons';
@@ -28,6 +26,7 @@ import {
   STEPPER_TEXT_TERTIARY,
   STEPPER_TINT,
 } from './stepper-visual-tokens';
+import { useWorkflowAnimation } from './use-workflow-animation';
 
 const NodeCard = styled.div`
   align-items: center;
@@ -136,9 +135,7 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
     startY: number;
   } | null>(null);
 
-  const [activeNodes, setActiveNodes] = useState<Set<string>>(new Set());
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const stepRef = useRef(0);
+  const activeNodes = useWorkflowAnimation(active);
 
   const handlePointerDown = (nodeId: string, event: React.PointerEvent) => {
     event.preventDefault();
@@ -170,34 +167,6 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
     setDragging(null);
   };
 
-  useEffect(() => {
-    if (!active) {
-      setActiveNodes(new Set());
-      stepRef.current = 0;
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-      return;
-    }
-
-    intervalRef.current = setInterval(() => {
-      stepRef.current += 1;
-      if (stepRef.current > ANIMATION_SEQUENCE.length) {
-        stepRef.current = 0;
-        setActiveNodes(new Set());
-      } else {
-        setActiveNodes(new Set(ANIMATION_SEQUENCE.slice(0, stepRef.current)));
-      }
-    }, STEP_INTERVAL_MS);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [active]);
-
   return (
     <AppPreviewShell active={active} title="Workflow Runs">
       <ShellCanvas
@@ -217,7 +186,6 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
                 highlighted={
                   activeNodes.has(edge.from) && activeNodes.has(edge.to)
                 }
-                id={`${edge.from}-${edge.to}`}
                 to={getNodeCenter(toPos)}
               />
             );

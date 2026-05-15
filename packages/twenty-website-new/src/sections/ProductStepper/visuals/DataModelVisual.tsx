@@ -246,7 +246,6 @@ export function DataModelVisual({ active }: StepperVisualProps) {
               elbow="horizontal-first"
               from={getCardCenter(positions, conn.from)}
               highlighted={isConnectionHighlighted(conn)}
-              id={`${conn.from}-${conn.to}`}
               to={getCardCenter(positions, conn.to)}
             />
           ))}

@@ -10,7 +10,6 @@ type DrawEdgeProps = {
   elbow?: 'horizontal-first' | 'vertical-first';
   from: Point;
   highlighted: boolean;
-  id: string;
   to: Point;
 };
 
@@ -19,7 +18,6 @@ export function DrawEdge({
   elbow = 'vertical-first',
   from,
   highlighted,
-  id,
   to,
 }: DrawEdgeProps) {
   const color = highlighted ? STEPPER_BORDER_STRONG : STEPPER_BORDER_MEDIUM;
@@ -49,7 +47,7 @@ export function DrawEdge({
   }
 
   return (
-    <g key={id}>
+    <g>
       <path
         d={pathD}
         fill="none"
