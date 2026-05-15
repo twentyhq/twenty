@@ -8,7 +8,7 @@ Twenty has two independent key families:
 - **JWT signing keys** — asymmetric ES256 keypairs (`kid`-tagged) stored in `core."signingKey"`, used to sign and verify access / refresh tokens.
 - **At-rest encryption key** — `ENCRYPTION_KEY`, used to encrypt OAuth tokens, application variables, signing-key private keys, sensitive config values and TOTP secrets inside an `enc:v2:` envelope.
 
-`APP_SECRET` only signs session cookies and verifies legacy HS256 JWTs. It is kept for backward compatibility and will be deprecated.
+`APP_SECRET` is a legacy secret kept for backward compatibility: when `ENCRYPTION_KEY` is unset it acts as the at-rest encryption / session cookie fallback, and it still verifies pre-existing HS256 access tokens. It will be deprecated.
 
 ## JWT signing keys
 
@@ -16,16 +16,18 @@ Each key carries a `publicKey` (kept indefinitely so it can verify previously is
 
 ### Rotate the current key
 
-Issues a fresh ES256 keypair, marks it as the new current, and demotes the previous one to verification-only. Tokens signed under the old `kid` keep verifying until they expire.
+- **Manual** — **Settings → Admin Panel → Signing keys → Revoke** on the current row. Revoking wipes its encrypted private material and demotes it; the next sign call automatically mints a fresh ES256 keypair as the new current. Tokens signed under any other (non-revoked) `kid` keep verifying until they expire.
+- **Enterprise (automatic)** — a daily cron (`'15 3 * * *'` UTC) issues a new current key once the existing one has been current for `SIGNING_KEY_ROTATION_DAYS` (default `90`). The previous key is *not* revoked, so tokens signed under it keep verifying. Register it once with `yarn command:prod cron:register:all`.
 
-- **Manual** — **Settings → Admin Panel → Signing keys → Rotate current signing key**.
-- **Enterprise (automatic)** — a daily cron (`'15 3 * * *'` UTC) issues a new current key once the existing one has been current for `SIGNING_KEY_ROTATION_DAYS` (default `90`). Register it once with `yarn command:prod cron:register:all`.
+  <Note>The Enterprise cron and `SIGNING_KEY_ROTATION_DAYS` ship in v2.6+.</Note>
 
 ### Revoke a key (leak / emergency only)
 
-**Settings → Admin Panel → Signing keys → Revoke**. Wipes the encrypted private material, sets `revokedAt`, and rejects every existing token signed under that `kid`. If the revoked key was the current one, the next sign call mints a brand-new current key on the fly.
+**Settings → Admin Panel → Signing keys → Revoke** on a non-current row. Wipes the encrypted private material, sets `revokedAt`, and rejects every existing token signed under that `kid`.
 
 ## Rotate `ENCRYPTION_KEY`
+
+<Note>The `secret-encryption:rotate` command described below ships in v2.6+.</Note>
 
 Every encrypted value is wrapped as `enc:v2:<keyId>:<payload>`, where `<keyId>` is an 8-hex prefix derived from the raw key. Rotation is online and resumable.
 
@@ -52,4 +54,4 @@ Every encrypted value is wrapped as `enc:v2:<keyId>:<payload>`, where `<keyId>` 
 
 ## Legacy `APP_SECRET` support
 
-Older instances that never set `ENCRYPTION_KEY` use `APP_SECRET` as the at-rest encryption key. This path is preserved for backward compatibility but is **deprecated** — set a dedicated `ENCRYPTION_KEY` and follow the rotation procedure above to migrate off it. `APP_SECRET` itself stays in use for session cookies and HS256 verification only.
+Older instances that never set `ENCRYPTION_KEY` use `APP_SECRET` as the at-rest encryption key (and as the session-cookie secret, derived from it). This path is preserved for backward compatibility but is **deprecated** — set a dedicated `ENCRYPTION_KEY` and follow the rotation procedure above to migrate off it. `APP_SECRET` itself stays in use to verify legacy HS256 access tokens.
