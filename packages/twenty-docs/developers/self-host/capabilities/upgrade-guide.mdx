@@ -37,7 +37,7 @@ Starting in **v2.5**, Twenty stores at-rest secrets (OAuth tokens, application v
 
 The first boot on v2.5 runs slow upgrade commands that **backfill** existing rows into the new envelope. They are idempotent — interrupting and restarting the server resumes from where it left off — but they can take a while on large databases. You can monitor progress with `upgrade:status`.
 
-If you want to use a dedicated `ENCRYPTION_KEY` separate from `APP_SECRET`, set it **before** the v2.5 upgrade so the backfill writes rows under the new key from the start. Switching keys after the backfill requires a [rotation](/developers/self-host/capabilities/key-rotation).
+You should set a dedicated `ENCRYPTION_KEY` **before** the v2.5 upgrade so the backfill writes rows under it from the start. Switching keys after the backfill requires a [rotation](/developers/self-host/capabilities/key-rotation).
 
 ## Rotating secrets and signing keys
 
