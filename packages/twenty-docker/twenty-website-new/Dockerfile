@@ -1,4 +1,4 @@
-FROM node:24.15.0-alpine3.23@sha256:8e2c930fda481a6ec141fe5a88e8c249c69f8102fe98af505f38c081649ea749 AS twenty-website-new-build
+FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS twenty-website-new-build
 
 
 WORKDIR /app
@@ -20,7 +20,7 @@ COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-website-new /app/packages/twenty-website-new
 RUN npx nx build twenty-website-new
 
-FROM node:24.15.0-alpine3.23@sha256:8e2c930fda481a6ec141fe5a88e8c249c69f8102fe98af505f38c081649ea749 AS twenty-website-new
+FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS twenty-website-new
 
 WORKDIR /app/packages/twenty-website-new
 
