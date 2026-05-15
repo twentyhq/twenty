@@ -4,5 +4,4 @@ export const FLAT_PERMISSION_FLAG_EDITABLE_PROPERTIES = [
   'label',
   'description',
   'iconKey',
-  'permissionType',
 ] as const satisfies MetadataEntityPropertyName<'permissionFlag'>[];

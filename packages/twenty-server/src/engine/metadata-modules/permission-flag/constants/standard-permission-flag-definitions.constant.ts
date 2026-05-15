@@ -3,16 +3,12 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 
-import { type PermissionFlagPermissionType } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
-import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
-
 export type StandardPermissionFlagDefinition = {
   key: PermissionFlagType;
   universalIdentifier: string;
   label: string;
   description: string | null;
   iconKey: string | null;
-  permissionType: PermissionFlagPermissionType;
 };
 
 type StandardPermissionFlagMetadata = Pick<
@@ -156,5 +152,4 @@ export const STANDARD_PERMISSION_FLAG_DEFINITIONS: StandardPermissionFlagDefinit
     key,
     universalIdentifier: SystemPermissionFlag[key],
     ...STANDARD_PERMISSION_FLAG_METADATA[key],
-    permissionType: TOOL_PERMISSION_FLAGS.includes(key) ? 'tool' : 'settings',
   }));

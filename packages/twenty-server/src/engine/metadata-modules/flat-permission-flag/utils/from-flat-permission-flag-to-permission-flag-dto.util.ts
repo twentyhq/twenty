@@ -10,7 +10,6 @@ export const fromFlatPermissionFlagToPermissionFlagDto = (
   label: flatDefinition.label,
   description: flatDefinition.description,
   iconKey: flatDefinition.iconKey,
-  permissionType: flatDefinition.permissionType,
   workspaceId: flatDefinition.workspaceId,
   applicationId: flatDefinition.applicationId,
   createdAt: new Date(flatDefinition.createdAt),

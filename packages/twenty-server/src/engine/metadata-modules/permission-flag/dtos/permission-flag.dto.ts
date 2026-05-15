@@ -2,7 +2,6 @@ import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
   IsDateString,
-  IsIn,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -10,10 +9,6 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import {
-  PERMISSION_FLAG_PERMISSION_TYPES,
-  type PermissionFlagPermissionType,
-} from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
 
 @ObjectType('PermissionFlag')
 export class PermissionFlagDTO {
@@ -46,10 +41,6 @@ export class PermissionFlagDTO {
   @IsOptional()
   @Field(() => String, { nullable: true })
   iconKey: string | null;
-
-  @IsIn(PERMISSION_FLAG_PERMISSION_TYPES)
-  @Field(() => String)
-  permissionType: PermissionFlagPermissionType;
 
   @HideField()
   workspaceId: string;
