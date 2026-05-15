@@ -60,29 +60,20 @@ export const firefliesApiRequest = async <TData = unknown>({
     };
   }
 
-  if (!response.ok) {
-    return {
-      ok: false,
-      status: response.status,
-      errorMessage: `Fireflies API responded with HTTP ${response.status}`,
-    };
-  }
-
-  let envelope: FirefliesGraphqlEnvelope<TData>;
+  let envelope: FirefliesGraphqlEnvelope<TData> | null = null;
+  let parseError: Error | null = null;
 
   try {
     envelope = (await response.json()) as FirefliesGraphqlEnvelope<TData>;
   } catch (error) {
-    return {
-      ok: false,
-      status: response.status,
-      errorMessage: `Fireflies API returned a non-JSON response: ${
-        (error as Error).message
-      }`,
-    };
+    parseError = error as Error;
   }
 
-  if (isDefined(envelope.errors) && envelope.errors.length > 0) {
+  if (
+    envelope !== null &&
+    isDefined(envelope.errors) &&
+    envelope.errors.length > 0
+  ) {
     return {
       ok: false,
       status: response.status,
@@ -92,7 +83,23 @@ export const firefliesApiRequest = async <TData = unknown>({
     };
   }
 
-  if (!isDefined(envelope.data)) {
+  if (!response.ok) {
+    return {
+      ok: false,
+      status: response.status,
+      errorMessage: `Fireflies API responded with HTTP ${response.status}`,
+    };
+  }
+
+  if (parseError !== null) {
+    return {
+      ok: false,
+      status: response.status,
+      errorMessage: `Fireflies API returned a non-JSON response: ${parseError.message}`,
+    };
+  }
+
+  if (envelope === null || !isDefined(envelope.data)) {
     return {
       ok: false,
       status: response.status,
@@ -109,5 +116,7 @@ const formatFirefliesGraphqlError = (
   const message = error?.message ?? 'Unknown Fireflies GraphQL error';
   const code = error?.extensions?.code;
 
-  return isDefined(code) ? `${message} (Fireflies error code ${code})` : message;
+  return isDefined(code)
+    ? `${message} (Fireflies error code ${code})`
+    : message;
 };
