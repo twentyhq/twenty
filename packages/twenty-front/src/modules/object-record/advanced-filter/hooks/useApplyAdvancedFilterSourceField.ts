@@ -6,14 +6,10 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeNonFilterableByAnySubField';
-import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
@@ -23,10 +19,11 @@ type ApplyAdvancedFilterSourceFieldParams = {
   recordFilterId: string;
 };
 
-// Creates an advanced filter from a source-field-only selection: the
-// terminal case for leaf source fields, and the initial state when the
-// user picks a composite or relation source before drilling into the
-// sub-menu (so the dropdown has a record filter to render against).
+// Creates a leaf advanced filter from a source field selection. Composite
+// and many-to-one relation sources are handled by their own specialized
+// hooks (useApplyAdvancedFilterCompositeSubField,
+// useApplyAdvancedFilterRelationTargetField) — callers branch to those
+// before reaching this hook.
 export const useApplyAdvancedFilterSourceField = () => {
   const setSelectedOperandInDropdown = useSetAtomComponentState(
     selectedOperandInDropdownComponentState,
@@ -68,24 +65,14 @@ export const useApplyAdvancedFilterSourceField = () => {
 
     const filterType = getFilterTypeFromFieldType(sourceFieldMetadataItem.type);
 
-    // Composite types that aren't filterable across "any subfield" need a
-    // concrete subfield to produce a valid filter — pick a default so the
-    // initial state is usable before the user drills into the sub-menu.
-    const defaultSubFieldName: CompositeFieldSubFieldName | null =
-      isCompositeFieldType(filterType) &&
-      isCompositeTypeNonFilterableByAnySubField(filterType)
-        ? (getDefaultSubFieldNameForCompositeFilterableFieldType(filterType) ??
-          null)
-        : null;
-
     const firstOperand = getRecordFilterOperands({
       filterType,
-      subFieldName: defaultSubFieldName,
+      subFieldName: null,
     })?.[0];
 
     if (!isDefined(firstOperand)) {
       throw new Error(
-        `No valid operand found for filter type: ${filterType} and subFieldName: ${defaultSubFieldName}`,
+        `No valid operand found for filter type: ${filterType}`,
       );
     }
 
@@ -111,11 +98,11 @@ export const useApplyAdvancedFilterSourceField = () => {
         existingRecordFilter?.positionInRecordFilterGroup,
       type: filterType,
       label: sourceFieldMetadataItem.label,
-      subFieldName: defaultSubFieldName,
+      subFieldName: null,
       relationTargetFieldMetadataId: null,
     } satisfies RecordFilter;
 
-    setSubFieldNameUsedInDropdown(defaultSubFieldName);
+    setSubFieldNameUsedInDropdown(null);
     setRelationTargetFieldMetadataIdUsedInDropdown(null);
 
     setObjectFilterDropdownSearchInput('');

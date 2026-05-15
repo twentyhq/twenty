@@ -24,9 +24,8 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
+import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
@@ -112,7 +111,8 @@ export const AdvancedFilterFieldSelectMenu = ({
     fieldMetadataItemIdUsedInDropdownComponentState,
   );
 
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { pushFocusForLeafFieldValuePicker } =
+    usePushFocusForLeafFieldValuePicker();
 
   const handleFieldMetadataItemSelect = (
     selectedFieldMetadataItem: FieldMetadataItem,
@@ -155,21 +155,7 @@ export const AdvancedFilterFieldSelectMenu = ({
       recordFilterId,
     });
 
-    // Leaf RELATION/SELECT fields open a value picker keyed by the source
-    // field id — push it on the focus stack so the picker's keyboard
-    // hotkeys are active when it opens.
-    if (
-      selectedFieldMetadataItem.type === 'RELATION' ||
-      selectedFieldMetadataItem.type === 'SELECT'
-    ) {
-      pushFocusItemToFocusStack({
-        focusId: selectedFieldMetadataItem.id,
-        component: {
-          type: FocusComponentType.DROPDOWN,
-          instanceId: selectedFieldMetadataItem.id,
-        },
-      });
-    }
+    pushFocusForLeafFieldValuePicker(selectedFieldMetadataItem);
 
     closeAdvancedFilterFieldSelectDropdown();
   };

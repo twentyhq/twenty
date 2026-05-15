@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 import { useApplyAdvancedFilterRelationTargetField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterRelationTargetField';
+import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownIsSelectingRelationTargetFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingRelationTargetFieldComponentState';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
@@ -13,8 +14,6 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -46,7 +45,8 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
   const { applyAdvancedFilterRelationTargetField } =
     useApplyAdvancedFilterRelationTargetField();
 
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { pushFocusForLeafFieldValuePicker } =
+    usePushFocusForLeafFieldValuePicker();
 
   const { advancedFilterFieldSelectDropdownId } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
@@ -93,21 +93,7 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
       recordFilterId,
     });
 
-    // Leaf RELATION/SELECT target fields open a value picker keyed by the
-    // target field id — push it on the focus stack so the picker's
-    // keyboard hotkeys are active when it opens.
-    if (
-      relationTargetFieldMetadataItem.type === 'RELATION' ||
-      relationTargetFieldMetadataItem.type === 'SELECT'
-    ) {
-      pushFocusItemToFocusStack({
-        focusId: relationTargetFieldMetadataItem.id,
-        component: {
-          type: FocusComponentType.DROPDOWN,
-          instanceId: relationTargetFieldMetadataItem.id,
-        },
-      });
-    }
+    pushFocusForLeafFieldValuePicker(relationTargetFieldMetadataItem);
 
     setObjectFilterDropdownIsSelectingRelationTargetField(false);
     closeAdvancedFilterFieldSelectDropdown();
