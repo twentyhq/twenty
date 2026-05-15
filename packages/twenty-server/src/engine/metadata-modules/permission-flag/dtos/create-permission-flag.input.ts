@@ -1,8 +1,18 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import {
+  PERMISSION_FLAG_PERMISSION_TYPES,
+  type PermissionFlagPermissionType,
+} from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
 
 @InputType()
 export class CreatePermissionFlagInput {
@@ -35,4 +45,8 @@ export class CreatePermissionFlagInput {
   @IsOptional()
   @Field({ nullable: true })
   icon?: string;
+
+  @IsIn(PERMISSION_FLAG_PERMISSION_TYPES)
+  @Field(() => String)
+  permissionType: PermissionFlagPermissionType;
 }

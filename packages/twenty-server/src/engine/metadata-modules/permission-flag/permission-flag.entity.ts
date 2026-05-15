@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type PermissionFlagPermissionType } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
 import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -31,6 +32,9 @@ export class PermissionFlagEntity extends SyncableEntity {
 
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
+
+  @Column({ nullable: false, type: 'varchar' })
+  permissionType: PermissionFlagPermissionType;
 
   @OneToMany(
     () => RolePermissionFlagEntity,

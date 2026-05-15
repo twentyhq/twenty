@@ -4,6 +4,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 import { STANDARD_PERMISSION_FLAG_DEFINITIONS } from 'src/engine/metadata-modules/permission-flag/constants/standard-permission-flag-definitions.constant';
+import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 
 const sqlString = (value: string) => value.replace(/'/g, "''");
 
@@ -17,7 +18,11 @@ const standardPermissionFlagValues = STANDARD_PERMISSION_FLAG_DEFINITIONS.map(
       definition.icon === null
         ? 'NULL'
         : `'${sqlString(definition.icon)}'`
-    })`,
+    }, '${definition.permissionType}')`,
+).join(', ');
+
+const toolPermissionFlagKeys = TOOL_PERMISSION_FLAGS.map(
+  (flag) => `'${sqlString(flag)}'`,
 ).join(', ');
 
 @RegisteredInstanceCommand('2.6.0', 1778235340022)
@@ -48,6 +53,7 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         "label",
         "description",
         "icon",
+        "permissionType",
         "createdAt",
         "updatedAt"
       )
@@ -60,6 +66,7 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         standardPermissionFlag."label",
         standardPermissionFlag."description",
         standardPermissionFlag."icon",
+        standardPermissionFlag."permissionType",
         now(),
         now()
       FROM "core"."workspace" workspace
@@ -74,7 +81,8 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         "key",
         "label",
         "description",
-        "icon"
+        "icon",
+        "permissionType"
       )
       ON CONFLICT ("key", "workspaceId") DO NOTHING`,
     );
@@ -89,6 +97,7 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         "label",
         "description",
         "icon",
+        "permissionType",
         "createdAt",
         "updatedAt"
       )
@@ -104,6 +113,11 @@ export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
         rolePermissionFlag."flag",
         NULL,
         NULL,
+        CASE
+          WHEN rolePermissionFlag."flag" IN (${toolPermissionFlagKeys})
+            THEN 'tool'
+          ELSE 'settings'
+        END,
         now(),
         now()
       FROM (

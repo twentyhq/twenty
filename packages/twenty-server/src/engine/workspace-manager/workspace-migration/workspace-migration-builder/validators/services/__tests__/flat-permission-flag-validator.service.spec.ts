@@ -7,6 +7,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag.type';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
+import { type PermissionFlagPermissionType } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
 import { PermissionFlagExceptionCode } from 'src/engine/metadata-modules/permission-flag/permission-flag.exception';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { FlatPermissionFlagValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service';
@@ -21,6 +22,7 @@ const buildFlatDefinition = (
     label: 'Test Flag',
     description: 'A flag for tests',
     icon: 'IconTest',
+    permissionType: 'tool',
     workspaceId: 'workspace-id',
     applicationId: '00000000-0000-0000-0000-000000000aaa',
     applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000aaa',
@@ -94,6 +96,20 @@ describe('FlatPermissionFlagValidatorService', () => {
 
       expect(result.errors.map((error) => error.code)).toEqual([
         PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY,
+      ]);
+    });
+
+    it('rejects an unknown permission type', () => {
+      const result = service.validateFlatPermissionFlagCreation(
+        buildArgs(
+          buildFlatDefinition({
+            permissionType: 'invalid' as PermissionFlagPermissionType,
+          }),
+        ),
+      );
+
+      expect(result.errors.map((error) => error.code)).toEqual([
+        PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_PERMISSION_TYPE,
       ]);
     });
 
@@ -226,6 +242,29 @@ describe('FlatPermissionFlagValidatorService', () => {
       ]);
     });
 
+    it('rejects updating to an unknown permission type', () => {
+      const existing = buildFlatDefinition();
+      const optimisticMaps = buildEmptyMaps();
+      optimisticMaps.byUniversalIdentifier[existing.universalIdentifier] =
+        existing;
+
+      const result = service.validateFlatPermissionFlagUpdate({
+        universalIdentifier: existing.universalIdentifier,
+        flatEntityUpdate: {
+          permissionType: 'invalid' as PermissionFlagPermissionType,
+        },
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+          flatPermissionFlagMaps: optimisticMaps,
+        },
+        buildOptions: {} as never,
+      } as unknown as Parameters<
+        FlatPermissionFlagValidatorService['validateFlatPermissionFlagUpdate']
+      >[0]);
+
+      expect(result.errors.map((error) => error.code)).toEqual([
+        PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_PERMISSION_TYPE,
+      ]);
+    });
   });
 
   describe('validateFlatPermissionFlagDeletion', () => {

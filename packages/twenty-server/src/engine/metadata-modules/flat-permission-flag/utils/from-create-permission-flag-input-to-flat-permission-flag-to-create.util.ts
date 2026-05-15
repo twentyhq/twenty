@@ -33,6 +33,7 @@ export const fromCreatePermissionFlagInputToFlatPermissionFlagToCreate = ({
     label,
     description: description ?? null,
     icon: icon ?? null,
+    permissionType: createPermissionFlagInput.permissionType,
     workspaceId,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,

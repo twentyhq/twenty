@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  IsIn,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -10,6 +11,10 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import {
+  PERMISSION_FLAG_PERMISSION_TYPES,
+  type PermissionFlagPermissionType,
+} from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
 
 @InputType()
 export class UpdatePermissionFlagInputUpdates {
@@ -27,6 +32,11 @@ export class UpdatePermissionFlagInputUpdates {
   @IsString()
   @Field({ nullable: true })
   icon?: string;
+
+  @IsOptional()
+  @IsIn(PERMISSION_FLAG_PERMISSION_TYPES)
+  @Field(() => String, { nullable: true })
+  permissionType?: PermissionFlagPermissionType;
 }
 
 @InputType()

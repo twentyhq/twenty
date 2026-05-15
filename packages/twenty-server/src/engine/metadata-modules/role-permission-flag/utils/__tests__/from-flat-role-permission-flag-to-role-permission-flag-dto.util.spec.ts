@@ -29,6 +29,7 @@ const buildFlatPermissionFlag = (): FlatPermissionFlag => ({
   label: 'Workspace',
   description: null,
   icon: null,
+  permissionType: 'settings',
   rolePermissionFlagIds: [],
   rolePermissionFlagUniversalIdentifiers: [],
   createdAt: '2026-05-13T00:00:00.000Z',

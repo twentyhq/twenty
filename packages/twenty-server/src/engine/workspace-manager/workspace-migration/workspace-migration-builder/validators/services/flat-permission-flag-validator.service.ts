@@ -6,6 +6,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { PERMISSION_FLAG_PERMISSION_TYPES } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
 import { PermissionFlagExceptionCode } from 'src/engine/metadata-modules/permission-flag/permission-flag.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { isCallerTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-caller-twenty-standard-app.util';
@@ -72,6 +73,18 @@ export class FlatPermissionFlagValidatorService {
       });
     }
 
+    if (
+      !PERMISSION_FLAG_PERMISSION_TYPES.includes(
+        flatPermissionFlagToValidate.permissionType,
+      )
+    ) {
+      validationResult.errors.push({
+        code: PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_PERMISSION_TYPE,
+        message: t`Permission flag definition permission type must be 'settings' or 'tool'`,
+        userFriendlyMessage: msg`Invalid permission type`,
+      });
+    }
+
     return validationResult;
   }
 
@@ -130,6 +143,19 @@ export class FlatPermissionFlagValidatorService {
         code: PermissionFlagExceptionCode.PERMISSION_FLAG_KEY_IMMUTABLE,
         message: t`Permission flag definition key cannot be changed after creation`,
         userFriendlyMessage: msg`Key cannot be changed`,
+      });
+    }
+
+    if (
+      isDefined(flatEntityUpdate.permissionType) &&
+      !PERMISSION_FLAG_PERMISSION_TYPES.includes(
+        flatEntityUpdate.permissionType,
+      )
+    ) {
+      validationResult.errors.push({
+        code: PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_PERMISSION_TYPE,
+        message: t`Permission flag definition permission type must be 'settings' or 'tool'`,
+        userFriendlyMessage: msg`Invalid permission type`,
       });
     }
 

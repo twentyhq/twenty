@@ -18,6 +18,7 @@ export class PermissionFlagSyncableEntityFastInstanceCommand
         "label" varchar NOT NULL,
         "description" text,
         "icon" varchar,
+        "permissionType" varchar NOT NULL,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "IDX_PERMISSION_FLAG_KEY_WORKSPACE_ID_UNIQUE" UNIQUE ("key", "workspaceId"),
