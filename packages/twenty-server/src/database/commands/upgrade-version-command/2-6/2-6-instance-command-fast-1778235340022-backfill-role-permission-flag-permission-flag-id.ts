@@ -32,7 +32,7 @@ const toolPermissionFlagKeys = TOOL_PERMISSION_FLAGS.map(
   (flag) => `'${sqlString(flag)}'`,
 ).join(', ');
 
-@RegisteredInstanceCommand('2.5.0', 1778235340022)
+@RegisteredInstanceCommand('2.6.0', 1778235340022)
 export class BackfillRolePermissionFlagPermissionFlagIdFastInstanceCommand
   implements FastInstanceCommand
 {
