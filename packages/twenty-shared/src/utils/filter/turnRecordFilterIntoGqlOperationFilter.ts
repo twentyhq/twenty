@@ -157,9 +157,7 @@ const buildDirectFieldGqlOperationFilter = ({
 
   const isSubFieldFilter = isNonEmptyString(subFieldName);
 
-  const filterType = getFilterTypeFromFieldType(
-    fieldMetadataItem.type,
-  );
+  const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
 
   switch (filterType) {
     case 'TEXT':
@@ -1319,9 +1317,9 @@ const buildDirectFieldGqlOperationFilter = ({
           };
         }
         default: {
-            throw new Error(
-              `Unknown operand ${recordFilter.operand} for ${fieldMetadataItem.label} filter`,
-            );
+          throw new Error(
+            `Unknown operand ${recordFilter.operand} for ${fieldMetadataItem.label} filter`,
+          );
         }
       }
     }
