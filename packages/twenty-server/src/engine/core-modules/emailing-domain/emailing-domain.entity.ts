@@ -17,10 +17,7 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 
 @Entity({ name: 'emailingDomain', schema: 'core' })
 @ObjectType('EmailingDomain')
-@Unique('IDX_EMAILING_DOMAIN_DOMAIN_WORKSPACE_ID_UNIQUE', [
-  'domain',
-  'workspaceId',
-])
+@Unique('IDX_EMAILING_DOMAIN_DOMAIN_UNIQUE', ['domain'])
 export class EmailingDomainEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -137,15 +137,22 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     const tenantName = this.buildTenantName(input.workspaceId);
     const identityArn = `arn:aws:ses:${this.config.region}:${this.config.accountId}:identity/${input.domain}`;
 
-    await sesClient.send(
-      new DeleteTenantResourceAssociationCommand({
-        TenantName: tenantName,
-        ResourceArn: identityArn,
-      }),
-    );
-    await sesClient.send(
-      new DeleteEmailIdentityCommand({ EmailIdentity: input.domain }),
-    );
+    await sesClient
+      .send(
+        new DeleteTenantResourceAssociationCommand({
+          TenantName: tenantName,
+          ResourceArn: identityArn,
+        }),
+      )
+      .catch((error) => {
+        if (!(error instanceof NotFoundException)) throw error;
+      });
+
+    await sesClient
+      .send(new DeleteEmailIdentityCommand({ EmailIdentity: input.domain }))
+      .catch((error) => {
+        if (!(error instanceof NotFoundException)) throw error;
+      });
   }
 
   private buildTenantName(workspaceId: string): string {

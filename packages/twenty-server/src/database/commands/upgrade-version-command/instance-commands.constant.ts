@@ -33,7 +33,9 @@ import { AddEmailGroupChannelTypeFastInstanceCommand } from 'src/database/comman
 import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1798000003000-add-application-id-to-public-domain';
 import { AddIsInternalMessagesImportEnabledFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778525104406-add-is-internal-messages-import-enabled';
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
-import { AddEmailingDomainTenantStatusFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778857335612-add-emailing-domain-tenant-status';
+import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
+import { AddEmailingDomainTenantStatusFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778862608620-add-emailing-domain-tenant-status';
+import { UniqueEmailingDomainGloballyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778865501791-unique-emailing-domain-globally';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -69,5 +71,7 @@ export const INSTANCE_COMMANDS = [
   AddApplicationIdToPublicDomainFastInstanceCommand,
   AddIsInternalMessagesImportEnabledFastInstanceCommand,
   EncryptConnectedAccountTokensSlowInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand,
   AddEmailingDomainTenantStatusFastInstanceCommand,
+  UniqueEmailingDomainGloballyFastInstanceCommand,
 ];
