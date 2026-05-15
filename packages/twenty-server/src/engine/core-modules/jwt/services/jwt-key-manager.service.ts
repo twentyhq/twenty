@@ -78,6 +78,51 @@ export class JwtKeyManagerService {
     });
   }
 
+  async getCurrentSigningKeyMetadata(): Promise<{
+    id: string;
+    createdAt: Date;
+  } | null> {
+    const current = await this.findCurrentSigningKeyRow();
+
+    if (!isDefined(current)) {
+      return null;
+    }
+
+    return { id: current.id, createdAt: current.createdAt };
+  }
+
+  async rotateCurrent(): Promise<CurrentSigningKey> {
+    const generated = this.generateEcP256KeyPair();
+    const newId = randomUUID();
+
+    await this.signingKeyRepository.manager.transaction(
+      async (entityManager) => {
+        const repository = entityManager.getRepository(SigningKeyEntity);
+
+        // Demote the existing current key first; the partial unique index on
+        // (isCurrent = true) is checked at statement end, so the subsequent
+        // insert never observes two current rows.
+        await repository.update({ isCurrent: true }, { isCurrent: false });
+
+        await repository.insert({
+          id: newId,
+          publicKey: generated.publicKeyPem,
+          privateKey: this.secretEncryptionService.encryptVersioned(
+            generated.privateKeyPem,
+          ),
+          isCurrent: true,
+          revokedAt: null,
+        });
+      },
+    );
+
+    await this.coreEntityCacheService.invalidate('signingKeyPublicKey', newId);
+    this.currentSigningKeyPromise = null;
+    this.currentSigningKeyCachedAt = 0;
+
+    return { id: newId, privateKeyPem: generated.privateKeyPem };
+  }
+
   async revokeSigningKey(id: string): Promise<SigningKeyEntity> {
     if (!isNonEmptyString(id) || !isValidUuid(id)) {
       throw new JwtKeyManagerException(
