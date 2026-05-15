@@ -2,7 +2,7 @@
 # Dependency stages
 # ===========================================================================
 
-FROM node:24-alpine AS front-deps
+FROM node:24.15.0-alpine3.23@sha256:8e2c930fda481a6ec141fe5a88e8c249c69f8102fe98af505f38c081649ea749 AS front-deps
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 RUN yarn workspaces focus twenty twenty-front twenty-front-component-renderer twenty-ui twenty-shared twenty-sdk twenty-client-sdk && yarn cache clean && npx nx reset
 
 
-FROM node:24-alpine AS server-deps
+FROM node:24.15.0-alpine3.23@sha256:8e2c930fda481a6ec141fe5a88e8c249c69f8102fe98af505f38c081649ea749 AS server-deps
 
 WORKDIR /app
 
@@ -84,7 +84,7 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 #   docker build --target twenty-server -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
-FROM node:24-alpine AS twenty-server
+FROM node:24.15.0-alpine3.23@sha256:8e2c930fda481a6ec141fe5a88e8c249c69f8102fe98af505f38c081649ea749 AS twenty-server
 
 RUN apk add --no-cache curl jq postgresql-client
 
@@ -187,7 +187,7 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
     echo "$NOARCH_SUM  s6-overlay-noarch.tar.xz" | sha256sum -c - && \
     echo "$ARCH_SUM  s6-overlay-arch.tar.xz" | sha256sum -c -
 
-FROM node:24-alpine AS twenty-app-dev
+FROM node:24.15.0-alpine3.23@sha256:8e2c930fda481a6ec141fe5a88e8c249c69f8102fe98af505f38c081649ea749 AS twenty-app-dev
 
 # s6-overlay
 COPY --from=s6-fetch /tmp/s6-overlay-noarch.tar.xz /tmp/
