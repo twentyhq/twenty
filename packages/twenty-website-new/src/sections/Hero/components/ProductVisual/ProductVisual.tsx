@@ -268,10 +268,11 @@ const SendBtn = styled.span`
 `;
 
 type ProductVisualProps = {
+  activeScene?: number;
   visual: AppPreviewConfig;
 };
 
-export function ProductVisual({ visual }: ProductVisualProps) {
+export function ProductVisual({ activeScene, visual }: ProductVisualProps) {
   const {
     activeItem,
     activeLabel,
@@ -280,13 +281,14 @@ export function ProductVisual({ visual }: ProductVisualProps) {
     handleSelectLabel,
     handleToggleFolder,
     highlightedItemId,
+    isScrollDriven,
     openFolderIds,
     revealedObjectIds,
     selectedOption,
     streamComplete,
     streamedText,
     workspaceNav,
-  } = useProductVisualAutoplay(visual);
+  } = useProductVisualAutoplay(visual, { externalScene: activeScene });
 
   const activeHeader = displayPage?.header;
   const showViewBar =
@@ -379,7 +381,7 @@ export function ProductVisual({ visual }: ProductVisualProps) {
                         <ThinkingText>Thinking...</ThinkingText>
                       )}
                     </AiMessages>
-                    {streamComplete ? (
+                    {streamComplete && !isScrollDriven ? (
                       <PromptOptions>
                         {PROMPT_OPTIONS.filter(
                           (_, index) => index !== selectedOption,

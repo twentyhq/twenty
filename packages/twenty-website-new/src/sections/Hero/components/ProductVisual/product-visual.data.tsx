@@ -91,6 +91,25 @@ export const PROMPT_OPTIONS = [
         stroke="currentColor"
         strokeWidth="2"
       >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+    ),
+    label: 'Show me deals closing this month',
+    navSteps: [{ at: 0.3, target: 'Opportunities' }],
+    response:
+      'Filtering your pipeline to deals closing this month. Found 5 opportunities worth $1.8M total across Identified, Qualified, and Engaged stages. The biggest: Enterprise Expansion with Anthropic at $500,000.',
+  },
+  {
+    icon: (
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <rect x="3" y="3" width="7" height="7" />
         <rect x="14" y="3" width="7" height="7" />
         <rect x="3" y="14" width="7" height="7" />
@@ -98,10 +117,7 @@ export const PROMPT_OPTIONS = [
       </svg>
     ),
     label: 'Create a dashboard',
-    navSteps: [
-      { at: 0.35, target: 'Dashboards' },
-      { at: 0.75, target: 'Sales Dashboard' },
-    ],
+    navSteps: [{ at: 0.35, target: 'Sales Dashboard' }],
     response:
       "Building a Sales Performance dashboard. I'll include revenue by month, new subscriptions, churn rate, and a distribution chart. Navigating to dashboards now... Opening the Sales Dashboard — your metrics are ready.",
   },

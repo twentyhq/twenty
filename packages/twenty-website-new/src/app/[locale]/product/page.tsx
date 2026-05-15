@@ -5,15 +5,14 @@ import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import { FEATURE_TILES } from '@/app/[locale]/product/feature.data';
-import { TABS } from '@/app/[locale]/product/tabs.data';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/product/three-cards.data';
 import {
-  Body,
   Eyebrow,
   Heading,
   HeadingPart,
   LinkButton,
 } from '@/design-system/components';
+import type { HeroScene } from '@/sections/Hero/components/ProductVisual/HeroVisualScroll';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import {
   getRouteI18n,
@@ -32,7 +31,6 @@ import {
 import { DataModelVisual } from '@/sections/ProductStepper/visuals/DataModelVisual';
 import { WorkflowVisual } from '@/sections/ProductStepper/visuals/WorkflowVisual';
 import { LayoutVisual } from '@/sections/ProductStepper/visuals/LayoutVisual';
-import { Tabs } from '@/sections/Tabs';
 import { ThreeCards } from '@/sections/ThreeCards';
 import { theme } from '@/theme';
 import {
@@ -104,60 +102,88 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
-      <Hero.Root scheme="light">
-        <Hero.Heading page={Pages.Product}>
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`A CRM for teams`)}
-          </HeadingPart>
-          <br />
-          <HeadingPart fontFamily="serif">{i18n._(msg`that`)}</HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">{i18n._(msg`moves fast`)}</HeadingPart>
-        </Hero.Heading>
-        <Hero.Body page={Pages.Product}>
-          {i18n._(
-            msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
-          )}
-        </Hero.Body>
-        <Hero.Cta>
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label={i18n._(msg`Get started`)}
-            variant="contained"
-          />
-        </Hero.Cta>
-        <Hero.ProductVisual visual={APP_PREVIEW_DATA.visual} />
-      </Hero.Root>
+      <Hero.HeroVisualScroll
+        ctaHref="https://app.twenty.com/welcome"
+        ctaLabel={i18n._(msg`Get started`)}
+        scenes={
+          [
+            {
+              heading: (
+                <Heading size="lg" weight="light">
+                  <HeadingPart fontFamily="serif">
+                    {i18n._(msg`A CRM for teams`)}
+                  </HeadingPart>
+                  <br />
+                  <HeadingPart fontFamily="serif">
+                    {i18n._(msg`that`)}
+                  </HeadingPart>{' '}
+                  <HeadingPart fontFamily="sans">
+                    {i18n._(msg`moves fast`)}
+                  </HeadingPart>
+                </Heading>
+              ),
+              body: i18n._(
+                msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
+              ),
+            },
+            {
+              heading: (
+                <Heading size="lg" weight="light">
+                  <HeadingPart fontFamily="serif">
+                    {i18n._(msg`Find your best`)}
+                  </HeadingPart>
+                  <br />
+                  <HeadingPart fontFamily="sans">
+                    {i18n._(msg`deals instantly`)}
+                  </HeadingPart>
+                </Heading>
+              ),
+              body: i18n._(
+                msg`Ask your CRM anything. Get answers about your pipeline, deals, and contacts in seconds.`,
+              ),
+            },
+            {
+              heading: (
+                <Heading size="lg" weight="light">
+                  <HeadingPart fontFamily="serif">
+                    {i18n._(msg`Dashboards built`)}
+                  </HeadingPart>
+                  <br />
+                  <HeadingPart fontFamily="sans">
+                    {i18n._(msg`by AI`)}
+                  </HeadingPart>
+                </Heading>
+              ),
+              body: i18n._(
+                msg`Generate analytics and visualizations from a simple prompt. No configuration needed.`,
+              ),
+            },
+            {
+              heading: (
+                <Heading size="lg" weight="light">
+                  <HeadingPart fontFamily="serif">
+                    {i18n._(msg`Automate everything`)}
+                  </HeadingPart>
+                  <br />
+                  <HeadingPart fontFamily="sans">
+                    {i18n._(msg`with workflows`)}
+                  </HeadingPart>
+                </Heading>
+              ),
+              body: i18n._(
+                msg`Build workflows and automations with natural language. No code required.`,
+              ),
+            },
+          ] satisfies HeroScene[]
+        }
+        visual={APP_PREVIEW_DATA.visual}
+      />
 
       <TrustedBy.Root
         separator={i18n._(msg`trusted by`)}
         logos={TRUSTED_BY_LOGOS}
         clientCount={i18n._(msg`+10k others`)}
       />
-
-      <Tabs.Root>
-        <Eyebrow colorScheme="secondary">
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`AI & Automation`)}
-          </HeadingPart>
-        </Eyebrow>
-        <Heading size="lg" weight="light">
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`AI that actually`)}
-          </HeadingPart>
-          <br />
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`helps you`)}
-          </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`work faster`)}
-          </HeadingPart>
-        </Heading>
-        <Body size="sm">
-          {i18n._(msg`The AI understands your CRM and takes action.`)}
-        </Body>
-        <Tabs.TabGroup tabs={TABS} />
-      </Tabs.Root>
 
       <Feature.Root scheme="light">
         <Feature.Intro align="center" page={Pages.Product}>

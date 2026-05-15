@@ -9,12 +9,26 @@ import {
   PROMPT_OPTIONS,
 } from './product-visual.data';
 
-export function useProductVisualAutoplay(visual: AppPreviewConfig) {
+type AutoplayOptions = {
+  externalScene?: number;
+};
+
+export function useProductVisualAutoplay(
+  visual: AppPreviewConfig,
+  options: AutoplayOptions = {},
+) {
+  const { externalScene } = options;
   const [selectedOption, setSelectedOption] = useState<number>(0);
   const [streamedText, setStreamedText] = useState('');
   const [streamComplete, setStreamComplete] = useState(false);
   const [companyAdded, setCompanyAdded] = useState(false);
   const [personAdded, setPersonAdded] = useState(false);
+
+  useEffect(() => {
+    if (externalScene !== undefined) {
+      setSelectedOption(externalScene);
+    }
+  }, [externalScene]);
 
   const {
     activeItem,
@@ -56,17 +70,32 @@ export function useProductVisualAutoplay(visual: AppPreviewConfig) {
     }
   }
 
+  const isScrollDriven = externalScene !== undefined;
+
   useEffect(() => {
     const option = PROMPT_OPTIONS[selectedOption];
     const fullText = option.response;
+
+    if (isScrollDriven) {
+      const firstStep = option.navSteps[0];
+      if (firstStep) {
+        handleSelectLabel(firstStep.target);
+      }
+      if (selectedOption === 0) {
+        setCompanyAdded(true);
+      }
+    }
+
     let index = 0;
     const completedSteps = new Set<number>();
     let companyInjected = false;
     let personInjected = false;
     setStreamedText('');
     setStreamComplete(false);
-    setCompanyAdded(false);
-    setPersonAdded(false);
+    if (!isScrollDriven) {
+      setCompanyAdded(false);
+      setPersonAdded(false);
+    }
     const interval = setInterval(() => {
       index += 1;
       setStreamedText(fullText.slice(0, index));
@@ -93,7 +122,7 @@ export function useProductVisualAutoplay(visual: AppPreviewConfig) {
       }
     }, 20);
     return () => clearInterval(interval);
-  }, [selectedOption, handleSelectLabel]);
+  }, [selectedOption, handleSelectLabel, isScrollDriven]);
 
   const handleOptionSelect = useCallback(
     (optionIndex: number) => setSelectedOption(optionIndex),
@@ -108,6 +137,7 @@ export function useProductVisualAutoplay(visual: AppPreviewConfig) {
     handleSelectLabel,
     handleToggleFolder,
     highlightedItemId,
+    isScrollDriven,
     openFolderIds,
     revealedObjectIds,
     selectedOption,
