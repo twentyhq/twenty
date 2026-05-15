@@ -21,11 +21,6 @@ export type CurrentSigningKey = {
 };
 
 const UNIQUE_VIOLATION_PG_CODE = '23505';
-
-// In-process cache lifetime for the current signing key. Bounded so that a
-// revocation issued on another pod is picked up here within ~1min without
-// requiring a restart (the cross-pod public-key cache for `verify` already
-// invalidates immediately via CoreEntityCacheService).
 const CURRENT_SIGNING_KEY_LOCAL_TTL_MS = 60 * 1000;
 
 @Injectable()
@@ -48,7 +43,7 @@ export class JwtKeyManagerService {
       Date.now() - this.currentSigningKeyCachedAt >
       CURRENT_SIGNING_KEY_LOCAL_TTL_MS;
 
-    if (this.currentSigningKeyPromise === null || isLocalCacheExpired) {
+    if (!isDefined(this.currentSigningKeyPromise) || isLocalCacheExpired) {
       this.currentSigningKeyPromise = this.loadOrCreateCurrentSigningKey();
       this.currentSigningKeyCachedAt = Date.now();
     }

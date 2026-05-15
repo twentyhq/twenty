@@ -5,6 +5,7 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -18,21 +19,6 @@ import {
   SIGNING_KEY_USAGE_WINDOW_DAYS,
 } from 'src/engine/core-modules/jwt/constants/signing-key-usage.constant';
 
-// Per-kid signing key usage is recorded on every successful JWT verify, i.e.
-// once per authenticated request. To keep that hot path cheap we buffer
-// increments in memory per pod and flush them to Redis every
-// SIGNING_KEY_USAGE_FLUSH_INTERVAL_MS instead of issuing INCR + EXPIRE on every
-// verify. Trade-off: the admin UI count can be up to ~30s stale, but the
-// `getCountInWindow` / `getCountsInWindow` reads always flush first so they
-// reflect the local pod's pending increments immediately.
-//
-// We intentionally use CacheStorageService directly rather than
-// MetricsCacheService: that one is built around Redis sets keyed by a fixed
-// MetricsKeys enum (dedup-by-eventId, 15s buckets, minutes-scale window).
-// Per-kid signing key usage needs the opposite shape: raw integer counters,
-// 1-day buckets over a 7-day window, and a dynamic key suffix per kid. We'll
-// generalize MetricsCacheService into a reusable "bucketed raw counter"
-// primitive once a second caller needs the same shape.
 @Injectable()
 export class SigningKeyVerifyCounterService
   implements OnModuleInit, OnModuleDestroy
@@ -150,8 +136,6 @@ export class SigningKeyVerifyCounterService
       return;
     }
 
-    // Atomically swap the buffer so concurrent recordVerify() calls keep
-    // accumulating into a fresh map while we drain the snapshot.
     const snapshot = this.pendingCounts;
 
     this.pendingCounts = new Map();
@@ -184,7 +168,7 @@ export class SigningKeyVerifyCounterService
       return 0;
     }
 
-    if (typeof value === 'number') {
+    if (isNumber(value)) {
       return Number.isFinite(value) ? value : 0;
     }
 
