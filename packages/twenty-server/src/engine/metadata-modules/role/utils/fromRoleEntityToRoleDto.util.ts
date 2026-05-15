@@ -24,7 +24,8 @@ export const fromRoleEntityToRoleDto = (role: RoleEntity): RoleDTO => {
     permissionFlags: role.rolePermissionFlags?.map((rolePermissionFlag) => ({
       id: rolePermissionFlag.id,
       roleId: rolePermissionFlag.roleId,
-      flag: rolePermissionFlag.permissionFlag.key as PermissionFlagType,
+      flag: (rolePermissionFlag.permissionFlag?.key ??
+        rolePermissionFlag.flag) as PermissionFlagType,
     })),
     objectPermissions: role.objectPermissions,
     fieldPermissions: role.fieldPermissions,
