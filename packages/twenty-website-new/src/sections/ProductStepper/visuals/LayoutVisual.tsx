@@ -100,10 +100,11 @@ export function LayoutVisual({ active }: StepperVisualProps) {
     const dy = event.clientY - dragStartY.current;
     const steps = Math.round(dy / 22);
     if (steps === 0) return;
-    const idx = fields.findIndex((f) => f.id === draggingId);
-    const to = Math.max(0, Math.min(fields.length - 1, idx + steps));
-    if (to === idx) return;
     setFields((prev) => {
+      const idx = prev.findIndex((f) => f.id === draggingId);
+      if (idx === -1) return prev;
+      const to = Math.max(0, Math.min(prev.length - 1, idx + steps));
+      if (to === idx) return prev;
       const next = [...prev];
       const [moved] = next.splice(idx, 1);
       next.splice(to, 0, moved);

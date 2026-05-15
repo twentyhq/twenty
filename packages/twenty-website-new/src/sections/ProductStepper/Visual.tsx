@@ -51,11 +51,13 @@ const VisualFrame = styled.div`
 const slideClassName = css`
   inset: 0;
   opacity: 0;
+  pointer-events: none;
   position: absolute;
   transition: opacity 0.4s ease;
 
   &[data-active='true'] {
     opacity: 1;
+    pointer-events: auto;
   }
 `;
 
