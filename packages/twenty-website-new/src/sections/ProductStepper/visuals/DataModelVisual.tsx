@@ -1,260 +1,42 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { type ReactNode, useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import type { StepperVisualProps } from '../types';
 
-import { STEPPER_BG, STEPPER_FONT } from './stepper-visual-tokens';
-
-const COLOR_INDIGO_BG = '#d9e2fc';
-const COLOR_INDIGO_BORDER = '#c6d4f9';
-const COLOR_PURPLE_BG = '#eddbf9';
-const COLOR_PURPLE_BORDER = '#e3ccf4';
-const COLOR_RED_BG = '#fdd8d8';
-const COLOR_RED_BORDER = '#f9c6c6';
-const COLOR_GREEN_BG = '#d4f4e2';
-const COLOR_GREEN_BORDER = '#b4e7cf';
-
-const BADGE_STANDARD_BG = '#f0f4ff';
-const BADGE_STANDARD_BORDER = '#e6edfe';
-const BADGE_STANDARD_TEXT = '#3e63dd';
-const BADGE_CUSTOM_BG = '#fff1e7';
-const BADGE_CUSTOM_BORDER = '#ffe8d7';
-const BADGE_CUSTOM_TEXT = '#f76808';
-
-const ICON_PROPS = {
-  fill: 'none',
-  height: 12,
-  stroke: 'currentColor',
-  strokeLinecap: 'round' as const,
-  strokeLinejoin: 'round' as const,
-  strokeWidth: 1.5,
-  viewBox: '0 0 24 24',
-  width: 12,
-};
-
-const ICON_SM_PROPS = {
-  ...ICON_PROPS,
-  height: 9,
-  strokeWidth: 2,
-  width: 9,
-};
-
-const IconBuilding = () => (
-  <svg {...ICON_PROPS}>
-    <path d="M3 21l18 0" />
-    <path d="M5 21v-14l8 -4v18" />
-    <path d="M19 21v-10l-6 -4" />
-    <path d="M9 9l0 .01" />
-    <path d="M9 12l0 .01" />
-    <path d="M9 15l0 .01" />
-    <path d="M9 18l0 .01" />
-  </svg>
-);
-
-const IconUser = () => (
-  <svg {...ICON_PROPS}>
-    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-  </svg>
-);
-
-const IconApps = () => (
-  <svg {...ICON_PROPS}>
-    <path d="M4 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
-    <path d="M14 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
-    <path d="M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
-    <path d="M14 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
-  </svg>
-);
-
-const IconTag = () => (
-  <svg {...ICON_PROPS}>
-    <path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-    <path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z" />
-  </svg>
-);
-
-const IconTarget = () => (
-  <svg {...ICON_PROPS}>
-    <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-    <path d="M12 7a5 5 0 1 0 5 5" />
-    <path d="M13 3.055a9 9 0 1 0 7.941 7.945" />
-    <path d="M15 6v3h3l3 -3h-3v-3z" />
-    <path d="M15 9l-3 3" />
-  </svg>
-);
-
-const IconChevronDown = () => (
-  <svg {...ICON_PROPS}>
-    <path d="M6 9l6 -6" />
-    <path d="M6 9l-6 -6" />
-  </svg>
-);
-
-const IconBuildingSm = () => (
-  <svg {...ICON_SM_PROPS}>
-    <path d="M3 21l18 0" />
-    <path d="M5 21v-14l8 -4v18" />
-    <path d="M19 21v-10l-6 -4" />
-    <path d="M9 9l0 .01" />
-    <path d="M9 12l0 .01" />
-    <path d="M9 15l0 .01" />
-    <path d="M9 18l0 .01" />
-  </svg>
-);
-
-const IconUsersSm = () => (
-  <svg {...ICON_SM_PROPS} strokeWidth={1.8}>
-    <path d="M9 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-    <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
-  </svg>
-);
-
-const IconTargetSm = () => (
-  <svg {...ICON_SM_PROPS}>
-    <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-    <path d="M12 7a5 5 0 1 0 5 5" />
-    <path d="M13 3.055a9 9 0 1 0 7.941 7.945" />
-    <path d="M15 6v3h3l3 -3h-3v-3z" />
-    <path d="M15 9l-3 3" />
-  </svg>
-);
-
-const IconUserScreenSm = () => (
-  <svg {...ICON_SM_PROPS} strokeWidth={1.8}>
-    <path d="M19.03 17.818a3 3 0 0 0 1.97 -2.818v-8a3 3 0 0 0 -3 -3h-12a3 3 0 0 0 -3 3v8c0 1.317 .85 2.436 2.03 2.84" />
-    <path d="M10 14a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-    <path d="M8 21a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2" />
-  </svg>
-);
-
-const IconUserSm = () => (
-  <svg {...ICON_SM_PROPS}>
-    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-  </svg>
-);
-
-type EntityDef = {
-  expandCount: number;
-  fields: { icon: ReactNode; label: string }[];
-  headerIcon: ReactNode;
-  iconBg: string;
-  iconBorder: string;
-  id: string;
-  isCustom: boolean;
-  label: string;
-  meta: string;
-  x: number;
-  y: number;
-};
-
-type ConnectionDef = {
-  from: string;
-  to: string;
-};
-
-const ENTITIES: EntityDef[] = [
-  {
-    id: 'workspaces',
-    label: 'Workspaces',
-    meta: '22',
-    isCustom: true,
-    headerIcon: <IconUserScreenSm />,
-    iconBg: COLOR_GREEN_BG,
-    iconBorder: COLOR_GREEN_BORDER,
-    fields: [
-      { icon: <IconBuilding />, label: 'Company' },
-      { icon: <IconUser />, label: 'Users' },
-    ],
-    expandCount: 21,
-    x: 40,
-    y: 40,
-  },
-  {
-    id: 'companies',
-    label: 'Companies',
-    meta: '39',
-    isCustom: false,
-    headerIcon: <IconBuildingSm />,
-    iconBg: COLOR_INDIGO_BG,
-    iconBorder: COLOR_INDIGO_BORDER,
-    fields: [
-      { icon: <IconApps />, label: 'Workspace' },
-      { icon: <IconTag />, label: '31 fields' },
-    ],
-    expandCount: 8,
-    x: 290,
-    y: 20,
-  },
-  {
-    id: 'users',
-    label: 'Users',
-    meta: '497',
-    isCustom: true,
-    headerIcon: <IconUsersSm />,
-    iconBg: COLOR_PURPLE_BG,
-    iconBorder: COLOR_PURPLE_BORDER,
-    fields: [
-      { icon: <IconUser />, label: 'People' },
-      { icon: <IconApps />, label: 'Workspace' },
-    ],
-    expandCount: 32,
-    x: 40,
-    y: 310,
-  },
-  {
-    id: 'people',
-    label: 'People',
-    meta: '648',
-    isCustom: false,
-    headerIcon: <IconUserSm />,
-    iconBg: COLOR_INDIGO_BG,
-    iconBorder: COLOR_INDIGO_BORDER,
-    fields: [
-      { icon: <IconBuilding />, label: 'Company' },
-      { icon: <IconUser />, label: 'Users' },
-      { icon: <IconTarget />, label: 'Opportunity' },
-    ],
-    expandCount: 4,
-    x: 280,
-    y: 400,
-  },
-  {
-    id: 'opportunities',
-    label: 'Opportunities',
-    meta: '42',
-    isCustom: false,
-    headerIcon: <IconTargetSm />,
-    iconBg: COLOR_RED_BG,
-    iconBorder: COLOR_RED_BORDER,
-    fields: [
-      { icon: <IconBuilding />, label: 'Company' },
-      { icon: <IconTag />, label: '12 fields' },
-    ],
-    expandCount: 23,
-    x: 380,
-    y: 190,
-  },
-];
-
-const CONNECTIONS: ConnectionDef[] = [
-  { from: 'workspaces', to: 'companies' },
-  { from: 'workspaces', to: 'users' },
-  { from: 'users', to: 'people' },
-  { from: 'companies', to: 'people' },
-  { from: 'companies', to: 'opportunities' },
-  { from: 'people', to: 'opportunities' },
-];
+import {
+  BADGE_CUSTOM_BG,
+  BADGE_CUSTOM_BORDER,
+  BADGE_CUSTOM_TEXT,
+  BADGE_STANDARD_BG,
+  BADGE_STANDARD_BORDER,
+  BADGE_STANDARD_TEXT,
+  CONNECTIONS,
+  type ConnectionDef,
+  ENTITIES,
+} from './data/data-model.data';
+import { IconChevronDown } from './icons/data-model-icons';
+import {
+  STEPPER_BG,
+  STEPPER_BORDER_LIGHT,
+  STEPPER_BORDER_MEDIUM,
+  STEPPER_BORDER_STRONG,
+  STEPPER_BORDER_SUBTLE,
+  STEPPER_CARD_BG,
+  STEPPER_FONT,
+  STEPPER_HEADER_BG,
+  STEPPER_HEADER_BORDER,
+  STEPPER_SHADOW_SM,
+  STEPPER_TEXT,
+  STEPPER_TEXT_MUTED,
+  STEPPER_TEXT_TERTIARY,
+} from './stepper-visual-tokens';
 
 const Wrapper = styled.div`
   background: ${STEPPER_BG};
   border-radius: 2px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: ${STEPPER_SHADOW_SM};
   display: flex;
   flex-direction: column;
   font-family: ${STEPPER_FONT};
@@ -275,10 +57,10 @@ const Header = styled.div`
 
 const HeaderLogo = styled.span`
   align-items: center;
-  background: ${COLOR_INDIGO_BG};
-  border: 1px solid ${COLOR_INDIGO_BORDER};
+  background: ${STEPPER_HEADER_BG};
+  border: 1px solid ${STEPPER_HEADER_BORDER};
   border-radius: 3px;
-  color: #333;
+  color: ${STEPPER_TEXT};
   display: flex;
   height: 14px;
   justify-content: center;
@@ -286,7 +68,7 @@ const HeaderLogo = styled.span`
 `;
 
 const HeaderTitle = styled.span`
-  color: #333;
+  color: ${STEPPER_TEXT};
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
@@ -302,9 +84,9 @@ const HeaderActions = styled.div`
 
 const HeaderBtn = styled.span`
   align-items: center;
-  border: 1px solid #ebebeb;
+  border: 1px solid ${STEPPER_BORDER_MEDIUM};
   border-radius: 4px;
-  color: #666;
+  color: ${STEPPER_TEXT_MUTED};
   display: flex;
   height: 22px;
   justify-content: center;
@@ -313,9 +95,9 @@ const HeaderBtn = styled.span`
 
 const HeaderCmdBtn = styled.span`
   align-items: center;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid ${STEPPER_BORDER_SUBTLE};
   border-radius: 4px;
-  color: #b3b3b3;
+  color: ${STEPPER_TEXT_TERTIARY};
   display: flex;
   font-size: 12px;
   font-weight: 500;
@@ -326,7 +108,7 @@ const HeaderCmdBtn = styled.span`
 
 const Canvas = styled.div`
   background: white;
-  border: 1px solid #ebebeb;
+  border: 1px solid ${STEPPER_BORDER_MEDIUM};
   border-radius: 8px;
   flex: 1;
   margin: 0 10px 10px;
@@ -347,8 +129,8 @@ const SvgLayer = styled.svg`
 
 const EntityCard = styled.div<{ $hovered: boolean }>`
   backdrop-filter: blur(14px);
-  background: #fcfcfc;
-  border: 1px solid ${({ $hovered }) => ($hovered ? '#d6d6d6' : '#ebebeb')};
+  background: ${STEPPER_CARD_BG};
+  border: 1px solid ${({ $hovered }) => ($hovered ? STEPPER_BORDER_STRONG : STEPPER_BORDER_MEDIUM)};
   border-radius: 8px;
   box-shadow:
     0 0 2px rgba(0, 0, 0, 0.08),
@@ -380,7 +162,7 @@ const EntityHeader = styled.div`
 
 const InnerCard = styled.div`
   background: white;
-  border: 1px solid #f1f1f1;
+  border: 1px solid ${STEPPER_BORDER_LIGHT};
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -394,7 +176,7 @@ const EntityIcon = styled.span<{ $bg: string; $border: string }>`
   background: ${({ $bg }) => $bg};
   border: 1px solid ${({ $border }) => $border};
   border-radius: 3px;
-  color: #333;
+  color: ${STEPPER_TEXT};
   display: flex;
   height: 14px;
   justify-content: center;
@@ -402,7 +184,7 @@ const EntityIcon = styled.span<{ $bg: string; $border: string }>`
 `;
 
 const EntityLabel = styled.span`
-  color: #333;
+  color: ${STEPPER_TEXT};
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
@@ -412,7 +194,7 @@ const EntityLabel = styled.span`
 `;
 
 const EntityMeta = styled.span`
-  color: #b3b3b3;
+  color: ${STEPPER_TEXT_TERTIARY};
   flex-shrink: 0;
   font-size: 12px;
   font-weight: 500;
@@ -426,7 +208,11 @@ const MetaBadge = styled.div`
   margin-left: auto;
 `;
 
-const MetaBadgeIcon = styled.span<{ $bg: string; $border: string; $color: string }>`
+const MetaBadgeIcon = styled.span<{
+  $bg: string;
+  $border: string;
+  $color: string;
+}>`
   align-items: center;
   background: ${({ $bg }) => $bg};
   border: 1px solid ${({ $border }) => $border};
@@ -441,14 +227,14 @@ const MetaBadgeIcon = styled.span<{ $bg: string; $border: string; $color: string
 `;
 
 const MetaBadgeText = styled.span`
-  color: #666;
+  color: ${STEPPER_TEXT_MUTED};
   font-size: 9px;
   font-weight: 400;
 `;
 
 const FieldRow = styled.div`
   align-items: center;
-  color: #333;
+  color: ${STEPPER_TEXT};
   display: flex;
   font-size: 12px;
   font-weight: 400;
@@ -460,7 +246,7 @@ const FieldRow = styled.div`
 
 const FieldIcon = styled.span`
   align-items: center;
-  color: #666;
+  color: ${STEPPER_TEXT_MUTED};
   display: flex;
   height: 14px;
   justify-content: center;
@@ -469,7 +255,7 @@ const FieldIcon = styled.span`
 
 const ExpandHint = styled.div`
   align-items: center;
-  color: #999;
+  color: ${STEPPER_TEXT_TERTIARY};
   display: flex;
   font-size: 12px;
   font-weight: 400;
@@ -595,7 +381,7 @@ export function DataModelVisual({ active }: StepperVisualProps) {
             const from = getCardCenter(positions, conn.from);
             const to = getCardCenter(positions, conn.to);
             const highlighted = isConnectionHighlighted(conn);
-            const color = highlighted ? '#d6d6d6' : '#ebebeb';
+            const color = highlighted ? STEPPER_BORDER_STRONG : STEPPER_BORDER_MEDIUM;
 
             const dx = Math.abs(to.x - from.x);
             const dy = Math.abs(to.y - from.y);

@@ -1,18 +1,15 @@
 'use client';
 
-import type { ImageType } from '@/design-system/components/Image';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import NextImage from 'next/image';
 import type { ComponentType } from 'react';
 
 import type { StepperVisualProps } from './types';
 import { StepperVisualFrame } from './StepperVisualFrame';
 
 type StepVisual = {
-  image?: ImageType;
-  visual?: ComponentType<StepperVisualProps>;
+  visual: ComponentType<StepperVisualProps>;
 };
 
 type ProductStepperVisualProps = {
@@ -62,11 +59,6 @@ const slideClassName = css`
   }
 `;
 
-const slideImageClassName = css`
-  object-fit: contain;
-  object-position: center;
-`;
-
 const visualWrapperClassName = css`
   display: flex;
   height: 100%;
@@ -92,35 +84,17 @@ export function Visual({
             const isActive = index === activeStepIndex;
             const VisualComponent = step.visual;
 
-            if (VisualComponent) {
-              return (
-                <div
-                  key={index}
-                  className={slideClassName}
-                  data-active={String(isActive)}
-                >
-                  <div className={visualWrapperClassName}>
-                    <VisualComponent active={isActive} />
-                  </div>
+            return (
+              <div
+                key={index}
+                className={slideClassName}
+                data-active={String(isActive)}
+              >
+                <div className={visualWrapperClassName}>
+                  <VisualComponent active={isActive} />
                 </div>
-              );
-            }
-
-            if (step.image) {
-              return (
-                <NextImage
-                  key={`${step.image.src}-${index}`}
-                  alt={step.image.alt}
-                  className={`${slideClassName} ${slideImageClassName}`}
-                  data-active={String(isActive)}
-                  fill
-                  sizes="(min-width: 921px) 50vw, 100vw"
-                  src={step.image.src}
-                />
-              );
-            }
-
-            return null;
+              </div>
+            );
           })}
         </StepperVisualFrame>
       </VisualFrame>

@@ -66,7 +66,7 @@ export function Flow({ body, children, eyebrow, steps }: FlowProps) {
     }),
   );
 
-  const stepVisuals = steps.map(({ image, visual }) => ({ image, visual }));
+  const stepVisuals = steps.map(({ visual }) => ({ visual }));
 
   return (
     <StyledSection ref={scrollContainerRef}>

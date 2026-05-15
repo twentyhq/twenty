@@ -5,92 +5,37 @@ import { useCallback, useRef, useState } from 'react';
 
 import type { StepperVisualProps } from '../types';
 
+import { FIELDS, NAV } from './data/layout.data';
 import {
-  STEPPER_ACCENT_GREEN,
+  CheckSvg,
+  ChevLeft,
+  DotsV,
+  DotsVW,
+  EyeIcon,
+  FieldIcon,
+  GripV,
+  ListSvg,
+  NavSvgIcon,
+  NewSecSvg,
+  PaintSvg,
+  PlusSvg,
+  SparkSvg,
+} from './icons/layout-icons';
+import {
+  STEPPER_BORDER_LIGHT,
+  STEPPER_BORDER_MEDIUM,
+  STEPPER_BORDER_STRONG,
+  STEPPER_BORDER_SUBTLE,
   STEPPER_FONT,
   STEPPER_TEXT,
   STEPPER_TEXT_SECONDARY,
   STEPPER_TEXT_TERTIARY,
+  STEPPER_TINT,
 } from './stepper-visual-tokens';
 
 const ACCENT = '#3e63dd';
-const LIGHT = '#b3b3b3';
-const STRONGER = '#d6d6d6';
-const MEDIUM_BORDER = '#ebebeb';
-const LIGHT_BORDER = '#f1f1f1';
 const GLASS = 'rgba(255,255,255,0.9)';
-const TINT = 'rgba(0,0,0,0.04)';
 const R = '3px';
-
-type FieldDef = {
-  icon: 'link' | 'user' | 'money' | 'target' | 'users' | 'map' | 'calendar';
-  id: string;
-  label: string;
-  section: string;
-  type: string;
-  visible: boolean;
-};
-
-const FIELDS: FieldDef[] = [
-  {
-    id: 'url',
-    icon: 'link',
-    label: 'URL',
-    type: 'Link',
-    section: 'General',
-    visible: true,
-  },
-  {
-    id: 'account-owner',
-    icon: 'user',
-    label: 'Account Owner',
-    type: 'Relation',
-    section: 'General',
-    visible: true,
-  },
-  {
-    id: 'revenue',
-    icon: 'money',
-    label: 'Revenue',
-    type: 'Currency',
-    section: 'General',
-    visible: true,
-  },
-  {
-    id: 'icp',
-    icon: 'target',
-    label: 'ICP',
-    type: 'Boolean',
-    section: 'Additional',
-    visible: false,
-  },
-  {
-    id: 'employees',
-    icon: 'users',
-    label: 'Employees',
-    type: 'Number',
-    section: 'Other',
-    visible: true,
-  },
-  {
-    id: 'address',
-    icon: 'map',
-    label: 'Address',
-    type: 'Address',
-    section: 'Other',
-    visible: true,
-  },
-  {
-    id: 'creation-date',
-    icon: 'calendar',
-    label: 'Creation date',
-    type: 'Date & Time',
-    section: 'Other',
-    visible: true,
-  },
-];
-
-// ── Canvas ──────────────────────────────────────────────────────────────────
 
 const Canvas = styled.div`
   font-family: ${STEPPER_FONT};
@@ -98,8 +43,6 @@ const Canvas = styled.div`
   position: relative;
   width: 100%;
 `;
-
-// ── Layer 1: Main white card with blue header ───────────────────────────────
 
 const MainCard = styled.div`
   background: white;
@@ -150,12 +93,6 @@ const HeaderSave = styled.span`
   gap: 3px;
   padding: 2px 8px;
 `;
-
-const MainCardBody = styled.div`
-  padding: 10px;
-`;
-
-// ── Layer 2: Widget card (inside main card area) ────────────────────────────
 
 const WidgetPanel = styled.div`
   backdrop-filter: blur(5px);
@@ -231,14 +168,12 @@ const WValue = styled.span`
 
 const WChip = styled.span`
   background: rgba(0, 0, 0, 0.02);
-  border: 0.5px solid ${STRONGER};
+  border: 0.5px solid ${STEPPER_BORDER_STRONG};
   border-radius: 50px;
   color: ${STEPPER_TEXT};
   font-size: 8px;
   padding: 1px 6px;
 `;
-
-// ── Layer 3: Navigation sidebar ─────────────────────────────────────────────
 
 const NavPanel = styled.div`
   backdrop-filter: blur(5px);
@@ -255,7 +190,7 @@ const NavPanel = styled.div`
 `;
 
 const NavSectionLabel = styled.div`
-  color: ${LIGHT};
+  color: ${STEPPER_TEXT_TERTIARY};
   font-size: 8px;
   font-weight: 600;
   padding: 4px 3px;
@@ -263,7 +198,7 @@ const NavSectionLabel = styled.div`
 
 const NavItem = styled.div<{ $active: boolean }>`
   align-items: center;
-  background: ${({ $active }) => ($active ? TINT : 'transparent')};
+  background: ${({ $active }) => ($active ? STEPPER_TINT : 'transparent')};
   border-radius: ${R};
   color: ${({ $active }) => ($active ? STEPPER_TEXT : STEPPER_TEXT_SECONDARY)};
   cursor: pointer;
@@ -277,7 +212,7 @@ const NavItem = styled.div<{ $active: boolean }>`
 const NavIconBox = styled.span<{ $bg: string }>`
   align-items: center;
   background: ${({ $bg }) => $bg};
-  border: 0.5px solid ${STRONGER};
+  border: 0.5px solid ${STEPPER_BORDER_STRONG};
   border-radius: 3px;
   display: flex;
   flex-shrink: 0;
@@ -297,8 +232,8 @@ const NavSubItem = styled.div`
 `;
 
 const NavBreadcrumb = styled.span`
-  border-bottom: 0.5px solid ${STRONGER};
-  border-left: 0.5px solid ${STRONGER};
+  border-bottom: 0.5px solid ${STEPPER_BORDER_STRONG};
+  border-left: 0.5px solid ${STEPPER_BORDER_STRONG};
   border-radius: 0 0 0 2px;
   flex-shrink: 0;
   height: 8px;
@@ -307,7 +242,7 @@ const NavBreadcrumb = styled.span`
 `;
 
 const NavSuffix = styled.span`
-  color: ${LIGHT};
+  color: ${STEPPER_TEXT_TERTIARY};
   font-size: 6px;
 `;
 
@@ -316,8 +251,6 @@ const NavChevron = styled.span`
   font-size: 6px;
   margin-left: auto;
 `;
-
-// ── Layer 4: Actions bar ────────────────────────────────────────────────────
 
 const ActionsBar = styled.div`
   backdrop-filter: blur(5px);
@@ -334,15 +267,13 @@ const ActionsBar = styled.div`
 `;
 
 const ActionBtn = styled.span`
-  border: 0.8px solid rgba(0, 0, 0, 0.08);
+  border: 0.8px solid ${STEPPER_BORDER_SUBTLE};
   border-radius: ${R};
   color: ${STEPPER_TEXT_SECONDARY};
   font-size: 8px;
   font-weight: 500;
   padding: 3px 6px;
 `;
-
-// ── Layer 5: Right panel (Layout editor) ────────────────────────────────────
 
 const RightPanel = styled.div`
   backdrop-filter: blur(5px);
@@ -362,7 +293,7 @@ const RightPanel = styled.div`
 
 const RPHeader = styled.div`
   align-items: center;
-  border-bottom: 0.8px solid ${MEDIUM_BORDER};
+  border-bottom: 0.8px solid ${STEPPER_BORDER_MEDIUM};
   display: flex;
   flex-shrink: 0;
   gap: 2px;
@@ -381,7 +312,7 @@ const RPBackBtn = styled.span`
 
 const RPIconBox = styled.span`
   align-items: center;
-  background: ${TINT};
+  background: ${STEPPER_TINT};
   border-radius: 3px;
   display: flex;
   height: 16px;
@@ -413,7 +344,7 @@ const RPTitleSub = styled.span`
 
 const RPSubBar = styled.div`
   align-items: center;
-  border-bottom: 0.8px solid ${LIGHT_BORDER};
+  border-bottom: 0.8px solid ${STEPPER_BORDER_LIGHT};
   display: flex;
   flex-shrink: 0;
   gap: 3px;
@@ -493,7 +424,7 @@ const RPFieldRow = styled.div<{ $dragging: boolean }>`
 
 const RPFieldIconBox = styled.span`
   align-items: center;
-  background: ${TINT};
+  background: ${STEPPER_TINT};
   border-radius: 3px;
   display: flex;
   flex-shrink: 0;
@@ -519,11 +450,11 @@ const RPFieldName = styled.span`
 `;
 
 const RPFieldDot = styled.span`
-  color: ${LIGHT};
+  color: ${STEPPER_TEXT_TERTIARY};
 `;
 
 const RPFieldType = styled.span`
-  color: ${LIGHT};
+  color: ${STEPPER_TEXT_TERTIARY};
   overflow: hidden;
   text-overflow: ellipsis;
 `;
@@ -543,7 +474,7 @@ const RPAddSection = styled.div`
 
 const RPAddIconBox = styled.span`
   align-items: center;
-  background: ${TINT};
+  background: ${STEPPER_TINT};
   border-radius: 3px;
   display: flex;
   height: 16px;
@@ -558,7 +489,7 @@ const RPAddText = styled.span`
 
 const RPNewFields = styled.div`
   align-items: center;
-  border-top: 0.8px solid ${MEDIUM_BORDER};
+  border-top: 0.8px solid ${STEPPER_BORDER_MEDIUM};
   display: flex;
   gap: 5px;
   margin-top: 4px;
@@ -571,481 +502,9 @@ const RPNewTitle = styled.span`
 `;
 
 const RPNewDesc = styled.span`
-  color: ${LIGHT};
+  color: ${STEPPER_TEXT_TERTIARY};
   font-size: 7px;
 `;
-
-// ── SVG helpers ─────────────────────────────────────────────────────────────
-
-function FieldIcon({ type }: { type: FieldDef['icon'] }) {
-  const c = '#666';
-  const z = 10;
-  switch (type) {
-    case 'link':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <path
-            d="M7 9a3.5 3.5 0 005 0l2-2a3.536 3.536 0 00-5-5L8 3m1 4a3.5 3.5 0 00-5 0L2 9a3.536 3.536 0 005 5l1-1"
-            stroke={c}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.2}
-          />
-        </svg>
-      );
-    case 'user':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <circle cx="8" cy="5.5" r="2.5" stroke={c} strokeWidth={1.2} />
-          <path
-            d="M3.5 13.5c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4"
-            stroke={c}
-            strokeLinecap="round"
-            strokeWidth={1.2}
-          />
-        </svg>
-      );
-    case 'money':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <path
-            d="M8 2v12M5 4.5h4.5a1.5 1.5 0 010 3H5.5a1.5 1.5 0 000 3H11"
-            stroke={c}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.2}
-          />
-        </svg>
-      );
-    case 'target':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <circle cx="8" cy="8" r="6" stroke={c} strokeWidth={1.2} />
-          <circle cx="8" cy="8" r="3" stroke={c} strokeWidth={1.2} />
-          <circle cx="8" cy="8" fill={c} r="1" />
-        </svg>
-      );
-    case 'users':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <circle cx="6" cy="5" r="2" stroke={c} strokeWidth={1.2} />
-          <path
-            d="M2 13c0-2 1.5-3.5 4-3.5s4 1.5 4 3.5"
-            stroke={c}
-            strokeLinecap="round"
-            strokeWidth={1.2}
-          />
-          <circle cx="11" cy="5.5" r="1.5" stroke={c} strokeWidth={1.2} />
-          <path
-            d="M12 9.5c1.5.5 2.5 1.5 2.5 3"
-            stroke={c}
-            strokeLinecap="round"
-            strokeWidth={1.2}
-          />
-        </svg>
-      );
-    case 'map':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <path
-            d="M3 4l3.5-1.5 3 1.5L13 2.5v9.5l-3.5 1.5-3-1.5L3 13.5V4z"
-            stroke={c}
-            strokeLinejoin="round"
-            strokeWidth={1.2}
-          />
-          <path d="M6.5 2.5v9M9.5 4v9" stroke={c} strokeWidth={1.2} />
-        </svg>
-      );
-    case 'calendar':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <rect
-            height="10"
-            rx="1.5"
-            stroke={c}
-            strokeWidth={1.2}
-            width="10"
-            x="3"
-            y="3.5"
-          />
-          <path d="M3 7h10M6 2v2M10 2v2" stroke={c} strokeWidth={1.2} />
-        </svg>
-      );
-    default:
-      return null;
-  }
-}
-
-function NavSvgIcon({ type }: { type: string }) {
-  const c = '#555';
-  const z = 7;
-  switch (type) {
-    case 'building':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <path
-            d="M5 14V3l6 2v9M5 6H3v8h12V7h-4"
-            stroke={c}
-            strokeLinejoin="round"
-            strokeWidth={1.4}
-          />
-        </svg>
-      );
-    case 'user':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <circle cx="8" cy="5" r="2.5" stroke={c} strokeWidth={1.4} />
-          <path
-            d="M3.5 14c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4"
-            stroke={c}
-            strokeLinecap="round"
-            strokeWidth={1.4}
-          />
-        </svg>
-      );
-    case 'target':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <circle cx="8" cy="8" r="5" stroke={c} strokeWidth={1.4} />
-          <circle cx="8" cy="8" r="2" stroke={c} strokeWidth={1.4} />
-          <path d="M8 3v2M13 8h-2" stroke={c} strokeWidth={1.4} />
-        </svg>
-      );
-    case 'checkbox':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <rect
-            height="10"
-            rx="2"
-            stroke={c}
-            strokeWidth={1.4}
-            width="10"
-            x="3"
-            y="3"
-          />
-          <path
-            d="M6 8l1.5 1.5L10 6"
-            stroke={c}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.4}
-          />
-        </svg>
-      );
-    case 'notes':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <rect
-            height="10"
-            rx="1.5"
-            stroke={c}
-            strokeWidth={1.4}
-            width="8"
-            x="4"
-            y="3"
-          />
-          <path
-            d="M6.5 6h3M6.5 8.5h3"
-            stroke={c}
-            strokeLinecap="round"
-            strokeWidth={1.4}
-          />
-        </svg>
-      );
-    case 'automation':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <circle cx="8" cy="8" r="5" stroke={c} strokeWidth={1.4} />
-          <path
-            d="M8 5v3l2 1"
-            stroke={c}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.4}
-          />
-        </svg>
-      );
-    case 'play':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <path
-            d="M5 3.5l8 4.5-8 4.5V3.5z"
-            stroke={c}
-            strokeLinejoin="round"
-            strokeWidth={1.4}
-          />
-        </svg>
-      );
-    case 'versions':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <rect
-            height="8"
-            rx="1"
-            stroke={c}
-            strokeWidth={1.4}
-            width="6"
-            x="5"
-            y="4"
-          />
-          <path d="M3 6v6a1 1 0 001 1h6" stroke={c} strokeWidth={1.4} />
-        </svg>
-      );
-    case 'ai':
-      return (
-        <svg fill="none" height={z} viewBox="0 0 16 16" width={z}>
-          <path
-            d="M8 2l1.5 4L14 8l-4.5 2L8 14l-1.5-4L2 8l4.5-2L8 2z"
-            stroke={c}
-            strokeLinejoin="round"
-            strokeWidth={1.2}
-          />
-        </svg>
-      );
-    case 'letter-S':
-      return (
-        <svg height={z} viewBox="0 0 16 16" width={z}>
-          <text
-            fill="#35290f"
-            fontFamily="Inter"
-            fontSize="9"
-            fontWeight="600"
-            textAnchor="middle"
-            x="8"
-            y="12"
-          >
-            S
-          </text>
-        </svg>
-      );
-    case 'stripe-S':
-      return (
-        <svg height={z} viewBox="0 0 16 16" width={z}>
-          <text
-            fill="#333"
-            fontFamily="Inter"
-            fontSize="9"
-            fontWeight="600"
-            textAnchor="middle"
-            x="8"
-            y="12"
-          >
-            S
-          </text>
-        </svg>
-      );
-    default:
-      return null;
-  }
-}
-
-function EyeIcon({ visible }: { visible: boolean }) {
-  if (visible)
-    return (
-      <svg fill="none" height={10} viewBox="0 0 16 16" width={10}>
-        <path
-          d="M2 8s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4z"
-          stroke="#999"
-          strokeLinejoin="round"
-          strokeWidth={1.2}
-        />
-        <circle cx="8" cy="8" r="1.5" stroke="#999" strokeWidth={1.2} />
-      </svg>
-    );
-  return (
-    <svg fill="none" height={10} viewBox="0 0 16 16" width={10}>
-      <path
-        d="M2 8s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4z"
-        stroke="#b3b3b3"
-        strokeLinejoin="round"
-        strokeWidth={1.2}
-      />
-      <path
-        d="M3 3l10 10"
-        stroke="#b3b3b3"
-        strokeLinecap="round"
-        strokeWidth={1.2}
-      />
-    </svg>
-  );
-}
-
-function ChevLeft() {
-  return (
-    <svg fill="none" height={10} viewBox="0 0 16 16" width={10}>
-      <path
-        d="M10 4l-4 4 4 4"
-        stroke="#999"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.2}
-      />
-    </svg>
-  );
-}
-function ChevDown() {
-  return (
-    <svg fill="none" height={7} viewBox="0 0 16 16" width={7}>
-      <path
-        d="M4 6l4 4 4-4"
-        stroke="#999"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.3}
-      />
-    </svg>
-  );
-}
-function DotsV() {
-  return (
-    <svg fill="none" height={10} viewBox="0 0 4 12" width={5}>
-      <circle cx="2" cy="2" fill="#999" r="0.8" />
-      <circle cx="2" cy="6" fill="#999" r="0.8" />
-      <circle cx="2" cy="10" fill="#999" r="0.8" />
-    </svg>
-  );
-}
-function DotsVW() {
-  return (
-    <svg fill="none" height={12} viewBox="0 0 4 12" width={5}>
-      <circle cx="2" cy="2" fill="white" r="1" />
-      <circle cx="2" cy="6" fill="white" r="1" />
-      <circle cx="2" cy="10" fill="white" r="1" />
-    </svg>
-  );
-}
-function GripV() {
-  return (
-    <svg fill="none" height={10} viewBox="0 0 8 12" width={7}>
-      <circle cx="3" cy="2" fill="#999" r="0.8" />
-      <circle cx="5" cy="2" fill="#999" r="0.8" />
-      <circle cx="3" cy="6" fill="#999" r="0.8" />
-      <circle cx="5" cy="6" fill="#999" r="0.8" />
-      <circle cx="3" cy="10" fill="#999" r="0.8" />
-      <circle cx="5" cy="10" fill="#999" r="0.8" />
-    </svg>
-  );
-}
-function PaintSvg() {
-  return (
-    <svg fill="none" height={12} viewBox="0 0 16 16" width={12}>
-      <rect
-        height="6"
-        rx="1"
-        stroke="white"
-        strokeWidth={1.2}
-        width="8"
-        x="4"
-        y="3"
-      />
-      <path
-        d="M6 9v3a1 1 0 001 1h0a1 1 0 001-1V9"
-        stroke="white"
-        strokeLinecap="round"
-        strokeWidth={1.2}
-      />
-    </svg>
-  );
-}
-function CheckSvg() {
-  return (
-    <svg fill="none" height={8} viewBox="0 0 16 16" width={8}>
-      <path
-        d="M3 8l4 4 6-8"
-        stroke="white"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-      />
-    </svg>
-  );
-}
-function ListSvg() {
-  return (
-    <svg fill="none" height={10} viewBox="0 0 16 16" width={10}>
-      <path
-        d="M3 4h4M3 8h4M3 12h4M9 4h4M9 8h4M9 12h4"
-        stroke="#666"
-        strokeLinecap="round"
-        strokeWidth={1.2}
-      />
-    </svg>
-  );
-}
-function SparkSvg() {
-  return (
-    <svg fill="none" height={10} viewBox="0 0 16 16" width={10}>
-      <path
-        d="M8 2l1.5 4.5L14 8l-4.5 1.5L8 14l-1.5-4.5L2 8l4.5-1.5L8 2z"
-        stroke="#999"
-        strokeLinejoin="round"
-        strokeWidth={1.2}
-      />
-    </svg>
-  );
-}
-function NewSecSvg() {
-  return (
-    <svg fill="none" height={10} viewBox="0 0 16 16" width={10}>
-      <path
-        d="M3 4h10M3 8h5M3 12h10M12 8v4M10 10h4"
-        stroke="#666"
-        strokeLinecap="round"
-        strokeWidth={1.2}
-      />
-    </svg>
-  );
-}
-function PlusSvg() {
-  return (
-    <svg fill="none" height={10} viewBox="0 0 16 16" width={10}>
-      <path
-        d="M8 3v10M3 8h10"
-        stroke="#666"
-        strokeLinecap="round"
-        strokeWidth={1.2}
-      />
-    </svg>
-  );
-}
-// ── Nav data ────────────────────────────────────────────────────────────────
-
-const NAV = [
-  { icon: 'building', label: 'Companies', active: true, bg: '#d9e2fc' },
-  { icon: 'user', label: 'People', active: false, bg: '#d9e2fc' },
-  { icon: 'target', label: 'Opportunities', active: false, bg: '#fdd8d8' },
-  { icon: 'checkbox', label: 'Tasks', active: false, bg: '#c7ebe5' },
-  { icon: 'notes', label: 'Notes', active: false, bg: '#c7ebe5' },
-  {
-    icon: 'letter-S',
-    label: 'Sales Dashboard',
-    active: false,
-    bg: '#fef2a4',
-    suffix: 'Dashboard',
-  },
-  {
-    icon: 'automation',
-    label: 'Workflows',
-    active: false,
-    bg: '#ffdcc3',
-    folder: true,
-    children: [
-      { icon: 'automation', label: 'Workflows', bg: '#ebebeb' },
-      { icon: 'play', label: 'Workflows runs', bg: '#ebebeb' },
-      { icon: 'versions', label: 'Workflows versions', bg: '#ebebeb' },
-    ],
-  },
-  { icon: 'ai', label: 'Claude', active: false, bg: '#ebebeb' },
-  {
-    icon: 'stripe-S',
-    label: 'Stripe',
-    active: false,
-    bg: '#ebebeb',
-    folder: true,
-  },
-] as const;
-
-// ── Component ───────────────────────────────────────────────────────────────
 
 export function LayoutVisual({ active }: StepperVisualProps) {
   const [fields, setFields] = useState(FIELDS);
@@ -1093,7 +552,6 @@ export function LayoutVisual({ active }: StepperVisualProps) {
 
   return (
     <Canvas style={{ opacity: active ? 1 : 0.6, transition: 'opacity 0.3s' }}>
-      {/* Layer 1: Main white card with blue header */}
       <MainCard>
         <BlueHeader>
           <HeaderLeft>
@@ -1109,7 +567,6 @@ export function LayoutVisual({ active }: StepperVisualProps) {
         </BlueHeader>
       </MainCard>
 
-      {/* Layer 2: Widget card (overlaps main card) */}
       <WidgetPanel>
         <WidgetInner>
           <WidgetTitle>Widget name</WidgetTitle>
@@ -1145,7 +602,6 @@ export function LayoutVisual({ active }: StepperVisualProps) {
         </WidgetInner>
       </WidgetPanel>
 
-      {/* Layer 3: Navigation sidebar (overlaps main card from left) */}
       <NavPanel>
         <NavSectionLabel>Workspace</NavSectionLabel>
         {NAV.map((item) => (
@@ -1174,14 +630,12 @@ export function LayoutVisual({ active }: StepperVisualProps) {
         ))}
       </NavPanel>
 
-      {/* Layer 4: Actions bar (floats above widget) */}
       <ActionsBar>
         <ActionBtn>+ New record</ActionBtn>
         <ActionBtn>✧ Enrich</ActionBtn>
         <ActionBtn>✎ Edit actions</ActionBtn>
       </ActionsBar>
 
-      {/* Layer 5: Right panel / Layout editor (overlaps everything) */}
       <RightPanel onPointerMove={handleDragMove} onPointerUp={handleDragEnd}>
         <RPHeader>
           <RPBackBtn>

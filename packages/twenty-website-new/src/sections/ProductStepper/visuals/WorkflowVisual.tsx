@@ -5,121 +5,40 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { StepperVisualProps } from '../types';
 
-import { STEPPER_BG, STEPPER_FONT } from './stepper-visual-tokens';
+import {
+  ANIMATION_SEQUENCE,
+  COLOR_GRAY_BG,
+  COLOR_TEAL_BG,
+  EDGES,
+  NODE_HEIGHT,
+  NODE_WIDTH,
+  NODES,
+  STEP_INTERVAL_MS,
+} from './data/workflow.data';
+import { CheckIcon, NodeIcon } from './icons/workflow-icons';
+import {
+  STEPPER_BG,
+  STEPPER_BORDER_MEDIUM,
+  STEPPER_BORDER_STRONG,
+  STEPPER_BORDER_SUBTLE,
+  STEPPER_CARD_BG,
+  STEPPER_FONT,
+  STEPPER_HEADER_BG,
+  STEPPER_HEADER_BORDER,
+  STEPPER_SHADOW_SM,
+  STEPPER_TEXT,
+  STEPPER_TEXT_MUTED,
+  STEPPER_TEXT_TERTIARY,
+  STEPPER_TINT,
+} from './stepper-visual-tokens';
 
 const COLOR_GREEN = '#30a46c';
-const COLOR_AMBER = '#946800';
 const COLOR_GRAY = '#999';
-const COLOR_TEAL_BG = '#e7f9f5';
-const COLOR_GRAY_BG = '#f9f9f9';
-
-type NodeDef = {
-  badge?: string;
-  dimmed?: boolean;
-  icon: 'playlist-add' | 'search' | 'repeat' | 'send' | 'reload' | 'plus';
-  id: string;
-  label: string;
-  labelColor: string;
-  type: string;
-  x: number;
-  y: number;
-};
-
-type EdgeDef = {
-  from: string;
-  to: string;
-};
-
-const TRUNK_X = 55;
-const RIGHT_X = 200;
-const LEFT_X = 5;
-
-const NODES: NodeDef[] = [
-  {
-    id: 'trigger',
-    type: 'Trigger',
-    label: 'Record is Created',
-    icon: 'playlist-add',
-    labelColor: COLOR_GREEN,
-    x: TRUNK_X,
-    y: 16,
-    badge: '1',
-  },
-  {
-    id: 'search',
-    type: 'Action',
-    label: 'Search Records',
-    icon: 'search',
-    labelColor: COLOR_GREEN,
-    x: TRUNK_X,
-    y: 92,
-    badge: '1',
-  },
-  {
-    id: 'iterator',
-    type: 'Flow',
-    label: 'Iterator',
-    icon: 'repeat',
-    labelColor: COLOR_AMBER,
-    x: TRUNK_X,
-    y: 168,
-  },
-  {
-    id: 'email',
-    type: 'Action',
-    label: 'Send Email',
-    icon: 'send',
-    labelColor: COLOR_AMBER,
-    x: RIGHT_X,
-    y: 280,
-  },
-  {
-    id: 'update',
-    type: 'Action',
-    label: 'Update Record',
-    icon: 'reload',
-    labelColor: COLOR_GRAY,
-    x: LEFT_X,
-    y: 340,
-    badge: '3',
-    dimmed: true,
-  },
-  {
-    id: 'create',
-    type: 'Action',
-    label: 'Create Record',
-    icon: 'plus',
-    labelColor: COLOR_GREEN,
-    x: RIGHT_X - 5,
-    y: 400,
-    badge: '1',
-  },
-];
-
-const EDGES: EdgeDef[] = [
-  { from: 'trigger', to: 'search' },
-  { from: 'search', to: 'iterator' },
-  { from: 'iterator', to: 'update' },
-  { from: 'email', to: 'create' },
-];
-
-const ANIMATION_SEQUENCE = [
-  'trigger',
-  'search',
-  'iterator',
-  'email',
-  'update',
-  'create',
-];
-const STEP_INTERVAL_MS = 800;
-
-const NODE_WIDTH = 170;
-const NODE_HEIGHT = 48;
 
 const Wrapper = styled.div`
   background: ${STEPPER_BG};
   border-radius: 2px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: ${STEPPER_SHADOW_SM};
   display: flex;
   flex-direction: column;
   font-family: ${STEPPER_FONT};
@@ -140,10 +59,10 @@ const Header = styled.div`
 
 const HeaderLogo = styled.span`
   align-items: center;
-  background: #d9e2fc;
-  border: 1px solid #c6d4f9;
+  background: ${STEPPER_HEADER_BG};
+  border: 1px solid ${STEPPER_HEADER_BORDER};
   border-radius: 3px;
-  color: #333;
+  color: ${STEPPER_TEXT};
   display: flex;
   height: 14px;
   justify-content: center;
@@ -151,7 +70,7 @@ const HeaderLogo = styled.span`
 `;
 
 const HeaderTitle = styled.span`
-  color: #333;
+  color: ${STEPPER_TEXT};
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
@@ -167,9 +86,9 @@ const HeaderActions = styled.div`
 
 const HeaderBtn = styled.span`
   align-items: center;
-  border: 1px solid #ebebeb;
+  border: 1px solid ${STEPPER_BORDER_MEDIUM};
   border-radius: 4px;
-  color: #666;
+  color: ${STEPPER_TEXT_MUTED};
   display: flex;
   height: 22px;
   justify-content: center;
@@ -178,9 +97,9 @@ const HeaderBtn = styled.span`
 
 const HeaderCmdBtn = styled.span`
   align-items: center;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid ${STEPPER_BORDER_SUBTLE};
   border-radius: 4px;
-  color: #b3b3b3;
+  color: ${STEPPER_TEXT_TERTIARY};
   display: flex;
   font-size: 12px;
   font-weight: 500;
@@ -191,7 +110,7 @@ const HeaderCmdBtn = styled.span`
 
 const Canvas = styled.div`
   background: white;
-  border: 1px solid #ebebeb;
+  border: 1px solid ${STEPPER_BORDER_MEDIUM};
   border-radius: 8px;
   flex: 1;
   margin: 0 10px 10px;
@@ -212,8 +131,8 @@ const SvgLayer = styled.svg`
 
 const NodeCard = styled.div`
   align-items: center;
-  background: #fcfcfc;
-  border: 1px solid #d6d6d6;
+  background: ${STEPPER_CARD_BG};
+  border: 1px solid ${STEPPER_BORDER_STRONG};
   border-radius: 8px;
   box-shadow:
     0 0 2px rgba(0, 0, 0, 0.08),
@@ -228,9 +147,9 @@ const NodeCard = styled.div`
 
 const NodeIconBox = styled.div`
   align-items: center;
-  background: rgba(0, 0, 0, 0.04);
+  background: ${STEPPER_TINT};
   border-radius: 4px;
-  color: #666;
+  color: ${STEPPER_TEXT_MUTED};
   display: flex;
   flex-shrink: 0;
   height: 30px;
@@ -277,7 +196,7 @@ const NodeCheck = styled.span<{ $bg: string; $visible: boolean }>`
 `;
 
 const NodeName = styled.div<{ $dimmed?: boolean }>`
-  color: ${({ $dimmed }) => ($dimmed ? '#b3b3b3' : '#333')};
+  color: ${({ $dimmed }) => ($dimmed ? STEPPER_TEXT_TERTIARY : STEPPER_TEXT)};
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
@@ -287,10 +206,10 @@ const NodeName = styled.div<{ $dimmed?: boolean }>`
 `;
 
 const IterationLabel = styled.span`
-  background: #fcfcfc;
-  border: 1px solid #d6d6d6;
+  background: ${STEPPER_CARD_BG};
+  border: 1px solid ${STEPPER_BORDER_STRONG};
   border-radius: 4px;
-  color: #999;
+  color: ${STEPPER_TEXT_TERTIARY};
   font-size: 9px;
   font-weight: 600;
   padding: 2px 4px;
@@ -304,84 +223,6 @@ function getNodeCenter(pos: { x: number; y: number }): {
   y: number;
 } {
   return { x: pos.x + NODE_WIDTH / 2, y: pos.y + NODE_HEIGHT / 2 };
-}
-
-function NodeIcon({ name }: { name: NodeDef['icon'] }) {
-  const props = {
-    fill: 'none',
-    height: 16,
-    stroke: 'currentColor',
-    strokeLinecap: 'round' as const,
-    strokeLinejoin: 'round' as const,
-    strokeWidth: 1.5,
-    viewBox: '0 0 24 24',
-    width: 16,
-  };
-
-  switch (name) {
-    case 'playlist-add':
-      return (
-        <svg {...props}>
-          <path d="M19 8h-14" />
-          <path d="M5 12h9" />
-          <path d="M11 16h-6" />
-          <path d="M15 16h6" />
-          <path d="M18 13v6" />
-        </svg>
-      );
-    case 'search':
-      return (
-        <svg {...props}>
-          <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-          <path d="M21 21l-6 -6" />
-        </svg>
-      );
-    case 'repeat':
-      return (
-        <svg {...props}>
-          <path d="M4 12v-3a3 3 0 0 1 3 -3h13m-3 -3l3 3l-3 3" />
-          <path d="M20 12v3a3 3 0 0 1 -3 3h-13m3 3l-3 -3l3 -3" />
-        </svg>
-      );
-    case 'send':
-      return (
-        <svg {...props} stroke={COLOR_AMBER}>
-          <path d="M10 14l11 -11" />
-          <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />
-        </svg>
-      );
-    case 'reload':
-      return (
-        <svg {...props}>
-          <path d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1.002 7.935 1.007 9.425 4.747" />
-          <path d="M20 4v5h-5" />
-        </svg>
-      );
-    case 'plus':
-      return (
-        <svg {...props}>
-          <path d="M12 5v14" />
-          <path d="M5 12h14" />
-        </svg>
-      );
-  }
-}
-
-function CheckIcon({ color }: { color: string }) {
-  return (
-    <svg
-      fill="none"
-      height="8"
-      stroke={color}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2.5"
-      viewBox="0 0 24 24"
-      width="8"
-    >
-      <path d="M5 12l5 5l10 -10" />
-    </svg>
-  );
 }
 
 export function WorkflowVisual({ active }: StepperVisualProps) {
@@ -470,16 +311,7 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
     <Wrapper style={{ opacity: active ? 1 : 0.7, transition: 'opacity 0.3s' }}>
       <Header>
         <HeaderLogo>
-          <svg
-            fill="none"
-            height="9"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            width="9"
-          >
+          <svg fill="none" height="9" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="9">
             <path d="M10 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
             <path d="M19.5 13a2 2 0 1 0 0 4a2 2 0 0 0 0 -4" />
             <path d="M4.5 13a2 2 0 1 0 0 4a2 2 0 0 0 0 -4" />
@@ -490,44 +322,17 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
         <HeaderTitle>Workflow Runs</HeaderTitle>
         <HeaderActions>
           <HeaderBtn>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-              width="14"
-            >
+            <svg fill="none" height="14" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="14">
               <path d="M6 15l6 -6l6 6" />
             </svg>
           </HeaderBtn>
           <HeaderBtn>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-              width="14"
-            >
+            <svg fill="none" height="14" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="14">
               <path d="M6 9l6 6l6 -6" />
             </svg>
           </HeaderBtn>
           <HeaderCmdBtn>
-            <svg
-              fill="none"
-              height="12"
-              stroke="#666"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-              width="12"
-            >
+            <svg fill="none" height="12" stroke="#666" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" viewBox="0 0 24 24" width="12">
               <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
               <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
               <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
@@ -547,7 +352,7 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
             const to = getNodeCenter(toPos);
             const isHighlighted =
               activeNodes.has(edge.from) && activeNodes.has(edge.to);
-            const color = isHighlighted ? '#d6d6d6' : '#ebebeb';
+            const color = isHighlighted ? STEPPER_BORDER_STRONG : STEPPER_BORDER_MEDIUM;
 
             const dx = Math.abs(to.x - from.x);
             const dy = Math.abs(to.y - from.y);
@@ -599,7 +404,7 @@ export function WorkflowVisual({ active }: StepperVisualProps) {
             const vertEnd = emailPos.y;
             const emailCenterX = emailPos.x + NODE_WIDTH / 2;
             const midY = vertEnd - 28;
-            const loopColor = '#d6d6d6';
+            const loopColor = STEPPER_BORDER_STRONG;
             const ah = 3;
 
             return (
