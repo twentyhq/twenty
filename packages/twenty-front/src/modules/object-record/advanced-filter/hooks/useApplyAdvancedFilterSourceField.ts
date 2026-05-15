@@ -71,9 +71,7 @@ export const useApplyAdvancedFilterSourceField = () => {
     })?.[0];
 
     if (!isDefined(firstOperand)) {
-      throw new Error(
-        `No valid operand found for filter type: ${filterType}`,
-      );
+      throw new Error(`No valid operand found for filter type: ${filterType}`);
     }
 
     setSelectedOperandInDropdown(firstOperand);
