@@ -22,7 +22,10 @@ export const useOpenFrontComponentInSidePanel = () => {
     pageIcon: IconComponent;
     resetNavigationStack?: boolean;
     recordContext?: {
-      recordId: string;
+      // Carries every selected record id, not just one — non-headless
+      // front-component commands need the full multi-selection. A single
+      // selection is just selectedRecordIds.length === 1.
+      selectedRecordIds: string[];
       objectNameSingular: string;
     };
   }) => {

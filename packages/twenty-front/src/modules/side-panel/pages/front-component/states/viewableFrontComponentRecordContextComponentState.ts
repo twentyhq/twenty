@@ -2,7 +2,7 @@ import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/conte
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 type FrontComponentRecordContext = {
-  recordId: string;
+  selectedRecordIds: string[];
   objectNameSingular: string;
 };
 
