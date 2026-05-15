@@ -140,26 +140,41 @@ export class SigningKeyVerifyCounterService
 
     this.pendingCounts = new Map();
 
-    try {
-      await Promise.all(
-        Array.from(snapshot.entries()).map(async ([key, increment]) => {
-          await this.cacheStorage.incrBy(key, increment);
-          await this.cacheStorage.expire(key, SIGNING_KEY_USAGE_TTL_MS);
-        }),
-      );
-    } catch (error) {
-      this.logger.warn(
-        `Failed to flush signing key verify counters; re-buffering ${snapshot.size} bucket(s) for next flush: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
+    const entries = Array.from(snapshot.entries());
+    const incrResults = await Promise.allSettled(
+      entries.map(([key, increment]) =>
+        this.cacheStorage.incrBy(key, increment),
+      ),
+    );
 
-      for (const [key, increment] of snapshot) {
+    const incrementedKeys: string[] = [];
+    let failedCount = 0;
+
+    for (let index = 0; index < entries.length; index++) {
+      const [key, increment] = entries[index];
+
+      if (incrResults[index].status === 'rejected') {
         this.pendingCounts.set(
           key,
           (this.pendingCounts.get(key) ?? 0) + increment,
         );
+        failedCount++;
+        continue;
       }
+
+      incrementedKeys.push(key);
+    }
+
+    await Promise.allSettled(
+      incrementedKeys.map((key) =>
+        this.cacheStorage.expire(key, SIGNING_KEY_USAGE_TTL_MS),
+      ),
+    );
+
+    if (failedCount > 0) {
+      this.logger.warn(
+        `Failed to flush ${failedCount}/${entries.length} signing key verify bucket(s); re-buffered for next flush`,
+      );
     }
   }
 
