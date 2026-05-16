@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 export const FIREFLIES_WEBHOOK_SECRET_ENV_VAR = 'FIREFLIES_WEBHOOK_SECRET';
 
@@ -7,7 +7,7 @@ export const getFirefliesWebhookSecret = ():
   | { success: false; error: string } => {
   const secret = process.env[FIREFLIES_WEBHOOK_SECRET_ENV_VAR];
 
-  if (!isDefined(secret) || secret.length === 0) {
+  if (!isNonEmptyString(secret)) {
     return {
       success: false,
       error:

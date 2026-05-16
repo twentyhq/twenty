@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 export const FIREFLIES_API_KEY_ENV_VAR = 'FIREFLIES_API_KEY';
 
@@ -7,7 +7,7 @@ export const getFirefliesApiKey = ():
   | { success: false; error: string } => {
   const apiKey = process.env[FIREFLIES_API_KEY_ENV_VAR];
 
-  if (!isDefined(apiKey) || apiKey.length === 0) {
+  if (!isNonEmptyString(apiKey)) {
     return {
       success: false,
       error:

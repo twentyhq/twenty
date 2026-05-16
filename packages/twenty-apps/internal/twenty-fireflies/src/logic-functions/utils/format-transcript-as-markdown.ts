@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FirefliesTranscript } from 'src/logic-functions/types/fireflies-transcript.type';
@@ -33,7 +34,7 @@ export const formatTranscriptAsMarkdown = (
   for (const sentence of sentences) {
     const text = sentence.text.trim();
 
-    if (text.length === 0) {
+    if (!isNonEmptyString(text)) {
       continue;
     }
 
