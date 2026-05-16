@@ -61,4 +61,16 @@ describe('formatTranscriptAsMarkdown', () => {
 
     expect(result).toBe('**Sarah:** Hello');
   });
+
+  it('returns the placeholder when every sentence is whitespace-only', () => {
+    const result = formatTranscriptAsMarkdown(
+      buildTranscript([
+        { speaker_name: 'Sarah', text: '   ', start_time: 0 },
+        { speaker_name: 'John', text: '\n\t', start_time: 1 },
+        { speaker_name: null, text: '', start_time: 2 },
+      ]),
+    );
+
+    expect(result).toContain('Fireflies returned no transcript content');
+  });
 });

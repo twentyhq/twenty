@@ -4,15 +4,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FirefliesTranscript } from 'src/logic-functions/types/fireflies-transcript.type';
 
 const UNKNOWN_SPEAKER_LABEL = 'Speaker';
+const EMPTY_TRANSCRIPT_MESSAGE =
+  '_Fireflies returned no transcript content for this meeting._';
 
 export const formatTranscriptAsMarkdown = (
   transcript: FirefliesTranscript,
 ): string => {
   const sentences = transcript.sentences ?? [];
-
-  if (sentences.length === 0) {
-    return '_Fireflies returned no transcript content for this meeting._';
-  }
 
   const lines: string[] = [];
   let currentSpeaker: string | null = null;
@@ -49,6 +47,10 @@ export const formatTranscriptAsMarkdown = (
   }
 
   flush();
+
+  if (lines.length === 0) {
+    return EMPTY_TRANSCRIPT_MESSAGE;
+  }
 
   return lines.join('\n\n');
 };
