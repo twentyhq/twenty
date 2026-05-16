@@ -135,7 +135,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {i18n._(msg`that`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {i18n._(msg`moves fast`)}
+              {i18n._(msg`move fast`)}
             </HeadingPart>
           </Heading>
         }
