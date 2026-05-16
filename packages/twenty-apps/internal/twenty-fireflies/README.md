@@ -1,10 +1,8 @@
 # Fireflies for Twenty
 
-Sync [Fireflies](https://fireflies.ai) call transcripts **and AI summaries**
-into your Twenty CRM. When Fireflies finishes processing a recording, the
-transcript and summary are automatically written onto the matching
-`CalendarEvent` record — searchable, in context, and ready for AI agents and
-workflows to act on.
+Sync [Fireflies](https://fireflies.ai) call transcripts and AI summaries onto
+the matching `CalendarEvent` in your Twenty CRM — searchable, in context, and
+ready for AI agents and workflows to act on.
 
 ## What this app does
 
@@ -39,9 +37,6 @@ event, the call is treated as an orphan and skipped (see
 [Limitations](#limitations) below). This avoids silently writing transcripts
 to the wrong event.
 
-No clicking out to Fireflies to read what was said — every meeting in Twenty
-now carries its own transcript.
-
 ## What gets added to your Twenty workspace
 
 Two new fields on the standard **CalendarEvent** object:
@@ -58,8 +53,8 @@ Two new fields on the standard **CalendarEvent** object:
 3. Follow [Self-hosting setup](#self-hosting-setup-admin-only) below to wire
    up the API key and webhook (admin-only, one-time).
 
-> **Heads up:** if you see *"Fireflies is not configured"* in the logs on
-> the first webhook, your Twenty admin needs to follow the
+> **Heads up:** if you see *"Fireflies is not configured"* on the first
+> webhook, your Twenty admin needs to follow the
 > [Self-hosting setup](#self-hosting-setup-admin-only) section.
 
 ## Limitations
@@ -77,9 +72,9 @@ What this connector intentionally does **not** support in v1:
   workspace-shared API key (set by the admin). Per-user OAuth-style
   connections require extending Twenty's connection provider system and are
   planned once we have evidence that workspace-shared is too coarse.
-- **Editing transcripts or summaries in Twenty.** Both fields are writable in
-  principle but any future Fireflies sync would overwrite manual edits —
-  treat them as read-only.
+- **Editing transcripts or summaries in Twenty.** The fields are writable
+  but the next Fireflies sync overwrites any manual edits — treat them as
+  read-only.
 
 ## Troubleshooting
 
@@ -147,35 +142,20 @@ the summary follows once Fireflies finishes the AI summarization step
 
 ---
 
-## Why webhook instead of polling?
-
-Fireflies recordings are inherently **async-completion events** — a call ends,
-Fireflies takes 5–30 minutes to process the audio, and *then* the transcript
-becomes available. Webhooks fit this shape exactly:
-
-- Real-time delivery once the transcript is ready (no polling lag)
-- No wasted API calls hitting "is anything new?" every N minutes
-- Reuses Twenty's existing HTTP route trigger pattern
-  (`httpRouteTriggerSettings`)
-
-The trade-off is a public, unauthenticated endpoint — handled by HMAC-SHA256
-signature verification using a shared secret.
-
 ## Why `transcript` / `summary` fields on `CalendarEvent` instead of a new object?
 
-Twenty already models meetings as `CalendarEvent` records. Storing the
-transcript and the AI summary as rich-text fields directly on the event:
+Storing the transcript and AI summary as rich-text fields directly on the
+existing `CalendarEvent`:
 
 - Keeps everything about a meeting in one place (no joins)
 - Avoids inventing a new object that other call-recording apps would each
   need to coordinate on
 - Works today without lookup fields
 
-If we later integrate other recording tools (Gong, Otter, Zoom AI, etc.) and
-find that one pair of fields is too restrictive — for example, we need to
-distinguish *which* tool produced the transcript — we'll revisit and likely
-promote the fields to a core platform-level concept (managed alongside
-`CalendarEvent` itself rather than by this app).
+If later integrations (Gong, Otter, Zoom AI, etc.) make one pair of fields
+too restrictive — for example, needing to distinguish *which* tool produced
+the transcript — we'll promote the fields to a platform-level concept rather
+than keep extending this app.
 
 ---
 
