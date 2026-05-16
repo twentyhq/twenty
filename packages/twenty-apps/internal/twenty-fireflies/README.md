@@ -115,9 +115,14 @@ supported.
 
 1. Open the Webhooks V2 page: https://app.fireflies.ai/integrations/api/webhook
 2. Set the **Webhook URL** to your Twenty deployment's webhook endpoint:
-   `https://<your-twenty-domain>/webhook/fireflies`
-   (local dev: see the testing instructions in the troubleshooting section
-   below — Twenty's multi-tenancy requires the right Host header).
+   `https://<your-twenty-domain>/webhook/fireflies`. Twenty resolves the
+   target workspace from the request's `Host` header, so the URL must match
+   the workspace's public domain — `localhost` is not valid in the
+   Fireflies UI. For local development, expose your dev server with a
+   tunnel like `ngrok http 3000` and paste the HTTPS forwarding URL here,
+   or skip the Fireflies UI entirely and POST a signed payload directly to
+   your local endpoint (see [Local webhook testing](#local-webhook-testing)
+   in the developer section below).
 3. Set a **Signing Secret** (a long random string — generate one with
    `openssl rand -hex 32`). Save it; you'll paste it into Twenty next.
 4. Under **Events**, subscribe to **both**:
@@ -197,3 +202,45 @@ server, installs the app, and watches for changes in one command.
 The Fireflies GraphQL API is called directly via `fetch` — no `fireflies` SDK
 dependency. See `src/logic-functions/utils/fireflies-api-request.ts` for the
 auth + error-handling wrapper that all queries go through.
+
+### Local webhook testing
+
+Fireflies' Webhooks V2 UI only accepts a publicly reachable HTTPS URL, so
+pointing it at `http://localhost:*` directly is not possible. Two paths:
+
+**End-to-end via tunnel.** Run a tunnel that fronts your local server with
+a public HTTPS URL (`ngrok http 3000`, `cloudflared tunnel`, etc.), paste
+the HTTPS forwarding URL into the Fireflies webhook UI as the **Webhook
+URL**, and exercise the integration by ending a real Fireflies meeting.
+
+**Backend-only via signed `curl`.** Skip the Fireflies UI entirely and POST
+a signed payload straight to the local endpoint. The signature must be
+HMAC-SHA256 over the **raw** request body, keyed by your
+`FIREFLIES_WEBHOOK_SECRET`, prefixed with `sha256=`:
+
+```bash
+export FIREFLIES_WEBHOOK_SECRET='<the secret you set in Twenty app settings>'
+
+BODY='{"event":"meeting.transcribed","meeting_id":"<a-real-fireflies-transcript-id>"}'
+SIG=$(printf '%s' "$BODY" \
+  | openssl dgst -sha256 -hmac "$FIREFLIES_WEBHOOK_SECRET" \
+  | awk '{print $NF}')
+
+curl -X POST http://localhost:3000/webhook/fireflies \
+  -H 'Content-Type: application/json' \
+  -H "x-hub-signature: sha256=$SIG" \
+  --data-binary "$BODY"
+```
+
+`--data-binary` (not `--data`) is important: it preserves the bytes
+verbatim so the HMAC the server computes matches the one `openssl`
+computed above. Twenty resolves the workspace from the `Host` header, so
+the default dev workspace (mapped to `localhost:3000` in a standard
+`yarn start` setup) receives the request.
+
+To match a real `CalendarEvent`, the transcript ID you pass must belong to
+a Fireflies call whose `calendar_id` / `cal_id` matches an existing
+`CalendarEvent.iCalUid` or `CalendarChannelEventAssociation.eventExternalId`
+in your local Twenty workspace. The easiest local seed is to manually
+insert a row with one of those identifiers and use a Fireflies transcript
+whose calendar fields point at it.
