@@ -3,13 +3,13 @@
 import { styled } from '@linaria/react';
 
 import type { AppPreviewConfig } from '@/sections/AppPreview';
+import { AppWindow } from '@/sections/AppPreview/AppWindow/AppWindow';
 import { COLORS } from '@/sections/AppPreview/Shared/utils/app-preview-theme';
 import { VISUAL_TOKENS } from '@/sections/AppPreview/Shared/utils/app-preview-tokens';
 import { AppPreviewNavbar } from '@/sections/AppPreview/Shell/AppPreviewNavbar';
 import { AppPreviewSidebar } from '@/sections/AppPreview/Shell/AppPreviewSidebar';
 import { AppPreviewViewbar } from '@/sections/AppPreview/Shell/AppPreviewViewbar';
 import { renderPageDefinition } from '@/sections/AppPreview/Shell/PageRenderers';
-import { AppWindow } from '@/sections/AppPreview/AppWindow/AppWindow';
 import { WindowOrderProvider } from '@/sections/AppPreview/WindowOrder/WindowOrderProvider';
 import { theme } from '@/theme';
 
@@ -295,6 +295,7 @@ export function ProductVisual({ activeScene, visual }: ProductVisualProps) {
     displayPage !== null &&
     displayPage !== undefined &&
     displayPage.type !== 'dashboard' &&
+    displayPage.type !== 'record' &&
     displayPage.type !== 'workflow';
 
   return (

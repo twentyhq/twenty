@@ -8,10 +8,11 @@ import { WorkflowBranchLabel } from './WorkflowBranchLabel';
 import { WorkflowEdges } from './WorkflowEdges';
 import { WorkflowNode } from './WorkflowNode';
 import {
-  workflowBranchLabels,
-  workflowEdges,
-  workflowNodes,
+  workflowBranchLabels as defaultBranchLabels,
+  workflowEdges as defaultEdges,
+  workflowNodes as defaultNodes,
 } from './workflow-page-data';
+import { resolveWorkflowNodes } from './resolve-workflow-nodes';
 import {
   WORKFLOW_CANVAS_HEIGHT,
   WORKFLOW_CANVAS_TOP_OFFSET,
@@ -94,7 +95,28 @@ const ActiveBadgeLabel = styled.span`
   padding: 0 8px;
 `;
 
+const PLUS_NODE_SIZE = 24;
+
+const PlusNodeSquare = styled.div`
+  align-items: center;
+  background: ${WORKFLOW_PAGE_COLORS.nodeSurface};
+  border: 1px solid ${WORKFLOW_PAGE_COLORS.nodeBorder};
+  border-radius: 4px;
+  color: ${WORKFLOW_PAGE_COLORS.textTertiary};
+  display: flex;
+  font-size: 16px;
+  font-weight: 300;
+  height: ${PLUS_NODE_SIZE}px;
+  justify-content: center;
+  position: absolute;
+  width: ${PLUS_NODE_SIZE}px;
+`;
+
 export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
+  const nodes = page.nodes ? resolveWorkflowNodes(page.nodes) : defaultNodes;
+  const edges = page.edges ?? defaultEdges;
+  const branchLabels = page.branchLabels ?? defaultBranchLabels;
+
   return (
     <PageShell>
       <CanvasViewportShell>
@@ -106,9 +128,13 @@ export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
         >
           <Canvas>
             <CanvasContent>
-              <WorkflowEdges edges={workflowEdges} nodes={workflowNodes} />
+              <WorkflowEdges
+                edges={edges}
+                nodes={nodes}
+                plusNode={page.plusNode}
+              />
 
-              {workflowNodes.map((node) => (
+              {nodes.map((node) => (
                 <WorkflowNode
                   key={`${node.title}-${node.x}-${node.y}`}
                   Icon={node.Icon}
@@ -122,7 +148,7 @@ export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
                 />
               ))}
 
-              {workflowBranchLabels.map((label) => (
+              {branchLabels.map((label) => (
                 <WorkflowBranchLabel
                   key={`${label.text}-${label.x}-${label.y}`}
                   text={label.text}
@@ -130,6 +156,17 @@ export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
                   y={label.y}
                 />
               ))}
+
+              {page.plusNode && (
+                <PlusNodeSquare
+                  style={{
+                    left: page.plusNode.x - PLUS_NODE_SIZE / 2,
+                    top: page.plusNode.y - PLUS_NODE_SIZE / 2,
+                  }}
+                >
+                  +
+                </PlusNodeSquare>
+              )}
             </CanvasContent>
           </Canvas>
         </CanvasViewport>

@@ -1,40 +1,56 @@
 'use client';
 
-import { type ReactNode, useRef } from 'react';
+import { type ReactNode, useId, useRef, useState } from 'react';
 
 import { Container, LinkButton } from '@/design-system/components';
 import type { AppPreviewConfig } from '@/sections/AppPreview';
+import { TabButtons } from '@/sections/Tabs/components/TabButtons';
+import type { TabType } from '@/sections/Tabs/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
 import { ProductVisual } from './ProductVisual';
 import { useHeroScrollProgress } from './use-hero-scroll-progress';
 
-export type HeroScene = {
-  body: string;
-  heading: ReactNode;
+export type HeroScrollProps = {
+  aiBody: string;
+  aiHeading: ReactNode;
+  ctaHref: string;
+  ctaLabel: string;
+  introBody: string;
+  introHeading: ReactNode;
+  tabs: TabType[];
+  visual: AppPreviewConfig;
 };
 
-const SCENE_COUNT = 4;
 const NAV_HEIGHT = 64;
+const SCROLL_HEIGHT = '200vh';
 
 const ScrollTrack = styled.section`
-  background-color: var(--color-white);
   position: relative;
   width: 100%;
 `;
 
 const StickyFrame = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
   height: calc(100vh - ${NAV_HEIGHT}px);
   justify-content: flex-start;
   overflow: hidden;
   padding-top: ${theme.spacing(7.5)};
   position: sticky;
   top: ${NAV_HEIGHT}px;
+  transition: background-color 0.6s ease;
   width: 100%;
+
+  &[data-phase='0'] {
+    background-color: var(--color-white, #ffffff);
+  }
+
+  &[data-phase='1'] {
+    background-color: var(--color-black, #141414);
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     padding-top: ${theme.spacing(12)};
@@ -46,11 +62,11 @@ const StyledContainer = styled(Container)`
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   min-width: 0;
-  position: relative;
-  text-align: center;
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
+  position: relative;
   row-gap: ${theme.spacing(3)};
+  text-align: center;
   width: 100%;
   z-index: 1;
 
@@ -64,61 +80,87 @@ const HeadingSlot = styled.div`
   max-width: 672px;
   min-height: 96px;
   position: relative;
+  transition: color 0.6s ease;
   width: 100%;
-`;
 
-const HeadingLayer = styled.div`
-  inset: 0;
-  opacity: 0;
-  position: absolute;
-  transform: translateY(8px);
-  transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
+  &[data-phase='0'] {
+    color: ${theme.colors.primary.text[100]};
+  }
 
-  &[data-active='true'] {
-    opacity: 1;
-    position: relative;
-    transform: translateY(0);
+  &[data-phase='1'] {
+    color: ${theme.colors.secondary.text[100]};
   }
 `;
 
-const BodySlot = styled.div`
-  color: ${theme.colors.primary.text[60]};
+const ContentLayer = styled.div`
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: opacity 0.6s ease;
+
+  &[data-active='true'] {
+    opacity: 1;
+    pointer-events: auto;
+    position: relative;
+  }
+`;
+
+const BodyText = styled.p`
   font-size: 16px;
   line-height: 1.5;
+  margin: 0;
   max-width: 591px;
-  min-height: 24px;
-  position: relative;
+  transition: color 0.6s ease;
   width: 100%;
+
+  &[data-phase='0'] {
+    color: ${theme.colors.primary.text[60]};
+  }
+
+  &[data-phase='1'] {
+    color: rgba(255, 255, 255, 0.7);
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     font-size: 18px;
   }
 `;
 
-const BodyLayer = styled.span`
-  inset: 0;
-  opacity: 0;
-  position: absolute;
-  transform: translateY(6px);
-  transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
-
-  &[data-active='true'] {
-    opacity: 1;
-    position: relative;
-    transform: translateY(0);
-  }
+const ActionSlot = styled.div`
+  min-height: 48px;
+  position: relative;
+  width: 100%;
 `;
 
-const CtaRow = styled.div`
+const CtaLayer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${theme.spacing(3)};
+  inset: 0;
   justify-content: center;
+  opacity: 1;
+  position: absolute;
   transition: opacity 0.4s ease;
+
+  &[data-visible='false'] {
+    opacity: 0;
+    pointer-events: none;
+  }
+`;
+
+const TabsLayer = styled.div`
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: opacity 0.4s ease 0.2s;
+  width: 100%;
+
+  &[data-visible='true'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
 `;
 
 const VisualWrapper = styled.div`
@@ -127,57 +169,60 @@ const VisualWrapper = styled.div`
   width: 100%;
 `;
 
-type HeroVisualScrollProps = {
-  ctaHref: string;
-  ctaLabel: string;
-  scenes: HeroScene[];
-  visual: AppPreviewConfig;
-};
-
 export function HeroVisualScroll({
+  aiBody,
+  aiHeading,
   ctaHref,
   ctaLabel,
-  scenes,
+  introBody,
+  introHeading,
+  tabs,
   visual,
-}: HeroVisualScrollProps) {
+}: HeroScrollProps) {
   const trackRef = useRef<HTMLDivElement>(null);
-  const { sceneIndex } = useHeroScrollProgress(trackRef);
+  const phase = useHeroScrollProgress(trackRef);
+  const [activeTab, setActiveTab] = useState(0);
+  const idPrefix = useId();
+
+  const activeScene = phase === 0 ? 0 : activeTab + 1;
 
   return (
-    <ScrollTrack
-      ref={trackRef}
-      style={{ height: `${SCENE_COUNT * 100}vh` }}
-    >
-      <StickyFrame>
+    <ScrollTrack ref={trackRef} style={{ height: SCROLL_HEIGHT }}>
+      <StickyFrame data-phase={phase}>
         <StyledContainer>
-          <HeadingSlot>
-            {scenes.map((scene, index) => (
-              <HeadingLayer data-active={index === sceneIndex} key={index}>
-                {scene.heading}
-              </HeadingLayer>
-            ))}
+          <HeadingSlot data-phase={phase}>
+            <ContentLayer data-active={phase === 0}>
+              {introHeading}
+            </ContentLayer>
+            <ContentLayer data-active={phase === 1}>{aiHeading}</ContentLayer>
           </HeadingSlot>
 
-          <BodySlot>
-            {scenes.map((scene, index) => (
-              <BodyLayer data-active={index === sceneIndex} key={index}>
-                {scene.body}
-              </BodyLayer>
-            ))}
-          </BodySlot>
+          <BodyText data-phase={phase}>
+            {phase === 0 ? introBody : aiBody}
+          </BodyText>
 
-          <CtaRow style={{ opacity: sceneIndex === 0 ? 1 : 0 }}>
-            <LinkButton
-              color="secondary"
-              href={ctaHref}
-              label={ctaLabel}
-              variant="contained"
-            />
-          </CtaRow>
+          <ActionSlot>
+            <CtaLayer data-visible={phase === 0 ? 'true' : 'false'}>
+              <LinkButton
+                color="secondary"
+                href={ctaHref}
+                label={ctaLabel}
+                variant="contained"
+              />
+            </CtaLayer>
+            <TabsLayer data-visible={phase === 1 ? 'true' : 'false'}>
+              <TabButtons
+                activeIndex={activeTab}
+                idPrefix={idPrefix}
+                onSelect={setActiveTab}
+                tabs={tabs}
+              />
+            </TabsLayer>
+          </ActionSlot>
         </StyledContainer>
 
         <VisualWrapper>
-          <ProductVisual activeScene={sceneIndex} visual={visual} />
+          <ProductVisual activeScene={activeScene} visual={visual} />
         </VisualWrapper>
       </StickyFrame>
     </ScrollTrack>

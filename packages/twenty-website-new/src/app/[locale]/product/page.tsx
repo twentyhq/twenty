@@ -1,9 +1,5 @@
-import { msg } from '@lingui/core/macro';
-import type { AppLocale } from 'twenty-shared/translations';
-import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
-import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
-import { TalkToUsButton } from '@/sections/ContactCal';
 import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
+import { AI_HERO_TABS } from '@/app/[locale]/product/ai-hero-tabs.data';
 import { FEATURE_TILES } from '@/app/[locale]/product/feature.data';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/product/three-cards.data';
 import {
@@ -12,32 +8,36 @@ import {
   HeadingPart,
   LinkButton,
 } from '@/design-system/components';
-import type { HeroScene } from '@/sections/Hero/components/ProductVisual/HeroVisualScroll';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import {
   getRouteI18n,
   type LocaleRouteParams,
 } from '@/lib/i18n/utils/get-route-i18n';
 import { Pages } from '@/lib/pages';
-import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Feature } from '@/sections/Feature';
-import { Hero } from '@/sections/Hero';
-import { Menu, MENU_DATA } from '@/sections/Menu';
-import { Demo } from '@/sections/Demo';
-import {
-  ProductStepper,
-  type ProductStepperStepType,
-} from '@/sections/ProductStepper';
-import { DataModelVisual } from '@/sections/ProductStepper/visuals/DataModelVisual';
-import { WorkflowVisual } from '@/sections/ProductStepper/visuals/WorkflowVisual';
-import { LayoutVisual } from '@/sections/ProductStepper/visuals/LayoutVisual';
-import { ThreeCards } from '@/sections/ThreeCards';
-import { theme } from '@/theme';
 import {
   buildBreadcrumbListJsonLd,
   buildRouteMetadata,
   JsonLd,
 } from '@/lib/seo';
+import { TalkToUsButton } from '@/sections/ContactCal';
+import { Demo } from '@/sections/Demo';
+import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
+import { Feature } from '@/sections/Feature';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import {
+  ProductStepper,
+  type ProductStepperStepType,
+} from '@/sections/ProductStepper';
+import { DataModelVisual } from '@/sections/ProductStepper/visuals/DataModelVisual';
+import { LayoutVisual } from '@/sections/ProductStepper/visuals/LayoutVisual';
+import { WorkflowVisual } from '@/sections/ProductStepper/visuals/WorkflowVisual';
+import { ThreeCards } from '@/sections/ThreeCards';
+import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
+import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
+import type { AppLocale } from 'twenty-shared/translations';
 
 export const generateMetadata = buildRouteMetadata('product');
 
@@ -103,79 +103,43 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </Menu.Root>
 
       <Hero.HeroVisualScroll
+        aiBody={i18n._(
+          msg`Ask questions, automate tasks, and get insights — all powered by AI that understands your data.`,
+        )}
+        aiHeading={
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`AI that actually`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`helps you`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`work faster`)}
+            </HeadingPart>
+          </Heading>
+        }
         ctaHref="https://app.twenty.com/welcome"
         ctaLabel={i18n._(msg`Get started`)}
-        scenes={
-          [
-            {
-              heading: (
-                <Heading size="lg" weight="light">
-                  <HeadingPart fontFamily="serif">
-                    {i18n._(msg`A CRM for teams`)}
-                  </HeadingPart>
-                  <br />
-                  <HeadingPart fontFamily="serif">
-                    {i18n._(msg`that`)}
-                  </HeadingPart>{' '}
-                  <HeadingPart fontFamily="sans">
-                    {i18n._(msg`moves fast`)}
-                  </HeadingPart>
-                </Heading>
-              ),
-              body: i18n._(
-                msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
-              ),
-            },
-            {
-              heading: (
-                <Heading size="lg" weight="light">
-                  <HeadingPart fontFamily="serif">
-                    {i18n._(msg`Find your best`)}
-                  </HeadingPart>
-                  <br />
-                  <HeadingPart fontFamily="sans">
-                    {i18n._(msg`deals instantly`)}
-                  </HeadingPart>
-                </Heading>
-              ),
-              body: i18n._(
-                msg`Ask your CRM anything. Get answers about your pipeline, deals, and contacts in seconds.`,
-              ),
-            },
-            {
-              heading: (
-                <Heading size="lg" weight="light">
-                  <HeadingPart fontFamily="serif">
-                    {i18n._(msg`Dashboards built`)}
-                  </HeadingPart>
-                  <br />
-                  <HeadingPart fontFamily="sans">
-                    {i18n._(msg`by AI`)}
-                  </HeadingPart>
-                </Heading>
-              ),
-              body: i18n._(
-                msg`Generate analytics and visualizations from a simple prompt. No configuration needed.`,
-              ),
-            },
-            {
-              heading: (
-                <Heading size="lg" weight="light">
-                  <HeadingPart fontFamily="serif">
-                    {i18n._(msg`Automate everything`)}
-                  </HeadingPart>
-                  <br />
-                  <HeadingPart fontFamily="sans">
-                    {i18n._(msg`with workflows`)}
-                  </HeadingPart>
-                </Heading>
-              ),
-              body: i18n._(
-                msg`Build workflows and automations with natural language. No code required.`,
-              ),
-            },
-          ] satisfies HeroScene[]
+        introBody={i18n._(
+          msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
+        )}
+        introHeading={
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`A CRM for teams`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`that`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`moves fast`)}
+            </HeadingPart>
+          </Heading>
         }
+        tabs={AI_HERO_TABS}
         visual={APP_PREVIEW_DATA.visual}
       />
 

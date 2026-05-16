@@ -1,19 +1,11 @@
 import { type RefObject, useEffect, useState } from 'react';
 
-const SCENE_COUNT = 4;
-
-type ScrollProgress = {
-  progress: number;
-  sceneIndex: number;
-};
+const TRANSITION_POINT = 0.25;
 
 export function useHeroScrollProgress(
   trackRef: RefObject<HTMLDivElement | null>,
-): ScrollProgress {
-  const [state, setState] = useState<ScrollProgress>({
-    progress: 0,
-    sceneIndex: 0,
-  });
+): number {
+  const [phase, setPhase] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,12 +20,8 @@ export function useHeroScrollProgress(
 
       const scrolled = -rect.top;
       const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
-      const nextScene = Math.min(
-        SCENE_COUNT - 1,
-        Math.floor(progress * SCENE_COUNT),
-      );
 
-      setState({ progress, sceneIndex: nextScene });
+      setPhase(progress >= TRANSITION_POINT ? 1 : 0);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -42,5 +30,5 @@ export function useHeroScrollProgress(
     return () => window.removeEventListener('scroll', handleScroll);
   }, [trackRef]);
 
-  return state;
+  return phase;
 }

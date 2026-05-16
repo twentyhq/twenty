@@ -3,9 +3,12 @@ import { useCallback, useEffect, useState } from 'react';
 import type { AppPreviewConfig } from '@/sections/AppPreview';
 import { useAppPreviewState } from '@/sections/AppPreview/Shell/use-app-preview-state';
 
+import { QONTO_RECORD_PAGE } from '@/app/[locale]/(home)/app-preview.data';
+
 import {
   NEW_COMPANY_ROW,
   NEW_PERSON_ROW,
+  NEW_TASK_ROWS,
   PROMPT_OPTIONS,
 } from './product-visual.data';
 
@@ -23,6 +26,7 @@ export function useProductVisualAutoplay(
   const [streamComplete, setStreamComplete] = useState(false);
   const [companyAdded, setCompanyAdded] = useState(false);
   const [personAdded, setPersonAdded] = useState(false);
+  const [tasksAdded, setTasksAdded] = useState(false);
 
   useEffect(() => {
     if (externalScene !== undefined) {
@@ -43,7 +47,9 @@ export function useProductVisualAutoplay(
   } = useAppPreviewState(visual);
 
   let displayPage = activePage;
-  if (
+  if (selectedOption === 3) {
+    displayPage = QONTO_RECORD_PAGE;
+  } else if (
     activePage !== null &&
     activePage !== undefined &&
     activePage.type === 'table'
@@ -67,6 +73,15 @@ export function useProductVisualAutoplay(
         },
         rows: [NEW_PERSON_ROW, ...activePage.rows],
       };
+    } else if (tasksAdded && title === 'All Tasks') {
+      displayPage = {
+        ...activePage,
+        header: {
+          ...activePage.header,
+          count: (activePage.header.count ?? 0) + NEW_TASK_ROWS.length,
+        },
+        rows: [...NEW_TASK_ROWS, ...activePage.rows],
+      };
     }
   }
 
@@ -84,17 +99,22 @@ export function useProductVisualAutoplay(
       if (selectedOption === 0) {
         setCompanyAdded(true);
       }
+      if (selectedOption === 2) {
+        setTasksAdded(true);
+      }
     }
 
     let index = 0;
     const completedSteps = new Set<number>();
     let companyInjected = false;
     let personInjected = false;
+    let tasksInjected = false;
     setStreamedText('');
     setStreamComplete(false);
     if (!isScrollDriven) {
       setCompanyAdded(false);
       setPersonAdded(false);
+      setTasksAdded(false);
     }
     const interval = setInterval(() => {
       index += 1;
@@ -115,6 +135,10 @@ export function useProductVisualAutoplay(
           personInjected = true;
           setPersonAdded(true);
         }
+      }
+      if (selectedOption === 2 && !tasksInjected && progress >= 0.3) {
+        tasksInjected = true;
+        setTasksAdded(true);
       }
       if (index >= fullText.length) {
         clearInterval(interval);

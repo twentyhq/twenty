@@ -104,8 +104,35 @@ export type DashboardPageDefinition = {
   type: 'dashboard';
 };
 
+export type WorkflowNodeDef = {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  label: 'Trigger' | 'Action';
+  title: string;
+  iconName: string;
+  iconColor?: string;
+};
+
+export type WorkflowEdgeDef = {
+  from: string;
+  to: string;
+  type: 'branch' | 'curve' | 'loopBack' | 'loopRight' | 'smoothStep' | 'vertical';
+};
+
+export type WorkflowBranchLabelDef = {
+  text: string;
+  x: number;
+  y: number;
+};
+
 export type WorkflowPageDefinition = {
+  branchLabels?: WorkflowBranchLabelDef[];
+  edges?: WorkflowEdgeDef[];
   header: PageHeader;
+  nodes?: WorkflowNodeDef[];
+  plusNode?: { x: number; y: number };
   type: 'workflow';
 };
 
@@ -135,9 +162,49 @@ export type KanbanPageDefinition = {
   type: 'kanban';
 };
 
+export type RecordField = {
+  avatarUrl?: string;
+  icon?: string;
+  label: string;
+  value: string;
+};
+
+export type RecordRelation = {
+  avatarUrl?: string;
+  domain?: string;
+  icon?: SidebarIcon;
+  name: string;
+};
+
+export type RecordNote = {
+  id: string;
+  title: string;
+  body: string;
+  relation?: { avatarUrl?: string; name: string };
+};
+
+export type RecordPageDefinition = {
+  type: 'record';
+  header: PageHeader;
+  record: {
+    logoDomain?: string;
+    name: string;
+    createdAt: string;
+    fields: RecordField[];
+    moreCount?: number;
+    relations: {
+      title: string;
+      count?: number;
+      items: RecordRelation[];
+    }[];
+  };
+  notes: RecordNote[];
+};
+
 export type PageDefinition =
   | DashboardPageDefinition
   | KanbanPageDefinition
+  | RecordPageDefinition
   | TablePageDefinition
   | WorkflowPageDefinition;
 

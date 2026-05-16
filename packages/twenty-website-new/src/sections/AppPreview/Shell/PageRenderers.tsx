@@ -9,10 +9,12 @@ import type {
   KanbanPageDefinition,
   PageDefinition,
   PageType,
+  RecordPageDefinition,
   TablePageDefinition,
   WorkflowPageDefinition,
 } from '../types';
 import { KanbanPage } from '../Pages/Kanban/KanbanPage';
+import { RecordPage } from '../Pages/Record/RecordPage';
 import { TablePage } from '../Pages/Table/TablePage';
 import { PagePreviewLoader } from '../Shared/components/PagePreviewLoader';
 
@@ -68,6 +70,7 @@ const PAGE_RENDERERS = {
       <SalesDashboardPage page={page} />
     </DashboardViewport>
   ),
+  record: (page: RecordPageDefinition) => <RecordPage page={page} />,
   workflow: (page: WorkflowPageDefinition) => <WorkflowPage page={page} />,
 } satisfies {
   [K in PageType]: (page: Extract<PageDefinition, { type: K }>) => ReactNode;
@@ -91,6 +94,8 @@ export function renderPageDefinition(
       return PAGE_RENDERERS.kanban(page);
     case 'dashboard':
       return PAGE_RENDERERS.dashboard(page);
+    case 'record':
+      return PAGE_RENDERERS.record(page);
     case 'workflow':
       return PAGE_RENDERERS.workflow(page);
   }

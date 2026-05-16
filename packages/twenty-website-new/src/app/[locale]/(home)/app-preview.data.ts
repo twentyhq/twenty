@@ -3,6 +3,7 @@ import type {
   DashboardData,
   DashboardPageDefinition,
   KanbanPageDefinition,
+  RecordPageDefinition,
   TablePageDefinition,
 } from '@/sections/AppPreview';
 import { SHARED_PEOPLE_AVATAR_URLS } from '@/content/site/asset-paths';
@@ -295,6 +296,78 @@ function createTablePage({
     rows,
   };
 }
+
+export const QONTO_RECORD_PAGE: RecordPageDefinition = {
+  type: 'record',
+  header: {
+    title: 'Qonto',
+    count: 12,
+  },
+  record: {
+    logoDomain: 'qonto.com',
+    name: 'Qonto',
+    createdAt: 'Created 4 hours ago',
+    fields: [
+      { icon: 'link', label: 'URL', value: 'qonto.com' },
+      { icon: 'user', label: 'Account O...', value: 'Phil Schiller', avatarUrl: PEOPLE_AVATAR_URLS.philSchiller },
+      { icon: 'mapPin', label: 'Address', value: '18 Rue De Navarin, 75009 Paris' },
+      { icon: 'check', label: 'ICP', value: '✓ True' },
+      { icon: 'currency', label: 'Revenue', value: '$500,000' },
+      { icon: 'linkedin', label: 'Linkedin', value: 'linkedin.com/company/q...' },
+      { icon: 'twitter', label: 'Twitter', value: '@qonto' },
+    ],
+    moreCount: 12,
+    relations: [
+      {
+        title: 'Holdings',
+        items: [
+          { name: 'Q Global Holdings', domain: 'qonto.com' },
+        ],
+      },
+      {
+        title: 'Opportunities',
+        items: [
+          { name: 'Qonto', domain: 'qonto.com' },
+        ],
+      },
+      {
+        title: 'People',
+        count: 12,
+        items: [
+          {
+            name: 'Alexandre',
+            avatarUrl: PEOPLE_AVATAR_URLS.alexandreProt,
+          },
+          {
+            name: 'Steve Anavi',
+            avatarUrl: PEOPLE_AVATAR_URLS.steveAnavi,
+          },
+        ],
+      },
+    ],
+  },
+  notes: [
+    {
+      id: 'logged-call',
+      title: 'Logged call (Phil Schiller ↔ Steve Anavi)',
+      body: 'Apple sells its products by focusing on the benefits users gain from their products, rather than solely highlighting the features. The same approach should be used for selling to Qonto. Understand their pain points and how your product can alleviate those issues. Emphasize how our CRM tool can help streamline their operations, improve customer service, and ultimately, grow their business.',
+      relation: {
+        name: 'Alexandre',
+        avatarUrl: PEOPLE_AVATAR_URLS.alexandreProt,
+      },
+    },
+    {
+      id: 'follow-up',
+      title: 'Follow-up with Alexandre',
+      body: 'Understand their pain points and how your product can alleviate those issues. Emphasize how our CRM tool can help streamline their operations, improve customer service, and ultimately, grow their business.',
+    },
+    {
+      id: 'third-note',
+      title: 'Third note',
+      body: 'Apple sells its products by focusing on the benefits users gain from their products, rather than solely highlighting the features. The same approach should be used for selling to Qonto. Understand their pain points and how your product can alleviate those issues. Emphasize how our CRM tool can help streamline their operations, improve customer service, and ultimately, grow their business.',
+    },
+  ],
+};
 
 export const APP_PREVIEW_DATA: { visual: AppPreviewConfig } = {
   visual: {
@@ -1370,6 +1443,79 @@ export const APP_PREVIEW_DATA: { visual: AppPreviewConfig } = {
                 ],
                 title: 'Create company when adding a new person',
               },
+            },
+          },
+          {
+            id: 'workflow-send-email-sequence',
+            label: 'Send email sequence when deal is engaged',
+            icon: {
+              color: '#451E11',
+              kind: 'avatar',
+              label: 'S',
+              tone: 'orange',
+              shape: 'circle',
+            },
+            page: {
+              type: 'workflow',
+              header: {
+                navbarActions: [
+                  { icon: 'chevronDown', variant: 'icon' },
+                  { icon: 'chevronUp', variant: 'icon' },
+                  { icon: 'heart', variant: 'icon' },
+                  { icon: 'playerPause', label: 'Deactivate' },
+                  { icon: 'repeat', label: 'See Runs' },
+                  { icon: 'plus', label: 'Add a Node' },
+                  { icon: 'dotsVertical', trailingLabel: '⌘K' },
+                ],
+                title: 'Send email sequence when deal is engaged',
+              },
+              nodes: [
+                {
+                  id: 'trigger',
+                  x: 415,
+                  y: 60,
+                  width: 200,
+                  label: 'Trigger',
+                  title: 'Manual trigger',
+                  iconName: 'plug',
+                },
+                {
+                  id: 'iterator',
+                  x: 420,
+                  y: 230,
+                  width: 190,
+                  label: 'Action',
+                  title: 'Iterator',
+                  iconName: 'repeat',
+                },
+                {
+                  id: 'send-email',
+                  x: 590,
+                  y: 340,
+                  width: 200,
+                  label: 'Action',
+                  title: 'Send Email',
+                  iconName: 'mail',
+                },
+              ],
+              edges: [
+                { from: 'trigger', to: 'iterator', type: 'vertical' },
+                {
+                  from: 'iterator',
+                  to: 'send-email',
+                  type: 'loopRight',
+                },
+                {
+                  from: 'send-email',
+                  to: 'trigger',
+                  type: 'loopBack',
+                },
+              ],
+              branchLabels: [
+                { x: 635, y: 248, text: 'loop' },
+                { x: 482, y: 318, text: 'completed' },
+              ],
+              plusNode: { x: 515, y: 380 },
             },
           },
           {
