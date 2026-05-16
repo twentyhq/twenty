@@ -29,8 +29,8 @@ export default defineApplicationRole({
     },
     {
       objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS
-          .calendarChannelEventAssociation.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarChannelEventAssociation
+          .universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
