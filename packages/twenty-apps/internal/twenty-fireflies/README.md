@@ -85,11 +85,6 @@ The list-by-participant and search tools return the same compact call shape:
 `transcriptUrl`, `meetingLink`. To then sync any of those calls onto its
 CalendarEvent, pass the `id` from a list result into **Sync Fireflies Call**.
 
-The tools are also exposed as authenticated HTTP routes (POST
-`/fireflies/sync-call`, GET `/fireflies/calls/by-participant?participantEmail=…`,
-GET `/fireflies/calls/search?keyword=…`) for backfilling via scripts or
-testing via `curl`.
-
 ## Installing
 
 1. Open **Settings → Applications** in your Twenty workspace.
