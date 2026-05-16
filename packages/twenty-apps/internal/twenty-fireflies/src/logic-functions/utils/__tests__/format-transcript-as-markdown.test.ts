@@ -51,6 +51,17 @@ describe('formatTranscriptAsMarkdown', () => {
     expect(result).toBe('**Speaker:** Hello');
   });
 
+  it('falls back to "Speaker" when the speaker name is whitespace-only', () => {
+    const result = formatTranscriptAsMarkdown(
+      buildTranscript([
+        { speaker_name: '   ', text: 'Hello', start_time: 0 },
+        { speaker_name: '\n\t', text: 'World', start_time: 1 },
+      ]),
+    );
+
+    expect(result).toBe('**Speaker:** Hello World');
+  });
+
   it('skips empty sentence text', () => {
     const result = formatTranscriptAsMarkdown(
       buildTranscript([

@@ -36,7 +36,8 @@ export const formatTranscriptAsMarkdown = (
       continue;
     }
 
-    const speaker = sentence.speaker_name?.trim() ?? null;
+    const trimmedSpeaker = sentence.speaker_name?.trim();
+    const speaker = isNonEmptyString(trimmedSpeaker) ? trimmedSpeaker : null;
 
     if (speaker !== currentSpeaker) {
       flush();
