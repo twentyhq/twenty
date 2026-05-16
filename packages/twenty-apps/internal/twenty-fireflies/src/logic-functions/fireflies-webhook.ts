@@ -10,7 +10,7 @@ import {
 import { getFirefliesWebhookSecret } from 'src/logic-functions/utils/get-fireflies-webhook-secret';
 import { verifyFirefliesWebhookSignature } from 'src/logic-functions/utils/verify-fireflies-webhook-signature';
 
-const handler = async (
+const firefliesWebhookRouteHandler = async (
   routePayload: RoutePayload<FirefliesWebhookPayload>,
 ): Promise<FirefliesWebhookResult> => {
   const secretResult = getFirefliesWebhookSecret();
@@ -19,11 +19,16 @@ const handler = async (
     return { error: secretResult.error };
   }
 
-  const signatureHeader = routePayload.headers['x-hub-signature'];
+  const { rawBody } = routePayload;
 
-  const rawBody = isDefined(routePayload.body)
-    ? JSON.stringify(routePayload.body)
-    : '';
+  if (!isDefined(rawBody)) {
+    return {
+      error:
+        'Invalid webhook signature: raw request body was not forwarded by the server, cannot verify HMAC',
+    };
+  }
+
+  const signatureHeader = routePayload.headers['x-hub-signature'];
 
   const signatureCheck = verifyFirefliesWebhookSignature({
     rawBody,
@@ -53,7 +58,7 @@ export default defineLogicFunction({
   description:
     'Receives Fireflies webhook events when a transcript is ready, then writes the transcript onto the matching CalendarEvent.',
   timeoutSeconds: 60,
-  handler,
+  handler: firefliesWebhookRouteHandler,
   httpRouteTriggerSettings: {
     path: '/webhook/fireflies',
     httpMethod: 'POST',
