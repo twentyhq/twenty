@@ -1,4 +1,5 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FirefliesTranscript } from 'src/logic-functions/types/fireflies-transcript.type';
 
@@ -10,7 +11,7 @@ export const formatSummaryAsMarkdown = (
 ): string => {
   const summary = transcript.summary;
 
-  if (summary === null || summary === undefined) {
+  if (!isDefined(summary)) {
     return EMPTY_SUMMARY_MESSAGE;
   }
 
