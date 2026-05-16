@@ -2,7 +2,8 @@
 
 Sync [Fireflies](https://fireflies.ai) call transcripts and AI summaries onto
 the matching `CalendarEvent` in your Twenty CRM — searchable, in context, and
-ready for AI agents and workflows to act on.
+ready for AI agents and workflows to act on. Plus on-demand workflow tools to
+sync, list, and search Fireflies calls from the AI chat or workflow builder.
 
 ## What this app does
 
@@ -14,6 +15,10 @@ ready for AI agents and workflows to act on.
    GraphQL API.
 4. It finds the matching `CalendarEvent` in Twenty and writes the content
    into either the **Transcript** or **Summary** field on that event.
+
+Alongside the webhook, three [Workflow tools](#workflow-tools) let you
+trigger Fireflies actions from the AI chat or as steps inside a workflow,
+without waiting for Fireflies to push.
 
 ### How a transcript is matched to a CalendarEvent
 
@@ -45,6 +50,45 @@ Two new fields on the standard **CalendarEvent** object:
   Hi there"*, then *"**John:** Doing well, thanks."*).
 - **Summary** — rich-text field with the Fireflies AI summary: a bullet-list
   overview, action items grouped by speaker, topics discussed, and keywords.
+
+Plus three workflow tools — see [Workflow tools](#workflow-tools) below.
+
+## Workflow tools
+
+Once the API key is configured, three tools become available in the workflow
+builder and the AI chat — covering the cases the webhook can't:
+
+- **Sync Fireflies Call** — *"sync the Fireflies call `01HXYZ...` onto its
+  CalendarEvent now"*. As a workflow step: provide `transcriptId`. Runs the
+  same pipeline as the webhook (fetch transcript + AI summary, find matching
+  CalendarEvent, write Transcript + Summary fields) on demand. Use cases:
+  **backfilling** historical calls that happened before the app was
+  installed; **recovering** from a missed webhook (e.g. the calendar event
+  hadn't synced yet when Fireflies pushed); or triggering a sync from a
+  workflow instead of waiting for Fireflies. Output includes
+  `calendarEventId`, `updatedFields`, and a per-field outcome breakdown so
+  partial successes are visible.
+- **List Fireflies Calls By Participant** — *"show me my last 5 calls with
+  john@acme.com"*. As a workflow step: provide `participantEmail` (and
+  optional `limit`, max 50). Returns recent Fireflies calls — newest first —
+  where that email was an attendee, with title, date, duration, host, and
+  transcript URL. The natural first step in workflows triggered on
+  `Person.created` — *"find what we've talked about with this contact"*.
+- **Search Fireflies Calls** — *"find any call where we discussed pricing"*.
+  As a workflow step: provide `keyword` (and optional `limit`, max 50).
+  Matches the keyword against both meeting titles and the words actually
+  spoken in meetings. Returns the same call-summary shape as the
+  participant tool. Best for AI-chat-driven research.
+
+The list-by-participant and search tools return the same compact call shape:
+`id`, `title`, `date`, `durationMinutes`, `participants`, `hostEmail`,
+`transcriptUrl`, `meetingLink`. To then sync any of those calls onto its
+CalendarEvent, pass the `id` from a list result into **Sync Fireflies Call**.
+
+The tools are also exposed as authenticated HTTP routes (POST
+`/fireflies/sync-call`, GET `/fireflies/calls/by-participant?participantEmail=…`,
+GET `/fireflies/calls/search?keyword=…`) for backfilling via scripts or
+testing via `curl`.
 
 ## Installing
 
@@ -87,6 +131,8 @@ What this connector intentionally does **not** support in v1:
 | Summary appears empty | Fireflies hasn't summarized the call yet, or the call was too short to summarize | Fireflies sends `meeting.summarized` separately from `meeting.transcribed` (typically a minute or two later); ensure that event is subscribed to in your Webhooks V2 config |
 | Summary is populated but Transcript isn't (or vice versa) | Only one of the two Fireflies events is subscribed to | Subscribe to both `meeting.transcribed` and `meeting.summarized` in your Fireflies Webhooks V2 configuration |
 | Fireflies API errors with `401` | API key wrong, rotated, or revoked | Generate a new key in Fireflies → Integrations → Fireflies API → Regenerate, then update `FIREFLIES_API_KEY` |
+| **Sync Fireflies Call** reports `No fields were updated` | The Fireflies call's `calendar_id` / `cal_id` doesn't match any CalendarEvent's `iCalUid` or `eventExternalId` (orphan call), or the per-field outcomes show transient Fireflies API failures | Check the `fieldOutcomes` array in the result — `skipped` means orphan call (same limitation as the webhook); `error` means Fireflies-side failure (retry, or inspect the error message) |
+| **List / Search** tools return `count: 0` for a contact you've definitely talked to | Email mismatch — Fireflies stores the address as the participant joined the meeting with, which may differ from the contact's primary address in Twenty (aliases, plus-addressing, work vs. personal) | Try the contact's other known email addresses; cross-check the `participants` list on a known matching call |
 
 ---
 

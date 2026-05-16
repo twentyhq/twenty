@@ -9,7 +9,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Twenty Fireflies sync role',
   description:
-    'Reads CalendarEvent and CalendarChannelEventAssociation to locate the meeting matching an incoming Fireflies webhook, and updates that CalendarEvent to write the synced transcript and summary fields.',
+    'Reads CalendarEvent and CalendarChannelEventAssociation to locate the meeting matching a Fireflies call (from an incoming webhook or from the on-demand Sync Fireflies Call workflow tool), and updates that CalendarEvent to write the synced transcript and summary fields. The list / search workflow tools only call the Fireflies API and do not require any Twenty object permissions.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,

@@ -10,12 +10,12 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: 'Twenty Fireflies',
   description:
-    'Sync Fireflies call transcripts into Twenty. When a Fireflies meeting recording finishes processing, the transcript is automatically written onto the matching CalendarEvent.',
+    'Sync Fireflies call transcripts and AI summaries onto matching CalendarEvent records in Twenty, and trigger sync / list / search of Fireflies calls from workflows and the AI chat.',
   logoUrl: 'public/twenty-fireflies.svg',
   author: 'Twenty',
   category: 'Productivity',
   aboutDescription:
-    'Official Fireflies connector for Twenty CRM. Targets Fireflies Webhooks V2 (https://app.fireflies.ai/integrations/api/webhook) and subscribes to the meeting.transcribed event. Generate a Fireflies API key at https://app.fireflies.ai/integrations/custom/api, paste it into the FIREFLIES_API_KEY application variable, point the V2 webhook at this app with FIREFLIES_WEBHOOK_SECRET as the signing secret, and call transcripts will land on the matching CalendarEvent records automatically.',
+    'Official Fireflies connector for Twenty CRM. Targets Fireflies Webhooks V2 (https://app.fireflies.ai/integrations/api/webhook), subscribing to the meeting.transcribed and meeting.summarized events to write the transcript and AI summary onto the matching CalendarEvent. Also exposes three workflow tools — Sync Fireflies Call (on-demand sync, useful for backfilling), List Fireflies Calls By Participant (find past calls with a contact), and Search Fireflies Calls (keyword search over titles and spoken content). Generate a Fireflies API key at https://app.fireflies.ai/integrations/custom/api and paste it into the FIREFLIES_API_KEY application variable; configure the V2 webhook with FIREFLIES_WEBHOOK_SECRET as the signing secret.',
   websiteUrl: 'https://docs.twenty.com/developers/extend/apps/getting-started',
   termsUrl: 'https://www.twenty.com/terms',
   emailSupport: 'contact@twenty.com',

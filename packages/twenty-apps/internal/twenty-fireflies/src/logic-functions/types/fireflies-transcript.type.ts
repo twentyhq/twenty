@@ -19,6 +19,9 @@ export type FirefliesTranscript = {
   meeting_link: string | null;
   participants: string[];
   organizer_email: string | null;
+  host_email?: string | null;
+  date?: number | null;
+  transcript_url?: string | null;
   sentences?: FirefliesTranscriptSentence[] | null;
   summary?: FirefliesSummary | null;
   calendar_id?: string | null;
