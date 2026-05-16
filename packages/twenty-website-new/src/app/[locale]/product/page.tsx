@@ -104,7 +104,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <Hero.HeroVisualScroll
         aiBody={i18n._(
-          msg`Ask questions, automate tasks, and get insights — all powered by AI that understands your data.`,
+          msg`Ask questions, automate tasks, and get insights. All powered by AI that understands your data.`,
         )}
         aiHeading={
           <Heading size="lg" weight="light">

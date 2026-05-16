@@ -7,7 +7,9 @@ import type { AppPreviewConfig } from '@/sections/AppPreview';
 import { TabButtons } from '@/sections/Tabs/components/TabButtons';
 import type { TabType } from '@/sections/Tabs/types';
 import { theme } from '@/theme';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import NextImage from 'next/image';
 
 import { ProductVisual } from './ProductVisual';
 import { useHeroScrollProgress } from './use-hero-scroll-progress';
@@ -55,6 +57,27 @@ const StickyFrame = styled.div`
   @media (min-width: ${theme.breakpoints.md}px) {
     padding-top: ${theme.spacing(12)};
   }
+`;
+
+const PatternOverlay = styled.div`
+  bottom: 0;
+  height: 575px;
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+  transition: opacity 0.6s ease;
+  width: 100%;
+  z-index: 0;
+
+  &[data-visible='true'] {
+    opacity: 0.4;
+  }
+`;
+
+const patternImageClassName = css`
+  object-fit: cover;
 `;
 
 const StyledContainer = styled(Container)`
@@ -189,6 +212,15 @@ export function HeroVisualScroll({
   return (
     <ScrollTrack ref={trackRef} style={{ height: SCROLL_HEIGHT }}>
       <StickyFrame data-phase={phase}>
+        <PatternOverlay data-visible={phase === 1 ? 'true' : 'false'}>
+          <NextImage
+            alt=""
+            className={patternImageClassName}
+            fill
+            sizes="100vw"
+            src="/images/product/tabs/background.webp"
+          />
+        </PatternOverlay>
         <StyledContainer>
           <HeadingSlot data-phase={phase}>
             <ContentLayer data-active={phase === 0}>
