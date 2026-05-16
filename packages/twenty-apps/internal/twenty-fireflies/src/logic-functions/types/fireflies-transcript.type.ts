@@ -4,6 +4,14 @@ export type FirefliesTranscriptSentence = {
   start_time: number | null;
 };
 
+export type FirefliesSummary = {
+  overview: string | null;
+  action_items: string | null;
+  keywords: string[] | null;
+  topics_discussed: string[] | null;
+  short_summary: string | null;
+};
+
 export type FirefliesTranscript = {
   id: string;
   title: string | null;
@@ -11,7 +19,8 @@ export type FirefliesTranscript = {
   meeting_link: string | null;
   participants: string[];
   organizer_email: string | null;
-  sentences: FirefliesTranscriptSentence[] | null;
+  sentences?: FirefliesTranscriptSentence[] | null;
+  summary?: FirefliesSummary | null;
   calendar_id?: string | null;
   cal_id?: string | null;
   calendar_type?: string | null;

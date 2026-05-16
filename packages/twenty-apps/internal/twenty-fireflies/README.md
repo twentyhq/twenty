@@ -1,17 +1,21 @@
 # Fireflies for Twenty
 
-Sync [Fireflies](https://fireflies.ai) call transcripts into your Twenty CRM.
-When a Fireflies recording finishes processing, the transcript is automatically
-written onto the matching `CalendarEvent` record — searchable, in context, and
-ready for AI agents and workflows to act on.
+Sync [Fireflies](https://fireflies.ai) call transcripts **and AI summaries**
+into your Twenty CRM. When Fireflies finishes processing a recording, the
+transcript and summary are automatically written onto the matching
+`CalendarEvent` record — searchable, in context, and ready for AI agents and
+workflows to act on.
 
 ## What this app does
 
 1. Fireflies records and transcribes your Zoom / Meet / Teams / phone call.
-2. When the transcript is ready, Fireflies fires a webhook to this app.
-3. This app fetches the full transcript via the Fireflies GraphQL API.
-4. It finds the matching `CalendarEvent` in Twenty and writes the transcript
-   into a new **Transcript** field on that event.
+2. When the transcript is ready, Fireflies fires a `meeting.transcribed`
+   webhook; once Fireflies finishes its AI summary, it fires a separate
+   `meeting.summarized` webhook.
+3. For each event, this app fetches the relevant data via the Fireflies
+   GraphQL API.
+4. It finds the matching `CalendarEvent` in Twenty and writes the content
+   into either the **Transcript** or **Summary** field on that event.
 
 ### How a transcript is matched to a CalendarEvent
 
@@ -40,9 +44,12 @@ now carries its own transcript.
 
 ## What gets added to your Twenty workspace
 
-- One new field on the standard **CalendarEvent** object:
-  - **Transcript** — rich-text field, speaker-attributed (e.g. *"**Sarah:**
-    Hi there"*, then *"**John:** Doing well, thanks."*).
+Two new fields on the standard **CalendarEvent** object:
+
+- **Transcript** — rich-text field, speaker-attributed (e.g. *"**Sarah:**
+  Hi there"*, then *"**John:** Doing well, thanks."*).
+- **Summary** — rich-text field with the Fireflies AI summary: a bullet-list
+  overview, action items grouped by speaker, topics discussed, and keywords.
 
 ## Installing
 
@@ -63,15 +70,16 @@ What this connector intentionally does **not** support in v1:
   that were never on anyone's synced calendar are skipped. The webhook logs
   the skip reason; the transcript still lives in Fireflies. Synthetic event
   creation for orphans is planned for v2.
-- **Fireflies summary, action items, sentiment, speaker analytics.** Only the
-  raw transcript text is synced in v1.
+- **Fireflies sentiment, speaker analytics, transcript chapters.** Only
+  the raw transcript and the AI summary (overview, action items, topics,
+  keywords) are synced today.
 - **Per-user Fireflies accounts.** All transcripts come through one
   workspace-shared API key (set by the admin). Per-user OAuth-style
   connections require extending Twenty's connection provider system and are
   planned once we have evidence that workspace-shared is too coarse.
-- **Editing transcripts in Twenty.** The field is writable in principle but
-  any future Fireflies sync would overwrite manual edits — treat it as
-  read-only.
+- **Editing transcripts or summaries in Twenty.** Both fields are writable in
+  principle but any future Fireflies sync would overwrite manual edits —
+  treat them as read-only.
 
 ## Troubleshooting
 
@@ -81,6 +89,8 @@ What this connector intentionally does **not** support in v1:
 | Webhook returns `Invalid webhook signature` | `FIREFLIES_WEBHOOK_SECRET` mismatch between Fireflies and Twenty | Re-copy the signing secret from the Fireflies webhook configuration and paste it into the Twenty app settings |
 | Webhook returns `skipped: No CalendarEvent matched the transcript by external ID or iCalUid` | The meeting was never on a synced calendar in Twenty, or the workspace has no Google/Outlook/CalDAV calendar connection set up | Connect the relevant calendar provider in **Settings → Accounts** so the calendar event lands in Twenty with `eventExternalId` and `iCalUid` populated. Manually-created CalendarEvents are intentionally not matched in v1 |
 | Transcript appears empty | Fireflies returned no sentences (call too short, audio failed) | Check the call in the Fireflies dashboard; nothing this app can do |
+| Summary appears empty | Fireflies hasn't summarized the call yet, or the call was too short to summarize | Fireflies sends `meeting.summarized` separately from `meeting.transcribed` (typically a minute or two later); ensure that event is subscribed to in your Webhooks V2 config |
+| Summary is populated but Transcript isn't (or vice versa) | Only one of the two Fireflies events is subscribed to | Subscribe to both `meeting.transcribed` and `meeting.summarized` in your Fireflies Webhooks V2 configuration |
 | Fireflies API errors with `401` | API key wrong, rotated, or revoked | Generate a new key in Fireflies → Integrations → Fireflies API → Regenerate, then update `FIREFLIES_API_KEY` |
 
 ---
@@ -110,9 +120,13 @@ supported.
    below — Twenty's multi-tenancy requires the right Host header).
 3. Set a **Signing Secret** (a long random string — generate one with
    `openssl rand -hex 32`). Save it; you'll paste it into Twenty next.
-4. Under **Events**, subscribe to **`meeting.transcribed`**.
-   `meeting.summarized` is safe to subscribe to as well — this app
-   explicitly skips it with a clear reason — but it isn't required.
+4. Under **Events**, subscribe to **both**:
+   - **`meeting.transcribed`** — fires when the transcript is ready and
+     writes it to the **Transcript** field.
+   - **`meeting.summarized`** — fires once Fireflies finishes its AI summary
+     and writes it to the **Summary** field.
+   Subscribing to only one is fine if you don't want the other field
+   populated; the app dispatches per event.
 5. **Save** the configuration.
 
 ### 3. Wire the credentials into Twenty
@@ -122,7 +136,9 @@ supported.
 3. Paste the signing secret into the `FIREFLIES_WEBHOOK_SECRET` row.
 
 After saving, the next time Fireflies finishes processing a recording, the
-transcript will land on the matching CalendarEvent within a few seconds.
+transcript will land on the matching CalendarEvent within a few seconds;
+the summary follows once Fireflies finishes the AI summarization step
+(typically a minute or two later — Fireflies sends two separate webhooks).
 
 ---
 
@@ -140,10 +156,10 @@ becomes available. Webhooks fit this shape exactly:
 The trade-off is a public, unauthenticated endpoint — handled by HMAC-SHA256
 signature verification using a shared secret.
 
-## Why a `transcript` field on `CalendarEvent` instead of a new object?
+## Why `transcript` / `summary` fields on `CalendarEvent` instead of a new object?
 
 Twenty already models meetings as `CalendarEvent` records. Storing the
-transcript as a rich-text field directly on the event:
+transcript and the AI summary as rich-text fields directly on the event:
 
 - Keeps everything about a meeting in one place (no joins)
 - Avoids inventing a new object that other call-recording apps would each
@@ -151,9 +167,9 @@ transcript as a rich-text field directly on the event:
 - Works today without lookup fields
 
 If we later integrate other recording tools (Gong, Otter, Zoom AI, etc.) and
-find that one transcript field is too restrictive — for example, we need to
+find that one pair of fields is too restrictive — for example, we need to
 distinguish *which* tool produced the transcript — we'll revisit and likely
-promote the field to a core platform-level concept (managed alongside
+promote the fields to a core platform-level concept (managed alongside
 `CalendarEvent` itself rather than by this app).
 
 ---
