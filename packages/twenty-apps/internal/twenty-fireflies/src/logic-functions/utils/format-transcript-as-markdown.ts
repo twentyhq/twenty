@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FirefliesTranscript } from 'src/logic-functions/types/fireflies-transcript.type';
@@ -17,7 +17,7 @@ export const formatTranscriptAsMarkdown = (
   let currentLines: string[] = [];
 
   const flush = () => {
-    if (currentLines.length === 0) {
+    if (!isNonEmptyArray(currentLines)) {
       return;
     }
 
@@ -49,7 +49,7 @@ export const formatTranscriptAsMarkdown = (
 
   flush();
 
-  if (lines.length === 0) {
+  if (!isNonEmptyArray(lines)) {
     return EMPTY_TRANSCRIPT_MESSAGE;
   }
 
