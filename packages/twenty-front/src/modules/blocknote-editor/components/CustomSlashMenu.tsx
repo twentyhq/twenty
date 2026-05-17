@@ -16,6 +16,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { MenuItem } from 'twenty-ui/navigation';
+import { t } from '@lingui/core/macro';
 
 export type { SuggestionItem };
 
@@ -76,15 +78,19 @@ export const CustomSlashMenu = ({
             >
               <DropdownContent>
                 <DropdownMenuItemsContainer hasMaxHeight>
-                  <SelectableList
-                    focusId={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
-                    selectableListInstanceId={SLASH_MENU_LIST_ID}
-                    selectableItemIdArray={items.map((item) => item.title)}
-                  >
-                    {items.map((item) => (
-                      <CustomSlashMenuListItem key={item.title} item={item} />
-                    ))}
-                  </SelectableList>
+                  {items.length === 0 ? (
+                    <MenuItem text={t`No results`} />
+                  ) : (
+                    <SelectableList
+                      focusId={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+                      selectableListInstanceId={SLASH_MENU_LIST_ID}
+                      selectableItemIdArray={items.map((item) => item.title)}
+                    >
+                      {items.map((item) => (
+                        <CustomSlashMenuListItem key={item.title} item={item} />
+                      ))}
+                    </SelectableList>
+                  )}
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             </OverlayContainer>
