@@ -2,6 +2,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
+import { StyledContentContainer } from '@/auth/sign-in-up/components/internal/SignInUpContentContainerStyles';
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
@@ -59,12 +60,6 @@ const StyledMainContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   width: 100%;
-`;
-
-const StyledContentContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[8]};
-  margin-top: ${themeCssVariables.spacing[4]};
-  width: 200px;
 `;
 
 const StyledForm = styled.form`

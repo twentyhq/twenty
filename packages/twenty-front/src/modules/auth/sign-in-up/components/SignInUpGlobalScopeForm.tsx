@@ -20,10 +20,10 @@ import {
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
+import { StyledContentContainer } from '@/auth/sign-in-up/components/internal/SignInUpContentContainerStyles';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
-import { motion } from 'framer-motion';
 import { useContext } from 'react';
 import {
   Avatar,
@@ -34,12 +34,6 @@ import {
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-
-const StyledContentContainer = styled(motion.div)`
-  margin-bottom: ${themeCssVariables.spacing[8]};
-  margin-top: ${themeCssVariables.spacing[4]};
-  min-width: 200px;
-`;
 
 const StyledWorkspaceContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
