@@ -397,9 +397,6 @@ export class WorkflowDatabaseEventTriggerListener {
       const updatedFields =
         updateEventPayload?.properties?.updatedFields ?? [];
 
-      // Skip position-only updates to preserve historical trigger behavior:
-      // before POSITION was included in event diffs, same-column kanban drags
-      // emitted no event at all, so workflows never fired on them.
       if (updatedFields.length === 1 && updatedFields[0] === 'position') {
         return false;
       }

@@ -32,9 +32,6 @@ export const transformEventBatchToWebhookEvents = ({
           ? eventData.properties.updatedFields
           : undefined;
 
-      // Skip position-only updates to preserve historical webhook behavior:
-      // before POSITION was included in event diffs, same-column kanban drags
-      // emitted no event at all, so webhook consumers never fired on them.
       if (
         eventUpdatedFields?.length === 1 &&
         eventUpdatedFields[0] === 'position'
