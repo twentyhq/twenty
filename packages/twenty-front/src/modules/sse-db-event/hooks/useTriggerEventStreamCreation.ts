@@ -191,12 +191,54 @@ export const useTriggerEventStreamCreation = () => {
               }
             }
           } catch (error) {
-            const errorProcessingSSEMessage = new Error(
-              'Error while processing SSE message',
-              { cause: error instanceof Error ? error : undefined },
-            );
+            const objectRecordEventsWithQueryIds =
+              result?.data?.onEventSubscription?.objectRecordEventsWithQueryIds ??
+              [];
 
-            captureException(errorProcessingSSEMessage);
+            const metadataEvents =
+              result?.data?.onEventSubscription?.metadataEvents ?? [];
+
+            const objectRecordEventActions = [
+              ...new Set(
+                objectRecordEventsWithQueryIds.map(
+                  ({ objectRecordEvent }) => objectRecordEvent.action,
+                ),
+              ),
+            ];
+
+            const objectRecordNames = [
+              ...new Set(
+                objectRecordEventsWithQueryIds.map(
+                  ({ objectRecordEvent }) =>
+                    objectRecordEvent.objectNameSingular,
+                ),
+              ),
+            ];
+
+            const processingError =
+              error instanceof Error
+                ? error
+                : new Error('Unknown error while processing SSE message');
+
+            captureException(processingError, (scope) => {
+              scope.setLevel('warning');
+              scope.setTag('eventType', event);
+              scope.setTag('eventStreamId', newSseEventStreamId);
+              scope.setExtras({
+                hasGraphqlErrors: isDefined(result?.errors),
+                objectRecordEventCount: objectRecordEventsWithQueryIds.length,
+                metadataEventCount: metadataEvents.length,
+                objectRecordEventActions,
+                objectRecordNames,
+              });
+              scope.setFingerprint([
+                'sse-message-processing-error',
+                event,
+                processingError.message,
+              ]);
+
+              return scope;
+            });
           }
         },
       },
