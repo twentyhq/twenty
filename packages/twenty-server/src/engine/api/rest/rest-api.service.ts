@@ -41,7 +41,13 @@ export class RestApiService {
         },
       });
     } catch (err) {
-      throw new RestApiException(err.response.data.errors);
+      if (err.response?.data?.errors) {
+        throw new RestApiException(err.response.data.errors);
+      }
+
+      throw new RestApiException([
+        { message: err.message ?? 'Internal server error' },
+      ]);
     }
 
     if (response.data.errors?.length) {
