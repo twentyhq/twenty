@@ -186,6 +186,10 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
 
       return status.uidValidity ?? null;
     } catch (error) {
+      if (error instanceof Error && error.message.includes('Mailbox doesn\'t exist')) {
+        return null;
+      }
+
       this.logger.warn(
         `Failed to get uidValidity for folder ${mailbox.path}:`,
         error,
