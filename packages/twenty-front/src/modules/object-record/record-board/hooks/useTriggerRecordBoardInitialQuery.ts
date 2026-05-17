@@ -75,7 +75,11 @@ export const useTriggerRecordBoardInitialQuery = () => {
       objectMetadataItem,
     });
 
-  const triggerRecordBoardInitialQuery = useCallback(async () => {
+  const triggerRecordBoardInitialQuery = useCallback(async (options?: {
+    preserveScroll?: boolean;
+  }) => {
+    const preserveScroll = options?.preserveScroll === true;
+
     store.set(recordIndexRecordGroupsAreInInitialLoading, true);
 
     const cleanStateBeforeExit = () => {
@@ -85,7 +89,13 @@ export const useTriggerRecordBoardInitialQuery = () => {
 
       setRecordBoardCurrentGroupByQueryOffset(0);
 
-      scrollWrapperHTMLElement?.scrollTo({ top: 0, left: 0 });
+      // Scroll reset only makes sense when the dataset itself changed
+      // (filters/sort/group). For data-driven re-init (a single record
+      // changed via SSE or an own mutation), preserveScroll keeps the user
+      // where they were.
+      if (!preserveScroll) {
+        scrollWrapperHTMLElement?.scrollTo({ top: 0, left: 0 });
+      }
     };
 
     const recordIndexGroupsRecordsGroupByLazyQueryResult =

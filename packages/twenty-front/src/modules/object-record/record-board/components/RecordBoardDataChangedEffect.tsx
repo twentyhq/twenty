@@ -57,13 +57,13 @@ export const RecordBoardDataChangedEffect = () => {
               getShouldInitializeRecordBoardForUpdateInputs(updateInputs);
 
             if (shouldInitializeForUpdateOperation) {
-              triggerRecordBoardInitialQuery();
+              triggerRecordBoardInitialQuery({ preserveScroll: true });
             }
           }
           break;
         case 'create-one': {
           if (objectRecordOperation.createdRecord.position === 'first') {
-            triggerRecordBoardInitialQuery();
+            triggerRecordBoardInitialQuery({ preserveScroll: true });
           } else {
             const createdRecordPosition =
               objectRecordOperation.createdRecord.position;
@@ -106,7 +106,7 @@ export const RecordBoardDataChangedEffect = () => {
             const groupIsEmpty = recordIdsWithoutCreatedRecord.length === 0;
 
             if (groupIsEmpty) {
-              triggerRecordBoardInitialQuery();
+              triggerRecordBoardInitialQuery({ preserveScroll: true });
               return;
             }
 
@@ -122,7 +122,7 @@ export const RecordBoardDataChangedEffect = () => {
             if (
               createdRecordPosition < (firstExistingRecordInGroup.position ?? 0)
             ) {
-              triggerRecordBoardInitialQuery();
+              triggerRecordBoardInitialQuery({ preserveScroll: true });
             }
           }
           break;
@@ -148,7 +148,7 @@ export const RecordBoardDataChangedEffect = () => {
           return;
         }
         default: {
-          triggerRecordBoardInitialQuery();
+          triggerRecordBoardInitialQuery({ preserveScroll: true });
         }
       }
     },
