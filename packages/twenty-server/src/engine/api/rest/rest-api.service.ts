@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { type AxiosResponse } from 'axios';
 
@@ -45,9 +45,9 @@ export class RestApiService {
         throw new RestApiException(err.response.data.errors);
       }
 
-      throw new RestApiException([
-        { message: err.message ?? 'Internal server error' },
-      ]);
+      throw new InternalServerErrorException(
+        err.message ?? 'Internal server error',
+      );
     }
 
     if (response.data.errors?.length) {
