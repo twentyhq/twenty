@@ -151,7 +151,7 @@ describe('objectRecordChangedValues', () => {
     expect(result).toEqual(expectedChanges);
   });
 
-  it('ignores changes to POSITION fields', () => {
+  it('detects changes to POSITION fields', () => {
     const positionFieldId = 'position-field-id';
     const positionUniversalId = 'position-universal-id';
 
@@ -196,7 +196,7 @@ describe('objectRecordChangedValues', () => {
 
     expect(result).toEqual({
       name: { before: 'Original', after: 'Updated' },
+      position: { before: 1, after: 5 },
     });
-    expect(result).not.toHaveProperty('position');
   });
 });
