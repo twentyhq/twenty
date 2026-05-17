@@ -23,6 +23,11 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @Index('IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_FILTER_VIEW_ID', ['viewId'])
 @Index('IDX_VIEW_FILTER_FIELD_METADATA_ID', ['fieldMetadataId'])
+@Index(
+  'IDX_VIEW_FILTER_RELATION_TARGET_FIELD_METADATA_ID',
+  ['relationTargetFieldMetadataId'],
+  { where: '"relationTargetFieldMetadataId" IS NOT NULL' },
+)
 export class ViewFilterEntity
   extends SyncableEntity
   implements Required<ViewFilterEntity>
@@ -58,6 +63,16 @@ export class ViewFilterEntity
 
   @Column({ nullable: true, type: 'text', default: null })
   subFieldName: string | null;
+
+  @Column({ nullable: true, type: 'uuid', default: null })
+  relationTargetFieldMetadataId: string | null;
+
+  @ManyToOne(() => FieldMetadataEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'relationTargetFieldMetadataId' })
+  relationTargetFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;

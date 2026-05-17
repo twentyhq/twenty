@@ -37,6 +37,27 @@ describe('filterEmails', () => {
     expect(filteredMessages).toEqual([]);
   });
 
+  it('Should keep same-domain emails when isInternalMessagesImportEnabled is true', () => {
+    // Workspace opted into syncing internal emails (e.g. university or
+    // shared-domain institution). Same-domain participants must not be
+    // dropped — the toggle bypasses filterOutInternals.
+    const primaryHandle = 'guillim@acme.com';
+    const messages = messagingGetMessagesServiceGetMessages.filter(
+      (message) => message.externalId === 'AA-work-emails-internal',
+    );
+
+    const filteredMessages = filterEmails(
+      primaryHandle,
+      [],
+      messages,
+      [],
+      true,
+      true,
+    );
+
+    expect(filteredMessages).toEqual(messages);
+  });
+
   it('Should filter messages with participant from the blocklist', () => {
     const primaryHandle = 'guillim@acme.com';
     const messages = messagingGetMessagesServiceGetMessages.filter(

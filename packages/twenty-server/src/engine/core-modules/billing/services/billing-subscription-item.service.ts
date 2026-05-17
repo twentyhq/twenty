@@ -8,7 +8,6 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -23,43 +22,6 @@ export class BillingSubscriptionItemService {
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
-
-  async getMeteredSubscriptionItemDetails(subscriptionId: string) {
-    const meteredSubscriptionItems =
-      await this.billingSubscriptionItemRepository.find({
-        where: {
-          billingSubscriptionId: subscriptionId,
-        },
-        relations: ['billingProduct', 'billingProduct.billingPrices'],
-      });
-
-    return meteredSubscriptionItems.reduce(
-      (acc, item) => {
-        const price = this.findMatchingPrice(item);
-
-        if (!price.stripeMeterId) {
-          return acc;
-        }
-
-        return acc.concat({
-          stripeSubscriptionItemId: item.stripeSubscriptionItemId,
-          productKey: item.billingProduct.metadata.productKey,
-          stripeMeterId: price.stripeMeterId,
-          tierQuantity: this.getTierQuantity(price),
-          freeTrialQuantity: this.getFreeTrialQuantity(item),
-          unitPriceCents: this.getUnitPrice(price),
-        });
-      },
-      [] as Array<{
-        stripeSubscriptionItemId: string;
-        productKey: BillingProductKey;
-        stripeMeterId: string;
-        tierQuantity: number;
-        freeTrialQuantity: number;
-        unitPriceCents: number;
-      }>,
-    );
-  }
 
   async getResourceCreditSubscriptionItemDetails(
     subscription: BillingSubscriptionEntity,
@@ -127,28 +89,5 @@ export class BillingSubscriptionItemService {
     }
 
     return matchingPrice;
-  }
-
-  private getTierQuantity(price: BillingPriceEntity): number {
-    billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
-
-    return price.tiers[0].up_to;
-  }
-
-  private getFreeTrialQuantity(item: BillingSubscriptionItemEntity): number {
-    switch (item.billingProduct.metadata.productKey) {
-      case BillingProductKey.WORKFLOW_NODE_EXECUTION:
-        return this.twentyConfigService.get(
-          'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
-        );
-      default:
-        return 0;
-    }
-  }
-
-  private getUnitPrice(price: BillingPriceEntity): number {
-    billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
-
-    return Number(price.tiers[1].unit_amount_decimal);
   }
 }

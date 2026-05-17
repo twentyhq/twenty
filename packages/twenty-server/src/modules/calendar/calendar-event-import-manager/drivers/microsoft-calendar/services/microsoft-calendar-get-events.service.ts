@@ -20,7 +20,7 @@ export class MicrosoftCalendarGetEventsService {
   public async getCalendarEvents(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'provider' | 'accessToken' | 'refreshToken' | 'id'
+      'provider' | 'accessToken' | 'refreshToken' | 'id' | 'workspaceId'
     >,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {

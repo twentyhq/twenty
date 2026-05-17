@@ -29,6 +29,7 @@ export {
   objectMetadataItem,
 } from './conditional-availability/conditional-availability-variables';
 export { closeSidePanel } from './functions/closeSidePanel';
+export { getApplicationVariable } from './functions/getApplicationVariable';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';

@@ -1,9 +1,6 @@
 import type { ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 import { useQuery } from '@apollo/client/react';
-import {
-  type ApplicationRegistrationVariable,
-  FindApplicationRegistrationVariablesDocument,
-} from '~/generated-metadata/graphql';
+import { FindApplicationRegistrationVariablesDocument } from '~/generated-metadata/graphql';
 import { Section } from 'twenty-ui/layout';
 import { H2Title, Status } from 'twenty-ui/display';
 import { useLingui } from '@lingui/react/macro';
@@ -28,17 +25,12 @@ export const SettingsApplicationRegistrationConfigTab = ({
     },
   );
 
-  const variables: ApplicationRegistrationVariable[] =
-    variablesData?.findApplicationRegistrationVariables ?? [];
+  const variables = variablesData?.findApplicationRegistrationVariables ?? [];
 
   const configVariables = variables.map((variable) => ({
     name: variable.key,
     description: variable.description,
-    value: variable.isFilled ? (
-      '••••••••••'
-    ) : (
-      <Status color="gray" text={t`Not set`} />
-    ),
+    value: variable.value ?? <Status color="gray" text={t`Not set`} />,
     to: getSettingsPath(
       SettingsPath.ApplicationRegistrationConfigVariableDetails,
       {

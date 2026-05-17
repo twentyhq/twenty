@@ -48,7 +48,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     }
 
     const { agentId, prompt } = step.settings.input;
-    const workspaceId = context.workspaceId as string;
+    const workspaceId = runInfo.workspaceId;
 
     let agent: AgentEntity | null = null;
 
@@ -76,18 +76,25 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         ? executionContext.authContext.userWorkspaceId
         : null;
 
-    const { result } = await this.aiAgentExecutionService.executeAgent({
-      agent,
-      userPrompt: resolveInput(prompt, context) as string,
-      actorContext: executionContext.isActingOnBehalfOfUser
-        ? executionContext.initiator
-        : undefined,
-      rolePermissionConfig: executionContext.rolePermissionConfig,
-      authContext: executionContext.authContext,
-      workspaceId,
-      userWorkspaceId,
-      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-    });
+    const { result, hasNoMoreAvailableCredits } =
+      await this.aiAgentExecutionService.executeAgent({
+        agent,
+        userPrompt: resolveInput(prompt, context) as string,
+        actorContext: executionContext.isActingOnBehalfOfUser
+          ? executionContext.initiator
+          : undefined,
+        rolePermissionConfig: executionContext.rolePermissionConfig,
+        authContext: executionContext.authContext,
+        workspaceId,
+        userWorkspaceId,
+        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      });
+
+    if (hasNoMoreAvailableCredits) {
+      return {
+        error: 'AI agent stopped: no more available credits.',
+      };
+    }
 
     return {
       result,

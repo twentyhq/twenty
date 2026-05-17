@@ -15,6 +15,7 @@ import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/main
 import { AdminPanelBillingService } from 'src/engine/core-modules/admin-panel/services/admin-panel-billing.service';
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
 import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
+import { AdminPanelSigningKeyService } from 'src/engine/core-modules/admin-panel/services/admin-panel-signing-key.service';
 import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-statistics.service';
 import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
@@ -29,6 +30,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ImpersonationModule } from 'src/engine/core-modules/impersonation/impersonation.module';
+import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
@@ -76,6 +78,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     UserVarsModule,
     UpgradeModule,
     UserModule,
+    JwtModule,
   ],
   providers: [
     AdminPanelResolver,
@@ -85,6 +88,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     AdminPanelBillingService,
     AdminPanelChatService,
     AdminPanelConfigService,
+    AdminPanelSigningKeyService,
     AdminPanelVersionService,
     AdminPanelHealthService,
     AdminPanelQueueService,

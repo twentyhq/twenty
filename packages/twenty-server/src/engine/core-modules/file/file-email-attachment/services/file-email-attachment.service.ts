@@ -64,7 +64,7 @@ export class FileEmailAttachmentService {
 
     return {
       ...savedFile,
-      url: this.fileUrlService.signFileByIdUrl({
+      url: await this.fileUrlService.signFileByIdUrl({
         fileId,
         workspaceId,
         fileFolder: FileFolder.EmailAttachment,

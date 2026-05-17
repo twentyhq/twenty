@@ -71,7 +71,9 @@ export class UpdateApplicationVariableActionHandlerService extends WorkspaceMigr
       !existing.isSecret
     ) {
       (update as Record<string, unknown>).value =
-        this.secretEncryptionService.encrypt(existing.value);
+        this.secretEncryptionService.encryptVersioned(existing.value, {
+          workspaceId,
+        });
     }
 
     if (
@@ -81,7 +83,9 @@ export class UpdateApplicationVariableActionHandlerService extends WorkspaceMigr
       existing.isSecret
     ) {
       (update as Record<string, unknown>).value =
-        this.secretEncryptionService.decrypt(existing.value);
+        this.secretEncryptionService.decryptVersioned(existing.value, {
+          workspaceId,
+        });
     }
 
     await applicationVariableRepository.update(

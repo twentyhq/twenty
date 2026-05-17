@@ -7,7 +7,6 @@ import {
   UpdateApplicationRegistrationVariableDocument,
 } from '~/generated-metadata/graphql';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -145,9 +144,7 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
           <TextInput
             value={value}
             placeholder={
-              variable.isFilled
-                ? '••••••••••••••••••••••••'
-                : t`set-config-value`
+              !isEditing ? (variable.value ?? t`set-config-value`) : ''
             }
             onChange={setValue}
             disabled={!isEditing}

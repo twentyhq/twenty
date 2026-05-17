@@ -3,12 +3,11 @@ import {
   Body as BaseBody,
   Container,
   Eyebrow,
-  Heading,
+  HeadingPart,
 } from '@/design-system/components';
+import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
 import { theme } from '@/theme';
-import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
-
 const Section = styled.section`
   background-color: ${theme.colors.primary.background[100]};
   color: ${theme.colors.primary.text[100]};
@@ -125,47 +124,40 @@ function parseCallout(raw: string): {
 type TextBlockProps = {
   block: CaseStudyTextBlock;
   isLast?: boolean;
-  renderText: (descriptor: MessageDescriptor) => string;
   sectionId?: string;
 };
 
 export function TextBlock({
   block,
   isLast = false,
-  renderText,
   sectionId,
 }: TextBlockProps) {
+  const i18n = getServerI18n();
   return (
     <Section id={sectionId}>
       <StyledContainer $isLast={isLast}>
         <ContentWrap>
           {block.eyebrow && (
-            <Eyebrow
-              colorScheme="primary"
-              heading={{ fontFamily: 'sans', text: block.eyebrow }}
-              renderText={renderText}
-            />
+            <Eyebrow colorScheme="primary">
+              <HeadingPart fontFamily="sans">
+                {i18n._(block.eyebrow)}
+              </HeadingPart>
+            </Eyebrow>
           )}
 
-          <Heading
-            as="h2"
-            renderText={renderText}
-            segments={block.heading}
-            size="md"
-            weight="light"
-          />
+          {block.heading}
 
           <BodyStack>
             {block.paragraphs.map((paragraph, index) => (
               <BaseBody
                 key={index}
-                body={{ text: paragraph }}
                 family="sans"
-                renderText={renderText}
                 size="md"
                 variant="body-paragraph"
                 weight="regular"
-              />
+              >
+                {i18n._(paragraph)}
+              </BaseBody>
             ))}
             {block.callout &&
               (() => {

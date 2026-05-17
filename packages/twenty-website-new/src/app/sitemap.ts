@@ -9,6 +9,7 @@ import {
 } from '@/lib/website-routing';
 
 const SITE_URL = getSiteUrl();
+const BUILD_DATE = new Date().toISOString();
 
 const buildLocalizedUrl = (locale: AppLocale, path: string): string => {
   const prefix =
@@ -40,6 +41,7 @@ const localize = (
 ): MetadataRoute.Sitemap =>
   locales.map((locale) => ({
     url: buildLocalizedUrl(locale, path),
+    lastModified: BUILD_DATE,
     changeFrequency,
     priority,
     alternates: { languages: buildLanguageAlternates(path, locales) },

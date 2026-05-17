@@ -32,17 +32,6 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
   });
 
-  it('returns only proration for METERED_PRICE update type', () => {
-    const result = computeSubscriptionUpdateOptions({
-      type: SubscriptionUpdateType.METERED_PRICE,
-      newMeteredPriceId: 'price_123',
-    });
-
-    expect(result).toEqual({
-      proration: 'create_prorations',
-    });
-  });
-
   it('returns proration and anchor for INTERVAL update type', () => {
     const result = computeSubscriptionUpdateOptions({
       type: SubscriptionUpdateType.INTERVAL,

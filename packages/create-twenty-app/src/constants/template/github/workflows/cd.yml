@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 env:
-  TWENTY_DEPLOY_URL: http://localhost:3000
+  TWENTY_DEPLOY_URL: http://localhost:2020
 
 concurrency:
   group: cd-${{ github.ref }}

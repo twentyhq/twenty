@@ -22,10 +22,6 @@ export const computeSubscriptionUpdateOptions = (
           plan: subscriptionUpdate.newPlan,
         },
       };
-    case SubscriptionUpdateType.METERED_PRICE:
-      return {
-        proration: 'create_prorations',
-      };
     case SubscriptionUpdateType.RESOURCE_CREDIT_PRICE:
       return {
         proration: 'none',

@@ -1,8 +1,15 @@
 import { msg } from '@lingui/core/macro';
 import type { CaseStudyCatalogEntry } from '@/lib/customers';
-import { Body, Container, Eyebrow, Heading } from '@/design-system/components';
+import {
+  Body,
+  Container,
+  Eyebrow,
+  Heading,
+  HeadingPart,
+} from '@/design-system/components';
 import { PlusIcon, UsersIcon } from '@/icons';
-import { LocalizedLinkButton } from '@/lib/i18n/LocalizedLinkButton';
+import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
+import { LocalizedLinkButton } from '@/lib/i18n/components/LocalizedLinkButton';
 import { PromoMic } from '@/sections/CaseStudyCatalog/visuals/PromoMic';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
@@ -15,19 +22,7 @@ const LINE_INSET = '20px';
 const TRUSTED_BY_BOTTOM_PADDING = 12;
 const TRUSTED_BY_BOTTOM_PADDING_DESKTOP = 16;
 
-const EYEBROW = {
-  text: msg`Customer Stories`,
-  fontFamily: 'mono' as const,
-};
-
-const HEADING = [
-  { text: msg`How teams`, fontFamily: 'serif' as const },
-  { text: msg`built with Twenty`, fontFamily: 'sans' as const, newLine: true },
-];
-
-const BODY = {
-  text: msg`Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks.`,
-};
+const BODY = msg`Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks.`;
 
 const Section = styled.section`
   background-color: ${theme.colors.primary.background[100]};
@@ -258,7 +253,6 @@ type PromoProps = {
   ctaHref?: string;
   ctaLabel?: MessageDescriptor;
   compactTop?: boolean;
-  renderText: (descriptor: MessageDescriptor) => string;
 };
 
 export function Promo({
@@ -266,8 +260,8 @@ export function Promo({
   ctaHref = '/customers',
   ctaLabel = msg`Explore customer stories`,
   compactTop = false,
-  renderText,
 }: PromoProps) {
+  const i18n = getServerI18n();
   return (
     <Section aria-label="Customer stories preview">
       <BackgroundLayer aria-hidden>
@@ -331,25 +325,26 @@ export function Promo({
         </VisualColumn>
 
         <TextColumn>
-          <Eyebrow
-            colorScheme="primary"
-            heading={EYEBROW}
-            markerHeight={6}
-            markerWidth={14}
-            renderText={renderText}
-          />
-          <Heading
-            renderText={renderText}
-            segments={HEADING}
-            size="lg"
-            weight="light"
-          />
-          <PromoBody body={BODY} renderText={renderText} size="sm" />
+          <Eyebrow colorScheme="primary" markerHeight={6} markerWidth={14}>
+            <HeadingPart fontFamily="mono">
+              {i18n._(msg`Customer Stories`)}
+            </HeadingPart>
+          </Eyebrow>
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`How teams`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`built with Twenty`)}
+            </HeadingPart>
+          </Heading>
+          <PromoBody size="sm">{i18n._(BODY)}</PromoBody>
           <CtaRow>
             <LocalizedLinkButton
               color="secondary"
               href={ctaHref}
-              label={renderText(ctaLabel)}
+              label={i18n._(ctaLabel)}
               variant="outlined"
             />
           </CtaRow>

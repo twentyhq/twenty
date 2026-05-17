@@ -61,7 +61,7 @@ export class FileAiChatService {
 
     return {
       ...savedFile,
-      url: this.fileUrlService.signFileByIdUrl({
+      url: await this.fileUrlService.signFileByIdUrl({
         fileId,
         workspaceId,
         fileFolder: FileFolder.AgentChat,

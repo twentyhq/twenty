@@ -1,7 +1,7 @@
 import {
   createTimeoutRegistry,
   type TimeoutRegistry,
-} from '@/lib/lifecycle/timeout-registry';
+} from '@/lib/react/timeout-registry';
 import { useEffect, useRef } from 'react';
 
 export function useTimeoutRegistry(): TimeoutRegistry {

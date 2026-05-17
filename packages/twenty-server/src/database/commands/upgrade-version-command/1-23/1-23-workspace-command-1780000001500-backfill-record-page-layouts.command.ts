@@ -1,5 +1,5 @@
 import { Command } from 'nest-commander';
-import { FeatureFlagKey, ViewType } from 'twenty-shared/types';
+import { type FeatureFlagKey, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
@@ -47,7 +47,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     const isDryRun = options.dryRun ?? false;
 
     const isAlreadyEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
+      'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' as FeatureFlagKey,
       workspaceId,
     );
 
@@ -88,12 +88,12 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     });
 
     await this.featureFlagService.enableFeatureFlags(
-      [FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED],
+      ['IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' as FeatureFlagKey],
       workspaceId,
     );
 
     await this.featureFlagService.enableFeatureFlags(
-      [FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED],
+      ['IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' as FeatureFlagKey],
       workspaceId,
     );
 

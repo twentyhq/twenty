@@ -1,10 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import {
-  AuditException,
-  AuditExceptionCode,
-} from 'src/engine/core-modules/audit/audit.exception';
 import {
   type TrackEventName,
   type TrackEventProperties,
@@ -18,6 +14,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class AuditService {
+  private readonly logger = new Logger(AuditService.name);
+
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly clickHouseService: ClickHouseService,
@@ -82,16 +80,19 @@ export class AuditService {
     };
   }
 
-  private preventIfDisabled(
+  private async preventIfDisabled(
     sendEventOrPageviewFunction: () => Promise<{ success: boolean }>,
-  ) {
+  ): Promise<{ success: boolean }> {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return { success: true };
     }
+
     try {
-      return sendEventOrPageviewFunction();
-    } catch (err) {
-      return new AuditException(err, AuditExceptionCode.INVALID_INPUT);
+      return await sendEventOrPageviewFunction();
+    } catch (error) {
+      this.logger.error('Failed to persist audit event to ClickHouse', error);
+
+      return { success: false };
     }
   }
 }
