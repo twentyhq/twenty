@@ -1,6 +1,7 @@
 import { type RefObject, useEffect, useState } from 'react';
 
 const TRANSITION_POINT = 0.25;
+const MOBILE_BREAKPOINT = 921;
 
 export function useHeroScrollProgress(
   trackRef: RefObject<HTMLDivElement | null>,
@@ -8,11 +9,12 @@ export function useHeroScrollProgress(
   const [phase, setPhase] = useState(0);
 
   useEffect(() => {
+    const element = trackRef.current;
+    if (!element) return;
+
+    if (window.innerWidth < MOBILE_BREAKPOINT) return;
+
     const handleScroll = () => {
-      const element = trackRef.current;
-
-      if (!element) return;
-
       const rect = element.getBoundingClientRect();
       const scrollableDistance = element.offsetHeight - window.innerHeight;
 

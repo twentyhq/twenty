@@ -26,23 +26,24 @@ export type HeroScrollProps = {
 };
 
 const NAV_HEIGHT = 64;
-const SCROLL_HEIGHT = '200vh';
 
 const ScrollTrack = styled.section`
   position: relative;
   width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    height: 200vh;
+  }
 `;
 
 const StickyFrame = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - ${NAV_HEIGHT}px);
   justify-content: flex-start;
   overflow: hidden;
+  padding-bottom: ${theme.spacing(6)};
   padding-top: ${theme.spacing(7.5)};
-  position: sticky;
-  top: ${NAV_HEIGHT}px;
   transition: background-color 0.6s ease;
   width: 100%;
 
@@ -55,7 +56,11 @@ const StickyFrame = styled.div`
   }
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    height: calc(100vh - ${NAV_HEIGHT}px);
+    padding-bottom: 0;
     padding-top: ${theme.spacing(12)};
+    position: sticky;
+    top: ${NAV_HEIGHT}px;
   }
 `;
 
@@ -88,7 +93,7 @@ const StyledContainer = styled(Container)`
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
   position: relative;
-  row-gap: ${theme.spacing(3)};
+  row-gap: ${theme.spacing(6)};
   text-align: center;
   width: 100%;
   z-index: 1;
@@ -100,8 +105,12 @@ const StyledContainer = styled(Container)`
 `;
 
 const HeadingSlot = styled.div`
-  max-width: 672px;
+  max-width: 360px;
   min-height: 96px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    max-width: 672px;
+  }
   position: relative;
   transition: color 0.6s ease;
   width: 100%;
@@ -130,10 +139,10 @@ const ContentLayer = styled.div`
 `;
 
 const BodyText = styled.p`
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: ${theme.font.size(4)};
+  line-height: 1.55;
   margin: 0;
-  max-width: 591px;
+  max-width: 360px;
   transition: color 0.6s ease;
   width: 100%;
 
@@ -146,8 +155,16 @@ const BodyText = styled.p`
   }
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    font-size: 18px;
+    max-width: 591px;
   }
+`;
+
+const HeadingGroup = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing(3)};
+  width: 100%;
 `;
 
 const ActionSlot = styled.div`
@@ -173,10 +190,8 @@ const CtaLayer = styled.div`
 `;
 
 const TabsLayer = styled.div`
-  inset: 0;
   opacity: 0;
   pointer-events: none;
-  position: absolute;
   transition: opacity 0.4s ease 0.2s;
   width: 100%;
 
@@ -184,11 +199,17 @@ const TabsLayer = styled.div`
     opacity: 1;
     pointer-events: auto;
   }
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    inset: 0;
+    position: absolute;
+  }
 `;
 
 const VisualWrapper = styled.div`
   flex: 1;
   min-height: 0;
+  overflow: hidden;
   width: 100%;
 `;
 
@@ -210,7 +231,7 @@ export function HeroVisualScroll({
   const activeScene = phase === 0 ? 0 : activeTab + 1;
 
   return (
-    <ScrollTrack ref={trackRef} style={{ height: SCROLL_HEIGHT }}>
+    <ScrollTrack ref={trackRef}>
       <StickyFrame data-phase={phase}>
         <PatternOverlay data-visible={phase === 1 ? 'true' : 'false'}>
           <NextImage
@@ -222,16 +243,20 @@ export function HeroVisualScroll({
           />
         </PatternOverlay>
         <StyledContainer>
-          <HeadingSlot data-phase={phase}>
-            <ContentLayer data-active={phase === 0}>
-              {introHeading}
-            </ContentLayer>
-            <ContentLayer data-active={phase === 1}>{aiHeading}</ContentLayer>
-          </HeadingSlot>
+          <HeadingGroup>
+            <HeadingSlot data-phase={phase}>
+              <ContentLayer data-active={phase === 0}>
+                {introHeading}
+              </ContentLayer>
+              <ContentLayer data-active={phase === 1}>
+                {aiHeading}
+              </ContentLayer>
+            </HeadingSlot>
 
-          <BodyText data-phase={phase}>
-            {phase === 0 ? introBody : aiBody}
-          </BodyText>
+            <BodyText data-phase={phase}>
+              {phase === 0 ? introBody : aiBody}
+            </BodyText>
+          </HeadingGroup>
 
           <ActionSlot>
             <CtaLayer data-visible={phase === 0 ? 'true' : 'false'}>

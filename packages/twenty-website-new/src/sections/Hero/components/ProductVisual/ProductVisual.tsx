@@ -24,20 +24,16 @@ const StyledRoot = styled.div`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    margin-top: ${theme.spacing(8)};
+    margin-top: ${theme.spacing(11)};
   }
 `;
 
 const ShellScene = styled.div`
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1280 / 832;
   margin: 0 auto;
   max-height: 740px;
   position: relative;
   width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    aspect-ratio: 1280 / 832;
-  }
 `;
 
 const AppLayout = styled.div`
