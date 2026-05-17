@@ -75,119 +75,120 @@ export const useTriggerRecordBoardInitialQuery = () => {
       objectMetadataItem,
     });
 
-  const triggerRecordBoardInitialQuery = useCallback(async (options?: {
-    preserveScroll?: boolean;
-  }) => {
-    const preserveScroll = options?.preserveScroll === true;
+  const triggerRecordBoardInitialQuery = useCallback(
+    async (options?: { preserveScroll?: boolean }) => {
+      const preserveScroll = options?.preserveScroll === true;
 
-    store.set(recordIndexRecordGroupsAreInInitialLoading, true);
+      store.set(recordIndexRecordGroupsAreInInitialLoading, true);
 
-    const cleanStateBeforeExit = () => {
-      store.set(recordIndexRecordGroupsAreInInitialLoading, false);
+      const cleanStateBeforeExit = () => {
+        store.set(recordIndexRecordGroupsAreInInitialLoading, false);
 
-      setLastRecordBoardQueryIdentifier(queryIdentifier);
+        setLastRecordBoardQueryIdentifier(queryIdentifier);
 
-      setRecordBoardCurrentGroupByQueryOffset(0);
+        setRecordBoardCurrentGroupByQueryOffset(0);
 
-      // Scroll reset only makes sense when the dataset itself changed
-      // (filters/sort/group). For data-driven re-init (a single record
-      // changed via SSE or an own mutation), preserveScroll keeps the user
-      // where they were.
-      if (!preserveScroll) {
-        scrollWrapperHTMLElement?.scrollTo({ top: 0, left: 0 });
+        // Scroll reset only makes sense when the dataset itself changed
+        // (filters/sort/group). For data-driven re-init (a single record
+        // changed via SSE or an own mutation), preserveScroll keeps the user
+        // where they were.
+        if (!preserveScroll) {
+          scrollWrapperHTMLElement?.scrollTo({ top: 0, left: 0 });
+        }
+      };
+
+      const recordIndexGroupsRecordsGroupByLazyQueryResult =
+        await executeRecordIndexGroupsRecordsLazyGroupBy();
+
+      if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
+        cleanStateBeforeExit();
+
+        return;
       }
-    };
 
-    const recordIndexGroupsRecordsGroupByLazyQueryResult =
-      await executeRecordIndexGroupsRecordsLazyGroupBy();
+      const queryFieldName =
+        getGroupByQueryResultGqlFieldName(objectMetadataItem);
 
-    if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
+      const groups =
+        recordIndexGroupsRecordsGroupByLazyQueryResult.data?.[queryFieldName];
+
+      if (!isDefined(groups)) {
+        cleanStateBeforeExit();
+
+        return;
+      }
+
+      for (const recordGroupDefinition of recordGroupDefinitions) {
+        const foundGroupInResult = groups?.find(
+          (recordGroup: any) =>
+            (recordGroup.groupByDimensionValues[0] as string) ===
+            recordGroupDefinition.value,
+        );
+
+        if (!isDefined(foundGroupInResult)) {
+          setRecordIdsForColumn(recordGroupDefinition.id, []);
+          store.set(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+            false,
+          );
+          continue;
+        }
+
+        const records = getRecordsFromRecordConnection({
+          recordConnection: foundGroupInResult,
+        });
+
+        if (!isNonEmptyArray(records)) {
+          setRecordIdsForColumn(recordGroupDefinition.id, []);
+          store.set(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+            false,
+          );
+          continue;
+        }
+
+        upsertRecordsInStore({ partialRecords: records });
+
+        setRecordIdsForColumn(recordGroupDefinition.id, records);
+
+        if (records.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
+          store.set(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+            false,
+          );
+        } else {
+          store.set(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+            true,
+          );
+        }
+      }
+
       cleanStateBeforeExit();
-
-      return;
-    }
-
-    const queryFieldName =
-      getGroupByQueryResultGqlFieldName(objectMetadataItem);
-
-    const groups =
-      recordIndexGroupsRecordsGroupByLazyQueryResult.data?.[queryFieldName];
-
-    if (!isDefined(groups)) {
-      cleanStateBeforeExit();
-
-      return;
-    }
-
-    for (const recordGroupDefinition of recordGroupDefinitions) {
-      const foundGroupInResult = groups?.find(
-        (recordGroup: any) =>
-          (recordGroup.groupByDimensionValues[0] as string) ===
-          recordGroupDefinition.value,
-      );
-
-      if (!isDefined(foundGroupInResult)) {
-        setRecordIdsForColumn(recordGroupDefinition.id, []);
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          false,
-        );
-        continue;
-      }
-
-      const records = getRecordsFromRecordConnection({
-        recordConnection: foundGroupInResult,
-      });
-
-      if (!isNonEmptyArray(records)) {
-        setRecordIdsForColumn(recordGroupDefinition.id, []);
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          false,
-        );
-        continue;
-      }
-
-      upsertRecordsInStore({ partialRecords: records });
-
-      setRecordIdsForColumn(recordGroupDefinition.id, records);
-
-      if (records.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          false,
-        );
-      } else {
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          true,
-        );
-      }
-    }
-
-    cleanStateBeforeExit();
-  }, [
-    recordIndexRecordGroupsAreInInitialLoading,
-    store,
-    executeRecordIndexGroupsRecordsLazyGroupBy,
-    objectMetadataItem,
-    setLastRecordBoardQueryIdentifier,
-    queryIdentifier,
-    setRecordBoardCurrentGroupByQueryOffset,
-    scrollWrapperHTMLElement,
-    recordGroupDefinitions,
-    upsertRecordsInStore,
-    setRecordIdsForColumn,
-    recordBoardShouldFetchMoreInColumnFamilyCallbackState,
-  ]);
+    },
+    [
+      recordIndexRecordGroupsAreInInitialLoading,
+      store,
+      executeRecordIndexGroupsRecordsLazyGroupBy,
+      objectMetadataItem,
+      setLastRecordBoardQueryIdentifier,
+      queryIdentifier,
+      setRecordBoardCurrentGroupByQueryOffset,
+      scrollWrapperHTMLElement,
+      recordGroupDefinitions,
+      upsertRecordsInStore,
+      setRecordIdsForColumn,
+      recordBoardShouldFetchMoreInColumnFamilyCallbackState,
+    ],
+  );
 
   return {
     triggerRecordBoardInitialQuery,
