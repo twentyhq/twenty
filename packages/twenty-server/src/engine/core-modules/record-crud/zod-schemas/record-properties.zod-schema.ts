@@ -234,7 +234,15 @@ export const generateRecordPropertiesZodSchema = (
           primaryPhoneNumber: z.string().optional(),
           primaryPhoneCountryCode: z.string().optional(),
           primaryPhoneCallingCode: z.string().optional(),
-          additionalPhones: z.array(z.string()).optional(),
+          additionalPhones: z
+            .array(
+              z.object({
+                number: z.string().optional(),
+                callingCode: z.string().optional(),
+                countryCode: z.string().optional(),
+              }),
+            )
+            .optional(),
         });
         break;
 
