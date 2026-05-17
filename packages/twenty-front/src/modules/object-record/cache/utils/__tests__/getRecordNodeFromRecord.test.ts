@@ -1,5 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
@@ -48,6 +49,49 @@ describe('getRecordNodeFromRecord', () => {
         __typename: 'FullName',
         firstName: record.name.firstName,
         lastName: record.name.lastName,
+      },
+    });
+  });
+
+  it('maps null one-to-many relation values to an empty connection', () => {
+    // Given
+    const objectMetadataItems: EnrichedObjectMetadataItem[] =
+      getTestEnrichedObjectMetadataItemsMock();
+    const objectMetadataItem:
+      | Pick<
+          EnrichedObjectMetadataItem,
+          'fields' | 'namePlural' | 'nameSingular'
+        >
+      | undefined = getTestEnrichedObjectMetadataItemsMock().find(
+      (item) => item.nameSingular === 'company',
+    );
+
+    if (!objectMetadataItem) {
+      throw new Error('Object metadata item not found');
+    }
+
+    const recordGqlFields = {
+      people: true,
+    };
+    const record = {
+      ...mockedCompanyRecords[0],
+      people: null,
+    };
+
+    // When
+    const result = getRecordNodeFromRecord({
+      objectMetadataItems,
+      objectMetadataItem,
+      recordGqlFields,
+      record,
+    });
+
+    // Then
+    expect(result).toEqual({
+      __typename: 'Company',
+      people: {
+        __typename: 'PersonConnection',
+        edges: [],
       },
     });
   });

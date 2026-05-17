@@ -20,15 +20,17 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
     EnrichedObjectMetadataItem,
     'fields' | 'namePlural' | 'nameSingular'
   >;
-  records: T[];
+  records: T[] | null | undefined;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   withPageInfo?: boolean;
   isRootLevel?: boolean;
   computeReferences?: boolean;
 }) => {
+  const recordsWithFallback = records ?? [];
+
   return {
     __typename: getConnectionTypename(objectMetadataItem.nameSingular),
-    edges: records.map((record) => {
+    edges: recordsWithFallback.map((record) => {
       return getRecordEdgeFromRecord({
         objectMetadataItems,
         objectMetadataItem,
@@ -39,6 +41,6 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
       });
     }),
     ...(withPageInfo && { pageInfo: getEmptyPageInfo() }),
-    ...(withPageInfo && { totalCount: records.length }),
+    ...(withPageInfo && { totalCount: recordsWithFallback.length }),
   } as RecordGqlConnectionEdgesRequired;
 };
