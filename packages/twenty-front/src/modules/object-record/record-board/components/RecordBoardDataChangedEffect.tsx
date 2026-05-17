@@ -2,6 +2,7 @@ import { useStore } from 'jotai';
 
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
+import { SSE_BOARD_DEBOUNCE_TIME_IN_MS_TO_AVOID_SSE_OWN_EVENTS_RACE_CONDITION } from '@/object-record/record-board/constants/SseBoardDebounceTimeInMsToAvoidSseOwnEventsRaceCondition';
 import { useGetShouldInitializeRecordBoardForUpdateInputs } from '@/object-record/record-board/hooks/useGetShouldInitializeRecordBoardForUpdateInputs';
 import { useRemoveRecordsFromBoard } from '@/object-record/record-board/hooks/useRemoveRecordsFromBoard';
 import { useTriggerRecordBoardInitialQuery } from '@/object-record/record-board/hooks/useTriggerRecordBoardInitialQuery';
@@ -15,6 +16,7 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 
 export const RecordBoardDataChangedEffect = () => {
   const store = useStore();
@@ -38,6 +40,12 @@ export const RecordBoardDataChangedEffect = () => {
 
   const { removeRecordsFromBoard } = useRemoveRecordsFromBoard();
 
+  const debouncedTriggerRecordBoardInitialQuery = useDebouncedCallback(
+    () => triggerRecordBoardInitialQuery({ preserveScroll: true }),
+    SSE_BOARD_DEBOUNCE_TIME_IN_MS_TO_AVOID_SSE_OWN_EVENTS_RACE_CONDITION,
+    { leading: false },
+  );
+
   const handleObjectRecordOperation = useCallback(
     (
       objectRecordOperationEventDetail: ObjectRecordOperationBrowserEventDetail,
@@ -57,13 +65,13 @@ export const RecordBoardDataChangedEffect = () => {
               getShouldInitializeRecordBoardForUpdateInputs(updateInputs);
 
             if (shouldInitializeForUpdateOperation) {
-              triggerRecordBoardInitialQuery({ preserveScroll: true });
+              debouncedTriggerRecordBoardInitialQuery();
             }
           }
           break;
         case 'create-one': {
           if (objectRecordOperation.createdRecord.position === 'first') {
-            triggerRecordBoardInitialQuery({ preserveScroll: true });
+            debouncedTriggerRecordBoardInitialQuery();
           } else {
             const createdRecordPosition =
               objectRecordOperation.createdRecord.position;
@@ -106,7 +114,7 @@ export const RecordBoardDataChangedEffect = () => {
             const groupIsEmpty = recordIdsWithoutCreatedRecord.length === 0;
 
             if (groupIsEmpty) {
-              triggerRecordBoardInitialQuery({ preserveScroll: true });
+              debouncedTriggerRecordBoardInitialQuery();
               return;
             }
 
@@ -122,7 +130,7 @@ export const RecordBoardDataChangedEffect = () => {
             if (
               createdRecordPosition < (firstExistingRecordInGroup.position ?? 0)
             ) {
-              triggerRecordBoardInitialQuery({ preserveScroll: true });
+              debouncedTriggerRecordBoardInitialQuery();
             }
           }
           break;
@@ -148,13 +156,13 @@ export const RecordBoardDataChangedEffect = () => {
           return;
         }
         default: {
-          triggerRecordBoardInitialQuery({ preserveScroll: true });
+          debouncedTriggerRecordBoardInitialQuery();
         }
       }
     },
     [
       store,
-      triggerRecordBoardInitialQuery,
+      debouncedTriggerRecordBoardInitialQuery,
       getShouldInitializeRecordBoardForUpdateInputs,
       recordIndexGroupFieldMetadataItem,
       recordGroupFromGroupValueCallbackState,

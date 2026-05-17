@@ -394,26 +394,37 @@ export class WorkflowDatabaseEventTriggerListener {
     if (action === DatabaseEventAction.UPDATED) {
       const settings = eventListener.settings as UpdateEventTriggerSettings;
       const updateEventPayload = eventPayload as ObjectRecordUpdateEvent;
+      const updatedFields =
+        updateEventPayload?.properties?.updatedFields ?? [];
+
+      // Skip position-only updates to preserve historical trigger behavior:
+      // before POSITION was included in event diffs, same-column kanban drags
+      // emitted no event at all, so workflows never fired on them.
+      if (updatedFields.length === 1 && updatedFields[0] === 'position') {
+        return false;
+      }
 
       return (
         !settings.fields ||
         settings.fields.length === 0 ||
-        settings.fields.some((field) =>
-          updateEventPayload?.properties?.updatedFields?.includes(field),
-        )
+        settings.fields.some((field) => updatedFields.includes(field))
       );
     }
 
     if (action === DatabaseEventAction.UPSERTED) {
       const settings = eventListener.settings as UpsertEventTriggerSettings;
       const upsertEventPayload = eventPayload as ObjectRecordUpsertEvent;
+      const updatedFields =
+        upsertEventPayload?.properties?.updatedFields ?? [];
+
+      if (updatedFields.length === 1 && updatedFields[0] === 'position') {
+        return false;
+      }
 
       return (
         !settings.fields ||
         settings.fields.length === 0 ||
-        settings.fields.some((field) =>
-          upsertEventPayload?.properties?.updatedFields?.includes(field),
-        )
+        settings.fields.some((field) => updatedFields.includes(field))
       );
     }
 

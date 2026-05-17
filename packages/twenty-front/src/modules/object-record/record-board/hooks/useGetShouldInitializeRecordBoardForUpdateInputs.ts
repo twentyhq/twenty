@@ -84,7 +84,7 @@ export const useGetShouldInitializeRecordBoardForUpdateInputs = () => {
     }
 
     if (updatedFieldNames.has('position')) {
-      return false;
+      return true;
     }
 
     return (

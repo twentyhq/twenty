@@ -34,8 +34,7 @@ export const objectRecordChangedValues = (
       if (
         key === 'updatedAt' ||
         key === 'searchVector' ||
-        field?.type === FieldMetadataType.RELATION ||
-        field?.type === FieldMetadataType.POSITION
+        field?.type === FieldMetadataType.RELATION
       ) {
         return acc;
       }

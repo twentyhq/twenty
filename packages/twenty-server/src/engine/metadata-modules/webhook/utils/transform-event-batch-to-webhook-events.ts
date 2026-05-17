@@ -27,6 +27,21 @@ export const transformEventBatchToWebhookEvents = ({
     const secret = webhook.secret;
 
     for (const eventData of workspaceEventBatch.events) {
+      const eventUpdatedFields =
+        'updatedFields' in eventData.properties
+          ? eventData.properties.updatedFields
+          : undefined;
+
+      // Skip position-only updates to preserve historical webhook behavior:
+      // before POSITION was included in event diffs, same-column kanban drags
+      // emitted no event at all, so webhook consumers never fired on them.
+      if (
+        eventUpdatedFields?.length === 1 &&
+        eventUpdatedFields[0] === 'position'
+      ) {
+        continue;
+      }
+
       const { record, updatedFields } = transformEventToWebhookEvent({
         eventName: workspaceEventBatch.name,
         event: eventData,
