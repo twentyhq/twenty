@@ -39,7 +39,7 @@ describe('computeFolderIdsForSyncToggle', () => {
       expect(result).toEqual(['inbox']);
     });
 
-    it('should include ancestors when syncing a nested folder', () => {
+    it('should not include ancestors when syncing a nested folder', () => {
       const work = createFolder({
         id: 'work',
         name: 'Work',
@@ -57,9 +57,7 @@ describe('computeFolderIdsForSyncToggle', () => {
         isSynced: true,
       });
 
-      expect(result).toContain('nested');
-      expect(result).toContain('work');
-      expect(result).toHaveLength(2);
+      expect(result).toEqual(['nested']);
     });
 
     it('should NOT include siblings when syncing a child folder', () => {
@@ -97,13 +95,13 @@ describe('computeFolderIdsForSyncToggle', () => {
       });
 
       expect(result).toContain('child-a');
-      expect(result).toContain('parent');
+      expect(result).not.toContain('parent');
       expect(result).not.toContain('child-b');
       expect(result).not.toContain('child-c');
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(1);
     });
 
-    it('should include all ancestors up to root', () => {
+    it('should not include ancestors up to root', () => {
       const work = createFolder({
         id: 'work',
         name: 'Work',
@@ -127,10 +125,7 @@ describe('computeFolderIdsForSyncToggle', () => {
         isSynced: true,
       });
 
-      expect(result).toContain('deep');
-      expect(result).toContain('nested');
-      expect(result).toContain('work');
-      expect(result).toHaveLength(3);
+      expect(result).toEqual(['deep']);
     });
 
     it('should include descendants when syncing a parent folder', () => {
@@ -163,7 +158,7 @@ describe('computeFolderIdsForSyncToggle', () => {
       expect(result).toHaveLength(3);
     });
 
-    it('should include both ancestors and descendants', () => {
+    it('should include descendants but not ancestors', () => {
       const root = createFolder({
         id: 'root',
         name: 'Root',
@@ -187,10 +182,10 @@ describe('computeFolderIdsForSyncToggle', () => {
         isSynced: true,
       });
 
-      expect(result).toContain('root');
+      expect(result).not.toContain('root');
       expect(result).toContain('middle');
       expect(result).toContain('leaf');
-      expect(result).toHaveLength(3);
+      expect(result).toHaveLength(2);
     });
   });
 
