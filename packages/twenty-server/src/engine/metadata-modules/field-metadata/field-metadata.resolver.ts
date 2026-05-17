@@ -122,7 +122,7 @@ export class FieldMetadataResolver {
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+      return fieldMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -144,7 +144,7 @@ export class FieldMetadataResolver {
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+      return fieldMetadataGraphqlApiExceptionHandler(error);
     }
   }
 

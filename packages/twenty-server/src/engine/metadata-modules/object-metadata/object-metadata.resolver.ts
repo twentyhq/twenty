@@ -147,7 +147,7 @@ export class ObjectMetadataResolver {
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      return objectMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -166,7 +166,7 @@ export class ObjectMetadataResolver {
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      return objectMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -185,7 +185,7 @@ export class ObjectMetadataResolver {
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
+      return objectMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
