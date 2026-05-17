@@ -10,10 +10,10 @@ const StyledFixedContainer = styled.div<{
   isSettings?: boolean;
   isMobile?: boolean;
 }>`
-  padding-left: ${({ isSettings }) =>
-    isSettings ? themeCssVariables.spacing[5] : '0'};
+  padding-left: ${({ isSettings, isMobile }) =>
+    isSettings || isMobile ? themeCssVariables.spacing[5] : '0'};
   padding-right: ${({ isSettings, isMobile }) =>
-    isSettings
+    isSettings || isMobile
       ? isMobile
         ? themeCssVariables.spacing[5]
         : themeCssVariables.spacing[8]
