@@ -44,7 +44,7 @@ Then your admin completes the one-time wiring (see below).
 
 ## One-time setup (admin)
 
-1. Generate an API key at [Fireflies → Integrations → Fireflies API](https://app.fireflies.ai/integrations/custom/api) and paste it into the **FIREFLIES_API_KEY** application variable.
+1. Generate an API key at [Fireflies → Integrations → Fireflies API](https://app.fireflies.ai/settings/developer-settings) and paste it into the **FIREFLIES_API_KEY** application variable.
 2. Generate a long random string (\`openssl rand -hex 32\`). Paste it into the **FIREFLIES_WEBHOOK_SECRET** application variable.
 3. Configure a Webhooks V2 endpoint at [Fireflies → Integrations → Webhooks V2](https://app.fireflies.ai/integrations/api/webhook):
    - **Webhook URL**: \`https://<your-twenty-domain>/webhook/fireflies\`
