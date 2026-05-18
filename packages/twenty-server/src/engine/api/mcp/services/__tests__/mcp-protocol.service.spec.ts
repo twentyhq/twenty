@@ -2,12 +2,16 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.const';
+import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
+import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-open-world-read-only-tool-annotations.const';
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
 import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
 import { MCP_SERVER_INSTRUCTIONS } from 'src/engine/api/mcp/constants/mcp-server-instructions.const';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
+import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { EXECUTE_TOOL_TOOL_NAME } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
@@ -41,7 +45,18 @@ describe('McpProtocolService', () => {
     EXECUTE_TOOL_TOOL_NAME,
     LOAD_SKILL_TOOL_NAME,
     'search_help_center',
-  ];
+  ] as const;
+
+  const EXPECTED_MCP_TOOL_ANNOTATIONS: Record<
+    (typeof EXPECTED_MCP_TOOL_NAMES)[number],
+    McpToolAnnotations
+  > = {
+    [GET_TOOL_CATALOG_TOOL_NAME]: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+    [LEARN_TOOLS_TOOL_NAME]: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+    [EXECUTE_TOOL_TOOL_NAME]: MCP_EXECUTE_TOOL_ANNOTATIONS,
+    [LOAD_SKILL_TOOL_NAME]: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+    search_help_center: MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+  };
 
   beforeEach(async () => {
     const mockSearchHelpCenterTool = {
@@ -255,6 +270,7 @@ describe('McpProtocolService', () => {
               name,
               expect.objectContaining({
                 description: expect.any(String),
+                annotations: EXPECTED_MCP_TOOL_ANNOTATIONS[name],
                 execute: expect.any(Function),
               }),
             ]),
@@ -294,6 +310,7 @@ describe('McpProtocolService', () => {
               name,
               expect.objectContaining({
                 description: expect.any(String),
+                annotations: EXPECTED_MCP_TOOL_ANNOTATIONS[name],
               }),
             ]),
           ),

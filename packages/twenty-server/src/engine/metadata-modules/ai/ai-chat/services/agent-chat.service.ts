@@ -23,6 +23,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
+import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 
 const serializeThreadForBroadcast = (
@@ -252,14 +253,14 @@ export class AgentChatService {
     threadId,
     text,
     id,
-    fileIds,
+    fileAttachments,
     workspaceId,
     userWorkspaceId,
   }: {
     threadId: string;
     text: string;
     id?: string;
-    fileIds?: string[];
+    fileAttachments?: AiChatFileAttachment[];
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<AgentMessageEntity> {
@@ -277,12 +278,18 @@ export class AgentChatService {
 
     const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
 
-    const files =
-      fileIds && fileIds.length > 0
+    const validFiles =
+      fileAttachments && fileAttachments.length > 0
         ? await this.fileRepository.find({
-            where: { id: In(fileIds), workspaceId },
+            where: {
+              id: In(fileAttachments.map((attachment) => attachment.id)),
+              workspaceId,
+            },
+            select: ['id'],
           })
         : [];
+
+    const validFileIds = new Set(validFiles.map((file) => file.id));
 
     const parts = [
       {
@@ -292,14 +299,16 @@ export class AgentChatService {
         textContent: text,
         workspaceId,
       },
-      ...files.map((file, index) => ({
-        messageId: savedMessageId,
-        orderIndex: index + 1,
-        type: 'file',
-        fileId: file.id,
-        fileFilename: file.path.split('/').pop() ?? null,
-        workspaceId,
-      })),
+      ...(fileAttachments ?? [])
+        .filter((attachment) => validFileIds.has(attachment.id))
+        .map((attachment, index) => ({
+          messageId: savedMessageId,
+          orderIndex: index + 1,
+          type: 'file',
+          fileId: attachment.id,
+          fileFilename: attachment.filename,
+          workspaceId,
+        })),
     ];
 
     await this.messagePartRepository.insert(parts);

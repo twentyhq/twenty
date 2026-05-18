@@ -135,6 +135,11 @@ msgstr "A note target"
 msgid "A payment processing error occurred."
 msgstr "A payment processing error occurred."
 
+#. js-lingui-id: CazRIU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "A permission flag with this key already exists"
+msgstr "A permission flag with this key already exists"
+
 #. js-lingui-id: Io42ej
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A person"
@@ -1161,6 +1166,12 @@ msgstr "Cannot delete account: you are the only admin. Assign another admin or d
 msgid "Cannot delete standard agent"
 msgstr "Cannot delete standard agent"
 
+#. js-lingui-id: kOOXTs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Cannot delete standard permission flag definition"
+msgstr "Cannot delete standard permission flag definition"
+
 #. js-lingui-id: EN2+6i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
@@ -1294,6 +1305,12 @@ msgstr "Cannot target a role owned by another application."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service.ts
 msgid "Cannot update standard agent"
 msgstr "Cannot update standard agent"
+
+#. js-lingui-id: LWpSNC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Cannot update standard permission flag definition"
+msgstr "Cannot update standard permission flag definition"
 
 #. js-lingui-id: I2EmgT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
@@ -3579,15 +3596,19 @@ msgstr "Invalid page layout widget data."
 msgid "Invalid parameters provided."
 msgstr "Invalid parameters provided."
 
-#. js-lingui-id: KhF8C3
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-msgid "Invalid permission flag value"
-msgstr "Invalid permission flag value"
+#. js-lingui-id: LI7Gn/
+#: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
+msgid "Invalid permission flag key."
+msgstr "Invalid permission flag key."
+
+#. js-lingui-id: OqxwMi
+#: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
+msgid "Invalid permission flag permission type."
+msgstr "Invalid permission flag permission type."
 
 #. js-lingui-id: mMHHVP
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "Invalid permission setting"
 msgstr "Invalid permission setting"
 
@@ -3595,6 +3616,12 @@ msgstr "Invalid permission setting"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "Invalid permission setting."
+
+#. js-lingui-id: ZoXxz9
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Invalid permission type"
+msgstr "Invalid permission type"
 
 #. js-lingui-id: 0D0YwP
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
@@ -4112,6 +4139,16 @@ msgstr "Kanban main group by field must be a SELECT field"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 msgid "Kanban view must have a main group by field"
 msgstr "Kanban view must have a main group by field"
+
+#. js-lingui-id: WDgCbh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Key cannot be changed"
+msgstr "Key cannot be changed"
+
+#. js-lingui-id: QV1ZPO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Key is required"
+msgstr "Key is required"
 
 #. js-lingui-id: 6sFS+I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-required-properties.util.ts
@@ -5646,38 +5683,104 @@ msgstr "People"
 msgid "People linked to the company."
 msgstr "People linked to the company."
 
-#. js-lingui-id: fxC+On
+#. js-lingui-id: 3zRddX
+#: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
+msgid "Permission flag already exists."
+msgstr "Permission flag already exists."
+
+#. js-lingui-id: vUfYBs
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-msgid "Permission flag already exists"
-msgstr "Permission flag already exists"
+msgid "Permission flag definition already exists"
+msgstr "Permission flag definition already exists"
+
+#. js-lingui-id: si69+A
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag definition key cannot be changed after creation"
+msgstr "Permission flag definition key cannot be changed after creation"
+
+#. js-lingui-id: vCvEfM
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag definition key is required"
+msgstr "Permission flag definition key is required"
+
+#. js-lingui-id: IPm2ty
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag definition not found"
+msgstr "Permission flag definition not found"
+
+#. js-lingui-id: /amTA5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag definition permission type must be 'settings' or 'tool'"
+msgstr "Permission flag definition permission type must be 'settings' or 'tool'"
+
+#. js-lingui-id: dKSPBk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag definition to delete not found"
+msgstr "Permission flag definition to delete not found"
+
+#. js-lingui-id: 5phRcJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag definition to update not found"
+msgstr "Permission flag definition to update not found"
+
+#. js-lingui-id: O/v4Uv
+#. placeholder {0}: flatPermissionFlagToValidate.key
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag definition with key {0} already exists in this workspace"
+msgstr "Permission flag definition with key {0} already exists in this workspace"
+
+#. js-lingui-id: FxbCOo
+#. placeholder {0}: existing.key
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag definition with key {0} is still assigned to a role"
+msgstr "Permission flag definition with key {0} is still assigned to a role"
+
+#. js-lingui-id: px8Wqt
+#. placeholder {0}: flatPermissionFlagToValidate.universalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag definition with universal identifier {0} already exists"
+msgstr "Permission flag definition with universal identifier {0} already exists"
 
 #. js-lingui-id: qG245w
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "Permission flag for this role and setting already exists"
 msgstr "Permission flag for this role and setting already exists"
 
+#. js-lingui-id: 7A0rAw
+#: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
+msgid "Permission flag is still assigned to a role."
+msgstr "Permission flag is still assigned to a role."
+
+#. js-lingui-id: 09NaoU
+#: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
+msgid "Permission flag key cannot be changed."
+msgstr "Permission flag key cannot be changed."
+
 #. js-lingui-id: 2mZr45
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "Permission flag not found"
 msgstr "Permission flag not found"
 
+#. js-lingui-id: 3qYOk2
+#: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
+msgid "Permission flag not found."
+msgstr "Permission flag not found."
+
 #. js-lingui-id: dqLRwc
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "Permission flag to delete not found"
 msgstr "Permission flag to delete not found"
 
 #. js-lingui-id: SMgh5j
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "Permission flag to update not found"
 msgstr "Permission flag to update not found"
-
-#. js-lingui-id: VuCvJL
-#. placeholder {0}: flatPermissionFlagToValidate.universalIdentifier
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-msgid "Permission flag with universal identifier {0} already exists"
-msgstr "Permission flag with universal identifier {0} already exists"
 
 #. js-lingui-id: vcvSI3
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -6036,6 +6139,11 @@ msgstr "Remote objects are not production ready yet"
 msgid "Remote objects are not supported yet"
 msgstr "Remote objects are not supported yet"
 
+#. js-lingui-id: yFLhnq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Remove this permission from all roles before deleting it"
+msgstr "Remove this permission from all roles before deleting it"
+
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
@@ -6097,9 +6205,9 @@ msgid "Role cannot be assigned to this entity."
 msgstr "Role cannot be assigned to this entity."
 
 #. js-lingui-id: k2/sGI
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
@@ -6136,10 +6244,10 @@ msgstr "Role name is invalid"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
@@ -6159,6 +6267,17 @@ msgstr "Role not found"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Role not found."
 msgstr "Role not found."
+
+#. js-lingui-id: zlsZBc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+msgid "Role permission flag already exists"
+msgstr "Role permission flag already exists"
+
+#. js-lingui-id: 2NHP+l
+#. placeholder {0}: flatRolePermissionFlagToValidate.universalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+msgid "Role permission flag with universal identifier {0} already exists"
+msgstr "Role permission flag with universal identifier {0} already exists"
 
 #. js-lingui-id: K+Gn31
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -6422,7 +6541,7 @@ msgid "Some of the information provided is invalid. Please check your input and 
 msgstr "Some of the information provided is invalid. Please check your input and try again."
 
 #. js-lingui-id: 01Sxb6
-#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/role-permission-flag/role-permission-flag.service.ts
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 
@@ -6481,6 +6600,11 @@ msgstr "Standard agents cannot be modified."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
 msgstr "Standard objects cannot be deleted"
+
+#. js-lingui-id: Xn/1qY
+#: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
+msgid "Standard permission flags cannot be modified."
+msgstr "Standard permission flags cannot be modified."
 
 #. js-lingui-id: H8j7uw
 #: src/engine/metadata-modules/skill/skill.exception.ts
@@ -7073,7 +7197,7 @@ msgid "The role you are looking for could not be found. It may have been deleted
 msgstr "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
 
 #. js-lingui-id: woRk0z
-#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/role-permission-flag/role-permission-flag.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "The role you are trying to modify could not be found."
 msgstr "The role you are trying to modify could not be found."
@@ -7313,8 +7437,8 @@ msgid "This operation is not supported."
 msgstr "This operation is not supported."
 
 #. js-lingui-id: 3q5jw3
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "This permission is already set for the role"
 msgstr "This permission is already set for the role"
 
@@ -7366,9 +7490,9 @@ msgstr "This role cannot be edited."
 
 #. js-lingui-id: KoDdqN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
