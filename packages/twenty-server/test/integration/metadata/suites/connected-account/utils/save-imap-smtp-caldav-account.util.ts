@@ -65,7 +65,7 @@ export const saveImapSmtpCaldavAccount = async ({
   });
 
   if (expectToFail) {
-    expect(response.body.data?.saveImapSmtpCaldavAccount).toBeNull();
+    expect(response.body.errors).toBeDefined();
 
     return { errors: response.body.errors, data: null };
   }

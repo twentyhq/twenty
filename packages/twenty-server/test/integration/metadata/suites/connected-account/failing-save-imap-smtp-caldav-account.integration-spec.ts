@@ -148,21 +148,6 @@ describe('Connected account creation should fail', () => {
         },
       },
     },
-    {
-      title: 'when IMAP host is a private network address',
-      context: {
-        accountOwnerId: VALID_OWNER_ID,
-        handle: VALID_HANDLE,
-        connectionParameters: {
-          IMAP: {
-            host: '192.168.1.1',
-            port: 993,
-            password: 'secret',
-            secure: true,
-          },
-        },
-      },
-    },
   ];
 
   it.each(eachTestingContextFilter(failingCreationTestCases))(

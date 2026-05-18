@@ -6,7 +6,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 const OWNER_ID = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE;
 
-const createAccount = async (handle: string) => {
+const createAccount = async (handle: string): Promise<string> => {
   const { data } = await saveImapSmtpCaldavAccount({
     expectToFail: false,
     input: {
@@ -14,14 +14,14 @@ const createAccount = async (handle: string) => {
       handle,
       connectionParameters: {
         IMAP: {
-          host: 'imap.example.com',
+          host: 'imap.fastmail.com',
           port: 993,
           username: 'user@example.com',
           password: 'test-password',
           secure: true,
         },
         SMTP: {
-          host: 'smtp.example.com',
+          host: 'smtp.fastmail.com',
           port: 465,
           username: 'user@example.com',
           password: 'test-password',
@@ -43,7 +43,7 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
     }
   });
 
-  it('should create a connected account with IMAP and SMTP connection parameters', async () => {
+  it('should create a connected account with IMAP and SMTP', async () => {
     const { data } = await saveImapSmtpCaldavAccount({
       expectToFail: false,
       input: {
@@ -51,14 +51,14 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
         handle: 'test-create@example.com',
         connectionParameters: {
           IMAP: {
-            host: 'imap.example.com',
+            host: 'imap.fastmail.com',
             port: 993,
             username: 'user@example.com',
             password: 'test-password',
             secure: true,
           },
           SMTP: {
-            host: 'smtp.example.com',
+            host: 'smtp.fastmail.com',
             port: 465,
             username: 'user@example.com',
             password: 'test-password',
@@ -81,13 +81,13 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
 
     expect(account.connectionParameters).toEqual({
       IMAP: {
-        host: 'imap.example.com',
+        host: 'imap.fastmail.com',
         port: 993,
         username: 'user@example.com',
         secure: true,
       },
       SMTP: {
-        host: 'smtp.example.com',
+        host: 'smtp.fastmail.com',
         port: 465,
         username: 'user@example.com',
         secure: true,
@@ -108,13 +108,13 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
         handle: 'test-update-no-pwd@example.com',
         connectionParameters: {
           IMAP: {
-            host: 'imap-updated.example.com',
+            host: 'imap-updated.fastmail.com',
             port: 993,
             username: 'updated-user@example.com',
             secure: true,
           },
           SMTP: {
-            host: 'smtp-updated.example.com',
+            host: 'smtp-updated.fastmail.com',
             port: 587,
             username: 'updated-user@example.com',
             secure: false,
@@ -133,70 +133,16 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
 
     expect(account.connectionParameters).toEqual({
       IMAP: {
-        host: 'imap-updated.example.com',
+        host: 'imap-updated.fastmail.com',
         port: 993,
         username: 'updated-user@example.com',
         secure: true,
       },
       SMTP: {
-        host: 'smtp-updated.example.com',
+        host: 'smtp-updated.fastmail.com',
         port: 587,
         username: 'updated-user@example.com',
         secure: false,
-      },
-      CALDAV: null,
-    });
-  });
-
-  it('should update only the password when other fields stay the same', async () => {
-    const accountId = await createAccount('test-update-pwd@example.com');
-
-    accountIdsToCleanup.push(accountId);
-
-    const { data } = await saveImapSmtpCaldavAccount({
-      expectToFail: false,
-      input: {
-        accountOwnerId: OWNER_ID,
-        handle: 'test-update-pwd@example.com',
-        connectionParameters: {
-          IMAP: {
-            host: 'imap.example.com',
-            port: 993,
-            username: 'user@example.com',
-            password: 'new-password',
-            secure: true,
-          },
-          SMTP: {
-            host: 'smtp.example.com',
-            port: 465,
-            username: 'user@example.com',
-            password: 'new-password',
-            secure: true,
-          },
-        },
-        id: accountId,
-      },
-    });
-
-    expect(data).toEqual({
-      success: true,
-      connectedAccountId: accountId,
-    });
-
-    const account = await getConnectedImapSmtpCaldavAccount({ id: accountId });
-
-    expect(account.connectionParameters).toEqual({
-      IMAP: {
-        host: 'imap.example.com',
-        port: 993,
-        username: 'user@example.com',
-        secure: true,
-      },
-      SMTP: {
-        host: 'smtp.example.com',
-        port: 465,
-        username: 'user@example.com',
-        secure: true,
       },
       CALDAV: null,
     });
@@ -214,7 +160,7 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
         handle: 'test-remove-smtp@example.com',
         connectionParameters: {
           IMAP: {
-            host: 'imap.example.com',
+            host: 'imap.fastmail.com',
             port: 993,
             username: 'user@example.com',
             password: 'test-password',
@@ -234,12 +180,66 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
 
     expect(account.connectionParameters).toEqual({
       IMAP: {
-        host: 'imap.example.com',
+        host: 'imap.fastmail.com',
         port: 993,
         username: 'user@example.com',
         secure: true,
       },
       SMTP: null,
+      CALDAV: null,
+    });
+  });
+
+  it('should update only the password when other fields stay the same', async () => {
+    const accountId = await createAccount('test-update-pwd@example.com');
+
+    accountIdsToCleanup.push(accountId);
+
+    const { data } = await saveImapSmtpCaldavAccount({
+      expectToFail: false,
+      input: {
+        accountOwnerId: OWNER_ID,
+        handle: 'test-update-pwd@example.com',
+        connectionParameters: {
+          IMAP: {
+            host: 'imap.fastmail.com',
+            port: 993,
+            username: 'user@example.com',
+            password: 'new-password',
+            secure: true,
+          },
+          SMTP: {
+            host: 'smtp.fastmail.com',
+            port: 465,
+            username: 'user@example.com',
+            password: 'new-password',
+            secure: true,
+          },
+        },
+        id: accountId,
+      },
+    });
+
+    expect(data).toEqual({
+      success: true,
+      connectedAccountId: accountId,
+    });
+
+    const account = await getConnectedImapSmtpCaldavAccount({ id: accountId });
+
+    expect(account.connectionParameters).toEqual({
+      IMAP: {
+        host: 'imap.fastmail.com',
+        port: 993,
+        username: 'user@example.com',
+        secure: true,
+      },
+      SMTP: {
+        host: 'smtp.fastmail.com',
+        port: 465,
+        username: 'user@example.com',
+        secure: true,
+      },
       CALDAV: null,
     });
   });
