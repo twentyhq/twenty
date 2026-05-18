@@ -162,6 +162,35 @@ export class UpgradeSequenceReaderService {
       : workspaceCommands.slice(cursorIndex);
   }
 
+  isStepCompletedOrPassed({
+    cursor,
+    stepName,
+  }: {
+    cursor: { name: string; status: UpgradeMigrationStatus };
+    stepName: string;
+  }): boolean {
+    const sequence = this.getUpgradeSequence();
+
+    const cursorIndex = this.locateStepInSequenceOrThrow({
+      sequence,
+      stepName: cursor.name,
+    });
+    const stepIndex = this.locateStepInSequenceOrThrow({
+      sequence,
+      stepName,
+    });
+
+    if (cursorIndex > stepIndex) {
+      return true;
+    }
+
+    if (cursorIndex < stepIndex) {
+      return false;
+    }
+
+    return cursor.status === 'completed';
+  }
+
   getInitialCursorForNewWorkspace(lastAttemptedInstanceCommand: {
     name: string;
     status: UpgradeMigrationStatus;

@@ -74,6 +74,77 @@ const makeFastInstance = (name: string) => makeStep('fast-instance', name);
 const makeWorkspace = (name: string) => makeStep('workspace', name);
 
 describe('UpgradeSequenceReaderService', () => {
+  describe('isStepCompletedOrPassed', () => {
+    it('should return true when cursor is on required step with completed status', async () => {
+      const sequence = [
+        makeFastInstance('Ic0'),
+        makeWorkspace('Wc0'),
+        makeWorkspace('Wc1'),
+      ];
+
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      const result = service.isStepCompletedOrPassed({
+        cursor: { name: 'Wc1', status: 'completed' },
+        stepName: 'Wc1',
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when cursor is on required step with failed status', async () => {
+      const sequence = [
+        makeFastInstance('Ic0'),
+        makeWorkspace('Wc0'),
+        makeWorkspace('Wc1'),
+      ];
+
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      const result = service.isStepCompletedOrPassed({
+        cursor: { name: 'Wc1', status: 'failed' },
+        stepName: 'Wc1',
+      });
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true when cursor is after required step', async () => {
+      const sequence = [
+        makeFastInstance('Ic0'),
+        makeWorkspace('Wc0'),
+        makeWorkspace('Wc1'),
+        makeFastInstance('Ic1'),
+      ];
+
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      const result = service.isStepCompletedOrPassed({
+        cursor: { name: 'Ic1', status: 'failed' },
+        stepName: 'Wc1',
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when cursor is before required step', async () => {
+      const sequence = [
+        makeFastInstance('Ic0'),
+        makeWorkspace('Wc0'),
+        makeWorkspace('Wc1'),
+      ];
+
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      const result = service.isStepCompletedOrPassed({
+        cursor: { name: 'Wc0', status: 'completed' },
+        stepName: 'Wc1',
+      });
+
+      expect(result).toBe(false);
+    });
+  });
+
   describe('getInitialCursorForNewWorkspace', () => {
     it('should return last workspace command of segment following completed instance command', async () => {
       const sequence = [

@@ -135,15 +135,29 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       return;
     }
 
-    const allAtPreviousVersion =
-      await this.upgradeMigrationService.areAllWorkspacesAtCommand({
-        commandName: lastWorkspaceCommand.name,
-        workspaceIds: activeOrSuspendedWorkspaceIds,
-      });
+    const workspaceCursors =
+      await this.upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow(
+        activeOrSuspendedWorkspaceIds,
+      );
+
+    const allAtPreviousVersion = activeOrSuspendedWorkspaceIds.every(
+      (workspaceId) => {
+        const cursor = workspaceCursors.get(workspaceId);
+
+        if (!cursor) {
+          return false;
+        }
+
+        return this.upgradeSequenceReaderService.isStepCompletedOrPassed({
+          cursor,
+          stepName: lastWorkspaceCommand.name,
+        });
+      },
+    );
 
     if (!allAtPreviousVersion) {
       throw new Error(
-        'Unable to run instance commands. Some workspace(s) have not completed ' +
+        'Unable to run instance commands. Some workspace(s) have not reached ' +
           `the last workspace command for ${previousVersion} ("${lastWorkspaceCommand.name}").\n` +
           'Please ensure all workspaces are upgraded to at least the previous version before running migrations.\n' +
           'Use --force to bypass this check (not recommended).',
