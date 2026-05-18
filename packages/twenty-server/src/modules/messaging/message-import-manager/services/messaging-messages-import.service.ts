@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { QueryRunnerAlreadyReleasedError } from 'typeorm/error/QueryRunnerAlreadyReleasedError';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -251,9 +252,20 @@ export class MessagingMessagesImportService {
           workspaceId,
         );
       } catch (error) {
-        this.logger.error(
-          `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Error (${error.code}) importing messages: ${error.message}`,
-        );
+        const errorCode =
+          error instanceof Error && 'code' in error
+            ? String(error.code)
+            : 'UNKNOWN';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
+        const logMessage =
+          `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Error (${errorCode}) importing messages: ${errorMessage}`;
+
+        if (this.isRetryableImportError(error)) {
+          this.logger.warn(logMessage);
+        } else {
+          this.logger.error(logMessage);
+        }
         await this.cacheStorage.setAdd(
           `messages-to-import:${workspaceId}:${messageChannel.id}`,
           messageIdsToFetch,
@@ -272,6 +284,21 @@ export class MessagingMessagesImportService {
         );
       }
     }, authContext);
+  }
+
+  private isRetryableImportError(error: unknown): boolean {
+    if (error instanceof QueryRunnerAlreadyReleasedError) {
+      return true;
+    }
+
+    if (!(error instanceof Error) || !('code' in error)) {
+      return false;
+    }
+
+    return [
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR,
+    ].includes(error.code as MessageImportDriverExceptionCode);
   }
 
   private async trackMessageImportCompleted(

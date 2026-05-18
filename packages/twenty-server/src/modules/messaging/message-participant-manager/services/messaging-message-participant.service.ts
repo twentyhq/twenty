@@ -21,9 +21,7 @@ export class MessagingMessageParticipantService {
     workspaceId: string,
     transactionManager?: WorkspaceEntityManager,
   ): Promise<void> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    const saveParticipants = async () => {
       const messageParticipantRepository =
         await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
           workspaceId,
@@ -31,13 +29,16 @@ export class MessagingMessageParticipantService {
         );
 
       const existingParticipantsBasedOnMessageIds =
-        await messageParticipantRepository.find({
-          where: {
-            messageId: In(
-              participants.map((participant) => participant.messageId),
-            ),
+        await messageParticipantRepository.find(
+          {
+            where: {
+              messageId: In(
+                participants.map((participant) => participant.messageId),
+              ),
+            },
           },
-        });
+          transactionManager,
+        );
 
       const participantsToCreate: Pick<
         MessageParticipantWorkspaceEntity,
@@ -74,6 +75,19 @@ export class MessagingMessageParticipantService {
         matchWith: 'workspaceMemberAndPerson',
         workspaceId,
       });
-    }, authContext);
+    };
+
+    if (transactionManager) {
+      await saveParticipants();
+
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      saveParticipants,
+      authContext,
+    );
   }
 }

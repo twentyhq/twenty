@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { QueryRunnerAlreadyReleasedError } from 'typeorm/error/QueryRunnerAlreadyReleasedError';
 
 import { MessageChannelSyncStatus } from 'twenty-shared/types';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -49,6 +50,17 @@ export class MessageImportExceptionHandlerService {
       };
     }
 
+    if (exception instanceof QueryRunnerAlreadyReleasedError) {
+      await this.handleTemporaryException(
+        syncStep,
+        messageChannel,
+        workspaceId,
+        exception,
+      );
+
+      return;
+    }
+
     if ('code' in exception) {
       switch (exception.code) {
         case MessageImportDriverExceptionCode.NOT_FOUND:
@@ -91,13 +103,19 @@ export class MessageImportExceptionHandlerService {
         default:
           await this.handleUnknownException(
             exception,
+            syncStep,
             messageChannel,
             workspaceId,
           );
           break;
       }
     } else {
-      await this.handleUnknownException(exception, messageChannel, workspaceId);
+      await this.handleUnknownException(
+        exception,
+        syncStep,
+        messageChannel,
+        workspaceId,
+      );
     }
   }
 
@@ -201,10 +219,15 @@ export class MessageImportExceptionHandlerService {
 
   private async handleUnknownException(
     exception: Error,
+    syncStep: MessageImportSyncStep,
     messageChannel: Pick<MessageChannelEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
     this.exceptionHandlerService.captureExceptions([exception], {
+      additionalData: {
+        messageChannelId: messageChannel.id,
+        syncStep,
+      },
       workspace: { id: workspaceId },
     });
     await this.messageChannelSyncStatusService.markAsFailed(
