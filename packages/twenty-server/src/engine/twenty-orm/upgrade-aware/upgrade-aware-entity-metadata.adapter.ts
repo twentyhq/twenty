@@ -64,7 +64,15 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
 
     UpgradeAwareRepositoryState.getInstance().setMetadataService(this);
 
-    await this.refresh();
+    try {
+      await this.refresh();
+    } catch (error) {
+      this.logger.log(
+        `[upgrade-metadata] initial refresh skipped (core.upgradeMigration not readable yet): ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   async refresh(): Promise<void> {

@@ -56,7 +56,7 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
 
     const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
 
-    adapter.onModuleInit();
+    await adapter.onModuleInit();
 
     await adapter.refresh();
 

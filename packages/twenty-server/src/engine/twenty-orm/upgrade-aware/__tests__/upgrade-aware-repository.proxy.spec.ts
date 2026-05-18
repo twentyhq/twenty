@@ -56,7 +56,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
 
     const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
 
-    adapter.onModuleInit();
+    await adapter.onModuleInit();
     await adapter.refresh();
 
     const find = jest.fn().mockResolvedValue([{ id: 1 }]);
