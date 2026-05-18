@@ -1,6 +1,5 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -19,7 +18,6 @@ import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibl
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -75,18 +73,29 @@ export const PageLayoutTabsRenderer = () => {
     currentPageLayout.id,
   );
 
-  const targetRecord = useTargetRecord();
+  const isMobile = useIsMobile();
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
+  const metadataStore = useAtomFamilyStateValue(
+    metadataStoreState,
+    'objectMetadataItems',
+  );
+
+  const targetObjectMetadataItem = useMemo(
+    () =>
+      (metadataStore.current as FlatObjectMetadataItem[]).find(
+        (item) =>
+          item.nameSingular === targetRecordIdentifier?.targetObjectNameSingular,
+      ),
+    [metadataStore.current, targetRecordIdentifier],
+  );
 
   const inactiveRelationFieldNames = useMemo(() => {
-    if (!isDefined(objectMetadataItem)) {
+    if (!isDefined(targetObjectMetadataItem)) {
       return new Set<string>();
     }
+
     return new Set(
-      objectMetadataItem.fields
+      targetObjectMetadataItem.fields
         .filter(
           (field) =>
             !field.isActive &&
@@ -95,20 +104,9 @@ export const PageLayoutTabsRenderer = () => {
         )
         .map((field) => field.name),
     );
-  }, [objectMetadataItem]);
+  }, [targetObjectMetadataItem]);
 
-  const isMobile = useIsMobile();
-
-  const metadataStore = useAtomFamilyStateValue(
-    metadataStoreState,
-    'objectMetadataItems',
-  );
-
-  const isSystemObject =
-    (metadataStore.current as FlatObjectMetadataItem[]).find(
-      (item) =>
-        item.nameSingular === targetRecordIdentifier?.targetObjectNameSingular,
-    )?.isSystem ?? false;
+  const isSystemObject = targetObjectMetadataItem?.isSystem ?? false;
 
   const canEnableTabEditing =
     isPageLayoutInEditMode &&
