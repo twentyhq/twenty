@@ -18,7 +18,7 @@ import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/s
 import { UpgradeGaugeService } from 'src/engine/core-modules/upgrade/upgrade-gauge.service';
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UpgradeAwareEntityMetadataService } from 'src/engine/twenty-orm/services/upgrade-aware-entity-metadata.service';
+import { UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
 import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 
 @Module({
@@ -37,7 +37,7 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
     InstanceCommandRunnerService,
     WorkspaceCommandRunnerService,
     UpgradeCommandRegistryService,
-    UpgradeAwareEntityMetadataService,
+    UpgradeAwareEntityMetadataAdapter,
     UpgradeSequenceReaderService,
     UpgradeSequenceRunnerService,
     UpgradeStatusService,
@@ -49,7 +49,7 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
     InstanceCommandRunnerService,
     WorkspaceCommandRunnerService,
     UpgradeCommandRegistryService,
-    UpgradeAwareEntityMetadataService,
+    UpgradeAwareEntityMetadataAdapter,
     UpgradeSequenceReaderService,
     UpgradeSequenceRunnerService,
     UpgradeStatusService,

@@ -10,7 +10,7 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
-import { UpgradeAwareEntityMetadataService } from 'src/engine/twenty-orm/services/upgrade-aware-entity-metadata.service';
+import { UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
 
 const RENAME_CMD = '2.6.0_RenameCommand_1700000000000';
 const INTRODUCE_CMD = '2.7.0_IntroduceCommand_1800000000000';
@@ -69,7 +69,7 @@ const buildEntityMetadata = ({
   } as unknown as EntityMetadata;
 };
 
-describe('UpgradeAwareEntityMetadataService', () => {
+describe('UpgradeAwareEntityMetadataAdapter', () => {
   const buildService = async ({
     entityMetadatas,
   }: {
@@ -94,7 +94,7 @@ describe('UpgradeAwareEntityMetadataService', () => {
 
     const moduleRef = await Test.createTestingModule({
       providers: [
-        UpgradeAwareEntityMetadataService,
+        UpgradeAwareEntityMetadataAdapter,
         {
           provide: UpgradeMigrationService,
           useValue: upgradeMigrationService,
@@ -107,7 +107,7 @@ describe('UpgradeAwareEntityMetadataService', () => {
       ],
     }).compile();
 
-    const service = moduleRef.get(UpgradeAwareEntityMetadataService);
+    const service = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
 
     service.onModuleInit();
 

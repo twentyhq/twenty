@@ -18,7 +18,7 @@ import {
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
-import { UpgradeAwareEntityMetadataService } from 'src/engine/twenty-orm/services/upgrade-aware-entity-metadata.service';
+import { UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
@@ -36,7 +36,7 @@ export class UpgradeSequenceRunnerService {
     private readonly instanceCommandRunnerService: InstanceCommandRunnerService,
     private readonly workspaceCommandRunnerService: WorkspaceCommandRunnerService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
-    private readonly upgradeAwareEntityMetadataService: UpgradeAwareEntityMetadataService,
+    private readonly upgradeAwareEntityMetadataAdapter: UpgradeAwareEntityMetadataAdapter,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceVersionService: WorkspaceVersionService,
   ) {}
@@ -52,12 +52,12 @@ export class UpgradeSequenceRunnerService {
       return { totalSuccesses: 0, totalFailures: 0 };
     }
 
-    await this.upgradeAwareEntityMetadataService.refresh();
+    await this.upgradeAwareEntityMetadataAdapter.refresh();
 
     try {
       return await this.runInner({ sequence, options });
     } finally {
-      await this.upgradeAwareEntityMetadataService.refresh();
+      await this.upgradeAwareEntityMetadataAdapter.refresh();
     }
   }
 
@@ -125,7 +125,7 @@ export class UpgradeSequenceRunnerService {
           skipDataMigration: allActiveOrSuspendedWorkspaceIds.length === 0,
         });
 
-        await this.upgradeAwareEntityMetadataService.refresh();
+        await this.upgradeAwareEntityMetadataAdapter.refresh();
 
         cursor++;
         continue;

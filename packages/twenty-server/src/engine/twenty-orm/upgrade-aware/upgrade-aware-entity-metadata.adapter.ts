@@ -24,8 +24,8 @@ type EntityMetadataSnapshot = {
 };
 
 @Injectable()
-export class UpgradeAwareEntityMetadataService implements OnModuleInit {
-  private readonly logger = new Logger(UpgradeAwareEntityMetadataService.name);
+export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
+  private readonly logger = new Logger(UpgradeAwareEntityMetadataAdapter.name);
 
   private readonly snapshotByMetadata = new WeakMap<
     EntityMetadata,

@@ -1,9 +1,9 @@
-import { type UpgradeAwareEntityMetadataService } from 'src/engine/twenty-orm/services/upgrade-aware-entity-metadata.service';
+import { type UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
 
 export class UpgradeAwareRepositoryState {
   private static singleton: UpgradeAwareRepositoryState | null = null;
 
-  private metadataService: UpgradeAwareEntityMetadataService | null = null;
+  private metadataService: UpgradeAwareEntityMetadataAdapter | null = null;
 
   static getInstance(): UpgradeAwareRepositoryState {
     if (this.singleton === null) {
@@ -13,7 +13,7 @@ export class UpgradeAwareRepositoryState {
     return this.singleton;
   }
 
-  setMetadataService(service: UpgradeAwareEntityMetadataService): void {
+  setMetadataService(service: UpgradeAwareEntityMetadataAdapter): void {
     this.metadataService = service;
   }
 
