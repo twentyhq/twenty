@@ -438,7 +438,9 @@ export class CreateAppCommand {
   private openInBrowser(url: string): void {
     const command = process.platform === 'darwin' ? 'open' : 'xdg-open';
 
-    spawn(command, [url], { stdio: 'ignore', detached: true }).unref();
+    const child = spawn(command, [url], { stdio: 'ignore', detached: true });
+    child.on('error', () => undefined);
+    child.unref();
   }
 
   private syncApplication(appDirectory: string): Promise<boolean> {
