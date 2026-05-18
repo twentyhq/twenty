@@ -16,6 +16,7 @@ import type {
 import { KanbanPage } from '../Pages/Kanban/KanbanPage';
 import { RecordPage } from '../Pages/Record/RecordPage';
 import { TablePage } from '../Pages/Table/TablePage';
+import { WorkflowPage } from '../Pages/Workflow/WorkflowPage';
 import { PagePreviewLoader } from '../Shared/components/PagePreviewLoader';
 
 const DashboardViewport = styled.div`
@@ -34,8 +35,6 @@ const DashboardViewport = styled.div`
 const loadSalesDashboardPageModule = () =>
   import('../Pages/Dashboard/SalesDashboardPage');
 
-const loadWorkflowPageModule = () => import('../Pages/Workflow/WorkflowPage');
-
 const SalesDashboardPage = dynamic(
   () =>
     loadSalesDashboardPageModule().then((mod) => ({
@@ -45,17 +44,6 @@ const SalesDashboardPage = dynamic(
     loading: () => (
       <PagePreviewLoader ariaLabel="Loading sales dashboard preview" />
     ),
-    ssr: false,
-  },
-);
-
-const WorkflowPage = dynamic(
-  () =>
-    loadWorkflowPageModule().then((mod) => ({
-      default: mod.WorkflowPage,
-    })),
-  {
-    loading: () => <PagePreviewLoader ariaLabel="Loading workflow preview" />,
     ssr: false,
   },
 );

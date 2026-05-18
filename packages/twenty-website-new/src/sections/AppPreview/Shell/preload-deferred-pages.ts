@@ -1,15 +1,10 @@
 const loadSalesDashboardPageModule = () =>
   import('../Pages/Dashboard/SalesDashboardPage');
 
-const loadWorkflowPageModule = () => import('../Pages/Workflow/WorkflowPage');
-
 let deferredPagePreloadPromise: Promise<void> | null = null;
 
 export function preloadDeferredPages() {
-  deferredPagePreloadPromise ??= Promise.all([
-    loadSalesDashboardPageModule(),
-    loadWorkflowPageModule(),
-  ])
+  deferredPagePreloadPromise ??= loadSalesDashboardPageModule()
     .then(() => undefined)
     .catch((error: unknown) => {
       deferredPagePreloadPromise = null;

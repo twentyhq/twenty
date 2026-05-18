@@ -134,12 +134,13 @@ export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
                 plusNode={page.plusNode}
               />
 
-              {nodes.map((node) => (
+              {nodes.map((node, index) => (
                 <WorkflowNode
                   key={`${node.title}-${node.x}-${node.y}`}
                   Icon={node.Icon}
                   iconColor={node.iconColor}
                   id={node.id}
+                  index={index}
                   label={node.label}
                   title={node.title}
                   width={node.width}

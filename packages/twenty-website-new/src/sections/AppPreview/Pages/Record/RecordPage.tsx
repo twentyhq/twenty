@@ -46,10 +46,23 @@ const LeftPanel = styled.div`
 
 const RecordHeader = styled.div`
   align-items: center;
+  animation: recordHeaderAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 120ms;
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding-bottom: 4px;
+
+  @keyframes recordHeaderAppear {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const RecordName = styled.div`
@@ -71,12 +84,25 @@ const FieldList = styled.div`
   gap: 8px;
 `;
 
-const FieldRow = styled.div`
+const FieldRow = styled.div<{ $index: number }>`
   align-items: center;
+  animation: fieldRowAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: ${({ $index }) => `${190 + $index * 70}ms`};
   display: grid;
   gap: 8px;
   grid-template-columns: 14px 70px 1fr;
   min-height: 22px;
+
+  @keyframes fieldRowAppear {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const FieldIcon = styled.span`
@@ -146,9 +172,22 @@ const Divider = styled.div`
 `;
 
 const RelationSection = styled.div`
+  animation: relationAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 600ms;
   display: flex;
   flex-direction: column;
   gap: 6px;
+
+  @keyframes relationAppear {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const RelationTitle = styled.div`
@@ -198,11 +237,24 @@ const CenterPanel = styled.div`
 
 const TabBar = styled.div`
   align-items: center;
+  animation: tabBarAppear 260ms ease-out both;
+  animation-delay: 120ms;
   border-bottom: 1px solid ${COLORS.borderLight};
   display: flex;
   flex: 0 0 auto;
   gap: 0;
   padding: 0 16px;
+
+  @keyframes tabBarAppear {
+    from {
+      opacity: 0;
+      transform: translateY(-2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const Tab = styled.div<{ $active?: boolean }>`
@@ -252,13 +304,26 @@ const NotesGrid = styled.div`
   }
 `;
 
-const NoteCard = styled.div`
+const NoteCard = styled.div<{ $index: number }>`
+  animation: noteCardAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: ${({ $index }) => `${400 + $index * 100}ms`};
   border: 1px solid ${COLORS.borderLight};
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   padding: 12px;
+
+  @keyframes noteCardAppear {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const NoteTitle = styled.div`
@@ -358,8 +423,8 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
         </RecordHeader>
 
         <FieldList>
-          {record.fields.map((field) => (
-            <FieldRow key={field.label}>
+          {record.fields.map((field, index) => (
+            <FieldRow $index={index} key={field.label}>
               <FieldIcon>
                 {field.icon ? (
                   <svg
@@ -438,8 +503,8 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
         </NotesHeader>
 
         <NotesGrid>
-          {notes.map((note) => (
-            <NoteCard key={note.id}>
+          {notes.map((note, index) => (
+            <NoteCard $index={index} key={note.id}>
               <NoteTitle>{note.title}</NoteTitle>
               <NoteBody>{note.body}</NoteBody>
               {note.relation ? (

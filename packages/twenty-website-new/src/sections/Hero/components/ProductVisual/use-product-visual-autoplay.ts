@@ -27,6 +27,7 @@ export function useProductVisualAutoplay(
   const [companyAdded, setCompanyAdded] = useState(false);
   const [personAdded, setPersonAdded] = useState(false);
   const [tasksAdded, setTasksAdded] = useState(false);
+  const [recordReady, setRecordReady] = useState(false);
 
   useEffect(() => {
     if (externalScene !== undefined) {
@@ -47,7 +48,7 @@ export function useProductVisualAutoplay(
   } = useAppPreviewState(visual);
 
   let displayPage = activePage;
-  if (selectedOption === 3) {
+  if (selectedOption === 3 && recordReady) {
     displayPage = QONTO_RECORD_PAGE;
   } else if (
     activePage !== null &&
@@ -92,9 +93,13 @@ export function useProductVisualAutoplay(
     const fullText = option.response;
 
     if (isScrollDriven) {
-      const firstStep = option.navSteps[0];
-      if (firstStep) {
-        handleSelectLabel(firstStep.target);
+      if (selectedOption === 3) {
+        setRecordReady(true);
+      } else {
+        const firstStep = option.navSteps[0];
+        if (firstStep) {
+          handleSelectLabel(firstStep.target);
+        }
       }
       if (selectedOption === 0) {
         setCompanyAdded(true);
@@ -109,12 +114,14 @@ export function useProductVisualAutoplay(
     let companyInjected = false;
     let personInjected = false;
     let tasksInjected = false;
+    let recordShown = false;
     setStreamedText('');
     setStreamComplete(false);
     if (!isScrollDriven) {
       setCompanyAdded(false);
       setPersonAdded(false);
       setTasksAdded(false);
+      setRecordReady(false);
     }
     const interval = setInterval(() => {
       index += 1;
@@ -139,6 +146,10 @@ export function useProductVisualAutoplay(
       if (selectedOption === 2 && !tasksInjected && progress >= 0.3) {
         tasksInjected = true;
         setTasksAdded(true);
+      }
+      if (selectedOption === 3 && !recordShown && progress >= 0.5) {
+        recordShown = true;
+        setRecordReady(true);
       }
       if (index >= fullText.length) {
         clearInterval(interval);
