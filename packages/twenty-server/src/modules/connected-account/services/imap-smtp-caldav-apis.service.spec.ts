@@ -115,9 +115,33 @@ describe('ImapSmtpCalDavAPIService', () => {
     resetAndMarkAsCalendarEventListFetchPending: jest.fn(),
   };
 
+  const encryptPassword = (password: string) => `enc:v2:${password}`;
+
+  const withEncryptedPasswords = (
+    params: ImapSmtpCaldavParams,
+  ): ImapSmtpCaldavParams => {
+    const result: ImapSmtpCaldavParams = {};
+
+    for (const protocol of ['IMAP', 'SMTP', 'CALDAV'] as const) {
+      if (params[protocol]) {
+        result[protocol] = {
+          ...params[protocol],
+          password: encryptPassword(params[protocol]!.password),
+        };
+      }
+    }
+
+    return result;
+  };
+
   const mockConnectedAccountTokenEncryptionService = {
-    encrypt: jest.fn(
-      ({ plaintext }: { plaintext: string }) => `enc:v2:${plaintext}`,
+    encryptConnectionParameters: jest.fn(
+      ({
+        connectionParameters,
+      }: {
+        connectionParameters: ImapSmtpCaldavParams;
+        workspaceId: string;
+      }) => withEncryptedPasswords(connectionParameters),
     ),
   };
 
@@ -203,25 +227,6 @@ describe('ImapSmtpCalDavAPIService', () => {
 
     jest.clearAllMocks();
   });
-
-  const encryptPassword = (password: string) => `enc:v2:${password}`;
-
-  const withEncryptedPasswords = (
-    params: ImapSmtpCaldavParams,
-  ): ImapSmtpCaldavParams => {
-    const result: ImapSmtpCaldavParams = {};
-
-    for (const protocol of ['IMAP', 'SMTP', 'CALDAV'] as const) {
-      if (params[protocol]) {
-        result[protocol] = {
-          ...params[protocol],
-          password: encryptPassword(params[protocol]!.password),
-        };
-      }
-    }
-
-    return result;
-  };
 
   describe('processAccount', () => {
     const baseInput = {

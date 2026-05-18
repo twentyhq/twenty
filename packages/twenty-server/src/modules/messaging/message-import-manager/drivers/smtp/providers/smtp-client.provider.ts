@@ -4,6 +4,7 @@ import { createTransport, type Transporter } from 'nodemailer';
 
 import type SMTPConnection from 'nodemailer/lib/smtp-connection';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
@@ -20,11 +21,14 @@ export class SmtpClientProvider {
   public async getSmtpClient(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'connectionParameters' | 'handle' | 'workspaceId'
+      'provider' | 'connectionParameters' | 'handle' | 'workspaceId'
     >,
   ): Promise<Transporter> {
-    if (!isDefined(connectedAccount.connectionParameters?.SMTP)) {
-      throw new Error('SMTP settings not configured for this account');
+    if (
+      connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
+      !isDefined(connectedAccount.connectionParameters?.SMTP)
+    ) {
+      throw new Error('Connected account is not an SMTP provider');
     }
 
     const smtpParams =
