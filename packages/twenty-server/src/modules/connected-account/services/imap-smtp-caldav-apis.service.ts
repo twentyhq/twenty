@@ -39,7 +39,6 @@ import {
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 
 @Injectable()
 export class ImapSmtpCalDavAPIService {
@@ -176,10 +175,12 @@ export class ImapSmtpCalDavAPIService {
         await this.connectedAccountRepository.manager.transaction(
           async (transactionManager: EntityManager) => {
             const encryptedConnectionParameters =
-              this.buildEncryptedConnectionParameters({
-                inputParameters: input.connectionParameters,
-                workspaceId,
-              });
+              this.connectedAccountTokenEncryptionService.encryptConnectionParameters(
+                {
+                  connectionParameters: input.connectionParameters,
+                  workspaceId,
+                },
+              );
 
             await transactionManager
               .getRepository(ConnectedAccountEntity)
@@ -285,31 +286,4 @@ export class ImapSmtpCalDavAPIService {
     );
   }
 
-  private buildEncryptedConnectionParameters({
-    inputParameters,
-    workspaceId,
-  }: {
-    inputParameters: ImapSmtpCaldavParams;
-    workspaceId: string;
-  }): ImapSmtpCaldavParams {
-    const result: ImapSmtpCaldavParams = {};
-
-    for (const protocol of ACCOUNT_TYPES) {
-      const inputProtocolParams = inputParameters[protocol];
-
-      if (!isDefined(inputProtocolParams)) {
-        continue;
-      }
-
-      result[protocol] = {
-        ...inputProtocolParams,
-        password: this.connectedAccountTokenEncryptionService.encrypt({
-          plaintext: inputProtocolParams.password,
-          workspaceId,
-        }),
-      };
-    }
-
-    return result;
-  }
 }
