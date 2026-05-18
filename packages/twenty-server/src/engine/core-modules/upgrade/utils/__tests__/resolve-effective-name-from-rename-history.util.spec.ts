@@ -1,16 +1,18 @@
 import { resolveEffectiveNameFromRenameHistory } from 'src/engine/core-modules/upgrade/utils/resolve-effective-name-from-rename-history.util';
 
 describe('resolveEffectiveNameFromRenameHistory', () => {
-  const buildPosition = (applied: string[]) => ({
-    appliedCommandNames: new Set(applied),
-  });
+  const buildPredicate = (applied: string[]) => {
+    const set = new Set(applied);
+
+    return (stepName: string) => set.has(stepName);
+  };
 
   it('should return the current name when history is empty', () => {
     expect(
       resolveEffectiveNameFromRenameHistory({
         currentName: 'currentTable',
         history: [],
-        position: buildPosition([]),
+        isStepApplied: buildPredicate([]),
       }),
     ).toBe('currentTable');
   });
@@ -22,7 +24,7 @@ describe('resolveEffectiveNameFromRenameHistory', () => {
         history: [
           { previousName: 'oldName', upgradeCommandName: 'rename_cmd' },
         ],
-        position: buildPosition([]),
+        isStepApplied: buildPredicate([]),
       }),
     ).toBe('oldName');
   });
@@ -34,7 +36,7 @@ describe('resolveEffectiveNameFromRenameHistory', () => {
         history: [
           { previousName: 'oldName', upgradeCommandName: 'rename_cmd' },
         ],
-        position: buildPosition(['rename_cmd']),
+        isStepApplied: buildPredicate(['rename_cmd']),
       }),
     ).toBe('newName');
   });
@@ -49,7 +51,7 @@ describe('resolveEffectiveNameFromRenameHistory', () => {
       resolveEffectiveNameFromRenameHistory({
         currentName: 'baz',
         history,
-        position: buildPosition([]),
+        isStepApplied: buildPredicate([]),
       }),
     ).toBe('foo');
 
@@ -57,7 +59,7 @@ describe('resolveEffectiveNameFromRenameHistory', () => {
       resolveEffectiveNameFromRenameHistory({
         currentName: 'baz',
         history,
-        position: buildPosition(['cmd1']),
+        isStepApplied: buildPredicate(['cmd1']),
       }),
     ).toBe('bar');
 
@@ -65,7 +67,7 @@ describe('resolveEffectiveNameFromRenameHistory', () => {
       resolveEffectiveNameFromRenameHistory({
         currentName: 'baz',
         history,
-        position: buildPosition(['cmd1', 'cmd2']),
+        isStepApplied: buildPredicate(['cmd1', 'cmd2']),
       }),
     ).toBe('baz');
   });

@@ -19,7 +19,7 @@ describe('validateUpgradeAwareEntityDecorators', () => {
     expect(
       validateUpgradeAwareEntityDecorators({
         entityClasses: [IntroducedEntity, RenamedEntity],
-        knownCommandNames: new Set([KNOWN_CMD, KNOWN_RENAME_CMD]),
+        knownStepNames: new Set([KNOWN_CMD, KNOWN_RENAME_CMD]),
       }),
     ).toEqual([]);
   });
@@ -30,7 +30,7 @@ describe('validateUpgradeAwareEntityDecorators', () => {
 
     const problems = validateUpgradeAwareEntityDecorators({
       entityClasses: [BrokenIntroduced],
-      knownCommandNames: new Set([KNOWN_CMD]),
+      knownStepNames: new Set([KNOWN_CMD]),
     });
 
     expect(problems).toEqual([
@@ -56,7 +56,7 @@ describe('validateUpgradeAwareEntityDecorators', () => {
 
     const problems = validateUpgradeAwareEntityDecorators({
       entityClasses: [BrokenProperty],
-      knownCommandNames: new Set([KNOWN_CMD]),
+      knownStepNames: new Set([KNOWN_CMD]),
     });
 
     expect(problems).toEqual([
@@ -84,7 +84,7 @@ describe('validateUpgradeAwareEntityDecorators', () => {
 
     const problems = validateUpgradeAwareEntityDecorators({
       entityClasses: [HalfBroken],
-      knownCommandNames: new Set([KNOWN_CMD]),
+      knownStepNames: new Set([KNOWN_CMD]),
     });
 
     expect(problems).toEqual([

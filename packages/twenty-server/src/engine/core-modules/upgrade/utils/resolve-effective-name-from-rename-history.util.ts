@@ -1,20 +1,16 @@
 import { type WasRenamedInUpgradeHistoryEntry } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
-import { type UpgradePosition } from 'src/engine/core-modules/upgrade/types/upgrade-position.type';
-import { isCommandAppliedInUpgradePosition } from 'src/engine/core-modules/upgrade/utils/is-command-applied-in-upgrade-position.util';
 
 export const resolveEffectiveNameFromRenameHistory = ({
   currentName,
   history,
-  position,
+  isStepApplied,
 }: {
   currentName: string;
   history: WasRenamedInUpgradeHistoryEntry[];
-  position: UpgradePosition;
+  isStepApplied: (stepName: string) => boolean;
 }): string => {
   for (const entry of history) {
-    if (
-      !isCommandAppliedInUpgradePosition(position, entry.upgradeCommandName)
-    ) {
+    if (!isStepApplied(entry.upgradeCommandName)) {
       return entry.previousName;
     }
   }

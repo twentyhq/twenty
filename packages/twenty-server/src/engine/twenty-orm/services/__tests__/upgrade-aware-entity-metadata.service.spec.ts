@@ -8,8 +8,7 @@ import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
-import { UpgradePositionRegistry } from 'src/engine/core-modules/upgrade/services/upgrade-position-registry.service';
-import { type UpgradePosition } from 'src/engine/core-modules/upgrade/types/upgrade-position.type';
+import { UpgradeCursorService } from 'src/engine/core-modules/upgrade/services/upgrade-cursor.service';
 import { UpgradeAwareEntityMetadataService } from 'src/engine/twenty-orm/services/upgrade-aware-entity-metadata.service';
 
 const RENAME_CMD = '2.6.0_RenameCommand_1700000000000';
@@ -67,25 +66,24 @@ const buildEntityMetadata = ({
   } as unknown as EntityMetadata;
 };
 
-const buildPosition = (applied: string[]): UpgradePosition => ({
-  appliedCommandNames: new Set(applied),
-});
-
 describe('UpgradeAwareEntityMetadataService', () => {
   const buildService = async ({
     entityMetadatas,
-    initialPosition,
+    initialAppliedSteps = [],
   }: {
     entityMetadatas: EntityMetadata[];
-    initialPosition: UpgradePosition;
+    initialAppliedSteps?: string[];
   }) => {
-    let positionListener: ((position: UpgradePosition) => void) | undefined;
+    let appliedSteps = new Set(initialAppliedSteps);
+    let cursorListener: (() => void) | undefined;
 
-    const positionRegistry = {
-      onPositionChanged: (listener: (position: UpgradePosition) => void) => {
-        positionListener = listener;
+    const cursorService = {
+      onCursorChanged: (listener: () => void) => {
+        cursorListener = listener;
       },
-      getCurrentPosition: () => initialPosition,
+      getCurrentCursor: () => appliedSteps.size,
+      isStepAppliedAtCurrentCursor: (stepName: string) =>
+        appliedSteps.has(stepName),
     };
 
     const dataSource = { entityMetadatas } as unknown as DataSource;
@@ -93,7 +91,7 @@ describe('UpgradeAwareEntityMetadataService', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         UpgradeAwareEntityMetadataService,
-        { provide: UpgradePositionRegistry, useValue: positionRegistry },
+        { provide: UpgradeCursorService, useValue: cursorService },
         { provide: getDataSourceToken(), useValue: dataSource },
       ],
     }).compile();
@@ -104,8 +102,9 @@ describe('UpgradeAwareEntityMetadataService', () => {
 
     return {
       service,
-      pushPosition: (position: UpgradePosition) => {
-        positionListener?.(position);
+      setAppliedSteps: (steps: string[]) => {
+        appliedSteps = new Set(steps);
+        cursorListener?.();
       },
     };
   };
@@ -118,19 +117,18 @@ describe('UpgradeAwareEntityMetadataService', () => {
       columns: [{ propertyName: 'id', databaseName: 'id' }],
     });
 
-    const { pushPosition } = await buildService({
+    const { setAppliedSteps } = await buildService({
       entityMetadatas: [metadata],
-      initialPosition: buildPosition([]),
     });
 
-    pushPosition(buildPosition([]));
+    setAppliedSteps([]);
 
     expect(metadata.tableName).toBe('oldEntity');
     expect(metadata.tablePath).toBe('core.oldEntity');
     expect(metadata.givenTableName).toBe('oldEntity');
   });
 
-  it('should restore the canonical names once the rename command has been applied', async () => {
+  it('should restore the canonical names once the rename step has been applied', async () => {
     const metadata = buildEntityMetadata({
       target: RenamedEntity,
       tableName: 'renamedEntity',
@@ -138,13 +136,13 @@ describe('UpgradeAwareEntityMetadataService', () => {
       columns: [{ propertyName: 'id', databaseName: 'id' }],
     });
 
-    const { pushPosition } = await buildService({
+    const { setAppliedSteps } = await buildService({
       entityMetadatas: [metadata],
-      initialPosition: buildPosition([RENAME_CMD]),
+      initialAppliedSteps: [RENAME_CMD],
     });
 
-    pushPosition(buildPosition([]));
-    pushPosition(buildPosition([RENAME_CMD]));
+    setAppliedSteps([]);
+    setAppliedSteps([RENAME_CMD]);
 
     expect(metadata.tableName).toBe('renamedEntity');
     expect(metadata.tablePath).toBe('core.renamedEntity');
@@ -159,12 +157,11 @@ describe('UpgradeAwareEntityMetadataService', () => {
       columns: [{ propertyName: 'id', databaseName: 'id' }],
     });
 
-    const { pushPosition } = await buildService({
+    const { setAppliedSteps } = await buildService({
       entityMetadatas: [metadata],
-      initialPosition: buildPosition([]),
     });
 
-    pushPosition(buildPosition([]));
+    setAppliedSteps([]);
 
     expect(metadata.tableName).toBe('plainEntity');
     expect(metadata.tablePath).toBe('core.plainEntity');
@@ -181,19 +178,18 @@ describe('UpgradeAwareEntityMetadataService', () => {
       ],
     });
 
-    const { service, pushPosition } = await buildService({
+    const { service, setAppliedSteps } = await buildService({
       entityMetadatas: [metadata],
-      initialPosition: buildPosition([]),
     });
 
-    pushPosition(buildPosition([]));
+    setAppliedSteps([]);
 
     expect(service.isEntityAvailable(IntroducedEntity)).toBe(false);
     expect(service.getHiddenColumnPropertyNames(IntroducedEntity)).toEqual(
       new Set(['brandNewColumn']),
     );
 
-    pushPosition(buildPosition([INTRODUCE_CMD, PROP_INTRODUCE_CMD]));
+    setAppliedSteps([INTRODUCE_CMD, PROP_INTRODUCE_CMD]);
 
     expect(service.isEntityAvailable(IntroducedEntity)).toBe(true);
     expect(service.getHiddenColumnPropertyNames(IntroducedEntity).size).toBe(
@@ -216,12 +212,11 @@ describe('UpgradeAwareEntityMetadataService', () => {
       ],
     });
 
-    const { pushPosition } = await buildService({
+    const { setAppliedSteps } = await buildService({
       entityMetadatas: [metadata],
-      initialPosition: buildPosition([]),
     });
 
-    pushPosition(buildPosition([INTRODUCE_CMD]));
+    setAppliedSteps([INTRODUCE_CMD]);
 
     const brandNewColumn = metadata.columns.find(
       (column) => column.propertyName === 'brandNewColumn',
@@ -229,7 +224,7 @@ describe('UpgradeAwareEntityMetadataService', () => {
 
     expect(brandNewColumn?.isSelect).toBe(false);
 
-    pushPosition(buildPosition([INTRODUCE_CMD, PROP_INTRODUCE_CMD]));
+    setAppliedSteps([INTRODUCE_CMD, PROP_INTRODUCE_CMD]);
 
     expect(brandNewColumn?.isSelect).toBe(true);
   });

@@ -6,9 +6,8 @@ import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 
 import { DataSource } from 'typeorm';
 
-import { UpgradePositionRegistry } from 'src/engine/core-modules/upgrade/services/upgrade-position-registry.service';
-import { type UpgradePosition } from 'src/engine/core-modules/upgrade/types/upgrade-position.type';
-import { resolveEntityShapeForUpgradePosition } from 'src/engine/core-modules/upgrade/utils/resolve-entity-shape-for-upgrade-position.util';
+import { UpgradeCursorService } from 'src/engine/core-modules/upgrade/services/upgrade-cursor.service';
+import { resolveEntityShapeAtUpgradeCursor } from 'src/engine/core-modules/upgrade/utils/resolve-entity-shape-at-upgrade-cursor.util';
 import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 
 type EntityMetadataSnapshot = {
@@ -37,19 +36,17 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
   constructor(
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    private readonly upgradePositionRegistry: UpgradePositionRegistry,
+    private readonly upgradeCursorService: UpgradeCursorService,
   ) {}
 
   onModuleInit(): void {
     this.captureCanonicalSnapshots();
 
-    this.upgradePositionRegistry.onPositionChanged((position) => {
-      this.applyPositionToMetadata(position);
+    this.upgradeCursorService.onCursorChanged(() => {
+      this.applyCursorToMetadata();
     });
 
-    this.applyPositionToMetadata(
-      this.upgradePositionRegistry.getCurrentPosition(),
-    );
+    this.applyCursorToMetadata();
 
     UpgradeAwareRepositoryState.getInstance().setMetadataService(this);
   }
@@ -85,7 +82,10 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
     }
   }
 
-  private applyPositionToMetadata(position: UpgradePosition): void {
+  private applyCursorToMetadata(): void {
+    const isStepApplied = (stepName: string) =>
+      this.upgradeCursorService.isStepAppliedAtCurrentCursor(stepName);
+
     let renamedCount = 0;
     let unavailableCount = 0;
     let hiddenColumnCount = 0;
@@ -113,11 +113,11 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
         currentColumns.push({ propertyName, databaseName });
       }
 
-      const resolved = resolveEntityShapeForUpgradePosition({
+      const resolved = resolveEntityShapeAtUpgradeCursor({
         entityClass,
         currentTableName: snapshot.tableName,
         currentColumns,
-        position,
+        isStepApplied,
       });
 
       this.applyResolvedShapeToMetadata({ metadata, snapshot, resolved });
@@ -151,7 +151,7 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
     }
 
     this.logger.log(
-      `[upgrade-metadata] applied position renamed=${renamedCount} unavailable=${unavailableCount} hiddenColumns=${hiddenColumnCount}`,
+      `[upgrade-metadata] applied cursor renamed=${renamedCount} unavailable=${unavailableCount} hiddenColumns=${hiddenColumnCount}`,
     );
   }
 
@@ -162,7 +162,7 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
   }: {
     metadata: EntityMetadata;
     snapshot: EntityMetadataSnapshot;
-    resolved: ReturnType<typeof resolveEntityShapeForUpgradePosition>;
+    resolved: ReturnType<typeof resolveEntityShapeAtUpgradeCursor>;
   }): void {
     if (resolved.effectiveTableName === snapshot.tableName) {
       metadata.tableName = snapshot.tableName;
@@ -189,7 +189,7 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
   }: {
     column: ColumnMetadata;
     snapshot: EntityMetadataSnapshot;
-    resolved: ReturnType<typeof resolveEntityShapeForUpgradePosition>;
+    resolved: ReturnType<typeof resolveEntityShapeAtUpgradeCursor>;
   }): void {
     const canonicalName = snapshot.columnDatabaseNamesByPropertyName.get(
       column.propertyName,

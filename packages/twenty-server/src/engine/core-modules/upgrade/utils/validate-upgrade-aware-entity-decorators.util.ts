@@ -18,10 +18,10 @@ export type UpgradeAwareDecoratorReferenceProblem = {
 
 export const validateUpgradeAwareEntityDecorators = ({
   entityClasses,
-  knownCommandNames,
+  knownStepNames,
 }: {
   entityClasses: Function[];
-  knownCommandNames: ReadonlySet<string>;
+  knownStepNames: ReadonlySet<string>;
 }): UpgradeAwareDecoratorReferenceProblem[] => {
   const problems: UpgradeAwareDecoratorReferenceProblem[] = [];
 
@@ -32,7 +32,7 @@ export const validateUpgradeAwareEntityDecorators = ({
 
     if (
       classIntroduced &&
-      !knownCommandNames.has(classIntroduced.upgradeCommandName)
+      !knownStepNames.has(classIntroduced.upgradeCommandName)
     ) {
       problems.push({
         entityName,
@@ -46,7 +46,7 @@ export const validateUpgradeAwareEntityDecorators = ({
       getWasRenamedInUpgradeClassMetadata(entityClass) ?? [];
 
     for (const entry of classRenameHistory) {
-      if (!knownCommandNames.has(entry.upgradeCommandName)) {
+      if (!knownStepNames.has(entry.upgradeCommandName)) {
         problems.push({
           entityName,
           decorator: '@WasRenamedInUpgrade',
@@ -60,7 +60,7 @@ export const validateUpgradeAwareEntityDecorators = ({
       getWasIntroducedInUpgradePropertyMetadata(entityClass);
 
     for (const [propertyName, options] of Object.entries(propIntroducedMap)) {
-      if (!knownCommandNames.has(options.upgradeCommandName)) {
+      if (!knownStepNames.has(options.upgradeCommandName)) {
         problems.push({
           entityName,
           decorator: '@WasIntroducedInUpgrade',
@@ -74,7 +74,7 @@ export const validateUpgradeAwareEntityDecorators = ({
 
     for (const [propertyName, history] of Object.entries(propRenameMap)) {
       for (const entry of history) {
-        if (!knownCommandNames.has(entry.upgradeCommandName)) {
+        if (!knownStepNames.has(entry.upgradeCommandName)) {
           problems.push({
             entityName,
             decorator: '@WasRenamedInUpgrade',

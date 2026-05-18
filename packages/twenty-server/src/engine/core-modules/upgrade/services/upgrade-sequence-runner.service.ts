@@ -10,7 +10,7 @@ import {
   UpgradeMigrationService,
   WorkspaceLastAttemptedCommand,
 } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { UpgradePositionRegistry } from 'src/engine/core-modules/upgrade/services/upgrade-position-registry.service';
+import { UpgradeCursorService } from 'src/engine/core-modules/upgrade/services/upgrade-cursor.service';
 import {
   type InstanceUpgradeStep,
   type UpgradeStep,
@@ -36,7 +36,7 @@ export class UpgradeSequenceRunnerService {
     private readonly instanceCommandRunnerService: InstanceCommandRunnerService,
     private readonly workspaceCommandRunnerService: WorkspaceCommandRunnerService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
-    private readonly upgradePositionRegistry: UpgradePositionRegistry,
+    private readonly upgradeCursorService: UpgradeCursorService,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceVersionService: WorkspaceVersionService,
   ) {}
@@ -52,12 +52,12 @@ export class UpgradeSequenceRunnerService {
       return { totalSuccesses: 0, totalFailures: 0 };
     }
 
-    await this.upgradePositionRegistry.beginUpgradeRun();
+    await this.upgradeCursorService.beginUpgradeRun();
 
     try {
       return await this.runInner({ sequence, options });
     } finally {
-      this.upgradePositionRegistry.endUpgradeRun();
+      this.upgradeCursorService.endUpgradeRun();
     }
   }
 
@@ -125,7 +125,7 @@ export class UpgradeSequenceRunnerService {
           skipDataMigration: allActiveOrSuspendedWorkspaceIds.length === 0,
         });
 
-        this.upgradePositionRegistry.markCommandApplied(step.name);
+        this.upgradeCursorService.advanceCursorTo(step.name);
 
         cursor++;
         continue;

@@ -8,42 +8,37 @@ import {
   getWasRenamedInUpgradeClassMetadata,
   getWasRenamedInUpgradePropertyMetadata,
 } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
-import { type UpgradePosition } from 'src/engine/core-modules/upgrade/types/upgrade-position.type';
-import { isCommandAppliedInUpgradePosition } from 'src/engine/core-modules/upgrade/utils/is-command-applied-in-upgrade-position.util';
 import { resolveEffectiveNameFromRenameHistory } from 'src/engine/core-modules/upgrade/utils/resolve-effective-name-from-rename-history.util';
 
-export type ResolvedEntityShapeForUpgradePosition = {
+export type ResolvedEntityShapeAtUpgradeCursor = {
   isAvailable: boolean;
   effectiveTableName: string;
   hiddenPropertyNames: ReadonlySet<string>;
   columnDatabaseNameRemap: ReadonlyMap<string, string>;
 };
 
-export const resolveEntityShapeForUpgradePosition = ({
+export const resolveEntityShapeAtUpgradeCursor = ({
   entityClass,
   currentTableName,
   currentColumns,
-  position,
+  isStepApplied,
 }: {
   entityClass: Function;
   currentTableName: string;
   currentColumns: { propertyName: string; databaseName: string }[];
-  position: UpgradePosition;
-}): ResolvedEntityShapeForUpgradePosition => {
+  isStepApplied: (stepName: string) => boolean;
+}): ResolvedEntityShapeAtUpgradeCursor => {
   const classIntroduced = getWasIntroducedInUpgradeClassMetadata(entityClass);
   const isAvailable =
     !isDefined(classIntroduced) ||
-    isCommandAppliedInUpgradePosition(
-      position,
-      classIntroduced.upgradeCommandName,
-    );
+    isStepApplied(classIntroduced.upgradeCommandName);
 
   const classRenameHistory =
     getWasRenamedInUpgradeClassMetadata(entityClass) ?? [];
   const effectiveTableName = resolveEffectiveNameFromRenameHistory({
     currentName: currentTableName,
     history: classRenameHistory,
-    position,
+    isStepApplied,
   });
 
   const propertyIntroductionMap =
@@ -59,10 +54,7 @@ export const resolveEntityShapeForUpgradePosition = ({
 
     if (
       isDefined(introduced) &&
-      !isCommandAppliedInUpgradePosition(
-        position,
-        introduced.upgradeCommandName,
-      )
+      !isStepApplied(introduced.upgradeCommandName)
     ) {
       hiddenPropertyNames.add(column.propertyName);
       continue;
@@ -77,7 +69,7 @@ export const resolveEntityShapeForUpgradePosition = ({
     const effectiveColumnName = resolveEffectiveNameFromRenameHistory({
       currentName: column.databaseName,
       history: renameHistory,
-      position,
+      isStepApplied,
     });
 
     if (effectiveColumnName !== column.databaseName) {
