@@ -56,8 +56,8 @@ export const useFindManyRecordsSelectedInContextStore = ({
 
   const isSoftDeleteFilterActive = contextStoreFilters.some(
     (filter) =>
-      fieldMetadataItemByIdMap.get(filter.fieldMetadataId)?.name === 'deletedAt' &&
-      filter.operand === RecordFilterOperand.IS_NOT_EMPTY,
+      fieldMetadataItemByIdMap.get(filter.fieldMetadataId)?.name ===
+        'deletedAt' && filter.operand === RecordFilterOperand.IS_NOT_EMPTY,
   );
 
   const queryFilter = computeContextStoreFilters({
