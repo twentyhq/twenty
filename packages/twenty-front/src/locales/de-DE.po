@@ -11801,11 +11801,11 @@ msgstr "Das Passwort wurde aktualisiert"
 msgid "Password has been updated"
 msgstr "Das Passwort wurde aktualisiert"
 
-#. js-lingui-id: 1oqxe6
+#. js-lingui-id: BfLK2u
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/auth/sign-in-up/hooks/useSignInUpForm.ts
-msgid "Password must be min. 8 characters"
-msgstr "Passwort muss mind. 8 Zeichen lang sein"
+msgid "Password must be between 8 and 50 characters"
+msgstr ""
 
 #. js-lingui-id: mi6Rel
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
