@@ -57,7 +57,16 @@ export class UpgradeSequenceRunnerService {
     try {
       return await this.runInner({ sequence, options });
     } finally {
-      await this.upgradeAwareEntityMetadataAdapter.refresh();
+      try {
+        await this.upgradeAwareEntityMetadataAdapter.refresh();
+      } catch (refreshError) {
+        this.logger.error(
+          `Failed to refresh upgrade-aware entity metadata after run`,
+          refreshError instanceof Error
+            ? refreshError.stack
+            : String(refreshError),
+        );
+      }
     }
   }
 

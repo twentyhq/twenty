@@ -49,7 +49,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     private readonly upgradeMigrationService: UpgradeMigrationService,
   ) {}
 
-  onModuleInit(): void {
+  async onModuleInit(): Promise<void> {
     const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
 
     for (const [index, step] of sequence.entries()) {
@@ -63,6 +63,8 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     this.applyCursorToMetadata();
 
     UpgradeAwareRepositoryState.getInstance().setMetadataService(this);
+
+    await this.refresh();
   }
 
   async refresh(): Promise<void> {
