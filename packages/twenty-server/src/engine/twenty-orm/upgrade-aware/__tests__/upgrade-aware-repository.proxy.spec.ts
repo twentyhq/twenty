@@ -120,4 +120,52 @@ describe('wrapRepositoryWithUpgradeAwareGuard', () => {
     expect(mocks.save).toHaveBeenCalledTimes(1);
     expect(mocks.insert).toHaveBeenCalledTimes(1);
   });
+
+  it('should strip relations whose target entity is unavailable from find options', async () => {
+    class UnavailableTarget {}
+    class AvailableTarget {}
+
+    const { repository, mocks } = buildFakeRepository();
+
+    Object.assign(repository, {
+      metadata: {
+        relations: [
+          {
+            propertyName: 'unavailable',
+            inverseEntityMetadata: { target: UnavailableTarget },
+          },
+          {
+            propertyName: 'available',
+            inverseEntityMetadata: { target: AvailableTarget },
+          },
+        ],
+      },
+    });
+
+    const state = new (UpgradeAwareRepositoryState as unknown as {
+      new (): UpgradeAwareRepositoryState;
+    })();
+
+    state.setMetadataService({
+      isEntityAvailable: (entityClass: Function) =>
+        entityClass !== UnavailableTarget,
+      getHiddenColumnPropertyNames: () => new Set(),
+    } as never);
+
+    const wrapped = wrapRepositoryWithUpgradeAwareGuard({
+      repository,
+      entityClass: FakeEntity,
+      state,
+    });
+
+    await wrapped.find({
+      where: { id: 1 },
+      relations: ['unavailable', 'available'],
+    } as never);
+
+    expect(mocks.find).toHaveBeenCalledWith({
+      where: { id: 1 },
+      relations: ['available'],
+    });
+  });
 });

@@ -1,11 +1,105 @@
 import { Logger } from '@nestjs/common';
 
 import { type Repository } from 'typeorm';
+import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 
 import { type UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 import { UpgradeUnavailableEntityWriteException } from 'src/engine/twenty-orm/upgrade-aware/exceptions/upgrade-unavailable-entity-write.exception';
 
 const logger = new Logger('UpgradeAwareRepositoryProxy');
+
+const METHODS_WITH_FIND_OPTIONS = new Set<string>([
+  'find',
+  'findBy',
+  'findAndCount',
+  'findAndCountBy',
+  'findOne',
+  'findOneBy',
+  'findOneOrFail',
+  'findOneByOrFail',
+  'count',
+  'countBy',
+  'exists',
+  'existsBy',
+]);
+
+const stripUnavailableRelations = (
+  metadata: EntityMetadata,
+  state: UpgradeAwareRepositoryState,
+  options: unknown,
+): unknown => {
+  if (
+    options === null ||
+    options === undefined ||
+    typeof options !== 'object'
+  ) {
+    return options;
+  }
+
+  const withRelations = options as { relations?: unknown };
+
+  if (!withRelations.relations) {
+    return options;
+  }
+
+  if (Array.isArray(withRelations.relations)) {
+    const filtered = (withRelations.relations as string[]).filter((name) =>
+      isRelationAvailable(metadata, state, name),
+    );
+
+    if (filtered.length === withRelations.relations.length) {
+      return options;
+    }
+
+    return { ...withRelations, relations: filtered };
+  }
+
+  if (typeof withRelations.relations === 'object') {
+    const filtered: Record<string, unknown> = {};
+
+    for (const [name, value] of Object.entries(
+      withRelations.relations as Record<string, unknown>,
+    )) {
+      if (isRelationAvailable(metadata, state, name)) {
+        filtered[name] = value;
+      }
+    }
+
+    return { ...withRelations, relations: filtered };
+  }
+
+  return options;
+};
+
+const isRelationAvailable = (
+  metadata: EntityMetadata,
+  state: UpgradeAwareRepositoryState,
+  relationPropertyName: string,
+): boolean => {
+  const relation = metadata.relations.find(
+    (candidate) => candidate.propertyName === relationPropertyName,
+  );
+
+  if (relation === undefined) {
+    return true;
+  }
+
+  const relatedTarget = relation.inverseEntityMetadata?.target;
+
+  if (typeof relatedTarget !== 'function') {
+    return true;
+  }
+
+  const available = state.isEntityAvailable(relatedTarget);
+
+  if (!available) {
+    logger.log(
+      `[upgrade-proxy] strip relation ${metadata.targetName}.${relationPropertyName} -> ${relatedTarget.name}`,
+    );
+  }
+
+  return available;
+};
 
 const SHORT_CIRCUIT_READ_TO_EMPTY_ARRAY = new Set<string>([
   'find',
@@ -107,11 +201,19 @@ export const wrapRepositoryWithUpgradeAwareGuard = <Entity extends object>({
             return Promise.resolve(shortCircuitReadFor(methodName));
           }
 
+          const rewrittenArgs =
+            METHODS_WITH_FIND_OPTIONS.has(methodName) && args.length > 0
+              ? [
+                  stripUnavailableRelations(target.metadata, state, args[0]),
+                  ...args.slice(1),
+                ]
+              : args;
+
           return (
             target[methodName as keyof Repository<Entity>] as unknown as (
               ...callArgs: unknown[]
             ) => unknown
-          ).apply(target, args);
+          ).apply(target, rewrittenArgs);
         };
       }
 
