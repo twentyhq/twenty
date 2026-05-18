@@ -16,8 +16,7 @@ import {
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 
@@ -26,13 +25,13 @@ export class ImapSmtpCaldavService {
   private readonly logger = new Logger(ImapSmtpCaldavService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly caldavClientService: CalDavClientService,
     private readonly caldavFetchEventsService: CalDavFetchEventsService,
+    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
   async testImapConnection(
@@ -218,21 +217,27 @@ export class ImapSmtpCaldavService {
     workspaceId: string,
     connectionId: string,
   ): Promise<ConnectedAccountEntity | null> {
-    const authContext = buildSystemAuthContext(workspaceId);
+    const connectedAccount = await this.connectedAccountRepository.findOne({
+      where: {
+        id: connectionId,
+        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+        workspaceId,
+      },
+    });
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const connectedAccount = await this.connectedAccountRepository.findOne({
-          where: {
-            id: connectionId,
-            provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+    if (!connectedAccount?.connectionParameters) {
+      return connectedAccount;
+    }
+
+    return {
+      ...connectedAccount,
+      connectionParameters:
+        this.connectedAccountTokenEncryptionService.decryptConnectionParameters(
+          {
+            connectionParameters: connectedAccount.connectionParameters,
             workspaceId,
           },
-        });
-
-        return connectedAccount;
-      },
-      authContext,
-    );
+        ),
+    };
   }
 }
