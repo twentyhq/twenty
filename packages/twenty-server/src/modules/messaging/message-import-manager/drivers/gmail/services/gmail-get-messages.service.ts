@@ -33,6 +33,7 @@ export class GmailGetMessagesService {
       | 'id'
       | 'handle'
       | 'handleAliases'
+      | 'workspaceId'
     >,
     messageChannel: Pick<
       MessageChannelEntity,

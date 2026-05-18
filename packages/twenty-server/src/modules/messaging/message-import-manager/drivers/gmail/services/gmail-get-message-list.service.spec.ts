@@ -40,6 +40,7 @@ describe('GmailGetMessageListService', () => {
     | 'id'
     | 'handle'
     | 'connectionParameters'
+    | 'workspaceId'
   > = {
     id: 'connected-account-id',
     provider: ConnectedAccountProvider.GOOGLE,
@@ -47,6 +48,7 @@ describe('GmailGetMessageListService', () => {
     refreshToken: 'refresh-token',
     handle: 'test@gmail.com',
     connectionParameters: {},
+    workspaceId: 'workspace-id',
   };
 
   beforeEach(async () => {

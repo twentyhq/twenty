@@ -1,0 +1,4 @@
+export const IMAGE_POINTER_FOLLOW = 0.38;
+export const IMAGE_POINTER_VELOCITY_DAMPING = 0.82;
+export const IMAGE_HOVER_FADE_IN = 18;
+export const IMAGE_HOVER_FADE_OUT = 7;

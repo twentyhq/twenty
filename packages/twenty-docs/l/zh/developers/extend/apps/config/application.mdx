@@ -32,7 +32,7 @@ export default defineApplication({
 备注：
 
 * `universalIdentifier` 字段是你拥有的确定性 ID。 只需生成一次，并在多次同步过程中保持稳定不变。
-* `applicationVariables` 会变成你的函数和前端组件可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
+* `applicationVariables` 会变成你的函数和前端组件可用的环境变量。 在逻辑函数（服务端）中，可以通过 `process.env.VARIABLE_NAME` 使用它们。 在前端组件中，使用 `twenty-sdk/front-component` 中的 `getApplicationVariable('VARIABLE_NAME')`。 标记为 `isSecret: true` 的变量只会注入到逻辑函数中。 前端组件只会接收非机密变量。
 * 默认角色会根据使用 [`defineApplicationRole()`](/l/zh/developers/extend/apps/config/roles) 标记的角色文件自动检测——你不需要在 `defineApplication()` 中引用它。
 * 在构建清单时会自动检测安装前/安装后函数——无需在 `defineApplication()` 中引用它们。
 * 显式传递 `defaultRoleUniversalIdentifier` 仍然受支持以保持向后兼容性，但已弃用，推荐改用 `defineApplicationRole()`。

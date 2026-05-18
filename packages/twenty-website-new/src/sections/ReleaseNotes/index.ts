@@ -1,0 +1,1 @@
+export { ReleaseNotes } from './components';

@@ -96,6 +96,10 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
             href: getSettingsPath(SettingsPath.Workspace),
           },
           {
+            children: t`Members`,
+            href: getSettingsPath(SettingsPath.WorkspaceMembersPage),
+          },
+          {
             children: t`Roles`,
             href: getSettingsPath(SettingsPath.Roles),
           },

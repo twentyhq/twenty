@@ -669,6 +669,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    relationTargetFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'relationTargetFieldMetadataUniversalIdentifier',
+    },
     createdAt: {
       toCompare: false,
       toStringify: false,
@@ -1390,6 +1395,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
   },
   viewSort: {
     direction: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    subFieldName: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,

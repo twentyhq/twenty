@@ -6,29 +6,14 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
-import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('BillingUsageCapService', () => {
   let service: BillingUsageCapService;
   let clickHouseService: jest.Mocked<ClickHouseService>;
-  let meteredCreditService: jest.Mocked<MeteredCreditService>;
   let twentyConfigService: jest.Mocked<TwentyConfigService>;
-
-  const buildSubscription = (
-    overrides: Partial<BillingSubscriptionEntity> = {},
-  ): BillingSubscriptionEntity =>
-    ({
-      id: 'sub_123',
-      workspaceId: 'workspace_123',
-      stripeCustomerId: 'cus_123',
-      currentPeriodStart: new Date('2026-04-01T00:00:00Z'),
-      currentPeriodEnd: new Date('2026-05-01T00:00:00Z'),
-      ...overrides,
-    }) as BillingSubscriptionEntity;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -41,22 +26,15 @@ describe('BillingUsageCapService', () => {
           },
         },
         {
-          provide: MeteredCreditService,
+          provide: ResourceCreditService,
           useValue: {
-            extractMeteredPricingInfoFromSubscription: jest.fn(),
-            getCreditBalance: jest.fn(),
+            extractResourceCreditPricingInfo: jest.fn(),
           },
         },
         {
           provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
-          },
-        },
-        {
-          provide: FeatureFlagService,
-          useValue: {
-            isFeatureEnabled: jest.fn().mockResolvedValue(false),
           },
         },
         {
@@ -71,7 +49,6 @@ describe('BillingUsageCapService', () => {
 
     service = module.get<BillingUsageCapService>(BillingUsageCapService);
     clickHouseService = module.get(ClickHouseService);
-    meteredCreditService = module.get(MeteredCreditService);
     twentyConfigService = module.get(TwentyConfigService);
   });
 
@@ -155,119 +132,6 @@ describe('BillingUsageCapService', () => {
       );
 
       expect(result.get('ws_1')).toBe(9876543210);
-    });
-  });
-
-  describe('evaluateCapBatch', () => {
-    it('returns evaluations keyed by subscription id', () => {
-      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
-        { tierCap: 1_000_000, unitPriceCents: 10 },
-      );
-
-      const sub1 = buildSubscription({
-        id: 'sub_1',
-        workspaceId: 'ws_1',
-        stripeCustomerId: 'cus_1',
-      });
-      const sub2 = buildSubscription({
-        id: 'sub_2',
-        workspaceId: 'ws_2',
-        stripeCustomerId: 'cus_2',
-      });
-
-      const usageByWorkspace = new Map([
-        ['ws_1', 500_000],
-        ['ws_2', 1_500_000],
-      ]);
-      const creditBalanceByCustomer = new Map([
-        ['cus_1', 0],
-        ['cus_2', 200_000],
-      ]);
-
-      const results = service.evaluateCapBatch(
-        [sub1, sub2],
-        usageByWorkspace,
-        creditBalanceByCustomer,
-      );
-
-      expect(results.get('sub_1')).toMatchObject({
-        skipped: false,
-        hasReachedCap: false,
-        usage: 500_000,
-        allowance: 1_000_000,
-      });
-      expect(results.get('sub_2')).toMatchObject({
-        skipped: false,
-        hasReachedCap: true,
-        usage: 1_500_000,
-        allowance: 1_200_000,
-      });
-    });
-
-    it('defaults usage to 0 for workspaces not in the map', () => {
-      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
-        { tierCap: 1_000_000, unitPriceCents: 10 },
-      );
-
-      const sub = buildSubscription({
-        id: 'sub_1',
-        workspaceId: 'ws_unknown',
-        stripeCustomerId: 'cus_1',
-      });
-
-      const results = service.evaluateCapBatch(
-        [sub],
-        new Map(),
-        new Map([['cus_1', 0]]),
-      );
-
-      expect(results.get('sub_1')).toMatchObject({
-        skipped: false,
-        hasReachedCap: false,
-        usage: 0,
-        allowance: 1_000_000,
-      });
-    });
-
-    it('defaults credit balance to 0 for unknown customers', () => {
-      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
-        { tierCap: 1_000_000, unitPriceCents: 10 },
-      );
-
-      const sub = buildSubscription({
-        id: 'sub_1',
-        workspaceId: 'ws_1',
-        stripeCustomerId: 'cus_unknown',
-      });
-
-      const results = service.evaluateCapBatch(
-        [sub],
-        new Map([['ws_1', 500_000]]),
-        new Map(),
-      );
-
-      expect(results.get('sub_1')).toMatchObject({
-        skipped: false,
-        hasReachedCap: false,
-        usage: 500_000,
-        creditBalance: 0,
-        allowance: 1_000_000,
-      });
-    });
-
-    it('returns skipped for subscriptions without metered pricing', () => {
-      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
-        null,
-      );
-
-      const sub = buildSubscription({ id: 'sub_1' });
-
-      const results = service.evaluateCapBatch([sub], new Map(), new Map());
-
-      expect(results.get('sub_1')).toEqual({
-        skipped: true,
-        reason: 'no-metered-item',
-      });
     });
   });
 });

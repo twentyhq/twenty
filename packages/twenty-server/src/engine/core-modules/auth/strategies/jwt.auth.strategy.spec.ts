@@ -47,6 +47,10 @@ describe('JwtAuthStrategy', () => {
 
     jwtWrapperService = {
       extractJwtFromRequest: jest.fn(() => () => 'token'),
+      resolveVerificationKey: jest.fn(async () => ({
+        key: 'mock-key',
+        algorithm: 'HS256',
+      })),
     };
 
     permissionsService = {

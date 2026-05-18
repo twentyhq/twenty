@@ -35,10 +35,6 @@ export class TransientTokenService {
       type: JwtTokenTypeEnum.LOGIN,
     };
 
-    const secret = this.jwtWrapperService.generateAppSecret(
-      jwtPayload.type,
-      workspaceId,
-    );
     const expiresIn = this.twentyConfigService.get(
       'SHORT_TERM_TOKEN_EXPIRES_IN',
     );
@@ -46,8 +42,7 @@ export class TransientTokenService {
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret,
+      token: await this.jwtWrapperService.signAsyncOrThrow(jwtPayload, {
         expiresIn,
       }),
       expiresAt,

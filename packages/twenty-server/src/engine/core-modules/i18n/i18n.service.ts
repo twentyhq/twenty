@@ -113,6 +113,6 @@ export class I18nService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    this.loadTranslations();
+    await this.loadTranslations();
   }
 }

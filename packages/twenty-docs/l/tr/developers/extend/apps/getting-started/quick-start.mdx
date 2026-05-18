@@ -87,7 +87,7 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-Bu, `src/` dizinini izler, her değişiklikte yeniden oluşturur ve sonucu sunucuya eşitler. Bir dosyayı düzenleyin, kaydedin; bir saniye içinde sunucu değişikliği yansıtır. Terminalinizde canlı bir durum paneli göreceksiniz.
+Bu, `src/` dizinini izler, her değişiklikte yeniden oluşturur ve sonucu sunucuya eşitler. Bir dosyayı düzenleyin, kaydedin ve birkaç saniye içinde sunucu değişikliği yansıtır. Terminalinizde canlı bir durum paneli göreceksiniz.
 
 Daha ayrıntılı çıktı (derleme günlükleri, eşitleme istekleri, hata izleri) için `--verbose` ekleyin.
 
@@ -128,11 +128,15 @@ yarn twenty dev --once
 | `yarn twenty dev`        | Her değişiklikte izler ve yeniden eşitler. Siz durdurana kadar çalışır. | Etkileşimli yerel geliştirme.                                   |
 | `yarn twenty dev --once` | Tek derleme + eşitleme; başarıda `0`, başarısızlıkta `1` ile çıkar.     | CI, pre-commit kancaları, AI ajanları, betiklenmiş iş akışları. |
 
-Her iki mod da geliştirme modunda bir sunucuya ve kimliği doğrulanmış bir uzak uca ihtiyaç duyar.
+Her iki kipin de kimliği doğrulanmış bir uzak sunucuya ihtiyaç duyar.
 
-<Warning>
-Geliştirme modu yalnızca geliştirme ortamında (`NODE_ENV=development`) çalışan Twenty örneklerinde kullanılabilir. Üretim örnekleri, geliştirme eşitleme isteklerini reddeder — üretim sunucularına dağıtmak için `yarn twenty deploy` kullanın. Bkz. [Yayımlama](/l/tr/developers/extend/apps/operations/publishing).
-</Warning>
+### Geliştirme kipi seçenekleri
+
+| Bayrak                                | Açıklama                                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `--once`                              | Bir kez derleyip eşitleyin, ardından çıkın.                                                |
+| `--debounceMs \<ms>` | Dosya değişikliği geciktirme süresini milisaniye cinsinden ayarlayın (varsayılan: `2000`). |
+| `--verbose` / `--debug`               | Ayrıntılı derleme günlüklerini, eşitleme isteklerini ve hata izlerini gösterin.            |
 
 ---
 

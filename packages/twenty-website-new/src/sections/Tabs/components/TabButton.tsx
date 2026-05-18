@@ -1,6 +1,6 @@
 'use client';
 
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import { useLingui } from '@lingui/react';
 import { INFORMATIVE_ICONS } from '@/icons';
 import type { TabType } from '@/sections/Tabs/types';
 import { theme } from '@/theme';
@@ -96,7 +96,7 @@ export function TabButton({
   onSelect,
   tab,
 }: TabButtonProps) {
-  const renderText = useRenderMessage();
+  const { i18n } = useLingui();
 
   const iconColor = isActive
     ? theme.colors.highlight[100]
@@ -114,7 +114,7 @@ export function TabButton({
       role="tab"
       type="button"
     >
-      <Label>{renderText(tab.body)}</Label>
+      <Label>{i18n._(tab.body)}</Label>
       <TabIconBox data-active={String(isActive)}>
         {Icon ? <Icon color={iconColor} size={16} /> : null}
       </TabIconBox>

@@ -31,6 +31,7 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
         'viewFilterGroupId',
         'operand',
         'subFieldName',
+        'relationTargetFieldMetadataId',
       ],
     );
 
@@ -41,12 +42,15 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
     fieldMetadataUniversalIdentifier,
     viewUniversalIdentifier,
     viewFilterGroupUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
     metadataName: 'viewFilter',
     foreignKeyValues: {
       fieldMetadataId,
       viewId,
       viewFilterGroupId: createViewFilterInput.viewFilterGroupId,
+      relationTargetFieldMetadataId:
+        createViewFilterInput.relationTargetFieldMetadataId,
     },
     flatEntityMaps: {
       flatFieldMetadataMaps,
@@ -69,6 +73,7 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
     positionInViewFilterGroup:
       createViewFilterInput.positionInViewFilterGroup ?? null,
     subFieldName: createViewFilterInput.subFieldName ?? null,
+    relationTargetFieldMetadataUniversalIdentifier,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

@@ -239,6 +239,38 @@ Verfügbare Hooks:
 | `useFrontComponentId()`                       | `string`             | Die ID dieser Komponenteninstanz                                            |
 | `useFrontComponentExecutionContext(selector)` | variiert             | Zugriff auf den vollständigen Ausführungskontext mit einer Selektorfunktion |
 
+## Anwendungsvariablen
+
+In [`defineApplication()`](/l/de/developers/extend/apps/config/application) mit `isSecret: false` definierte Anwendungsvariablen sind in Front-Komponenten über das Hilfsprogramm `getApplicationVariable` verfügbar:
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+Geheime Variablen (`isSecret: true`) werden **nicht** in Front-Komponenten offengelegt. Sie sind nur in [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions) verfügbar, die serverseitig ausgeführt werden. Dadurch wird verhindert, dass sensible Werte wie API-Schlüssel an den Browser gesendet werden.
+</Warning>
+
+Die folgenden Systemvariablen sind immer über `process.env` verfügbar:
+
+| Variable                  | Beschreibung                                                  |
+| ------------------------- | ------------------------------------------------------------- |
+| `TWENTY_API_URL`          | Basis-URL der Twenty API                                      |
+| `TWENTY_APP_ACCESS_TOKEN` | Kurzlebiges Token mit dem Geltungsbereich der Rolle Ihrer App |
+
 ## Host-Kommunikations-API
 
 Front-Komponenten können Navigation, Modals und Benachrichtigungen mittels Funktionen aus `twenty-sdk` auslösen:

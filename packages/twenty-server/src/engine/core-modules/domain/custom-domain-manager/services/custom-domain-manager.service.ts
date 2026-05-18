@@ -114,7 +114,7 @@ export class CustomDomainManagerService {
         workspaceId: workspace.id,
       });
 
-      analytics.insertWorkspaceEvent(
+      void analytics.insertWorkspaceEvent(
         workspace.isCustomDomainEnabled
           ? CUSTOM_DOMAIN_ACTIVATED_EVENT
           : CUSTOM_DOMAIN_DEACTIVATED_EVENT,

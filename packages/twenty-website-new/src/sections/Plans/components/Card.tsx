@@ -3,17 +3,21 @@
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
-import { Body, Heading, LinkButton } from '@/design-system/components';
-import { CheckIcon } from '@/icons/informative/Check';
+import {
+  Body,
+  Heading,
+  HeadingPart,
+  LinkButton,
+} from '@/design-system/components';
 import { useAnimatedNumber } from '@/lib/animation';
-import { getMessageDescriptorSource } from '@/lib/i18n/get-message-descriptor-source';
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
-import { useTimeoutRegistry } from '@/lib/react';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
-import { useEffect, useState } from 'react';
+
+import { PlanFeatureList } from './PlanFeatureList';
+import { useFeatureTransition } from './use-feature-transition';
 
 const StyledCard = styled.div`
   background-color: ${theme.colors.primary.background[100]};
@@ -140,109 +144,7 @@ const CtaWrapper = styled.div`
   }
 `;
 
-const FEATURES_SWITCH_ANIMATION_MS = 110;
-const FEATURE_ITEM_STAGGER_MS = 8;
-const FEATURE_ITEM_EXPANDED_HEIGHT = theme.spacing(8);
-const FEATURE_ITEM_SPACING = theme.spacing(4);
-const FEATURE_LIST_ROW_LAYOUT_HEIGHT = theme.spacing(5.5);
-
-const FeaturesViewport = styled.div<{ $featuresHeight: string }>`
-  flex: 1 1 auto;
-  min-height: ${({ $featuresHeight }) => $featuresHeight};
-  min-width: 0;
-  overflow: hidden;
-  position: relative;
-  transition: min-height ${FEATURES_SWITCH_ANIMATION_MS}ms
-    cubic-bezier(0.2, 0.8, 0.2, 1);
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-`;
-
-const FeaturesList = styled.ul`
-  display: flex;
-  flex-direction: column;
-  list-style: none;
-  margin: 0;
-  min-width: 0;
-  padding: 0;
-  width: 100%;
-`;
-
-const FeatureCheck = styled.span`
-  align-items: center;
-  display: inline-flex;
-  height: 16px;
-  justify-content: center;
-  width: 16px;
-`;
-
-const FeatureItem = styled.li<{
-  $featureIndex: number;
-  $featureSpacing: string;
-}>`
-  @keyframes pricingFeatureItemEnter {
-    from {
-      margin-top: 0;
-      max-height: 0;
-      opacity: 0;
-    }
-
-    to {
-      margin-top: ${({ $featureSpacing }) => $featureSpacing};
-      max-height: ${FEATURE_ITEM_EXPANDED_HEIGHT};
-      opacity: 1;
-    }
-  }
-
-  @keyframes pricingFeatureItemExit {
-    from {
-      margin-top: ${({ $featureSpacing }) => $featureSpacing};
-      max-height: ${FEATURE_ITEM_EXPANDED_HEIGHT};
-      opacity: 1;
-    }
-
-    to {
-      margin-top: 0;
-      max-height: 0;
-      opacity: 0;
-    }
-  }
-
-  align-items: center;
-  column-gap: ${theme.spacing(2)};
-  display: grid;
-  grid-template-columns: auto 1fr;
-  margin-top: ${({ $featureSpacing }) => $featureSpacing};
-  max-height: ${FEATURE_ITEM_EXPANDED_HEIGHT};
-  min-width: 0;
-  overflow: hidden;
-
-  &[data-state='stable'] {
-    max-height: none;
-  }
-
-  &[data-state='entering'] {
-    animation: pricingFeatureItemEnter ${FEATURES_SWITCH_ANIMATION_MS}ms
-      cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    animation-delay: calc(
-      ${({ $featureIndex }) => $featureIndex} * ${FEATURE_ITEM_STAGGER_MS}ms
-    );
-  }
-
-  &[data-state='exiting'] {
-    animation: pricingFeatureItemExit ${FEATURES_SWITCH_ANIMATION_MS}ms
-      cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    animation-delay: calc(
-      ${({ $featureIndex }) => $featureIndex} * ${FEATURE_ITEM_STAGGER_MS}ms
-    );
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
-`;
+const PRICE_NUMBER_FORMATTER = new Intl.NumberFormat('en-US');
 
 type CardProps = {
   card: PlanCardType;
@@ -250,165 +152,12 @@ type CardProps = {
   maxBullets: number;
 };
 
-const PRICE_NUMBER_FORMATTER = new Intl.NumberFormat('en-US');
-const PRICE_HEADING_NUMBER_REGEX = /^(.*?)(\d[\d,]*)(.*)$/;
-
-function getHeadingSegments(heading: PlanCardType['price']['heading']) {
-  return Array.isArray(heading) ? heading : [heading];
-}
-
-function getPriceHeadingNumericValue(
-  heading: PlanCardType['price']['heading'],
-) {
-  const segments = getHeadingSegments(heading);
-
-  for (const segment of segments) {
-    const match = getMessageDescriptorSource(segment.text).match(
-      PRICE_HEADING_NUMBER_REGEX,
-    );
-
-    if (!match) {
-      continue;
-    }
-
-    return Number(match[2].replaceAll(',', ''));
-  }
-
-  return null;
-}
-
-function getAnimatedPriceHeading(
-  heading: PlanCardType['price']['heading'],
-  animatedValue: number,
-) {
-  const originalIsArray = Array.isArray(heading);
-  let replaced = false;
-
-  const nextSegments = getHeadingSegments(heading).map((segment) => {
-    if (replaced) {
-      return segment;
-    }
-
-    const match = getMessageDescriptorSource(segment.text).match(
-      PRICE_HEADING_NUMBER_REGEX,
-    );
-
-    if (!match) {
-      return segment;
-    }
-
-    replaced = true;
-
-    return {
-      ...segment,
-      text: `${match[1]}${PRICE_NUMBER_FORMATTER.format(animatedValue)}${match[3]}`,
-    };
-  });
-
-  return originalIsArray ? nextSegments : nextSegments[0];
-}
-
-function getBulletsKey(bullets: PlanCardType['features']['bullets']) {
-  return bullets
-    .map((bullet) => getMessageDescriptorSource(bullet.text))
-    .join('||');
-}
-
-function getFeaturesLayoutMinHeight(maxBullets: number) {
-  if (maxBullets <= 0) {
-    return '0px';
-  }
-
-  return `calc((${FEATURE_LIST_ROW_LAYOUT_HEIGHT} * ${maxBullets}) + (${theme.spacing(
-    4,
-  )} * ${maxBullets - 1}))`;
-}
-
-function getFeaturesAnimationMinHeight(maxBullets: number) {
-  if (maxBullets <= 0) {
-    return '0px';
-  }
-
-  return `calc((${FEATURE_ITEM_EXPANDED_HEIGHT} * ${maxBullets}) + (${theme.spacing(
-    4,
-  )} * ${maxBullets - 1}))`;
-}
-
 export function Card({ card, highlighted = false, maxBullets }: CardProps) {
-  const renderText = useRenderMessage();
-  const timeoutRegistry = useTimeoutRegistry();
+  const { i18n } = useLingui();
   const iconWidth = card.icon.width ?? 80;
-  const targetPriceValue = getPriceHeadingNumericValue(card.price.heading);
-  const animatedPriceValue = useAnimatedNumber(targetPriceValue ?? 0);
-  const animatedPriceHeading =
-    targetPriceValue === null
-      ? card.price.heading
-      : getAnimatedPriceHeading(card.price.heading, animatedPriceValue);
-  const [visibleBullets, setVisibleBullets] = useState(card.features.bullets);
-  const [queuedBullets, setQueuedBullets] = useState<
-    PlanCardType['features']['bullets'] | null
-  >(null);
-  const [comparisonBullets, setComparisonBullets] = useState<
-    PlanCardType['features']['bullets'] | null
-  >(null);
-  const [featuresPhase, setFeaturesPhase] = useState<
-    'stable' | 'exiting' | 'entering'
-  >('stable');
-
-  useEffect(() => {
-    const nextBullets = card.features.bullets;
-    const nextBulletsKey = getBulletsKey(nextBullets);
-
-    if (
-      nextBulletsKey === getBulletsKey(visibleBullets) ||
-      nextBulletsKey === getBulletsKey(queuedBullets ?? [])
-    ) {
-      return;
-    }
-
-    setQueuedBullets(nextBullets);
-
-    if (featuresPhase === 'stable') {
-      setFeaturesPhase('exiting');
-    }
-  }, [card.features.bullets, featuresPhase, queuedBullets, visibleBullets]);
-
-  useEffect(() => {
-    if (featuresPhase !== 'exiting' || !queuedBullets) {
-      return;
-    }
-
-    return timeoutRegistry.schedule(
-      () => {
-        setComparisonBullets(visibleBullets);
-        setVisibleBullets(queuedBullets);
-        setQueuedBullets(null);
-        setFeaturesPhase('entering');
-      },
-      FEATURES_SWITCH_ANIMATION_MS +
-        FEATURE_ITEM_STAGGER_MS * visibleBullets.length,
-    );
-  }, [featuresPhase, queuedBullets, timeoutRegistry, visibleBullets]);
-
-  useEffect(() => {
-    if (featuresPhase !== 'entering') {
-      return;
-    }
-
-    return timeoutRegistry.schedule(
-      () => {
-        setComparisonBullets(null);
-        setFeaturesPhase('stable');
-      },
-      FEATURES_SWITCH_ANIMATION_MS +
-        FEATURE_ITEM_STAGGER_MS * visibleBullets.length,
-    );
-  }, [featuresPhase, timeoutRegistry, visibleBullets]);
-
-  const comparisonBulletTexts = new Set(
-    (featuresPhase === 'exiting' ? queuedBullets : comparisonBullets)?.map(
-      (bullet) => getMessageDescriptorSource(bullet.text),
-    ) ?? [],
+  const animatedPriceValue = useAnimatedNumber(card.price.value);
+  const { comparisonBulletTexts, phase, visibleBullets } = useFeatureTransition(
+    card.features.bullets,
   );
 
   return (
@@ -418,26 +167,21 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           <Heading
             as="h3"
             className={cardPlanTitleClassName}
-            renderText={renderText}
-            segments={card.heading}
             size="xs"
             weight="light"
-          />
+          >
+            <HeadingPart fontFamily="sans">{i18n._(card.heading)}</HeadingPart>
+          </Heading>
           <PriceLine>
-            <Heading
-              as="h4"
-              renderText={renderText}
-              segments={animatedPriceHeading}
-              size="sm"
-              weight="regular"
-            />
-            <Body
-              as="span"
-              body={card.price.body}
-              className={priceBodyClassName}
-              renderText={renderText}
-              size="sm"
-            />
+            <Heading as="h4" size="sm" weight="regular">
+              <HeadingPart fontFamily="sans">
+                {card.price.prefix}
+                {PRICE_NUMBER_FORMATTER.format(animatedPriceValue)}
+              </HeadingPart>
+            </Heading>
+            <Body as="span" className={priceBodyClassName} size="sm">
+              {i18n._(card.price.suffix)}
+            </Body>
           </PriceLine>
         </CardHeaderInfo>
         <CardIcon $iconWidth={iconWidth}>
@@ -452,47 +196,18 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
 
       <CardRule />
 
-      <FeaturesViewport
-        $featuresHeight={
-          featuresPhase === 'stable'
-            ? getFeaturesLayoutMinHeight(maxBullets)
-            : getFeaturesAnimationMinHeight(maxBullets)
-        }
-      >
-        <FeaturesList data-state={featuresPhase}>
-          {visibleBullets.map((bullet, index) => (
-            <FeatureItem
-              $featureIndex={index}
-              $featureSpacing={index > 0 ? FEATURE_ITEM_SPACING : '0px'}
-              data-state={
-                featuresPhase === 'stable'
-                  ? 'stable'
-                  : comparisonBulletTexts.has(
-                        getMessageDescriptorSource(bullet.text),
-                      )
-                    ? 'stable'
-                    : featuresPhase
-              }
-              key={`${getMessageDescriptorSource(bullet.text)}-${index}`}
-            >
-              <FeatureCheck>
-                <CheckIcon
-                  color={theme.colors.highlight[100]}
-                  size={16}
-                  strokeWidth={1.5}
-                />
-              </FeatureCheck>
-              <Body as="span" body={bullet} renderText={renderText} size="sm" />
-            </FeatureItem>
-          ))}
-        </FeaturesList>
-      </FeaturesViewport>
+      <PlanFeatureList
+        comparisonBulletTexts={comparisonBulletTexts}
+        maxBullets={maxBullets}
+        phase={phase}
+        visibleBullets={visibleBullets}
+      />
 
       <CtaWrapper>
         <LinkButton
           color="secondary"
           href="https://app.twenty.com/welcome"
-          label={renderText(msg`Start for free`)}
+          label={i18n._(msg`Start for free`)}
           variant={highlighted ? 'contained' : 'outlined'}
         />
       </CtaWrapper>

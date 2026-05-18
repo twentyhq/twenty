@@ -23,12 +23,13 @@ const FRAME_MAP_PATH = path.join(
   'src',
   'sections',
   'HomeStepper',
-  'utils',
-  'home-stepper-lottie-frame-map.ts',
+  'components',
+  'Visual',
+  'use-dot-lottie-scroll-sync.ts',
 );
 
 const EXPECTED_CONSTANT_REGEX =
-  /export\s+const\s+HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES\s*=\s*(\d+)\s*;/;
+  /(?:export\s+)?const\s+HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES\s*=\s*(\d+)\s*;/;
 
 function fail(message) {
   // eslint-disable-next-line no-console

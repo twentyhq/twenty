@@ -9,24 +9,14 @@ import {
   getExportedModelFile,
   parseExportedPreset,
   type ReactExportSettings,
-} from '@/app/[locale]/halftone/_lib/exporters';
-import { resolveExportArtifactNames } from '@/app/[locale]/halftone/_lib/exportNames';
-import { generateImageHalftoneSvg } from '@/app/[locale]/halftone/_lib/imageSvgExport';
-import {
-  buildShareUrl,
-  decodeShareState,
-  encodeShareState,
-} from '@/app/[locale]/halftone/_lib/share';
+} from '@/lib/halftone/utils/exporters';
+import { resolveExportArtifactNames } from '@/lib/halftone/utils/export-names';
+import { generateImageHalftoneSvg } from '@/lib/halftone/utils/image-svg-export';
 import {
   HalftoneCanvas,
   type HalftoneSnapshotFn,
-} from '@/lib/halftone/halftone-canvas';
-import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/footprint';
-import {
-  createFallbackGeometry,
-  disposeGeometryCache,
-  getGeometryForSpec,
-} from '@/lib/halftone/geometry-registry';
+} from '@/lib/halftone/components/HalftoneCanvas';
+import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/utils/footprint';
 import {
   DEFAULT_IMAGE_HALFTONE_SETTINGS,
   DEFAULT_SHAPE_HALFTONE_SETTINGS,
@@ -37,12 +27,10 @@ import {
   type HalftoneModelLoader,
   type HalftoneSourceMode,
   normalizeHalftoneStudioSettings,
-} from '@/lib/halftone/state';
+} from '@/lib/halftone/utils/state';
 import { Logo as LogoIcon } from '@/icons';
-import { LocalizedLink } from '@/lib/i18n';
 import { useTimeoutRegistry } from '@/lib/react';
 import { theme } from '@/theme';
-import { styled } from '@linaria/react';
 import {
   useCallback,
   useEffect,
@@ -51,142 +39,30 @@ import {
   useRef,
   useState,
 } from 'react';
-import type * as THREE from 'three';
 
-type GeometryCacheEntry = THREE.BufferGeometry | Promise<THREE.BufferGeometry>;
-const DESKTOP_CONTROLS_PANEL_WIDTH = 320;
-const DESKTOP_CONTROLS_PANEL_OFFSET = 20;
-const DESKTOP_CONTROLS_PANEL_FOOTPRINT =
-  DESKTOP_CONTROLS_PANEL_WIDTH + DESKTOP_CONTROLS_PANEL_OFFSET;
+import { CopyHalftoneShortcutEffect } from './effect-components/CopyHalftoneShortcutEffect';
+import { PasteImageEffect } from './effect-components/PasteImageEffect';
+import { useDefaultHalftoneImage } from '../_hooks/use-default-halftone-image';
+import { useGeometryLoader } from '../_hooks/use-geometry-loader';
+import { useImageElement } from '../_hooks/use-image-element';
+
+import {
+  CanvasLayer,
+  ContentRegion,
+  ControlsPanelFrame,
+  ControlsPositioner,
+  HiddenFileInput,
+  Hint,
+  LogoLink,
+  Status,
+  StudioShell,
+} from './halftone-studio.styles';
+
 const STATUS_CLEAR_DELAY_MS = 2000;
-
-const StudioShell = styled.div<{ $background: string }>`
-  background: ${(props) => props.$background};
-  /* Full-screen tool: track the visible viewport so the bottom controls bar
-   * is reachable on mobile Safari (where 100vh extends behind the URL bar). */
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-`;
-
-const ContentRegion = styled.div<{ $panelOpen: boolean }>`
-  height: 100%;
-  margin-right: auto;
-  position: relative;
-  transition: width 0.18s ease;
-  width: ${(props) =>
-    props.$panelOpen
-      ? `calc(100% - ${DESKTOP_CONTROLS_PANEL_FOOTPRINT}px)`
-      : '100%'};
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    width: 100%;
-  }
-`;
-
-const CanvasLayer = styled.div`
-  height: 100%;
-  width: 100%;
-`;
-
-const LogoLink = styled(LocalizedLink)`
-  display: grid;
-  left: 24px;
-  position: absolute;
-  top: 24px;
-  z-index: 2;
-`;
-
-const Hint = styled.div<{ $tone: 'dark' | 'light'; $visible: boolean }>`
-  color: ${(props) =>
-    props.$tone === 'dark'
-      ? 'rgba(255, 255, 255, 0.34)'
-      : 'rgba(0, 0, 0, 0.3)'};
-  font-family: ${theme.font.family.mono};
-  font-size: 11px;
-  left: 50%;
-  opacity: ${(props) => (props.$visible ? 1 : 0)};
-  pointer-events: none;
-  position: absolute;
-  top: 20px;
-  transform: translateX(-50%);
-  transition: opacity 0.3s ease;
-  z-index: 1;
-`;
-
-const Status = styled.div<{
-  $error: boolean;
-  $tone: 'dark' | 'light';
-  $visible: boolean;
-}>`
-  color: ${(props) => {
-    if (props.$error) {
-      return 'rgba(214, 66, 66, 0.92)';
-    }
-
-    return props.$tone === 'dark'
-      ? 'rgba(255, 255, 255, 0.62)'
-      : 'rgba(0, 0, 0, 0.55)';
-  }};
-  font-family: ${theme.font.family.mono};
-  font-size: 11px;
-  left: 50%;
-  opacity: ${(props) => (props.$visible ? 1 : 0)};
-  pointer-events: none;
-  position: absolute;
-  top: 44px;
-  transform: translateX(-50%);
-  transition: opacity 0.2s ease;
-  z-index: 1;
-`;
-
-const ControlsPositioner = styled.div`
-  align-items: flex-start;
-  bottom: 20px;
-  display: flex;
-  height: calc(100vh - 40px);
-  height: calc(100dvh - 40px);
-  justify-content: flex-end;
-  pointer-events: none;
-  position: fixed;
-  right: 20px;
-  top: 20px;
-  z-index: 3;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    bottom: 16px;
-    height: 48vh;
-    left: 16px;
-    right: 16px;
-    top: auto;
-  }
-`;
-
-const ControlsPanelFrame = styled.div<{ $visible: boolean }>`
-  height: ${(props) => (props.$visible ? '100%' : 'auto')};
-  pointer-events: auto;
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    width: ${(props) => (props.$visible ? '100%' : 'auto')};
-  }
-`;
-
-const HiddenFileInput = styled.input`
-  display: none;
-`;
 
 const DEFAULT_PREVIEW_DISTANCE = 6;
 const DEFAULT_IMAGE_ASSET_PATH = '/images/shared/halftone/twenty-logo.svg';
 const DEFAULT_IMAGE_FILENAME = 'twenty-logo.svg';
-const CLIPBOARD_IMAGE_EXTENSION_BY_MIME: Record<string, string> = {
-  'image/bmp': '.bmp',
-  'image/gif': '.gif',
-  'image/jpeg': '.jpg',
-  'image/png': '.png',
-  'image/svg+xml': '.svg',
-  'image/webp': '.webp',
-};
 type PendingFilePicker = {
   resolve: (file: File | null) => void;
 };
@@ -237,42 +113,6 @@ function getAssetFilenameFromUrl(assetUrl: string, fallbackFilename: string) {
   return assetFilename && assetFilename.length > 0
     ? assetFilename
     : fallbackFilename;
-}
-
-function isEditablePasteTarget(target: EventTarget | null) {
-  if (!(target instanceof HTMLElement)) {
-    return false;
-  }
-
-  return (
-    target.isContentEditable ||
-    target instanceof HTMLInputElement ||
-    target instanceof HTMLTextAreaElement ||
-    target.closest('[contenteditable=""], [contenteditable="true"]') !== null
-  );
-}
-
-function createPastedImageFile(file: File) {
-  const hasExtension = /\.[^.]+$/i.test(file.name);
-
-  if (hasExtension) {
-    return file;
-  }
-
-  const extension =
-    CLIPBOARD_IMAGE_EXTENSION_BY_MIME[file.type] ??
-    CLIPBOARD_IMAGE_EXTENSION_BY_MIME['image/png'];
-
-  return new File([file], `pasted-image-${Date.now()}${extension}`, {
-    type: file.type || 'image/png',
-    lastModified: Date.now(),
-  });
-}
-
-function hasTextSelection() {
-  const selection = window.getSelection();
-
-  return selection !== null && selection.toString().trim().length > 0;
 }
 
 function createInitialExportPose(): HalftoneExportPose {
@@ -358,18 +198,12 @@ export function HalftoneStudio() {
   const [previewDistance, setPreviewDistance] = useState(
     DEFAULT_PREVIEW_DISTANCE,
   );
-  const [activeGeometry, setActiveGeometry] = useState<THREE.BufferGeometry>(
-    () => createFallbackGeometry(),
-  );
   const [exportBackground, setExportBackground] = useState(false);
   const [exportName, setExportName] = useState('');
   const [reactExportSettings, setReactExportSettings] =
     useState<ReactExportSettings>(DEFAULT_REACT_EXPORT_SETTINGS);
   const [reactAssetPublicUrl, setReactAssetPublicUrl] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imageElement, setImageElement] = useState<HTMLImageElement | null>(
-    null,
-  );
   const [canvasInitialPose, setCanvasInitialPose] =
     useState<HalftoneExportPose>();
   const defaultImageFileReference = useRef<File | null>(null);
@@ -380,10 +214,6 @@ export function HalftoneStudio() {
   const presetFileInputReference = useRef<HTMLInputElement>(null);
   const pendingFilePickerReference = useRef<PendingFilePicker | null>(null);
   const pendingPresetPickerReference = useRef<PendingPresetPicker | null>(null);
-  const geometryCacheReference = useRef<Map<string, GeometryCacheEntry>>(
-    new Map([['torusKnot', activeGeometry]]),
-  );
-  const lastSuccessfulShapeReference = useRef(state.settings.shapeKey);
   const exportPoseReference = useRef<HalftoneExportPose>(
     createInitialExportPose(),
   );
@@ -400,6 +230,8 @@ export function HalftoneStudio() {
     );
   }, [timeoutRegistry]);
 
+  const imageElement = useImageElement(imageFile);
+
   const selectedShape = useMemo(
     () =>
       state.geometrySpecs.find(
@@ -407,6 +239,26 @@ export function HalftoneStudio() {
       ),
     [state.geometrySpecs, state.settings.shapeKey],
   );
+
+  const geometryLoaderCallbacks = useMemo(
+    () => ({
+      onLoadStart: (label: string) =>
+        dispatch({ type: 'setStatus', message: `Loading ${label}…` }),
+      onLoadSuccess: () => dispatch({ type: 'clearStatus' }),
+      onLoadError: (message: string) =>
+        dispatch({ type: 'setStatus', message, isError: true }),
+      onFallbackShape: (key: string) =>
+        dispatch({ type: 'setShapeKey', value: key }),
+    }),
+    [],
+  );
+
+  const activeGeometry = useGeometryLoader(
+    selectedShape,
+    state.importedFiles,
+    geometryLoaderCallbacks,
+  );
+
   const shapeOptions = useMemo(
     () =>
       state.geometrySpecs.map((shape) => ({
@@ -485,67 +337,6 @@ export function HalftoneStudio() {
     };
   }, [state.settings.halftone, state.settings.sourceMode]);
 
-  const hashHydratedReference = useRef(false);
-  useEffect(() => {
-    if (hashHydratedReference.current) {
-      return;
-    }
-
-    hashHydratedReference.current = true;
-
-    const decoded = decodeShareState(window.location.hash);
-
-    if (!decoded) {
-      return;
-    }
-
-    dispatch({ type: 'replaceSettings', value: decoded.settings });
-    setPreviewDistance(decoded.previewDistance);
-    setExportName(decoded.exportName);
-  }, []);
-
-  const hashSyncInitializedReference = useRef(false);
-  useEffect(() => {
-    if (!hashSyncInitializedReference.current) {
-      hashSyncInitializedReference.current = true;
-      return;
-    }
-
-    const timeout = window.setTimeout(() => {
-      const hash = encodeShareState({
-        settings: state.settings,
-        previewDistance,
-        exportName,
-      });
-      const nextUrl = `${window.location.pathname}${window.location.search}#${hash}`;
-      window.history.replaceState(null, '', nextUrl);
-    }, 250);
-
-    return () => window.clearTimeout(timeout);
-  }, [state.settings, previewDistance, exportName]);
-
-  const handleCopyShareLink = useCallback(() => {
-    const url = buildShareUrl({
-      settings: state.settings,
-      previewDistance,
-      exportName,
-    });
-
-    void navigator.clipboard
-      .writeText(url)
-      .then(() => {
-        dispatch({ type: 'setStatus', message: 'Link copied to clipboard.' });
-        clearStatusLater();
-      })
-      .catch(() => {
-        dispatch({
-          type: 'setStatus',
-          message: 'Could not copy the share link.',
-          isError: true,
-        });
-      });
-  }, [clearStatusLater, exportName, previewDistance, state.settings]);
-
   const handleCopyHalftoneImage = useCallback(
     async (width: number, height: number) => {
       const snapshotFn = snapshotReference.current;
@@ -601,37 +392,6 @@ export function HalftoneStudio() {
     },
     [clearStatusLater, exportBackground, state.settings.background.color],
   );
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const isCopyShortcut =
-        (event.metaKey || event.ctrlKey) &&
-        !event.shiftKey &&
-        !event.altKey &&
-        event.key.toLowerCase() === 'c';
-
-      if (!isCopyShortcut) {
-        return;
-      }
-
-      if (isEditablePasteTarget(event.target) || hasTextSelection()) {
-        return;
-      }
-
-      const canvasLayer = canvasLayerReference.current;
-      const width = Math.max(canvasLayer?.clientWidth ?? 0, 1);
-      const height = Math.max(canvasLayer?.clientHeight ?? 0, 1);
-
-      event.preventDefault();
-      void handleCopyHalftoneImage(width, height);
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [handleCopyHalftoneImage]);
 
   const openFilePicker = useCallback(
     (accept: string) => {
@@ -828,47 +588,6 @@ export function HalftoneStudio() {
     },
     [state.settings.halftone, state.settings.sourceMode],
   );
-
-  useEffect(() => {
-    const handlePaste = (event: ClipboardEvent) => {
-      if (isEditablePasteTarget(event.target)) {
-        return;
-      }
-
-      const imageItem = Array.from(event.clipboardData?.items ?? []).find(
-        (item) => item.type.startsWith('image/'),
-      );
-
-      if (!imageItem) {
-        return;
-      }
-
-      const pastedFile = imageItem.getAsFile();
-
-      if (!pastedFile) {
-        dispatch({
-          type: 'setStatus',
-          message: 'Could not read the pasted image.',
-          isError: true,
-        });
-        return;
-      }
-
-      event.preventDefault();
-      activateUploadedImage(createPastedImageFile(pastedFile));
-      dispatch({
-        type: 'setStatus',
-        message: 'Image pasted from clipboard.',
-      });
-      clearStatusLater();
-    };
-
-    window.addEventListener('paste', handlePaste);
-
-    return () => {
-      window.removeEventListener('paste', handlePaste);
-    };
-  }, [activateUploadedImage, clearStatusLater]);
 
   const handleUploadSource = useCallback(async () => {
     const file = await openFilePicker(
@@ -1337,96 +1056,7 @@ export function HalftoneStudio() {
     state.settings,
   ]);
 
-  useEffect(() => {
-    void loadDefaultImageFile()
-      .then((file) => {
-        setImageFile((currentFile) => currentFile ?? file);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [loadDefaultImageFile]);
-
-  useEffect(() => {
-    if (!imageFile) {
-      setImageElement(null);
-      return;
-    }
-
-    const url = URL.createObjectURL(imageFile);
-    const img = new Image();
-    img.onload = () => setImageElement(img);
-    img.src = url;
-
-    return () => URL.revokeObjectURL(url);
-  }, [imageFile]);
-
-  useEffect(() => {
-    const geometryCache = geometryCacheReference.current;
-
-    return () => {
-      disposeGeometryCache(geometryCache);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!selectedShape) {
-      return;
-    }
-
-    let cancelled = false;
-
-    if (selectedShape.kind === 'imported') {
-      dispatch({
-        type: 'setStatus',
-        message: `Loading ${selectedShape.label}…`,
-      });
-    } else {
-      dispatch({ type: 'clearStatus' });
-    }
-
-    void getGeometryForSpec(
-      selectedShape,
-      state.importedFiles[selectedShape.key],
-      geometryCacheReference.current,
-    )
-      .then((geometry) => {
-        if (cancelled) {
-          return;
-        }
-
-        lastSuccessfulShapeReference.current = selectedShape.key;
-        setActiveGeometry(geometry);
-        dispatch({ type: 'clearStatus' });
-      })
-      .catch((error) => {
-        if (cancelled) {
-          return;
-        }
-
-        console.error(error);
-
-        dispatch({
-          type: 'setStatus',
-          message:
-            error instanceof Error
-              ? error.message
-              : `${selectedShape.label} failed to load.`,
-          isError: true,
-        });
-
-        if (lastSuccessfulShapeReference.current !== selectedShape.key) {
-          dispatch({
-            type: 'setShapeKey',
-            value: lastSuccessfulShapeReference.current,
-          });
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedShape, state.importedFiles]);
+  useDefaultHalftoneImage({ loadDefaultImageFile, setImageFile });
 
   const background = state.settings.background.color;
   const backgroundTone = isLightColor(background) ? 'light' : 'dark';
@@ -1434,8 +1064,40 @@ export function HalftoneStudio() {
     dispatch({ type: 'hideHint' });
   }, []);
 
+  const handlePasteImage = useCallback(
+    (file: File) => {
+      activateUploadedImage(file);
+      dispatch({ type: 'setStatus', message: 'Image pasted from clipboard.' });
+      clearStatusLater();
+    },
+    [activateUploadedImage, clearStatusLater],
+  );
+
+  const handlePasteError = useCallback(() => {
+    dispatch({
+      type: 'setStatus',
+      message: 'Could not read the pasted image.',
+      isError: true,
+    });
+  }, []);
+
+  const handleCopyShortcut = useCallback(
+    (width: number, height: number) => {
+      void handleCopyHalftoneImage(width, height);
+    },
+    [handleCopyHalftoneImage],
+  );
+
   return (
     <StudioShell $background={background}>
+      <CopyHalftoneShortcutEffect
+        canvasLayerRef={canvasLayerReference}
+        onCopy={handleCopyShortcut}
+      />
+      <PasteImageEffect
+        onPasteImage={handlePasteImage}
+        onPasteError={handlePasteError}
+      />
       <LogoLink aria-label="Go to homepage" href="/">
         <LogoIcon
           backgroundColor={theme.colors.secondary.background[100]}
@@ -1489,7 +1151,6 @@ export function HalftoneStudio() {
             onAnimationSettingsChange={(value) =>
               dispatch({ type: 'patchAnimation', value })
             }
-            onCopyShareLink={handleCopyShareLink}
             onDashColorChange={(value) =>
               dispatch({
                 type: 'patchHalftone',

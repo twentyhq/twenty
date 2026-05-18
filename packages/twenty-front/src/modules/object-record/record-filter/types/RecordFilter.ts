@@ -24,7 +24,7 @@ export type RecordFilter = {
   positionInRecordFilterGroup?: number | null;
   label: string;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
-  // RLS-specific: when set, filter compares against current user's field value
+  relationTargetFieldMetadataId?: string | null;
   rlsDynamicValue?: RLSDynamicValue | null;
 };
 

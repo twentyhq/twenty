@@ -1,31 +1,30 @@
+import { msg } from '@lingui/core/macro';
 import { notFound } from 'next/navigation';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { HeadingPart } from '@/design-system/components';
 import { getPublishedArticles } from '@/lib/articles';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
+import { resolveLocaleParam } from '@/lib/i18n';
 import {
   getRouteI18n,
   type LocaleRouteParams,
-} from '@/lib/i18n/get-route-i18n';
-import { resolveLocaleParam } from '@/lib/i18n';
-import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
+} from '@/lib/i18n/utils/get-route-i18n';
 import { Pages } from '@/lib/pages';
-import { buildArticleListJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
-import { Articles } from '@/sections/Articles/components';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
-import { MENU_DATA } from '@/sections/Menu/data';
-import { TrustedBy } from '@/sections/TrustedBy/components';
-import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
+import {
+  buildArticleListJsonLd,
+  buildBreadcrumbListJsonLd,
+  buildRouteMetadata,
+  JsonLd,
+} from '@/lib/seo';
+import { Articles } from '@/sections/Articles';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { css } from '@linaria/core';
 
 export const generateMetadata = buildRouteMetadata('articles');
-
-const ARTICLES_HERO_BODY = {
-  text: 'Ideas from the team building Twenty on open source CRM, GTM systems, and building software that lasts.',
-};
 
 const ARTICLES_TOP_BACKGROUND_COLOR = '#F4F4F4';
 
@@ -71,12 +70,20 @@ export default async function ArticlesPage({ params }: ArticlesPageProps) {
     getRouteI18n(params),
     fetchCommunityStats(),
   ]);
-  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
   const posts = getPublishedArticles();
 
   return (
     <>
+      <JsonLd
+        data={buildBreadcrumbListJsonLd(
+          [
+            { name: 'Home', path: '/' },
+            { name: 'Articles', path: '/articles' },
+          ],
+          locale,
+        )}
+      />
       {posts.length > 0 ? (
         <JsonLd data={buildArticleListJsonLd(posts)} />
       ) : null}
@@ -93,29 +100,25 @@ export default async function ArticlesPage({ params }: ArticlesPageProps) {
       </Menu.Root>
 
       <div className={pageRevealClassName}>
-        <Hero.Root backgroundColor={ARTICLES_TOP_BACKGROUND_COLOR}>
+        <Hero.Root scheme="muted">
           <Hero.Heading page={Pages.Articles}>
             <HeadingPart fontFamily="serif">Ideas on</HeadingPart>
             <br />
             <HeadingPart fontFamily="serif">open-source</HeadingPart>{' '}
             <HeadingPart fontFamily="sans">CRM</HeadingPart>
           </Hero.Heading>
-          <Hero.Body body={ARTICLES_HERO_BODY} page={Pages.Articles} />
+          <Hero.Body page={Pages.Articles}>
+            Ideas from the team building Twenty on open source CRM, GTM systems,
+            and building software that lasts.
+          </Hero.Body>
         </Hero.Root>
         <TrustedBy.Root
           cardBackgroundColor={ARTICLES_TOP_BACKGROUND_COLOR}
           compactBottom
-        >
-          <TrustedBy.Separator
-            renderText={renderText}
-            separator={TRUSTED_BY_DATA.separator}
-          />
-          <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
-          <TrustedBy.ClientCount
-            label={TRUSTED_BY_DATA.clientCountLabel.text}
-            renderText={renderText}
-          />
-        </TrustedBy.Root>
+          separator={i18n._(msg`trusted by`)}
+          logos={TRUSTED_BY_LOGOS}
+          clientCount={i18n._(msg`+10k others`)}
+        />
       </div>
 
       <Articles.Index posts={posts} />

@@ -4,8 +4,8 @@ import {
   BaseButton,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
-import { useRenderMessage } from '@/lib/i18n/use-render-message';
-import { usePartnerApplicationModal } from '@/lib/partner-application';
+import { useLingui } from '@lingui/react';
+import { usePartnerApplicationModal } from '@/sections/PartnerApplication';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
@@ -25,7 +25,7 @@ export function BecomePartnerButton({
   label = msg`Become a partner`,
   variant = 'contained',
 }: BecomePartnerButtonProps) {
-  const renderText = useRenderMessage();
+  const { i18n } = useLingui();
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
 
   return (
@@ -37,7 +37,7 @@ export function BecomePartnerButton({
         openPartnerApplicationModal();
       }}
     >
-      <BaseButton color={color} label={renderText(label)} variant={variant} />
+      <BaseButton color={color} label={i18n._(label)} variant={variant} />
     </StyledTrigger>
   );
 }

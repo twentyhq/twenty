@@ -12,6 +12,7 @@ import {
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { isNonEmptyString } from '@sniptt/guards';
 
 @Injectable()
 export class ApplicationVariableEntityService {
@@ -27,9 +28,14 @@ export class ApplicationVariableEntityService {
       return applicationVariable.value;
     }
 
-    return this.secretEncryptionService.decryptAndMask({
+    if (!isNonEmptyString(applicationVariable.value)) {
+      return '';
+    }
+
+    return this.secretEncryptionService.decryptAndMaskVersioned({
       value: applicationVariable.value,
       mask: SECRET_APPLICATION_VARIABLE_MASK,
+      workspaceId: applicationVariable.workspaceId,
     });
   }
 
@@ -55,7 +61,9 @@ export class ApplicationVariableEntityService {
     }
 
     const encryptedValue = existingVariable.isSecret
-      ? this.secretEncryptionService.encrypt(plainTextValue)
+      ? this.secretEncryptionService.encryptVersioned(plainTextValue, {
+          workspaceId,
+        })
       : plainTextValue;
 
     await this.applicationVariableRepository.update(

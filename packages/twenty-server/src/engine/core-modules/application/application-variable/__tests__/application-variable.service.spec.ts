@@ -39,17 +39,23 @@ describe('ApplicationVariableEntityService', () => {
         {
           provide: SecretEncryptionService,
           useValue: {
-            encrypt: jest.fn((value: string) => `encrypted_${value}`),
-            decrypt: jest.fn((value: string) =>
-              value.replace('encrypted_', ''),
+            encryptVersioned: jest.fn(
+              (value: string, opts?: { workspaceId?: string }) =>
+                `enc:v2:deadbeef:${value}|${opts?.workspaceId ?? 'instance'}`,
             ),
-            decryptAndMask: jest.fn(
+            decryptVersioned: jest.fn(
+              (value: string, _opts?: { workspaceId?: string }) =>
+                value.replace(/^enc:v2:[0-9a-f]+:/, '').replace(/\|.*$/, ''),
+            ),
+            decryptAndMaskVersioned: jest.fn(
               ({
                 value: _value,
                 mask: _mask,
+                workspaceId: _workspaceId,
               }: {
                 value: string;
                 mask: string;
+                workspaceId?: string;
               }) => '********',
             ),
           },
@@ -76,7 +82,7 @@ describe('ApplicationVariableEntityService', () => {
   });
 
   describe('update', () => {
-    it('should encrypt value when variable is secret', async () => {
+    it('should encrypt value with workspaceId-scoped envelope when variable is secret', async () => {
       const existingVariable = {
         id: '1',
         key: 'API_KEY',
@@ -95,12 +101,13 @@ describe('ApplicationVariableEntityService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(secretEncryptionService.encrypt).toHaveBeenCalledWith(
+      expect(secretEncryptionService.encryptVersioned).toHaveBeenCalledWith(
         'new-secret-value',
+        { workspaceId: mockWorkspaceId },
       );
       expect(repository.update).toHaveBeenCalledWith(
         { key: 'API_KEY', applicationId: mockApplicationId },
-        { value: 'encrypted_new-secret-value' },
+        { value: `enc:v2:deadbeef:new-secret-value|${mockWorkspaceId}` },
       );
       expect(workspaceCacheService.invalidateAndRecompute).toHaveBeenCalledWith(
         mockWorkspaceId,
@@ -127,7 +134,7 @@ describe('ApplicationVariableEntityService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(secretEncryptionService.encrypt).not.toHaveBeenCalled();
+      expect(secretEncryptionService.encryptVersioned).not.toHaveBeenCalled();
       expect(repository.update).toHaveBeenCalledWith(
         { key: 'PUBLIC_URL', applicationId: mockApplicationId },
         { value: 'https://new-url.com' },
@@ -167,28 +174,35 @@ describe('ApplicationVariableEntityService', () => {
         value: 'https://example.com',
         isSecret: false,
         applicationId: mockApplicationId,
+        workspaceId: mockWorkspaceId,
       } as ApplicationVariableEntity;
 
       const result = service.getDisplayValue(variable);
 
       expect(result).toBe('https://example.com');
-      expect(secretEncryptionService.decryptAndMask).not.toHaveBeenCalled();
+      expect(
+        secretEncryptionService.decryptAndMaskVersioned,
+      ).not.toHaveBeenCalled();
     });
 
-    it('should call decryptAndMask for secret variables', () => {
+    it('should call decryptAndMaskVersioned with the row workspaceId for secret variables', () => {
       const variable = {
         id: '1',
         key: 'SECRET_KEY',
-        value: 'encrypted_value',
+        value: 'enc:v2:deadbeef:secret|workspace-123',
         isSecret: true,
         applicationId: mockApplicationId,
+        workspaceId: mockWorkspaceId,
       } as ApplicationVariableEntity;
 
       service.getDisplayValue(variable);
 
-      expect(secretEncryptionService.decryptAndMask).toHaveBeenCalledWith({
-        value: 'encrypted_value',
+      expect(
+        secretEncryptionService.decryptAndMaskVersioned,
+      ).toHaveBeenCalledWith({
+        value: 'enc:v2:deadbeef:secret|workspace-123',
         mask: SECRET_APPLICATION_VARIABLE_MASK,
+        workspaceId: mockWorkspaceId,
       });
     });
   });
