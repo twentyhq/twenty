@@ -10,7 +10,7 @@ import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { useMutation } from '@apollo/client/react';
 import {
-  type ConnectionParameters,
+  type ConnectionParametersInput,
   SaveImapSmtpCaldavAccountDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -19,7 +19,9 @@ import { type ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccou
 import { ACCOUNT_PROTOCOLS } from '@/settings/accounts/constants/AccountProtocols';
 import {
   connectionImapSmtpCalDav,
+  connectionImapSmtpCalDavUpdate,
   isProtocolConfigured,
+  isProtocolConfiguredForUpdate,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
@@ -41,7 +43,7 @@ export const useImapSmtpCaldavConnectionForm = ({
   const navigate = useNavigateSettings();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const defaultProtocolValues: Record<string, ConnectionParameters> = {
+  const defaultProtocolValues: Record<string, ConnectionParametersInput> = {
     IMAP: { host: '', port: 993, password: '', secure: true },
     SMTP: { host: '', username: '', port: 587, password: '', secure: true },
     CALDAV: { host: '', port: 443, password: '', secure: true },
@@ -49,7 +51,9 @@ export const useImapSmtpCaldavConnectionForm = ({
 
   const formMethods = useForm<ConnectionFormData>({
     mode: 'onSubmit',
-    resolver: zodResolver(connectionImapSmtpCalDav),
+    resolver: zodResolver(
+      isEditing ? connectionImapSmtpCalDavUpdate : connectionImapSmtpCalDav,
+    ),
     defaultValues: {
       handle: '',
       ...defaultProtocolValues,
@@ -95,15 +99,19 @@ export const useImapSmtpCaldavConnectionForm = ({
     (
       values: ConnectionFormData = watchedValues,
     ): (keyof ImapSmtpCaldavAccount)[] => {
+      const checkFn = isEditing
+        ? isProtocolConfiguredForUpdate
+        : isProtocolConfigured;
+
       return ACCOUNT_PROTOCOLS.filter((protocol) => {
         const protocolConfig = values[protocol];
         return (
           protocolConfig &&
-          isProtocolConfigured(protocolConfig as ConnectionParameters)
+          checkFn(protocolConfig as ConnectionParametersInput)
         );
       });
     },
-    [watchedValues],
+    [watchedValues, isEditing],
   );
 
   const isValid = useMemo(() => {
@@ -126,7 +134,7 @@ export const useImapSmtpCaldavConnectionForm = ({
       }
 
       const connectionParameters: Partial<
-        Record<keyof ImapSmtpCaldavAccount, ConnectionParameters>
+        Record<keyof ImapSmtpCaldavAccount, ConnectionParametersInput>
       > = {};
       configuredProtocols.forEach((protocol) => {
         const protocolConfig = formValues[protocol];

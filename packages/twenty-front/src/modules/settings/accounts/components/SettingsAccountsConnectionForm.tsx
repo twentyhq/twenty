@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { type Control, Controller } from 'react-hook-form';
 
 import { Select } from '@/ui/input/components/Select';
@@ -57,16 +58,52 @@ const StyledFieldGroup = styled.div`
   }
 `;
 
+const StyledPasswordFieldContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledEditPasswordLink = styled.button`
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  font-size: ${themeCssVariables.font.size.sm};
+  padding: 0;
+  text-decoration: underline;
+
+  &:hover {
+    color: ${themeCssVariables.font.color.primary};
+  }
+`;
+
 type SettingsAccountsConnectionFormProps = {
   control: Control<ConnectionFormData>;
   isEditing: boolean;
+  existingProtocols?: string[];
 };
 
 export const SettingsAccountsConnectionForm = ({
   control,
   isEditing,
+  existingProtocols = [],
 }: SettingsAccountsConnectionFormProps) => {
   const { t } = useLingui();
+
+  const [editingPasswords, setEditingPasswords] = useState<
+    Record<string, boolean>
+  >({});
+
+  const isPasswordLocked = (protocol: string) =>
+    isEditing &&
+    existingProtocols.includes(protocol) &&
+    !editingPasswords[protocol];
+
+  const unlockPassword = (protocol: string) => {
+    setEditingPasswords((prev) => ({ ...prev, [protocol]: true }));
+  };
 
   const getDescription = () => {
     if (isEditing) {
@@ -141,15 +178,30 @@ export const SettingsAccountsConnectionForm = ({
             name="IMAP.password"
             control={control}
             render={({ field, fieldState }) => (
-              <SettingsTextInput
-                instanceId="imap-password-connection-form"
-                label={t`IMAP Password`}
-                placeholder={t`••••••••`}
-                type="password"
-                value={field.value || ''}
-                onChange={field.onChange}
-                error={fieldState.error?.message}
-              />
+              <StyledPasswordFieldContainer>
+                <SettingsTextInput
+                  instanceId="imap-password-connection-form"
+                  label={t`IMAP Password`}
+                  placeholder={
+                    isPasswordLocked('IMAP')
+                      ? t`Password saved`
+                      : t`••••••••`
+                  }
+                  type="password"
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                  error={fieldState.error?.message}
+                  disabled={isPasswordLocked('IMAP')}
+                />
+                {isPasswordLocked('IMAP') && (
+                  <StyledEditPasswordLink
+                    type="button"
+                    onClick={() => unlockPassword('IMAP')}
+                  >
+                    {t`Change password`}
+                  </StyledEditPasswordLink>
+                )}
+              </StyledPasswordFieldContainer>
             )}
           />
 
@@ -239,15 +291,30 @@ export const SettingsAccountsConnectionForm = ({
             name="SMTP.password"
             control={control}
             render={({ field, fieldState }) => (
-              <SettingsTextInput
-                instanceId="smtp-password-connection-form"
-                label={t`SMTP Password`}
-                placeholder={t`••••••••`}
-                type="password"
-                value={field.value || ''}
-                onChange={field.onChange}
-                error={fieldState.error?.message}
-              />
+              <StyledPasswordFieldContainer>
+                <SettingsTextInput
+                  instanceId="smtp-password-connection-form"
+                  label={t`SMTP Password`}
+                  placeholder={
+                    isPasswordLocked('SMTP')
+                      ? t`Password saved`
+                      : t`••••••••`
+                  }
+                  type="password"
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                  error={fieldState.error?.message}
+                  disabled={isPasswordLocked('SMTP')}
+                />
+                {isPasswordLocked('SMTP') && (
+                  <StyledEditPasswordLink
+                    type="button"
+                    onClick={() => unlockPassword('SMTP')}
+                  >
+                    {t`Change password`}
+                  </StyledEditPasswordLink>
+                )}
+              </StyledPasswordFieldContainer>
             )}
           />
 
@@ -337,15 +404,30 @@ export const SettingsAccountsConnectionForm = ({
             name="CALDAV.password"
             control={control}
             render={({ field, fieldState }) => (
-              <SettingsTextInput
-                instanceId="caldav-password-connection-form"
-                label={t`CalDAV Password`}
-                placeholder={t`••••••••`}
-                type="password"
-                value={field.value || ''}
-                onChange={field.onChange}
-                error={fieldState.error?.message}
-              />
+              <StyledPasswordFieldContainer>
+                <SettingsTextInput
+                  instanceId="caldav-password-connection-form"
+                  label={t`CalDAV Password`}
+                  placeholder={
+                    isPasswordLocked('CALDAV')
+                      ? t`Password saved`
+                      : t`••••••••`
+                  }
+                  type="password"
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                  error={fieldState.error?.message}
+                  disabled={isPasswordLocked('CALDAV')}
+                />
+                {isPasswordLocked('CALDAV') && (
+                  <StyledEditPasswordLink
+                    type="button"
+                    onClick={() => unlockPassword('CALDAV')}
+                  >
+                    {t`Change password`}
+                  </StyledEditPasswordLink>
+                )}
+              </StyledPasswordFieldContainer>
             )}
           />
         </StyledConnectionSection>
