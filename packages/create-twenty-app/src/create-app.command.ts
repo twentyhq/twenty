@@ -147,14 +147,10 @@ export class CreateAppCommand {
         syncSucceeded = await this.syncApplication(appDirectory);
 
         if (!syncSucceeded) {
-          this.logDetail(
-            'Sync failed. Run `yarn twenty dev --once` manually.',
-          );
+          this.logDetail('Sync failed. Run `yarn twenty dev --once` manually.');
         }
       } else {
-        this.logDetail(
-          'Skipped (server or authentication not available)',
-        );
+        this.logDetail('Skipped (server or authentication not available)');
       }
 
       if (syncSucceeded) {
@@ -311,29 +307,78 @@ export class CreateAppCommand {
     workspaceUrl: string,
   ): Promise<void> {
     try {
-      const universalIdentifier =
-        await this.readMainPageLayoutUniversalIdentifier(appDirectory);
+      const configService = new ConfigService();
+      const config = await configService.getConfig();
+      const token = config.twentyCLIAccessToken ?? config.apiKey;
 
-      if (!universalIdentifier) {
+      if (!token) {
+        return;
+      }
+
+      const [universalIdentifier, frontUrl] = await Promise.all([
+        this.readMainPageLayoutUniversalIdentifier(appDirectory),
+        this.resolveWorkspaceFrontUrl(workspaceUrl, token),
+      ]);
+
+      if (!universalIdentifier || !frontUrl) {
         return;
       }
 
       const pageLayoutId = await this.resolvePageLayoutId(
         workspaceUrl,
         universalIdentifier,
+        token,
       );
 
       if (!pageLayoutId) {
         return;
       }
 
-      const url = `${workspaceUrl}/page/${pageLayoutId}`;
+      const url = `${frontUrl}/page/${pageLayoutId}`;
 
-      this.logDetail(`Opening ${url}`);
+      this.logDetail(`Opening app welcome page: ${url}`);
       this.openInBrowser(url);
     } catch {
       // Best-effort — don't fail the scaffold if browser open fails
     }
+  }
+
+  private async resolveWorkspaceFrontUrl(
+    workspaceUrl: string,
+    token: string,
+  ): Promise<string | null> {
+    const query = `{ currentWorkspace { workspaceUrls { subdomainUrl customUrl } } }`;
+
+    const response = await fetch(`${workspaceUrl}/metadata`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const body = (await response.json()) as {
+      data?: {
+        currentWorkspace?: {
+          workspaceUrls?: { subdomainUrl?: string; customUrl?: string };
+        };
+      };
+    };
+
+    const urls = body.data?.currentWorkspace?.workspaceUrls;
+
+    if (!urls) {
+      return null;
+    }
+
+    const frontUrl = urls.customUrl ?? urls.subdomainUrl;
+
+    return frontUrl?.replace(/\/+$/, '') ?? null;
   }
 
   private async readMainPageLayoutUniversalIdentifier(
@@ -356,21 +401,11 @@ export class CreateAppCommand {
   private async resolvePageLayoutId(
     workspaceUrl: string,
     universalIdentifier: string,
+    token: string,
   ): Promise<string | null> {
-    const configService = new ConfigService();
-    const config = await configService.getConfig();
-    const token = config.twentyCLIAccessToken ?? config.apiKey;
-
-    if (!token) {
-      return null;
-    }
-
-    const response = await fetch(
-      `${workspaceUrl}/rest/metadata/pageLayouts`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
+    const response = await fetch(`${workspaceUrl}/rest/metadata/pageLayouts`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
     if (!response.ok) {
       return null;
@@ -395,6 +430,7 @@ export class CreateAppCommand {
   }
 
   private syncApplication(appDirectory: string): Promise<boolean> {
+    this.logDetail('Running `yarn twenty dev --once`...');
     return new Promise((resolve) => {
       const child = spawn('yarn', ['twenty', 'dev', '--once'], {
         cwd: appDirectory,
@@ -406,9 +442,7 @@ export class CreateAppCommand {
     });
   }
 
-  private async authenticateWithDevKey(
-    workspaceUrl: string,
-  ): Promise<boolean> {
+  private async authenticateWithDevKey(workspaceUrl: string): Promise<boolean> {
     try {
       const result = await authLogin({
         apiKey: DEV_API_KEY,
@@ -451,9 +485,7 @@ export class CreateAppCommand {
     }
   }
 
-  private async authenticateWithOAuth(
-    workspaceUrl: string,
-  ): Promise<boolean> {
+  private async authenticateWithOAuth(workspaceUrl: string): Promise<boolean> {
     try {
       const remoteName = this.deriveRemoteName(workspaceUrl);
 
