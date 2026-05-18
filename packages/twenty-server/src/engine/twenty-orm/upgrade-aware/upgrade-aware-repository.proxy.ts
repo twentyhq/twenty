@@ -10,7 +10,91 @@ import { UpgradeUnavailableEntityWriteException } from 'src/engine/twenty-orm/up
 
 const logger = new Logger('UpgradeAwareRepositoryProxy');
 
-const METHODS_WITH_FIND_OPTIONS = new Set<string>([
+type RepositoryMethodBehavior =
+  | {
+      kind: 'short-circuit-read';
+      produceEmpty: (entityClass: Function) => Promise<unknown>;
+    }
+  | { kind: 'throw-on-unavailable-write' };
+
+const REPOSITORY_METHOD_BEHAVIORS = new Map<string, RepositoryMethodBehavior>([
+  [
+    'find',
+    { kind: 'short-circuit-read', produceEmpty: () => Promise.resolve([]) },
+  ],
+  [
+    'findBy',
+    { kind: 'short-circuit-read', produceEmpty: () => Promise.resolve([]) },
+  ],
+  [
+    'findAndCount',
+    {
+      kind: 'short-circuit-read',
+      produceEmpty: () => Promise.resolve([[], 0]),
+    },
+  ],
+  [
+    'findAndCountBy',
+    {
+      kind: 'short-circuit-read',
+      produceEmpty: () => Promise.resolve([[], 0]),
+    },
+  ],
+  [
+    'findOne',
+    { kind: 'short-circuit-read', produceEmpty: () => Promise.resolve(null) },
+  ],
+  [
+    'findOneBy',
+    { kind: 'short-circuit-read', produceEmpty: () => Promise.resolve(null) },
+  ],
+  [
+    'findOneOrFail',
+    {
+      kind: 'short-circuit-read',
+      produceEmpty: (entityClass) =>
+        Promise.reject(new EntityNotFoundError(entityClass, undefined)),
+    },
+  ],
+  [
+    'findOneByOrFail',
+    {
+      kind: 'short-circuit-read',
+      produceEmpty: (entityClass) =>
+        Promise.reject(new EntityNotFoundError(entityClass, undefined)),
+    },
+  ],
+  [
+    'count',
+    { kind: 'short-circuit-read', produceEmpty: () => Promise.resolve(0) },
+  ],
+  [
+    'countBy',
+    { kind: 'short-circuit-read', produceEmpty: () => Promise.resolve(0) },
+  ],
+  [
+    'exists',
+    { kind: 'short-circuit-read', produceEmpty: () => Promise.resolve(false) },
+  ],
+  [
+    'existsBy',
+    { kind: 'short-circuit-read', produceEmpty: () => Promise.resolve(false) },
+  ],
+  ['save', { kind: 'throw-on-unavailable-write' }],
+  ['insert', { kind: 'throw-on-unavailable-write' }],
+  ['update', { kind: 'throw-on-unavailable-write' }],
+  ['delete', { kind: 'throw-on-unavailable-write' }],
+  ['remove', { kind: 'throw-on-unavailable-write' }],
+  ['softRemove', { kind: 'throw-on-unavailable-write' }],
+  ['recover', { kind: 'throw-on-unavailable-write' }],
+  ['upsert', { kind: 'throw-on-unavailable-write' }],
+  ['increment', { kind: 'throw-on-unavailable-write' }],
+  ['decrement', { kind: 'throw-on-unavailable-write' }],
+  ['restore', { kind: 'throw-on-unavailable-write' }],
+  ['softDelete', { kind: 'throw-on-unavailable-write' }],
+]);
+
+const METHODS_THAT_ACCEPT_FIND_OPTIONS = new Set<string>([
   'find',
   'findBy',
   'findAndCount',
@@ -24,78 +108,6 @@ const METHODS_WITH_FIND_OPTIONS = new Set<string>([
   'exists',
   'existsBy',
 ]);
-
-const SHORT_CIRCUIT_READ_TO_EMPTY_ARRAY = new Set<string>(['find', 'findBy']);
-
-const SHORT_CIRCUIT_READ_TO_EMPTY_FIND_AND_COUNT = new Set<string>([
-  'findAndCount',
-  'findAndCountBy',
-]);
-
-const SHORT_CIRCUIT_READ_TO_NULL = new Set<string>(['findOne', 'findOneBy']);
-
-const SHORT_CIRCUIT_READ_TO_ENTITY_NOT_FOUND = new Set<string>([
-  'findOneOrFail',
-  'findOneByOrFail',
-]);
-
-const SHORT_CIRCUIT_READ_TO_ZERO = new Set<string>(['count', 'countBy']);
-
-const SHORT_CIRCUIT_READ_TO_FALSE = new Set<string>(['exists', 'existsBy']);
-
-const THROW_ON_UPGRADE_UNAVAILABLE_WRITE = new Set<string>([
-  'save',
-  'insert',
-  'update',
-  'delete',
-  'remove',
-  'softRemove',
-  'recover',
-  'upsert',
-  'increment',
-  'decrement',
-  'restore',
-  'softDelete',
-]);
-
-const isShortCircuitableRead = (methodName: string): boolean =>
-  SHORT_CIRCUIT_READ_TO_EMPTY_ARRAY.has(methodName) ||
-  SHORT_CIRCUIT_READ_TO_EMPTY_FIND_AND_COUNT.has(methodName) ||
-  SHORT_CIRCUIT_READ_TO_NULL.has(methodName) ||
-  SHORT_CIRCUIT_READ_TO_ENTITY_NOT_FOUND.has(methodName) ||
-  SHORT_CIRCUIT_READ_TO_ZERO.has(methodName) ||
-  SHORT_CIRCUIT_READ_TO_FALSE.has(methodName);
-
-const shortCircuitReadFor = (
-  methodName: string,
-  entityClass: Function,
-): Promise<unknown> => {
-  if (SHORT_CIRCUIT_READ_TO_EMPTY_ARRAY.has(methodName)) {
-    return Promise.resolve([]);
-  }
-
-  if (SHORT_CIRCUIT_READ_TO_EMPTY_FIND_AND_COUNT.has(methodName)) {
-    return Promise.resolve([[], 0]);
-  }
-
-  if (SHORT_CIRCUIT_READ_TO_NULL.has(methodName)) {
-    return Promise.resolve(null);
-  }
-
-  if (SHORT_CIRCUIT_READ_TO_ENTITY_NOT_FOUND.has(methodName)) {
-    return Promise.reject(new EntityNotFoundError(entityClass, undefined));
-  }
-
-  if (SHORT_CIRCUIT_READ_TO_ZERO.has(methodName)) {
-    return Promise.resolve(0);
-  }
-
-  if (SHORT_CIRCUIT_READ_TO_FALSE.has(methodName)) {
-    return Promise.resolve(false);
-  }
-
-  return Promise.resolve(undefined);
-};
 
 const stripUnavailableRelations = (
   metadata: EntityMetadata,
@@ -171,6 +183,12 @@ const isRelationAvailable = (
   return available;
 };
 
+const isClassConstructor = (fn: Function): boolean =>
+  typeof fn.prototype === 'object' &&
+  fn.prototype !== null &&
+  fn.prototype.constructor === fn &&
+  fn.toString().startsWith('class ');
+
 export const wrapRepositoryWithUpgradeAwareProxy = <Entity extends object>({
   repository,
   entityClass,
@@ -183,53 +201,20 @@ export const wrapRepositoryWithUpgradeAwareProxy = <Entity extends object>({
   new Proxy(repository, {
     get(target, prop, receiver) {
       const methodName = typeof prop === 'string' ? prop : undefined;
+      const behavior = isDefined(methodName)
+        ? REPOSITORY_METHOD_BEHAVIORS.get(methodName)
+        : undefined;
 
-      if (isDefined(methodName) && isShortCircuitableRead(methodName)) {
-        return (...args: unknown[]) => {
-          if (!state.isEntityAvailable(entityClass)) {
-            logger.log(
-              `[upgrade-proxy] short-circuit ${entityClass.name}.${methodName}`,
-            );
-
-            return shortCircuitReadFor(methodName, entityClass);
-          }
-
-          const rewrittenArgs =
-            METHODS_WITH_FIND_OPTIONS.has(methodName) && args.length > 0
-              ? [
-                  stripUnavailableRelations(target.metadata, state, args[0]),
-                  ...args.slice(1),
-                ]
-              : args;
-
-          return (
-            target[methodName as keyof Repository<Entity>] as unknown as (
-              ...callArgs: unknown[]
-            ) => unknown
-          ).apply(target, rewrittenArgs);
-        };
-      }
-
-      if (
-        isDefined(methodName) &&
-        THROW_ON_UPGRADE_UNAVAILABLE_WRITE.has(methodName)
-      ) {
-        return (...args: unknown[]) => {
-          if (!state.isEntityAvailable(entityClass)) {
-            return Promise.reject(
-              new UpgradeUnavailableEntityWriteException(
-                entityClass.name,
-                methodName,
-              ),
-            );
-          }
-
-          return (
-            target[methodName as keyof Repository<Entity>] as unknown as (
-              ...callArgs: unknown[]
-            ) => unknown
-          ).apply(target, args);
-        };
+      if (isDefined(methodName) && isDefined(behavior)) {
+        return (...args: unknown[]) =>
+          handleRepositoryMethodCall({
+            target,
+            methodName,
+            entityClass,
+            state,
+            behavior,
+            args,
+          });
       }
 
       const value = Reflect.get(target, prop, receiver);
@@ -242,8 +227,49 @@ export const wrapRepositoryWithUpgradeAwareProxy = <Entity extends object>({
     },
   });
 
-const isClassConstructor = (fn: Function): boolean =>
-  typeof fn.prototype === 'object' &&
-  fn.prototype !== null &&
-  fn.prototype.constructor === fn &&
-  fn.toString().startsWith('class ');
+const handleRepositoryMethodCall = <Entity extends object>({
+  target,
+  methodName,
+  entityClass,
+  state,
+  behavior,
+  args,
+}: {
+  target: Repository<Entity>;
+  methodName: string;
+  entityClass: Function;
+  state: UpgradeAwareRepositoryState;
+  behavior: RepositoryMethodBehavior;
+  args: unknown[];
+}): unknown => {
+  if (!state.isEntityAvailable(entityClass)) {
+    if (behavior.kind === 'throw-on-unavailable-write') {
+      return Promise.reject(
+        new UpgradeUnavailableEntityWriteException(
+          entityClass.name,
+          methodName,
+        ),
+      );
+    }
+
+    logger.log(
+      `[upgrade-proxy] short-circuit ${entityClass.name}.${methodName}`,
+    );
+
+    return behavior.produceEmpty(entityClass);
+  }
+
+  const rewrittenArgs =
+    METHODS_THAT_ACCEPT_FIND_OPTIONS.has(methodName) && args.length > 0
+      ? [
+          stripUnavailableRelations(target.metadata, state, args[0]),
+          ...args.slice(1),
+        ]
+      : args;
+
+  return (
+    target[methodName as keyof Repository<Entity>] as unknown as (
+      ...callArgs: unknown[]
+    ) => unknown
+  ).apply(target, rewrittenArgs);
+};

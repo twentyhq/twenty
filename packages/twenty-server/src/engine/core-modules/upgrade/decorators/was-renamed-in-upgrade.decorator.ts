@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { isDefined } from 'twenty-shared/utils';
+import { defineUpgradeMetadataOnClassOrProperty } from 'src/engine/core-modules/upgrade/decorators/upgrade-decorator-metadata.util';
 
 export type WasRenamedInUpgradeHistoryEntry = {
   previousName: string;
@@ -21,28 +21,13 @@ export type WasRenamedInUpgradePropertyMap = Record<
 export const WasRenamedInUpgrade =
   (history: WasRenamedInUpgradeHistoryEntry[]) =>
   (target: object, propertyKey?: string | symbol): void => {
-    if (!isDefined(propertyKey)) {
-      Reflect.defineMetadata(
-        WAS_RENAMED_IN_UPGRADE_CLASS_METADATA_KEY,
-        history,
-        target,
-      );
-
-      return;
-    }
-
-    const constructor = (target as { constructor: Function }).constructor;
-    const existing: WasRenamedInUpgradePropertyMap =
-      Reflect.getMetadata(
-        WAS_RENAMED_IN_UPGRADE_PROPERTIES_METADATA_KEY,
-        constructor,
-      ) ?? {};
-
-    Reflect.defineMetadata(
-      WAS_RENAMED_IN_UPGRADE_PROPERTIES_METADATA_KEY,
-      { ...existing, [String(propertyKey)]: history },
-      constructor,
-    );
+    defineUpgradeMetadataOnClassOrProperty({
+      classMetadataKey: WAS_RENAMED_IN_UPGRADE_CLASS_METADATA_KEY,
+      propertyMetadataKey: WAS_RENAMED_IN_UPGRADE_PROPERTIES_METADATA_KEY,
+      value: history,
+      target,
+      propertyKey,
+    });
   };
 
 export const getWasRenamedInUpgradeClassMetadata = (

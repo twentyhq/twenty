@@ -9,7 +9,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
-import { resolveEntityShapeAtUpgradeCursor } from 'src/engine/core-modules/upgrade/utils/resolve-entity-shape-at-upgrade-cursor.util';
+import {
+  resolveEntityShapeAtUpgradeCursor,
+  type ResolvedEntityShapeAtUpgradeCursor,
+} from 'src/engine/core-modules/upgrade/utils/resolve-entity-shape-at-upgrade-cursor.util';
 import {
   formatUpgradeAwareDecoratorReferenceProblems,
   validateUpgradeAwareEntityDecorators,
@@ -133,7 +136,37 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
   }
 
   private applyCursorToMetadata(): void {
-    const isStepApplied = (stepName: string) => {
+    const isStepApplied = this.buildIsStepAppliedPredicate();
+
+    let renamedCount = 0;
+    let unavailableCount = 0;
+    let hiddenColumnCount = 0;
+
+    for (const metadata of this.coreDataSource.entityMetadatas) {
+      const applied = this.applyCursorToEntity({ metadata, isStepApplied });
+
+      if (!isDefined(applied)) {
+        continue;
+      }
+
+      if (applied.resolved.effectiveTableName !== applied.snapshot.tableName) {
+        renamedCount++;
+      }
+
+      if (!applied.resolved.isAvailable) {
+        unavailableCount++;
+      }
+
+      hiddenColumnCount += applied.resolved.hiddenPropertyNames.size;
+    }
+
+    this.logger.log(
+      `[upgrade-metadata] applied cursor=${this.currentCursor} renamed=${renamedCount} unavailable=${unavailableCount} hiddenColumns=${hiddenColumnCount}`,
+    );
+  }
+
+  private buildIsStepAppliedPredicate(): (stepName: string) => boolean {
+    return (stepName: string) => {
       const index = this.stepNameToIndex.get(stepName);
 
       if (!isDefined(index)) {
@@ -142,72 +175,76 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
 
       return index < this.currentCursor;
     };
+  }
 
-    let renamedCount = 0;
-    let unavailableCount = 0;
-    let hiddenColumnCount = 0;
-
-    for (const metadata of this.coreDataSource.entityMetadatas) {
-      const snapshot = this.snapshotByMetadata.get(metadata);
-
-      if (!isDefined(snapshot)) {
-        continue;
+  private applyCursorToEntity({
+    metadata,
+    isStepApplied,
+  }: {
+    metadata: EntityMetadata;
+    isStepApplied: (stepName: string) => boolean;
+  }):
+    | {
+        snapshot: EntityMetadataSnapshot;
+        resolved: ResolvedEntityShapeAtUpgradeCursor;
       }
+    | undefined {
+    const snapshot = this.snapshotByMetadata.get(metadata);
 
-      if (typeof metadata.target !== 'function') {
-        continue;
-      }
-
-      const entityClass = metadata.target;
-
-      const currentColumns: { propertyName: string; databaseName: string }[] =
-        [];
-
-      for (const [
-        propertyName,
-        databaseName,
-      ] of snapshot.columnDatabaseNamesByPropertyName) {
-        currentColumns.push({ propertyName, databaseName });
-      }
-
-      const resolved = resolveEntityShapeAtUpgradeCursor({
-        entityClass,
-        currentTableName: snapshot.tableName,
-        currentColumns,
-        isStepApplied,
-      });
-
-      this.applyResolvedShapeToMetadata({ metadata, snapshot, resolved });
-
-      this.availabilityByEntityClass.set(entityClass, resolved.isAvailable);
-      this.hiddenColumnsByEntityClass.set(
-        entityClass,
-        resolved.hiddenPropertyNames,
-      );
-
-      if (resolved.effectiveTableName !== snapshot.tableName) {
-        renamedCount++;
-        this.logger.log(
-          `[upgrade-metadata] rename ${entityClass.name} ${snapshot.tableName} -> ${resolved.effectiveTableName}`,
-        );
-      }
-
-      if (!resolved.isAvailable) {
-        unavailableCount++;
-        this.logger.log(`[upgrade-metadata] unavailable ${entityClass.name}`);
-      }
-
-      if (resolved.hiddenPropertyNames.size > 0) {
-        hiddenColumnCount += resolved.hiddenPropertyNames.size;
-        this.logger.log(
-          `[upgrade-metadata] hidden columns on ${entityClass.name}: ${[...resolved.hiddenPropertyNames].join(',')}`,
-        );
-      }
+    if (!isDefined(snapshot) || typeof metadata.target !== 'function') {
+      return undefined;
     }
 
-    this.logger.log(
-      `[upgrade-metadata] applied cursor=${this.currentCursor} renamed=${renamedCount} unavailable=${unavailableCount} hiddenColumns=${hiddenColumnCount}`,
+    const entityClass = metadata.target;
+
+    const currentColumns = [...snapshot.columnDatabaseNamesByPropertyName].map(
+      ([propertyName, databaseName]) => ({ propertyName, databaseName }),
     );
+
+    const resolved = resolveEntityShapeAtUpgradeCursor({
+      entityClass,
+      currentTableName: snapshot.tableName,
+      currentColumns,
+      isStepApplied,
+    });
+
+    this.applyResolvedShapeToMetadata({ metadata, snapshot, resolved });
+
+    this.availabilityByEntityClass.set(entityClass, resolved.isAvailable);
+    this.hiddenColumnsByEntityClass.set(
+      entityClass,
+      resolved.hiddenPropertyNames,
+    );
+
+    this.logResolvedShape({ entityClass, snapshot, resolved });
+
+    return { snapshot, resolved };
+  }
+
+  private logResolvedShape({
+    entityClass,
+    snapshot,
+    resolved,
+  }: {
+    entityClass: Function;
+    snapshot: EntityMetadataSnapshot;
+    resolved: ResolvedEntityShapeAtUpgradeCursor;
+  }): void {
+    if (resolved.effectiveTableName !== snapshot.tableName) {
+      this.logger.log(
+        `[upgrade-metadata] rename ${entityClass.name} ${snapshot.tableName} -> ${resolved.effectiveTableName}`,
+      );
+    }
+
+    if (!resolved.isAvailable) {
+      this.logger.log(`[upgrade-metadata] unavailable ${entityClass.name}`);
+    }
+
+    if (resolved.hiddenPropertyNames.size > 0) {
+      this.logger.log(
+        `[upgrade-metadata] hidden columns on ${entityClass.name}: ${[...resolved.hiddenPropertyNames].join(',')}`,
+      );
+    }
   }
 
   private applyResolvedShapeToMetadata({
@@ -217,7 +254,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
   }: {
     metadata: EntityMetadata;
     snapshot: EntityMetadataSnapshot;
-    resolved: ReturnType<typeof resolveEntityShapeAtUpgradeCursor>;
+    resolved: ResolvedEntityShapeAtUpgradeCursor;
   }): void {
     if (resolved.effectiveTableName === snapshot.tableName) {
       metadata.tableName = snapshot.tableName;
@@ -244,7 +281,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
   }: {
     column: ColumnMetadata;
     snapshot: EntityMetadataSnapshot;
-    resolved: ReturnType<typeof resolveEntityShapeAtUpgradeCursor>;
+    resolved: ResolvedEntityShapeAtUpgradeCursor;
   }): void {
     const canonicalName = snapshot.columnDatabaseNamesByPropertyName.get(
       column.propertyName,
@@ -293,7 +330,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
 
     const problems = validateUpgradeAwareEntityDecorators({
       entityClasses,
-      knownStepNames: new Set(this.stepNameToIndex.keys()),
+      stepNameToIndex: this.stepNameToIndex,
     });
 
     if (problems.length === 0) {
@@ -303,8 +340,8 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     const formatted = formatUpgradeAwareDecoratorReferenceProblems(problems);
 
     throw new Error(
-      `Upgrade-aware entity decorators reference unknown upgrade step names. ` +
-        `Either fix the upgradeCommandName string, or register the missing step.\n${formatted}`,
+      `Upgrade-aware entity decorators have problems. ` +
+        `Either fix the upgradeCommandName strings, register the missing steps, or reorder the rename history.\n${formatted}`,
     );
   }
 }

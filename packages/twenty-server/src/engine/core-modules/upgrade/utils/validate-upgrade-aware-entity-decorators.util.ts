@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   getWasIntroducedInUpgradeClassMetadata,
   getWasIntroducedInUpgradePropertyMetadata,
@@ -5,21 +7,31 @@ import {
 import {
   getWasRenamedInUpgradeClassMetadata,
   getWasRenamedInUpgradePropertyMetadata,
+  type WasRenamedInUpgradeHistoryEntry,
 } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 
-export type UpgradeAwareDecoratorReferenceProblem = {
-  entityName: string;
-  decorator: '@WasIntroducedInUpgrade' | '@WasRenamedInUpgrade';
-  scope: 'class' | `property:${string}`;
-  upgradeCommandName: string;
-};
+export type UpgradeAwareDecoratorReferenceProblem =
+  | {
+      kind: 'unknown-step-name';
+      entityName: string;
+      decorator: '@WasIntroducedInUpgrade' | '@WasRenamedInUpgrade';
+      scope: 'class' | `property:${string}`;
+      upgradeCommandName: string;
+    }
+  | {
+      kind: 'rename-history-out-of-order';
+      entityName: string;
+      scope: 'class' | `property:${string}`;
+      offendingUpgradeCommandName: string;
+      precedingUpgradeCommandName: string;
+    };
 
 export const validateUpgradeAwareEntityDecorators = ({
   entityClasses,
-  knownStepNames,
+  stepNameToIndex,
 }: {
   entityClasses: Function[];
-  knownStepNames: ReadonlySet<string>;
+  stepNameToIndex: ReadonlyMap<string, number>;
 }): UpgradeAwareDecoratorReferenceProblem[] => {
   const problems: UpgradeAwareDecoratorReferenceProblem[] = [];
 
@@ -29,10 +41,11 @@ export const validateUpgradeAwareEntityDecorators = ({
     const classIntroduced = getWasIntroducedInUpgradeClassMetadata(entityClass);
 
     if (
-      classIntroduced &&
-      !knownStepNames.has(classIntroduced.upgradeCommandName)
+      isDefined(classIntroduced) &&
+      !stepNameToIndex.has(classIntroduced.upgradeCommandName)
     ) {
       problems.push({
+        kind: 'unknown-step-name',
         entityName,
         decorator: '@WasIntroducedInUpgrade',
         scope: 'class',
@@ -43,23 +56,21 @@ export const validateUpgradeAwareEntityDecorators = ({
     const classRenameHistory =
       getWasRenamedInUpgradeClassMetadata(entityClass) ?? [];
 
-    for (const entry of classRenameHistory) {
-      if (!knownStepNames.has(entry.upgradeCommandName)) {
-        problems.push({
-          entityName,
-          decorator: '@WasRenamedInUpgrade',
-          scope: 'class',
-          upgradeCommandName: entry.upgradeCommandName,
-        });
-      }
-    }
+    checkHistoryForReferenceAndOrder({
+      entityName,
+      scope: 'class',
+      history: classRenameHistory,
+      stepNameToIndex,
+      problems,
+    });
 
     const propIntroducedMap =
       getWasIntroducedInUpgradePropertyMetadata(entityClass);
 
     for (const [propertyName, options] of Object.entries(propIntroducedMap)) {
-      if (!knownStepNames.has(options.upgradeCommandName)) {
+      if (!stepNameToIndex.has(options.upgradeCommandName)) {
         problems.push({
+          kind: 'unknown-step-name',
           entityName,
           decorator: '@WasIntroducedInUpgrade',
           scope: `property:${propertyName}`,
@@ -71,28 +82,73 @@ export const validateUpgradeAwareEntityDecorators = ({
     const propRenameMap = getWasRenamedInUpgradePropertyMetadata(entityClass);
 
     for (const [propertyName, history] of Object.entries(propRenameMap)) {
-      for (const entry of history) {
-        if (!knownStepNames.has(entry.upgradeCommandName)) {
-          problems.push({
-            entityName,
-            decorator: '@WasRenamedInUpgrade',
-            scope: `property:${propertyName}`,
-            upgradeCommandName: entry.upgradeCommandName,
-          });
-        }
-      }
+      checkHistoryForReferenceAndOrder({
+        entityName,
+        scope: `property:${propertyName}`,
+        history,
+        stepNameToIndex,
+        problems,
+      });
     }
   }
 
   return problems;
 };
 
+const checkHistoryForReferenceAndOrder = ({
+  entityName,
+  scope,
+  history,
+  stepNameToIndex,
+  problems,
+}: {
+  entityName: string;
+  scope: 'class' | `property:${string}`;
+  history: WasRenamedInUpgradeHistoryEntry[];
+  stepNameToIndex: ReadonlyMap<string, number>;
+  problems: UpgradeAwareDecoratorReferenceProblem[];
+}): void => {
+  let previousIndex = -1;
+  let previousName: string | undefined;
+
+  for (const entry of history) {
+    const index = stepNameToIndex.get(entry.upgradeCommandName);
+
+    if (!isDefined(index)) {
+      problems.push({
+        kind: 'unknown-step-name',
+        entityName,
+        decorator: '@WasRenamedInUpgrade',
+        scope,
+        upgradeCommandName: entry.upgradeCommandName,
+      });
+      continue;
+    }
+
+    if (index <= previousIndex) {
+      problems.push({
+        kind: 'rename-history-out-of-order',
+        entityName,
+        scope,
+        offendingUpgradeCommandName: entry.upgradeCommandName,
+        precedingUpgradeCommandName: previousName ?? '',
+      });
+    }
+
+    previousIndex = index;
+    previousName = entry.upgradeCommandName;
+  }
+};
+
 export const formatUpgradeAwareDecoratorReferenceProblems = (
   problems: UpgradeAwareDecoratorReferenceProblem[],
 ): string =>
   problems
-    .map(
-      ({ entityName, decorator, scope, upgradeCommandName }) =>
-        `  - ${entityName} ${decorator} (${scope}): unknown upgradeCommandName "${upgradeCommandName}"`,
-    )
+    .map((problem) => {
+      if (problem.kind === 'unknown-step-name') {
+        return `  - ${problem.entityName} ${problem.decorator} (${problem.scope}): unknown upgradeCommandName "${problem.upgradeCommandName}"`;
+      }
+
+      return `  - ${problem.entityName} @WasRenamedInUpgrade (${problem.scope}): "${problem.offendingUpgradeCommandName}" must come after "${problem.precedingUpgradeCommandName}" in the upgrade sequence`;
+    })
     .join('\n');
