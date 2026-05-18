@@ -65,14 +65,3 @@ exports[`Connected account creation should fail when SMTP password is missing on
   "name": "UserInputError",
 }
 `;
-
-exports[`Connected account creation should fail when accountOwnerId does not exist 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Workspace member with id 00000000-0000-0000-0000-000000000000 not found",
-  "name": "NotFoundError",
-}
-`;

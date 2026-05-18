@@ -5,10 +5,7 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 
-import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-
 type TestContext = {
-  accountOwnerId: string;
   handle: string;
   connectionParameters: {
     IMAP?: {
@@ -38,7 +35,6 @@ type TestContext = {
 
 type FailingTestContext = EachTestingContext<TestContext>[];
 
-const VALID_OWNER_ID = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE;
 const VALID_HANDLE = 'test-failing@example.com';
 
 describe('Connected account creation should fail', () => {
@@ -46,7 +42,6 @@ describe('Connected account creation should fail', () => {
     {
       title: 'when IMAP password is missing on creation',
       context: {
-        accountOwnerId: VALID_OWNER_ID,
         handle: VALID_HANDLE,
         connectionParameters: {
           IMAP: {
@@ -61,7 +56,6 @@ describe('Connected account creation should fail', () => {
     {
       title: 'when SMTP password is missing on creation',
       context: {
-        accountOwnerId: VALID_OWNER_ID,
         handle: VALID_HANDLE,
         connectionParameters: {
           SMTP: {
@@ -76,7 +70,6 @@ describe('Connected account creation should fail', () => {
     {
       title: 'when CALDAV password is missing on creation',
       context: {
-        accountOwnerId: VALID_OWNER_ID,
         handle: VALID_HANDLE,
         connectionParameters: {
           CALDAV: {
@@ -91,7 +84,6 @@ describe('Connected account creation should fail', () => {
     {
       title: 'when IMAP host is empty',
       context: {
-        accountOwnerId: VALID_OWNER_ID,
         handle: VALID_HANDLE,
         connectionParameters: {
           IMAP: {
@@ -106,7 +98,6 @@ describe('Connected account creation should fail', () => {
     {
       title: 'when IMAP port is zero',
       context: {
-        accountOwnerId: VALID_OWNER_ID,
         handle: VALID_HANDLE,
         connectionParameters: {
           IMAP: {
@@ -121,28 +112,12 @@ describe('Connected account creation should fail', () => {
     {
       title: 'when IMAP password is empty string on creation',
       context: {
-        accountOwnerId: VALID_OWNER_ID,
         handle: VALID_HANDLE,
         connectionParameters: {
           IMAP: {
             host: 'imap.example.com',
             port: 993,
             password: '',
-            secure: true,
-          },
-        },
-      },
-    },
-    {
-      title: 'when accountOwnerId does not exist',
-      context: {
-        accountOwnerId: '00000000-0000-0000-0000-000000000000',
-        handle: VALID_HANDLE,
-        connectionParameters: {
-          IMAP: {
-            host: 'imap.gmail.com',
-            port: 993,
-            password: 'secret',
             secure: true,
           },
         },
@@ -156,7 +131,6 @@ describe('Connected account creation should fail', () => {
       const { errors } = await saveImapSmtpCaldavAccount({
         expectToFail: true,
         input: {
-          accountOwnerId: context.accountOwnerId,
           handle: context.handle,
           connectionParameters: context.connectionParameters,
           id: context.id,

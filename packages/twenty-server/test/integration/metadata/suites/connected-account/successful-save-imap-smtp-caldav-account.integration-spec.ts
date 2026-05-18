@@ -2,15 +2,10 @@ import { deleteConnectedAccount } from 'test/integration/metadata/suites/connect
 import { getConnectedImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/get-connected-imap-smtp-caldav-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 
-import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-
-const OWNER_ID = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE;
-
 const createAccount = async (handle: string): Promise<string> => {
   const { data } = await saveImapSmtpCaldavAccount({
     expectToFail: false,
     input: {
-      accountOwnerId: OWNER_ID,
       handle,
       connectionParameters: {
         IMAP: {
@@ -47,7 +42,6 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
     const { data } = await saveImapSmtpCaldavAccount({
       expectToFail: false,
       input: {
-        accountOwnerId: OWNER_ID,
         handle: 'test-create@example.com',
         connectionParameters: {
           IMAP: {
@@ -104,7 +98,6 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
     const { data } = await saveImapSmtpCaldavAccount({
       expectToFail: false,
       input: {
-        accountOwnerId: OWNER_ID,
         handle: 'test-update-no-pwd@example.com',
         connectionParameters: {
           IMAP: {
@@ -156,7 +149,6 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
     const { data } = await saveImapSmtpCaldavAccount({
       expectToFail: false,
       input: {
-        accountOwnerId: OWNER_ID,
         handle: 'test-remove-smtp@example.com',
         connectionParameters: {
           IMAP: {
@@ -198,7 +190,6 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
     const { data } = await saveImapSmtpCaldavAccount({
       expectToFail: false,
       input: {
-        accountOwnerId: OWNER_ID,
         handle: 'test-update-pwd@example.com',
         connectionParameters: {
           IMAP: {
