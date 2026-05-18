@@ -77,7 +77,9 @@ describe('ImapSmtpCalDavAPIService', () => {
   };
 
   const mockUserWorkspaceRepository = {
-    findOne: jest.fn().mockResolvedValue({ id: 'user-workspace-id', userId: 'user-id' }),
+    findOne: jest
+      .fn()
+      .mockResolvedValue({ id: 'user-workspace-id', userId: 'user-id' }),
   };
 
   const mockWorkspaceMemberRepository = {
