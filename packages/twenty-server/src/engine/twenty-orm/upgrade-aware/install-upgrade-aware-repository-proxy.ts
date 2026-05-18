@@ -67,10 +67,13 @@ export const installUpgradeAwareRepositoryProxy = (
       this: EntityManager,
       target: EntityTarget<Entity>,
     ) {
-      return wrapIfNeeded(
-        target,
-        originalEntityManagerGetRepository.call(this, target),
-      );
+      const repository = originalEntityManagerGetRepository.call(this, target);
+
+      if (this.connection !== dataSource) {
+        return repository;
+      }
+
+      return wrapIfNeeded(target, repository);
     } as EntityManager['getRepository'];
 
   logger.log(
