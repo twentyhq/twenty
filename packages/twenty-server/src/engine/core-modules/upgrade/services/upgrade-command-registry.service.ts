@@ -206,6 +206,27 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     );
   }
 
+  // Every known command name across all versions and kinds. Used by the
+  // upgrade-aware-decorator validator to fail fast on typo'd
+  // `upgradeCommandName` references.
+  getAllRegisteredCommandNames(): string[] {
+    const names: string[] = [];
+
+    for (const [, bundle] of this.bundlesByVersion) {
+      for (const entry of bundle.fastInstanceCommands) {
+        names.push(entry.name);
+      }
+      for (const entry of bundle.slowInstanceCommands) {
+        names.push(entry.name);
+      }
+      for (const entry of bundle.workspaceCommands) {
+        names.push(entry.name);
+      }
+    }
+
+    return names;
+  }
+
   private computeCommandName(
     version: TwentyAllVersion,
     className: string,

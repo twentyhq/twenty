@@ -10,6 +10,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradePositionRegistry } from 'src/engine/core-modules/upgrade/services/upgrade-position-registry.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
@@ -18,6 +19,7 @@ import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/s
 import { UpgradeGaugeService } from 'src/engine/core-modules/upgrade/upgrade-gauge.service';
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UpgradeAwareEntityMetadataService } from 'src/engine/twenty-orm/services/upgrade-aware-entity-metadata.service';
 import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 
 @Module({
@@ -36,6 +38,8 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
     InstanceCommandRunnerService,
     WorkspaceCommandRunnerService,
     UpgradeCommandRegistryService,
+    UpgradePositionRegistry,
+    UpgradeAwareEntityMetadataService,
     UpgradeSequenceReaderService,
     UpgradeSequenceRunnerService,
     UpgradeStatusService,
@@ -47,6 +51,8 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
     InstanceCommandRunnerService,
     WorkspaceCommandRunnerService,
     UpgradeCommandRegistryService,
+    UpgradePositionRegistry,
+    UpgradeAwareEntityMetadataService,
     UpgradeSequenceReaderService,
     UpgradeSequenceRunnerService,
     UpgradeStatusService,

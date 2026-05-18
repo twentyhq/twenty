@@ -1,12 +1,30 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { DataSource, type DataSourceOptions } from 'typeorm';
+
 import { typeORMCoreModuleOptions } from 'src/database/typeorm/core/core.datasource';
 import { DatabaseGaugeService } from 'src/database/typeorm/database-gauge.service';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { installUpgradeAwareRepositoryGuard } from 'src/engine/twenty-orm/upgrade-aware/install-upgrade-aware-repository-guard';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(typeORMCoreModuleOptions), MetricsModule],
+  imports: [
+    TypeOrmModule.forRootAsync({
+      useFactory: () => typeORMCoreModuleOptions,
+      // Install the upgrade-aware guard before any @InjectRepository factory
+      // resolves so injected repositories carry the guard from the start.
+      dataSourceFactory: async (options) => {
+        const dataSource = new DataSource(options as DataSourceOptions);
+
+        await dataSource.initialize();
+        installUpgradeAwareRepositoryGuard(dataSource);
+
+        return dataSource;
+      },
+    }),
+    MetricsModule,
+  ],
   providers: [DatabaseGaugeService],
   exports: [],
 })

@@ -392,4 +392,26 @@ export class UpgradeMigrationService {
 
     return result;
   }
+
+  // Names of instance commands whose latest attempt is `completed`. Drives the
+  // UpgradePositionRegistry's view of which decorators are still in effect.
+  async getCompletedInstanceCommandNames(): Promise<string[]> {
+    const rows = await this.upgradeMigrationRepository
+      .createQueryBuilder('migration')
+      .select('migration.name', 'name')
+      .where('migration."workspaceId" IS NULL')
+      .andWhere('migration."isInitial" = false')
+      .andWhere('migration.status = :status', { status: 'completed' })
+      .andWhere(
+        `migration.attempt = (
+          SELECT MAX(sub.attempt)
+          FROM core."upgradeMigration" sub
+          WHERE sub.name = migration.name
+          AND sub."workspaceId" IS NULL
+        )`,
+      )
+      .getRawMany<{ name: string }>();
+
+    return rows.map((row) => row.name);
+  }
 }
