@@ -62,9 +62,7 @@ type FieldShared = {
   label: string;
 };
 
-export type FindFieldMetadataItemById = (
-  id: string,
-) => FieldShared | undefined;
+export type FindFieldMetadataItemById = (id: string) => FieldShared | undefined;
 
 type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
   filterValueDependencies: RecordFilterValueDependencies;

@@ -236,9 +236,8 @@ export const buildRowLevelPermissionRecordFilter = ({
   return computeRecordGqlOperationFilter({
     recordFilters,
     recordFilterGroups,
-    findFieldMetadataItemById: createFindFieldMetadataItemById(
-      fieldMetadataItems,
-    ),
+    findFieldMetadataItemById:
+      createFindFieldMetadataItemById(fieldMetadataItems),
     filterValueDependencies: {
       currentWorkspaceMemberId: workspaceMember?.id,
     },
