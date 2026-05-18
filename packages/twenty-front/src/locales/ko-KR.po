@@ -13178,6 +13178,11 @@ msgstr "역할 이름"
 msgid "Role name cannot be empty"
 msgstr "역할 이름은 비워 둘 수 없습니다"
 
+#. js-lingui-id: VMX1Oy
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role permission flag"
+msgstr ""
+
 #. js-lingui-id: jLNGne
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "role target"

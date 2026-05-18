@@ -13178,6 +13178,11 @@ msgstr "Tên vai trò"
 msgid "Role name cannot be empty"
 msgstr "Tên vai trò không thể để trống"
 
+#. js-lingui-id: VMX1Oy
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role permission flag"
+msgstr ""
+
 #. js-lingui-id: jLNGne
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "role target"
