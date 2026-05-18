@@ -13,23 +13,9 @@ import { isCommandAppliedInUpgradePosition } from 'src/engine/core-modules/upgra
 import { resolveEffectiveNameFromRenameHistory } from 'src/engine/core-modules/upgrade/utils/resolve-effective-name-from-rename-history.util';
 
 export type ResolvedEntityShapeForUpgradePosition = {
-  // false when the class carries @WasIntroducedInUpgrade for a command that
-  // has not yet been applied. The metadata mutator marks such entities as
-  // unavailable so repository reads short-circuit to empty results.
   isAvailable: boolean;
-
-  // The table name that should be used at this position. For entities with
-  // no @WasRenamedInUpgrade history, this equals currentTableName.
   effectiveTableName: string;
-
-  // Properties carrying @WasIntroducedInUpgrade for a not-yet-applied command.
-  // Selects must strip these (the column doesn't exist in the DB yet) and
-  // writes touching them must throw.
   hiddenPropertyNames: ReadonlySet<string>;
-
-  // Property → effective database column name, for columns whose
-  // @WasRenamedInUpgrade history hasn't fully caught up to the current name.
-  // Only contains entries that differ from the current database name.
   columnDatabaseNameRemap: ReadonlyMap<string, string>;
 };
 

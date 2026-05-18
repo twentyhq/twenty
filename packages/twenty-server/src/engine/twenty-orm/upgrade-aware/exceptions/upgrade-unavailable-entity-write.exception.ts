@@ -1,8 +1,3 @@
-// Thrown when a TypeORM write method is invoked on an entity that hasn't been
-// introduced at the current upgrade position. Catching authoring mistakes
-// early is cheaper than letting the underlying SQL fail with a confusing
-// "relation does not exist" deep inside a workspace step.
-
 export class UpgradeUnavailableEntityWriteException extends Error {
   constructor(entityName: string, method: string) {
     super(

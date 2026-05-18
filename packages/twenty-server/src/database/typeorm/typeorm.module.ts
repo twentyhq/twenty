@@ -12,8 +12,6 @@ import { installUpgradeAwareRepositoryGuard } from 'src/engine/twenty-orm/upgrad
   imports: [
     TypeOrmModule.forRootAsync({
       useFactory: () => typeORMCoreModuleOptions,
-      // Install the upgrade-aware guard before any @InjectRepository factory
-      // resolves so injected repositories carry the guard from the start.
       dataSourceFactory: async (options) => {
         const dataSource = new DataSource(options as DataSourceOptions);
 

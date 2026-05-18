@@ -1,13 +1,11 @@
+import { Logger } from '@nestjs/common';
+
 import { type Repository } from 'typeorm';
 
 import { type UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 import { UpgradeUnavailableEntityWriteException } from 'src/engine/twenty-orm/upgrade-aware/exceptions/upgrade-unavailable-entity-write.exception';
 
-// Repository method names that should short-circuit to an empty result when
-// the entity is not yet introduced at the current upgrade position. These are
-// the operations cache providers and similar code call during workspace
-// iteration; returning empty matches the "entity has no rows yet" semantics
-// the surrounding code already handles for fresh workspaces.
+const logger = new Logger('UpgradeAwareRepositoryProxy');
 
 const SHORT_CIRCUIT_READ_TO_EMPTY_ARRAY = new Set<string>([
   'find',
@@ -86,10 +84,6 @@ const isShortCircuitableRead = (methodName: string): boolean =>
   SHORT_CIRCUIT_READ_TO_ZERO.has(methodName) ||
   SHORT_CIRCUIT_READ_TO_FALSE.has(methodName);
 
-// Wraps a TypeORM Repository so that calls touching an upgrade-unavailable
-// entity either resolve to empty results (reads) or throw (writes). Other
-// methods — including createQueryBuilder and metadata access — pass through
-// to the real repository unchanged.
 export const wrapRepositoryWithUpgradeAwareGuard = <Entity extends object>({
   repository,
   entityClass,
@@ -106,6 +100,10 @@ export const wrapRepositoryWithUpgradeAwareGuard = <Entity extends object>({
       if (methodName !== undefined && isShortCircuitableRead(methodName)) {
         return (...args: unknown[]) => {
           if (!state.isEntityAvailable(entityClass)) {
+            logger.log(
+              `[upgrade-proxy] short-circuit ${entityClass.name}.${methodName}`,
+            );
+
             return Promise.resolve(shortCircuitReadFor(methodName));
           }
 

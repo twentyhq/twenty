@@ -7,11 +7,6 @@ import {
   getWasRenamedInUpgradePropertyMetadata,
 } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 
-// Walks every upgrade-aware decorator on a list of entity classes and verifies
-// each `upgradeCommandName` is a real, registered command. Catches typos and
-// stale references at boot rather than at upgrade time. Returns the full list
-// of problems; the caller decides whether to throw.
-
 export type UpgradeAwareDecoratorReferenceProblem = {
   entityName: string;
   decorator:

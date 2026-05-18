@@ -1,17 +1,7 @@
 import 'reflect-metadata';
 
-// Applied to an @Entity class or an @Column property to declare the rename
-// history that brought it to its current name. Each entry says "before this
-// upgrade command ran, the entity/column was named `previousName`". The
-// array is chronological: oldest rename first, most recent rename last.
-// During cross-version upgrade, the resolver walks the array against the
-// applied set to compute the effective table or column name for the current
-// database state.
-
 export type WasRenamedInUpgradeHistoryEntry = {
   previousName: string;
-  // Full name as persisted in core.upgradeMigration.name, i.e.
-  // `${version}_${className}_${timestamp}` (see UpgradeCommandRegistryService).
   upgradeCommandName: string;
 };
 

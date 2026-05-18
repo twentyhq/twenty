@@ -2,11 +2,6 @@ import { type WasRenamedInUpgradeHistoryEntry } from 'src/engine/core-modules/up
 import { type UpgradePosition } from 'src/engine/core-modules/upgrade/types/upgrade-position.type';
 import { isCommandAppliedInUpgradePosition } from 'src/engine/core-modules/upgrade/utils/is-command-applied-in-upgrade-position.util';
 
-// Walks rename history chronologically (oldest entry first). For each entry,
-// if its upgradeCommandName has NOT yet been applied at this position, the
-// effective name is that entry's previousName. Otherwise we advance past it.
-// If every entry is applied, the current (final) name is in effect.
-
 export const resolveEffectiveNameFromRenameHistory = ({
   currentName,
   history,

@@ -15,20 +15,6 @@ export type UpgradePositionChangeListener = (
   position: UpgradePosition,
 ) => void;
 
-// Tracks which upgrade commands are applied at any moment so the metadata
-// mutator and repository proxies can resolve historical entity shapes.
-//
-// State machine:
-//   - boot: appliedCommandNames seeded with every command name from the
-//     registry. Decorators behave as no-ops because every reference resolves
-//     to "applied".
-//   - beginUpgradeRun(): replaces the set with the actual completed instance
-//     commands read from core.upgradeMigration. Decorators now reflect the
-//     historical DB state.
-//   - markCommandApplied(name): called after each step succeeds. The set grows
-//     monotonically until endUpgradeRun().
-//   - endUpgradeRun(): restores the "all applied" seed so normal app activity
-//     after the run is decorator-free again.
 @Injectable()
 export class UpgradePositionRegistry implements OnModuleInit {
   private readonly logger = new Logger(UpgradePositionRegistry.name);
@@ -47,25 +33,27 @@ export class UpgradePositionRegistry implements OnModuleInit {
   onModuleInit(): void {
     this.validateDecoratorsAgainstRegistry();
     this.seedAsAllApplied();
+    this.logger.log(
+      `[upgrade-position] seeded ${this.appliedCommandNames.size} commands as applied (boot)`,
+    );
   }
 
   getCurrentPosition(): UpgradePosition {
     return { appliedCommandNames: this.appliedCommandNames };
   }
 
-  // Replaces the current set with completed instance commands read from
-  // core.upgradeMigration. Listeners are notified once.
   async beginUpgradeRun(): Promise<void> {
     const completed =
       await this.upgradeMigrationService.getCompletedInstanceCommandNames();
 
     this.appliedCommandNames = new Set(completed);
     this.isUpgradeRunActive = true;
+    this.logger.log(
+      `[upgrade-position] beginUpgradeRun applied=${this.appliedCommandNames.size}`,
+    );
     this.notifyListeners();
   }
 
-  // Adds a single command to the applied set. No-op if not currently in an
-  // upgrade run (boot-time seed already includes every command).
   markCommandApplied(upgradeCommandName: string): void {
     if (!this.isUpgradeRunActive) {
       return;
@@ -76,14 +64,18 @@ export class UpgradePositionRegistry implements OnModuleInit {
     }
 
     this.appliedCommandNames.add(upgradeCommandName);
+    this.logger.log(
+      `[upgrade-position] markCommandApplied "${upgradeCommandName}" applied=${this.appliedCommandNames.size}`,
+    );
     this.notifyListeners();
   }
 
-  // Restores the all-applied seed. Listeners are notified once. Safe to call
-  // even if no run was active.
   endUpgradeRun(): void {
     this.isUpgradeRunActive = false;
     this.seedAsAllApplied();
+    this.logger.log(
+      `[upgrade-position] endUpgradeRun restored applied=${this.appliedCommandNames.size}`,
+    );
     this.notifyListeners();
   }
 

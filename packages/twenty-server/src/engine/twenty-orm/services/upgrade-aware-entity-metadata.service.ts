@@ -1,4 +1,4 @@
-import { Injectable, type OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
@@ -19,17 +19,10 @@ type EntityMetadataSnapshot = {
   columnSelectByPropertyName: ReadonlyMap<string, boolean>;
 };
 
-// Mutates the core DataSource's EntityMetadata in place so TypeORM queries
-// emit table and column names that match the database at the current upgrade
-// position. NestJS injects Repository<T> instances once at module init; since
-// EntityMetadata is shared by reference, mutating it propagates to every
-// existing repository without re-initializing the DataSource.
-//
-// At boot we snapshot the canonical (final-state) shape of every entity. Each
-// time UpgradePositionRegistry fires, we recompute the effective shape and
-// either rewrite metadata fields or restore them to the snapshot.
 @Injectable()
 export class UpgradeAwareEntityMetadataService implements OnModuleInit {
+  private readonly logger = new Logger(UpgradeAwareEntityMetadataService.name);
+
   private readonly snapshotByMetadata = new WeakMap<
     EntityMetadata,
     EntityMetadataSnapshot
@@ -54,14 +47,10 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
       this.applyPositionToMetadata(position);
     });
 
-    // Apply the boot position once so all consumers (including the sidecar
-    // maps) reflect a consistent state immediately.
     this.applyPositionToMetadata(
       this.upgradePositionRegistry.getCurrentPosition(),
     );
 
-    // Hand ourselves to the singleton state so the repository proxies
-    // installed at TypeOrmModule.forRoot time can resolve real availability.
     UpgradeAwareRepositoryState.getInstance().setMetadataService(this);
   }
 
@@ -97,6 +86,10 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
   }
 
   private applyPositionToMetadata(position: UpgradePosition): void {
+    let renamedCount = 0;
+    let unavailableCount = 0;
+    let hiddenColumnCount = 0;
+
     for (const metadata of this.coreDataSource.entityMetadatas) {
       const snapshot = this.snapshotByMetadata.get(metadata);
 
@@ -134,7 +127,32 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
         entityClass,
         resolved.hiddenPropertyNames,
       );
+
+      if (resolved.effectiveTableName !== snapshot.tableName) {
+        renamedCount++;
+        this.logger.log(
+          `[upgrade-metadata] rename ${entityClass.name} ${snapshot.tableName} -> ${resolved.effectiveTableName}`,
+        );
+      }
+
+      if (!resolved.isAvailable) {
+        unavailableCount++;
+        this.logger.log(
+          `[upgrade-metadata] unavailable ${entityClass.name}`,
+        );
+      }
+
+      if (resolved.hiddenPropertyNames.size > 0) {
+        hiddenColumnCount += resolved.hiddenPropertyNames.size;
+        this.logger.log(
+          `[upgrade-metadata] hidden columns on ${entityClass.name}: ${[...resolved.hiddenPropertyNames].join(',')}`,
+        );
+      }
     }
+
+    this.logger.log(
+      `[upgrade-metadata] applied position renamed=${renamedCount} unavailable=${unavailableCount} hiddenColumns=${hiddenColumnCount}`,
+    );
   }
 
   private applyResolvedShapeToMetadata({
@@ -190,15 +208,9 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
     const canonicalIsSelect =
       snapshot.columnSelectByPropertyName.get(column.propertyName) ?? true;
 
-    // Hide not-yet-introduced columns so auto-generated SELECT lists don't
-    // reference them. Explicit selects in `find({ select: [...] })` still
-    // pass through; the proxy short-circuits the entity entirely when the
-    // class itself is unavailable.
-    if (resolved.hiddenPropertyNames.has(column.propertyName)) {
-      column.isSelect = false;
-    } else {
-      column.isSelect = canonicalIsSelect;
-    }
+    column.isSelect = resolved.hiddenPropertyNames.has(column.propertyName)
+      ? false
+      : canonicalIsSelect;
   }
 
   private computeTablePath({
