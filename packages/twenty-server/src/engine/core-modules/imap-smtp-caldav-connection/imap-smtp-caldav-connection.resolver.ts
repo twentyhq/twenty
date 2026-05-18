@@ -13,7 +13,10 @@ import { ImapSmtpCaldavConnectionSuccessDTO } from 'src/engine/core-modules/imap
 import { EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
-import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { ACCOUNT_TYPES } from 'src/engine/core-modules/imap-smtp-caldav-connection/constants/account-types.constant';
+import {
+  type ConnectionParameters,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -111,9 +114,8 @@ export class ImapSmtpCaldavResolver {
     { isUpdate }: { isUpdate: boolean },
   ): Promise<EmailAccountConnectionParameters> {
     const validatedParams: EmailAccountConnectionParameters = {};
-    const protocols = ['IMAP', 'SMTP', 'CALDAV'] as const;
 
-    for (const protocol of protocols) {
+    for (const protocol of ACCOUNT_TYPES) {
       const params = connectionParameters[protocol];
 
       if (params) {

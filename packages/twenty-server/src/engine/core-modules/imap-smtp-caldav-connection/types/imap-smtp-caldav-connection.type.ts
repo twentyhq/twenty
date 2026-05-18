@@ -1,3 +1,5 @@
+import { ACCOUNT_TYPES } from 'src/engine/core-modules/imap-smtp-caldav-connection/constants/account-types.constant';
+
 export type ConnectionParameters = {
   host: string;
   port: number;
@@ -6,7 +8,7 @@ export type ConnectionParameters = {
   secure?: boolean;
 };
 
-export type AccountType = 'IMAP' | 'SMTP' | 'CALDAV';
+export type AccountType = (typeof ACCOUNT_TYPES)[number];
 
 export type ImapSmtpCaldavParams = {
   IMAP?: ConnectionParameters;

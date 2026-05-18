@@ -14,7 +14,10 @@ import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-err
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { ACCOUNT_TYPES } from 'src/engine/core-modules/imap-smtp-caldav-connection/constants/account-types.constant';
+import {
+  type ImapSmtpCaldavParams,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -297,7 +300,7 @@ export class ImapSmtpCalDavAPIService {
   }): ImapSmtpCaldavParams {
     const result: ImapSmtpCaldavParams = {};
 
-    for (const protocol of ['IMAP', 'SMTP', 'CALDAV'] as const) {
+    for (const protocol of ACCOUNT_TYPES) {
       const inputProtocolParams = inputParameters[protocol];
 
       if (!isDefined(inputProtocolParams)) {
