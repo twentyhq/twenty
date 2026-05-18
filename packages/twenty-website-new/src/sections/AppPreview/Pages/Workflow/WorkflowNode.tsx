@@ -81,15 +81,15 @@ const NodeTitle = styled.div`
 `;
 
 export function WorkflowNode({
-  x,
-  y,
-  width,
-  label,
-  title,
   Icon,
   iconColor,
   index = 0,
-}: WorkflowNodeDefinition & { index?: number }) {
+  label,
+  title,
+  width,
+  x,
+  y,
+}: Omit<WorkflowNodeDefinition, 'id'> & { index?: number }) {
   return (
     <Node $index={index} style={{ left: x, top: y, width }}>
       <NodeIconContainer>

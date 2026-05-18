@@ -288,8 +288,7 @@ export function ProductVisual({ activeScene, visual }: ProductVisualProps) {
 
   const activeHeader = displayPage?.header;
   const showViewBar =
-    displayPage !== null &&
-    displayPage !== undefined &&
+    displayPage != null &&
     displayPage.type !== 'dashboard' &&
     displayPage.type !== 'record' &&
     displayPage.type !== 'workflow';
@@ -380,19 +379,19 @@ export function ProductVisual({ activeScene, visual }: ProductVisualProps) {
                     </AiMessages>
                     {streamComplete && !isScrollDriven ? (
                       <PromptOptions>
-                        {PROMPT_OPTIONS.filter(
-                          (_, index) => index !== selectedOption,
-                        ).map((option, index) => (
-                          <PromptOption
-                            key={index}
-                            onClick={() =>
-                              handleOptionSelect(PROMPT_OPTIONS.indexOf(option))
-                            }
-                          >
-                            <PromptOptionIcon>{option.icon}</PromptOptionIcon>
-                            {option.label}
-                          </PromptOption>
-                        ))}
+                        {PROMPT_OPTIONS.map((option, index) =>
+                          index === selectedOption ? null : (
+                            <PromptOption
+                              key={option.label}
+                              onClick={() => handleOptionSelect(index)}
+                            >
+                              <PromptOptionIcon>
+                                {option.icon}
+                              </PromptOptionIcon>
+                              {option.label}
+                            </PromptOption>
+                          ),
+                        )}
                       </PromptOptions>
                     ) : null}
                     <AiInputArea>

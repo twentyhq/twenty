@@ -1,9 +1,11 @@
 'use client';
 
-import type { WorkflowPageDefinition } from '../../types';
-import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
+import { theme } from '@/theme';
+
+import type { WorkflowPageDefinition } from '../../types';
+import { resolveWorkflowNodes } from './resolve-workflow-nodes';
 import { WorkflowBranchLabel } from './WorkflowBranchLabel';
 import { WorkflowEdges } from './WorkflowEdges';
 import { WorkflowNode } from './WorkflowNode';
@@ -12,7 +14,6 @@ import {
   workflowEdges as defaultEdges,
   workflowNodes as defaultNodes,
 } from './workflow-page-data';
-import { resolveWorkflowNodes } from './resolve-workflow-nodes';
 import {
   WORKFLOW_CANVAS_HEIGHT,
   WORKFLOW_CANVAS_TOP_OFFSET,
@@ -139,7 +140,6 @@ export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
                   key={`${node.title}-${node.x}-${node.y}`}
                   Icon={node.Icon}
                   iconColor={node.iconColor}
-                  id={node.id}
                   index={index}
                   label={node.label}
                   title={node.title}

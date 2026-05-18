@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { AppPreviewConfig } from '@/sections/AppPreview';
 import { useAppPreviewState } from '@/sections/AppPreview/Shell/use-app-preview-state';
-
 import { QONTO_RECORD_PAGE } from '@/app/[locale]/(home)/app-preview.data';
 
 import {
@@ -50,11 +49,7 @@ export function useProductVisualAutoplay(
   let displayPage = activePage;
   if (selectedOption === 3 && recordReady) {
     displayPage = QONTO_RECORD_PAGE;
-  } else if (
-    activePage !== null &&
-    activePage !== undefined &&
-    activePage.type === 'table'
-  ) {
+  } else if (activePage != null && activePage.type === 'table') {
     const title = activePage.header?.title;
     if (companyAdded && title === 'All Companies') {
       displayPage = {
@@ -159,16 +154,11 @@ export function useProductVisualAutoplay(
     return () => clearInterval(interval);
   }, [selectedOption, handleSelectLabel, isScrollDriven]);
 
-  const handleOptionSelect = useCallback(
-    (optionIndex: number) => setSelectedOption(optionIndex),
-    [],
-  );
-
   return {
     activeItem,
     activeLabel,
     displayPage,
-    handleOptionSelect,
+    handleOptionSelect: setSelectedOption,
     handleSelectLabel,
     handleToggleFolder,
     highlightedItemId,
