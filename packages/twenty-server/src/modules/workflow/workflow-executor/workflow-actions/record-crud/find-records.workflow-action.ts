@@ -69,7 +69,21 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
         workspaceId,
       );
 
-    const fields = flatObjectMetadata.fieldIds
+    // Relation-traversal filters reference target fields on related
+    // objects, which aren't in flatObjectMetadata.fieldIds. Collect the
+    // referenced target ids from the record filters so the shared
+    // dispatcher can resolve them and avoid silently dropping the filter.
+    const relationTargetFieldIds = (
+      workflowActionInput.filter?.recordFilters ?? []
+    )
+      .map((filter) => filter.relationTargetFieldMetadataId)
+      .filter(isDefined);
+
+    const fieldIds = Array.from(
+      new Set([...flatObjectMetadata.fieldIds, ...relationTargetFieldIds]),
+    );
+
+    const fields = fieldIds
       .map((fieldId) => {
         const field = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: fieldId,
