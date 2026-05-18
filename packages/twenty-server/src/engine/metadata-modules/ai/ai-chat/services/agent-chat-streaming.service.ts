@@ -32,6 +32,11 @@ import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-c
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 
+export type FileAttachment = {
+  id: string;
+  filename: string;
+};
+
 export type StreamAgentChatOptions = {
   threadId: string;
   userWorkspaceId: string;
@@ -40,7 +45,7 @@ export type StreamAgentChatOptions = {
   browsingContext: BrowsingContextType | null;
   modelId?: string;
   messageId?: string;
-  fileIds?: string[];
+  fileAttachments?: FileAttachment[];
 };
 
 @Injectable()
@@ -67,7 +72,7 @@ export class AgentChatStreamingService {
     browsingContext,
     modelId,
     messageId,
-    fileIds,
+    fileAttachments,
   }: StreamAgentChatOptions): Promise<{ streamId: string; messageId: string }> {
     const thread = await this.threadRepository.findOne({
       where: {
@@ -83,7 +88,10 @@ export class AgentChatStreamingService {
       );
     }
 
-    const fileParts = await this.buildFilePartsFromIds(fileIds, workspace.id);
+    const fileParts = await this.buildFilePartsFromAttachments(
+      fileAttachments,
+      workspace.id,
+    );
 
     const userMessageParts: ExtendedUIMessagePart[] = [
       { type: 'text' as const, text },
@@ -281,30 +289,38 @@ export class AgentChatStreamingService {
     );
   }
 
-  private async buildFilePartsFromIds(
-    fileIds: string[] | undefined,
+  private async buildFilePartsFromAttachments(
+    fileAttachments: FileAttachment[] | undefined,
     workspaceId: string,
   ): Promise<ExtendedUIMessagePart[]> {
-    if (!fileIds || fileIds.length === 0) {
+    if (!fileAttachments || fileAttachments.length === 0) {
       return [];
     }
 
-    const files = await this.fileRepository.find({
+    const fileIds = fileAttachments.map((attachment) => attachment.id);
+
+    const validFiles = await this.fileRepository.find({
       where: {
         id: In(fileIds),
         workspaceId,
-        path: Like(`%/${FileFolder.AgentChat}/%`),
+        path: Like(`${FileFolder.AgentChat}/%`),
       },
     });
 
-    return files.map(
-      (file): ExtendedFileUIPart => ({
-        type: 'file' as const,
-        mediaType: file.mimeType,
-        filename: file.path.split('/').pop() ?? file.path,
-        url: '',
-        fileId: file.id,
-      }),
-    );
+    const validFileIds = new Set(validFiles.map((file) => file.id));
+
+    return fileAttachments
+      .filter((attachment) => validFileIds.has(attachment.id))
+      .map((attachment): ExtendedFileUIPart => {
+        const file = validFiles.find((validFile) => validFile.id === attachment.id);
+
+        return {
+          type: 'file' as const,
+          mediaType: file?.mimeType ?? 'application/octet-stream',
+          filename: attachment.filename,
+          url: '',
+          fileId: attachment.id,
+        };
+      });
   }
 }
