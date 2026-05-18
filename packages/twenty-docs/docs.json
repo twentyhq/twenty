@@ -440,7 +440,8 @@
                 "pages": [
                   "developers/extend/api",
                   "developers/extend/webhooks",
-                  "developers/extend/oauth"
+                  "developers/extend/oauth",
+                  "developers/extend/mcp"
                 ]
               },
               {
@@ -873,7 +874,8 @@
                 "pages": [
                   "developers/extend/api",
                   "developers/extend/webhooks",
-                  "developers/extend/oauth"
+                  "developers/extend/oauth",
+                  "developers/extend/mcp"
                 ]
               },
               {
@@ -1739,7 +1741,8 @@
                 "pages": [
                   "l/cs/developers/extend/api",
                   "l/cs/developers/extend/webhooks",
-                  "l/cs/developers/extend/oauth"
+                  "l/cs/developers/extend/oauth",
+                  "l/cs/developers/extend/mcp"
                 ]
               },
               {
@@ -2172,7 +2175,8 @@
                 "pages": [
                   "l/de/developers/extend/api",
                   "l/de/developers/extend/webhooks",
-                  "l/de/developers/extend/oauth"
+                  "l/de/developers/extend/oauth",
+                  "l/de/developers/extend/mcp"
                 ]
               },
               {
@@ -2605,7 +2609,8 @@
                 "pages": [
                   "developers/extend/api",
                   "developers/extend/webhooks",
-                  "developers/extend/oauth"
+                  "developers/extend/oauth",
+                  "developers/extend/mcp"
                 ]
               },
               {
@@ -3038,7 +3043,8 @@
                 "pages": [
                   "l/it/developers/extend/api",
                   "l/it/developers/extend/webhooks",
-                  "l/it/developers/extend/oauth"
+                  "l/it/developers/extend/oauth",
+                  "l/it/developers/extend/mcp"
                 ]
               },
               {
@@ -3471,7 +3477,8 @@
                 "pages": [
                   "developers/extend/api",
                   "developers/extend/webhooks",
-                  "developers/extend/oauth"
+                  "developers/extend/oauth",
+                  "developers/extend/mcp"
                 ]
               },
               {
@@ -3904,7 +3911,8 @@
                 "pages": [
                   "developers/extend/api",
                   "developers/extend/webhooks",
-                  "developers/extend/oauth"
+                  "developers/extend/oauth",
+                  "developers/extend/mcp"
                 ]
               },
               {
@@ -4337,7 +4345,8 @@
                 "pages": [
                   "l/pt/developers/extend/api",
                   "l/pt/developers/extend/webhooks",
-                  "l/pt/developers/extend/oauth"
+                  "l/pt/developers/extend/oauth",
+                  "l/pt/developers/extend/mcp"
                 ]
               },
               {
@@ -4770,7 +4779,8 @@
                 "pages": [
                   "l/ro/developers/extend/api",
                   "l/ro/developers/extend/webhooks",
-                  "l/ro/developers/extend/oauth"
+                  "l/ro/developers/extend/oauth",
+                  "l/ro/developers/extend/mcp"
                 ]
               },
               {
@@ -5203,7 +5213,8 @@
                 "pages": [
                   "l/ru/developers/extend/api",
                   "l/ru/developers/extend/webhooks",
-                  "l/ru/developers/extend/oauth"
+                  "l/ru/developers/extend/oauth",
+                  "l/ru/developers/extend/mcp"
                 ]
               },
               {
@@ -5636,7 +5647,8 @@
                 "pages": [
                   "l/tr/developers/extend/api",
                   "l/tr/developers/extend/webhooks",
-                  "l/tr/developers/extend/oauth"
+                  "l/tr/developers/extend/oauth",
+                  "l/tr/developers/extend/mcp"
                 ]
               },
               {

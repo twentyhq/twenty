@@ -1,0 +1,120 @@
+---
+title: MCP (Model Context Protocol)
+icon: "robot"
+description: Connect AI agents to your Twenty CRM via the Model Context Protocol.
+---
+
+## Overview
+
+Twenty exposes an [MCP](https://modelcontextprotocol.io/) server that allows AI assistants and agents to interact with your CRM data programmatically. MCP is an open protocol developed by Anthropic that standardizes how AI models connect to external tools and data sources.
+
+With Twenty's MCP server, AI agents can discover available tools, learn their schemas, and execute operations against your workspace — all through a single endpoint.
+
+## Endpoint
+
+```
+POST https://<your-twenty-instance>/api/mcp
+```
+
+For Twenty Cloud users:
+
+```
+POST https://api.twenty.com/api/mcp
+```
+
+## Authentication
+
+The MCP endpoint uses the same authentication as the REST and GraphQL APIs. Include your API key as a Bearer token:
+
+```
+Authorization: Bearer <YOUR_API_KEY>
+```
+
+You can generate an API key from **Settings → API & Webhooks** in your Twenty workspace.
+
+## Protocol
+
+Twenty's MCP server communicates over HTTP using JSON-RPC 2.0 with Server-Sent Events (SSE) for streaming responses. It implements the MCP protocol version `2024-11-05`.
+
+## Workflow
+
+The MCP server follows a discovery-first approach:
+
+1. **`get_tool_catalog`** — Discover all available tools in your workspace
+2. **`learn_tools`** — Get detailed input schemas for specific tools
+3. **`execute_tool`** — Run a tool with the required parameters
+
+Never guess tool names — always start with `get_tool_catalog`.
+
+## Available Operations
+
+The tools exposed by the MCP server are generated from your workspace schema, similar to the REST and GraphQL APIs. This means:
+
+- All standard objects (People, Companies, Opportunities, Notes, Tasks, etc.) have corresponding tools
+- Custom objects you create also get MCP tools automatically
+- Operations include: find, create, update, delete, and aggregate (group by) records
+
+### Analytics and Aggregation
+
+For comparative or grouped analytics (e.g., "top companies by revenue", "opportunities by stage"), use the `group_by` tools. For simple record retrieval, use `find` tools.
+
+### Complex Tasks
+
+Use `load_skills` for guidance on multi-step tasks like workflow building or dashboard creation.
+
+## Example: Connecting with Claude Desktop
+
+Add the following to your Claude Desktop MCP configuration (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "url": "https://api.twenty.com/api/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+## Example: Connecting with Cursor
+
+In Cursor's MCP settings, add:
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "url": "https://api.twenty.com/api/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+## Example: Raw JSON-RPC Request
+
+```bash
+curl -X POST https://api.twenty.com/api/mcp \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "get_tool_catalog",
+      "arguments": {}
+    }
+  }'
+```
+
+## Security
+
+- The MCP server respects workspace permissions — API keys can only access data they are authorized to see
+- All operations are scoped to the authenticated workspace
+- Read-only and execute tool annotations indicate which operations modify data
