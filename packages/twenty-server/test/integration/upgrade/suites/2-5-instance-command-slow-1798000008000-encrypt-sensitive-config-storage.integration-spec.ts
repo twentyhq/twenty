@@ -103,6 +103,19 @@ describe('2-5 slow instance command 1798000008000 - EncryptSensitiveConfigStorag
     expect(secretEncryptionService.decryptVersioned(value)).toBe(plaintext);
   });
 
+  it('treats plaintext-under-sensitive config as plaintext and re-encrypts as v2', async () => {
+    const plaintext =
+      'https://api.anthropic.com/v1/messages?workspace=acme&token=abc';
+    const id = await seedRow(plaintext);
+
+    await command.runDataMigration(dataSource);
+
+    const value = await readValue(id);
+
+    expect(value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)).toBe(true);
+    expect(secretEncryptionService.decryptVersioned(value)).toBe(plaintext);
+  });
+
   it('leaves enc:v2 rows untouched and is idempotent across re-runs', async () => {
     const plaintext = 'smtp-already-v2-username';
     const preexistingV2 = secretEncryptionService.encryptVersioned(plaintext);

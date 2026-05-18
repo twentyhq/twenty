@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
@@ -13,10 +15,21 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 type SensitiveConfigRow = { id: string; value: unknown };
 
+const LEGACY_CTR_LOOKS_LIKE_BASE64_RE = /^[A-Za-z0-9+/]+={0,2}$/;
+const LEGACY_CTR_MIN_LENGTH = 22;
+
+const looksLikeLegacyCtrCiphertext = (value: string): boolean =>
+  value.length >= LEGACY_CTR_MIN_LENGTH &&
+  LEGACY_CTR_LOOKS_LIKE_BASE64_RE.test(value);
+
 @RegisteredInstanceCommand('2.5.0', 1798000008000, { type: 'slow' })
 export class EncryptSensitiveConfigStorageSlowInstanceCommand
   implements SlowInstanceCommand
 {
+  private readonly logger = new Logger(
+    EncryptSensitiveConfigStorageSlowInstanceCommand.name,
+  );
+
   constructor(
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
@@ -25,9 +38,9 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand
   // user/feature-flag entries and with non-sensitive config — so a CHECK
   // constraint cannot be added column-wide. The backfill walks only the
   // CONFIG_VARIABLE rows whose key is declared `isSensitive` + STRING in
-  // the ConfigVariables metadata, decrypts the legacy CTR ciphertext, and
-  // re-encrypts it into the instance-scoped versioned envelope. Idempotent:
-  // already-v2 rows are left untouched.
+  // the ConfigVariables metadata and re-encrypts legacy values into the
+  // instance-scoped versioned envelope. Idempotent: already-v2 rows are
+  // left untouched.
   async runDataMigration(dataSource: DataSource): Promise<void> {
     const sensitiveStringKeys = this.collectSensitiveStringConfigKeys();
 
@@ -60,15 +73,36 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand
           continue;
         }
 
-        const plaintext =
-          this.secretEncryptionService.decryptVersioned(rawValue);
+        let plaintext: string;
+
+        if (looksLikeLegacyCtrCiphertext(rawValue)) {
+          try {
+            plaintext = this.secretEncryptionService.decryptVersioned(rawValue);
+          } catch (error) {
+            this.logger.warn(
+              `keyValuePair row ${row.id} for config key ${key} is not valid legacy ciphertext; treating as plaintext. ${
+                error instanceof Error ? error.message : String(error)
+              }`,
+            );
+            plaintext = rawValue;
+          }
+
+          if (plaintext.includes('\uFFFD')) {
+            this.logger.warn(
+              `keyValuePair row ${row.id} for config key ${key} decrypted to invalid UTF-8; skipping re-encryption to avoid persisting corrupted plaintext.`,
+            );
+
+            continue;
+          }
+        } else {
+          plaintext = rawValue;
+        }
 
         if (!isDefined(plaintext)) {
           continue;
         }
 
-        const encrypted =
-          this.secretEncryptionService.encryptVersioned(plaintext);
+        const encrypted = this.secretEncryptionService.encryptVersioned(plaintext);
 
         await dataSource.query(
           `UPDATE "core"."keyValuePair"

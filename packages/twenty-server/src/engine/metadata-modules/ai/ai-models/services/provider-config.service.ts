@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -8,8 +8,13 @@ import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 
+const INVALID_HEADER_VALUE_CHAR_RE = /[\u0000-\u001F\u007F\uFFFD]/;
+
 @Injectable()
 export class ProviderConfigService {
+  private readonly logger = new Logger(ProviderConfigService.name);
+  private readonly loggedInvalidSecretKeys = new Set<string>();
+
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly defaultAiCatalogService: DefaultAiCatalogService,
@@ -34,20 +39,35 @@ export class ProviderConfigService {
   private resolveTemplates(providers: AiProvidersConfig): AiProvidersConfig {
     const result: AiProvidersConfig = {};
 
-    for (const [name, config] of Object.entries(providers)) {
-      result[name] = this.resolveProviderTemplates(config);
+    for (const [providerName, config] of Object.entries(providers)) {
+      result[providerName] = this.resolveProviderTemplates(providerName, config);
     }
 
     return result;
   }
 
-  private resolveProviderTemplates(config: AiProviderConfig): AiProviderConfig {
+  private resolveProviderTemplates(
+    providerName: string,
+    config: AiProviderConfig,
+  ): AiProviderConfig {
     return {
       ...config,
       baseUrl: this.resolveTemplate(config.baseUrl),
-      apiKey: this.resolveTemplate(config.apiKey),
-      accessKeyId: this.resolveTemplate(config.accessKeyId),
-      secretAccessKey: this.resolveTemplate(config.secretAccessKey),
+      apiKey: this.resolveAndValidateHeaderSecret({
+        providerName,
+        fieldName: 'apiKey',
+        value: config.apiKey,
+      }),
+      accessKeyId: this.resolveAndValidateHeaderSecret({
+        providerName,
+        fieldName: 'accessKeyId',
+        value: config.accessKeyId,
+      }),
+      secretAccessKey: this.resolveAndValidateHeaderSecret({
+        providerName,
+        fieldName: 'secretAccessKey',
+        value: config.secretAccessKey,
+      }),
     };
   }
 
@@ -78,5 +98,32 @@ export class ProviderConfigService {
     }
 
     return process.env[varName] || undefined;
+  }
+
+  private resolveAndValidateHeaderSecret({
+    providerName,
+    fieldName,
+    value,
+  }: {
+    providerName: string;
+    fieldName: 'apiKey' | 'accessKeyId' | 'secretAccessKey';
+    value?: string;
+  }): string | undefined {
+    const resolved = this.resolveTemplate(value);
+
+    if (!resolved || !INVALID_HEADER_VALUE_CHAR_RE.test(resolved)) {
+      return resolved;
+    }
+
+    const dedupeKey = `${providerName}:${fieldName}`;
+
+    if (!this.loggedInvalidSecretKeys.has(dedupeKey)) {
+      this.loggedInvalidSecretKeys.add(dedupeKey);
+      this.logger.warn(
+        `Ignoring invalid ${fieldName} for AI provider "${providerName}" because it contains non-header-safe characters.`,
+      );
+    }
+
+    return undefined;
   }
 }
