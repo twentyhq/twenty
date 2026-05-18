@@ -76,8 +76,6 @@ export const PageLayoutTabsRenderer = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  // Standalone (dashboard) page layouts have no target record, so there are
-  // no relation fields to filter against.
   const inactiveRelationFieldNames = useMemo(() => {
     if (!isDefined(targetRecordIdentifier)) {
       return new Set<string>();
