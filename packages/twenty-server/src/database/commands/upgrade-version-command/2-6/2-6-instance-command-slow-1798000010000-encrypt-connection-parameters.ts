@@ -1,12 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
-import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 
 const BACKFILL_BATCH_SIZE = 500;
 
@@ -69,19 +69,39 @@ export class EncryptConnectionParametersSlowInstanceCommand
           continue;
         }
 
+        const plaintextOnly: ImapSmtpCaldavParams = {};
+
+        for (const protocol of ACCOUNT_TYPES) {
+          const protocolParams = row.connectionParameters[protocol];
+
+          if (
+            isDefined(protocolParams?.password) &&
+            !protocolParams.password.startsWith(
+              SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
+            )
+          ) {
+            plaintextOnly[protocol] = protocolParams;
+          }
+        }
+
         const encrypted =
           this.connectedAccountTokenEncryptionService.encryptConnectionParameters(
             {
-              connectionParameters: row.connectionParameters,
+              connectionParameters: plaintextOnly,
               workspaceId: row.workspaceId,
             },
           );
+
+        const merged: ImapSmtpCaldavParams = {
+          ...row.connectionParameters,
+          ...encrypted,
+        };
 
         await dataSource.query(
           `UPDATE "core"."connectedAccount"
               SET "connectionParameters" = $2
             WHERE id = $1`,
-          [row.id, JSON.stringify(encrypted)],
+          [row.id, JSON.stringify(merged)],
         );
       }
 

@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import {
   type ConnectionParameters,
   type ImapSmtpCaldavParams,
@@ -13,6 +12,7 @@ import {
   SecretEncryptionExceptionCode,
 } from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 
 @Injectable()
 export class ConnectedAccountTokenEncryptionService {
