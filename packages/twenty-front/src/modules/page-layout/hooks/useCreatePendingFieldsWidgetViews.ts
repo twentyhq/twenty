@@ -6,6 +6,7 @@ import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewA
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 as uuidv4 } from 'uuid';
 import { ViewType, WidgetType } from '~/generated-metadata/graphql';
 
 export const useCreatePendingFieldsWidgetViews = () => {
@@ -25,26 +26,71 @@ export const useCreatePendingFieldsWidgetViews = () => {
         }),
       );
 
-      const persistedWidgetIds = new Set(
-        persisted?.tabs.flatMap((tab) =>
-          tab.widgets.map((widget) => widget.id),
-        ) ?? [],
+      const persistedFieldsWidgetViewIdsByWidgetId = new Map(
+        (persisted?.tabs ?? [])
+          .flatMap((tab) => tab.widgets)
+          .filter((widget) => widget.type === WidgetType.FIELDS)
+          .map((widget) => [
+            widget.id,
+            getWidgetConfigurationViewId(widget.configuration),
+          ]),
+      );
+
+      const draftWithGeneratedViewIds = {
+        ...draft,
+        tabs: draft.tabs.map((tab) => ({
+          ...tab,
+          widgets: tab.widgets.map((widget) => {
+            if (widget.type !== WidgetType.FIELDS) {
+              return widget;
+            }
+
+            const viewId = getWidgetConfigurationViewId(widget.configuration);
+
+            if (isDefined(viewId)) {
+              return widget;
+            }
+
+            return {
+              ...widget,
+              configuration: {
+                ...widget.configuration,
+                viewId: uuidv4(),
+              },
+            };
+          }),
+        })),
+      };
+
+      store.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+        draftWithGeneratedViewIds,
       );
 
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
-      const newFieldsWidgets = draft.tabs
+      const fieldsWidgetsToPersist = draftWithGeneratedViewIds.tabs
         .flatMap((tab) => tab.widgets)
         .filter((widget) => {
           if (widget.type !== WidgetType.FIELDS) {
             return false;
           }
+
           const viewId = getWidgetConfigurationViewId(widget.configuration);
 
-          return isDefined(viewId) && !persistedWidgetIds.has(widget.id);
+          if (!isDefined(viewId)) {
+            return false;
+          }
+
+          const persistedViewId =
+            persistedFieldsWidgetViewIdsByWidgetId.get(widget.id);
+
+          return persistedViewId !== viewId;
         });
 
-      for (const widget of newFieldsWidgets) {
+      for (const widget of fieldsWidgetsToPersist) {
         const viewId = getWidgetConfigurationViewId(widget.configuration);
 
         if (!isDefined(viewId)) {

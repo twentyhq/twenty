@@ -18,6 +18,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 @Catch(
   ViewException,
   ViewFieldException,
+  ViewFieldGroupException,
   ViewFilterException,
   ViewFilterGroupException,
   ViewGroupException,
