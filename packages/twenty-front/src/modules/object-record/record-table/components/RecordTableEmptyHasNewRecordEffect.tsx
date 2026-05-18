@@ -5,7 +5,6 @@ import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { augmentFieldsWithRelationTargets } from '@/object-record/record-filter/utils/augmentFieldsWithRelationTargets';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -19,7 +18,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 import { useStore } from 'jotai';
 import { useCallback, useMemo } from 'react';
-import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
+import {
+  computeRecordGqlOperationFilter,
+  createFindFieldMetadataItemById,
+} from 'twenty-shared/utils';
 
 export const RecordTableEmptyHasNewRecordEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -64,11 +66,9 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
         filter: computeRecordGqlOperationFilter({
-          fields: augmentFieldsWithRelationTargets({
-            baseFields: objectMetadataItem.fields,
-            recordFilters: currentRecordFilters,
-            allFieldMetadataItems: flattenedFieldMetadataItems,
-          }),
+          findFieldMetadataItemById: createFindFieldMetadataItemById(
+            flattenedFieldMetadataItems,
+          ),
           recordFilters: currentRecordFilters,
           recordFilterGroups: currentRecordFilterGroups,
           filterValueDependencies,

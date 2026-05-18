@@ -12,6 +12,7 @@ import {
 import {
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
+  createFindFieldMetadataItemById,
   getFilterTypeFromFieldType,
   isDefined,
   type RecordFilter,
@@ -235,7 +236,9 @@ export const buildRowLevelPermissionRecordFilter = ({
   return computeRecordGqlOperationFilter({
     recordFilters,
     recordFilterGroups,
-    fields: fieldMetadataItems,
+    findFieldMetadataItemById: createFindFieldMetadataItemById(
+      fieldMetadataItems,
+    ),
     filterValueDependencies: {
       currentWorkspaceMemberId: workspaceMember?.id,
     },

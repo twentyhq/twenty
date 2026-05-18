@@ -6,7 +6,6 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { augmentFieldsWithRelationTargets } from '@/object-record/record-filter/utils/augmentFieldsWithRelationTargets';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -15,6 +14,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
+  createFindFieldMetadataItemById,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -55,11 +55,9 @@ export const useFindManyRecordIndexTableParams = (
   );
 
   const currentFilters = computeRecordGqlOperationFilter({
-    fields: augmentFieldsWithRelationTargets({
-      baseFields: objectMetadataItem?.fields ?? [],
-      recordFilters: currentRecordFilters,
-      allFieldMetadataItems: flattenedFieldMetadataItems,
-    }),
+    findFieldMetadataItemById: createFindFieldMetadataItemById(
+      flattenedFieldMetadataItems,
+    ),
     recordFilterGroups: currentRecordFilterGroups,
     recordFilters: currentRecordFilters,
     filterValueDependencies,

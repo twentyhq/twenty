@@ -62,21 +62,25 @@ type FieldShared = {
   label: string;
 };
 
+export type FindFieldMetadataItemById = (
+  id: string,
+) => FieldShared | undefined;
+
 type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
   filterValueDependencies: RecordFilterValueDependencies;
   recordFilter: Omit<RecordFilter, 'id'>;
-  fieldMetadataItems: FieldShared[];
+  findFieldMetadataItemById: FindFieldMetadataItemById;
 };
 
 export const turnRecordFilterIntoRecordGqlOperationFilter = ({
   recordFilter,
-  fieldMetadataItems,
+  findFieldMetadataItemById,
   filterValueDependencies,
 }: TurnRecordFilterIntoRecordGqlOperationFilterParams):
   | RecordGqlOperationFilter
   | undefined => {
-  const sourceFieldMetadataItem = fieldMetadataItems.find(
-    (field) => field.id === recordFilter.fieldMetadataId,
+  const sourceFieldMetadataItem = findFieldMetadataItemById(
+    recordFilter.fieldMetadataId,
   );
 
   if (!isDefined(sourceFieldMetadataItem)) {
@@ -91,8 +95,8 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     sourceFieldMetadataItem.type === FieldMetadataType.RELATION &&
     isDefined(recordFilter.relationTargetFieldMetadataId)
   ) {
-    const targetFieldMetadataItem = fieldMetadataItems.find(
-      (field) => field.id === recordFilter.relationTargetFieldMetadataId,
+    const targetFieldMetadataItem = findFieldMetadataItemById(
+      recordFilter.relationTargetFieldMetadataId,
     );
 
     if (!isDefined(targetFieldMetadataItem)) {

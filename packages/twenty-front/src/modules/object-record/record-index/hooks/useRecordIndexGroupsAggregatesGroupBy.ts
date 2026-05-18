@@ -9,7 +9,6 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { augmentFieldsWithRelationTargets } from '@/object-record/record-filter/utils/augmentFieldsWithRelationTargets';
 import { useAggregateGqlFieldsFromRecordIndexGroupAggregates } from '@/object-record/record-index/hooks/useAggregateGqlFieldsFromRecordIndexGroupAggregates';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
@@ -20,6 +19,7 @@ import { useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
+  createFindFieldMetadataItemById,
   isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
@@ -57,11 +57,9 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
     filterValueDependencies,
     recordFilters: currentRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
-    fields: augmentFieldsWithRelationTargets({
-      baseFields: objectMetadataItem.fields,
-      recordFilters: currentRecordFilters,
-      allFieldMetadataItems: flattenedFieldMetadataItems,
-    }),
+    findFieldMetadataItemById: createFindFieldMetadataItemById(
+      flattenedFieldMetadataItems,
+    ),
   });
 
   const { recordAggregateGqlField } =

@@ -3,6 +3,7 @@ import {
   RecordFilterGroupLogicalOperator,
   ViewFilterOperand,
 } from '@/types';
+import { createFindFieldMetadataItemById } from '@/utils/filter/createFindFieldMetadataItemById';
 import { turnRecordFilterGroupsIntoGqlOperationFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 
 describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
@@ -21,11 +22,13 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
     },
   ];
 
+  const findFieldMetadataItemById = createFindFieldMetadataItemById(fields);
+
   it('should return undefined when group is not found', () => {
     const result = turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies: {},
       filters: [],
-      fields,
+      findFieldMetadataItemById,
       recordFilterGroups: [],
       currentRecordFilterGroupId: 'nonexistent',
     });
@@ -45,7 +48,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
           recordFilterGroupId: 'group1',
         },
       ],
-      fields,
+      findFieldMetadataItemById,
       recordFilterGroups: [
         {
           id: 'group1',
@@ -70,7 +73,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
           recordFilterGroupId: 'group1',
         },
       ],
-      fields,
+      findFieldMetadataItemById,
       recordFilterGroups: [
         {
           id: 'group1',
@@ -95,7 +98,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
           recordFilterGroupId: 'subgroup1',
         },
       ],
-      fields,
+      findFieldMetadataItemById,
       recordFilterGroups: [
         {
           id: 'group1',

@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
-} from 'twenty-shared/types';
-import {
   computeRecordGqlOperationFilter,
-  isDefined,
   isRecordFilterValueValid,
   resolveInput,
 } from 'twenty-shared/utils';
@@ -63,51 +58,11 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const { flatObjectMetadata, flatFieldMetadataMaps } =
+    const { flatFieldMetadataMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
         workflowActionInput.objectName,
         workspaceId,
       );
-
-    // Relation-traversal filters reference target fields on related
-    // objects, which aren't in flatObjectMetadata.fieldIds. Collect the
-    // referenced target ids from the record filters so the shared
-    // dispatcher can resolve them and avoid silently dropping the filter.
-    const relationTargetFieldIds = (
-      workflowActionInput.filter?.recordFilters ?? []
-    )
-      .map((filter) => filter.relationTargetFieldMetadataId)
-      .filter(isDefined);
-
-    const fieldIds = Array.from(
-      new Set([...flatObjectMetadata.fieldIds, ...relationTargetFieldIds]),
-    );
-
-    const fields = fieldIds
-      .map((fieldId) => {
-        const field = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-
-        if (!field) {
-          return null;
-        }
-
-        return {
-          id: field.id,
-          name: field.name,
-          type: field.type,
-          label: field.label,
-          // Note: force cast is required until we deprecate the CreateFieldInput and UpdateFieldInput
-          // type derivation from the FieldMetadataDto
-          options: field.options as
-            | (FieldMetadataDefaultOption & { id: string })[]
-            | (FieldMetadataComplexOption & { id: string })[]
-            | null,
-        };
-      })
-      .filter(isDefined);
 
     if (workflowActionInput.filter?.recordFilters) {
       for (const filter of workflowActionInput.filter.recordFilters) {
@@ -124,7 +79,11 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       workflowActionInput.filter?.recordFilters &&
       workflowActionInput.filter?.recordFilterGroups
         ? computeRecordGqlOperationFilter({
-            fields,
+            findFieldMetadataItemById: (id) =>
+              findFlatEntityByIdInFlatEntityMaps({
+                flatEntityId: id,
+                flatEntityMaps: flatFieldMetadataMaps,
+              }) ?? undefined,
             recordFilters: workflowActionInput.filter.recordFilters,
             recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
             filterValueDependencies: {

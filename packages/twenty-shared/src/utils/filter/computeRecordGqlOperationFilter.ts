@@ -1,5 +1,4 @@
 import {
-  type PartialFieldMetadataItem,
   type RecordFilterValueDependencies,
   type RecordGqlOperationFilter,
 } from '@/types';
@@ -8,17 +7,20 @@ import {
   type RecordFilter,
   type RecordFilterGroup,
 } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
-import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
+import {
+  type FindFieldMetadataItemById,
+  turnRecordFilterIntoRecordGqlOperationFilter,
+} from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const computeRecordGqlOperationFilter = ({
-  fields,
+  findFieldMetadataItemById,
   recordFilters,
   recordFilterGroups,
   filterValueDependencies,
 }: {
   recordFilters: Omit<RecordFilter, 'id'>[];
-  fields: PartialFieldMetadataItem[];
+  findFieldMetadataItemById: FindFieldMetadataItemById;
   recordFilterGroups: RecordFilterGroup[];
   filterValueDependencies: RecordFilterValueDependencies;
 }): RecordGqlOperationFilter => {
@@ -28,7 +30,7 @@ export const computeRecordGqlOperationFilter = ({
       .map((regularFilter) => {
         return turnRecordFilterIntoRecordGqlOperationFilter({
           recordFilter: regularFilter,
-          fieldMetadataItems: fields,
+          findFieldMetadataItemById,
           filterValueDependencies,
         });
       })
@@ -42,7 +44,7 @@ export const computeRecordGqlOperationFilter = ({
     turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies,
       filters: recordFilters,
-      fields,
+      findFieldMetadataItemById,
       recordFilterGroups,
       currentRecordFilterGroupId: outermostFilterGroupId,
     });
