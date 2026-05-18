@@ -17,13 +17,13 @@ import {
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
-import { type FileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
+import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 
 const serializeThreadForBroadcast = (
@@ -260,7 +260,7 @@ export class AgentChatService {
     threadId: string;
     text: string;
     id?: string;
-    fileAttachments?: FileAttachment[];
+    fileAttachments?: AiChatFileAttachment[];
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<AgentMessageEntity> {

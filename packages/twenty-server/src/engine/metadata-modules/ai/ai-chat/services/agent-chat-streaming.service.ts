@@ -21,23 +21,19 @@ import {
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
-export type FileAttachment = {
-  id: string;
-  filename: string;
-};
-
-export type StreamAgentChatOptions = {
+type StreamAgentChatOptions = {
   threadId: string;
   userWorkspaceId: string;
   workspace: WorkspaceEntity;
@@ -45,7 +41,7 @@ export type StreamAgentChatOptions = {
   browsingContext: BrowsingContextType | null;
   modelId?: string;
   messageId?: string;
-  fileAttachments?: FileAttachment[];
+  fileAttachments?: AiChatFileAttachment[];
 };
 
 @Injectable()
@@ -290,7 +286,7 @@ export class AgentChatStreamingService {
   }
 
   private async buildFilePartsFromAttachments(
-    fileAttachments: FileAttachment[] | undefined,
+    fileAttachments: AiChatFileAttachment[] | undefined,
     workspaceId: string,
   ): Promise<ExtendedUIMessagePart[]> {
     if (!fileAttachments || fileAttachments.length === 0) {
