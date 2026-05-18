@@ -462,15 +462,13 @@ export class CreateAppCommand {
       const remoteNames = await configService.getRemotes();
 
       for (const remoteName of remoteNames) {
-        const remoteConfig =
-          await configService.getConfigForRemote(remoteName);
+        const remoteConfig = await configService.getConfigForRemote(remoteName);
 
         if (remoteConfig.apiUrl !== workspaceUrl) {
           continue;
         }
 
-        const token =
-          remoteConfig.twentyCLIAccessToken ?? remoteConfig.apiKey;
+        const token = remoteConfig.twentyCLIAccessToken ?? remoteConfig.apiKey;
 
         if (!token) {
           continue;
