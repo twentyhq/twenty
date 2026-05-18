@@ -30,7 +30,6 @@ import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowse
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useAgentChat = (
@@ -44,11 +43,9 @@ export const useAgentChat = (
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const store = useStore();
 
-  const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesState);
-
   const [, setPendingThreadIdAfterFirstSend] = useState<string | null>(null);
 
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useAtomState(
+  const setAgentChatUploadedFiles = useSetAtomState(
     agentChatUploadedFilesState,
   );
 
@@ -74,11 +71,13 @@ export const useAgentChat = (
       return;
     }
 
-    const isLoading = agentChatSelectedFiles.length > 0;
+    const agentChatSelectedFiles = store.get(agentChatSelectedFilesState.atom);
 
-    if (isLoading) {
+    if (agentChatSelectedFiles.length > 0) {
       return;
     }
+
+    const agentChatUploadedFiles = store.get(agentChatUploadedFilesState.atom);
 
     const threadId = await ensureThreadIdForSend();
 
@@ -131,7 +130,11 @@ export const useAgentChat = (
     store.set(messagesAtom, [...currentMessages, optimisticUserMessage]);
     store.set(errorAtom, null);
 
-    const fileIds = agentChatUploadedFiles.map((file) => file.fileId);
+    const fileAttachments = agentChatUploadedFiles.map((file) => ({
+      id: file.fileId,
+      filename: file.filename,
+    }));
+    const uploadedFilesSnapshot = agentChatUploadedFiles;
 
     setAgentChatUploadedFiles([]);
 
@@ -150,7 +153,8 @@ export const useAgentChat = (
           messageId,
           browsingContext: browsingContext ?? null,
           modelId: modelIdForRequest ?? undefined,
-          fileIds: fileIds.length > 0 ? fileIds : undefined,
+          fileAttachments:
+            fileAttachments.length > 0 ? fileAttachments : undefined,
         },
       });
 
@@ -186,6 +190,7 @@ export const useAgentChat = (
           ? { [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '' }
           : {}),
       }));
+      setAgentChatUploadedFiles(uploadedFilesSnapshot);
 
       const latestMessages = store.get(messagesAtom);
 
@@ -214,11 +219,9 @@ export const useAgentChat = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     store,
-    agentChatSelectedFiles,
     ensureThreadIdForSend,
     setAgentChatInput,
     getBrowsingContext,
-    agentChatUploadedFiles,
     setAgentChatUploadedFiles,
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
