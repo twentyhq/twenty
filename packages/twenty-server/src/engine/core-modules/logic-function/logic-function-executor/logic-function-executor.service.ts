@@ -37,6 +37,10 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -123,14 +127,25 @@ export class LogicFunctionExecutorService {
         timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
       });
     } catch (error) {
-      this.logger.error(
+      const message =
         `Logic function execution failed: ` +
-          `functionId=${logicFunctionId}, ` +
-          `workspaceId=${workspaceId}, ` +
-          `driver=${driver.constructor.name}: ` +
-          `${error instanceof Error ? error.message : String(error)}`,
-        error instanceof Error ? error.stack : undefined,
-      );
+        `functionId=${logicFunctionId}, ` +
+        `workspaceId=${workspaceId}, ` +
+        `driver=${driver.constructor.name}: ` +
+        `${error instanceof Error ? error.message : String(error)}`;
+
+      if (
+        error instanceof LogicFunctionException &&
+        error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+      ) {
+        this.logger.warn(message);
+      } else {
+        this.logger.error(
+          message,
+          error instanceof Error ? error.stack : undefined,
+        );
+      }
+
       throw error;
     }
 

@@ -148,6 +148,10 @@ export class BullMQDriver
         return;
       }
 
+      this.logger.warn(
+        `Job ${job.id} with name ${job.name} failed on queue ${queueName} [workspace=${job.data?.workspaceId ?? 'n/a'}]: ${error.message}`,
+      );
+
       void this.metricsService.incrementCounter({
         key: MetricsKeys.JobFailed,
         attributes: {
@@ -157,6 +161,17 @@ export class BullMQDriver
         },
         shouldStoreInCache: false,
       });
+    });
+
+    this.workerMap[queueName].on('stalled', (jobId) => {
+      this.logger.warn(`Job ${jobId} stalled on queue ${queueName}`);
+    });
+
+    this.workerMap[queueName].on('error', (error) => {
+      this.logger.error(
+        `Worker error on queue ${queueName}: ${error.message}`,
+        error.stack,
+      );
     });
   }
 

@@ -1149,6 +1149,15 @@ export class LambdaDriver implements LogicFunctionDriver {
     };
   }
 
+  private isInvalidSignatureException(error: unknown): boolean {
+    return (
+      isDefined(error) &&
+      typeof error === 'object' &&
+      'name' in error &&
+      error.name === 'InvalidSignatureException'
+    );
+  }
+
   async execute({
     flatLogicFunction,
     flatApplication,
@@ -1236,11 +1245,6 @@ export class LambdaDriver implements LogicFunctionDriver {
         status: LogicFunctionExecutionStatus.SUCCESS,
       };
     } catch (error) {
-      this.logger.error(
-        `Lambda invocation failed for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
-        error instanceof Error ? error.stack : undefined,
-      );
-
       if (error instanceof ResourceNotFoundException) {
         throw new LogicFunctionException(
           `Function '${flatLogicFunction.id}' does not exist`,
@@ -1250,6 +1254,17 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       if (error instanceof LogicFunctionException) {
         throw error;
+      }
+
+      if (this.isInvalidSignatureException(error)) {
+        this.logger.warn(
+          `Lambda invocation signature rejected for function ${flatLogicFunction.id}. This can indicate worker clock skew or event-loop stalls under load.`,
+        );
+      } else {
+        this.logger.error(
+          `Lambda invocation failed for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+          error instanceof Error ? error.stack : undefined,
+        );
       }
 
       throw new LogicFunctionException(
