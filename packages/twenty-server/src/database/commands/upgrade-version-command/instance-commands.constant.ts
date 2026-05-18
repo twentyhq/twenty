@@ -31,6 +31,10 @@ import { AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand } from 'src/
 import { BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1777966965588-backfill-application-variable-universal-identifier';
 import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1797000002000-migrate-tool-trigger-settings';
 import { AddMetadataToBillingPriceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1777100000000-add-metadata-to-billing-price';
+import { RenamePermissionFlagToRolePermissionFlagFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778235340020-rename-permission-flag-to-role-permission-flag';
+import { PermissionFlagSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778235340021-permission-flag-syncable-entity';
+import { LinkRolePermissionFlagToPermissionFlagFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778235340022-link-role-permission-flag-to-permission-flag';
+import { BackfillRolePermissionFlagPermissionFlagIdSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-slow-1778235340023-backfill-role-permission-flag-permission-flag-id';
 import { AddEmailGroupChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778256809018-add-email-group-channel-type';
 import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1798000003000-add-application-id-to-public-domain';
 import { AddIsInternalMessagesImportEnabledFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778525104406-add-is-internal-messages-import-enabled';
@@ -77,6 +81,10 @@ export const INSTANCE_COMMANDS = [
   RemoveUserDefaultAvatarUrlFastInstanceCommand,
   TransformApplicationVariableToSyncableEntityFastInstanceCommand,
   BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand,
+  RenamePermissionFlagToRolePermissionFlagFastInstanceCommand,
+  PermissionFlagSyncableEntityFastInstanceCommand,
+  LinkRolePermissionFlagToPermissionFlagFastInstanceCommand,
+  BackfillRolePermissionFlagPermissionFlagIdSlowInstanceCommand,
   AddEmailGroupChannelTypeFastInstanceCommand,
   AddApplicationIdToPublicDomainFastInstanceCommand,
   AddIsInternalMessagesImportEnabledFastInstanceCommand,

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Permission flag upsert should fail when permissionFlagKeys contains invalid enum value 1`] = `
 {
@@ -19,7 +19,7 @@ exports[`Permission flag upsert should fail when role is not editable (system ro
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
-      "permissionFlag": [
+      "rolePermissionFlag": [
         {
           "errors": [
             {
@@ -34,18 +34,19 @@ exports[`Permission flag upsert should fail when role is not editable (system ro
             },
           ],
           "flatEntityMinimalInformation": {
+            "permissionFlagUniversalIdentifier": Any<String>,
             "roleUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
-          "metadataName": "permissionFlag",
+          "metadataName": "rolePermissionFlag",
           "status": "fail",
           "type": "create",
         },
       ],
     },
-    "message": "Validation failed for 1 permissionFlag",
+    "message": "Validation failed for 1 rolePermissionFlag",
     "summary": {
-      "permissionFlag": 1,
+      "rolePermissionFlag": 1,
       "totalErrors": 1,
     },
     "userFriendlyMessage": "Cannot target a role owned by another application.",
