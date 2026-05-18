@@ -4,7 +4,7 @@ import { type Repository } from 'typeorm';
 
 import { UpgradeUnavailableEntityWriteException } from 'src/engine/twenty-orm/upgrade-aware/exceptions/upgrade-unavailable-entity-write.exception';
 import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
-import { wrapRepositoryWithUpgradeAwareGuard } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository.proxy';
+import { wrapRepositoryWithUpgradeAwareProxy } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository.proxy';
 
 class FakeEntity {}
 
@@ -34,11 +34,11 @@ const buildState = (isAvailable: boolean) => {
   return state;
 };
 
-describe('wrapRepositoryWithUpgradeAwareGuard', () => {
+describe('wrapRepositoryWithUpgradeAwareProxy', () => {
   it('should short-circuit find() to an empty array when the entity is unavailable', async () => {
     const { repository, mocks } = buildFakeRepository();
 
-    const wrapped = wrapRepositoryWithUpgradeAwareGuard({
+    const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass: FakeEntity,
       state: buildState(false),
@@ -51,7 +51,7 @@ describe('wrapRepositoryWithUpgradeAwareGuard', () => {
   it('should short-circuit findOne() to null when the entity is unavailable', async () => {
     const { repository, mocks } = buildFakeRepository();
 
-    const wrapped = wrapRepositoryWithUpgradeAwareGuard({
+    const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass: FakeEntity,
       state: buildState(false),
@@ -64,7 +64,7 @@ describe('wrapRepositoryWithUpgradeAwareGuard', () => {
   it('should short-circuit count() to 0 when the entity is unavailable', async () => {
     const { repository, mocks } = buildFakeRepository();
 
-    const wrapped = wrapRepositoryWithUpgradeAwareGuard({
+    const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass: FakeEntity,
       state: buildState(false),
@@ -77,7 +77,7 @@ describe('wrapRepositoryWithUpgradeAwareGuard', () => {
   it('should pass reads through when the entity is available', async () => {
     const { repository, mocks } = buildFakeRepository();
 
-    const wrapped = wrapRepositoryWithUpgradeAwareGuard({
+    const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass: FakeEntity,
       state: buildState(true),
@@ -90,7 +90,7 @@ describe('wrapRepositoryWithUpgradeAwareGuard', () => {
   it('should throw UpgradeUnavailableEntityWriteException on writes when unavailable', () => {
     const { repository, mocks } = buildFakeRepository();
 
-    const wrapped = wrapRepositoryWithUpgradeAwareGuard({
+    const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass: FakeEntity,
       state: buildState(false),
@@ -109,7 +109,7 @@ describe('wrapRepositoryWithUpgradeAwareGuard', () => {
   it('should pass writes through when available', async () => {
     const { repository, mocks } = buildFakeRepository();
 
-    const wrapped = wrapRepositoryWithUpgradeAwareGuard({
+    const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass: FakeEntity,
       state: buildState(true),
@@ -152,7 +152,7 @@ describe('wrapRepositoryWithUpgradeAwareGuard', () => {
       getHiddenColumnPropertyNames: () => new Set(),
     } as never);
 
-    const wrapped = wrapRepositoryWithUpgradeAwareGuard({
+    const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass: FakeEntity,
       state,

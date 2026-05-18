@@ -6,7 +6,7 @@ import { DataSource, type DataSourceOptions } from 'typeorm';
 import { typeORMCoreModuleOptions } from 'src/database/typeorm/core/core.datasource';
 import { DatabaseGaugeService } from 'src/database/typeorm/database-gauge.service';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { installUpgradeAwareRepositoryGuard } from 'src/engine/twenty-orm/upgrade-aware/install-upgrade-aware-repository-guard';
+import { installUpgradeAwareRepositoryProxy } from 'src/engine/twenty-orm/upgrade-aware/install-upgrade-aware-repository-proxy';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { installUpgradeAwareRepositoryGuard } from 'src/engine/twenty-orm/upgrad
         const dataSource = new DataSource(options as DataSourceOptions);
 
         await dataSource.initialize();
-        installUpgradeAwareRepositoryGuard(dataSource);
+        installUpgradeAwareRepositoryProxy(dataSource);
 
         return dataSource;
       },

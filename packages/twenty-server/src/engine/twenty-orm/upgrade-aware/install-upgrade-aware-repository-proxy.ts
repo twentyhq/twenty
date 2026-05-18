@@ -3,11 +3,11 @@ import { Logger } from '@nestjs/common';
 import { type DataSource, type EntityTarget } from 'typeorm';
 
 import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
-import { wrapRepositoryWithUpgradeAwareGuard } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository.proxy';
+import { wrapRepositoryWithUpgradeAwareProxy } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository.proxy';
 
-const logger = new Logger('InstallUpgradeAwareRepositoryGuard');
+const logger = new Logger('InstallUpgradeAwareRepositoryProxy');
 
-export const installUpgradeAwareRepositoryGuard = (
+export const installUpgradeAwareRepositoryProxy = (
   dataSource: DataSource,
 ): void => {
   const state = UpgradeAwareRepositoryState.getInstance();
@@ -15,7 +15,7 @@ export const installUpgradeAwareRepositoryGuard = (
 
   const wrappedRepositoryCache = new WeakMap<object, object>();
 
-  dataSource.getRepository = function getRepositoryWithUpgradeAwareGuard<
+  dataSource.getRepository = function getRepositoryWithUpgradeAwareProxy<
     Entity extends object,
   >(target: EntityTarget<Entity>) {
     const repository = originalGetRepository(target);
@@ -32,7 +32,7 @@ export const installUpgradeAwareRepositoryGuard = (
       return cached as typeof repository;
     }
 
-    const wrapped = wrapRepositoryWithUpgradeAwareGuard({
+    const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass,
       state,
@@ -43,7 +43,9 @@ export const installUpgradeAwareRepositoryGuard = (
     return wrapped;
   } as DataSource['getRepository'];
 
-  logger.log('[upgrade-proxy] installed getRepository guard on core DataSource');
+  logger.log(
+    '[upgrade-proxy] installed getRepository proxy on core DataSource',
+  );
 };
 
 const resolveEntityClass = <Entity extends object>(

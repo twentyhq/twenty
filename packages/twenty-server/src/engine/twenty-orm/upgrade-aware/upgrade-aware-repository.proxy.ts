@@ -178,7 +178,7 @@ const isShortCircuitableRead = (methodName: string): boolean =>
   SHORT_CIRCUIT_READ_TO_ZERO.has(methodName) ||
   SHORT_CIRCUIT_READ_TO_FALSE.has(methodName);
 
-export const wrapRepositoryWithUpgradeAwareGuard = <Entity extends object>({
+export const wrapRepositoryWithUpgradeAwareProxy = <Entity extends object>({
   repository,
   entityClass,
   state,
