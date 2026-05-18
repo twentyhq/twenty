@@ -58,6 +58,8 @@ export const convertChartFilterToGqlOperationFilter = ({
         subFieldName: (recordFilter.subFieldName ?? undefined) as
           | CompositeFieldSubFieldName
           | undefined,
+        relationTargetFieldMetadataId:
+          recordFilter.relationTargetFieldMetadataId ?? null,
       };
     },
   );
