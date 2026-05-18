@@ -19,6 +19,7 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { CalendarEventListFetchJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
@@ -114,6 +115,10 @@ describe('ImapSmtpCalDavAPIService', () => {
     resetAndMarkAsCalendarEventListFetchPending: jest.fn(),
   };
 
+  const mockConnectedAccountTokenEncryptionService = {
+    encrypt: jest.fn(({ plaintext }: { plaintext: string }) => `enc:v2:${plaintext}`),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -185,6 +190,10 @@ describe('ImapSmtpCalDavAPIService', () => {
           provide: CalendarChannelSyncStatusService,
           useValue: mockCalendarChannelSyncStatusService,
         },
+        {
+          provide: ConnectedAccountTokenEncryptionService,
+          useValue: mockConnectedAccountTokenEncryptionService,
+        },
       ],
     }).compile();
 
@@ -192,6 +201,25 @@ describe('ImapSmtpCalDavAPIService', () => {
 
     jest.clearAllMocks();
   });
+
+  const encryptPassword = (password: string) => `enc:v2:${password}`;
+
+  const withEncryptedPasswords = (
+    params: ImapSmtpCaldavParams,
+  ): ImapSmtpCaldavParams => {
+    const result: ImapSmtpCaldavParams = {};
+
+    for (const protocol of ['IMAP', 'SMTP', 'CALDAV'] as const) {
+      if (params[protocol]) {
+        result[protocol] = {
+          ...params[protocol],
+          password: encryptPassword(params[protocol]!.password),
+        };
+      }
+    }
+
+    return result;
+  };
 
   describe('processAccount', () => {
     const baseInput = {
@@ -233,7 +261,9 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'mocked-uuid',
         handle: 'test@example.com',
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-        connectionParameters: baseInput.connectionParameters,
+        connectionParameters: withEncryptedPasswords(
+          baseInput.connectionParameters,
+        ),
         userWorkspaceId: 'user-workspace-id',
         workspaceId: 'workspace-id',
         authFailedAt: null,
@@ -309,7 +339,9 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'existing-account-id',
         handle: 'test@example.com',
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-        connectionParameters: inputWithConnectedAccountId.connectionParameters,
+        connectionParameters: withEncryptedPasswords(
+          inputWithConnectedAccountId.connectionParameters,
+        ),
         userWorkspaceId: 'user-workspace-id',
         workspaceId: 'workspace-id',
         authFailedAt: null,
@@ -608,7 +640,9 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'existing-account-id',
         handle: 'test@example.com',
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-        connectionParameters: baseInput.connectionParameters,
+        connectionParameters: withEncryptedPasswords(
+          baseInput.connectionParameters,
+        ),
         userWorkspaceId: 'user-workspace-id',
         workspaceId: 'workspace-id',
         authFailedAt: null,
