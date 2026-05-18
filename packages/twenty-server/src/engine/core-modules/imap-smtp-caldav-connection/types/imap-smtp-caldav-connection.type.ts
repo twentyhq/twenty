@@ -1,19 +1,8 @@
 import { z } from 'zod';
 
 import { ACCOUNT_TYPES } from 'src/engine/core-modules/imap-smtp-caldav-connection/constants/account-types.constant';
-
-export const connectionParametersSchema = z.object({
-  host: z.string().min(1, 'Host is required'),
-  port: z.int().positive('Port must be a positive number'),
-  username: z.string().optional(),
-  password: z.string().min(1, 'Password is required'),
-  secure: z.boolean().optional(),
-});
-
-export const connectionParametersUpdateSchema =
-  connectionParametersSchema.extend({
-    password: z.string().min(1, 'Password is required').optional(),
-  });
+import { connectionParametersUpdateSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters-update.schema';
+import { connectionParametersSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters.schema';
 
 export type ConnectionParameters = z.infer<typeof connectionParametersSchema>;
 
