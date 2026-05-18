@@ -296,6 +296,15 @@ export class ImapSmtpCalDavAPIService {
         continue;
       }
 
+      const existingPassword =
+        existingAccount?.connectionParameters?.[protocol]?.password;
+
+      if (!isDefined(inputProtocolParams.password) && !existingPassword) {
+        throw new NotFoundError(
+          `Password is required for ${protocol} — no existing password found`,
+        );
+      }
+
       result[protocol] = {
         ...inputProtocolParams,
         password: isDefined(inputProtocolParams.password)
@@ -303,7 +312,7 @@ export class ImapSmtpCalDavAPIService {
               plaintext: inputProtocolParams.password,
               workspaceId,
             })
-          : existingAccount!.connectionParameters![protocol]!.password,
+          : existingPassword!,
       };
     }
 

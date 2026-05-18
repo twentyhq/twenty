@@ -5,10 +5,12 @@ import { msg } from '@lingui/core/macro';
 import { ImapFlow } from 'imapflow';
 import { createTransport } from 'nodemailer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   type AccountType,
@@ -28,6 +30,7 @@ export class ImapSmtpCaldavService {
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly caldavClientService: CalDavClientService,
     private readonly caldavFetchEventsService: CalDavFetchEventsService,
   ) {}
@@ -187,25 +190,24 @@ export class ImapSmtpCaldavService {
     params: ConnectionParameters,
     accountType: AccountType,
   ): Promise<boolean> {
-    if (accountType === 'IMAP') {
-      return this.testImapConnection(handle, params);
+    if (
+      !this.twentyConfigService.get(
+        'IS_IMAP_SMTP_CALDAV_CONNECTION_TEST_ENABLED',
+      )
+    ) {
+      return true;
     }
 
-    if (accountType === 'SMTP') {
-      return this.testSmtpConnection(handle, params);
-    }
-
-    if (accountType === 'CALDAV') {
-      return this.testCaldavConnection(handle, params);
-    }
-
-    throw new UserInputError(
-      'Invalid account type. Must be one of: IMAP, SMTP, CALDAV',
-      {
-        userFriendlyMessage: msg`Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again.`,
-      },
-    );
-  }
+    switch (accountType) {
+      case 'IMAP':
+        return this.testImapConnection(handle, params);
+      case 'SMTP':
+        return this.testSmtpConnection(handle, params);
+      case 'CALDAV':
+        return this.testCaldavConnection(handle, params);
+      default:
+        assertUnreachable(accountType);
+    }  }
 
   async getImapSmtpCaldav(
     workspaceId: string,
