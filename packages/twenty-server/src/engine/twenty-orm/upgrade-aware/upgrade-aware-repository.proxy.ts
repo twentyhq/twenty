@@ -234,10 +234,16 @@ export const wrapRepositoryWithUpgradeAwareProxy = <Entity extends object>({
 
       const value = Reflect.get(target, prop, receiver);
 
-      if (typeof value === 'function') {
+      if (typeof value === 'function' && !isClassConstructor(value)) {
         return value.bind(target);
       }
 
       return value;
     },
   });
+
+const isClassConstructor = (fn: Function): boolean =>
+  typeof fn.prototype === 'object' &&
+  fn.prototype !== null &&
+  fn.prototype.constructor === fn &&
+  fn.toString().startsWith('class ');
