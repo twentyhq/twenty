@@ -184,9 +184,7 @@ export const SettingsAccountsConnectionForm = ({
                   instanceId="imap-password-connection-form"
                   label={t`IMAP Password`}
                   placeholder={
-                    isPasswordLocked('IMAP')
-                      ? t`Password saved`
-                      : t`••••••••`
+                    isPasswordLocked('IMAP') ? t`Password saved` : t`••••••••`
                   }
                   type="password"
                   value={field.value || ''}
@@ -297,9 +295,7 @@ export const SettingsAccountsConnectionForm = ({
                   instanceId="smtp-password-connection-form"
                   label={t`SMTP Password`}
                   placeholder={
-                    isPasswordLocked('SMTP')
-                      ? t`Password saved`
-                      : t`••••••••`
+                    isPasswordLocked('SMTP') ? t`Password saved` : t`••••••••`
                   }
                   type="password"
                   value={field.value || ''}
@@ -410,9 +406,7 @@ export const SettingsAccountsConnectionForm = ({
                   instanceId="caldav-password-connection-form"
                   label={t`CalDAV Password`}
                   placeholder={
-                    isPasswordLocked('CALDAV')
-                      ? t`Password saved`
-                      : t`••••••••`
+                    isPasswordLocked('CALDAV') ? t`Password saved` : t`••••••••`
                   }
                   type="password"
                   value={field.value || ''}

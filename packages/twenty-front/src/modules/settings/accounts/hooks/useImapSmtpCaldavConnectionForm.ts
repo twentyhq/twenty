@@ -106,8 +106,7 @@ export const useImapSmtpCaldavConnectionForm = ({
       return ACCOUNT_TYPES.filter((protocol) => {
         const protocolConfig = values[protocol];
         return (
-          protocolConfig &&
-          checkFn(protocolConfig as ConnectionParametersInput)
+          protocolConfig && checkFn(protocolConfig as ConnectionParametersInput)
         );
       });
     },
