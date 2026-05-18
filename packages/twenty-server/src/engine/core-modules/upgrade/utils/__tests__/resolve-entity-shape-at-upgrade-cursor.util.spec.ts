@@ -103,10 +103,7 @@ describe('resolveEntityShapeAtUpgradeCursor', () => {
           entityClass: TwiceRenamedEntity,
           currentTableName: 'thirdName',
           currentColumns: [],
-          isStepApplied: buildPredicate([
-            FIRST_RENAME_CMD,
-            SECOND_RENAME_CMD,
-          ]),
+          isStepApplied: buildPredicate([FIRST_RENAME_CMD, SECOND_RENAME_CMD]),
         }).effectiveTableName,
       ).toBe('thirdName');
     });

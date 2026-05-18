@@ -9,9 +9,7 @@ import {
 
 export type UpgradeAwareDecoratorReferenceProblem = {
   entityName: string;
-  decorator:
-    | '@WasIntroducedInUpgrade'
-    | '@WasRenamedInUpgrade';
+  decorator: '@WasIntroducedInUpgrade' | '@WasRenamedInUpgrade';
   scope: 'class' | `property:${string}`;
   upgradeCommandName: string;
 };

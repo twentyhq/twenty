@@ -69,19 +69,25 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     const lastAttempted =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
 
+    let nextCursor: number;
+
     if (!isDefined(lastAttempted)) {
-      this.currentCursor = 0;
+      nextCursor = 0;
     } else {
       const index = this.stepNameToIndex.get(lastAttempted.name);
 
       if (!isDefined(index)) {
-        this.currentCursor = 0;
+        nextCursor = 0;
       } else {
-        this.currentCursor =
-          lastAttempted.status === 'completed' ? index + 1 : index;
+        nextCursor = lastAttempted.status === 'completed' ? index + 1 : index;
       }
     }
 
+    if (nextCursor === this.currentCursor) {
+      return;
+    }
+
+    this.currentCursor = nextCursor;
     this.applyCursorToMetadata();
   }
 
@@ -178,9 +184,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
 
       if (!resolved.isAvailable) {
         unavailableCount++;
-        this.logger.log(
-          `[upgrade-metadata] unavailable ${entityClass.name}`,
-        );
+        this.logger.log(`[upgrade-metadata] unavailable ${entityClass.name}`);
       }
 
       if (resolved.hiddenPropertyNames.size > 0) {

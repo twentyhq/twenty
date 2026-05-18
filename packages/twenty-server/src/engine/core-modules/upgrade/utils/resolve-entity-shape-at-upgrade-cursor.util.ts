@@ -43,8 +43,7 @@ export const resolveEntityShapeAtUpgradeCursor = ({
 
   const propertyIntroductionMap =
     getWasIntroducedInUpgradePropertyMetadata(entityClass);
-  const propertyRenameMap =
-    getWasRenamedInUpgradePropertyMetadata(entityClass);
+  const propertyRenameMap = getWasRenamedInUpgradePropertyMetadata(entityClass);
 
   const hiddenPropertyNames = new Set<string>();
   const columnDatabaseNameRemap = new Map<string, string>();

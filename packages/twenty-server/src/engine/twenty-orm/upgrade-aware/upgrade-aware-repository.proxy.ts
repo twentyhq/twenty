@@ -25,10 +25,7 @@ const METHODS_WITH_FIND_OPTIONS = new Set<string>([
   'existsBy',
 ]);
 
-const SHORT_CIRCUIT_READ_TO_EMPTY_ARRAY = new Set<string>([
-  'find',
-  'findBy',
-]);
+const SHORT_CIRCUIT_READ_TO_EMPTY_ARRAY = new Set<string>(['find', 'findBy']);
 
 const SHORT_CIRCUIT_READ_TO_EMPTY_FIND_AND_COUNT = new Set<string>([
   'findAndCount',

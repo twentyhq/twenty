@@ -392,5 +392,4 @@ export class UpgradeMigrationService {
 
     return result;
   }
-
 }
