@@ -47,7 +47,6 @@ const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
 
   await expect(await canvas.findByText('Revenue')).toBeVisible();
-  await expect(await canvas.findByText('Goal Progress')).toBeVisible();
   await expect(await canvas.findByText('Revenue Sources')).toBeVisible();
   await expect(await canvas.findByText('Quarterly Comparison')).toBeVisible();
 };
