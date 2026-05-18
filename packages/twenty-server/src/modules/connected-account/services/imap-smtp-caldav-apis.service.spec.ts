@@ -9,7 +9,7 @@ import {
 
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
-import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { type EmailAccountConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -212,7 +212,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           username: 'test@example.com',
           password: 'password',
         },
-      } as EmailAccountConnectionParameters,
+      } as EmailAccountConnectionParametersInput,
     };
 
     it('should create new account with message channel when account does not exist and IMAP is configured', async () => {
@@ -299,7 +299,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             username: 'test@example.com',
             password: 'password',
           },
-        } as EmailAccountConnectionParameters,
+        } as EmailAccountConnectionParametersInput,
         connectedAccountId: 'existing-account-id',
       };
 
@@ -424,7 +424,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             secure: true,
             password: 'password',
           },
-        } as EmailAccountConnectionParameters,
+        } as EmailAccountConnectionParametersInput,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
@@ -459,7 +459,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             username: 'test@example.com',
             password: 'password',
           },
-        } as EmailAccountConnectionParameters,
+        } as EmailAccountConnectionParametersInput,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
@@ -500,7 +500,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             username: 'test@example.com',
             password: 'password',
           },
-        } as EmailAccountConnectionParameters,
+        } as EmailAccountConnectionParametersInput,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
@@ -548,7 +548,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             username: 'test@example.com',
             password: 'password',
           },
-        } as EmailAccountConnectionParameters,
+        } as EmailAccountConnectionParametersInput,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
@@ -626,7 +626,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             username: 'test@example.com',
             password: 'password',
           },
-        } as EmailAccountConnectionParameters,
+        } as EmailAccountConnectionParametersInput,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);

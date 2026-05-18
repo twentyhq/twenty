@@ -1,14 +1,23 @@
-import { Field, ObjectType, OmitType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ConnectionParametersDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 
 @ObjectType('ImapSmtpCaldavPublicConnectionParams')
-class PublicConnectionParamsDTO extends OmitType(ConnectionParametersDTO, [
-  'password',
-] as const) {}
+class PublicConnectionParamsDTO {
+  @Field(() => String)
+  host: string;
+
+  @Field(() => Number)
+  port: number;
+
+  @Field(() => String, { nullable: true })
+  username?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  secure?: boolean;
+}
 
 @ObjectType('ImapSmtpCaldavPublicConnectionParameters')
 class ImapSmtpCaldavPublicConnectionParametersDTO {

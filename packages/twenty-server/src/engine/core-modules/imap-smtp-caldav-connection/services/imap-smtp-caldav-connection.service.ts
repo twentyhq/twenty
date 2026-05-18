@@ -9,13 +9,13 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   type AccountType,
   type ConnectionParameters,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
@@ -185,11 +185,15 @@ export class ImapSmtpCaldavService {
     return true;
   }
 
-  async testImapSmtpCaldav(
-    handle: string,
-    params: ConnectionParameters,
-    accountType: AccountType,
-  ): Promise<boolean> {
+  async testImapSmtpCaldav({
+    handle,
+    params,
+    accountType,
+  }: {
+    handle: string;
+    params: ConnectionParameters;
+    accountType: AccountType;
+  }): Promise<boolean> {
     if (
       !this.twentyConfigService.get(
         'IS_IMAP_SMTP_CALDAV_CONNECTION_TEST_ENABLED',

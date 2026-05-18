@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class AccountType {
@@ -7,7 +7,7 @@ export class AccountType {
 }
 
 @InputType()
-export class ConnectionParameters {
+export class ConnectionParametersInput {
   @Field(() => String)
   host: string;
 
@@ -24,44 +24,14 @@ export class ConnectionParameters {
   secure?: boolean;
 }
 
-@InputType()
-export class EmailAccountConnectionParameters {
-  @Field(() => ConnectionParameters, { nullable: true })
-  IMAP?: ConnectionParameters;
+@InputType('EmailAccountConnectionParameters')
+export class EmailAccountConnectionParametersInput {
+  @Field(() => ConnectionParametersInput, { nullable: true })
+  IMAP?: ConnectionParametersInput;
 
-  @Field(() => ConnectionParameters, { nullable: true })
-  SMTP?: ConnectionParameters;
+  @Field(() => ConnectionParametersInput, { nullable: true })
+  SMTP?: ConnectionParametersInput;
 
-  @Field(() => ConnectionParameters, { nullable: true })
-  CALDAV?: ConnectionParameters;
-}
-
-@ObjectType('ConnectionParametersOutput')
-export class ConnectionParametersDTO {
-  @Field(() => String)
-  host: string;
-
-  @Field(() => Number)
-  port: number;
-
-  @Field(() => String, { nullable: true })
-  username?: string;
-
-  @Field(() => String)
-  password: string;
-
-  @Field(() => Boolean, { nullable: true })
-  secure?: boolean;
-}
-
-@ObjectType('ImapSmtpCaldavConnectionParameters')
-export class ImapSmtpCaldavConnectionParametersDTO {
-  @Field(() => ConnectionParametersDTO, { nullable: true })
-  IMAP?: ConnectionParametersDTO;
-
-  @Field(() => ConnectionParametersDTO, { nullable: true })
-  SMTP?: ConnectionParametersDTO;
-
-  @Field(() => ConnectionParametersDTO, { nullable: true })
-  CALDAV?: ConnectionParametersDTO;
+  @Field(() => ConnectionParametersInput, { nullable: true })
+  CALDAV?: ConnectionParametersInput;
 }

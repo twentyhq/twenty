@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ImapSmtpCaldavConnectionParametersDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 
 @ObjectType('ConnectedAccountDTO')
 export class ConnectedAccountDTO {
@@ -56,7 +56,7 @@ export class ConnectedAccountDTO {
   scopes: string[] | null;
 
   @HideField()
-  connectionParameters: ImapSmtpCaldavConnectionParametersDTO | null;
+  connectionParameters: ImapSmtpCaldavParams | null;
 
   @IsDateString()
   @IsOptional()

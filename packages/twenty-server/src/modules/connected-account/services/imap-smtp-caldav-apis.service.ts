@@ -13,7 +13,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
-import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { type EmailAccountConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { ACCOUNT_TYPES } from 'src/engine/core-modules/imap-smtp-caldav-connection/constants/account-types.constant';
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -95,7 +95,7 @@ export class ImapSmtpCalDavAPIService {
     handle: string;
     workspaceMemberId: string;
     workspaceId: string;
-    connectionParameters: EmailAccountConnectionParameters;
+    connectionParameters: ImapSmtpCaldavParams;
     connectedAccountId?: string;
   }): Promise<string> {
     const { handle, workspaceId, workspaceMemberId, connectedAccountId } =
@@ -179,7 +179,6 @@ export class ImapSmtpCalDavAPIService {
             const encryptedConnectionParameters =
               this.buildEncryptedConnectionParameters({
                 inputParameters: input.connectionParameters,
-                existingAccount,
                 workspaceId,
               });
 
@@ -289,11 +288,9 @@ export class ImapSmtpCalDavAPIService {
 
   private buildEncryptedConnectionParameters({
     inputParameters,
-    existingAccount,
     workspaceId,
   }: {
-    inputParameters: EmailAccountConnectionParameters;
-    existingAccount: ConnectedAccountEntity | null;
+    inputParameters: ImapSmtpCaldavParams;
     workspaceId: string;
   }): ImapSmtpCaldavParams {
     const result: ImapSmtpCaldavParams = {};
@@ -305,23 +302,12 @@ export class ImapSmtpCalDavAPIService {
         continue;
       }
 
-      const existingPassword =
-        existingAccount?.connectionParameters?.[protocol]?.password;
-
-      if (!isDefined(inputProtocolParams.password) && !existingPassword) {
-        throw new NotFoundError(
-          `Password is required for ${protocol} — no existing password found`,
-        );
-      }
-
       result[protocol] = {
         ...inputProtocolParams,
-        password: isDefined(inputProtocolParams.password)
-          ? this.connectedAccountTokenEncryptionService.encrypt({
-              plaintext: inputProtocolParams.password,
-              workspaceId,
-            })
-          : existingPassword!,
+        password: this.connectedAccountTokenEncryptionService.encrypt({
+          plaintext: inputProtocolParams.password,
+          workspaceId,
+        }),
       };
     }
 
