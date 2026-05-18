@@ -155,6 +155,7 @@ export const SettingsAccountsConnectionForm = ({
 
           <SettingsAccountsPasswordController
             protocol="IMAP"
+            label={t`IMAP Password`}
             control={control}
             disabled={isPasswordInputDisabled('IMAP')}
             onUnlock={() => unlockPassword('IMAP')}
@@ -244,6 +245,7 @@ export const SettingsAccountsConnectionForm = ({
 
           <SettingsAccountsPasswordController
             protocol="SMTP"
+            label={t`SMTP Password`}
             control={control}
             disabled={isPasswordInputDisabled('SMTP')}
             onUnlock={() => unlockPassword('SMTP')}
@@ -333,6 +335,7 @@ export const SettingsAccountsConnectionForm = ({
 
           <SettingsAccountsPasswordController
             protocol="CALDAV"
+            label={t`CalDAV Password`}
             control={control}
             disabled={isPasswordInputDisabled('CALDAV')}
             onUnlock={() => unlockPassword('CALDAV')}

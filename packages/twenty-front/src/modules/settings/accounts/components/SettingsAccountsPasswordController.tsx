@@ -33,6 +33,7 @@ const MASKED_PASSWORD_PLACEHOLDER = '••••••••';
 
 type SettingsAccountsPasswordControllerProps = {
   protocol: AccountType;
+  label: string;
   control: Control<ConnectionFormData>;
   disabled: boolean;
   onUnlock: () => void;
@@ -40,6 +41,7 @@ type SettingsAccountsPasswordControllerProps = {
 
 export const SettingsAccountsPasswordController = ({
   protocol,
+  label,
   control,
   disabled,
   onUnlock,
@@ -54,7 +56,7 @@ export const SettingsAccountsPasswordController = ({
         <StyledPasswordFieldContainer>
           <SettingsTextInput
             instanceId={`${protocol.toLowerCase()}-password-connection-form`}
-            label={t`${protocol} Password`}
+            label={label}
             placeholder={disabled ? MASKED_PASSWORD_PLACEHOLDER : ''}
             type={disabled ? 'text' : 'password'}
             value={field.value || ''}
