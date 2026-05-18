@@ -2652,11 +2652,6 @@ msgstr "Tilbage til {linkText}"
 msgid "Back to content"
 msgstr "Tilbage til indhold"
 
-#. js-lingui-id: OvBnOM
-#: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
-msgid "Back to Settings"
-msgstr "Tilbage til Indstillinger"
-
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Background"

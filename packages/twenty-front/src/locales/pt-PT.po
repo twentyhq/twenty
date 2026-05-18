@@ -2652,11 +2652,6 @@ msgstr "Voltar a {linkText}"
 msgid "Back to content"
 msgstr "Voltar ao conteúdo"
 
-#. js-lingui-id: OvBnOM
-#: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
-msgid "Back to Settings"
-msgstr "Voltar às Definições"
-
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Background"
