@@ -34,7 +34,7 @@ const hasPlaintextPassword = (params: ImapSmtpCaldavParams): boolean => {
   return false;
 };
 
-@RegisteredInstanceCommand('2.5.0', 1798000010000, { type: 'slow' })
+@RegisteredInstanceCommand('2.6.0', 1798000010000, { type: 'slow' })
 export class EncryptConnectionParametersSlowInstanceCommand
   implements SlowInstanceCommand
 {
