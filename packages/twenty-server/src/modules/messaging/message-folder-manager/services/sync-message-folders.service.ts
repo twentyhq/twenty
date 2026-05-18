@@ -187,7 +187,7 @@ export class SyncMessageFoldersService {
 
         return [...updatedExistingFolders, ...createdFolders];
       },
-      authContext,
+      authContext, { lite: true }
     );
   }
 }

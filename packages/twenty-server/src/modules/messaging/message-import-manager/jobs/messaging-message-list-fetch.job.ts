@@ -101,6 +101,6 @@ export class MessagingMessageListFetchJob {
           workspaceId,
         );
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

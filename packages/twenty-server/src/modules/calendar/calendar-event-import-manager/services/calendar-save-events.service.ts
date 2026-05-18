@@ -312,6 +312,6 @@ export class CalendarSaveEventsService {
           );
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

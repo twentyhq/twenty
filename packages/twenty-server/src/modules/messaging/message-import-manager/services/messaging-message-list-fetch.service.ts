@@ -100,7 +100,7 @@ export class MessagingMessageListFetchService {
           return;
         }
 
-        const { accessToken, refreshToken } =
+        const { accessToken, refreshToken, lastCredentialsRefreshedAt } =
           await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
             {
               connectedAccount: freshMessageChannel.connectedAccount,
@@ -115,6 +115,7 @@ export class MessagingMessageListFetchService {
             ...freshMessageChannel.connectedAccount,
             accessToken,
             refreshToken,
+            lastCredentialsRefreshedAt,
           },
         };
 
@@ -295,7 +296,7 @@ export class MessagingMessageListFetchService {
           workspaceId,
         );
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   private async processPendingGroupEmailActions(

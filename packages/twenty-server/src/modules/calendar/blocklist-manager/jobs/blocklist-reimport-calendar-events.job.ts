@@ -86,6 +86,6 @@ export class BlocklistReimportCalendarEventsJob {
           workspaceId,
         );
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

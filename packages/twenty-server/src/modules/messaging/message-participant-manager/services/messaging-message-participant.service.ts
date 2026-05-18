@@ -31,13 +31,16 @@ export class MessagingMessageParticipantService {
         );
 
       const existingParticipantsBasedOnMessageIds =
-        await messageParticipantRepository.find({
-          where: {
-            messageId: In(
-              participants.map((participant) => participant.messageId),
-            ),
+        await messageParticipantRepository.find(
+          {
+            where: {
+              messageId: In(
+                participants.map((participant) => participant.messageId),
+              ),
+            },
           },
-        });
+          transactionManager,
+        );
 
       const participantsToCreate: Pick<
         MessageParticipantWorkspaceEntity,
@@ -74,6 +77,6 @@ export class MessagingMessageParticipantService {
         matchWith: 'workspaceMemberAndPerson',
         workspaceId,
       });
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

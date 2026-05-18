@@ -57,6 +57,6 @@ export class MessagingCursorService {
           },
         );
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

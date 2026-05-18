@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
-import { type ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+import { type ProviderRefreshedTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { exchangeRefreshTokenForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-refresh-token-for-token.util';
 import { OAuthTokenEndpointError } from 'src/engine/core-modules/application/connection-provider/utils/post-oauth-token-request.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
@@ -27,7 +27,7 @@ export class AppOAuthRefreshAccessTokenService {
   async refreshTokens(
     connectedAccount: ConnectedAccountEntity,
     refreshToken: string,
-  ): Promise<ConnectedAccountTokens> {
+  ): Promise<ProviderRefreshedTokens> {
     if (!isDefined(connectedAccount.connectionProviderId)) {
       throw new ConnectedAccountRefreshAccessTokenException(
         `Connected account ${connectedAccount.id} has no connectionProviderId`,

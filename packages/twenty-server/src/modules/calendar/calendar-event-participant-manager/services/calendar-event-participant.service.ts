@@ -179,6 +179,6 @@ export class CalendarEventParticipantService {
         matchWith: 'workspaceMemberAndPerson',
         workspaceId,
       });
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

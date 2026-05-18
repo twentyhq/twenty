@@ -61,7 +61,7 @@ export class MessageChannelSyncStatusService {
           ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async markAsMessagesImportPending(
@@ -83,7 +83,7 @@ export class MessageChannelSyncStatusService {
           ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async resetAndMarkAsMessagesListFetchPending(
@@ -121,7 +121,7 @@ export class MessageChannelSyncStatusService {
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
 
     await this.markAsMessagesListFetchPending(messageChannelIds, workspaceId);
   }
@@ -141,7 +141,7 @@ export class MessageChannelSyncStatusService {
         { id: In(messageChannelIds), workspaceId },
         { syncStageStartedAt: null },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async markAsMessagesListFetchScheduled(
@@ -163,7 +163,7 @@ export class MessageChannelSyncStatusService {
           syncStageStartedAt: new Date().toISOString(),
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async markAsMessagesListFetchOngoing(
@@ -185,7 +185,7 @@ export class MessageChannelSyncStatusService {
           syncStageStartedAt: new Date().toISOString(),
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async markAsCompletedAndMarkAsMessagesListFetchPending(
@@ -210,7 +210,7 @@ export class MessageChannelSyncStatusService {
           syncedAt: new Date().toISOString(),
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
 
     await this.metricsService.batchIncrementCounter({
       key: MetricsKeys.MessageChannelSyncJobActive,
@@ -235,7 +235,7 @@ export class MessageChannelSyncStatusService {
           syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async markAsMessagesImportOngoing(
@@ -257,7 +257,7 @@ export class MessageChannelSyncStatusService {
           syncStageStartedAt: new Date().toISOString(),
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async markAsFailed(
@@ -316,7 +316,7 @@ export class MessageChannelSyncStatusService {
           workspaceId,
         );
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   private async addToAccountsToReconnect(

@@ -100,7 +100,7 @@ export class MessagingTriggerMessageListFetchCommand extends CommandRunner {
       this.logger.log(
         `Successfully triggered ${messageChannels.length} message list fetch job(s)`,
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   @Option({

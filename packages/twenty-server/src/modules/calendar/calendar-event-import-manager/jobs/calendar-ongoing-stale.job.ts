@@ -84,6 +84,6 @@ export class CalendarOngoingStaleJob {
           }
         }
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

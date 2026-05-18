@@ -8,14 +8,14 @@ import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
-import { type ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+import { type ProviderRefreshedTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { parseGoogleOAuthError } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/utils/parse-google-oauth-error.util';
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  async refreshTokens(refreshToken: string): Promise<ConnectedAccountTokens> {
+  async refreshTokens(refreshToken: string): Promise<ProviderRefreshedTokens> {
     const oAuth2Client = new google.auth.OAuth2(
       this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID'),
       this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_SECRET'),

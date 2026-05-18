@@ -38,6 +38,7 @@ import {
   type CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
@@ -66,6 +67,7 @@ export class GoogleAPIsService {
     private readonly googleAPIScopesService: GoogleAPIScopesService,
     private readonly googleApisServiceAvailabilityService: GoogleApisServiceAvailabilityService,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
+    private readonly emailAliasManagerService: EmailAliasManagerService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -237,6 +239,18 @@ export class GoogleAPIsService {
             }
           },
         );
+
+        const connectedAccountForAliases =
+          await this.connectedAccountRepository.findOne({
+            where: { id: newOrExistingConnectedAccountId, workspaceId },
+          });
+
+        if (isDefined(connectedAccountForAliases)) {
+          await this.emailAliasManagerService.refreshHandleAliases(
+            connectedAccountForAliases,
+            workspaceId,
+          );
+        }
 
         if (
           isMessagingEnabled &&

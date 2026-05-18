@@ -79,7 +79,7 @@ export class MessagingResetChannelCommand extends CommandRunner {
       this.logger.log(
         `Successfully reset all ${messageChannels.length} message channels in workspace ${workspaceId}`,
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   @Option({

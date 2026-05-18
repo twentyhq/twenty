@@ -83,6 +83,6 @@ export class MessagingOngoingStaleJob {
           }
         }
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

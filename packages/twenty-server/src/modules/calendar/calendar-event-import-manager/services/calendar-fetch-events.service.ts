@@ -57,7 +57,7 @@ export class CalendarFetchEventsService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       try {
-        const { accessToken, refreshToken } =
+        const { accessToken, refreshToken, lastCredentialsRefreshedAt } =
           await this.calendarAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
             {
               connectedAccount,
@@ -70,6 +70,7 @@ export class CalendarFetchEventsService {
           ...connectedAccount,
           accessToken,
           refreshToken,
+          lastCredentialsRefreshedAt,
         };
 
         const getCalendarEventsResponse =
@@ -141,6 +142,6 @@ export class CalendarFetchEventsService {
           workspaceId,
         );
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

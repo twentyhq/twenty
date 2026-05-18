@@ -81,13 +81,16 @@ export class MessagingMessageService {
 
         const messageAccumulatorMap = new Map<string, MessageAccumulator>();
 
-        const existingMessagesInDB = await messageRepository.find({
-          where: {
-            headerMessageId: In(
-              messages.map((message) => message.headerMessageId),
-            ),
+        const existingMessagesInDB = await messageRepository.find(
+          {
+            where: {
+              headerMessageId: In(
+                messages.map((message) => message.headerMessageId),
+              ),
+            },
           },
-        });
+          transactionManager,
+        );
 
         const messageChannelMessageAssociationsReferencingMessageThread =
           await messageChannelMessageAssociationRepository.find(
@@ -104,12 +107,15 @@ export class MessagingMessageService {
           );
 
         const existingMessageChannelMessageAssociations =
-          await messageChannelMessageAssociationRepository.find({
-            where: {
-              messageId: In(existingMessagesInDB.map((message) => message.id)),
-              messageChannelId,
+          await messageChannelMessageAssociationRepository.find(
+            {
+              where: {
+                messageId: In(existingMessagesInDB.map((message) => message.id)),
+                messageChannelId,
+              },
             },
-          });
+            transactionManager,
+          );
 
         await this.enrichMessageAccumulatorWithExistingMessages(
           messages,
@@ -310,7 +316,7 @@ export class MessagingMessageService {
           messageExternalIdToMessageChannelMessageAssociationIdMap,
         };
       },
-      authContext,
+      authContext, { lite: true }
     );
   }
 

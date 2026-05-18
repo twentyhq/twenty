@@ -113,7 +113,7 @@ export class MessagingProcessFolderActionsService {
             );
           }
         },
-        authContext,
+        authContext, { lite: true }
       );
     }
   }

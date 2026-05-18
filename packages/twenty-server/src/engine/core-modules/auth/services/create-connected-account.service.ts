@@ -105,6 +105,7 @@ export class CreateConnectedAccountService {
           userWorkspaceId,
           scopes,
           workspaceId,
+          lastCredentialsRefreshedAt: new Date(),
         } as ConnectedAccountEntity);
     }, authContext);
   }

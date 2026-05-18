@@ -74,7 +74,7 @@ export class CalendarEventCleanerService {
           transactionManager,
         );
       });
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async cleanWorkspaceCalendarEvents(workspaceId: string) {
@@ -108,6 +108,6 @@ export class CalendarEventCleanerService {
           await calendarEventRepository.delete({ id: Any(ids) });
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

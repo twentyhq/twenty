@@ -101,7 +101,7 @@ export class InboundEmailImportService {
         connectedAccount,
         workspaceId,
       );
-    }, buildSystemAuthContext(workspaceId));
+    }, buildSystemAuthContext(workspaceId), { lite: true });
 
     await this.inboundEmailStorageService.deleteRawMessage(s3Key);
 

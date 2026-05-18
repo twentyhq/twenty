@@ -56,6 +56,7 @@ export class UpdateConnectedAccountOnReconnectService {
             refreshToken: encryptedRefreshToken,
             scopes,
             authFailedAt: null,
+            lastCredentialsRefreshedAt: new Date(),
           },
         );
     }, authContext);

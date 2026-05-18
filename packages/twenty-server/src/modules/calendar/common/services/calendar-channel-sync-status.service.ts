@@ -54,7 +54,7 @@ export class CalendarChannelSyncStatusService {
           ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async markAsCalendarEventListFetchOngoing(
@@ -76,7 +76,7 @@ export class CalendarChannelSyncStatusService {
           syncStageStartedAt: new Date().toISOString(),
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async resetAndMarkAsCalendarEventListFetchPending(
@@ -104,7 +104,7 @@ export class CalendarChannelSyncStatusService {
           throttleFailureCount: 0,
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
 
     await this.markAsCalendarEventListFetchPending(
       calendarChannelIds,
@@ -129,7 +129,7 @@ export class CalendarChannelSyncStatusService {
           syncStageStartedAt: null,
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async markAsCalendarEventsImportPending(
@@ -151,7 +151,7 @@ export class CalendarChannelSyncStatusService {
           ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async markAsCalendarEventsImportOngoing(
@@ -173,7 +173,7 @@ export class CalendarChannelSyncStatusService {
           syncStageStartedAt: new Date().toISOString(),
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async markAsCompletedAndMarkAsCalendarEventListFetchPending(
@@ -197,7 +197,7 @@ export class CalendarChannelSyncStatusService {
           syncedAt: new Date().toISOString(),
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
 
     await this.markAsCalendarEventListFetchPending(
       calendarChannelIds,
@@ -234,7 +234,7 @@ export class CalendarChannelSyncStatusService {
           syncStage: CalendarChannelSyncStage.FAILED,
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
 
     await this.metricsService.batchIncrementCounter({
       key: MetricsKeys.CalendarEventSyncJobFailedUnknown,
@@ -287,7 +287,7 @@ export class CalendarChannelSyncStatusService {
         calendarChannels.map((calendarChannel) => calendarChannel.id),
         workspaceId,
       );
-    }, authContext);
+    }, authContext, { lite: true });
 
     await this.metricsService.batchIncrementCounter({
       key: MetricsKeys.CalendarEventSyncJobFailedInsufficientPermissions,

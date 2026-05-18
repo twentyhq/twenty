@@ -101,7 +101,7 @@ export class CalendarTriggerEventListFetchCommand extends CommandRunner {
       this.logger.log(
         `Successfully triggered ${calendarChannels.length} calendar event list fetch job(s)`,
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   @Option({
