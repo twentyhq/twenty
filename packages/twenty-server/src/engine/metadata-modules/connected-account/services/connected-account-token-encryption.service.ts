@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import {
   SecretEncryptionException,
   SecretEncryptionExceptionCode,
@@ -123,5 +124,55 @@ export class ConnectedAccountTokenEncryptionService {
     } catch {
       return false;
     }
+  }
+
+  encryptConnectionParameters({
+    connectionParameters,
+    workspaceId,
+  }: {
+    connectionParameters: ImapSmtpCaldavParams;
+    workspaceId: string;
+  }): ImapSmtpCaldavParams {
+    const result: ImapSmtpCaldavParams = {};
+
+    for (const protocol of ['IMAP', 'SMTP', 'CALDAV'] as const) {
+      const params = connectionParameters[protocol];
+
+      if (!isDefined(params)) {
+        continue;
+      }
+
+      result[protocol] = {
+        ...params,
+        password: this.encrypt({ plaintext: params.password, workspaceId }),
+      };
+    }
+
+    return result;
+  }
+
+  decryptConnectionParameters({
+    connectionParameters,
+    workspaceId,
+  }: {
+    connectionParameters: ImapSmtpCaldavParams;
+    workspaceId: string;
+  }): ImapSmtpCaldavParams {
+    const result: ImapSmtpCaldavParams = {};
+
+    for (const protocol of ['IMAP', 'SMTP', 'CALDAV'] as const) {
+      const params = connectionParameters[protocol];
+
+      if (!isDefined(params)) {
+        continue;
+      }
+
+      result[protocol] = {
+        ...params,
+        password: this.decrypt({ ciphertext: params.password, workspaceId }),
+      };
+    }
+
+    return result;
   }
 }

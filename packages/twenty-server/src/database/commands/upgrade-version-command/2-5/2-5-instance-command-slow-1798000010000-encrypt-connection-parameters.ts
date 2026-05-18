@@ -1,0 +1,114 @@
+import { isDefined } from 'twenty-shared/utils';
+import { DataSource, QueryRunner } from 'typeorm';
+
+import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+
+const BACKFILL_BATCH_SIZE = 500;
+
+const CHECK_CONSTRAINT_NAME =
+  'CHK_connectedAccount_connectionParameters_encrypted';
+
+type ConnectionParametersRow = {
+  id: string;
+  workspaceId: string;
+  connectionParameters: ImapSmtpCaldavParams | null;
+};
+
+const hasPlaintextPassword = (params: ImapSmtpCaldavParams): boolean => {
+  for (const protocol of ['IMAP', 'SMTP', 'CALDAV'] as const) {
+    const protocolParams = params[protocol];
+
+    if (
+      isDefined(protocolParams?.password) &&
+      !protocolParams.password.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+@RegisteredInstanceCommand('2.5.0', 1798000010000, { type: 'slow' })
+export class EncryptConnectionParametersSlowInstanceCommand
+  implements SlowInstanceCommand
+{
+  constructor(
+    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
+  ) {}
+
+  async runDataMigration(dataSource: DataSource): Promise<void> {
+    let cursor = '00000000-0000-0000-0000-000000000000';
+
+    while (true) {
+      const rows: ConnectionParametersRow[] = await dataSource.query(
+        `SELECT id, "workspaceId", "connectionParameters"
+           FROM "core"."connectedAccount"
+          WHERE id > $1
+            AND "connectionParameters" IS NOT NULL
+          ORDER BY id
+          LIMIT $2`,
+        [cursor, BACKFILL_BATCH_SIZE],
+      );
+
+      if (rows.length === 0) {
+        break;
+      }
+
+      for (const row of rows) {
+        if (!isDefined(row.connectionParameters)) {
+          continue;
+        }
+
+        if (!hasPlaintextPassword(row.connectionParameters)) {
+          continue;
+        }
+
+        const encrypted =
+          this.connectedAccountTokenEncryptionService.encryptConnectionParameters(
+            {
+              connectionParameters: row.connectionParameters,
+              workspaceId: row.workspaceId,
+            },
+          );
+
+        await dataSource.query(
+          `UPDATE "core"."connectedAccount"
+              SET "connectionParameters" = $2
+            WHERE id = $1`,
+          [row.id, JSON.stringify(encrypted)],
+        );
+      }
+
+      cursor = rows[rows.length - 1].id;
+    }
+  }
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // Validates that all password fields inside the JSONB are encrypted.
+    // Checks each protocol key; if a password exists it must have the enc:v2: prefix.
+    await queryRunner.query(
+      `ALTER TABLE "core"."connectedAccount"
+       ADD CONSTRAINT "${CHECK_CONSTRAINT_NAME}"
+       CHECK (
+         "connectionParameters" IS NULL
+         OR (
+           (("connectionParameters"->'IMAP'->>'password') IS NULL OR ("connectionParameters"->'IMAP'->>'password') LIKE 'enc:v2:%')
+           AND (("connectionParameters"->'SMTP'->>'password') IS NULL OR ("connectionParameters"->'SMTP'->>'password') LIKE 'enc:v2:%')
+           AND (("connectionParameters"->'CALDAV'->>'password') IS NULL OR ("connectionParameters"->'CALDAV'->>'password') LIKE 'enc:v2:%')
+         )
+       )`,
+    );
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."connectedAccount"
+       DROP CONSTRAINT IF EXISTS "${CHECK_CONSTRAINT_NAME}"`,
+    );
+  }
+}

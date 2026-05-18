@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
@@ -20,12 +21,13 @@ export class CalDavGetEventsService {
   constructor(
     private readonly clientService: CalDavClientService,
     private readonly fetchEventsService: CalDavFetchEventsService,
+    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
   async getCalendarEvents(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'provider' | 'id' | 'connectionParameters' | 'handle'
+      'provider' | 'id' | 'connectionParameters' | 'handle' | 'workspaceId'
     >,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {
@@ -42,10 +44,16 @@ export class CalDavGetEventsService {
         throw new Error('Missing required CalDAV connection parameters');
       }
 
+      const decryptedPassword =
+        this.connectedAccountTokenEncryptionService.decrypt({
+          ciphertext: params.password,
+          workspaceId: connectedAccount.workspaceId,
+        });
+
       const client = await this.clientService.getClient({
         serverUrl: params.host,
         username: params.username ?? connectedAccount.handle,
-        password: params.password,
+        password: decryptedPassword,
       });
 
       const startDate = new Date(

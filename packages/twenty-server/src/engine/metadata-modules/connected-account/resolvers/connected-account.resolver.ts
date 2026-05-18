@@ -24,12 +24,12 @@ export class ConnectedAccountResolver {
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
-  @Query(() => [ConnectedAccountDTO])
+  @Query(() => [ConnectedAccountPublicDTO])
   @UseGuards(NoPermissionGuard)
   async myConnectedAccounts(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<ConnectedAccountDTO[]> {
+  ): Promise<ConnectedAccountPublicDTO[]> {
     return this.connectedAccountMetadataService.findByUserWorkspaceId({
       userWorkspaceId,
       workspaceId: workspace.id,
@@ -56,13 +56,13 @@ export class ConnectedAccountResolver {
     return this.connectedAccountMetadataService.findAll(workspace.id);
   }
 
-  @Mutation(() => ConnectedAccountDTO)
+  @Mutation(() => ConnectedAccountPublicDTO)
   @UseGuards(NoPermissionGuard)
   async deleteConnectedAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<ConnectedAccountDTO> {
+  ): Promise<ConnectedAccountPublicDTO> {
     await this.connectedAccountMetadataService.verifyOwnership({
       id,
       userWorkspaceId,

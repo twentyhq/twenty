@@ -20,6 +20,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
@@ -61,6 +62,7 @@ export class ImapSmtpCalDavAPIService {
     private readonly accountsToReconnectService: AccountsToReconnectService,
     private readonly messagingChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
+    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
   async getImapSmtpCaldavConnectedAccount(
@@ -170,13 +172,21 @@ export class ImapSmtpCalDavAPIService {
 
         await this.connectedAccountRepository.manager.transaction(
           async (transactionManager: EntityManager) => {
+            const encryptedConnectionParameters =
+              this.connectedAccountTokenEncryptionService.encryptConnectionParameters(
+                {
+                  connectionParameters: input.connectionParameters,
+                  workspaceId,
+                },
+              );
+
             await transactionManager
               .getRepository(ConnectedAccountEntity)
               .save({
                 id: newOrExistingAccountId,
                 handle,
                 provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-                connectionParameters: input.connectionParameters,
+                connectionParameters: encryptedConnectionParameters,
                 userWorkspaceId,
                 workspaceId,
                 authFailedAt: null,

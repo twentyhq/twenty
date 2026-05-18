@@ -55,8 +55,7 @@ export class ConnectedAccountDTO {
   @Field(() => [String], { nullable: true })
   scopes: string[] | null;
 
-  @IsOptional()
-  @Field(() => ImapSmtpCaldavConnectionParametersDTO, { nullable: true })
+  @HideField()
   connectionParameters: ImapSmtpCaldavConnectionParametersDTO | null;
 
   @IsDateString()
