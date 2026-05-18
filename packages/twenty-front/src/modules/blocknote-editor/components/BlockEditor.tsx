@@ -1,8 +1,12 @@
-import { filterSuggestionItems } from '@blocknote/core/extensions';
+import {
+  filterSuggestionItems,
+  SuggestionMenu,
+} from '@blocknote/core/extensions';
 import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
+import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
-import { type ClipboardEvent, useContext } from 'react';
+import { type ClipboardEvent, useContext, useRef } from 'react';
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
 import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
@@ -12,6 +16,7 @@ import {
   type SuggestionItem,
 } from '@/blocknote-editor/components/CustomSlashMenu';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
+import { IconX } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 interface BlockEditorProps {
@@ -149,9 +154,37 @@ export const BlockEditor = ({
   readonly,
 }: BlockEditorProps) => {
   const { colorScheme } = useContext(ThemeContext);
+  const { t } = useLingui();
 
   const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
   const getMentionItems = useMentionMenu(editor);
+
+  const lastSlashCommandQueryLengthRef = useRef(0);
+
+  const getSlashMenuItems = async (query: string) => {
+    const filtered = filterSuggestionItems<SuggestionItem>(
+      getSlashMenu(editor),
+      query,
+    );
+
+    if (filtered.length > 0) {
+      lastSlashCommandQueryLengthRef.current = query.length;
+      return filtered;
+    }
+
+    if (query.length - lastSlashCommandQueryLengthRef.current > 3) {
+      editor.getExtension(SuggestionMenu)?.closeMenu();
+      return [];
+    }
+
+    return [
+      {
+        title: t`Close menu`,
+        Icon: IconX,
+        onItemClick: () => editor.getExtension(SuggestionMenu)?.closeMenu(),
+      },
+    ];
+  };
 
   const handleFocus = () => {
     onFocus?.();
@@ -185,9 +218,7 @@ export const BlockEditor = ({
         <CustomSideMenu editor={editor} />
         <SuggestionMenuController
           triggerCharacter="/"
-          getItems={async (query) =>
-            filterSuggestionItems<SuggestionItem>(getSlashMenu(editor), query)
-          }
+          getItems={getSlashMenuItems}
           suggestionMenuComponent={CustomSlashMenu}
         />
         <SuggestionMenuController
