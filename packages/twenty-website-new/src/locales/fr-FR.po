@@ -161,6 +161,11 @@ msgstr ""
 msgid "2,000+"
 msgstr ""
 
+#. js-lingui-id: oadHWW
+#: src/app/[locale]/pricing/plan-table.data.ts
+msgid "200 per minute"
+msgstr ""
+
 #. js-lingui-id: FKcV/y
 #: src/lib/customers/case-study-catalog.ts
 #: src/lib/customers/case-study-catalog.ts
@@ -201,21 +206,6 @@ msgstr ""
 #: src/lib/customers/case-study-catalog.ts
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
 msgid "4 tools"
-msgstr ""
-
-#. js-lingui-id: 2ScEtE
-#: src/sections/Plans/data.ts
-msgid "5 workflow credits/month included"
-msgstr ""
-
-#. js-lingui-id: Z2TH0F
-#: src/app/[locale]/pricing/plan-table.data.ts
-msgid "50 per minute"
-msgstr ""
-
-#. js-lingui-id: CiRGZ8
-#: src/sections/Plans/data.ts
-msgid "50 workflow credits/year included"
 msgstr ""
 
 #. js-lingui-id: tZvajW
@@ -394,6 +384,11 @@ msgstr ""
 #. js-lingui-id: TeMRC2
 #: src/app/[locale]/customers/netzero/page.tsx
 msgid "advanced"
+msgstr ""
+
+#. js-lingui-id: cBdysG
+#: src/app/[locale]/pricing/plan-table.data.ts
+msgid "Advanced Encryption"
 msgstr ""
 
 #. js-lingui-id: /C6Pwb
@@ -1081,7 +1076,6 @@ msgid "CSV import flow"
 msgstr ""
 
 #. js-lingui-id: lh6aPn
-#: src/sections/Plans/data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Custom AI models"
 msgstr ""
@@ -1099,12 +1093,6 @@ msgstr ""
 #. js-lingui-id: L+b7SB
 #: src/app/[locale]/product/feature.data.ts
 msgid "Custom deal stages, drag-and-drop boards, and real-time tracking so your pipeline reflects reality."
-msgstr ""
-
-#. js-lingui-id: GAD3Dx
-#: src/sections/Plans/data.ts
-#: src/sections/Plans/data.ts
-msgid "Custom domain"
 msgstr ""
 
 #. js-lingui-id: Vz1Vq2
@@ -1309,11 +1297,6 @@ msgstr ""
 #. js-lingui-id: Qpn/bX
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Encrypt your data"
-msgstr ""
-
-#. js-lingui-id: Iy8Gze
-#: src/app/[locale]/pricing/plan-table.data.ts
-msgid "Encryption key rotation"
 msgstr ""
 
 #. js-lingui-id: Ijh+h+
@@ -2153,6 +2136,11 @@ msgstr ""
 msgid "No more renting someone else's structure"
 msgstr ""
 
+#. js-lingui-id: K1QTmg
+#: src/sections/Plans/data.ts
+msgid "No open-source distribution requirement"
+msgstr ""
+
 #. js-lingui-id: q9f4Tp
 #: src/lib/customers/case-study-catalog.ts
 #: src/app/[locale]/customers/netzero/page.tsx
@@ -2584,10 +2572,14 @@ msgstr ""
 msgid "Roadmap"
 msgstr ""
 
+#. js-lingui-id: C77N5M
+#: src/sections/Plans/data.ts
+#: src/sections/Plans/data.ts
+#: src/sections/Plans/data.ts
+msgid "Roles & Permissions"
+msgstr ""
+
 #. js-lingui-id: Wdh41P
-#: src/sections/Plans/data.ts
-#: src/sections/Plans/data.ts
-#: src/sections/Plans/data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Row-level permissions"
 msgstr ""
@@ -3396,9 +3388,14 @@ msgstr ""
 msgid "Unlimited"
 msgstr ""
 
-#. js-lingui-id: aGpTSC
+#. js-lingui-id: LF0tzk
 #: src/sections/Plans/data.ts
-msgid "Up to 5 workspaces"
+msgid "Up to 50M automation credits/year"
+msgstr ""
+
+#. js-lingui-id: RDRePw
+#: src/sections/Plans/data.ts
+msgid "Up to 5M automation credits/month"
 msgstr ""
 
 #. js-lingui-id: 2vanwz
@@ -3674,6 +3671,7 @@ msgstr ""
 
 #. js-lingui-id: l75CjT
 #: src/sections/PlanTable/components/Content.tsx
+#: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts

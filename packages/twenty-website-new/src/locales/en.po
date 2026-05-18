@@ -171,6 +171,11 @@ msgstr "2 years contract"
 msgid "2,000+"
 msgstr "2,000+"
 
+#. js-lingui-id: oadHWW
+#: src/app/[locale]/pricing/plan-table.data.ts
+msgid "200 per minute"
+msgstr "200 per minute"
+
 #. js-lingui-id: FKcV/y
 #: src/lib/customers/case-study-catalog.ts
 #: src/lib/customers/case-study-catalog.ts
@@ -214,21 +219,6 @@ msgstr "30+"
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
 msgid "4 tools"
 msgstr "4 tools"
-
-#. js-lingui-id: 2ScEtE
-#: src/sections/Plans/data.ts
-msgid "5 workflow credits/month included"
-msgstr "5 workflow credits/month included"
-
-#. js-lingui-id: Z2TH0F
-#: src/app/[locale]/pricing/plan-table.data.ts
-msgid "50 per minute"
-msgstr "50 per minute"
-
-#. js-lingui-id: CiRGZ8
-#: src/sections/Plans/data.ts
-msgid "50 workflow credits/year included"
-msgstr "50 workflow credits/year included"
 
 #. js-lingui-id: tZvajW
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -407,6 +397,11 @@ msgstr "Adoption"
 #: src/app/[locale]/customers/netzero/page.tsx
 msgid "advanced"
 msgstr "advanced"
+
+#. js-lingui-id: cBdysG
+#: src/app/[locale]/pricing/plan-table.data.ts
+msgid "Advanced Encryption"
+msgstr "Advanced Encryption"
 
 #. js-lingui-id: /C6Pwb
 #: src/app/[locale]/product/feature.data.ts
@@ -1093,7 +1088,6 @@ msgid "CSV import flow"
 msgstr "CSV import flow"
 
 #. js-lingui-id: lh6aPn
-#: src/sections/Plans/data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Custom AI models"
 msgstr "Custom AI models"
@@ -1112,12 +1106,6 @@ msgstr "Custom deal stages for your process"
 #: src/app/[locale]/product/feature.data.ts
 msgid "Custom deal stages, drag-and-drop boards, and real-time tracking so your pipeline reflects reality."
 msgstr "Custom deal stages, drag-and-drop boards, and real-time tracking so your pipeline reflects reality."
-
-#. js-lingui-id: GAD3Dx
-#: src/sections/Plans/data.ts
-#: src/sections/Plans/data.ts
-msgid "Custom domain"
-msgstr "Custom domain"
 
 #. js-lingui-id: Vz1Vq2
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -1324,11 +1312,6 @@ msgstr "Emails and events linked to CRM records"
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Encrypt your data"
 msgstr "Encrypt your data"
-
-#. js-lingui-id: Iy8Gze
-#: src/app/[locale]/pricing/plan-table.data.ts
-msgid "Encryption key rotation"
-msgstr "Encryption key rotation"
 
 #. js-lingui-id: Ijh+h+
 #: src/app/[locale]/(home)/page.tsx
@@ -2173,6 +2156,11 @@ msgstr "No more renting someone else's"
 msgid "No more renting someone else's structure"
 msgstr "No more renting someone else's structure"
 
+#. js-lingui-id: K1QTmg
+#: src/sections/Plans/data.ts
+msgid "No open-source distribution requirement"
+msgstr "No open-source distribution requirement"
+
 #. js-lingui-id: q9f4Tp
 #: src/lib/customers/case-study-catalog.ts
 #: src/app/[locale]/customers/netzero/page.tsx
@@ -2606,10 +2594,14 @@ msgstr "Rich notes attached to records"
 msgid "Roadmap"
 msgstr "Roadmap"
 
+#. js-lingui-id: C77N5M
+#: src/sections/Plans/data.ts
+#: src/sections/Plans/data.ts
+#: src/sections/Plans/data.ts
+msgid "Roles & Permissions"
+msgstr "Roles & Permissions"
+
 #. js-lingui-id: Wdh41P
-#: src/sections/Plans/data.ts
-#: src/sections/Plans/data.ts
-#: src/sections/Plans/data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Row-level permissions"
 msgstr "Row-level permissions"
@@ -3420,10 +3412,15 @@ msgstr "Unified timeline (emails, events, tasks, notes, files)"
 msgid "Unlimited"
 msgstr "Unlimited"
 
-#. js-lingui-id: aGpTSC
+#. js-lingui-id: LF0tzk
 #: src/sections/Plans/data.ts
-msgid "Up to 5 workspaces"
-msgstr "Up to 5 workspaces"
+msgid "Up to 50M automation credits/year"
+msgstr "Up to 50M automation credits/year"
+
+#. js-lingui-id: RDRePw
+#: src/sections/Plans/data.ts
+msgid "Up to 5M automation credits/month"
+msgstr "Up to 5M automation credits/month"
 
 #. js-lingui-id: 2vanwz
 #: src/app/[locale]/product/feature.data.ts
@@ -3698,6 +3695,7 @@ msgstr "Yearly"
 
 #. js-lingui-id: l75CjT
 #: src/sections/PlanTable/components/Content.tsx
+#: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
