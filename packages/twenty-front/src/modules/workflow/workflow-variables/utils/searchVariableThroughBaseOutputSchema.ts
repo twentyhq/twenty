@@ -1,4 +1,5 @@
 import { type VariableSearchResult } from '@/workflow/workflow-variables/hooks/useSearchVariable';
+import { reportInvalidVariableSchemaTraversal } from '@/workflow/workflow-variables/utils/reportInvalidVariableSchemaTraversal';
 import { isDefined } from 'twenty-shared/utils';
 import {
   CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
@@ -26,10 +27,17 @@ const parseVariableName = (rawVariableName: string) => {
   };
 };
 
-const navigateToTargetField = (
-  startingSchema: BaseOutputSchemaV2,
-  pathSegments: string[],
-): { schema: BaseOutputSchemaV2; pathLabels: string[] } | null => {
+const navigateToTargetField = ({
+  startingSchema,
+  pathSegments,
+  stepName,
+  rawVariableName,
+}: {
+  startingSchema: BaseOutputSchemaV2;
+  pathSegments: string[];
+  stepName: string;
+  rawVariableName: string;
+}): { schema: BaseOutputSchemaV2; pathLabels: string[] } | null => {
   let currentSchema: BaseOutputSchemaV2 = startingSchema;
   const pathLabels: string[] = [];
 
@@ -37,6 +45,20 @@ const navigateToTargetField = (
     const field = currentSchema[pathSegment];
 
     if (!isDefined(field) || field.isLeaf === true) {
+      return null;
+    }
+
+    if (
+      !isDefined(field.value) ||
+      typeof field.value !== 'object' ||
+      Array.isArray(field.value)
+    ) {
+      reportInvalidVariableSchemaTraversal({
+        stepName,
+        rawVariableName,
+        pathSegment,
+      });
+
       return null;
     }
 
@@ -78,13 +100,21 @@ export const searchBaseOutputSchema = ({
   baseOutputSchema,
   path,
   selectedField,
+  rawVariableName,
 }: {
   stepName: string;
   baseOutputSchema: BaseOutputSchemaV2;
   path: string[];
   selectedField: string;
+  rawVariableName?: string;
 }): VariableSearchResult => {
-  const navigationResult = navigateToTargetField(baseOutputSchema, path);
+  const navigationResult = navigateToTargetField({
+    startingSchema: baseOutputSchema,
+    pathSegments: path,
+    stepName,
+    rawVariableName:
+      rawVariableName ?? `${stepName}.${path.join('.')}.${selectedField}`,
+  });
 
   if (!navigationResult) {
     return {
@@ -137,10 +167,25 @@ export const searchVariableThroughBaseOutputSchema = ({
     };
   }
 
-  return searchBaseOutputSchema({
+  const navigationResult = navigateToTargetField({
+    startingSchema: baseOutputSchema,
+    pathSegments,
     stepName,
-    baseOutputSchema,
-    path: pathSegments,
-    selectedField: targetFieldName,
+    rawVariableName,
   });
+
+  if (!navigationResult) {
+    return {
+      variableLabel: undefined,
+      variablePathLabel: undefined,
+      variableType: undefined,
+    };
+  }
+
+  return buildVariableResult(
+    stepName,
+    navigationResult.pathLabels,
+    navigationResult.schema,
+    targetFieldName,
+  );
 };

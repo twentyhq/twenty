@@ -1,7 +1,19 @@
 import { searchVariableThroughBaseOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughBaseOutputSchema';
+import { reportInvalidVariableSchemaTraversal } from '@/workflow/workflow-variables/utils/reportInvalidVariableSchemaTraversal';
 import type { BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 
+jest.mock(
+  '@/workflow/workflow-variables/utils/reportInvalidVariableSchemaTraversal',
+  () => ({
+    reportInvalidVariableSchemaTraversal: jest.fn(),
+  }),
+);
+
 describe('searchVariableThroughBaseOutputSchema', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   const mockBaseSchema: BaseOutputSchemaV2 = {
     message: {
       isLeaf: true,
@@ -326,6 +338,34 @@ describe('searchVariableThroughBaseOutputSchema', () => {
       variableLabel: 'Unknown Data',
       variablePathLabel: 'AI Agent > Unknown Data',
       variableType: 'unknown',
+    });
+  });
+
+  it('should return undefined and report malformed nested schema nodes', () => {
+    const malformedSchema: BaseOutputSchemaV2 = {
+      user: {
+        isLeaf: false,
+        type: 'object',
+        label: 'User Information',
+        value: undefined as unknown as BaseOutputSchemaV2,
+      },
+    };
+
+    const result = searchVariableThroughBaseOutputSchema({
+      stepName: 'HTTP Request',
+      baseOutputSchema: malformedSchema,
+      rawVariableName: '{{step1.user.phone}}',
+    });
+
+    expect(result).toEqual({
+      variableLabel: undefined,
+      variablePathLabel: undefined,
+      variableType: undefined,
+    });
+    expect(reportInvalidVariableSchemaTraversal).toHaveBeenCalledWith({
+      stepName: 'HTTP Request',
+      rawVariableName: '{{step1.user.phone}}',
+      pathSegment: 'user',
     });
   });
 });

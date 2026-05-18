@@ -109,6 +109,7 @@ export const searchVariableThroughIteratorOutputSchema = ({
         baseOutputSchema: schema,
         path: pathSegments,
         selectedField: fieldName,
+        rawVariableName,
       });
     }
 
