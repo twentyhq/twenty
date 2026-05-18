@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { StyledContentContainer } from '@/auth/sign-in-up/components/internal/SignInUpContentContainerStyles';
+import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
 
@@ -18,7 +18,7 @@ export const SignInUpSSOIdentityProviderSelection = () => {
 
   return (
     <>
-      <StyledContentContainer>
+      <StyledOnboardingContentContainer>
         {isDefined(workspaceAuthProviders?.sso) &&
           workspaceAuthProviders?.sso.map((idp) => (
             <React.Fragment key={idp.id}>
@@ -31,7 +31,7 @@ export const SignInUpSSOIdentityProviderSelection = () => {
               <HorizontalSeparator visible={false} />
             </React.Fragment>
           ))}
-      </StyledContentContainer>
+      </StyledOnboardingContentContainer>
     </>
   );
 };

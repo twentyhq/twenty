@@ -2,8 +2,8 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
-import { StyledContentContainer } from '@/auth/sign-in-up/components/internal/SignInUpContentContainerStyles';
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
@@ -224,7 +224,7 @@ export const PasswordReset = () => {
             />
           </AnimatedEaseIn>
           <Title animate>{passwordActionLabel}</Title>
-          <StyledContentContainer>
+          <StyledOnboardingContentContainer>
             {!email ? (
               <SkeletonTheme
                 baseColor={theme.background.quaternary}
@@ -306,7 +306,7 @@ export const PasswordReset = () => {
                 </StyledMainButtonContainer>
               </StyledForm>
             )}
-          </StyledContentContainer>
+          </StyledOnboardingContentContainer>
         </StyledMainContainer>
       </ModalContent>
     )

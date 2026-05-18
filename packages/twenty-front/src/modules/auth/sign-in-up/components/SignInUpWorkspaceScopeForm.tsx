@@ -1,4 +1,4 @@
-import { StyledContentContainer } from '@/auth/sign-in-up/components/internal/SignInUpContentContainerStyles';
+import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
@@ -43,7 +43,7 @@ export const SignInUpWorkspaceScopeForm = () => {
 
   return (
     <>
-      <StyledContentContainer>
+      <StyledOnboardingContentContainer>
         {providers.google && <SignInUpWithGoogle action="join-workspace" />}
 
         {providers.microsoft && (
@@ -64,7 +64,7 @@ export const SignInUpWorkspaceScopeForm = () => {
             <SignInUpWithCredentials />
           </FormProvider>
         )}
-      </StyledContentContainer>
+      </StyledOnboardingContentContainer>
       {signInUpStep === SignInUpStep.Password && (
         <ClickToActionLink
           onClick={handleResetPassword(form.getValues('email'))}
