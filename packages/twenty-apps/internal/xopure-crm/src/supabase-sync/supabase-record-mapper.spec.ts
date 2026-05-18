@@ -133,6 +133,7 @@ describe('mapSupabaseRecord', () => {
         refund_amount_cents: 0,
         total_cents: 11075,
         payment_status: 'paid',
+        fulfillment_status: 'paid',
         affiliate_chain: ['ambassador-1'],
         cv_amount: 70,
         gateway_payload: { secret: 'redacted' },
@@ -173,6 +174,7 @@ describe('mapSupabaseRecord', () => {
       refundCents: 0,
       totalCents: 11075,
       status: 'PAID',
+      paymentStatus: 'PAID',
     });
     expect(order.record.fieldValues).not.toHaveProperty('orderTotal');
     expect(order.record.fieldValues).not.toHaveProperty('gateway_payload');

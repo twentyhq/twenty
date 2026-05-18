@@ -257,20 +257,33 @@ const mapProfile = (record: Record<string, unknown>) =>
 const mapOrderRelations = (
   record: Record<string, unknown>,
 ): RelationReference[] => {
+  const relations: RelationReference[] = [];
   const customerId = stringValue(record.customer_id);
+  const ambassadorId = getFirstAffiliateId(record);
 
-  return customerId
-    ? [
-        {
-          fieldName: 'customer',
-          relationIdFieldName: 'customerId',
-          targetObject: 'xopureCustomer',
-          externalIdField: 'supabaseCustomerId',
-          externalIdValue: customerId,
-          required: false,
-        },
-      ]
-    : [];
+  if (customerId) {
+    relations.push({
+      fieldName: 'customer',
+      relationIdFieldName: 'customerId',
+      targetObject: 'xopureCustomer',
+      externalIdField: 'supabaseCustomerId',
+      externalIdValue: customerId,
+      required: false,
+    });
+  }
+
+  if (ambassadorId) {
+    relations.push({
+      fieldName: 'ambassador',
+      relationIdFieldName: 'ambassadorId',
+      targetObject: 'xopureAmbassador',
+      externalIdField: 'supabaseAmbassadorId',
+      externalIdValue: ambassadorId,
+      required: false,
+    });
+  }
+
+  return relations;
 };
 
 const getFirstAffiliateId = (record: Record<string, unknown>): string | undefined => {
@@ -290,7 +303,7 @@ const mapOrder = (record: Record<string, unknown>) =>
     orderNumber: stringValue(record.id),
     supabaseOrderId: stringValue(record.id),
     commerceOrderId: stringValue(record.commerce_order_id),
-    status: mapOrderStatus(record.payment_status),
+    status: mapOrderStatus(record.fulfillment_status),
     subtotalCents: integerValue(record.subtotal_cents) ?? 0,
     shippingCents: integerValue(record.shipping_cents) ?? 0,
     taxCents: integerValue(record.tax_cents) ?? 0,
@@ -299,12 +312,13 @@ const mapOrder = (record: Record<string, unknown>) =>
     totalCents:
       integerValue(record.total_cents) ?? integerValue(record.subtotal_cents) ?? 0,
     currency: stringValue(record.currency) ?? 'USD',
-    paymentStatus: mapOrderStatus(record.payment_status),
+    paymentStatus: normalizeToken(record.payment_status) ?? 'UNKNOWN',
     orderedAt: isoDateValue(record.created_at),
     customerExternalId:
       stringValue(record.customer_id) ?? stringValue(record.user_email),
     customerEmail: stringValue(record.user_email),
     ambassadorCode: getFirstAffiliateId(record),
+    ambassadorExternalId: getFirstAffiliateId(record),
     commissionable: (integerValue(record.cv_amount) ?? 0) > 0,
     cvAmount: integerValue(record.cv_amount) ?? 0,
     buyerType: stringValue(record.buyer_type),

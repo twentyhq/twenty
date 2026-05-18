@@ -68,6 +68,7 @@ export default defineObject({
     { universalIdentifier: 'b8c9d0e1-f2a3-4b4c-5d6e-7f80912a3b4c', type: FieldType.TEXT, name: 'trackingUrl', label: 'Tracking URL', icon: 'IconLink' },
     { universalIdentifier: 'c9d0e1f2-a3b4-4c5d-6e7f-80912a3b4c5d', type: FieldType.DATE_TIME, name: 'shippedAt', label: 'Shipped at', icon: 'IconTruckDelivery', isNullable: true, defaultValue: null },
     { universalIdentifier: 'd0e1f2a3-b4c5-4d6e-7f80-912a3b4c5d6e', type: FieldType.DATE_TIME, name: 'deliveredAt', label: 'Delivered at', icon: 'IconPackageImport', isNullable: true, defaultValue: null },
+    { universalIdentifier: 'f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c', type: FieldType.TEXT, name: 'ambassadorExternalId', label: 'Ambassador external ID', icon: 'IconUserStar' },
     { universalIdentifier: '33a7596d-3378-4a3e-982d-23d1fa7e07e5', type: FieldType.DATE_TIME, name: 'lastSyncedAt', label: 'Last synced at', icon: 'IconRefresh', isNullable: true, defaultValue: null },
   ],
 });
