@@ -6,6 +6,7 @@ import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
 import { DEFAULT_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultRecordPageLayoutId';
 import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/PageLayoutLeftPanelContainerWidth';
+import { WIDGET_TYPE_TO_RELATION_FIELD_NAME } from '@/page-layout/constants/WidgetTypeToRelationFieldName';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutAddTabStrategy } from '@/page-layout/hooks/usePageLayoutAddTabStrategy';
@@ -80,15 +81,19 @@ export const PageLayoutTabsRenderer = () => {
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  const inactiveRelationTabs = useMemo(() => {
+  const inactiveRelationFieldNames = useMemo(() => {
     if (!isDefined(objectMetadataItem)) {
-      return [];
+      return new Set<string>();
     }
-    return objectMetadataItem.fields.filter(
-      (field) =>
-        !field.isActive &&
-        (field.type === FieldMetadataType.RELATION ||
-          field.type === FieldMetadataType.MORPH_RELATION),
+    return new Set(
+      objectMetadataItem.fields
+        .filter(
+          (field) =>
+            !field.isActive &&
+            (field.type === FieldMetadataType.RELATION ||
+              field.type === FieldMetadataType.MORPH_RELATION),
+        )
+        .map((field) => field.name),
     );
   }, [objectMetadataItem]);
 
@@ -139,12 +144,18 @@ export const PageLayoutTabsRenderer = () => {
 
   const sortedActiveTabs = useMemo(
     () =>
-      sortedTabs.filter((tab) =>
-        inactiveRelationTabs.every(
-          (inactiveField) => inactiveField.label !== tab.title,
-        ),
-      ),
-    [sortedTabs, inactiveRelationTabs],
+      sortedTabs.filter((tab) => {
+        const widgetTypes = tab.widgets.map((widget) => widget.type);
+        return !widgetTypes.some((widgetType) => {
+          const relationFieldName =
+            WIDGET_TYPE_TO_RELATION_FIELD_NAME[widgetType];
+          return (
+            isDefined(relationFieldName) &&
+            inactiveRelationFieldNames.has(relationFieldName)
+          );
+        });
+      }),
+    [sortedTabs, inactiveRelationFieldNames],
   );
 
   const activeTabExistsInCurrentPageLayout = currentPageLayout.tabs.some(
@@ -166,9 +177,9 @@ export const PageLayoutTabsRenderer = () => {
             undefined
           }
         />
-        {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (
+        {(sortedActiveTabs.length > 1 || isPageLayoutInEditMode) && (
           <PageLayoutTabList
-            tabs={sortedTabs}
+            tabs={sortedActiveTabs}
             behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
             isInSidePanel={isInSidePanel}
             componentInstanceId={tabListInstanceId}
