@@ -131,6 +131,20 @@ const mapOrderStatus = (value: unknown): string => {
   }
 };
 
+const mapFulfillmentStatus = (value: unknown): string => {
+  const normalized = normalizeToken(value);
+  switch (normalized) {
+    case 'READY':
+      return 'READY';
+    case 'SYNCED':
+      return 'SYNCED';
+    case 'SHIPPED':
+      return 'SHIPPED';
+    default:
+      return 'NOT_READY';
+  }
+};
+
 const mapCommissionStatus = (value: unknown): string => {
   const normalized = normalizeToken(value);
 
@@ -200,6 +214,13 @@ const mapAmbassador = (record: Record<string, unknown>) =>
     attributedRevenueCents: integerValue(record.team_volume_cents) ?? 0,
     totalCommissionEarnedCents: 0,
     researchSummary: stringValue(record.reason),
+    phone: stringValue(record.phone),
+    showPeptidesLink: booleanValue(record.show_peptides_link) ?? false,
+    heldCommissionCents: integerValue(record.held_commission_cents) ?? 0,
+    payableCommissionCents: integerValue(record.payable_commission_cents) ?? 0,
+    paidCommissionCents: integerValue(record.paid_commission_cents) ?? 0,
+    lifetimeCommissionCents: integerValue(record.lifetime_commission_cents) ?? integerValue(record.total_commission_earned_cents) ?? 0,
+    lastCommissionAt: isoDateValue(record.last_commission_at),
   });
 
 const mapCustomerExpertise = (record: Record<string, unknown>) =>
@@ -227,6 +248,9 @@ const mapProfile = (record: Record<string, unknown>) =>
     },
     emails: stringValue(record.email)
       ? { primaryEmail: stringValue(record.email), additionalEmails: [] }
+      : undefined,
+    phones: stringValue(record.phone)
+      ? { primaryPhoneNumber: stringValue(record.phone), additionalPhones: [] }
       : undefined,
   });
 
@@ -284,6 +308,13 @@ const mapOrder = (record: Record<string, unknown>) =>
     commissionable: (integerValue(record.cv_amount) ?? 0) > 0,
     cvAmount: integerValue(record.cv_amount) ?? 0,
     buyerType: stringValue(record.buyer_type),
+    fulfillmentStatus: mapFulfillmentStatus(record.fulfillment_status),
+    paymentMethodCode: stringValue(record.payment_method_code),
+    manualReviewRequired: booleanValue(record.manual_review_required) ?? false,
+    trackingNumber: stringValue(record.tracking_number),
+    trackingUrl: stringValue(record.tracking_url),
+    shippedAt: isoDateValue(record.shipped_at),
+    deliveredAt: isoDateValue(record.delivered_at),
   });
 
 const mapOrderItemRelations = (
@@ -383,6 +414,8 @@ const mapCommission = (record: Record<string, unknown>) =>
     holdUntil: isoDateValue(record.hold_until),
     paidAt: isoDateValue(record.paid_at),
     baseCvAmount: integerValue(record.base_cv_amount) ?? 0,
+    sourceOrderId: stringValue(record.source_order_id) ?? stringValue(record.order_id),
+    payableAt: isoDateValue(record.payable_at),
   });
 
 const mapFieldValues = (

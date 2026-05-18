@@ -74,11 +74,26 @@ export const SOURCE_TABLE_MAPPINGS: Record<
   },
 };
 
+export const TABLE_ALIASES: Record<string, SupportedSourceTable> = {
+  order: 'orders',
+  product: 'products',
+  ambassador: 'affiliates',
+  commission: 'commission_ledger',
+  order_item: 'order_items',
+  customer: 'customer_expertise',
+  profile: 'profiles',
+};
+
 export const getSourceTableMapping = (
   sourceTable: string,
 ): SourceTableMapping | null => {
   if (sourceTable in SOURCE_TABLE_MAPPINGS) {
     return SOURCE_TABLE_MAPPINGS[sourceTable as SupportedSourceTable];
+  }
+
+  const alias = TABLE_ALIASES[sourceTable];
+  if (alias) {
+    return SOURCE_TABLE_MAPPINGS[alias];
   }
 
   return null;

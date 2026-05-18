@@ -64,6 +64,13 @@ export default defineObject({
     { universalIdentifier: 'a38232d0-4679-46f5-950a-6d6000ed7221', type: FieldType.NUMBER, name: 'totalCommissionEarned', label: 'Commission earned', icon: 'IconCash', defaultValue: 0 },
     { universalIdentifier: '73d022ed-8ebd-4b1f-8a5a-aa5fd8a1c460', type: FieldType.NUMBER, name: 'totalCommissionEarnedCents', label: 'Commission earned cents', icon: 'IconCash', defaultValue: 0 },
     { universalIdentifier: '0de23b2b-a89b-4180-96e5-5c70cb6c6c5b', type: FieldType.TEXT, name: 'researchSummary', label: 'Research summary', icon: 'IconNotes' },
+    { universalIdentifier: 'bf54769b-50f0-415f-a5ef-d254b7418bc6', type: FieldType.TEXT, name: 'phone', label: 'Phone', icon: 'IconPhone' },
+    { universalIdentifier: '1f565efd-9c3d-4895-8665-4c8b2946f728', type: FieldType.BOOLEAN, name: 'showPeptidesLink', label: 'Show peptides link', icon: 'IconExternalLink', defaultValue: false },
+    { universalIdentifier: '84184496-3f6e-40ad-9f64-7051578c685e', type: FieldType.NUMBER, name: 'heldCommissionCents', label: 'Held commission cents', icon: 'IconCurrencyDollar', defaultValue: 0 },
+    { universalIdentifier: '95893632-1b38-44ed-92d5-fd932dadd274', type: FieldType.NUMBER, name: 'payableCommissionCents', label: 'Payable commission cents', icon: 'IconCurrencyDollar', defaultValue: 0 },
+    { universalIdentifier: '0bdb2501-c50c-4641-90f3-161a4e20b04e', type: FieldType.NUMBER, name: 'paidCommissionCents', label: 'Paid commission cents', icon: 'IconCurrencyDollar', defaultValue: 0 },
+    { universalIdentifier: '9978b846-cce7-4961-93c3-fa1d030791b4', type: FieldType.NUMBER, name: 'lifetimeCommissionCents', label: 'Lifetime commission cents', icon: 'IconCurrencyDollar', defaultValue: 0 },
+    { universalIdentifier: 'f48f5f6d-53b5-4c7b-b1af-cf50f78235d8', type: FieldType.DATE_TIME, name: 'lastCommissionAt', label: 'Last commission at', icon: 'IconCalendar', isNullable: true, defaultValue: null },
     { universalIdentifier: 'b4733094-c349-443f-9e4b-d9181cc2b2e9', type: FieldType.DATE_TIME, name: 'lastSyncedAt', label: 'Last synced at', icon: 'IconRefresh', isNullable: true, defaultValue: null },
   ],
 });

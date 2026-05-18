@@ -41,6 +41,8 @@ export default defineObject({
     { universalIdentifier: '9b7b2b88-fc5b-4ea7-83c6-42a028b7b4c2', type: FieldType.TEXT, name: 'periodId', label: 'Period ID', icon: 'IconCalendar' },
     { universalIdentifier: '6eb2b636-17dc-48d7-8b35-a1d353cd5036', type: FieldType.DATE_TIME, name: 'holdUntil', label: 'Hold until', icon: 'IconClock', isNullable: true, defaultValue: null },
     { universalIdentifier: '7bb0c03f-4a5e-438a-8985-0702924d8b0f', type: FieldType.NUMBER, name: 'baseCvAmount', label: 'Base CV amount', icon: 'IconChartBar', defaultValue: 0 },
+    { universalIdentifier: 'c4a1d9e2-7b38-4f05-91ad-3c8e2f1a0b5d', type: FieldType.TEXT, name: 'sourceOrderId', label: 'Source order ID', icon: 'IconShoppingBag' },
+    { universalIdentifier: 'd5b2e0f3-8c49-4a16-92be-4d9f3a2b1c6e', type: FieldType.DATE_TIME, name: 'payableAt', label: 'Payable at', icon: 'IconCalendar', isNullable: true, defaultValue: null },
     { universalIdentifier: '0226b7a4-544d-49c4-a625-a55c0a4e80b7', type: FieldType.DATE_TIME, name: 'lastSyncedAt', label: 'Last synced at', icon: 'IconRefresh', isNullable: true, defaultValue: null },
   ],
 });
