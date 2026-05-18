@@ -1,5 +1,4 @@
 import { copyBaseApplicationProject } from '@/utils/app-template';
-import { downloadExample } from '@/utils/download-example';
 import { convertToLabel } from '@/utils/convert-to-label';
 import { install } from '@/utils/install';
 import { tryGitInit } from '@/utils/try-git-init';
@@ -31,7 +30,6 @@ export type AuthenticationMethod = 'oauth' | 'apiKey';
 
 type CreateAppOptions = {
   directory?: string;
-  example?: string;
   name?: string;
   displayName?: string;
   description?: string;
@@ -92,30 +90,13 @@ export class CreateAppCommand {
 
       this.logNextStep('Scaffolding project files');
 
-      if (options.example) {
-        const exampleSucceeded = await this.tryDownloadExample(
-          options.example,
-          appDirectory,
-        );
-
-        if (!exampleSucceeded) {
-          await copyBaseApplicationProject({
-            appName,
-            appDisplayName,
-            appDescription,
-            appDirectory,
-            onProgress: (message) => this.logDetail(message),
-          });
-        }
-      } else {
-        await copyBaseApplicationProject({
-          appName,
-          appDisplayName,
-          appDescription,
-          appDirectory,
-          onProgress: (message) => this.logDetail(message),
-        });
-      }
+      await copyBaseApplicationProject({
+        appName,
+        appDisplayName,
+        appDescription,
+        appDirectory,
+        onProgress: (message) => this.logDetail(message),
+      });
 
       this.logNextStep('Installing dependencies');
 
@@ -193,7 +174,6 @@ export class CreateAppCommand {
     const appName = (
       options.name ??
       options.directory ??
-      options.example ??
       'my-twenty-app'
     ).trim();
 
@@ -219,28 +199,6 @@ export class CreateAppCommand {
       throw new Error(
         `Directory ${appDirectory} already exists and is not empty`,
       );
-    }
-  }
-
-  private async tryDownloadExample(
-    example: string,
-    appDirectory: string,
-  ): Promise<boolean> {
-    try {
-      await downloadExample(example, appDirectory);
-
-      return true;
-    } catch (error) {
-      console.log(
-        chalk.yellow(
-          `\n${error instanceof Error ? error.message : 'Failed to download example.'}`,
-        ),
-      );
-      this.logDetail('Falling back to default template...');
-
-      await fs.emptyDir(appDirectory);
-
-      return false;
     }
   }
 

@@ -15,7 +15,6 @@ const program = new Command(packageJson.name)
     'Output the current version of create-twenty-app.',
   )
   .argument('[directory]')
-  .option('--example <name>', 'Initialize from an example')
   .option('-n, --name <name>', 'Application name')
   .option('-d, --display-name <displayName>', 'Application display name')
   .option('--description <description>', 'Application description')
@@ -32,7 +31,6 @@ const program = new Command(packageJson.name)
     async (
       directory?: string,
       options?: {
-        example?: string;
         name?: string;
         displayName?: string;
         description?: string;
@@ -68,7 +66,6 @@ const program = new Command(packageJson.name)
 
       await new CreateAppCommand().execute({
         directory,
-        example: options?.example,
         name: options?.name,
         displayName: options?.displayName,
         description: options?.description,
