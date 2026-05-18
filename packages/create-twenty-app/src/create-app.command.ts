@@ -141,8 +141,10 @@ export class CreateAppCommand {
 
       this.logNextStep('Syncing application');
 
+      let syncSucceeded = false;
+
       if (serverReady && authSucceeded) {
-        const syncSucceeded = await this.syncApplication(appDirectory);
+        syncSucceeded = await this.syncApplication(appDirectory);
 
         if (!syncSucceeded) {
           this.logDetail(
@@ -153,6 +155,10 @@ export class CreateAppCommand {
         this.logDetail(
           'Skipped (server or authentication not available)',
         );
+      }
+
+      if (syncSucceeded) {
+        await this.openMainPage(appDirectory, resolvedWorkspaceUrl);
       }
 
       this.logSuccess(appDirectory, resolvedWorkspaceUrl, authSucceeded);
@@ -298,6 +304,94 @@ export class CreateAppCommand {
     console.log(chalk.yellow(`\n  ${startResult.error.message}`));
 
     return {};
+  }
+
+  private async openMainPage(
+    appDirectory: string,
+    workspaceUrl: string,
+  ): Promise<void> {
+    try {
+      const universalIdentifier =
+        await this.readMainPageLayoutUniversalIdentifier(appDirectory);
+
+      if (!universalIdentifier) {
+        return;
+      }
+
+      const pageLayoutId = await this.resolvePageLayoutId(
+        workspaceUrl,
+        universalIdentifier,
+      );
+
+      if (!pageLayoutId) {
+        return;
+      }
+
+      const url = `${workspaceUrl}/page/${pageLayoutId}`;
+
+      this.logDetail(`Opening ${url}`);
+      this.openInBrowser(url);
+    } catch {
+      // Best-effort — don't fail the scaffold if browser open fails
+    }
+  }
+
+  private async readMainPageLayoutUniversalIdentifier(
+    appDirectory: string,
+  ): Promise<string | null> {
+    const filePath = path.join(
+      appDirectory,
+      'src',
+      'constants',
+      'universal-identifiers.ts',
+    );
+    const content = await fs.readFile(filePath, 'utf-8');
+    const match = content.match(
+      /MAIN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER\s*=\s*'([^']+)'/,
+    );
+
+    return match?.[1] ?? null;
+  }
+
+  private async resolvePageLayoutId(
+    workspaceUrl: string,
+    universalIdentifier: string,
+  ): Promise<string | null> {
+    const configService = new ConfigService();
+    const config = await configService.getConfig();
+    const token = config.twentyCLIAccessToken ?? config.apiKey;
+
+    if (!token) {
+      return null;
+    }
+
+    const response = await fetch(
+      `${workspaceUrl}/rest/metadata/pageLayouts`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const pageLayouts = (await response.json()) as {
+      id: string;
+      universalIdentifier?: string;
+    }[];
+
+    const matching = pageLayouts.find(
+      (layout) => layout.universalIdentifier === universalIdentifier,
+    );
+
+    return matching?.id ?? null;
+  }
+
+  private openInBrowser(url: string): void {
+    const command = process.platform === 'darwin' ? 'open' : 'xdg-open';
+
+    spawn(command, [url], { stdio: 'ignore', detached: true }).unref();
   }
 
   private syncApplication(appDirectory: string): Promise<boolean> {
