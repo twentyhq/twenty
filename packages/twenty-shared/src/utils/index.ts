@@ -105,10 +105,8 @@ export type {
   RecordFilterGroup,
 } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
-export {
-  type FindFieldMetadataItemById,
-  turnRecordFilterIntoRecordGqlOperationFilter,
-} from './filter/turnRecordFilterIntoGqlOperationFilter';
+export type { FindFieldMetadataItemById } from './filter/turnRecordFilterIntoGqlOperationFilter';
+export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { combineFilters } from './filter/utils/combineFilters';
 export { convertViewFilterOperandToCoreOperand } from './filter/utils/convert-view-filter-operand-to-core-operand.util';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
