@@ -22,7 +22,7 @@ export default definePageLayout({
       widgets: [
         {
           universalIdentifier: MAIN_PAGE_WIDGET_UNIVERSAL_IDENTIFIER,
-          title: APP_DISPLAY_NAME,
+          title: ' ',
           type: 'FRONT_COMPONENT',
           gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
           configuration: {
