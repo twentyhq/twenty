@@ -40,7 +40,7 @@ const MainPage = () => {
 
 export default defineFrontComponent({
   universalIdentifier: MAIN_PAGE_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-  name: 'main-page',
-  description: 'Main page front component displaying the app logo and name',
+  name: APP_DISPLAY_NAME,
+  description: `${APP_DISPLAY_NAME} front component displaying the app logo and name`,
   component: MainPage,
 });
