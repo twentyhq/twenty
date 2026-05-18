@@ -1,4 +1,4 @@
-import { ACCOUNT_PROTOCOLS } from '@/settings/accounts/constants/AccountProtocols';
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { z } from 'zod';
 import { type ConnectionParametersInput } from '~/generated-metadata/graphql';
 
@@ -32,7 +32,7 @@ export const connectionImapSmtpCalDav = z
   })
   .refine(
     (data) => {
-      return ACCOUNT_PROTOCOLS.some((protocol) =>
+      return ACCOUNT_TYPES.some((protocol) =>
         isProtocolConfigured(data[protocol] as ConnectionParametersInput),
       );
     },
@@ -52,7 +52,7 @@ export const connectionImapSmtpCalDavUpdate = z
   })
   .refine(
     (data) => {
-      return ACCOUNT_PROTOCOLS.some((protocol) =>
+      return ACCOUNT_TYPES.some((protocol) =>
         isProtocolConfiguredForUpdate(
           data[protocol] as ConnectionParametersInput,
         ),

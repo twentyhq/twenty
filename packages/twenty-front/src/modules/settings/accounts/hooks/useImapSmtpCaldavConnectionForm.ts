@@ -16,7 +16,7 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { type ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
-import { ACCOUNT_PROTOCOLS } from '@/settings/accounts/constants/AccountProtocols';
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import {
   connectionImapSmtpCalDav,
   connectionImapSmtpCalDavUpdate,
@@ -103,7 +103,7 @@ export const useImapSmtpCaldavConnectionForm = ({
         ? isProtocolConfiguredForUpdate
         : isProtocolConfigured;
 
-      return ACCOUNT_PROTOCOLS.filter((protocol) => {
+      return ACCOUNT_TYPES.filter((protocol) => {
         const protocolConfig = values[protocol];
         return (
           protocolConfig &&

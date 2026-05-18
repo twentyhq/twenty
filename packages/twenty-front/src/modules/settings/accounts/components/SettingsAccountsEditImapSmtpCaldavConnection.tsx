@@ -13,7 +13,7 @@ import { Loader } from 'twenty-ui/feedback';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-import { ACCOUNT_PROTOCOLS } from '@/settings/accounts/constants/AccountProtocols';
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { useImapSmtpCaldavConnectionForm } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { SettingsAccountsConnectionForm } from './SettingsAccountsConnectionForm';
@@ -57,7 +57,7 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
     return <NotFound />;
   }
 
-  const existingProtocols = ACCOUNT_PROTOCOLS.filter(
+  const existingProtocols = ACCOUNT_TYPES.filter(
     (protocol) => connectedAccount?.connectionParameters?.[protocol]?.host,
   );
 

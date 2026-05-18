@@ -7,6 +7,7 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
+import { type AccountType } from 'twenty-shared/constants';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -82,7 +83,7 @@ const StyledEditPasswordLink = styled.button`
 type SettingsAccountsConnectionFormProps = {
   control: Control<ConnectionFormData>;
   isEditing: boolean;
-  existingProtocols?: string[];
+  existingProtocols?: AccountType[];
 };
 
 export const SettingsAccountsConnectionForm = ({
@@ -93,15 +94,15 @@ export const SettingsAccountsConnectionForm = ({
   const { t } = useLingui();
 
   const [editingPasswords, setEditingPasswords] = useState<
-    Record<string, boolean>
-  >({});
+    Record<AccountType, boolean>
+  >({ IMAP: false, SMTP: false, CALDAV: false });
 
-  const isPasswordLocked = (protocol: string) =>
+  const isPasswordLocked = (protocol: AccountType) =>
     isEditing &&
     existingProtocols.includes(protocol) &&
     !editingPasswords[protocol];
 
-  const unlockPassword = (protocol: string) => {
+  const unlockPassword = (protocol: AccountType) => {
     setEditingPasswords((prev) => ({ ...prev, [protocol]: true }));
   };
 
