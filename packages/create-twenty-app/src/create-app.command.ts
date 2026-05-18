@@ -139,6 +139,22 @@ export class CreateAppCommand {
         authSucceeded = await this.authenticateWithDevKey(resolvedWorkspaceUrl);
       }
 
+      this.logNextStep('Syncing application');
+
+      if (serverReady && authSucceeded) {
+        const syncSucceeded = await this.syncApplication(appDirectory);
+
+        if (!syncSucceeded) {
+          this.logDetail(
+            'Sync failed. Run `yarn twenty dev --once` manually.',
+          );
+        }
+      } else {
+        this.logDetail(
+          'Skipped (server or authentication not available)',
+        );
+      }
+
       this.logSuccess(appDirectory, resolvedWorkspaceUrl, authSucceeded);
     } catch (error) {
       console.error(
@@ -161,6 +177,7 @@ export class CreateAppCommand {
     }
 
     steps += 1; // authenticate (oauth or apiKey)
+    steps += 1; // sync application
 
     return steps;
   }
@@ -281,6 +298,18 @@ export class CreateAppCommand {
     console.log(chalk.yellow(`\n  ${startResult.error.message}`));
 
     return {};
+  }
+
+  private syncApplication(appDirectory: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      const child = spawn('yarn', ['twenty', 'dev', '--once'], {
+        cwd: appDirectory,
+        stdio: 'pipe',
+      });
+
+      child.on('close', (code) => resolve(code === 0));
+      child.on('error', () => resolve(false));
+    });
   }
 
   private async authenticateWithDevKey(
