@@ -234,8 +234,7 @@ export class ImapSmtpCaldavService {
     const decryptedParams: ImapSmtpCaldavParams = {};
 
     for (const protocol of ACCOUNT_TYPES) {
-      const protocolParams =
-        connectedAccount.connectionParameters[protocol];
+      const protocolParams = connectedAccount.connectionParameters[protocol];
 
       if (!isDefined(protocolParams)) {
         continue;
