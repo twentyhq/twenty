@@ -189,7 +189,13 @@ export const RecordDetailRelationSection = ({
     >
       <RecordDetailSectionContainer
         dataTestId={`${fieldDefinition.label.toLowerCase().replace(' ', '-')}-relation`}
-        title={fieldDefinition.label}
+        title={
+          isToManyObjects
+            ? relationObjectMetadataItem.labelPlural
+            : isToOneObject
+              ? relationObjectMetadataItem.labelSingular
+              : fieldDefinition.label
+        }
         link={
           isToManyObjects
             ? {
