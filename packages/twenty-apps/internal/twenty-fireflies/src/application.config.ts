@@ -1,5 +1,6 @@
 import { defineApplication } from 'twenty-sdk/define';
 
+import { ABOUT_DESCRIPTION } from 'src/constants/ABOUT_DESCRIPTION.md';
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
   FIREFLIES_API_KEY_VARIABLE_UNIVERSAL_IDENTIFIER,
@@ -14,8 +15,7 @@ export default defineApplication({
   logoUrl: 'public/twenty-fireflies.svg',
   author: 'Twenty',
   category: 'Productivity',
-  aboutDescription:
-    'Official Fireflies connector for Twenty CRM. Targets Fireflies Webhooks V2 (https://app.fireflies.ai/integrations/api/webhook), subscribing to the meeting.transcribed and meeting.summarized events to write the transcript and AI summary onto the matching CalendarEvent. Also exposes three workflow tools — Sync Fireflies Call (on-demand sync, useful for backfilling), List Fireflies Calls By Participant (find past calls with a contact), and Search Fireflies Calls (keyword search over titles and spoken content). Generate a Fireflies API key at https://app.fireflies.ai/integrations/custom/api and paste it into the FIREFLIES_API_KEY application variable; configure the V2 webhook with FIREFLIES_WEBHOOK_SECRET as the signing secret.',
+  aboutDescription: ABOUT_DESCRIPTION,
   websiteUrl: 'https://docs.twenty.com/developers/extend/apps/getting-started',
   termsUrl: 'https://www.twenty.com/terms',
   emailSupport: 'contact@twenty.com',
