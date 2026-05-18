@@ -7,31 +7,45 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 
+type ConnectionParametersInput = Omit<ConnectionParameters, 'password'> & {
+  password?: string;
+};
+
 @Injectable()
 export class ImapSmtpCaldavValidatorService {
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
-  private readonly protocolConnectionSchema = z.object({
+  private readonly baseProtocolConnectionSchema = z.object({
     host: z.string().min(1, 'Host is required'),
     port: z.int().positive('Port must be a positive number'),
     username: z.string().optional(),
-    password: z.string().min(1, 'Password is required'),
+    password: z.string().min(1, 'Password is required').optional(),
     secure: z.boolean().optional(),
   });
 
+  private readonly createProtocolConnectionSchema =
+    this.baseProtocolConnectionSchema.extend({
+      password: z.string().min(1, 'Password is required'),
+    });
+
   async validateProtocolConnectionParams(
-    params: ConnectionParameters,
-  ): Promise<ConnectionParameters> {
+    params: ConnectionParametersInput,
+    { isUpdate }: { isUpdate: boolean },
+  ): Promise<ConnectionParametersInput> {
     if (!params) {
       throw new UserInputError('Protocol connection parameters are required', {
         userFriendlyMessage: msg`Please provide connection details to configure your email account.`,
       });
     }
 
+    const schema = isUpdate
+      ? this.baseProtocolConnectionSchema
+      : this.createProtocolConnectionSchema;
+
     try {
-      const validated = this.protocolConnectionSchema.parse(params);
+      const validated = schema.parse(params);
 
       try {
         await this.secureHttpClientService.getValidatedHost(validated.host);

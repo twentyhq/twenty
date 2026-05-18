@@ -14,6 +14,7 @@ import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-err
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -173,12 +174,11 @@ export class ImapSmtpCalDavAPIService {
         await this.connectedAccountRepository.manager.transaction(
           async (transactionManager: EntityManager) => {
             const encryptedConnectionParameters =
-              this.connectedAccountTokenEncryptionService.encryptConnectionParameters(
-                {
-                  connectionParameters: input.connectionParameters,
-                  workspaceId,
-                },
-              );
+              this.buildEncryptedConnectionParameters({
+                inputParameters: input.connectionParameters,
+                existingAccount,
+                workspaceId,
+              });
 
             await transactionManager
               .getRepository(ConnectedAccountEntity)
@@ -276,5 +276,37 @@ export class ImapSmtpCalDavAPIService {
         return newOrExistingAccountId;
       },
     );
+  }
+
+  private buildEncryptedConnectionParameters({
+    inputParameters,
+    existingAccount,
+    workspaceId,
+  }: {
+    inputParameters: EmailAccountConnectionParameters;
+    existingAccount: ConnectedAccountEntity | null;
+    workspaceId: string;
+  }): ImapSmtpCaldavParams {
+    const result: ImapSmtpCaldavParams = {};
+
+    for (const protocol of ['IMAP', 'SMTP', 'CALDAV'] as const) {
+      const inputProtocolParams = inputParameters[protocol];
+
+      if (!isDefined(inputProtocolParams)) {
+        continue;
+      }
+
+      result[protocol] = {
+        ...inputProtocolParams,
+        password: isDefined(inputProtocolParams.password)
+          ? this.connectedAccountTokenEncryptionService.encrypt({
+              plaintext: inputProtocolParams.password,
+              workspaceId,
+            })
+          : existingAccount!.connectionParameters![protocol]!.password,
+      };
+    }
+
+    return result;
   }
 }

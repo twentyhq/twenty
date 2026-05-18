@@ -13,6 +13,7 @@ import { ImapSmtpCaldavConnectionSuccessDTO } from 'src/engine/core-modules/imap
 import { EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
+import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -86,6 +87,7 @@ export class ImapSmtpCaldavResolver {
     const validatedParams = await this.validateAndTestConnectionParameters(
       connectionParameters,
       handle,
+      { isUpdate: isDefined(id) },
     );
 
     const connectedAccountId =
@@ -106,6 +108,7 @@ export class ImapSmtpCaldavResolver {
   private async validateAndTestConnectionParameters(
     connectionParameters: EmailAccountConnectionParameters,
     handle: string,
+    { isUpdate }: { isUpdate: boolean },
   ): Promise<EmailAccountConnectionParameters> {
     const validatedParams: EmailAccountConnectionParameters = {};
     const protocols = ['IMAP', 'SMTP', 'CALDAV'] as const;
@@ -117,13 +120,14 @@ export class ImapSmtpCaldavResolver {
         validatedParams[protocol] =
           await this.mailConnectionValidatorService.validateProtocolConnectionParams(
             params,
+            { isUpdate },
           );
         const validatedProtocolParams = validatedParams[protocol];
 
-        if (validatedProtocolParams) {
+        if (validatedProtocolParams && isDefined(params.password)) {
           await this.ImapSmtpCaldavConnectionService.testImapSmtpCaldav(
             handle,
-            validatedProtocolParams,
+            validatedProtocolParams as ConnectionParameters,
             protocol,
           );
         }
