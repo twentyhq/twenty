@@ -1,4 +1,4 @@
-import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { findFieldMetadataItemByIdSelector } from '@/object-metadata/states/findFieldMetadataItemByIdSelector';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -16,7 +16,6 @@ import { type Temporal } from 'temporal-polyfill';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
-  createFindFieldMetadataItemById,
   isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
   turnPlainDateIntoUserTimeZoneInstantString,
@@ -49,8 +48,8 @@ export const useRecordCalendarQueryDateRangeFilter = (
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const flattenedFieldMetadataItems = useAtomStateValue(
-    flattenedFieldMetadataItemsSelector,
+  const findFieldMetadataItemById = useAtomStateValue(
+    findFieldMetadataItemByIdSelector,
   );
 
   const anyFieldFilterValue = useAtomComponentStateValue(
@@ -111,9 +110,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
     filterValueDependencies,
     recordFilters: calendarRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
-    findFieldMetadataItemById: createFindFieldMetadataItemById(
-      flattenedFieldMetadataItems,
-    ),
+    findFieldMetadataItemById,
   });
 
   const { recordGqlOperationFilter: anyFieldFilter } =

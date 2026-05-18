@@ -3,7 +3,6 @@ import {
   RecordFilterGroupLogicalOperator,
   ViewFilterOperand,
 } from '@/types';
-import { createFindFieldMetadataItemById } from '@/utils/filter/createFindFieldMetadataItemById';
 import { turnRecordFilterGroupsIntoGqlOperationFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 
 describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
@@ -22,7 +21,8 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
     },
   ];
 
-  const findFieldMetadataItemById = createFindFieldMetadataItemById(fields);
+  const fieldById = new Map(fields.map((field) => [field.id, field]));
+  const findFieldMetadataItemById = (id: string) => fieldById.get(id);
 
   it('should return undefined when group is not found', () => {
     const result = turnRecordFilterGroupsIntoGqlOperationFilter({

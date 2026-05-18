@@ -7,7 +7,6 @@ import {
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
-  createFindFieldMetadataItemById,
   isDefined,
 } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -22,6 +21,15 @@ const companyMockObjectMetadataItem =
 const petMockObjectMetadataItem = getMockObjectMetadataItemOrThrow('pet');
 
 const personMockObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+
+const findCompanyFieldById = (id: string) =>
+  companyMockObjectMetadataItem.fields.find((field) => field.id === id);
+
+const findPersonFieldById = (id: string) =>
+  personMockObjectMetadataItem.fields.find((field) => field.id === id);
+
+const findPetFieldById = (id: string) =>
+  petMockObjectMetadataItem.fields.find((field) => field.id === id);
 
 const mockFilterValueDependencies: RecordFilterValueDependencies = {
   currentWorkspaceMemberId: '32219445-f587-4c40-b2b1-6d3205ed96da',
@@ -55,9 +63,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
       filterValueDependencies: mockFilterValueDependencies,
       recordFilters: [nameFilter],
       recordFilterGroups: [],
-      findFieldMetadataItemById: createFindFieldMetadataItemById(
-        companyMockObjectMetadataItem.fields,
-      ),
+      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -110,9 +116,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
       filterValueDependencies: mockFilterValueDependencies,
       recordFilters: [nameFilter, employeesFilter],
       recordFilterGroups: [],
-      findFieldMetadataItemById: createFindFieldMetadataItemById(
-        companyMockObjectMetadataItem.fields,
-      ),
+      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -192,9 +196,7 @@ describe('should work as expected for the different field types', () => {
         addressFilterIsNotEmpty,
       ],
       recordFilterGroups: [],
-      findFieldMetadataItemById: createFindFieldMetadataItemById(
-        companyMockObjectMetadataItem.fields,
-      ),
+      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -658,9 +660,7 @@ describe('should work as expected for the different field types', () => {
         phonesFilterIsNotEmpty,
       ],
       recordFilterGroups: [],
-      findFieldMetadataItemById: createFindFieldMetadataItemById(
-        personMockObjectMetadataItem.fields,
-      ),
+      findFieldMetadataItemById: findPersonFieldById,
     });
 
     expect(result).toEqual({
@@ -857,9 +857,7 @@ describe('should work as expected for the different field types', () => {
         emailsFilterIsNotEmpty,
       ],
       recordFilterGroups: [],
-      findFieldMetadataItemById: createFindFieldMetadataItemById(
-        personMockObjectMetadataItem.fields,
-      ),
+      findFieldMetadataItemById: findPersonFieldById,
     });
 
     expect(result).toEqual({
@@ -1071,9 +1069,7 @@ describe('should work as expected for the different field types', () => {
         dateFilterIsNotEmpty,
       ],
       recordFilterGroups: [],
-      findFieldMetadataItemById: createFindFieldMetadataItemById(
-        companyMockObjectMetadataItem.fields,
-      ),
+      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -1175,9 +1171,7 @@ describe('should work as expected for the different field types', () => {
         employeesFilterIsNotEmpty,
       ],
       recordFilterGroups: [],
-      findFieldMetadataItemById: createFindFieldMetadataItemById(
-        companyMockObjectMetadataItem.fields,
-      ),
+      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -1279,9 +1273,7 @@ describe('should work as expected for the different field types', () => {
         ARRFilterIsNot,
       ],
       recordFilterGroups: [],
-      findFieldMetadataItemById: createFindFieldMetadataItemById(
-        companyMockObjectMetadataItem.fields,
-      ),
+      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -1358,9 +1350,7 @@ describe('should work as expected for the different field types', () => {
       filterValueDependencies: mockFilterValueDependencies,
       recordFilters: [ARRFilterIn, ARRFilterNotIn],
       recordFilterGroups: [],
-      findFieldMetadataItemById: createFindFieldMetadataItemById(
-        companyMockObjectMetadataItem.fields,
-      ),
+      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -1420,9 +1410,7 @@ describe('should work as expected for the different field types', () => {
       filterValueDependencies: mockFilterValueDependencies,
       recordFilters: [selectFilterIs, selectFilterIsNot],
       recordFilterGroups: [],
-      findFieldMetadataItemById: createFindFieldMetadataItemById(
-        petMockObjectMetadataItem.fields,
-      ),
+      findFieldMetadataItemById: findPetFieldById,
     });
 
     expect(result).toEqual({
@@ -1495,9 +1483,7 @@ describe('should work as expected for the different field types', () => {
         multiSelectFilterDoesNotContain,
       ],
       recordFilterGroups: [],
-      findFieldMetadataItemById: createFindFieldMetadataItemById(
-        companyMockObjectMetadataItem.fields,
-      ),
+      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({

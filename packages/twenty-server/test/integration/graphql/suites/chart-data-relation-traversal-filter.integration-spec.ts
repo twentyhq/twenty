@@ -21,12 +21,6 @@ const ALL_TEST_PERSON_IDS = [
 ];
 const ALL_TEST_COMPANY_IDS = [TEST_COMPANY_AIRBNB_ID, TEST_COMPANY_STRIPE_ID];
 
-// Regression guard for chart-data relation-traversal filters. If the chart
-// pipeline silently drops the traversal (the bug shape we fixed for the
-// workflow Search Records action), the aggregate count would include rows on
-// the related-but-non-matching company. The test seeds 2 Airbnb people +
-// 1 Stripe person and asserts the bar chart count for the shared job title
-// is exactly 2 (Airbnb-only) when the filter is applied — not 3.
 describe('BarChartData with relation-traversal filter (e2e)', () => {
   let personObjectMetadataId: string | null = null;
   let personIdFieldMetadataId: string | null = null;

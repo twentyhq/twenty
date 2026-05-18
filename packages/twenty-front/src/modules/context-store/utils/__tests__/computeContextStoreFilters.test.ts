@@ -29,7 +29,8 @@ describe('computeContextStoreFilters', () => {
       contextStoreFilters: [],
       contextStoreFilterGroups: [],
       objectMetadataItem: personObjectMetadataItem,
-      flattenedFieldMetadataItems: personObjectMetadataItem.fields,
+      findFieldMetadataItemById: (id) =>
+        personObjectMetadataItem.fields.find((field) => field.id === id),
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: '',
     });
@@ -74,7 +75,8 @@ describe('computeContextStoreFilters', () => {
       contextStoreFilters,
       contextStoreFilterGroups: [],
       objectMetadataItem: personObjectMetadataItem,
-      flattenedFieldMetadataItems: personObjectMetadataItem.fields,
+      findFieldMetadataItemById: (id) =>
+        personObjectMetadataItem.fields.find((field) => field.id === id),
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: '',
     });

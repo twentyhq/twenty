@@ -25,12 +25,6 @@ const ALL_TEST_PERSON_IDS = [
 ];
 const ALL_TEST_COMPANY_IDS = [TEST_COMPANY_AIRBNB_ID, TEST_COMPANY_STRIPE_ID];
 
-// Regression guard for the Workflow Search Records action silently dropping
-// one-hop relation-traversal filters. Pre-fix, the dispatcher couldn't resolve
-// the relation-target field id and the filter was discarded — the action then
-// returned every person regardless of company. This test exercises the full
-// path: configure a FIND_RECORDS step with a Person → Company → Name filter,
-// run the workflow, and assert only matching people come back.
 describe('FindRecords workflow action with relation-traversal filter (e2e)', () => {
   let createdWorkflowId: string | null = null;
   let createdWorkflowVersionId: string | null = null;

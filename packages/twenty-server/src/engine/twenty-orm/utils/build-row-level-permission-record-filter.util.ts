@@ -5,14 +5,12 @@ import {
   RecordFilterGroupLogicalOperator,
   RowLevelPermissionPredicateGroupLogicalOperator,
   type CompositeFieldSubFieldName,
-  type PartialFieldMetadataItemOption,
   type RecordGqlOperationFilter,
   type RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
-  createFindFieldMetadataItemById,
   getFilterTypeFromFieldType,
   isDefined,
   type RecordFilter,
@@ -217,27 +215,14 @@ export const buildRowLevelPermissionRecordFilter = ({
         predicateGroup.parentRowLevelPermissionPredicateGroupId,
     }));
 
-  const fieldMetadataItems = predicates
-    .map((predicate) =>
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: predicate.fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      }),
-    )
-    .filter(isDefined)
-    .map((field) => ({
-      id: field.id,
-      name: field.name,
-      type: field.type,
-      label: field.label,
-      options: field.options as PartialFieldMetadataItemOption[],
-    }));
-
   return computeRecordGqlOperationFilter({
     recordFilters,
     recordFilterGroups,
-    findFieldMetadataItemById:
-      createFindFieldMetadataItemById(fieldMetadataItems),
+    findFieldMetadataItemById: (id) =>
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: id,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }) ?? undefined,
     filterValueDependencies: {
       currentWorkspaceMemberId: workspaceMember?.id,
     },

@@ -3,7 +3,6 @@ import {
   ViewFilterOperand as RecordFilterOperand,
 } from '@/types';
 import { type RecordFilter } from '@/utils';
-import { createFindFieldMetadataItemById } from '@/utils/filter/createFindFieldMetadataItemById';
 import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 
 const fields = [
@@ -132,7 +131,8 @@ const fields = [
 
 const filterValueDependencies = { timeZone: 'UTC' };
 
-const findFieldMetadataItemById = createFindFieldMetadataItemById(fields);
+const fieldById = new Map(fields.map((field) => [field.id, field]));
+const findFieldMetadataItemById = (id: string) => fieldById.get(id);
 
 const makeFilter = (
   fieldMetadataId: string,

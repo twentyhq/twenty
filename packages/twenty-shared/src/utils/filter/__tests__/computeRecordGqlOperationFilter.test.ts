@@ -1,5 +1,4 @@
 import { computeRecordGqlOperationFilter } from '../computeRecordGqlOperationFilter';
-import { createFindFieldMetadataItemById } from '../createFindFieldMetadataItemById';
 import type { RecordFilter } from '../turnRecordFilterGroupIntoGqlOperationFilter';
 
 import { FieldMetadataType } from '@/types/FieldMetadataType';
@@ -28,9 +27,8 @@ describe('computeRecordGqlOperationFilter', () => {
     ];
 
     const filter = computeRecordGqlOperationFilter({
-      findFieldMetadataItemById: createFindFieldMetadataItemById([
-        companyIdField,
-      ]),
+      findFieldMetadataItemById: (id) =>
+        id === companyIdField.id ? companyIdField : undefined,
       recordFilters,
       recordFilterGroups: [],
       filterValueDependencies: {

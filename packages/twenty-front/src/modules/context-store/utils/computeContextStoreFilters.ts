@@ -1,6 +1,5 @@
 import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
@@ -10,7 +9,7 @@ import {
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
-  createFindFieldMetadataItemById,
+  type FindFieldMetadataItemById,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -19,7 +18,7 @@ type ComputeContextStoreFiltersProps = {
   contextStoreFilters: RecordFilter[];
   contextStoreFilterGroups: RecordFilterGroup[];
   objectMetadataItem: EnrichedObjectMetadataItem;
-  flattenedFieldMetadataItems: FieldMetadataItem[];
+  findFieldMetadataItemById: FindFieldMetadataItemById;
   filterValueDependencies: RecordFilterValueDependencies;
   contextStoreAnyFieldFilterValue: string;
 };
@@ -29,7 +28,7 @@ export const computeContextStoreFilters = ({
   contextStoreFilters,
   contextStoreFilterGroups,
   objectMetadataItem,
-  flattenedFieldMetadataItems,
+  findFieldMetadataItemById,
   filterValueDependencies,
   contextStoreAnyFieldFilterValue,
 }: ComputeContextStoreFiltersProps) => {
@@ -40,10 +39,6 @@ export const computeContextStoreFilters = ({
       filterValue: contextStoreAnyFieldFilterValue,
       fields: objectMetadataItem.fields,
     });
-
-  const findFieldMetadataItemById = createFindFieldMetadataItemById(
-    flattenedFieldMetadataItems,
-  );
 
   if (contextStoreTargetedRecordsRule.mode === 'exclusion') {
     queryFilter = makeAndFilterVariables([

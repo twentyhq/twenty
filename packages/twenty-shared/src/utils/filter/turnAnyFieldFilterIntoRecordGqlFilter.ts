@@ -11,7 +11,6 @@ import {
   type RecordFilter,
 } from '@/utils';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
-import { createFindFieldMetadataItemById } from '@/utils/filter/createFindFieldMetadataItemById';
 import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { createAnyFieldRecordFilterBaseProperties } from '@/utils/filter/utils/createAnyFieldRecordFilterBaseProperties';
 import { isDefined } from '@/utils/validation';
@@ -222,13 +221,13 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
     }
   }
 
-  const findFieldMetadataItemById = createFindFieldMetadataItemById(fields);
+  const fieldById = new Map(fields.map((field) => [field.id, field]));
 
   const baseRecordGqlOperationFilters = anyFieldRecordFilters
     .map((recordFilter) =>
       turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies: {},
-        findFieldMetadataItemById,
+        findFieldMetadataItemById: (id) => fieldById.get(id),
         recordFilter,
       }),
     )

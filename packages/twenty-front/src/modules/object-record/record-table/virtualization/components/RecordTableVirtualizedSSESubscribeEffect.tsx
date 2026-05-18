@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { findFieldMetadataItemByIdSelector } from '@/object-metadata/states/findFieldMetadataItemByIdSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -10,17 +10,14 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import {
-  computeRecordGqlOperationFilter,
-  createFindFieldMetadataItemById,
-} from 'twenty-shared/utils';
+import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
 
 export const RecordTableVirtualizedSSESubscribeEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const flattenedFieldMetadataItems = useAtomStateValue(
-    flattenedFieldMetadataItemsSelector,
+  const findFieldMetadataItemById = useAtomStateValue(
+    findFieldMetadataItemByIdSelector,
   );
 
   const currentRecordFilters = useAtomComponentStateValue(
@@ -42,9 +39,7 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
         filter: computeRecordGqlOperationFilter({
-          findFieldMetadataItemById: createFindFieldMetadataItemById(
-            flattenedFieldMetadataItems,
-          ),
+          findFieldMetadataItemById,
           recordFilters: currentRecordFilters,
           recordFilterGroups: currentRecordFilterGroups,
           filterValueDependencies,
@@ -58,7 +53,7 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
       currentRecordFilterGroups,
       filterValueDependencies,
       currentRecordSorts,
-      flattenedFieldMetadataItems,
+      findFieldMetadataItemById,
     ],
   );
 

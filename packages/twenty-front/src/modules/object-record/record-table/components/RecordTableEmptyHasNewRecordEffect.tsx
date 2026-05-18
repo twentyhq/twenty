@@ -1,6 +1,6 @@
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
-import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { findFieldMetadataItemByIdSelector } from '@/object-metadata/states/findFieldMetadataItemByIdSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -18,10 +18,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 import { useStore } from 'jotai';
 import { useCallback, useMemo } from 'react';
-import {
-  computeRecordGqlOperationFilter,
-  createFindFieldMetadataItemById,
-} from 'twenty-shared/utils';
+import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
 
 export const RecordTableEmptyHasNewRecordEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -43,8 +40,8 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const flattenedFieldMetadataItems = useAtomStateValue(
-    flattenedFieldMetadataItemsSelector,
+  const findFieldMetadataItemById = useAtomStateValue(
+    findFieldMetadataItemByIdSelector,
   );
 
   const currentRecordFilters = useAtomComponentStateValue(
@@ -66,9 +63,7 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
         filter: computeRecordGqlOperationFilter({
-          findFieldMetadataItemById: createFindFieldMetadataItemById(
-            flattenedFieldMetadataItems,
-          ),
+          findFieldMetadataItemById,
           recordFilters: currentRecordFilters,
           recordFilterGroups: currentRecordFilterGroups,
           filterValueDependencies,
@@ -82,7 +77,7 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
       currentRecordFilterGroups,
       filterValueDependencies,
       currentRecordSorts,
-      flattenedFieldMetadataItems,
+      findFieldMetadataItemById,
     ],
   );
 
