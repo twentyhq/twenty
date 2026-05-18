@@ -4,14 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { ImapFlow } from 'imapflow';
 import { createTransport } from 'nodemailer';
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   type AccountType,
   type ConnectionParameters,
+  type ImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -229,15 +231,26 @@ export class ImapSmtpCaldavService {
       return connectedAccount;
     }
 
+    const decryptedParams: ImapSmtpCaldavParams = {};
+
+    for (const protocol of ACCOUNT_TYPES) {
+      const protocolParams =
+        connectedAccount.connectionParameters[protocol];
+
+      if (!isDefined(protocolParams)) {
+        continue;
+      }
+
+      decryptedParams[protocol] =
+        this.connectedAccountTokenEncryptionService.decryptProtocolPassword({
+          protocolParams,
+          workspaceId,
+        });
+    }
+
     return {
       ...connectedAccount,
-      connectionParameters:
-        this.connectedAccountTokenEncryptionService.decryptConnectionParameters(
-          {
-            connectionParameters: connectedAccount.connectionParameters,
-            workspaceId,
-          },
-        ),
+      connectionParameters: decryptedParams,
     };
   }
 }
