@@ -10,7 +10,6 @@ import {
   UpgradeMigrationService,
   WorkspaceLastAttemptedCommand,
 } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { UpgradeCursorService } from 'src/engine/core-modules/upgrade/services/upgrade-cursor.service';
 import {
   type InstanceUpgradeStep,
   type UpgradeStep,
@@ -19,6 +18,7 @@ import {
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
+import { UpgradeAwareEntityMetadataService } from 'src/engine/twenty-orm/services/upgrade-aware-entity-metadata.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
@@ -36,7 +36,7 @@ export class UpgradeSequenceRunnerService {
     private readonly instanceCommandRunnerService: InstanceCommandRunnerService,
     private readonly workspaceCommandRunnerService: WorkspaceCommandRunnerService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
-    private readonly upgradeCursorService: UpgradeCursorService,
+    private readonly upgradeAwareEntityMetadataService: UpgradeAwareEntityMetadataService,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceVersionService: WorkspaceVersionService,
   ) {}
@@ -52,12 +52,12 @@ export class UpgradeSequenceRunnerService {
       return { totalSuccesses: 0, totalFailures: 0 };
     }
 
-    await this.upgradeCursorService.beginUpgradeRun();
+    await this.upgradeAwareEntityMetadataService.refresh();
 
     try {
       return await this.runInner({ sequence, options });
     } finally {
-      this.upgradeCursorService.endUpgradeRun();
+      await this.upgradeAwareEntityMetadataService.refresh();
     }
   }
 
@@ -125,7 +125,7 @@ export class UpgradeSequenceRunnerService {
           skipDataMigration: allActiveOrSuspendedWorkspaceIds.length === 0,
         });
 
-        this.upgradeCursorService.advanceCursorTo(step.name);
+        await this.upgradeAwareEntityMetadataService.refresh();
 
         cursor++;
         continue;

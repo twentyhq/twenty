@@ -8,12 +8,15 @@ import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
-import { UpgradeCursorService } from 'src/engine/core-modules/upgrade/services/upgrade-cursor.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeAwareEntityMetadataService } from 'src/engine/twenty-orm/services/upgrade-aware-entity-metadata.service';
 
 const RENAME_CMD = '2.6.0_RenameCommand_1700000000000';
 const INTRODUCE_CMD = '2.7.0_IntroduceCommand_1800000000000';
 const PROP_INTRODUCE_CMD = '2.7.0_AddColumn_1800000000001';
+
+const SEQUENCE_NAMES = [RENAME_CMD, INTRODUCE_CMD, PROP_INTRODUCE_CMD];
 
 @WasRenamedInUpgrade([
   { previousName: 'oldEntity', upgradeCommandName: RENAME_CMD },
@@ -69,21 +72,22 @@ const buildEntityMetadata = ({
 describe('UpgradeAwareEntityMetadataService', () => {
   const buildService = async ({
     entityMetadatas,
-    initialAppliedSteps = [],
   }: {
     entityMetadatas: EntityMetadata[];
-    initialAppliedSteps?: string[];
   }) => {
-    let appliedSteps = new Set(initialAppliedSteps);
-    let cursorListener: (() => void) | undefined;
+    let lastAttempted: { name: string; status: 'completed' | 'failed' } | null =
+      null;
 
-    const cursorService = {
-      onCursorChanged: (listener: () => void) => {
-        cursorListener = listener;
-      },
-      getCurrentCursor: () => appliedSteps.size,
-      isStepAppliedAtCurrentCursor: (stepName: string) =>
-        appliedSteps.has(stepName),
+    const upgradeMigrationService = {
+      getLastAttemptedInstanceCommand: jest
+        .fn()
+        .mockImplementation(async () => lastAttempted),
+    };
+
+    const upgradeSequenceReaderService = {
+      getUpgradeSequence: jest
+        .fn()
+        .mockReturnValue(SEQUENCE_NAMES.map((name) => ({ name }))),
     };
 
     const dataSource = { entityMetadatas } as unknown as DataSource;
@@ -91,7 +95,14 @@ describe('UpgradeAwareEntityMetadataService', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         UpgradeAwareEntityMetadataService,
-        { provide: UpgradeCursorService, useValue: cursorService },
+        {
+          provide: UpgradeMigrationService,
+          useValue: upgradeMigrationService,
+        },
+        {
+          provide: UpgradeSequenceReaderService,
+          useValue: upgradeSequenceReaderService,
+        },
         { provide: getDataSourceToken(), useValue: dataSource },
       ],
     }).compile();
@@ -102,9 +113,11 @@ describe('UpgradeAwareEntityMetadataService', () => {
 
     return {
       service,
-      setAppliedSteps: (steps: string[]) => {
-        appliedSteps = new Set(steps);
-        cursorListener?.();
+      setLastAttempted: async (
+        next: { name: string; status: 'completed' | 'failed' } | null,
+      ) => {
+        lastAttempted = next;
+        await service.refresh();
       },
     };
   };
@@ -117,11 +130,11 @@ describe('UpgradeAwareEntityMetadataService', () => {
       columns: [{ propertyName: 'id', databaseName: 'id' }],
     });
 
-    const { setAppliedSteps } = await buildService({
+    const { setLastAttempted } = await buildService({
       entityMetadatas: [metadata],
     });
 
-    setAppliedSteps([]);
+    await setLastAttempted(null);
 
     expect(metadata.tableName).toBe('oldEntity');
     expect(metadata.tablePath).toBe('core.oldEntity');
@@ -136,13 +149,11 @@ describe('UpgradeAwareEntityMetadataService', () => {
       columns: [{ propertyName: 'id', databaseName: 'id' }],
     });
 
-    const { setAppliedSteps } = await buildService({
+    const { setLastAttempted } = await buildService({
       entityMetadatas: [metadata],
-      initialAppliedSteps: [RENAME_CMD],
     });
 
-    setAppliedSteps([]);
-    setAppliedSteps([RENAME_CMD]);
+    await setLastAttempted({ name: RENAME_CMD, status: 'completed' });
 
     expect(metadata.tableName).toBe('renamedEntity');
     expect(metadata.tablePath).toBe('core.renamedEntity');
@@ -157,11 +168,11 @@ describe('UpgradeAwareEntityMetadataService', () => {
       columns: [{ propertyName: 'id', databaseName: 'id' }],
     });
 
-    const { setAppliedSteps } = await buildService({
+    const { setLastAttempted } = await buildService({
       entityMetadatas: [metadata],
     });
 
-    setAppliedSteps([]);
+    await setLastAttempted(null);
 
     expect(metadata.tableName).toBe('plainEntity');
     expect(metadata.tablePath).toBe('core.plainEntity');
@@ -178,18 +189,18 @@ describe('UpgradeAwareEntityMetadataService', () => {
       ],
     });
 
-    const { service, setAppliedSteps } = await buildService({
+    const { service, setLastAttempted } = await buildService({
       entityMetadatas: [metadata],
     });
 
-    setAppliedSteps([]);
+    await setLastAttempted(null);
 
     expect(service.isEntityAvailable(IntroducedEntity)).toBe(false);
     expect(service.getHiddenColumnPropertyNames(IntroducedEntity)).toEqual(
       new Set(['brandNewColumn']),
     );
 
-    setAppliedSteps([INTRODUCE_CMD, PROP_INTRODUCE_CMD]);
+    await setLastAttempted({ name: PROP_INTRODUCE_CMD, status: 'completed' });
 
     expect(service.isEntityAvailable(IntroducedEntity)).toBe(true);
     expect(service.getHiddenColumnPropertyNames(IntroducedEntity).size).toBe(
@@ -212,11 +223,11 @@ describe('UpgradeAwareEntityMetadataService', () => {
       ],
     });
 
-    const { setAppliedSteps } = await buildService({
+    const { setLastAttempted } = await buildService({
       entityMetadatas: [metadata],
     });
 
-    setAppliedSteps([INTRODUCE_CMD]);
+    await setLastAttempted({ name: INTRODUCE_CMD, status: 'completed' });
 
     const brandNewColumn = metadata.columns.find(
       (column) => column.propertyName === 'brandNewColumn',
@@ -224,7 +235,7 @@ describe('UpgradeAwareEntityMetadataService', () => {
 
     expect(brandNewColumn?.isSelect).toBe(false);
 
-    setAppliedSteps([INTRODUCE_CMD, PROP_INTRODUCE_CMD]);
+    await setLastAttempted({ name: PROP_INTRODUCE_CMD, status: 'completed' });
 
     expect(brandNewColumn?.isSelect).toBe(true);
   });

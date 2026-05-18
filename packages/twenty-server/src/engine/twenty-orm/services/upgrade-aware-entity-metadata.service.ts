@@ -6,8 +6,13 @@ import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 
 import { DataSource } from 'typeorm';
 
-import { UpgradeCursorService } from 'src/engine/core-modules/upgrade/services/upgrade-cursor.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { resolveEntityShapeAtUpgradeCursor } from 'src/engine/core-modules/upgrade/utils/resolve-entity-shape-at-upgrade-cursor.util';
+import {
+  formatUpgradeAwareDecoratorReferenceProblems,
+  validateUpgradeAwareEntityDecorators,
+} from 'src/engine/core-modules/upgrade/utils/validate-upgrade-aware-entity-decorators.util';
 import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 
 type EntityMetadataSnapshot = {
@@ -33,22 +38,50 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
     ReadonlySet<string>
   >();
 
+  private stepNameToIndex: Map<string, number> = new Map();
+  private currentCursor = Number.MAX_SAFE_INTEGER;
+
   constructor(
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    private readonly upgradeCursorService: UpgradeCursorService,
+    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
+    private readonly upgradeMigrationService: UpgradeMigrationService,
   ) {}
 
   onModuleInit(): void {
+    const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
+
+    for (const [index, step] of sequence.entries()) {
+      this.stepNameToIndex.set(step.name, index);
+    }
+
+    this.validateDecoratorsAgainstSequence();
     this.captureCanonicalSnapshots();
 
-    this.upgradeCursorService.onCursorChanged(() => {
-      this.applyCursorToMetadata();
-    });
-
+    this.currentCursor = sequence.length;
     this.applyCursorToMetadata();
 
     UpgradeAwareRepositoryState.getInstance().setMetadataService(this);
+  }
+
+  async refresh(): Promise<void> {
+    const lastAttempted =
+      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
+
+    if (lastAttempted === null) {
+      this.currentCursor = 0;
+    } else {
+      const index = this.stepNameToIndex.get(lastAttempted.name);
+
+      if (index === undefined) {
+        this.currentCursor = 0;
+      } else {
+        this.currentCursor =
+          lastAttempted.status === 'completed' ? index + 1 : index;
+      }
+    }
+
+    this.applyCursorToMetadata();
   }
 
   isEntityAvailable(entityClass: Function): boolean {
@@ -83,8 +116,15 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
   }
 
   private applyCursorToMetadata(): void {
-    const isStepApplied = (stepName: string) =>
-      this.upgradeCursorService.isStepAppliedAtCurrentCursor(stepName);
+    const isStepApplied = (stepName: string) => {
+      const index = this.stepNameToIndex.get(stepName);
+
+      if (index === undefined) {
+        return false;
+      }
+
+      return index < this.currentCursor;
+    };
 
     let renamedCount = 0;
     let unavailableCount = 0;
@@ -151,7 +191,7 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
     }
 
     this.logger.log(
-      `[upgrade-metadata] applied cursor renamed=${renamedCount} unavailable=${unavailableCount} hiddenColumns=${hiddenColumnCount}`,
+      `[upgrade-metadata] applied cursor=${this.currentCursor} renamed=${renamedCount} unavailable=${unavailableCount} hiddenColumns=${hiddenColumnCount}`,
     );
   }
 
@@ -229,5 +269,27 @@ export class UpgradeAwareEntityMetadataService implements OnModuleInit {
     }
 
     return effectiveTableName;
+  }
+
+  private validateDecoratorsAgainstSequence(): void {
+    const entityClasses = this.coreDataSource.entityMetadatas
+      .map((metadata) => metadata.target)
+      .filter((target): target is Function => typeof target === 'function');
+
+    const problems = validateUpgradeAwareEntityDecorators({
+      entityClasses,
+      knownStepNames: new Set(this.stepNameToIndex.keys()),
+    });
+
+    if (problems.length === 0) {
+      return;
+    }
+
+    const formatted = formatUpgradeAwareDecoratorReferenceProblems(problems);
+
+    throw new Error(
+      `Upgrade-aware entity decorators reference unknown upgrade step names. ` +
+        `Either fix the upgradeCommandName string, or register the missing step.\n${formatted}`,
+    );
   }
 }

@@ -10,7 +10,6 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { UpgradeCursorService } from 'src/engine/core-modules/upgrade/services/upgrade-cursor.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
@@ -38,7 +37,6 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
     InstanceCommandRunnerService,
     WorkspaceCommandRunnerService,
     UpgradeCommandRegistryService,
-    UpgradeCursorService,
     UpgradeAwareEntityMetadataService,
     UpgradeSequenceReaderService,
     UpgradeSequenceRunnerService,
@@ -51,7 +49,6 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
     InstanceCommandRunnerService,
     WorkspaceCommandRunnerService,
     UpgradeCommandRegistryService,
-    UpgradeCursorService,
     UpgradeAwareEntityMetadataService,
     UpgradeSequenceReaderService,
     UpgradeSequenceRunnerService,
