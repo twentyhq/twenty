@@ -2652,11 +2652,6 @@ msgstr "Quay lại {linkText}"
 msgid "Back to content"
 msgstr "Quay lại nội dung"
 
-#. js-lingui-id: OvBnOM
-#: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
-msgid "Back to Settings"
-msgstr "Quay lại Cài đặt"
-
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Background"
