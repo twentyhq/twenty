@@ -1,5 +1,5 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { upsertPermissionFlags } from 'test/integration/metadata/suites/permission-flag/utils/upsert-permission-flags.util';
+import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
@@ -12,7 +12,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/permission-flag/dtos/upsert-permission-flag-input';
+import { type UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/role-permission-flag/dtos/upsert-permission-flags.input';
 
 type GlobalTestContext = {
   editableRoleId: string;
@@ -23,7 +23,7 @@ type TestContext = {
   input: (globalContext: GlobalTestContext) => UpsertPermissionFlagsInput;
 };
 
-const failingPermissionFlagUpsertTestCases: EachTestingContext<TestContext>[] =
+const failingRolePermissionFlagUpsertTestCases: EachTestingContext<TestContext>[] =
   [
     {
       title: 'when roleId is not a valid UUID',
@@ -116,7 +116,7 @@ describe('Permission flag upsert should fail', () => {
     }
   });
 
-  it.each(eachTestingContextFilter(failingPermissionFlagUpsertTestCases))(
+  it.each(eachTestingContextFilter(failingRolePermissionFlagUpsertTestCases))(
     '$title',
     async ({ context }) => {
       const globalContext: GlobalTestContext = {

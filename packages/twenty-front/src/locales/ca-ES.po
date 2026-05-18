@@ -2652,11 +2652,6 @@ msgstr "Torna a {linkText}"
 msgid "Back to content"
 msgstr "Tornar al contingut"
 
-#. js-lingui-id: OvBnOM
-#: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
-msgid "Back to Settings"
-msgstr "Torna a Configuració"
-
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Background"
@@ -11801,11 +11796,11 @@ msgstr "La contrasenya s'ha establert"
 msgid "Password has been updated"
 msgstr "La contrasenya s'ha actualitzat"
 
-#. js-lingui-id: 1oqxe6
+#. js-lingui-id: BfLK2u
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/auth/sign-in-up/hooks/useSignInUpForm.ts
-msgid "Password must be min. 8 characters"
-msgstr "La contrasenya ha de tenir almenys 8 caràcters"
+msgid "Password must be between 8 and 50 characters"
+msgstr ""
 
 #. js-lingui-id: mi6Rel
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -13177,6 +13172,11 @@ msgstr "Nom del rol"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Role name cannot be empty"
 msgstr "El nom del rol no pot estar buit"
+
+#. js-lingui-id: VMX1Oy
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role permission flag"
+msgstr ""
 
 #. js-lingui-id: jLNGne
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

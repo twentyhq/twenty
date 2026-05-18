@@ -2652,11 +2652,6 @@ msgstr "Terug na {linkText}"
 msgid "Back to content"
 msgstr "Terug na inhoud"
 
-#. js-lingui-id: OvBnOM
-#: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
-msgid "Back to Settings"
-msgstr "Terug na Instellings"
-
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Background"
@@ -11801,11 +11796,11 @@ msgstr "Wagwoord is gestel"
 msgid "Password has been updated"
 msgstr "Wagwoord is opgedateer"
 
-#. js-lingui-id: 1oqxe6
+#. js-lingui-id: BfLK2u
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/auth/sign-in-up/hooks/useSignInUpForm.ts
-msgid "Password must be min. 8 characters"
-msgstr "Wagwoord moet minstens 8 karakters wees"
+msgid "Password must be between 8 and 50 characters"
+msgstr ""
 
 #. js-lingui-id: mi6Rel
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -13177,6 +13172,11 @@ msgstr "Rolnaam"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Role name cannot be empty"
 msgstr "Rolnaam kan nie leeg wees nie"
+
+#. js-lingui-id: VMX1Oy
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role permission flag"
+msgstr ""
 
 #. js-lingui-id: jLNGne
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

@@ -1,14 +1,14 @@
 import {
   type UpsertPermissionFlagsFactoryInput,
   upsertPermissionFlagsQueryFactory,
-} from 'test/integration/metadata/suites/permission-flag/utils/upsert-permission-flags-query-factory.util';
+} from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
+import { type RolePermissionFlagDTO } from 'src/engine/metadata-modules/role-permission-flag/dtos/role-permission-flag.dto';
 
 export const upsertPermissionFlags = async ({
   input,
@@ -16,7 +16,7 @@ export const upsertPermissionFlags = async ({
   expectToFail = false,
   token,
 }: PerformMetadataQueryParams<UpsertPermissionFlagsFactoryInput>): CommonResponseBody<{
-  upsertPermissionFlags: PermissionFlagDTO[];
+  upsertPermissionFlags: RolePermissionFlagDTO[];
 }> => {
   const graphqlOperation = upsertPermissionFlagsQueryFactory({
     input,
