@@ -15,20 +15,8 @@ import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junctio
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { styled } from '@linaria/react';
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: flex-start;
-  max-width: 100%;
-  overflow: hidden;
-  width: 100%;
-`;
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
@@ -108,15 +96,9 @@ export const RelationFromManyFieldDisplay = () => {
       })
       .filter(isDefined);
 
-    if (isFocused) {
-      return (
-        <ExpandableList isChipCountDisplayed={isFocused}>
-          {chips}
-        </ExpandableList>
-      );
-    }
-
-    return <StyledContainer>{chips}</StyledContainer>;
+    return (
+      <ExpandableList isChipCountDisplayed={isFocused}>{chips}</ExpandableList>
+    );
   }
 
   if (isJunctionRelation && isDefined(junctionConfig)) {
