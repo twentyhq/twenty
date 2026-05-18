@@ -93,18 +93,18 @@ export const SettingsAccountsConnectionForm = ({
 }: SettingsAccountsConnectionFormProps) => {
   const { t } = useLingui();
 
-  const [editingPasswords, setEditingPasswords] = useState<
+  const [isPasswordEdited, setIsPasswordEdited] = useState<
     Record<AccountType, boolean>
   >({ IMAP: false, SMTP: false, CALDAV: false });
 
-  const isPasswordLocked = (protocol: AccountType) =>
-    isEditing &&
-    existingProtocols.includes(protocol) &&
-    !editingPasswords[protocol];
+  const isPasswordInputDisabled = (protocol: AccountType) =>
+    existingProtocols.includes(protocol) && !isPasswordEdited[protocol];
 
   const unlockPassword = (protocol: AccountType) => {
-    setEditingPasswords((prev) => ({ ...prev, [protocol]: true }));
+    setIsPasswordEdited((prev) => ({ ...prev, [protocol]: true }));
   };
+
+  const MASKED_PASSWORD_PLACEHOLDER = '••••••••';
 
   const getDescription = () => {
     if (isEditing) {
@@ -184,15 +184,17 @@ export const SettingsAccountsConnectionForm = ({
                   instanceId="imap-password-connection-form"
                   label={t`IMAP Password`}
                   placeholder={
-                    isPasswordLocked('IMAP') ? t`Password saved` : t`••••••••`
+                    isPasswordInputDisabled('IMAP')
+                      ? MASKED_PASSWORD_PLACEHOLDER
+                      : ''
                   }
                   type="password"
                   value={field.value || ''}
                   onChange={field.onChange}
                   error={fieldState.error?.message}
-                  disabled={isPasswordLocked('IMAP')}
+                  disabled={isPasswordInputDisabled('IMAP')}
                 />
-                {isPasswordLocked('IMAP') && (
+                {isPasswordInputDisabled('IMAP') && (
                   <StyledEditPasswordLink
                     type="button"
                     onClick={() => unlockPassword('IMAP')}
@@ -295,15 +297,17 @@ export const SettingsAccountsConnectionForm = ({
                   instanceId="smtp-password-connection-form"
                   label={t`SMTP Password`}
                   placeholder={
-                    isPasswordLocked('SMTP') ? t`Password saved` : t`••••••••`
+                    isPasswordInputDisabled('SMTP')
+                      ? MASKED_PASSWORD_PLACEHOLDER
+                      : ''
                   }
                   type="password"
                   value={field.value || ''}
                   onChange={field.onChange}
                   error={fieldState.error?.message}
-                  disabled={isPasswordLocked('SMTP')}
+                  disabled={isPasswordInputDisabled('SMTP')}
                 />
-                {isPasswordLocked('SMTP') && (
+                {isPasswordInputDisabled('SMTP') && (
                   <StyledEditPasswordLink
                     type="button"
                     onClick={() => unlockPassword('SMTP')}
@@ -406,15 +410,17 @@ export const SettingsAccountsConnectionForm = ({
                   instanceId="caldav-password-connection-form"
                   label={t`CalDAV Password`}
                   placeholder={
-                    isPasswordLocked('CALDAV') ? t`Password saved` : t`••••••••`
+                    isPasswordInputDisabled('CALDAV')
+                      ? MASKED_PASSWORD_PLACEHOLDER
+                      : ''
                   }
                   type="password"
                   value={field.value || ''}
                   onChange={field.onChange}
                   error={fieldState.error?.message}
-                  disabled={isPasswordLocked('CALDAV')}
+                  disabled={isPasswordInputDisabled('CALDAV')}
                 />
-                {isPasswordLocked('CALDAV') && (
+                {isPasswordInputDisabled('CALDAV') && (
                   <StyledEditPasswordLink
                     type="button"
                     onClick={() => unlockPassword('CALDAV')}
