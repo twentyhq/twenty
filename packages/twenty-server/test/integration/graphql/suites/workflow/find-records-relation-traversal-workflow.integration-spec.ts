@@ -40,47 +40,41 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
   let companyNameFieldMetadataId: string | null = null;
 
   const lookupFieldMetadataIds = async () => {
-    const fieldsResponse = await makeMetadataAPIRequest({
+    const objectsResponse = await makeMetadataAPIRequest({
       query: gql`
-        query Fields($filter: FieldFilter!, $paging: CursorPaging!) {
-          fields(filter: $filter, paging: $paging) {
+        query Objects($filter: ObjectFilter!, $paging: CursorPaging!) {
+          objects(filter: $filter, paging: $paging) {
             edges {
               node {
-                id
-                name
-                object {
-                  nameSingular
+                nameSingular
+                fieldsList {
+                  id
+                  name
                 }
               }
             }
           }
         }
       `,
-      variables: {
-        paging: { first: 200 },
-        filter: { or: [{ name: { eq: 'company' } }, { name: { eq: 'name' } }] },
-      },
+      variables: { paging: { first: 1000 }, filter: {} },
     });
 
-    expect(fieldsResponse.body.errors).toBeUndefined();
+    expect(objectsResponse.body.errors).toBeUndefined();
 
-    const fieldEdges: Array<{
-      node: { id: string; name: string; object: { nameSingular: string } };
-    }> = fieldsResponse.body.data.fields.edges;
+    const objects: Array<{
+      nameSingular: string;
+      fieldsList: Array<{ id: string; name: string }>;
+    }> = objectsResponse.body.data.objects.edges.map(
+      (edge: { node: unknown }) => edge.node,
+    );
+
+    const personObject = objects.find((o) => o.nameSingular === 'person');
+    const companyObject = objects.find((o) => o.nameSingular === 'company');
 
     personCompanyFieldMetadataId =
-      fieldEdges.find(
-        (edge) =>
-          edge.node.name === 'company' &&
-          edge.node.object.nameSingular === 'person',
-      )?.node.id ?? null;
-
+      personObject?.fieldsList.find((f) => f.name === 'company')?.id ?? null;
     companyNameFieldMetadataId =
-      fieldEdges.find(
-        (edge) =>
-          edge.node.name === 'name' &&
-          edge.node.object.nameSingular === 'company',
-      )?.node.id ?? null;
+      companyObject?.fieldsList.find((f) => f.name === 'name')?.id ?? null;
 
     if (!personCompanyFieldMetadataId || !companyNameFieldMetadataId) {
       throw new Error(
