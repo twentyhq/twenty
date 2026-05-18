@@ -42,6 +42,11 @@
       "import": "./dist/logic-function/index.mjs",
       "require": "./dist/logic-function/index.cjs"
     },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.mjs",
+      "require": "./dist/utils/index.cjs"
+    },
     "./ui": {
       "types": "./dist/ui/index.d.ts",
       "import": "./dist/ui/index.mjs",
@@ -122,6 +127,9 @@
       ],
       "logic-function": [
         "dist/logic-function/index.d.ts"
+      ],
+      "utils": [
+        "dist/utils/index.d.ts"
       ],
       "cli": [
         "dist/cli/operations/index.d.ts"
