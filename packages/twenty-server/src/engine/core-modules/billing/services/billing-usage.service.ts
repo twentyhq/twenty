@@ -282,7 +282,11 @@ export class BillingUsageService {
     usedCredits: number;
   }): Promise<number> {
     const {
-      billingSubscription: { currentPeriodStart, currentPeriodEnd },
+      billingSubscription: {
+        id: billingSubscriptionId,
+        currentPeriodStart,
+        currentPeriodEnd,
+      },
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'billingSubscription',
     ]);
@@ -317,8 +321,9 @@ export class BillingUsageService {
         -usedCredits,
       );
 
-    if (decrementedAvailableCredits <= 0) {
+    if (availableCredits > 0 && decrementedAvailableCredits <= 0) {
       await this.billingUsageCapService.setSubscriptionItemHasReachedCap(
+        billingSubscriptionId,
         workspaceId,
         true,
       );

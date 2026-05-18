@@ -11,10 +11,9 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Not, Raw, Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 
 export type BillingCapEvaluation =
   | {
@@ -83,16 +82,18 @@ export class BillingUsageCapService {
   }
 
   async setSubscriptionItemHasReachedCap(
+    billingSubscriptionId: string,
     workspaceId: string,
     hasReachedCap: boolean,
   ): Promise<void> {
-    const billingSubscriptionItems =
-      await this.billingSubscriptionItemRepository.find({
+    const billingSubscriptionItem =
+      await this.billingSubscriptionItemRepository.findOne({
+        select: {
+          id: true,
+          hasReachedCurrentPeriodCap: true,
+        },
         where: {
-          billingSubscription: {
-            workspaceId,
-            status: Not(SubscriptionStatus.Canceled),
-          },
+          billingSubscriptionId,
           billingProduct: {
             metadata: Raw((alias) => `${alias} @> :metadata::jsonb`, {
               metadata: JSON.stringify({
@@ -103,15 +104,19 @@ export class BillingUsageCapService {
         },
       });
 
-    if (billingSubscriptionItems.length !== 1) {
+    if (!billingSubscriptionItem) {
       throw new BillingException(
-        `Expected 1 billing subscription item for workspace ${workspaceId}, but got ${billingSubscriptionItems.length}`,
+        `Resource credit subscription item not found for workspace ${workspaceId}`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
       );
     }
 
+    if (billingSubscriptionItem.hasReachedCurrentPeriodCap === hasReachedCap) {
+      return;
+    }
+
     await this.billingSubscriptionItemRepository.update(
-      { id: billingSubscriptionItems[0].id },
+      { id: billingSubscriptionItem.id },
       { hasReachedCurrentPeriodCap: hasReachedCap },
     );
   }

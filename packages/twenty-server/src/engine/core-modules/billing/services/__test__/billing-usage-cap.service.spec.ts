@@ -14,6 +14,10 @@ describe('BillingUsageCapService', () => {
   let service: BillingUsageCapService;
   let clickHouseService: jest.Mocked<ClickHouseService>;
   let twentyConfigService: jest.Mocked<TwentyConfigService>;
+  let billingSubscriptionItemRepository: {
+    findOne: jest.Mock;
+    update: jest.Mock;
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,7 +44,7 @@ describe('BillingUsageCapService', () => {
         {
           provide: getRepositoryToken(BillingSubscriptionItemEntity),
           useValue: {
-            find: jest.fn(),
+            findOne: jest.fn(),
             update: jest.fn(),
           },
         },
@@ -50,6 +54,9 @@ describe('BillingUsageCapService', () => {
     service = module.get<BillingUsageCapService>(BillingUsageCapService);
     clickHouseService = module.get(ClickHouseService);
     twentyConfigService = module.get(TwentyConfigService);
+    billingSubscriptionItemRepository = module.get(
+      getRepositoryToken(BillingSubscriptionItemEntity),
+    );
   });
 
   afterEach(() => {
@@ -67,6 +74,41 @@ describe('BillingUsageCapService', () => {
       twentyConfigService.get.mockReturnValue('');
 
       expect(service.isClickHouseEnabled()).toBe(false);
+    });
+  });
+
+  describe('setSubscriptionItemHasReachedCap', () => {
+    it('updates the subscription item when cap flag changes', async () => {
+      billingSubscriptionItemRepository.findOne.mockResolvedValue({
+        id: 'subscription-item-id',
+        hasReachedCurrentPeriodCap: false,
+      });
+
+      await service.setSubscriptionItemHasReachedCap(
+        'subscription-id',
+        'workspace-id',
+        true,
+      );
+
+      expect(billingSubscriptionItemRepository.update).toHaveBeenCalledWith(
+        { id: 'subscription-item-id' },
+        { hasReachedCurrentPeriodCap: true },
+      );
+    });
+
+    it('does not update when cap flag is already set', async () => {
+      billingSubscriptionItemRepository.findOne.mockResolvedValue({
+        id: 'subscription-item-id',
+        hasReachedCurrentPeriodCap: true,
+      });
+
+      await service.setSubscriptionItemHasReachedCap(
+        'subscription-id',
+        'workspace-id',
+        true,
+      );
+
+      expect(billingSubscriptionItemRepository.update).not.toHaveBeenCalled();
     });
   });
 

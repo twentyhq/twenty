@@ -15,6 +15,10 @@ import {
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
@@ -407,6 +411,17 @@ export class ChatExecutionService {
         if (error?.name === 'AbortError') {
           return;
         }
+
+        const isBillingCreditsExhaustedError =
+          error instanceof BillingException &&
+          error.code === BillingExceptionCode.BILLING_CREDITS_EXHAUSTED;
+
+        if (isBillingCreditsExhaustedError) {
+          this.logger.warn('AI stream aborted because billing credits are exhausted');
+
+          return;
+        }
+
         this.exceptionHandlerService.captureExceptions([error]);
       });
 

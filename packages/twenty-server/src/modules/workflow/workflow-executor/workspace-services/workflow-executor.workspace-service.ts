@@ -9,6 +9,10 @@ import {
   WorkflowRunStepInfos,
 } from 'twenty-shared/workflow';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -508,13 +512,16 @@ export class WorkflowExecutorWorkspaceService {
         },
       });
     } catch (error) {
-      const isUserError =
+      const isWorkflowUserError =
         error instanceof WorkflowStepExecutorException &&
         (error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
           error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
           error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
+      const isBillingCreditsExhaustedError =
+        error instanceof BillingException &&
+        error.code === BillingExceptionCode.BILLING_CREDITS_EXHAUSTED;
 
-      if (!isUserError) {
+      if (!isWorkflowUserError && !isBillingCreditsExhaustedError) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
         });
