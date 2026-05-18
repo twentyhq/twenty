@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   CombinedGraphQLErrors,
@@ -50,8 +51,26 @@ export const PromiseRejectionEffect = () => {
         );
       }
 
+      if (isAbortError) {
+        return;
+      }
+
       try {
-        const { captureException } = await import('@sentry/react');
+        const { captureException, captureMessage, withScope } = await import(
+          '@sentry/react'
+        );
+
+        if (error instanceof ObjectMetadataItemNotFoundError) {
+          withScope((scope) => {
+            scope.setExtras({ mechanism: 'onUnhandle' });
+            scope.setLevel('warning');
+            scope.setFingerprint(['ObjectMetadataItemNotFoundError']);
+            captureMessage(error.message);
+          });
+
+          return;
+        }
+
         captureException(error, (scope) => {
           scope.setExtras({ mechanism: 'onUnhandle' });
 

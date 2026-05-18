@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordShowPage = (
@@ -19,11 +18,8 @@ export const useRecordShowPage = (
     throw new Error('Object name or Record id is not defined');
   }
 
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
-
   return {
     objectNameSingular,
     objectRecordId,
-    objectMetadataItem,
   };
 };

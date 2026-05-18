@@ -1,5 +1,6 @@
 import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { type ErrorInfo, type ReactNode } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { type CustomError, isDefined } from 'twenty-shared/utils';
@@ -23,7 +24,21 @@ export const AppErrorBoundary = ({
 }: AppErrorBoundaryProps) => {
   const handleError = async (error: Error | CustomError, info: ErrorInfo) => {
     try {
-      const { captureException } = await import('@sentry/react');
+      const { captureException, captureMessage, withScope } = await import(
+        '@sentry/react'
+      );
+
+      if (error instanceof ObjectMetadataItemNotFoundError) {
+        withScope((scope) => {
+          scope.setExtras({ info });
+          scope.setLevel('warning');
+          scope.setFingerprint(['ObjectMetadataItemNotFoundError']);
+          captureMessage(error.message);
+        });
+
+        return;
+      }
+
       captureException(error, (scope) => {
         scope.setExtras({ info });
 
