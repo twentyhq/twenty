@@ -140,7 +140,7 @@ describe('Connected account creation should fail', () => {
         handle: VALID_HANDLE,
         connectionParameters: {
           IMAP: {
-            host: 'imap.example.com',
+            host: 'imap.gmail.com',
             port: 993,
             password: 'secret',
             secure: true,
