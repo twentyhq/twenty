@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   connectionParametersSchema,
@@ -65,7 +66,7 @@ export class ImapSmtpCaldavValidatorService {
     const password =
       validated.password ?? existingProtocolParams?.password ?? null;
 
-    if (!password) {
+    if (!isNonEmptyString(password)) {
       throw new UserInputError(
         'Password is required — no existing password found',
         {
