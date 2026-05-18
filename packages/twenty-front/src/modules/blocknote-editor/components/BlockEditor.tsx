@@ -159,6 +159,7 @@ export const BlockEditor = ({
   const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
   const getMentionItems = useMentionMenu(editor);
 
+  // oxlint-disable-next-line twenty/no-state-useref
   const lastSlashCommandQueryLengthRef = useRef(0);
 
   const getSlashMenuItems = async (query: string) => {
