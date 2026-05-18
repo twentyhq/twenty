@@ -188,7 +188,7 @@ export const SettingsAccountsConnectionForm = ({
                       ? MASKED_PASSWORD_PLACEHOLDER
                       : ''
                   }
-                  type="password"
+                  type={isPasswordInputDisabled('IMAP') ? 'text' : 'password'}
                   value={field.value || ''}
                   onChange={field.onChange}
                   error={fieldState.error?.message}
@@ -301,7 +301,7 @@ export const SettingsAccountsConnectionForm = ({
                       ? MASKED_PASSWORD_PLACEHOLDER
                       : ''
                   }
-                  type="password"
+                  type={isPasswordInputDisabled('SMTP') ? 'text' : 'password'}
                   value={field.value || ''}
                   onChange={field.onChange}
                   error={fieldState.error?.message}
@@ -414,7 +414,9 @@ export const SettingsAccountsConnectionForm = ({
                       ? MASKED_PASSWORD_PLACEHOLDER
                       : ''
                   }
-                  type="password"
+                  type={
+                    isPasswordInputDisabled('CALDAV') ? 'text' : 'password'
+                  }
                   value={field.value || ''}
                   onChange={field.onChange}
                   error={fieldState.error?.message}
