@@ -11,6 +11,7 @@ import {
 export default definePageLayout({
   universalIdentifier: MAIN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
   name: APP_DISPLAY_NAME,
+  type: 'STANDALONE_PAGE',
   tabs: [
     {
       universalIdentifier: MAIN_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
