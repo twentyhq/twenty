@@ -8,13 +8,6 @@ const MESSAGE_CHANNEL_INDEX_NAME =
 const CALENDAR_CHANNEL_INDEX_NAME =
   'IDX_CALENDAR_CHANNEL_WORKSPACE_ID_SYNC_ENABLED_SYNC_STAGE';
 
-// Backs the per-workspace `find` issued every minute by the messaging /
-// calendar import crons (messaging-messages-import, calendar-events-import,
-// messaging-message-list-fetch, calendar-event-list-fetch). Without these
-// indexes the planner falls back to seq scans on `core.messageChannel` /
-// `core.calendarChannel` once `(workspaceId, isSyncEnabled, syncStage)` is the
-// filter shape, which becomes the top load on the primary as the number of
-// active workspaces grows.
 @RegisteredInstanceCommand('2.6.0', 1798000010000)
 export class AddChannelSyncStageIndexesFastInstanceCommand
   implements FastInstanceCommand
