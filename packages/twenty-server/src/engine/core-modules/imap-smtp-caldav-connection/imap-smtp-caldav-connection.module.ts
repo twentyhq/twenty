@@ -6,6 +6,7 @@ import { ImapSmtpCaldavValidatorModule } from 'src/engine/core-modules/imap-smtp
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { CalDavDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/caldav-driver.module';
@@ -32,6 +33,7 @@ import { ImapSmtpCaldavService } from './services/imap-smtp-caldav-connection.se
     PermissionsModule,
     SecureHttpClientModule,
     CalDavDriverModule,
+    ConnectedAccountTokenEncryptionModule,
   ],
   providers: [ImapSmtpCaldavResolver, ImapSmtpCaldavService],
   exports: [ImapSmtpCaldavService],
