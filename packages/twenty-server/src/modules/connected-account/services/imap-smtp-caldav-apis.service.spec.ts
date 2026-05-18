@@ -116,7 +116,9 @@ describe('ImapSmtpCalDavAPIService', () => {
   };
 
   const mockConnectedAccountTokenEncryptionService = {
-    encrypt: jest.fn(({ plaintext }: { plaintext: string }) => `enc:v2:${plaintext}`),
+    encrypt: jest.fn(
+      ({ plaintext }: { plaintext: string }) => `enc:v2:${plaintext}`,
+    ),
   };
 
   beforeEach(async () => {
