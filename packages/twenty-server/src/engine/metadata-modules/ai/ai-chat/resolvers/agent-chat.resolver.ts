@@ -114,7 +114,10 @@ export class AgentChatResolver {
     browsingContext: BrowsingContextType | null,
     @Args('modelId', { type: () => String, nullable: true })
     modelId: string | undefined,
-    @Args('fileAttachments', { type: () => [FileAttachmentInput], nullable: true })
+    @Args('fileAttachments', {
+      type: () => [FileAttachmentInput],
+      nullable: true,
+    })
     fileAttachments: FileAttachmentInput[] | null,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

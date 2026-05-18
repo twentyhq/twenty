@@ -45,7 +45,9 @@ export const useAgentChat = (
 
   const [, setPendingThreadIdAfterFirstSend] = useState<string | null>(null);
 
-  const setAgentChatUploadedFiles = useSetAtomState(agentChatUploadedFilesState);
+  const setAgentChatUploadedFiles = useSetAtomState(
+    agentChatUploadedFilesState,
+  );
 
   const [, setAgentChatInput] = useAtomState(agentChatInputState);
   const setAgentChatDraftsByThreadId = useSetAtomState(
@@ -69,17 +71,13 @@ export const useAgentChat = (
       return;
     }
 
-    const agentChatSelectedFiles = store.get(
-      agentChatSelectedFilesState.atom,
-    );
+    const agentChatSelectedFiles = store.get(agentChatSelectedFilesState.atom);
 
     if (agentChatSelectedFiles.length > 0) {
       return;
     }
 
-    const agentChatUploadedFiles = store.get(
-      agentChatUploadedFilesState.atom,
-    );
+    const agentChatUploadedFiles = store.get(agentChatUploadedFilesState.atom);
 
     const threadId = await ensureThreadIdForSend();
 
@@ -155,7 +153,8 @@ export const useAgentChat = (
           messageId,
           browsingContext: browsingContext ?? null,
           modelId: modelIdForRequest ?? undefined,
-          fileAttachments: fileAttachments.length > 0 ? fileAttachments : undefined,
+          fileAttachments:
+            fileAttachments.length > 0 ? fileAttachments : undefined,
         },
       });
 

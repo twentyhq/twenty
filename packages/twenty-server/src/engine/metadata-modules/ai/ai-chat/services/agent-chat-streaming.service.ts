@@ -312,7 +312,9 @@ export class AgentChatStreamingService {
     return fileAttachments
       .filter((attachment) => validFileIds.has(attachment.id))
       .map((attachment): ExtendedFileUIPart => {
-        const file = validFiles.find((validFile) => validFile.id === attachment.id);
+        const file = validFiles.find(
+          (validFile) => validFile.id === attachment.id,
+        );
 
         return {
           type: 'file' as const,
