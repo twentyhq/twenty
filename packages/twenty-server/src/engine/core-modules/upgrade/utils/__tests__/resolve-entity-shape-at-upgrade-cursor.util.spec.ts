@@ -69,6 +69,47 @@ describe('resolveEntityShapeAtUpgradeCursor', () => {
 
       expect(result.effectiveTableName).toBe('newEntity');
     });
+
+    it('should walk a multi-step rename history chronologically', () => {
+      const FIRST_RENAME_CMD = '2.5.0_FirstRename_1600000000000';
+      const SECOND_RENAME_CMD = '2.6.0_SecondRename_1700000000000';
+
+      @WasRenamedInUpgrade([
+        { previousName: 'firstName', upgradeCommandName: FIRST_RENAME_CMD },
+        { previousName: 'secondName', upgradeCommandName: SECOND_RENAME_CMD },
+      ])
+      class TwiceRenamedEntity {}
+
+      expect(
+        resolveEntityShapeAtUpgradeCursor({
+          entityClass: TwiceRenamedEntity,
+          currentTableName: 'thirdName',
+          currentColumns: [],
+          isStepApplied: buildPredicate([]),
+        }).effectiveTableName,
+      ).toBe('firstName');
+
+      expect(
+        resolveEntityShapeAtUpgradeCursor({
+          entityClass: TwiceRenamedEntity,
+          currentTableName: 'thirdName',
+          currentColumns: [],
+          isStepApplied: buildPredicate([FIRST_RENAME_CMD]),
+        }).effectiveTableName,
+      ).toBe('secondName');
+
+      expect(
+        resolveEntityShapeAtUpgradeCursor({
+          entityClass: TwiceRenamedEntity,
+          currentTableName: 'thirdName',
+          currentColumns: [],
+          isStepApplied: buildPredicate([
+            FIRST_RENAME_CMD,
+            SECOND_RENAME_CMD,
+          ]),
+        }).effectiveTableName,
+      ).toBe('thirdName');
+    });
   });
 
   describe('property-level decorators', () => {
