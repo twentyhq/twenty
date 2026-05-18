@@ -240,16 +240,18 @@ export class GoogleAPIsService {
           },
         );
 
-        const connectedAccountForAliases =
-          await this.connectedAccountRepository.findOne({
-            where: { id: newOrExistingConnectedAccountId, workspaceId },
-          });
+        if (isMessagingEnabled && isMessagingAvailable) {
+          const connectedAccountForAliases =
+            await this.connectedAccountRepository.findOne({
+              where: { id: newOrExistingConnectedAccountId, workspaceId },
+            });
 
-        if (isDefined(connectedAccountForAliases)) {
-          await this.emailAliasManagerService.refreshHandleAliases(
-            connectedAccountForAliases,
-            workspaceId,
-          );
+          if (isDefined(connectedAccountForAliases)) {
+            await this.emailAliasManagerService.refreshHandleAliases(
+              connectedAccountForAliases,
+              workspaceId,
+            );
+          }
         }
 
         if (

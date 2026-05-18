@@ -218,16 +218,20 @@ export class MicrosoftAPIsService {
           },
         );
 
-        const connectedAccountForAliases =
-          await this.connectedAccountRepository.findOne({
-            where: { id: newOrExistingConnectedAccountId, workspaceId },
-          });
+        if (
+          this.twentyConfigService.get('MESSAGING_PROVIDER_MICROSOFT_ENABLED')
+        ) {
+          const connectedAccountForAliases =
+            await this.connectedAccountRepository.findOne({
+              where: { id: newOrExistingConnectedAccountId, workspaceId },
+            });
 
-        if (isDefined(connectedAccountForAliases)) {
-          await this.emailAliasManagerService.refreshHandleAliases(
-            connectedAccountForAliases,
-            workspaceId,
-          );
+          if (isDefined(connectedAccountForAliases)) {
+            await this.emailAliasManagerService.refreshHandleAliases(
+              connectedAccountForAliases,
+              workspaceId,
+            );
+          }
         }
 
         if (

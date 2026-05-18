@@ -17,6 +17,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
+import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageImportDriverException,
@@ -46,6 +47,7 @@ export class MessagingMessagesImportService {
     private readonly messagingMonitoringService: MessagingMonitoringService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
+    private readonly emailAliasManagerService: EmailAliasManagerService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
@@ -108,6 +110,14 @@ export class MessagingMessagesImportService {
             accessToken,
             refreshToken,
           };
+
+          if (!isDefined(connectedAccountWithFreshTokens.handleAliases)) {
+            connectedAccountWithFreshTokens.handleAliases =
+              await this.emailAliasManagerService.refreshHandleAliases(
+                connectedAccountWithFreshTokens,
+                workspaceId,
+              );
+          }
 
           messageIdsToFetch = await this.cacheStorage.setPop(
             `messages-to-import:${workspaceId}:${messageChannel.id}`,
