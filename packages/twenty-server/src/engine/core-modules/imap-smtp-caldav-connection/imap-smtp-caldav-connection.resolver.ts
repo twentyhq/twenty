@@ -139,13 +139,11 @@ export class ImapSmtpCaldavResolver {
             },
           );
 
-        if (validatedProtocolParams && isDefined(params.password)) {
-          await this.ImapSmtpCaldavConnectionService.testImapSmtpCaldav({
-            handle,
-            params: validatedProtocolParams,
-            accountType: protocol,
-          });
-        }
+        await this.ImapSmtpCaldavConnectionService.testImapSmtpCaldav({
+          handle,
+          params: validatedProtocolParams,
+          accountType: protocol,
+        });
 
         validatedParams[protocol] = validatedProtocolParams;
       }
