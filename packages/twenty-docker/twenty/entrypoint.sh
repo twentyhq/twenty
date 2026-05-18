@@ -1,6 +1,27 @@
 #!/bin/sh
 set -e
 
+validate_workspace_manifest() {
+    manifest_path="$1"
+
+    if [ ! -s "${manifest_path}" ]; then
+        echo "ERROR: Invalid runtime workspace manifest (missing or empty): ${manifest_path}" >&2
+        return 1
+    fi
+
+    if ! node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'))" "${manifest_path}" >/dev/null 2>&1; then
+        echo "ERROR: Invalid runtime workspace manifest (malformed JSON): ${manifest_path}" >&2
+        return 1
+    fi
+}
+
+validate_workspace_manifests() {
+    validate_workspace_manifest "/app/packages/twenty-shared/package.json" || return 1
+    validate_workspace_manifest "/app/packages/twenty-server/package.json" || return 1
+    validate_workspace_manifest "/app/packages/twenty-emails/package.json" || return 1
+    validate_workspace_manifest "/app/packages/twenty-client-sdk/package.json" || return 1
+}
+
 setup_and_migrate_db() {
     if [ "${DISABLE_DB_MIGRATIONS}" = "true" ]; then
         echo "Database setup and migrations are disabled, skipping..."
@@ -44,6 +65,11 @@ register_background_jobs() {
         echo "Warning: Failed to register background jobs, but continuing startup..."
     fi
 }
+
+if ! validate_workspace_manifests; then
+    echo "ERROR: Aborting startup because runtime workspace manifests are invalid." >&2
+    exit 1
+fi
 
 setup_and_migrate_db
 register_background_jobs

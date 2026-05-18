@@ -51,6 +51,8 @@ RUN npx nx run twenty-server:lingui:extract && \
 
 RUN npx nx run twenty-server:build
 
+RUN node -e "const fs = require('fs'); const manifests = ['/app/packages/twenty-shared/package.json', '/app/packages/twenty-server/package.json', '/app/packages/twenty-emails/package.json', '/app/packages/twenty-client-sdk/package.json']; for (const manifestPath of manifests) { if (!fs.existsSync(manifestPath)) { throw new Error(`Missing workspace manifest: ${manifestPath}`); } const content = fs.readFileSync(manifestPath, 'utf8'); if (content.trim().length === 0) { throw new Error(`Empty workspace manifest: ${manifestPath}`); } JSON.parse(content); } console.log('Workspace manifests are valid.');"
+
 # Clean server build output (type declarations and compiled tests are not needed at runtime;
 # source maps are kept because twenty-infra extracts them from the image for Sentry uploads)
 RUN find /app/packages/twenty-server/dist -name '*.d.ts' -delete \
