@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node';
+import { QueryFailedError } from 'typeorm';
 import {
   getGenericOperationName,
   getHumanReadableNameFromCode,
@@ -102,6 +103,39 @@ export class ExceptionHandlerSentryDriver
         if (exception instanceof MessageImportDriverException) {
           scope.setTag('messageImportDriverCode', exception.code);
           scope.setFingerprint([exception.code]);
+        }
+
+        if (exception instanceof QueryFailedError) {
+          const postgresCode =
+            exception.driverError?.code ?? exception.driverError?.routine;
+          const genericOperationName = getGenericOperationName(
+            options?.operation?.name,
+          );
+
+          if (isDefined(postgresCode)) {
+            scope.setTag('postgresSqlErrorCode', postgresCode);
+
+            const fingerprint = [postgresCode];
+
+            if (isDefined(genericOperationName)) {
+              fingerprint.push(genericOperationName);
+            }
+
+            scope.setFingerprint(fingerprint);
+          }
+
+          if (isDefined(exception.driverError?.table)) {
+            scope.setTag('postgresSqlErrorTable', exception.driverError.table);
+          }
+
+          scope.setContext('postgresDriverError', {
+            code: exception.driverError?.code,
+            detail: exception.driverError?.detail,
+            schema: exception.driverError?.schema,
+            table: exception.driverError?.table,
+            column: exception.driverError?.column,
+            constraint: exception.driverError?.constraint,
+          });
         }
 
         const eventId = Sentry.captureException(exception, {
