@@ -97,8 +97,11 @@ export const SettingsAccountsConnectionForm = ({
     Record<AccountType, boolean>
   >({ IMAP: false, SMTP: false, CALDAV: false });
 
-  const isPasswordInputDisabled = (protocol: AccountType) =>
-    existingProtocols.includes(protocol) && !isPasswordEdited[protocol];
+  const passwordDisabledByProtocol: Record<AccountType, boolean> = {
+    IMAP: existingProtocols.includes('IMAP') && !isPasswordEdited.IMAP,
+    SMTP: existingProtocols.includes('SMTP') && !isPasswordEdited.SMTP,
+    CALDAV: existingProtocols.includes('CALDAV') && !isPasswordEdited.CALDAV,
+  };
 
   const unlockPassword = (protocol: AccountType) => {
     setIsPasswordEdited((prev) => ({ ...prev, [protocol]: true }));
@@ -184,17 +187,17 @@ export const SettingsAccountsConnectionForm = ({
                   instanceId="imap-password-connection-form"
                   label={t`IMAP Password`}
                   placeholder={
-                    isPasswordInputDisabled('IMAP')
+                    passwordDisabledByProtocol.IMAP
                       ? MASKED_PASSWORD_PLACEHOLDER
                       : ''
                   }
-                  type={isPasswordInputDisabled('IMAP') ? 'text' : 'password'}
+                  type={passwordDisabledByProtocol.IMAP ? 'text' : 'password'}
                   value={field.value || ''}
                   onChange={field.onChange}
                   error={fieldState.error?.message}
-                  disabled={isPasswordInputDisabled('IMAP')}
+                  disabled={passwordDisabledByProtocol.IMAP}
                 />
-                {isPasswordInputDisabled('IMAP') && (
+                {passwordDisabledByProtocol.IMAP && (
                   <StyledEditPasswordLink
                     type="button"
                     onClick={() => unlockPassword('IMAP')}
@@ -297,17 +300,17 @@ export const SettingsAccountsConnectionForm = ({
                   instanceId="smtp-password-connection-form"
                   label={t`SMTP Password`}
                   placeholder={
-                    isPasswordInputDisabled('SMTP')
+                    passwordDisabledByProtocol.SMTP
                       ? MASKED_PASSWORD_PLACEHOLDER
                       : ''
                   }
-                  type={isPasswordInputDisabled('SMTP') ? 'text' : 'password'}
+                  type={passwordDisabledByProtocol.SMTP ? 'text' : 'password'}
                   value={field.value || ''}
                   onChange={field.onChange}
                   error={fieldState.error?.message}
-                  disabled={isPasswordInputDisabled('SMTP')}
+                  disabled={passwordDisabledByProtocol.SMTP}
                 />
-                {isPasswordInputDisabled('SMTP') && (
+                {passwordDisabledByProtocol.SMTP && (
                   <StyledEditPasswordLink
                     type="button"
                     onClick={() => unlockPassword('SMTP')}
@@ -410,19 +413,19 @@ export const SettingsAccountsConnectionForm = ({
                   instanceId="caldav-password-connection-form"
                   label={t`CalDAV Password`}
                   placeholder={
-                    isPasswordInputDisabled('CALDAV')
+                    passwordDisabledByProtocol.CALDAV
                       ? MASKED_PASSWORD_PLACEHOLDER
                       : ''
                   }
                   type={
-                    isPasswordInputDisabled('CALDAV') ? 'text' : 'password'
+                    passwordDisabledByProtocol.CALDAV ? 'text' : 'password'
                   }
                   value={field.value || ''}
                   onChange={field.onChange}
                   error={fieldState.error?.message}
-                  disabled={isPasswordInputDisabled('CALDAV')}
+                  disabled={passwordDisabledByProtocol.CALDAV}
                 />
-                {isPasswordInputDisabled('CALDAV') && (
+                {passwordDisabledByProtocol.CALDAV && (
                   <StyledEditPasswordLink
                     type="button"
                     onClick={() => unlockPassword('CALDAV')}
