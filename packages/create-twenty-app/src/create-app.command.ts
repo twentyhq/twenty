@@ -448,7 +448,7 @@ export class CreateAppCommand {
     return new Promise((resolve) => {
       const child = spawn('yarn', ['twenty', 'dev', '--once'], {
         cwd: appDirectory,
-        stdio: 'pipe',
+        stdio: 'inherit',
       });
 
       child.on('close', (code) => resolve(code === 0));
