@@ -207,7 +207,8 @@ export class ImapSmtpCaldavService {
         return this.testCaldavConnection(handle, params);
       default:
         assertUnreachable(accountType);
-    }  }
+    }
+  }
 
   async getImapSmtpCaldav(
     workspaceId: string,
