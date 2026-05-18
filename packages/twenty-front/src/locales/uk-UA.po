@@ -1963,7 +1963,7 @@ msgid "And"
 msgstr "Та"
 
 #. js-lingui-id: KYvJeB
-#: src/modules/object-record/advanced-filter/components/AdvancedFilterSubFieldSelectMenu.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 msgid "Any {fieldLabel} field"
 msgstr "Будь-яке поле {fieldLabel}"
 
@@ -11801,11 +11801,11 @@ msgstr "Пароль було встановлено"
 msgid "Password has been updated"
 msgstr "Пароль було оновлено"
 
-#. js-lingui-id: 1oqxe6
+#. js-lingui-id: BfLK2u
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/auth/sign-in-up/hooks/useSignInUpForm.ts
-msgid "Password must be min. 8 characters"
-msgstr "Пароль має містити щонайменше 8 символів"
+msgid "Password must be between 8 and 50 characters"
+msgstr ""
 
 #. js-lingui-id: mi6Rel
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts

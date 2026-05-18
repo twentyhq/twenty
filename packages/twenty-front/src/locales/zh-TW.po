@@ -1963,7 +1963,7 @@ msgid "And"
 msgstr "和"
 
 #. js-lingui-id: KYvJeB
-#: src/modules/object-record/advanced-filter/components/AdvancedFilterSubFieldSelectMenu.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 msgid "Any {fieldLabel} field"
 msgstr "任何 {fieldLabel} 欄位"
 
@@ -11801,11 +11801,11 @@ msgstr "密碼已設定"
 msgid "Password has been updated"
 msgstr "密碼已更新"
 
-#. js-lingui-id: 1oqxe6
+#. js-lingui-id: BfLK2u
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/auth/sign-in-up/hooks/useSignInUpForm.ts
-msgid "Password must be min. 8 characters"
-msgstr "密碼至少需 8 個字元"
+msgid "Password must be between 8 and 50 characters"
+msgstr ""
 
 #. js-lingui-id: mi6Rel
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts

@@ -6,11 +6,13 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect } from 'react';
 
@@ -52,11 +54,16 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
 
     const { filterValueDependencies } = useFilterValueDependencies();
 
+    const flattenedFieldMetadataItems = useAtomStateValue(
+      flattenedFieldMetadataItemsSelector,
+    );
+
     const computedFilter = computeContextStoreFilters({
       contextStoreTargetedRecordsRule,
       contextStoreFilters,
       contextStoreFilterGroups,
       objectMetadataItem,
+      flattenedFieldMetadataItems,
       filterValueDependencies,
       contextStoreAnyFieldFilterValue,
     });

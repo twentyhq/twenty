@@ -26,12 +26,16 @@ export class CreateViewFilterActionHandlerService extends WorkspaceMigrationRunn
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateViewFilterAction>): Promise<FlatCreateViewFilterAction> {
-    const { fieldMetadataId, viewId, viewFilterGroupId } =
-      resolveUniversalRelationIdentifiersToIds({
-        flatEntityMaps: allFlatEntityMaps,
-        metadataName: action.metadataName,
-        universalForeignKeyValues: action.flatEntity,
-      });
+    const {
+      fieldMetadataId,
+      viewId,
+      viewFilterGroupId,
+      relationTargetFieldMetadataId,
+    } = resolveUniversalRelationIdentifiersToIds({
+      flatEntityMaps: allFlatEntityMaps,
+      metadataName: action.metadataName,
+      universalForeignKeyValues: action.flatEntity,
+    });
 
     const emptyUniversalForeignKeyAggregators =
       getUniversalFlatEntityEmptyForeignKeyAggregators({
@@ -45,6 +49,7 @@ export class CreateViewFilterActionHandlerService extends WorkspaceMigrationRunn
         fieldMetadataId,
         viewId,
         viewFilterGroupId,
+        relationTargetFieldMetadataId,
         id: action.id ?? v4(),
         applicationId: flatApplication.id,
         workspaceId,

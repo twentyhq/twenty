@@ -7,6 +7,7 @@ import { contextStoreFilterGroupsComponentState } from '@/context-store/states/c
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
@@ -18,6 +19,7 @@ import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -87,6 +89,10 @@ export const useRecordIndexLazyFetchRecords = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
+
   const findManyRecordsParams = useFindManyRecordIndexTableParams(
     objectMetadataItem.nameSingular,
     recordIndexId,
@@ -101,6 +107,7 @@ export const useRecordIndexLazyFetchRecords = ({
     contextStoreFilters,
     contextStoreFilterGroups,
     objectMetadataItem,
+    flattenedFieldMetadataItems,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
   });

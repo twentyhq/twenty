@@ -231,6 +231,8 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         recordFilterGroupId: viewFilter.viewFilterGroupId,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
         subFieldName: viewFilter.subFieldName as CompositeFieldSubFieldName,
+        relationTargetFieldMetadataId:
+          viewFilter.relationTargetFieldMetadataId ?? null,
       };
     });
 
@@ -253,6 +255,33 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       label: field.label,
       options: field.options as PartialFieldMetadataItemOption[],
     }));
+
+    // Relation-traversal filters reference target fields on related objects
+    // that aren't in the source object's field list above. Resolve and add
+    // them so the shared dispatcher can look them up by id.
+    const relationTargetFieldsFromFilters = recordFilters
+      .map((filter) => filter.relationTargetFieldMetadataId)
+      .filter(isDefined)
+      .filter((id) => !fields.some((field) => field.id === id))
+      .map((id) => {
+        const field = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: id,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        if (!field) return null;
+
+        return {
+          id: field.id,
+          name: field.name,
+          type: field.type,
+          label: field.label,
+          options: field.options as PartialFieldMetadataItemOption[],
+        };
+      })
+      .filter(isDefined);
+
+    fields.push(...relationTargetFieldsFromFilters);
 
     const filtersFromView = computeRecordGqlOperationFilter({
       recordFilters,

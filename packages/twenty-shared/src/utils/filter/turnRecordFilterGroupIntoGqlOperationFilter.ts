@@ -19,6 +19,7 @@ export type RecordFilter = {
   recordFilterGroupId?: string | null;
   operand: ViewFilterOperand;
   subFieldName?: CompositeFieldSubFieldName | null | undefined;
+  relationTargetFieldMetadataId?: string | null | undefined;
 };
 
 export type RecordFilterGroup = {

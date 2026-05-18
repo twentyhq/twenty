@@ -1,31 +1,30 @@
-import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeNonFilterableByAnySubField';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
-type SelectFilterParams = {
-  fieldMetadataItemId: string;
+type ApplyAdvancedFilterCompositeSubFieldParams = {
+  sourceFieldMetadataItem: FieldMetadataItem;
+  subFieldName: CompositeFieldSubFieldName | null;
   recordFilterId: string;
-  subFieldName?: CompositeFieldSubFieldName | null | undefined;
 };
 
-export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
+// Creates an advanced filter from a composite source field together with
+// the user's chosen sub-field (e.g. address city, name first name). The
+// filter type is still driven by the source field's composite type.
+export const useApplyAdvancedFilterCompositeSubField = () => {
   const setSelectedOperandInDropdown = useSetAtomComponentState(
     selectedOperandInDropdownComponentState,
   );
@@ -38,54 +37,34 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const currentRecordFilters = useAtomComponentStateValue(
-    currentRecordFiltersComponentState,
-  );
-
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-
-  const { getFieldMetadataItemByIdOrThrow } =
-    useGetFieldMetadataItemByIdOrThrow();
-
   const setSubFieldNameUsedInDropdown = useSetAtomComponentState(
     subFieldNameUsedInDropdownComponentState,
   );
+
+  const setRelationTargetFieldMetadataIdUsedInDropdown =
+    useSetAtomComponentState(
+      relationTargetFieldMetadataIdUsedInDropdownComponentState,
+    );
 
   const setObjectFilterDropdownCurrentRecordFilter = useSetAtomComponentState(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 
+  const currentRecordFilters = useAtomComponentStateValue(
+    currentRecordFiltersComponentState,
+  );
+
   const { upsertRecordFilter } = useUpsertRecordFilter();
   const { getInitialFilterValue } = useGetInitialFilterValue();
 
-  const selectFieldUsedInAdvancedFilterDropdown = ({
-    fieldMetadataItemId,
-    recordFilterId,
+  const applyAdvancedFilterCompositeSubField = ({
+    sourceFieldMetadataItem,
     subFieldName,
-  }: SelectFilterParams) => {
-    setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
+    recordFilterId,
+  }: ApplyAdvancedFilterCompositeSubFieldParams) => {
+    setFieldMetadataItemIdUsedInDropdown(sourceFieldMetadataItem.id);
 
-    const { fieldMetadataItem } =
-      getFieldMetadataItemByIdOrThrow(fieldMetadataItemId);
-
-    if (!isDefined(fieldMetadataItem)) {
-      return;
-    }
-
-    if (
-      fieldMetadataItem.type === 'RELATION' ||
-      fieldMetadataItem.type === 'SELECT'
-    ) {
-      pushFocusItemToFocusStack({
-        focusId: fieldMetadataItem.id,
-        component: {
-          type: FocusComponentType.DROPDOWN,
-          instanceId: fieldMetadataItem.id,
-        },
-      });
-    }
-
-    const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
+    const filterType = getFilterTypeFromFieldType(sourceFieldMetadataItem.type);
 
     const firstOperand = getRecordFilterOperands({
       filterType,
@@ -109,30 +88,9 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       (recordFilter) => recordFilter.id === recordFilterId,
     );
 
-    const isCompositeFilterOnAnySubField =
-      isCompositeFieldType(filterType) && !isDefined(subFieldName);
-    const compositeFilterNonFilterableByAnySubField =
-      isCompositeTypeNonFilterableByAnySubField(filterType);
-
-    let subFieldNameForNonFilterableWithAny:
-      | CompositeFieldSubFieldName
-      | undefined
-      | null = subFieldName;
-
-    if (
-      isCompositeFilterOnAnySubField &&
-      compositeFilterNonFilterableByAnySubField
-    ) {
-      subFieldNameForNonFilterableWithAny =
-        getDefaultSubFieldNameForCompositeFilterableFieldType(filterType);
-    }
-
-    const subFieldNameToUse =
-      subFieldName ?? subFieldNameForNonFilterableWithAny;
-
     const newAdvancedFilter = {
       id: recordFilterId,
-      fieldMetadataId: fieldMetadataItem.id,
+      fieldMetadataId: sourceFieldMetadataItem.id,
       displayValue,
       operand: firstOperand,
       value,
@@ -140,11 +98,13 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       positionInRecordFilterGroup:
         existingRecordFilter?.positionInRecordFilterGroup,
       type: filterType,
-      label: fieldMetadataItem.label,
-      subFieldName: subFieldNameToUse,
+      label: sourceFieldMetadataItem.label,
+      subFieldName,
+      relationTargetFieldMetadataId: null,
     } satisfies RecordFilter;
 
-    setSubFieldNameUsedInDropdown(subFieldNameToUse);
+    setSubFieldNameUsedInDropdown(subFieldName);
+    setRelationTargetFieldMetadataIdUsedInDropdown(null);
 
     setObjectFilterDropdownSearchInput('');
 
@@ -153,6 +113,6 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
   };
 
   return {
-    selectFieldUsedInAdvancedFilterDropdown,
+    applyAdvancedFilterCompositeSubField,
   };
 };

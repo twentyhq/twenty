@@ -1963,7 +1963,7 @@ msgid "And"
 msgstr "및"
 
 #. js-lingui-id: KYvJeB
-#: src/modules/object-record/advanced-filter/components/AdvancedFilterSubFieldSelectMenu.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 msgid "Any {fieldLabel} field"
 msgstr "모든 {fieldLabel} 필드"
 
@@ -11801,11 +11801,11 @@ msgstr "비밀번호가 설정되었습니다"
 msgid "Password has been updated"
 msgstr "비밀번호가 업데이트되었습니다"
 
-#. js-lingui-id: 1oqxe6
+#. js-lingui-id: BfLK2u
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/auth/sign-in-up/hooks/useSignInUpForm.ts
-msgid "Password must be min. 8 characters"
-msgstr "비밀번호는 최소 8자여야 합니다"
+msgid "Password must be between 8 and 50 characters"
+msgstr ""
 
 #. js-lingui-id: mi6Rel
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts

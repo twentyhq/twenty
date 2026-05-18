@@ -523,6 +523,7 @@ export interface ViewFilter {
     viewFilterGroupId?: Scalars['UUID']
     positionInViewFilterGroup?: Scalars['Float']
     subFieldName?: Scalars['String']
+    relationTargetFieldMetadataId?: Scalars['UUID']
     viewId: Scalars['UUID']
     workspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -3451,6 +3452,7 @@ export interface ViewFilterGenqlSelection{
     viewFilterGroupId?: boolean | number
     positionInViewFilterGroup?: boolean | number
     subFieldName?: boolean | number
+    relationTargetFieldMetadataId?: boolean | number
     viewId?: boolean | number
     workspaceId?: boolean | number
     createdAt?: boolean | number
@@ -5973,7 +5975,7 @@ export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),paren
 
 export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId?: (Scalars['UUID'] | null)}
 
-export interface CreateViewFilterInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand?: (ViewFilterOperand | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
+export interface CreateViewFilterInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand?: (ViewFilterOperand | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
 
 export interface UpdateViewFilterInput {
 /** The id of the view filter to update */
@@ -5981,7 +5983,7 @@ id: Scalars['UUID'],
 /** The view filter to update */
 update: UpdateViewFilterInputUpdates}
 
-export interface UpdateViewFilterInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),operand?: (ViewFilterOperand | null),value?: (Scalars['JSON'] | null),viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null)}
+export interface UpdateViewFilterInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),operand?: (ViewFilterOperand | null),value?: (Scalars['JSON'] | null),viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null)}
 
 export interface DeleteViewFilterInput {
 /** The id of the view filter to delete. */
@@ -6013,7 +6015,7 @@ viewFieldId?: (Scalars['UUID'] | null),
 /** The field metadata id. Used to create a new view field when viewFieldId is not provided. */
 fieldMetadataId?: (Scalars['UUID'] | null),isVisible: Scalars['Boolean'],position: Scalars['Float'],size?: (Scalars['Float'] | null)}
 
-export interface UpsertViewWidgetViewFilterInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand?: (ViewFilterOperand | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null)}
+export interface UpsertViewWidgetViewFilterInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand?: (ViewFilterOperand | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null)}
 
 export interface UpsertViewWidgetViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null)}
 

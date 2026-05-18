@@ -21,6 +21,7 @@ import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/databas
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
+import { AddRelationTargetFieldMetadataIdToViewFilterEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234300000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777308014234-add-upgrade-migration-workspace-id-index';
 import { AddDeletedAtToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777682000000-add-deleted-at-to-agent-chat-thread';
 import { ConnectionProviderSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777896012579-connection-provider-syncable-entity';
@@ -46,6 +47,7 @@ import { EncryptSensitiveConfigStorageSlowInstanceCommand } from 'src/database/c
 import { EncryptTotpSecretsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000009000-encrypt-totp-secrets';
 import { AddSubFieldNameToViewSortFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778502963794-add-sub-field-name-to-view-sort';
 import { DropPostgresCredentialsTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1798500000000-drop-postgres-credentials-table';
+import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -64,6 +66,7 @@ export const INSTANCE_COMMANDS = [
   AddPageLayoutIdToCommandMenuItemFastInstanceCommand,
   AddConditionalAvailabilityExpressionToPageLayoutWidgetFastInstanceCommand,
   AddSubFieldNameToViewSortEarlyFastInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFilterEarlyFastInstanceCommand,
   AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand,
   AddIsPreInstalledToApplicationRegistrationFastInstanceCommand,
   AddProviderExecutedToAgentMessagePartFastInstanceCommand,
@@ -94,4 +97,5 @@ export const INSTANCE_COMMANDS = [
   EncryptTotpSecretsSlowInstanceCommand,
   AddSubFieldNameToViewSortFastInstanceCommand,
   DropPostgresCredentialsTableFastInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand,
 ];

@@ -9,6 +9,7 @@ export const VIEW_FILTER_FRAGMENT = gql`
     viewFilterGroupId
     positionInViewFilterGroup
     subFieldName
+    relationTargetFieldMetadataId
     viewId
     createdAt
     updatedAt

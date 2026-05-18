@@ -771,6 +771,7 @@ type ViewFilter {
   viewFilterGroupId: UUID
   positionInViewFilterGroup: Float
   subFieldName: String
+  relationTargetFieldMetadataId: UUID
   viewId: UUID!
   workspaceId: UUID!
   createdAt: DateTime!
@@ -3417,6 +3418,7 @@ input CreateViewFilterInput {
   viewFilterGroupId: UUID
   positionInViewFilterGroup: Float
   subFieldName: String
+  relationTargetFieldMetadataId: UUID
   viewId: UUID!
 }
 
@@ -3435,6 +3437,7 @@ input UpdateViewFilterInputUpdates {
   viewFilterGroupId: UUID
   positionInViewFilterGroup: Float
   subFieldName: String
+  relationTargetFieldMetadataId: UUID
 }
 
 input DeleteViewFilterInput {
@@ -3523,6 +3526,7 @@ input UpsertViewWidgetViewFilterInput {
   viewFilterGroupId: UUID
   positionInViewFilterGroup: Float
   subFieldName: String
+  relationTargetFieldMetadataId: UUID
 }
 
 input UpsertViewWidgetViewFilterGroupInput {

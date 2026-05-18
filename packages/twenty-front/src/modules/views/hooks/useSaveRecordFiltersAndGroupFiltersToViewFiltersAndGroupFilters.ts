@@ -144,6 +144,8 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
               viewFilterGroupId: viewFilter.viewFilterGroupId,
               positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
               subFieldName: viewFilter.subFieldName ?? null,
+              relationTargetFieldMetadataId:
+                viewFilter.relationTargetFieldMetadataId ?? null,
             },
           }),
         );
@@ -158,6 +160,8 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
                 positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
                 viewFilterGroupId: viewFilter.viewFilterGroupId,
                 subFieldName: viewFilter.subFieldName ?? null,
+                relationTargetFieldMetadataId:
+                  viewFilter.relationTargetFieldMetadataId ?? null,
               },
             },
           }),
