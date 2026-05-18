@@ -131,15 +131,27 @@ export class CreateAppCommand {
         }
       }
 
-      if (serverReady && authenticationMethod === 'oauth') {
-        this.logNextStep('Authenticating via OAuth');
-        authSucceeded = await this.authenticateWithOAuth(resolvedWorkspaceUrl);
-      } else if (serverReady && authenticationMethod === 'apiKey') {
-        this.logNextStep('Authenticating via API key');
-        authSucceeded = await this.authenticateWithDevKey(resolvedWorkspaceUrl);
+      if (serverReady) {
+        this.logNextStep('Authenticating');
+
+        authSucceeded = await this.tryExistingAuth(resolvedWorkspaceUrl);
+
+        console.log('authSucceeded', authSucceeded);
+
+        if (authSucceeded) {
+          this.logDetail('Reusing existing credentials');
+        } else if (authenticationMethod === 'oauth') {
+          this.logDetail('Starting OAuth flow');
+          authSucceeded =
+            await this.authenticateWithOAuth(resolvedWorkspaceUrl);
+        } else {
+          this.logDetail('Using development API key');
+          authSucceeded =
+            await this.authenticateWithDevKey(resolvedWorkspaceUrl);
+        }
       }
 
-      this.logNextStep('Syncing application');
+      this.logNextStep('Installing application');
 
       let syncSucceeded = false;
 
@@ -440,6 +452,60 @@ export class CreateAppCommand {
       child.on('close', (code) => resolve(code === 0));
       child.on('error', () => resolve(false));
     });
+  }
+
+  private async tryExistingAuth(workspaceUrl: string): Promise<boolean> {
+    try {
+      const configService = new ConfigService();
+      const remoteNames = await configService.getRemotes();
+
+      for (const remoteName of remoteNames) {
+        const remoteConfig =
+          await configService.getConfigForRemote(remoteName);
+
+        if (remoteConfig.apiUrl !== workspaceUrl) {
+          continue;
+        }
+
+        const token =
+          remoteConfig.twentyCLIAccessToken ?? remoteConfig.apiKey;
+
+        if (!token) {
+          continue;
+        }
+
+        const response = await fetch(`${workspaceUrl}/metadata`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            query: '{ currentWorkspace { id } }',
+          }),
+        });
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const body = (await response.json()) as {
+          data?: { currentWorkspace?: { id: string } };
+          errors?: unknown[];
+        };
+
+        if (isDefined(body.data?.currentWorkspace) && !body.errors) {
+          ConfigService.setActiveRemote(remoteName);
+          await configService.setDefaultRemote(remoteName);
+
+          return true;
+        }
+      }
+
+      return false;
+    } catch {
+      return false;
+    }
   }
 
   private async authenticateWithDevKey(workspaceUrl: string): Promise<boolean> {
