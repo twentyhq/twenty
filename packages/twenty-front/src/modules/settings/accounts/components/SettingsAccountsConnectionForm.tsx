@@ -6,6 +6,7 @@ import { type Control, Controller } from 'react-hook-form';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
+import { SettingsAccountsPasswordController } from '@/settings/accounts/components/SettingsAccountsPasswordController';
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { type AccountType } from 'twenty-shared/constants';
 import { H2Title } from 'twenty-ui/display';
@@ -59,27 +60,6 @@ const StyledFieldGroup = styled.div`
   }
 `;
 
-const StyledPasswordFieldContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledEditPasswordLink = styled.button`
-  align-self: flex-end;
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: 0;
-  text-decoration: underline;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
-`;
-
 type SettingsAccountsConnectionFormProps = {
   control: Control<ConnectionFormData>;
   isEditing: boolean;
@@ -97,17 +77,12 @@ export const SettingsAccountsConnectionForm = ({
     Record<AccountType, boolean>
   >({ IMAP: false, SMTP: false, CALDAV: false });
 
-  const passwordDisabledByProtocol: Record<AccountType, boolean> = {
-    IMAP: existingProtocols.includes('IMAP') && !isPasswordEdited.IMAP,
-    SMTP: existingProtocols.includes('SMTP') && !isPasswordEdited.SMTP,
-    CALDAV: existingProtocols.includes('CALDAV') && !isPasswordEdited.CALDAV,
-  };
+  const isPasswordInputDisabled = (protocol: AccountType) =>
+    existingProtocols.includes(protocol) && !isPasswordEdited[protocol];
 
   const unlockPassword = (protocol: AccountType) => {
     setIsPasswordEdited((prev) => ({ ...prev, [protocol]: true }));
   };
-
-  const MASKED_PASSWORD_PLACEHOLDER = '••••••••';
 
   const getDescription = () => {
     if (isEditing) {
@@ -178,35 +153,11 @@ export const SettingsAccountsConnectionForm = ({
             )}
           />
 
-          <Controller
-            name="IMAP.password"
+          <SettingsAccountsPasswordController
+            protocol="IMAP"
             control={control}
-            render={({ field, fieldState }) => (
-              <StyledPasswordFieldContainer>
-                <SettingsTextInput
-                  instanceId="imap-password-connection-form"
-                  label={t`IMAP Password`}
-                  placeholder={
-                    passwordDisabledByProtocol.IMAP
-                      ? MASKED_PASSWORD_PLACEHOLDER
-                      : ''
-                  }
-                  type={passwordDisabledByProtocol.IMAP ? 'text' : 'password'}
-                  value={field.value || ''}
-                  onChange={field.onChange}
-                  error={fieldState.error?.message}
-                  disabled={passwordDisabledByProtocol.IMAP}
-                />
-                {passwordDisabledByProtocol.IMAP && (
-                  <StyledEditPasswordLink
-                    type="button"
-                    onClick={() => unlockPassword('IMAP')}
-                  >
-                    {t`Change password`}
-                  </StyledEditPasswordLink>
-                )}
-              </StyledPasswordFieldContainer>
-            )}
+            disabled={isPasswordInputDisabled('IMAP')}
+            onUnlock={() => unlockPassword('IMAP')}
           />
 
           <StyledFieldRow>
@@ -291,35 +242,11 @@ export const SettingsAccountsConnectionForm = ({
             )}
           />
 
-          <Controller
-            name="SMTP.password"
+          <SettingsAccountsPasswordController
+            protocol="SMTP"
             control={control}
-            render={({ field, fieldState }) => (
-              <StyledPasswordFieldContainer>
-                <SettingsTextInput
-                  instanceId="smtp-password-connection-form"
-                  label={t`SMTP Password`}
-                  placeholder={
-                    passwordDisabledByProtocol.SMTP
-                      ? MASKED_PASSWORD_PLACEHOLDER
-                      : ''
-                  }
-                  type={passwordDisabledByProtocol.SMTP ? 'text' : 'password'}
-                  value={field.value || ''}
-                  onChange={field.onChange}
-                  error={fieldState.error?.message}
-                  disabled={passwordDisabledByProtocol.SMTP}
-                />
-                {passwordDisabledByProtocol.SMTP && (
-                  <StyledEditPasswordLink
-                    type="button"
-                    onClick={() => unlockPassword('SMTP')}
-                  >
-                    {t`Change password`}
-                  </StyledEditPasswordLink>
-                )}
-              </StyledPasswordFieldContainer>
-            )}
+            disabled={isPasswordInputDisabled('SMTP')}
+            onUnlock={() => unlockPassword('SMTP')}
           />
 
           <StyledFieldRow>
@@ -404,37 +331,11 @@ export const SettingsAccountsConnectionForm = ({
             )}
           />
 
-          <Controller
-            name="CALDAV.password"
+          <SettingsAccountsPasswordController
+            protocol="CALDAV"
             control={control}
-            render={({ field, fieldState }) => (
-              <StyledPasswordFieldContainer>
-                <SettingsTextInput
-                  instanceId="caldav-password-connection-form"
-                  label={t`CalDAV Password`}
-                  placeholder={
-                    passwordDisabledByProtocol.CALDAV
-                      ? MASKED_PASSWORD_PLACEHOLDER
-                      : ''
-                  }
-                  type={
-                    passwordDisabledByProtocol.CALDAV ? 'text' : 'password'
-                  }
-                  value={field.value || ''}
-                  onChange={field.onChange}
-                  error={fieldState.error?.message}
-                  disabled={passwordDisabledByProtocol.CALDAV}
-                />
-                {passwordDisabledByProtocol.CALDAV && (
-                  <StyledEditPasswordLink
-                    type="button"
-                    onClick={() => unlockPassword('CALDAV')}
-                  >
-                    {t`Change password`}
-                  </StyledEditPasswordLink>
-                )}
-              </StyledPasswordFieldContainer>
-            )}
+            disabled={isPasswordInputDisabled('CALDAV')}
+            onUnlock={() => unlockPassword('CALDAV')}
           />
         </StyledConnectionSection>
       </StyledFormContainer>
