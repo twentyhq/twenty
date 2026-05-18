@@ -225,9 +225,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const declaredOutputSchema =
           flatLogicFunction.workflowActionTriggerSettings?.outputSchema;
 
-        // Prefer the declared outputSchema so downstream steps get typed
-        // variables right away (no test run required). A successful test
-        // still overrides this with the inferred schema (test wins).
         const initialOutputSchema: OutputSchema = isDefined(
           declaredOutputSchema,
         )
