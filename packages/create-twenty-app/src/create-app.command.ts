@@ -33,7 +33,7 @@ type CreateAppOptions = {
   name?: string;
   displayName?: string;
   description?: string;
-  apiUrl?: string;
+  workspaceUrl?: string;
   authenticationMethod?: AuthenticationMethod;
 };
 
@@ -45,9 +45,9 @@ export class CreateAppCommand {
     const { appName, appDisplayName, appDirectory, appDescription } =
       this.getAppInfos(options);
 
-    const apiUrl = options.apiUrl ?? DEV_API_URL;
+    const workspaceUrl = options.workspaceUrl ?? DEV_API_URL;
 
-    const skipLocalInstance = apiUrl !== DEV_API_URL;
+    const skipLocalInstance = workspaceUrl !== DEV_API_URL;
 
     if (!skipLocalInstance && !isDockerInstalled()) {
       console.log(chalk.yellow('\n' + getDockerInstallInstructions() + '\n'));
@@ -118,7 +118,7 @@ export class CreateAppCommand {
       console.log('');
 
       let authSucceeded = false;
-      let resolvedApiUrl = apiUrl;
+      let resolvedWorkspaceUrl = workspaceUrl;
       let serverReady = skipLocalInstance;
 
       if (!skipLocalInstance) {
@@ -126,20 +126,20 @@ export class CreateAppCommand {
         const serverResult = await this.ensureDockerServer(dockerPullPromise);
 
         if (isDefined(serverResult.url)) {
-          resolvedApiUrl = serverResult.url;
+          resolvedWorkspaceUrl = serverResult.url;
           serverReady = true;
         }
       }
 
       if (serverReady && authenticationMethod === 'oauth') {
         this.logNextStep('Authenticating via OAuth');
-        authSucceeded = await this.authenticateWithOAuth(resolvedApiUrl);
+        authSucceeded = await this.authenticateWithOAuth(resolvedWorkspaceUrl);
       } else if (serverReady && authenticationMethod === 'apiKey') {
         this.logNextStep('Authenticating via API key');
-        authSucceeded = await this.authenticateWithDevKey(resolvedApiUrl);
+        authSucceeded = await this.authenticateWithDevKey(resolvedWorkspaceUrl);
       }
 
-      this.logSuccess(appDirectory, resolvedApiUrl, authSucceeded);
+      this.logSuccess(appDirectory, resolvedWorkspaceUrl, authSucceeded);
     } catch (error) {
       console.error(
         chalk.red('\nCreate application failed:'),
@@ -283,11 +283,13 @@ export class CreateAppCommand {
     return {};
   }
 
-  private async authenticateWithDevKey(apiUrl: string): Promise<boolean> {
+  private async authenticateWithDevKey(
+    workspaceUrl: string,
+  ): Promise<boolean> {
     try {
       const result = await authLogin({
         apiKey: DEV_API_KEY,
-        apiUrl,
+        apiUrl: workspaceUrl,
         remote: 'local',
       });
 
@@ -326,21 +328,23 @@ export class CreateAppCommand {
     }
   }
 
-  private async authenticateWithOAuth(apiUrl: string): Promise<boolean> {
+  private async authenticateWithOAuth(
+    workspaceUrl: string,
+  ): Promise<boolean> {
     try {
-      const remoteName = this.deriveRemoteName(apiUrl);
+      const remoteName = this.deriveRemoteName(workspaceUrl);
 
       ConfigService.setActiveRemote(remoteName);
 
       this.logDetail('Opening browser for OAuth...');
 
-      const result = await authLoginOAuth({ apiUrl });
+      const result = await authLoginOAuth({ apiUrl: workspaceUrl });
 
       if (result.success) {
         const configService = new ConfigService();
 
         await configService.setDefaultRemote(remoteName);
-        this.logDetail(`Authenticated via OAuth to ${apiUrl}`);
+        this.logDetail(`Authenticated via OAuth to ${workspaceUrl}`);
 
         return true;
       }
@@ -348,7 +352,7 @@ export class CreateAppCommand {
       console.log(
         chalk.yellow(
           `  OAuth failed: ${result.error.message}\n` +
-            `  Run \`yarn twenty remote add --api-url ${apiUrl}\` manually.`,
+            `  Run \`yarn twenty remote add --api-url ${workspaceUrl}\` manually.`,
         ),
       );
 
@@ -356,7 +360,7 @@ export class CreateAppCommand {
     } catch {
       console.log(
         chalk.yellow(
-          `  Authentication failed. Run \`yarn twenty remote add --api-url ${apiUrl}\` manually.`,
+          `  Authentication failed. Run \`yarn twenty remote add --api-url ${workspaceUrl}\` manually.`,
         ),
       );
 
@@ -366,7 +370,7 @@ export class CreateAppCommand {
 
   private logSuccess(
     appDirectory: string,
-    apiUrl: string,
+    workspaceUrl: string,
     authSucceeded: boolean,
   ): void {
     const dirName = basename(appDirectory);
@@ -396,7 +400,7 @@ export class CreateAppCommand {
     stepNumber++;
 
     console.log(chalk.white(`  ${stepNumber}. Open your twenty instance`));
-    console.log(chalk.cyan(`     ${apiUrl}\n`));
+    console.log(chalk.cyan(`     ${workspaceUrl}\n`));
 
     console.log(
       chalk.gray(

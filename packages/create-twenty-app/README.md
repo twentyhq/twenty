@@ -35,7 +35,7 @@ The scaffolder will:
 | `--name <name>`                    | Set the app name                                                      |
 | `--display-name <displayName>`     | Set the display name                                                  |
 | `--description <description>`      | Set the description                                                   |
-| `--api-url <url>`                  | Twenty instance URL (default: `http://localhost:2020`)                |
+| `--workspace-url <url>`            | Twenty workspace URL (default: `http://localhost:2020`)               |
 | `--authentication-method <method>` | `oauth` or `apiKey` (default: `apiKey` for local, `oauth` for remote) |
 
 ## Documentation
