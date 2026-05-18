@@ -43,7 +43,7 @@ export const SettingsAccountsPasswordController = ({
   control,
   disabled,
   onUnlock,
-}: PasswordFieldProps) => {
+}: SettingsAccountsPasswordControllerProps) => {
   const { t } = useLingui();
 
   return (
