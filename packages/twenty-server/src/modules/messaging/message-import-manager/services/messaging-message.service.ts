@@ -110,7 +110,9 @@ export class MessagingMessageService {
           await messageChannelMessageAssociationRepository.find(
             {
               where: {
-                messageId: In(existingMessagesInDB.map((message) => message.id)),
+                messageId: In(
+                  existingMessagesInDB.map((message) => message.id),
+                ),
                 messageChannelId,
               },
             },
@@ -316,7 +318,8 @@ export class MessagingMessageService {
           messageExternalIdToMessageChannelMessageAssociationIdMap,
         };
       },
-      authContext, { lite: true }
+      authContext,
+      { lite: true },
     );
   }
 

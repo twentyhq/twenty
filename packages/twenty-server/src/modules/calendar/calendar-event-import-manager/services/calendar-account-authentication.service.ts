@@ -44,7 +44,6 @@ export class CalendarAccountAuthenticationService {
       return {
         accessToken: '',
         refreshToken: '',
-        lastCredentialsRefreshedAt: connectedAccount.lastCredentialsRefreshedAt,
       };
     }
 

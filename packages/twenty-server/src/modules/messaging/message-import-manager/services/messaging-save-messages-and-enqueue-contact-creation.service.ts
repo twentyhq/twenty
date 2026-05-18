@@ -156,7 +156,8 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             },
           );
         },
-        authContext, { lite: true }
+        authContext,
+        { lite: true },
       );
 
     if (

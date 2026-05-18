@@ -46,7 +46,6 @@ export class MessagingAccountAuthenticationService {
       return {
         accessToken: '',
         refreshToken: '',
-        lastCredentialsRefreshedAt: connectedAccount.lastCredentialsRefreshedAt,
       };
     }
 

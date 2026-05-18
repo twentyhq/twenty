@@ -17,13 +17,9 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 
-export type ProviderRefreshedTokens = {
+export type ConnectedAccountTokens = {
   accessToken: string;
   refreshToken: string;
-};
-
-export type ConnectedAccountTokens = ProviderRefreshedTokens & {
-  lastCredentialsRefreshedAt: Date | null;
 };
 
 const CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;
@@ -83,7 +79,6 @@ export class ConnectedAccountRefreshTokensService {
           ciphertext: encryptedRefreshToken,
           workspaceId,
         }),
-        lastCredentialsRefreshedAt: connectedAccount.lastCredentialsRefreshedAt,
       };
     }
 
@@ -114,23 +109,18 @@ export class ConnectedAccountRefreshTokensService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const lastCredentialsRefreshedAt = new Date();
-
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.connectedAccountRepository.update(
         { id: connectedAccount.id, workspaceId },
         {
           accessToken: reEncryptedAccessToken,
           refreshToken: reEncryptedRefreshToken,
-          lastCredentialsRefreshedAt,
+          lastCredentialsRefreshedAt: new Date(),
         },
       );
     }, authContext);
 
-    return {
-      ...connectedAccountTokens,
-      lastCredentialsRefreshedAt,
-    };
+    return connectedAccountTokens;
   }
 
   async isAccessTokenStillValid(
@@ -140,7 +130,7 @@ export class ConnectedAccountRefreshTokensService {
       case ConnectedAccountProvider.GOOGLE:
       case ConnectedAccountProvider.MICROSOFT:
       case ConnectedAccountProvider.APP: {
-        if (!isDefined(connectedAccount.lastCredentialsRefreshedAt)) {
+        if (!connectedAccount.lastCredentialsRefreshedAt) {
           return false;
         }
 
@@ -171,7 +161,7 @@ export class ConnectedAccountRefreshTokensService {
     connectedAccount: ConnectedAccountEntity,
     refreshToken: string,
     workspaceId: string,
-  ): Promise<ProviderRefreshedTokens> {
+  ): Promise<ConnectedAccountTokens> {
     try {
       switch (connectedAccount.provider) {
         case ConnectedAccountProvider.GOOGLE:

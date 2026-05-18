@@ -78,7 +78,8 @@ export class MessagingProcessGroupEmailActionsService {
               break;
           }
         },
-        authContext, { lite: true }
+        authContext,
+        { lite: true },
       );
 
       await this.messageChannelRepository.update(

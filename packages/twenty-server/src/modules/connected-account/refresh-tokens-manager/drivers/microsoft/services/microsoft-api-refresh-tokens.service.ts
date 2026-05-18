@@ -7,14 +7,14 @@ import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
-import type { ProviderRefreshedTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+import type { ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { parseMsalError } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/utils/parse-msal-error.util';
 
 @Injectable()
 export class MicrosoftAPIRefreshAccessTokenService {
   constructor(private readonly config: TwentyConfigService) {}
 
-  async refreshTokens(refreshToken: string): Promise<ProviderRefreshedTokens> {
+  async refreshTokens(refreshToken: string): Promise<ConnectedAccountTokens> {
     const msalClient = new ConfidentialClientApplication({
       auth: {
         clientId: this.config.get('AUTH_MICROSOFT_CLIENT_ID'),
