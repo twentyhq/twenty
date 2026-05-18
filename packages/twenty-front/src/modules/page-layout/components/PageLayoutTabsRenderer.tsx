@@ -1,6 +1,6 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -19,7 +19,6 @@ import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibl
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -75,16 +74,24 @@ export const PageLayoutTabsRenderer = () => {
     currentPageLayout.id,
   );
 
-  const targetRecord = useTargetRecord();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
-
+  // Standalone (dashboard) page layouts have no target record, so there are
+  // no relation fields to filter against.
   const inactiveRelationFieldNames = useMemo(() => {
+    if (!isDefined(targetRecordIdentifier)) {
+      return new Set<string>();
+    }
+
+    const objectMetadataItem = objectMetadataItems.find(
+      (item) =>
+        item.nameSingular === targetRecordIdentifier.targetObjectNameSingular,
+    );
+
     if (!isDefined(objectMetadataItem)) {
       return new Set<string>();
     }
+
     return new Set(
       objectMetadataItem.fields
         .filter(
@@ -95,7 +102,7 @@ export const PageLayoutTabsRenderer = () => {
         )
         .map((field) => field.name),
     );
-  }, [objectMetadataItem]);
+  }, [objectMetadataItems, targetRecordIdentifier]);
 
   const isMobile = useIsMobile();
 
