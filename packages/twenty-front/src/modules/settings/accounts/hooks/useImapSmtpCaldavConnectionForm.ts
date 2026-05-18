@@ -2,8 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { t } from '@lingui/core/macro';
@@ -42,7 +40,6 @@ export const useImapSmtpCaldavConnectionForm = ({
   connectedAccountId,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const defaultProtocolValues: Record<string, ConnectionParametersInput> = {
     IMAP: { host: '', port: 993, password: '', secure: true },
@@ -123,10 +120,6 @@ export const useImapSmtpCaldavConnectionForm = ({
 
   const handleSave = useCallback(
     async (formValues: ConnectionFormData): Promise<void> => {
-      if (!currentWorkspaceMember?.id) {
-        throw new Error('Workspace member ID is missing');
-      }
-
       const configuredProtocols = getConfiguredProtocols(formValues);
 
       if (configuredProtocols.length === 0) {
@@ -154,7 +147,6 @@ export const useImapSmtpCaldavConnectionForm = ({
             ...(isEditing && connectedAccountId
               ? { id: connectedAccountId }
               : {}),
-            accountOwnerId: currentWorkspaceMember.id,
             handle: formValues.handle,
             connectionParameters,
           },
@@ -180,7 +172,6 @@ export const useImapSmtpCaldavConnectionForm = ({
       }
     },
     [
-      currentWorkspaceMember?.id,
       getConfiguredProtocols,
       saveConnection,
       isEditing,

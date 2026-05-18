@@ -76,20 +76,24 @@ export class ImapSmtpCaldavResolver {
     SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS),
   )
   async saveImapSmtpCaldavAccount(
-    @Args('accountOwnerId', { type: () => UUIDScalarType })
-    accountOwnerId: string,
     @Args('handle') handle: string,
     @Args('connectionParameters')
     connectionParameters: EmailAccountConnectionParametersInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
   ): Promise<ImapSmtpCaldavConnectionSuccessDTO> {
     const existingAccount = isDefined(id)
-      ? await this.ImapSmtpCaldavConnectionService.getImapSmtpCaldav(
-          workspace.id,
-          id,
-        )
+      ? await this.ImapSmtpCaldavConnectionService.getImapSmtpCaldav({
+          workspaceId: workspace.id,
+          connectionId: id,
+          userWorkspaceId,
+        })
       : null;
+
+    if (isDefined(id) && !existingAccount) {
+      throw new UserInputError('Connected account not found');
+    }
 
     const validatedParams = await this.validateAndTestConnectionParameters({
       connectionParameters,
@@ -99,12 +103,12 @@ export class ImapSmtpCaldavResolver {
     });
 
     const connectedAccountId =
-      await this.imapSmtpCaldavApisService.processAccount({
+      await this.imapSmtpCaldavApisService.upsertConnectedAccount({
         handle,
-        workspaceMemberId: accountOwnerId,
+        userWorkspaceId,
         workspaceId: workspace.id,
         connectionParameters: validatedParams,
-        connectedAccountId: id,
+        existingAccount,
       });
 
     return {

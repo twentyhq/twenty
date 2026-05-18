@@ -215,15 +215,21 @@ export class ImapSmtpCaldavService {
     }
   }
 
-  async getImapSmtpCaldav(
-    workspaceId: string,
-    connectionId: string,
-  ): Promise<ConnectedAccountEntity | null> {
+  async getImapSmtpCaldav({
+    workspaceId,
+    connectionId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    connectionId: string;
+    userWorkspaceId: string;
+  }): Promise<ConnectedAccountEntity | null> {
     const connectedAccount = await this.connectedAccountRepository.findOne({
       where: {
         id: connectionId,
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
         workspaceId,
+        userWorkspaceId,
       },
     });
 

@@ -228,10 +228,10 @@ describe('ImapSmtpCalDavAPIService', () => {
     jest.clearAllMocks();
   });
 
-  describe('processAccount', () => {
+  describe('upsertConnectedAccount', () => {
     const baseInput = {
       handle: 'test@example.com',
-      workspaceMemberId: 'workspace-member-id',
+      userWorkspaceId: 'user-workspace-id',
       workspaceId: 'workspace-id',
       connectionParameters: {
         IMAP: {
@@ -262,7 +262,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'user-workspace-id',
       });
 
-      await service.processAccount(baseInput);
+      await service.upsertConnectedAccount(baseInput);
 
       expect(mockTransactionManagerSave).toHaveBeenCalledWith({
         id: 'mocked-uuid',
@@ -340,7 +340,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         connectedAccountId: 'existing-account-id',
       };
 
-      await service.processAccount(inputWithConnectedAccountId);
+      await service.upsertConnectedAccount(inputWithConnectedAccountId);
 
       expect(mockTransactionManagerSave).toHaveBeenCalledWith({
         id: 'existing-account-id',
@@ -415,9 +415,9 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'user-workspace-id',
       });
 
-      await service.processAccount({
+      await service.upsertConnectedAccount({
         ...baseInput,
-        connectedAccountId: 'existing-account-id',
+        existingAccount,
       });
 
       expect(
@@ -438,7 +438,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'user-workspace-id',
       });
 
-      await service.processAccount(baseInput);
+      await service.upsertConnectedAccount(baseInput);
 
       expect(
         mockAccountsToReconnectService.removeAccountToReconnect,
@@ -477,7 +477,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'user-workspace-id',
       });
 
-      await service.processAccount(imapOnlyInput);
+      await service.upsertConnectedAccount(imapOnlyInput);
 
       expect(
         mockCreateMessageChannelService.createMessageChannel,
@@ -512,7 +512,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'user-workspace-id',
       });
 
-      await service.processAccount(caldavOnlyInput);
+      await service.upsertConnectedAccount(caldavOnlyInput);
 
       expect(
         mockCreateMessageChannelService.createMessageChannel,
@@ -553,7 +553,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'user-workspace-id',
       });
 
-      await service.processAccount(imapSmtpInput);
+      await service.upsertConnectedAccount(imapSmtpInput);
 
       expect(
         mockCreateMessageChannelService.createMessageChannel,
@@ -601,7 +601,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'user-workspace-id',
       });
 
-      await service.processAccount(fullConfigInput);
+      await service.upsertConnectedAccount(fullConfigInput);
 
       expect(
         mockCreateMessageChannelService.createMessageChannel,
@@ -633,7 +633,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'user-workspace-id',
       });
 
-      await service.processAccount(baseInput);
+      await service.upsertConnectedAccount(baseInput);
 
       expect(mockConnectedAccountRepository.findOne).toHaveBeenCalledWith({
         where: {
@@ -681,7 +681,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'user-workspace-id',
       });
 
-      await service.processAccount(smtpOnlyInput);
+      await service.upsertConnectedAccount(smtpOnlyInput);
 
       expect(
         mockCreateMessageChannelService.createMessageChannel,
@@ -703,7 +703,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         id: 'user-workspace-id',
       });
 
-      await service.processAccount(baseInput);
+      await service.upsertConnectedAccount(baseInput);
 
       expect(
         mockConnectedAccountRepository.manager.transaction,
