@@ -8,4 +8,5 @@ export const FIELD_NOT_OVERWRITTEN_AT_DRAFT = [
   FieldMetadataType.RATING,
   FieldMetadataType.SELECT,
   FieldMetadataType.FILES,
+  FieldMetadataType.RICH_TEXT,
 ];

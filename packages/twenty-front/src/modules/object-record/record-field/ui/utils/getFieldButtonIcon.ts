@@ -10,6 +10,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
+import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { IconPencil, type IconComponent } from 'twenty-ui/display';
 
 export const getFieldButtonIcon = (
@@ -30,7 +31,8 @@ export const getFieldButtonIcon = (
     isFieldEmails(fieldDefinition) ||
     isFieldArray(fieldDefinition) ||
     isFieldFiles(fieldDefinition) ||
-    isFieldPhones(fieldDefinition)
+    isFieldPhones(fieldDefinition) ||
+    isFieldRichText(fieldDefinition)
   ) {
     return IconPencil;
   }
