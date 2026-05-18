@@ -13178,6 +13178,11 @@ msgstr "Rolnaam"
 msgid "Role name cannot be empty"
 msgstr "Rolnaam kan nie leeg wees nie"
 
+#. js-lingui-id: VMX1Oy
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role permission flag"
+msgstr ""
+
 #. js-lingui-id: jLNGne
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "role target"
