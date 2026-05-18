@@ -14,6 +14,7 @@ import { EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-s
 import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -39,6 +40,7 @@ export class ImapSmtpCaldavResolver {
   async getConnectedImapSmtpCaldavAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedImapSmtpCaldavAccountDTO> {
     const connectedAccount =
       await this.imapSmtpCaldavApisService.getImapSmtpCaldavConnectedAccount(
@@ -47,6 +49,12 @@ export class ImapSmtpCaldavResolver {
       );
 
     if (!isDefined(connectedAccount) || !isDefined(connectedAccount?.handle)) {
+      throw new UserInputError(
+        `Connected mail account with ID ${id} not found`,
+      );
+    }
+
+    if (connectedAccount.userWorkspaceId !== userWorkspaceId) {
       throw new UserInputError(
         `Connected mail account with ID ${id} not found`,
       );

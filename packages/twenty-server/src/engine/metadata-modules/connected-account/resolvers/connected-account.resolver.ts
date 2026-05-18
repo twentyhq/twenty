@@ -48,11 +48,11 @@ export class ConnectedAccountResolver {
     });
   }
 
-  @Query(() => [ConnectedAccountDTO])
+  @Query(() => [ConnectedAccountPublicDTO])
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
   async connectedAccounts(
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ConnectedAccountDTO[]> {
+  ): Promise<ConnectedAccountPublicDTO[]> {
     return this.connectedAccountMetadataService.findAll(workspace.id);
   }
 
