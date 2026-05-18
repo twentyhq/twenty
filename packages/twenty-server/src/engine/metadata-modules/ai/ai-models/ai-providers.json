@@ -1421,18 +1421,6 @@
         "modalities": ["image"]
       },
       {
-        "name": "grok-4-1-fast",
-        "label": "Grok 4.1 Fast",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 0.2,
-        "outputCostPerMillionTokens": 0.5,
-        "cachedInputCostPerMillionTokens": 0.05,
-        "contextWindowTokens": 2000000,
-        "maxOutputTokens": 30000,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
         "name": "grok-4.20-0309-reasoning",
         "label": "Grok 4.20 (Reasoning)",
         "modelFamily": "GROK",
@@ -1451,17 +1439,6 @@
         "supportsReasoning": true
       },
       {
-        "name": "grok-3-mini-fast-latest",
-        "label": "Grok 3 Mini Fast Latest",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 0.6,
-        "outputCostPerMillionTokens": 4,
-        "cachedInputCostPerMillionTokens": 0.15,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192,
-        "supportsReasoning": true
-      },
-      {
         "name": "grok-vision-beta",
         "label": "Grok Vision Beta",
         "modelFamily": "GROK",
@@ -1473,70 +1450,6 @@
         "modalities": ["image"]
       },
       {
-        "name": "grok-3-mini",
-        "label": "Grok 3 Mini",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 0.3,
-        "outputCostPerMillionTokens": 0.5,
-        "cachedInputCostPerMillionTokens": 0.075,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192,
-        "supportsReasoning": true
-      },
-      {
-        "name": "grok-3-fast-latest",
-        "label": "Grok 3 Fast Latest",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 5,
-        "outputCostPerMillionTokens": 25,
-        "cachedInputCostPerMillionTokens": 1.25,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192
-      },
-      {
-        "name": "grok-4-1-fast-non-reasoning",
-        "label": "Grok 4.1 Fast (Non-Reasoning)",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 0.2,
-        "outputCostPerMillionTokens": 0.5,
-        "cachedInputCostPerMillionTokens": 0.05,
-        "contextWindowTokens": 2000000,
-        "maxOutputTokens": 30000,
-        "modalities": ["image"]
-      },
-      {
-        "name": "grok-4",
-        "label": "Grok 4",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 3,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.75,
-        "contextWindowTokens": 256000,
-        "maxOutputTokens": 64000,
-        "supportsReasoning": true
-      },
-      {
-        "name": "grok-code-fast-1",
-        "label": "Grok Code Fast 1",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 0.2,
-        "outputCostPerMillionTokens": 1.5,
-        "cachedInputCostPerMillionTokens": 0.02,
-        "contextWindowTokens": 256000,
-        "maxOutputTokens": 10000,
-        "supportsReasoning": true
-      },
-      {
-        "name": "grok-3-latest",
-        "label": "Grok 3 Latest",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 3,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.75,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192
-      },
-      {
         "name": "grok-2-vision-1212",
         "label": "Grok 2 Vision (1212)",
         "modelFamily": "GROK",
@@ -1546,17 +1459,6 @@
         "contextWindowTokens": 8192,
         "maxOutputTokens": 4096,
         "modalities": ["image"]
-      },
-      {
-        "name": "grok-3-mini-fast",
-        "label": "Grok 3 Mini Fast",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 0.6,
-        "outputCostPerMillionTokens": 4,
-        "cachedInputCostPerMillionTokens": 0.15,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192,
-        "supportsReasoning": true
       },
       {
         "name": "grok-2-1212",
@@ -1600,17 +1502,6 @@
         "modalities": ["image"]
       },
       {
-        "name": "grok-3-mini-latest",
-        "label": "Grok 3 Mini Latest",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 0.3,
-        "outputCostPerMillionTokens": 0.5,
-        "cachedInputCostPerMillionTokens": 0.075,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192,
-        "supportsReasoning": true
-      },
-      {
         "name": "grok-4.3",
         "label": "Grok 4.3",
         "modelFamily": "GROK",
@@ -1640,16 +1531,6 @@
         "modalities": ["image"]
       },
       {
-        "name": "grok-3-fast",
-        "label": "Grok 3 Fast",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 5,
-        "outputCostPerMillionTokens": 25,
-        "cachedInputCostPerMillionTokens": 1.25,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192
-      },
-      {
         "name": "grok-2-latest",
         "label": "Grok 2 Latest",
         "modelFamily": "GROK",
@@ -1658,39 +1539,6 @@
         "cachedInputCostPerMillionTokens": 2,
         "contextWindowTokens": 131072,
         "maxOutputTokens": 8192
-      },
-      {
-        "name": "grok-4-fast",
-        "label": "Grok 4 Fast",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 0.2,
-        "outputCostPerMillionTokens": 0.5,
-        "cachedInputCostPerMillionTokens": 0.05,
-        "contextWindowTokens": 2000000,
-        "maxOutputTokens": 30000,
-        "modalities": ["image"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "grok-3",
-        "label": "Grok 3",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 3,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.75,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192
-      },
-      {
-        "name": "grok-4-fast-non-reasoning",
-        "label": "Grok 4 Fast (Non-Reasoning)",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 0.2,
-        "outputCostPerMillionTokens": 0.5,
-        "cachedInputCostPerMillionTokens": 0.05,
-        "contextWindowTokens": 2000000,
-        "maxOutputTokens": 30000,
-        "modalities": ["image"]
       }
     ]
   }
