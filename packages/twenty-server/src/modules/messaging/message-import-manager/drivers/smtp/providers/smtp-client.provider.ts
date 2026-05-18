@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { createTransport, type Transporter } from 'nodemailer';
-import { isDefined } from 'twenty-shared/utils';
 
 import type SMTPConnection from 'nodemailer/lib/smtp-connection';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -22,15 +23,13 @@ export class SmtpClientProvider {
       'connectionParameters' | 'handle' | 'workspaceId'
     >,
   ): Promise<Transporter> {
-    const smtpParams = connectedAccount.connectionParameters?.SMTP;
-
-    if (!isDefined(smtpParams)) {
+    if (!isDefined(connectedAccount.connectionParameters?.SMTP)) {
       throw new Error('SMTP settings not configured for this account');
     }
 
-    const decryptedPassword =
-      this.connectedAccountTokenEncryptionService.decrypt({
-        ciphertext: smtpParams.password,
+    const smtpParams =
+      this.connectedAccountTokenEncryptionService.decryptProtocolPassword({
+        protocolParams: connectedAccount.connectionParameters.SMTP,
         workspaceId: connectedAccount.workspaceId,
       });
 
@@ -42,7 +41,7 @@ export class SmtpClientProvider {
       port: smtpParams.port,
       auth: {
         user: smtpParams.username ?? connectedAccount.handle ?? '',
-        pass: decryptedPassword,
+        pass: smtpParams.password,
       },
       tls: {
         rejectUnauthorized: false,

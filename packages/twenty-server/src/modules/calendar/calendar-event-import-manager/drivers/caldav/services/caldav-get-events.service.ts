@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -34,26 +33,20 @@ export class CalDavGetEventsService {
     this.logger.debug(`Getting calendar events for ${connectedAccount.handle}`);
 
     try {
-      const params = connectedAccount.connectionParameters?.CALDAV;
-
-      if (
-        !isNonEmptyString(params?.host) ||
-        !isNonEmptyString(params?.password) ||
-        !isDefined(connectedAccount.handle)
-      ) {
-        throw new Error('Missing required CalDAV connection parameters');
+      if (!isDefined(connectedAccount.connectionParameters?.CALDAV)) {
+        throw new Error('CalDAV settings not configured for this account');
       }
 
-      const decryptedPassword =
-        this.connectedAccountTokenEncryptionService.decrypt({
-          ciphertext: params.password,
+      const params =
+        this.connectedAccountTokenEncryptionService.decryptProtocolPassword({
+          protocolParams: connectedAccount.connectionParameters.CALDAV,
           workspaceId: connectedAccount.workspaceId,
         });
 
       const client = await this.clientService.getClient({
         serverUrl: params.host,
         username: params.username ?? connectedAccount.handle,
-        password: decryptedPassword,
+        password: params.password,
       });
 
       const startDate = new Date(

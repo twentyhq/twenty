@@ -3,7 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import {
+  type ConnectionParameters,
+  type ImapSmtpCaldavParams,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SECRET_ENCRYPTION_ENVELOPE_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import {
   SecretEncryptionException,
@@ -156,25 +159,41 @@ export class ConnectedAccountTokenEncryptionService {
         continue;
       }
 
-      const isEncrypted = params.password.startsWith(
-        SECRET_ENCRYPTION_ENVELOPE_PREFIX,
-      );
-
-      // TODO: Remove after 2-5 slow instance command has been run everywhere
-      if (!isEncrypted) {
-        this.logger.warn(
-          `${protocol} password is not encrypted. Expected during the rollout window until the slow instance command finishes backfilling.`,
-        );
-        result[protocol] = params;
-        continue;
-      }
-
-      result[protocol] = {
-        ...params,
-        password: this.decrypt({ ciphertext: params.password, workspaceId }),
-      };
+      result[protocol] = this.decryptProtocolPassword({
+        protocolParams: params,
+        workspaceId,
+      });
     }
 
     return result;
+  }
+
+  decryptProtocolPassword({
+    protocolParams,
+    workspaceId,
+  }: {
+    protocolParams: ConnectionParameters;
+    workspaceId: string;
+  }): ConnectionParameters {
+    const isEncrypted = protocolParams.password.startsWith(
+      SECRET_ENCRYPTION_ENVELOPE_PREFIX,
+    );
+
+    // TODO: Remove after 2-5 slow instance command has been run everywhere
+    if (!isEncrypted) {
+      this.logger.warn(
+        'Protocol password is not encrypted. Expected during the rollout window until the slow instance command finishes backfilling.',
+      );
+
+      return protocolParams;
+    }
+
+    return {
+      ...protocolParams,
+      password: this.decrypt({
+        ciphertext: protocolParams.password,
+        workspaceId,
+      }),
+    };
   }
 }

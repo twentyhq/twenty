@@ -1,14 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ImapFlow } from 'imapflow';
-import { isNonEmptyString } from '@sniptt/guards';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
-import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { parseImapAuthenticationError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-imap-authentication-error.util';
 
 type ConnectedAccountIdentifier = Pick<
@@ -55,29 +53,16 @@ export class ImapClientProvider {
   private async createConnection(
     connectedAccount: ConnectedAccountIdentifier,
   ): Promise<ImapFlow> {
-    const imapParams = connectedAccount.connectionParameters?.IMAP;
-
     if (
       connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
-      !isDefined(imapParams)
+      !isDefined(connectedAccount.connectionParameters?.IMAP)
     ) {
       throw new Error('Connected account is not an IMAP provider');
     }
 
-    if (!isDefined(connectedAccount.handle)) {
-      throw new CustomError(
-        'Handle is required',
-        MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
-      );
-    }
-
-    if (!isNonEmptyString(imapParams.password)) {
-      throw new Error('IMAP password is missing from connection parameters');
-    }
-
-    const decryptedPassword =
-      this.connectedAccountTokenEncryptionService.decrypt({
-        ciphertext: imapParams.password,
+    const imapParams =
+      this.connectedAccountTokenEncryptionService.decryptProtocolPassword({
+        protocolParams: connectedAccount.connectionParameters.IMAP,
         workspaceId: connectedAccount.workspaceId,
       });
 
@@ -92,7 +77,7 @@ export class ImapClientProvider {
         user: isDefined(imapParams.username)
           ? imapParams.username
           : connectedAccount.handle,
-        pass: decryptedPassword,
+        pass: imapParams.password,
       },
       logger: false,
       tls: {
