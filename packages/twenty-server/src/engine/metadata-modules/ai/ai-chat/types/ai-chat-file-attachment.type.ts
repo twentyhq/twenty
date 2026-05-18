@@ -1,4 +1,4 @@
 export type AiChatFileAttachment = {
-    id: string;
-    filename: string;
-  };
+  id: string;
+  filename: string;
+};
