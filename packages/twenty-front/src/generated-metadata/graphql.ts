@@ -945,7 +945,7 @@ export type ConnectedImapSmtpCaldavAccount = {
   userWorkspaceId: Scalars['UUID'];
 };
 
-export type ConnectionParameters = {
+export type ConnectionParametersInput = {
   host: Scalars['String'];
   password?: InputMaybe<Scalars['String']>;
   port: Scalars['Float'];
@@ -1410,9 +1410,9 @@ export type EditSsoInput = {
 };
 
 export type EmailAccountConnectionParameters = {
-  CALDAV?: InputMaybe<ConnectionParameters>;
-  IMAP?: InputMaybe<ConnectionParameters>;
-  SMTP?: InputMaybe<ConnectionParameters>;
+  CALDAV?: InputMaybe<ConnectionParametersInput>;
+  IMAP?: InputMaybe<ConnectionParametersInput>;
+  SMTP?: InputMaybe<ConnectionParametersInput>;
 };
 
 export type EmailPasswordResetLink = {
