@@ -1,12 +1,14 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type UpgradeAwareEntityMetadataAdapter } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-entity-metadata.adapter';
 
 export class UpgradeAwareRepositoryState {
-  private static singleton: UpgradeAwareRepositoryState | null = null;
+  private static singleton: UpgradeAwareRepositoryState | undefined;
 
-  private metadataService: UpgradeAwareEntityMetadataAdapter | null = null;
+  private metadataService: UpgradeAwareEntityMetadataAdapter | undefined;
 
   static getInstance(): UpgradeAwareRepositoryState {
-    if (this.singleton === null) {
+    if (!isDefined(this.singleton)) {
       this.singleton = new UpgradeAwareRepositoryState();
     }
 
@@ -18,17 +20,15 @@ export class UpgradeAwareRepositoryState {
   }
 
   isEntityAvailable(entityClass: Function): boolean {
-    if (this.metadataService === null) {
+    if (!isDefined(this.metadataService)) {
       return true;
     }
 
     return this.metadataService.isEntityAvailable(entityClass);
   }
 
-  getHiddenColumnPropertyNames(
-    entityClass: Function,
-  ): ReadonlySet<string> {
-    if (this.metadataService === null) {
+  getHiddenColumnPropertyNames(entityClass: Function): ReadonlySet<string> {
+    if (!isDefined(this.metadataService)) {
       return new Set();
     }
 

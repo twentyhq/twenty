@@ -5,6 +5,7 @@ import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
 
 import { DataSource } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -68,12 +69,12 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     const lastAttempted =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
 
-    if (lastAttempted === null) {
+    if (!isDefined(lastAttempted)) {
       this.currentCursor = 0;
     } else {
       const index = this.stepNameToIndex.get(lastAttempted.name);
 
-      if (index === undefined) {
+      if (!isDefined(index)) {
         this.currentCursor = 0;
       } else {
         this.currentCursor =
@@ -119,7 +120,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     const isStepApplied = (stepName: string) => {
       const index = this.stepNameToIndex.get(stepName);
 
-      if (index === undefined) {
+      if (!isDefined(index)) {
         return false;
       }
 
@@ -133,7 +134,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     for (const metadata of this.coreDataSource.entityMetadatas) {
       const snapshot = this.snapshotByMetadata.get(metadata);
 
-      if (snapshot === undefined) {
+      if (!isDefined(snapshot)) {
         continue;
       }
 
@@ -235,7 +236,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
       column.propertyName,
     );
 
-    if (canonicalName === undefined) {
+    if (!isDefined(canonicalName)) {
       return;
     }
 

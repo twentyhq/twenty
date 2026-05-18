@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { type DataSource, type EntityTarget } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 import { wrapRepositoryWithUpgradeAwareProxy } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository.proxy';
@@ -22,13 +23,13 @@ export const installUpgradeAwareRepositoryProxy = (
 
     const entityClass = resolveEntityClass(target);
 
-    if (entityClass === null) {
+    if (!isDefined(entityClass)) {
       return repository;
     }
 
     const cached = wrappedRepositoryCache.get(repository);
 
-    if (cached) {
+    if (isDefined(cached)) {
       return cached as typeof repository;
     }
 
@@ -50,10 +51,10 @@ export const installUpgradeAwareRepositoryProxy = (
 
 const resolveEntityClass = <Entity extends object>(
   target: EntityTarget<Entity>,
-): Function | null => {
+): Function | undefined => {
   if (typeof target === 'function') {
     return target;
   }
 
-  return null;
+  return undefined;
 };

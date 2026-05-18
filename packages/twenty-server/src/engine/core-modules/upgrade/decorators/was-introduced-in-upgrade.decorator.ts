@@ -1,5 +1,7 @@
 import 'reflect-metadata';
 
+import { isDefined } from 'twenty-shared/utils';
+
 export type WasIntroducedInUpgradeOptions = {
   upgradeCommandName: string;
 };
@@ -18,7 +20,7 @@ export type WasIntroducedInUpgradePropertyMap = Record<
 export const WasIntroducedInUpgrade =
   (options: WasIntroducedInUpgradeOptions) =>
   (target: object, propertyKey?: string | symbol): void => {
-    if (propertyKey === undefined) {
+    if (!isDefined(propertyKey)) {
       Reflect.defineMetadata(
         WAS_INTRODUCED_IN_UPGRADE_CLASS_METADATA_KEY,
         options,

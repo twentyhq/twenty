@@ -1,5 +1,7 @@
 import 'reflect-metadata';
 
+import { isDefined } from 'twenty-shared/utils';
+
 export type WasRenamedInUpgradeHistoryEntry = {
   previousName: string;
   upgradeCommandName: string;
@@ -19,7 +21,7 @@ export type WasRenamedInUpgradePropertyMap = Record<
 export const WasRenamedInUpgrade =
   (history: WasRenamedInUpgradeHistoryEntry[]) =>
   (target: object, propertyKey?: string | symbol): void => {
-    if (propertyKey === undefined) {
+    if (!isDefined(propertyKey)) {
       Reflect.defineMetadata(
         WAS_RENAMED_IN_UPGRADE_CLASS_METADATA_KEY,
         history,
