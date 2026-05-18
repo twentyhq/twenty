@@ -18,7 +18,6 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
@@ -31,7 +30,6 @@ export class ImapSmtpCaldavResolver {
     private readonly ImapSmtpCaldavConnectionService: ImapSmtpCaldavService,
     private readonly imapSmtpCaldavApisService: ImapSmtpCalDavAPIService,
     private readonly mailConnectionValidatorService: ImapSmtpCaldavValidatorService,
-    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
   @Query(() => ConnectedImapSmtpCaldavAccountDTO)
@@ -66,14 +64,7 @@ export class ImapSmtpCaldavResolver {
       id: connectedAccount.id,
       handle: connectedAccount.handle,
       provider: connectedAccount.provider,
-      connectionParameters: isDefined(connectedAccount.connectionParameters)
-        ? this.connectedAccountTokenEncryptionService.decryptConnectionParameters(
-            {
-              connectionParameters: connectedAccount.connectionParameters,
-              workspaceId: workspace.id,
-            },
-          )
-        : null,
+      connectionParameters: connectedAccount.connectionParameters,
       userWorkspaceId: connectedAccount.userWorkspaceId,
     };
   }
