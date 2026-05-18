@@ -24,6 +24,7 @@ import {
   isProtocolConfiguredForUpdate,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { useConnectedImapSmtpCaldavAccount } from './useConnectedImapSmtpCaldavAccount';
 
@@ -138,7 +139,12 @@ export const useImapSmtpCaldavConnectionForm = ({
       configuredProtocols.forEach((protocol) => {
         const protocolConfig = formValues[protocol];
         if (isDefined(protocolConfig)) {
-          connectionParameters[protocol] = protocolConfig;
+          const { password, ...withoutPassword } = protocolConfig;
+          const hasPassword = isNonEmptyString(password);
+
+          connectionParameters[protocol] = hasPassword
+            ? { ...withoutPassword, password }
+            : withoutPassword;
         }
       });
 

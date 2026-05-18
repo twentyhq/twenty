@@ -31,7 +31,7 @@ const StyledEditPasswordLink = styled.button`
 
 const MASKED_PASSWORD_PLACEHOLDER = '••••••••';
 
-type PasswordFieldProps = {
+type SettingsAccountsPasswordControllerProps = {
   protocol: AccountType;
   control: Control<ConnectionFormData>;
   disabled: boolean;
