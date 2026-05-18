@@ -147,7 +147,6 @@ const main = async (): Promise<void> => {
     if (isPip3rResponse(parsedRequest)) {
       process.stdout.write(`${JSON.stringify(parsedRequest, null, 2)}\n`);
       process.exit(1);
-      return;
     }
 
     const response = executePip3rRequest(parsedRequest);

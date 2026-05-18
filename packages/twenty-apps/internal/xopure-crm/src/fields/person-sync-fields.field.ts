@@ -12,4 +12,5 @@ export default defineField({
   label: 'XO Pure Supabase person ID',
   description: 'Stable source identifier for Supabase-to-Twenty sync matching.',
   icon: 'IconDatabase',
+  isUnique: true,
 });

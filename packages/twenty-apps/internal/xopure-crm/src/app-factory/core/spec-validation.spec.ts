@@ -69,7 +69,7 @@ describe('validateAppFactorySpec', () => {
     }
 
     expect(result.spec.app.skipLocalInstance).toBe(true);
-    expect(result.spec.pipeline.installDependencies).toBe(true);
+    expect(result.spec.pipeline.installDependencies).toBe(false);
     expect(result.spec.pipeline.buildTarball).toBe(true);
     expect(result.spec.pipeline.deploy).toBe(false);
     expect(result.spec.pipeline.install).toBe(false);
@@ -213,6 +213,26 @@ describe('validateAppFactorySpec', () => {
         'pipeline.postInstall.payload must be a non-empty JSON string when provided',
         'pipeline.postInstall must provide functionName or functionUniversalIdentifier unless preInstall is true',
       ]),
+    );
+  });
+
+  it('rejects example mode for non-interactive app-factory automation', () => {
+    const result = validateAppFactorySpec({
+      ...validSpec,
+      app: {
+        ...validSpec.app,
+        example: 'hello-world',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (result.success !== false) {
+      return;
+    }
+
+    expect(result.errors).toContain(
+      'app.example is not supported by app-factory automation; use base template generation to keep execution non-interactive',
     );
   });
 });

@@ -167,10 +167,32 @@ export type AppFactoryCommandExecution = {
   stderr: string;
 };
 
+export const APP_FACTORY_PIPELINE_STAGE_NAMES = [
+  'validateSpec',
+  'scaffold',
+  'generateFiles',
+  'installDependencies',
+  'buildTarball',
+  'deploy',
+  'install',
+  'postInstallExec',
+] as const;
+
+export type AppFactoryPipelineStageName =
+  (typeof APP_FACTORY_PIPELINE_STAGE_NAMES)[number];
+
+export type AppFactoryPipelineStageStatus = {
+  name: AppFactoryPipelineStageName;
+  success: boolean;
+  skipped: boolean;
+  details?: string;
+};
+
 export type AppFactoryPipelineResult = {
   success: boolean;
   appDirectory: string;
   generatedFiles: string[];
   commands: AppFactoryCommandExecution[];
+  stages: AppFactoryPipelineStageStatus[];
   errors: string[];
 };

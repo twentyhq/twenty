@@ -15,7 +15,7 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier: XOPURE_ORDER_LINE_NAME_FIELD_ID,
   fields: [
     { universalIdentifier: XOPURE_ORDER_LINE_NAME_FIELD_ID, type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconListDetails' },
-    { universalIdentifier: '8d45f9e3-587a-4b20-a915-6e2cd8f271d5', type: FieldType.TEXT, name: 'supabaseOrderItemId', label: 'Supabase order item ID', icon: 'IconDatabase' },
+    { universalIdentifier: '8d45f9e3-587a-4b20-a915-6e2cd8f271d5', type: FieldType.TEXT, name: 'supabaseOrderItemId', label: 'Supabase order item ID', icon: 'IconDatabase', isUnique: true },
     { universalIdentifier: 'a4a0e3c0-5dae-4270-8235-5e91c4941595', type: FieldType.TEXT, name: 'supabaseOrderId', label: 'Supabase order ID', icon: 'IconShoppingBag' },
     { universalIdentifier: '87f42103-4238-4f5f-beb6-f23db49f3d1f', type: FieldType.TEXT, name: 'supabaseProductId', label: 'Supabase product ID', icon: 'IconBottle' },
     { universalIdentifier: XOPURE_ORDER_LINE_SKU_FIELD_ID, type: FieldType.TEXT, name: 'sku', label: 'SKU', icon: 'IconBarcode' },
@@ -24,5 +24,6 @@ export default defineObject({
     { universalIdentifier: '0eb296b0-8040-4b30-ba63-41f0db8affaa', type: FieldType.NUMBER, name: 'lineTotalCents', label: 'Line total cents', icon: 'IconReceipt', defaultValue: 0 },
     { universalIdentifier: 'f1415667-015d-4a73-b092-381cc759c350', type: FieldType.NUMBER, name: 'cvAmount', label: 'CV amount', icon: 'IconChartBar', defaultValue: 0 },
     { universalIdentifier: '385f8484-d851-4c65-80de-980b3f5507bd', type: FieldType.TEXT, name: 'category', label: 'Category', icon: 'IconCategory' },
+    { universalIdentifier: 'd379db73-6785-413f-a3d9-ed90e6c34fe7', type: FieldType.DATE_TIME, name: 'lastSyncedAt', label: 'Last synced at', icon: 'IconRefresh', isNullable: true, defaultValue: null },
   ],
 });

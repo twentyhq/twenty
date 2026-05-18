@@ -117,6 +117,7 @@ const createFailureResult = (error: string): AppFactoryPipelineResult => {
     appDirectory: '',
     generatedFiles: [],
     commands: [],
+    stages: [],
     errors: [error],
   };
 };

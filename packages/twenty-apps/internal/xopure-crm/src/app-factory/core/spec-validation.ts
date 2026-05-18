@@ -194,7 +194,7 @@ const normalizePostInstall = (
 const normalizePipelineOptions = (
   value: AppFactoryPipelineOptionsSpec | undefined,
 ): NormalizedAppFactoryPipelineOptions => ({
-  installDependencies: value?.installDependencies ?? true,
+  installDependencies: value?.installDependencies ?? false,
   buildTarball: value?.buildTarball ?? true,
   deploy: value?.deploy ?? false,
   install: value?.install ?? false,
@@ -247,6 +247,11 @@ export const validateAppFactorySpec = (
   }
   if (app.example !== undefined && !isNonEmptyString(app.example)) {
     errors.push('app.example must be a non-empty string when provided');
+  }
+  if (isNonEmptyString(app.example)) {
+    errors.push(
+      'app.example is not supported by app-factory automation; use base template generation to keep execution non-interactive',
+    );
   }
   if (
     app.skipLocalInstance !== undefined &&

@@ -4,6 +4,7 @@ import { isAbsolute, join } from 'node:path';
 import type {
   AppFactoryCommandExecution,
   AppFactoryPipelineResult,
+  AppFactoryPipelineStageStatus,
   AppFactorySpec,
   NormalizedAppFactorySpec,
 } from './app-factory-spec';
@@ -130,17 +131,31 @@ export const runAppFactoryPipeline = (
     cwd?: string;
   },
 ): AppFactoryPipelineResult => {
+  const stages: AppFactoryPipelineStageStatus[] = [];
   const validationResult = validateAppFactorySpec(rawSpec);
 
   if (validationResult.success === false) {
+    stages.push({
+      name: 'validateSpec',
+      success: false,
+      skipped: false,
+      details: validationResult.errors.join('; '),
+    });
     return {
       success: false,
       appDirectory: '',
       generatedFiles: [],
       commands: [],
+      stages,
       errors: validationResult.errors,
     };
   }
+
+  stages.push({
+    name: 'validateSpec',
+    success: true,
+    skipped: false,
+  });
 
   const spec = validationResult.spec as AppFactorySpec & NormalizedAppFactorySpec;
   const cwd = options?.cwd ?? process.cwd();
@@ -182,17 +197,36 @@ export const runAppFactoryPipeline = (
       command: scaffoldCommand,
     })
   ) {
+    stages.push({
+      name: 'scaffold',
+      success: false,
+      skipped: scaffoldCommand.skipped,
+      details: errors[errors.length - 1],
+    });
     return {
       success: false,
       appDirectory,
       generatedFiles: [],
       commands,
+      stages,
       errors,
     };
   }
 
+  stages.push({
+    name: 'scaffold',
+    success: true,
+    skipped: scaffoldCommand.skipped,
+  });
+
   const generationResult = generateAppFactoryFiles(appDirectory, spec, {
     writeToDisk: !spec.pipeline.dryRun,
+  });
+  stages.push({
+    name: 'generateFiles',
+    success: true,
+    skipped: false,
+    details: `generated ${generationResult.files.length} files`,
   });
 
   if (spec.pipeline.installDependencies) {
@@ -210,14 +244,34 @@ export const runAppFactoryPipeline = (
         command: installCommand,
       })
     ) {
+      stages.push({
+        name: 'installDependencies',
+        success: false,
+        skipped: installCommand.skipped,
+        details: errors[errors.length - 1],
+      });
       return {
         success: false,
         appDirectory,
         generatedFiles: generationResult.files.map((file) => file.path),
         commands,
+        stages,
         errors,
       };
     }
+
+    stages.push({
+      name: 'installDependencies',
+      success: true,
+      skipped: installCommand.skipped,
+    });
+  } else {
+    stages.push({
+      name: 'installDependencies',
+      success: true,
+      skipped: true,
+      details: 'disabled by pipeline.installDependencies=false',
+    });
   }
 
   if (spec.pipeline.buildTarball) {
@@ -235,14 +289,34 @@ export const runAppFactoryPipeline = (
         command: buildCommand,
       })
     ) {
+      stages.push({
+        name: 'buildTarball',
+        success: false,
+        skipped: buildCommand.skipped,
+        details: errors[errors.length - 1],
+      });
       return {
         success: false,
         appDirectory,
         generatedFiles: generationResult.files.map((file) => file.path),
         commands,
+        stages,
         errors,
       };
     }
+
+    stages.push({
+      name: 'buildTarball',
+      success: true,
+      skipped: buildCommand.skipped,
+    });
+  } else {
+    stages.push({
+      name: 'buildTarball',
+      success: true,
+      skipped: true,
+      details: 'disabled by pipeline.buildTarball=false',
+    });
   }
 
   if (spec.pipeline.deploy) {
@@ -266,14 +340,34 @@ export const runAppFactoryPipeline = (
         command: deployCommand,
       })
     ) {
+      stages.push({
+        name: 'deploy',
+        success: false,
+        skipped: deployCommand.skipped,
+        details: errors[errors.length - 1],
+      });
       return {
         success: false,
         appDirectory,
         generatedFiles: generationResult.files.map((file) => file.path),
         commands,
+        stages,
         errors,
       };
     }
+
+    stages.push({
+      name: 'deploy',
+      success: true,
+      skipped: deployCommand.skipped,
+    });
+  } else {
+    stages.push({
+      name: 'deploy',
+      success: true,
+      skipped: true,
+      details: 'disabled by pipeline.deploy=false',
+    });
   }
 
   if (spec.pipeline.install) {
@@ -297,14 +391,34 @@ export const runAppFactoryPipeline = (
         command: installCommand,
       })
     ) {
+      stages.push({
+        name: 'install',
+        success: false,
+        skipped: installCommand.skipped,
+        details: errors[errors.length - 1],
+      });
       return {
         success: false,
         appDirectory,
         generatedFiles: generationResult.files.map((file) => file.path),
         commands,
+        stages,
         errors,
       };
     }
+
+    stages.push({
+      name: 'install',
+      success: true,
+      skipped: installCommand.skipped,
+    });
+  } else {
+    stages.push({
+      name: 'install',
+      success: true,
+      skipped: true,
+      details: 'disabled by pipeline.install=false',
+    });
   }
 
   const postInstallArgs = getPostInstallArgs(spec);
@@ -324,14 +438,34 @@ export const runAppFactoryPipeline = (
         command: postInstallCommand,
       })
     ) {
+      stages.push({
+        name: 'postInstallExec',
+        success: false,
+        skipped: postInstallCommand.skipped,
+        details: errors[errors.length - 1],
+      });
       return {
         success: false,
         appDirectory,
         generatedFiles: generationResult.files.map((file) => file.path),
         commands,
+        stages,
         errors,
       };
     }
+
+    stages.push({
+      name: 'postInstallExec',
+      success: true,
+      skipped: postInstallCommand.skipped,
+    });
+  } else {
+    stages.push({
+      name: 'postInstallExec',
+      success: true,
+      skipped: true,
+      details: 'pipeline.postInstall not provided',
+    });
   }
 
   return {
@@ -339,6 +473,7 @@ export const runAppFactoryPipeline = (
     appDirectory,
     generatedFiles: generationResult.files.map((file) => file.path),
     commands,
+    stages,
     errors,
   };
 };

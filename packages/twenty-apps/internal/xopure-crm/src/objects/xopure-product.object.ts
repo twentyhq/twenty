@@ -16,7 +16,7 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier: XOPURE_PRODUCT_NAME_FIELD_ID,
   fields: [
     { universalIdentifier: XOPURE_PRODUCT_NAME_FIELD_ID, type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconBottle' },
-    { universalIdentifier: 'd18a8cdb-0c49-469e-8f9f-21014769d0ed', type: FieldType.TEXT, name: 'supabaseProductId', label: 'Supabase product ID', icon: 'IconDatabase' },
+    { universalIdentifier: 'd18a8cdb-0c49-469e-8f9f-21014769d0ed', type: FieldType.TEXT, name: 'supabaseProductId', label: 'Supabase product ID', icon: 'IconDatabase', isUnique: true },
     { universalIdentifier: XOPURE_PRODUCT_SKU_FIELD_ID, type: FieldType.TEXT, name: 'sku', label: 'SKU', icon: 'IconBarcode' },
     { universalIdentifier: '01fd8a3d-88b9-43a0-b46b-4171654ad47b', type: FieldType.TEXT, name: 'slug', label: 'Slug', icon: 'IconLink' },
     { universalIdentifier: '30d632bf-a64e-48d1-a5c2-47139c00dce8', type: FieldType.NUMBER, name: 'priceCents', label: 'Price cents', icon: 'IconCurrencyDollar', defaultValue: 0 },
