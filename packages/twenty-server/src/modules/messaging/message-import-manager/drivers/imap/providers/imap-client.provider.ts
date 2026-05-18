@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ImapFlow } from 'imapflow';
+import { isNonEmptyString } from '@sniptt/guards';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
@@ -55,16 +55,14 @@ export class ImapClientProvider {
   private async createConnection(
     connectedAccount: ConnectedAccountIdentifier,
   ): Promise<ImapFlow> {
+    const imapParams = connectedAccount.connectionParameters?.IMAP;
+
     if (
       connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
-      !isDefined(connectedAccount.connectionParameters?.IMAP)
+      !isDefined(imapParams)
     ) {
       throw new Error('Connected account is not an IMAP provider');
     }
-
-    const connectionParameters: ImapSmtpCaldavParams =
-      (connectedAccount.connectionParameters as unknown as ImapSmtpCaldavParams) ||
-      {};
 
     if (!isDefined(connectedAccount.handle)) {
       throw new CustomError(
@@ -73,24 +71,26 @@ export class ImapClientProvider {
       );
     }
 
+    if (!isNonEmptyString(imapParams.password)) {
+      throw new Error('IMAP password is missing from connection parameters');
+    }
+
     const decryptedPassword =
       this.connectedAccountTokenEncryptionService.decrypt({
-        ciphertext: connectionParameters.IMAP?.password || '',
+        ciphertext: imapParams.password,
         workspaceId: connectedAccount.workspaceId,
       });
 
     const validatedImapHost =
-      await this.secureHttpClientService.getValidatedHost(
-        connectionParameters.IMAP?.host || '',
-      );
+      await this.secureHttpClientService.getValidatedHost(imapParams.host);
 
     const client = new ImapFlow({
       host: validatedImapHost,
-      port: connectionParameters.IMAP?.port || 993,
-      secure: connectionParameters.IMAP?.secure,
+      port: imapParams.port || 993,
+      secure: imapParams.secure,
       auth: {
-        user: isDefined(connectionParameters.IMAP?.username)
-          ? connectionParameters.IMAP?.username
+        user: isDefined(imapParams.username)
+          ? imapParams.username
           : connectedAccount.handle,
         pass: decryptedPassword,
       },
