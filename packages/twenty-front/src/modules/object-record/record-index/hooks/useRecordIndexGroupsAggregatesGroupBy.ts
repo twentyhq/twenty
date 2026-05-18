@@ -1,5 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { findFieldMetadataItemByIdSelector } from '@/object-metadata/states/findFieldMetadataItemByIdSelector';
+import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
@@ -48,15 +48,15 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const findFieldMetadataItemById = useAtomStateValue(
-    findFieldMetadataItemByIdSelector,
+  const fieldMetadataItemByIdMap = useAtomStateValue(
+    fieldMetadataItemByIdMapSelector,
   );
 
   const requestFilters = computeRecordGqlOperationFilter({
     filterValueDependencies,
     recordFilters: currentRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
-    findFieldMetadataItemById,
+    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
   });
 
   const { recordAggregateGqlField } =

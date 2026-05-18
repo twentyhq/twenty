@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { findFieldMetadataItemByIdSelector } from '@/object-metadata/states/findFieldMetadataItemByIdSelector';
+import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -49,12 +49,12 @@ export const useFindManyRecordIndexTableParams = (
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const findFieldMetadataItemById = useAtomStateValue(
-    findFieldMetadataItemByIdSelector,
+  const fieldMetadataItemByIdMap = useAtomStateValue(
+    fieldMetadataItemByIdMapSelector,
   );
 
   const currentFilters = computeRecordGqlOperationFilter({
-    findFieldMetadataItemById,
+    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
     recordFilterGroups: currentRecordFilterGroups,
     recordFilters: currentRecordFilters,
     filterValueDependencies,

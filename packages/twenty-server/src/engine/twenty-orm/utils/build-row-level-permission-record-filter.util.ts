@@ -222,7 +222,7 @@ export const buildRowLevelPermissionRecordFilter = ({
       findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: id,
         flatEntityMaps: flatFieldMetadataMaps,
-      }) ?? undefined,
+      }),
     filterValueDependencies: {
       currentWorkspaceMemberId: workspaceMember?.id,
     },

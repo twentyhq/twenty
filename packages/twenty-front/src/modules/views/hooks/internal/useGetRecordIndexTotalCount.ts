@@ -1,5 +1,5 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { findFieldMetadataItemByIdSelector } from '@/object-metadata/states/findFieldMetadataItemByIdSelector';
+import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -27,8 +27,8 @@ export const useGetRecordIndexTotalCount = () => {
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const findFieldMetadataItemById = useAtomStateValue(
-    findFieldMetadataItemByIdSelector,
+  const fieldMetadataItemByIdMap = useAtomStateValue(
+    fieldMetadataItemByIdMapSelector,
   );
 
   const recordGroupsVisibilityFilter = useGetViewGroupsFilters();
@@ -37,7 +37,7 @@ export const useGetRecordIndexTotalCount = () => {
     filterValueDependencies,
     recordFilters: [...currentRecordFilters, ...recordGroupsVisibilityFilter],
     recordFilterGroups: currentRecordFilterGroups,
-    findFieldMetadataItemById,
+    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
   });
 
   const anyFieldFilterValue = useAtomComponentStateValue(

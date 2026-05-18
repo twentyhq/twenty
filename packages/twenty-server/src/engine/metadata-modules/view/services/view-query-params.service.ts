@@ -108,28 +108,11 @@ export class ViewQueryParamsService {
     }));
 
     const filter = computeRecordGqlOperationFilter({
-      findFieldMetadataItemById: (id) => {
-        const field = findFlatEntityByIdInFlatEntityMaps({
+      findFieldMetadataItemById: (id) =>
+        findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: id,
           flatEntityMaps: flatFieldMetadataMaps,
-        });
-
-        if (!field) return undefined;
-
-        return {
-          id: field.id,
-          name: field.name,
-          type: field.type,
-          label: field.label,
-          options: field.options?.map((opt) => ({
-            id: opt.id ?? '',
-            label: opt.label,
-            value: opt.value,
-            color: 'color' in opt ? opt.color : undefined,
-            position: opt.position,
-          })),
-        };
-      },
+        }),
       recordFilters,
       recordFilterGroups,
       filterValueDependencies: { currentWorkspaceMemberId, timeZone },

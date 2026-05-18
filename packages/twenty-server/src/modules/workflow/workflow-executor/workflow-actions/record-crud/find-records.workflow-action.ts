@@ -83,7 +83,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
               findFlatEntityByIdInFlatEntityMaps({
                 flatEntityId: id,
                 flatEntityMaps: flatFieldMetadataMaps,
-              }) ?? undefined,
+              }),
             recordFilters: workflowActionInput.filter.recordFilters,
             recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
             filterValueDependencies: {

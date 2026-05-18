@@ -1,6 +1,6 @@
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
-import { findFieldMetadataItemByIdSelector } from '@/object-metadata/states/findFieldMetadataItemByIdSelector';
+import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -40,8 +40,8 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const findFieldMetadataItemById = useAtomStateValue(
-    findFieldMetadataItemByIdSelector,
+  const fieldMetadataItemByIdMap = useAtomStateValue(
+    fieldMetadataItemByIdMapSelector,
   );
 
   const currentRecordFilters = useAtomComponentStateValue(
@@ -63,7 +63,7 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
         filter: computeRecordGqlOperationFilter({
-          findFieldMetadataItemById,
+          findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
           recordFilters: currentRecordFilters,
           recordFilterGroups: currentRecordFilterGroups,
           filterValueDependencies,
@@ -77,7 +77,7 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
       currentRecordFilterGroups,
       filterValueDependencies,
       currentRecordSorts,
-      findFieldMetadataItemById,
+      fieldMetadataItemByIdMap,
     ],
   );
 

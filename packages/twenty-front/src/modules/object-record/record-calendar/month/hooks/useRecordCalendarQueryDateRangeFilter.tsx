@@ -1,4 +1,4 @@
-import { findFieldMetadataItemByIdSelector } from '@/object-metadata/states/findFieldMetadataItemByIdSelector';
+import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -48,8 +48,8 @@ export const useRecordCalendarQueryDateRangeFilter = (
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const findFieldMetadataItemById = useAtomStateValue(
-    findFieldMetadataItemByIdSelector,
+  const fieldMetadataItemByIdMap = useAtomStateValue(
+    fieldMetadataItemByIdMapSelector,
   );
 
   const anyFieldFilterValue = useAtomComponentStateValue(
@@ -110,7 +110,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
     filterValueDependencies,
     recordFilters: calendarRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
-    findFieldMetadataItemById,
+    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
   });
 
   const { recordGqlOperationFilter: anyFieldFilter } =

@@ -259,22 +259,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     const filtersFromView = computeRecordGqlOperationFilter({
       recordFilters,
       recordFilterGroups: recordFilterGroups,
-      findFieldMetadataItemById: (id) => {
-        const field = findFlatEntityByIdInFlatEntityMaps({
+      findFieldMetadataItemById: (id) =>
+        findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: id,
           flatEntityMaps: flatFieldMetadataMaps,
-        });
-
-        if (!field) return undefined;
-
-        return {
-          id: field.id,
-          name: field.name,
-          type: field.type,
-          label: field.label,
-          options: field.options as PartialFieldMetadataItemOption[],
-        };
-      },
+        }),
       filterValueDependencies: {
         timeZone: 'UTC', // TODO: see if we use workspace member timezone here
       },

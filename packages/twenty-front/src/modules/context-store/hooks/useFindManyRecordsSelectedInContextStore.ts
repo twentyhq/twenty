@@ -5,7 +5,7 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { findFieldMetadataItemByIdSelector } from '@/object-metadata/states/findFieldMetadataItemByIdSelector';
+import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
@@ -50,13 +50,13 @@ export const useFindManyRecordsSelectedInContextStore = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const findFieldMetadataItemById = useAtomStateValue(
-    findFieldMetadataItemByIdSelector,
+  const fieldMetadataItemByIdMap = useAtomStateValue(
+    fieldMetadataItemByIdMapSelector,
   );
 
   const isSoftDeleteFilterActive = contextStoreFilters.some(
     (filter) =>
-      findFieldMetadataItemById(filter.fieldMetadataId)?.name === 'deletedAt' &&
+      fieldMetadataItemByIdMap.get(filter.fieldMetadataId)?.name === 'deletedAt' &&
       filter.operand === RecordFilterOperand.IS_NOT_EMPTY,
   );
 
@@ -65,7 +65,7 @@ export const useFindManyRecordsSelectedInContextStore = ({
     contextStoreFilters,
     contextStoreFilterGroups,
     objectMetadataItem,
-    findFieldMetadataItemById,
+    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
   });
