@@ -117,7 +117,7 @@ export class MessagingMessageCleanerService {
           orphanMessageThreads.map(({ id }) => id),
         );
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   async deleteMessageChannelMessageAssociationsByChannelId({
@@ -179,7 +179,7 @@ export class MessagingMessageCleanerService {
           transactionManager,
         );
       });
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   public async cleanOrphanMessagesAndThreads(workspaceId: string) {
@@ -276,6 +276,6 @@ export class MessagingMessageCleanerService {
           );
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

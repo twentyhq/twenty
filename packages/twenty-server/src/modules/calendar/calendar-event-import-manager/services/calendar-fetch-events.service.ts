@@ -141,6 +141,6 @@ export class CalendarFetchEventsService {
           workspaceId,
         );
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

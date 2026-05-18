@@ -62,6 +62,6 @@ export class MessagingRelaunchFailedMessageChannelJob {
           syncStageStartedAt: null,
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

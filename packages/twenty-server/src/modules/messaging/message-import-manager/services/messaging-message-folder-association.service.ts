@@ -80,6 +80,6 @@ export class MessagingMessageFolderAssociationService {
       if (recordsToInsert.length > 0) {
         await repository.insert(recordsToInsert, transactionManager);
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

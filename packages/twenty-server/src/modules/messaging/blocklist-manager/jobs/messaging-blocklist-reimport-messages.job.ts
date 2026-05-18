@@ -95,6 +95,6 @@ export class BlocklistReimportMessagesJob {
           workspaceId,
         );
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

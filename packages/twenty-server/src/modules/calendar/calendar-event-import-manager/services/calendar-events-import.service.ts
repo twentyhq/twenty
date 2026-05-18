@@ -31,7 +31,6 @@ import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calen
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
-import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -47,7 +46,6 @@ export class CalendarEventsImportService {
     private readonly calendarSaveEventsService: CalendarSaveEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
     private readonly microsoftCalendarImportEventService: MicrosoftCalendarImportEventsService,
-    private readonly emailAliasManagerService: EmailAliasManagerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -133,13 +131,7 @@ export class CalendarEventsImportService {
             )
           : [];
 
-        const refreshedHandleAliases =
-          await this.emailAliasManagerService.refreshHandleAliases(
-            connectedAccount,
-            workspaceId,
-          );
 
-        connectedAccount.handleAliases = refreshedHandleAliases;
 
         if (
           !isDefined(connectedAccount.handleAliases) ||
@@ -201,6 +193,6 @@ export class CalendarEventsImportService {
           workspaceId,
         );
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

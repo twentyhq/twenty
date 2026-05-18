@@ -78,6 +78,6 @@ export class MessagingMessagesImportJob {
         messageChannel.connectedAccount,
         workspaceId,
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

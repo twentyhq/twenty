@@ -199,6 +199,6 @@ export class BlocklistItemDeleteMessagesJob {
       await this.threadCleanerService.cleanOrphanMessagesAndThreads(
         workspaceId,
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

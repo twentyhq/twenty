@@ -295,7 +295,7 @@ export class MessagingMessageListFetchService {
           workspaceId,
         );
       }
-    }, authContext);
+    }, authContext, { lite: true });
   }
 
   private async processPendingGroupEmailActions(

@@ -107,7 +107,7 @@ export class MessagingDeleteFolderMessagesService {
           id: In(folderAssociationIds),
         });
       }
-    }, authContext);
+    }, authContext, { lite: true });
 
     this.logger.log(
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${messageFolder.id} - Completed deleting ${totalDeletedCount} messages from folder: ${messageFolder.name}`,

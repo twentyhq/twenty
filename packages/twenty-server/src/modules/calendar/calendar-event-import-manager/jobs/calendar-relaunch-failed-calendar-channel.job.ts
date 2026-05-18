@@ -61,6 +61,6 @@ export class CalendarRelaunchFailedCalendarChannelJob {
           syncStageStartedAt: null,
         },
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

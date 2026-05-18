@@ -74,6 +74,6 @@ export class MessagingMessageParticipantService {
         matchWith: 'workspaceMemberAndPerson',
         workspaceId,
       });
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

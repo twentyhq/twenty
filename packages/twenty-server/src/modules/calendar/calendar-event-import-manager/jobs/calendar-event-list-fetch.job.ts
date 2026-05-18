@@ -61,6 +61,6 @@ export class CalendarEventListFetchJob {
         calendarChannel.connectedAccount,
         workspaceId,
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

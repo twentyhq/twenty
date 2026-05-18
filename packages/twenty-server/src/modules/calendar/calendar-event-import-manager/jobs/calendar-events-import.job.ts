@@ -61,6 +61,6 @@ export class CalendarEventsImportJob {
         calendarChannel.connectedAccount,
         workspaceId,
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }

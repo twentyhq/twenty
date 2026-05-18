@@ -180,6 +180,6 @@ export class BlocklistItemDeleteCalendarEventsJob {
       await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
         workspaceId,
       );
-    }, authContext);
+    }, authContext, { lite: true });
   }
 }
