@@ -41,14 +41,14 @@ import {
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { logError } from '~/utils/logError';
 
-const passwordMinLengthMessage = msg`Password must be min. 8 characters`;
+const passwordLengthMessage = msg`Password must be between 8 and 50 characters`;
 
 const validationSchema = z
   .object({
     passwordResetToken: z.string(),
     newPassword: z
       .string()
-      .regex(PASSWORD_REGEX, i18n._(passwordMinLengthMessage)),
+      .regex(PASSWORD_REGEX, i18n._(passwordLengthMessage)),
   })
   .required();
 

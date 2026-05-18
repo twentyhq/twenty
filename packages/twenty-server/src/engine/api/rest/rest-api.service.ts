@@ -6,6 +6,7 @@ import { type Query } from 'src/engine/api/rest/core/types/query.type';
 import { RestApiException } from 'src/engine/api/rest/errors/RestApiException';
 import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { isDefined } from 'twenty-shared/utils';
 
 export enum GraphqlApiType {
   CORE = 'core',
@@ -41,10 +42,14 @@ export class RestApiService {
         },
       });
     } catch (err) {
-      throw new RestApiException(err.response.data.errors);
+      if (isDefined(err.response?.data?.errors)) {
+        throw new RestApiException(err.response.data.errors);
+      }
+
+      throw err;
     }
 
-    if (response.data.errors?.length) {
+    if (isDefined(response.data.errors) && response.data.errors.length > 0) {
       throw new RestApiException(response.data.errors);
     }
 
