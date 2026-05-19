@@ -25,7 +25,8 @@ import { Demo } from '@/sections/Demo';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { Feature } from '@/sections/Feature';
 import { Hero } from '@/sections/Hero';
-import { Menu, MENU_DATA } from '@/sections/Menu';
+import { ProductHeroMenuSync } from '@/sections/Hero/components/ProductVisual/product-hero-menu-sync';
+import { MENU_DATA } from '@/sections/Menu';
 import {
   ProductStepper,
   type ProductStepperStepType,
@@ -35,7 +36,6 @@ import { LayoutVisual } from '@/sections/ProductStepper/visuals/LayoutVisual';
 import { WorkflowVisual } from '@/sections/ProductStepper/visuals/WorkflowVisual';
 import { ThreeCards } from '@/sections/ThreeCards';
 import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
-import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
 import type { AppLocale } from 'twenty-shared/translations';
 
@@ -90,58 +90,51 @@ export default async function ProductPage({ params }: ProductPageProps) {
           i18n.locale as AppLocale,
         )}
       />
-      <Menu.Root
-        backgroundColor={theme.colors.primary.background[100]}
-        scheme="primary"
+      <ProductHeroMenuSync
         navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
       >
-        <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
-        <Menu.Cta scheme="primary" />
-      </Menu.Root>
-
-      <Hero.HeroVisualScroll
-        aiBody={i18n._(
-          msg`Ask questions, automate tasks, and get insights. All powered by AI that understands your data.`,
-        )}
-        aiHeading={
-          <Heading size="lg" weight="light">
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`...with AI that actually`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`helps you`)}
-            </HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`work faster`)}
-            </HeadingPart>
-          </Heading>
-        }
-        ctaHref="https://app.twenty.com/welcome"
-        ctaLabel={i18n._(msg`Get started`)}
-        introBody={i18n._(
-          msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
-        )}
-        introHeading={
-          <Heading size="lg" weight="light">
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`A CRM for teams`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`that`)}
-            </HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`move fast`)}
-            </HeadingPart>
-          </Heading>
-        }
-        tabs={AI_HERO_TABS}
-        visual={APP_PREVIEW_DATA.visual}
-      />
+        <Hero.HeroVisualScroll
+          aiBody={i18n._(
+            msg`Ask questions, automate tasks, and get insights. All powered by AI that understands your data.`,
+          )}
+          aiHeading={
+            <Heading size="lg" weight="light">
+              <HeadingPart fontFamily="serif">
+                {i18n._(msg`...with AI that actually`)}
+              </HeadingPart>
+              <br />
+              <HeadingPart fontFamily="serif">
+                {i18n._(msg`helps you`)}
+              </HeadingPart>{' '}
+              <HeadingPart fontFamily="sans">
+                {i18n._(msg`work faster`)}
+              </HeadingPart>
+            </Heading>
+          }
+          ctaHref="https://app.twenty.com/welcome"
+          ctaLabel={i18n._(msg`Get started`)}
+          introBody={i18n._(
+            msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
+          )}
+          introHeading={
+            <Heading size="lg" weight="light">
+              <HeadingPart fontFamily="serif">
+                {i18n._(msg`A CRM for teams`)}
+              </HeadingPart>
+              <br />
+              <HeadingPart fontFamily="serif">
+                {i18n._(msg`that`)}
+              </HeadingPart>{' '}
+              <HeadingPart fontFamily="sans">
+                {i18n._(msg`move fast`)}
+              </HeadingPart>
+            </Heading>
+          }
+          tabs={AI_HERO_TABS}
+          visual={APP_PREVIEW_DATA.visual}
+        />
+      </ProductHeroMenuSync>
 
       <TrustedBy.Root
         separator={i18n._(msg`trusted by`)}
