@@ -18,10 +18,7 @@ import {
   serverStart,
 } from 'twenty-sdk/cli';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  getDockerInstallInstructions,
-  isDockerInstalled,
-} from '@/utils/docker-install';
+import { getDockerInstallInstructions, isDockerInstalled, } from '@/utils/docker-install';
 
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
 const IMAGE = 'twentycrm/twenty-app-dev:latest';
@@ -466,8 +463,11 @@ export class CreateAppCommand {
     return new Promise((resolve) => {
       const child = spawn('yarn', ['twenty', 'dev', '--once'], {
         cwd: appDirectory,
-        stdio: 'inherit',
+        stdio: ['inherit', 'pipe', 'pipe'],
       });
+
+      child.stdout?.resume();
+      child.stderr?.resume();
 
       child.on('close', (code) => resolve(code === 0));
       child.on('error', () => resolve(false));
