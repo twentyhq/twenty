@@ -1,4 +1,4 @@
-import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -7,7 +7,6 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { augmentFieldsWithRelationTargets } from '@/object-record/record-filter/utils/augmentFieldsWithRelationTargets';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -49,8 +48,8 @@ export const useRecordCalendarQueryDateRangeFilter = (
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const flattenedFieldMetadataItems = useAtomStateValue(
-    flattenedFieldMetadataItemsSelector,
+  const fieldMetadataItemByIdMap = useAtomStateValue(
+    fieldMetadataItemByIdMapSelector,
   );
 
   const anyFieldFilterValue = useAtomComponentStateValue(
@@ -111,11 +110,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
     filterValueDependencies,
     recordFilters: calendarRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
-    fields: augmentFieldsWithRelationTargets({
-      baseFields: objectMetadataItem.fields,
-      recordFilters: calendarRecordFilters,
-      allFieldMetadataItems: flattenedFieldMetadataItems,
-    }),
+    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
   });
 
   const { recordGqlOperationFilter: anyFieldFilter } =
