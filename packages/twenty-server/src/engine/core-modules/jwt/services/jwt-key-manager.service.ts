@@ -86,7 +86,10 @@ export class JwtKeyManagerService {
       async (entityManager) => {
         const repository = entityManager.getRepository(SigningKeyEntity);
 
-        await repository.update({ isCurrent: true }, { isCurrent: false });
+        await repository.update(
+          { isCurrent: true },
+          { isCurrent: false, privateKey: null },
+        );
 
         await repository.insert({
           id: newId,
