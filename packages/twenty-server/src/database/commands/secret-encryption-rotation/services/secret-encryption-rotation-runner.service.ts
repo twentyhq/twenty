@@ -4,6 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import {
+  SECRET_ENCRYPTION_ROTATION_SITE_NAME,
+  type SecretEncryptionRotationSiteName,
+} from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import { ColumnRotationSiteHandler } from 'src/database/commands/secret-encryption-rotation/handlers/column-rotation-site.handler';
 import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/sensitive-config-storage-rotation.handler';
 import {
@@ -21,7 +25,7 @@ import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/d
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 export type RotationRunOptions = {
-  site?: string;
+  site?: SecretEncryptionRotationSiteName | string;
   batchSize: number;
   dryRun: boolean;
 };
@@ -40,7 +44,7 @@ export class SecretEncryptionRotationRunnerService {
   );
 
   private readonly handlersBySiteName: Map<
-    string,
+    SecretEncryptionRotationSiteName,
     SecretEncryptionRotationHandler
   >;
 
@@ -62,7 +66,8 @@ export class SecretEncryptionRotationRunnerService {
     const handlers: SecretEncryptionRotationHandler[] = [
       new ColumnRotationSiteHandler(
         {
-          siteName: 'connected-account-tokens',
+          siteName:
+            SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_TOKENS,
           repository: connectedAccountRepository,
           encryptedColumns: ['accessToken', 'refreshToken'],
           isWorkspaceScoped: true,
@@ -71,7 +76,7 @@ export class SecretEncryptionRotationRunnerService {
       ),
       new ColumnRotationSiteHandler(
         {
-          siteName: 'application-variable',
+          siteName: SECRET_ENCRYPTION_ROTATION_SITE_NAME.APPLICATION_VARIABLE,
           repository: applicationVariableRepository,
           encryptedColumns: ['value'],
           isWorkspaceScoped: true,
@@ -81,7 +86,8 @@ export class SecretEncryptionRotationRunnerService {
       ),
       new ColumnRotationSiteHandler(
         {
-          siteName: 'application-registration-variable',
+          siteName:
+            SECRET_ENCRYPTION_ROTATION_SITE_NAME.APPLICATION_REGISTRATION_VARIABLE,
           repository: applicationRegistrationVariableRepository,
           encryptedColumns: ['encryptedValue'],
         },
@@ -89,7 +95,8 @@ export class SecretEncryptionRotationRunnerService {
       ),
       new ColumnRotationSiteHandler(
         {
-          siteName: 'signing-key-private-keys',
+          siteName:
+            SECRET_ENCRYPTION_ROTATION_SITE_NAME.SIGNING_KEY_PRIVATE_KEYS,
           repository: signingKeyRepository,
           encryptedColumns: ['privateKey'],
         },
@@ -97,7 +104,7 @@ export class SecretEncryptionRotationRunnerService {
       ),
       new ColumnRotationSiteHandler(
         {
-          siteName: 'totp-secrets',
+          siteName: SECRET_ENCRYPTION_ROTATION_SITE_NAME.TOTP_SECRETS,
           repository: twoFactorAuthenticationMethodRepository,
           encryptedColumns: ['secret'],
           isWorkspaceScoped: true,
@@ -112,7 +119,7 @@ export class SecretEncryptionRotationRunnerService {
     );
   }
 
-  listSiteNames(): string[] {
+  listSiteNames(): SecretEncryptionRotationSiteName[] {
     return Array.from(this.handlersBySiteName.keys());
   }
 
@@ -207,7 +214,9 @@ export class SecretEncryptionRotationRunnerService {
       return Array.from(this.handlersBySiteName.values());
     }
 
-    const handler = this.handlersBySiteName.get(site);
+    const handler = this.handlersBySiteName.get(
+      site as SecretEncryptionRotationSiteName,
+    );
 
     if (!isDefined(handler)) {
       throw new Error(

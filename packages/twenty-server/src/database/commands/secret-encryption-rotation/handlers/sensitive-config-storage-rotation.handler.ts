@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
 
+import { SECRET_ENCRYPTION_ROTATION_SITE_NAME } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
@@ -22,7 +23,8 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 @Injectable()
 export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotationHandler {
-  readonly siteName = 'sensitive-config-storage';
+  readonly siteName =
+    SECRET_ENCRYPTION_ROTATION_SITE_NAME.SENSITIVE_CONFIG_STORAGE;
   private readonly logger = new Logger(
     SensitiveConfigStorageRotationHandler.name,
   );
@@ -54,6 +56,7 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
 
   async rotate({
     currentEncryptionKeyId,
+    batchSize,
     dryRun,
   }: SecretEncryptionRotationContext): Promise<SecretEncryptionRotationOutcome> {
     const sensitiveStringConfigKeys = this.collectSensitiveStringConfigKeys();
@@ -62,61 +65,87 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
       return { rotated: 0, skipped: 0, errors: 0 };
     }
 
-    const rows = await this.buildRotationQuery({
-      currentEncryptionKeyId,
-      sensitiveStringConfigKeys,
-    }).getMany();
+    const outcome: SecretEncryptionRotationOutcome = {
+      rotated: 0,
+      skipped: 0,
+      errors: 0,
+    };
+    let cursor = '00000000-0000-0000-0000-000000000000';
 
-    let rotated = 0;
-    let skipped = 0;
-    let errors = 0;
+    while (true) {
+      const rows = await this.buildRotationQuery({
+        currentEncryptionKeyId,
+        sensitiveStringConfigKeys,
+      })
+        .andWhere('kvp.id > :cursor', { cursor })
+        .orderBy('kvp.id', 'ASC')
+        .take(batchSize)
+        .getMany();
 
-    for (const row of rows) {
-      const rawValue = row.value as unknown;
-
-      if (
-        typeof rawValue !== 'string' ||
-        !rawValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)
-      ) {
-        skipped++;
-        continue;
+      if (rows.length === 0) {
+        break;
       }
 
-      try {
-        const plaintext =
-          this.secretEncryptionService.decryptVersioned(rawValue);
-        const reEncrypted =
-          this.secretEncryptionService.encryptVersioned(plaintext);
+      for (const row of rows) {
+        const rowOutcome = await this.rotateRow({ row, dryRun });
 
-        if (!dryRun) {
-          const updateResult = await this.keyValuePairRepository
-            .createQueryBuilder()
-            .update()
-            .set({ value: reEncrypted as unknown as JSON })
-            .where('id = :id', { id: row.id })
-            .andWhere('CAST(value AS text) = :originalValueText', {
-              originalValueText: JSON.stringify(rawValue),
-            })
-            .execute();
-
-          if ((updateResult.affected ?? 0) === 0) {
-            skipped++;
-            continue;
-          }
-        }
-
-        rotated++;
-      } catch (error) {
-        errors++;
-        this.logger.warn(
-          `[${this.siteName}] failed to re-encrypt config key '${row.key}' row ${row.id}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
+        outcome.rotated += rowOutcome.rotated;
+        outcome.skipped += rowOutcome.skipped;
+        outcome.errors += rowOutcome.errors;
       }
+
+      cursor = rows[rows.length - 1].id;
     }
 
-    return { rotated, skipped, errors };
+    return outcome;
+  }
+
+  private async rotateRow({
+    row,
+    dryRun,
+  }: {
+    row: KeyValuePairEntity;
+    dryRun: boolean;
+  }): Promise<SecretEncryptionRotationOutcome> {
+    const rawValue = row.value as unknown;
+
+    if (
+      typeof rawValue !== 'string' ||
+      !rawValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)
+    ) {
+      return { rotated: 0, skipped: 1, errors: 0 };
+    }
+
+    try {
+      const plaintext = this.secretEncryptionService.decryptVersioned(rawValue);
+      const reEncrypted =
+        this.secretEncryptionService.encryptVersioned(plaintext);
+
+      if (!dryRun) {
+        const updateResult = await this.keyValuePairRepository
+          .createQueryBuilder()
+          .update()
+          .set({ value: reEncrypted as unknown as JSON })
+          .where('id = :id', { id: row.id })
+          .andWhere('CAST(value AS text) = :originalValueText', {
+            originalValueText: JSON.stringify(rawValue),
+          })
+          .execute();
+
+        if ((updateResult.affected ?? 0) === 0) {
+          return { rotated: 0, skipped: 1, errors: 0 };
+        }
+      }
+
+      return { rotated: 1, skipped: 0, errors: 0 };
+    } catch (error) {
+      this.logger.warn(
+        `[${this.siteName}] failed to re-encrypt config key '${row.key}' row ${row.id}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+      return { rotated: 0, skipped: 0, errors: 1 };
+    }
   }
 
   private buildRotationQuery({

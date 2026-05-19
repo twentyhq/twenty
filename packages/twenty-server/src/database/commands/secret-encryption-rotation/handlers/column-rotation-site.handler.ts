@@ -7,6 +7,7 @@ import {
   type SelectQueryBuilder,
 } from 'typeorm';
 
+import { type SecretEncryptionRotationSiteName } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
@@ -21,7 +22,7 @@ const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
 type EntityWithId = ObjectLiteral & { id: string };
 
 export type ColumnRotationSiteConfig<Entity extends EntityWithId> = {
-  siteName: string;
+  siteName: SecretEncryptionRotationSiteName;
   repository: Repository<Entity>;
   encryptedColumns: readonly (keyof Entity & string)[];
   isWorkspaceScoped?: boolean;
@@ -31,7 +32,7 @@ export type ColumnRotationSiteConfig<Entity extends EntityWithId> = {
 export class ColumnRotationSiteHandler<
   Entity extends EntityWithId = EntityWithId,
 > extends SecretEncryptionRotationHandler {
-  readonly siteName: string;
+  readonly siteName: SecretEncryptionRotationSiteName;
   private readonly logger = new Logger(ColumnRotationSiteHandler.name);
 
   constructor(

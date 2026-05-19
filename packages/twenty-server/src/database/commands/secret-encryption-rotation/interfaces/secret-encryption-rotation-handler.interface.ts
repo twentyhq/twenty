@@ -1,3 +1,5 @@
+import { type SecretEncryptionRotationSiteName } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
+
 export type SecretEncryptionRotationContext = {
   currentEncryptionKeyId: string;
   batchSize: number;
@@ -12,13 +14,13 @@ export type SecretEncryptionRotationOutcome = {
 
 export type SecretEncryptionRotationSiteResult =
   SecretEncryptionRotationOutcome & {
-    siteName: string;
+    siteName: SecretEncryptionRotationSiteName;
     remainingBefore: number;
     durationMs: number;
   };
 
 export abstract class SecretEncryptionRotationHandler {
-  abstract readonly siteName: string;
+  abstract readonly siteName: SecretEncryptionRotationSiteName;
 
   abstract countRemaining(args: {
     currentEncryptionKeyId: string;

@@ -8,8 +8,12 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import {
+  buildSecretEncryptionRotationRunnerFromEnv,
+  type SecretEncryptionRotationRunnerHarness,
+} from 'test/integration/secret-encryption/utils/build-secret-encryption-rotation-runner.util';
 
-import { SecretEncryptionRotationRunnerService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-rotation-runner.service';
+import { SECRET_ENCRYPTION_ROTATION_SITE_NAME } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
 
 const ROTATION_VARIABLE_KEY = 'TEST_ROTATION_SECRET';
@@ -21,28 +25,30 @@ const buildExpectedMask = (plaintext: string): string => {
 };
 
 describe('SecretEncryptionRotationRunnerService (integration)', () => {
-  let runner: SecretEncryptionRotationRunnerService;
+  let harness: SecretEncryptionRotationRunnerHarness;
 
-  beforeAll(() => {
-    runner = global.app.get(SecretEncryptionRotationRunnerService, {
-      strict: false,
-    });
+  beforeAll(async () => {
+    harness = await buildSecretEncryptionRotationRunnerFromEnv();
+  });
+
+  afterAll(async () => {
+    await harness.dataSource.destroy();
   });
 
   it('exposes the expected stable list of sites', () => {
-    expect(runner.listSiteNames()).toEqual([
-      'connected-account-tokens',
-      'application-variable',
-      'application-registration-variable',
-      'signing-key-private-keys',
-      'sensitive-config-storage',
-      'totp-secrets',
+    expect(harness.runner.listSiteNames()).toEqual([
+      SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_TOKENS,
+      SECRET_ENCRYPTION_ROTATION_SITE_NAME.APPLICATION_VARIABLE,
+      SECRET_ENCRYPTION_ROTATION_SITE_NAME.APPLICATION_REGISTRATION_VARIABLE,
+      SECRET_ENCRYPTION_ROTATION_SITE_NAME.SIGNING_KEY_PRIVATE_KEYS,
+      SECRET_ENCRYPTION_ROTATION_SITE_NAME.TOTP_SECRETS,
+      SECRET_ENCRYPTION_ROTATION_SITE_NAME.SENSITIVE_CONFIG_STORAGE,
     ]);
   });
 
   it('rejects an unknown --site value', async () => {
     await expect(
-      runner.run({
+      harness.runner.run({
         site: 'definitely-not-a-real-site',
         batchSize: 200,
         dryRun: false,
@@ -51,8 +57,14 @@ describe('SecretEncryptionRotationRunnerService (integration)', () => {
   });
 
   it('is idempotent: running twice in a row reports zero rotations on the second pass', async () => {
-    const firstSummary = await runner.run({ batchSize: 200, dryRun: false });
-    const secondSummary = await runner.run({ batchSize: 200, dryRun: false });
+    const firstSummary = await harness.runner.run({
+      batchSize: 200,
+      dryRun: false,
+    });
+    const secondSummary = await harness.runner.run({
+      batchSize: 200,
+      dryRun: false,
+    });
 
     const firstTotalErrors = firstSummary.results.reduce(
       (sum, result) => sum + result.errors,
@@ -165,7 +177,7 @@ describe('SecretEncryptionRotationRunnerService (integration)', () => {
     });
 
     it('keeps the secret applicationVariable decryptable via GraphQL after running the rotation', async () => {
-      await runner.run({ batchSize: 200, dryRun: false });
+      await harness.runner.run({ batchSize: 200, dryRun: false });
 
       const findResponse = await makeMetadataAPIRequest({
         query: gql`

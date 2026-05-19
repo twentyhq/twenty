@@ -10,7 +10,6 @@ import bytes from 'bytes';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 
 import { AppModule } from 'src/app.module';
-import { SecretEncryptionRotationModule } from 'src/database/commands/secret-encryption-rotation/secret-encryption-rotation.module';
 import { settings } from 'src/engine/constants/settings';
 import { StripeSDKMockService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/mocks/stripe-sdk-mock.service';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
@@ -54,7 +53,6 @@ export const createApp = async (
       AppModule,
       JobsModule,
       MessageQueueModule.registerExplorer(),
-      SecretEncryptionRotationModule,
     ],
     providers: [
       {
