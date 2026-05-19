@@ -10,9 +10,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.6.0', 1798000020000)
+@RegisteredWorkspaceCommand('2.7.0', 1798000020000)
 @Command({
-  name: 'upgrade:2-6:sync-command-menu-item-availability-expressions',
+  name: 'upgrade:2-7:sync-command-menu-item-availability-expressions',
   description:
     'Re-sync conditionalAvailabilityExpression on all standard command menu items in existing workspaces (heals drift between source-of-truth constant and workspace DB)',
 })
