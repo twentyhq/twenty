@@ -117,7 +117,7 @@ export const registerRemoteCommands = (program: Command): void => {
           return;
         }
 
-        let apiUrl = options.apiUrl;
+        let apiUrl = options.apiUrl?.replace(/\/+$/, '');
 
         if (!apiUrl) {
           const detectedUrl = await detectLocalServer();
@@ -153,7 +153,7 @@ export const registerRemoteCommands = (program: Command): void => {
                   },
                 },
               ])
-            ).apiUrl;
+            ).apiUrl.replace(/\/+$/, '');
           }
         }
 
