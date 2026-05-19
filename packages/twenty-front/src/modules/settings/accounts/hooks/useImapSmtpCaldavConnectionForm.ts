@@ -35,17 +35,17 @@ export type ConnectionFormData = {
   handle: string;
 } & ImapSmtpCaldavAccountInput;
 
+const DEFAULT_PROTOCOL_VALUES: Record<string, ConnectionParametersInput> = {
+  IMAP: { host: '', port: 993, password: '', secure: true },
+  SMTP: { host: '', username: '', port: 587, password: '', secure: true },
+  CALDAV: { host: '', port: 443, password: '', secure: true },
+};
+
 export const useImapSmtpCaldavConnectionForm = ({
   isEditing = false,
   connectedAccountId,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
-
-  const defaultProtocolValues: Record<string, ConnectionParametersInput> = {
-    IMAP: { host: '', port: 993, password: '', secure: true },
-    SMTP: { host: '', username: '', port: 587, password: '', secure: true },
-    CALDAV: { host: '', port: 443, password: '', secure: true },
-  };
 
   const formMethods = useForm<ConnectionFormData>({
     mode: 'onSubmit',
@@ -54,7 +54,7 @@ export const useImapSmtpCaldavConnectionForm = ({
     ),
     defaultValues: {
       handle: '',
-      ...defaultProtocolValues,
+      ...DEFAULT_PROTOCOL_VALUES,
     },
   });
 
@@ -72,15 +72,15 @@ export const useImapSmtpCaldavConnectionForm = ({
       reset({
         handle: connectedAccount.handle || '',
         IMAP: {
-          ...defaultProtocolValues.IMAP,
+          ...DEFAULT_PROTOCOL_VALUES.IMAP,
           ...connectedAccount.connectionParameters?.IMAP,
         },
         SMTP: {
-          ...defaultProtocolValues.SMTP,
+          ...DEFAULT_PROTOCOL_VALUES.SMTP,
           ...connectedAccount.connectionParameters?.SMTP,
         },
         CALDAV: {
-          ...defaultProtocolValues.CALDAV,
+          ...DEFAULT_PROTOCOL_VALUES.CALDAV,
           ...connectedAccount.connectionParameters?.CALDAV,
         },
       });

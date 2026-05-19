@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { Trans } from '@lingui/react/macro';
 import { type Control, Controller } from 'react-hook-form';
 
@@ -37,8 +36,6 @@ export const SettingsAccountsPasswordController = ({
   disabled,
   onUnlock,
 }: SettingsAccountsPasswordControllerProps) => {
-  const { t } = useLingui();
-
   return (
     <Controller
       name={`${protocol}.password`}
