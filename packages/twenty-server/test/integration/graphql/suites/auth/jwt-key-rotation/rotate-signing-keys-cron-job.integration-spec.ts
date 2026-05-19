@@ -15,12 +15,21 @@ describe('RotateSigningKeysCronJob (integration)', () => {
   let isValidSpy: jest.SpyInstance;
 
   beforeAll(async () => {
-    cronJob = global.app.get(RotateSigningKeysCronJob);
-    enterprisePlanService = global.app.get(EnterprisePlanService);
-    jwtKeyManagerService = global.app.get(JwtKeyManagerService);
-    signingKeyRotationService = global.app.get(SigningKeyRotationService);
+    // RotateSigningKeysCronJob and SigningKeyRotationService live in JwtModule,
+    // and EnterprisePlanService lives in EnterpriseModule; neither is @Global,
+    // so we have to widen the lookup with { strict: false }.
+    cronJob = global.app.get(RotateSigningKeysCronJob, { strict: false });
+    enterprisePlanService = global.app.get(EnterprisePlanService, {
+      strict: false,
+    });
+    jwtKeyManagerService = global.app.get(JwtKeyManagerService, {
+      strict: false,
+    });
+    signingKeyRotationService = global.app.get(SigningKeyRotationService, {
+      strict: false,
+    });
     rotationDays = global.app
-      .get(TwentyConfigService)
+      .get(TwentyConfigService, { strict: false })
       .get('SIGNING_KEY_ROTATION_DAYS');
 
     // Current signing keys are created lazily on first sign. Force creation
