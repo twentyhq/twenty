@@ -675,12 +675,15 @@ export class ViewWidgetUpsertService {
           fieldMetadataUniversalIdentifier,
           viewUniversalIdentifier,
           viewFilterGroupUniversalIdentifier,
+          relationTargetFieldMetadataUniversalIdentifier,
         } = resolveEntityRelationUniversalIdentifiers({
           metadataName: 'viewFilter',
           foreignKeyValues: {
             fieldMetadataId: inputFilter.fieldMetadataId,
             viewId,
             viewFilterGroupId: inputFilter.viewFilterGroupId,
+            relationTargetFieldMetadataId:
+              inputFilter.relationTargetFieldMetadataId,
           },
           flatEntityMaps: {
             flatFieldMetadataMaps,
@@ -706,6 +709,9 @@ export class ViewWidgetUpsertService {
           positionInViewFilterGroup:
             inputFilter.positionInViewFilterGroup ?? null,
           subFieldName: inputFilter.subFieldName ?? null,
+          relationTargetFieldMetadataId:
+            inputFilter.relationTargetFieldMetadataId ?? null,
+          relationTargetFieldMetadataUniversalIdentifier,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,
@@ -719,17 +725,22 @@ export class ViewWidgetUpsertService {
           existingFilter.viewFilterGroupId !== inputFilter.viewFilterGroupId ||
           existingFilter.positionInViewFilterGroup !==
             inputFilter.positionInViewFilterGroup ||
-          existingFilter.subFieldName !== inputFilter.subFieldName;
+          existingFilter.subFieldName !== inputFilter.subFieldName ||
+          existingFilter.relationTargetFieldMetadataId !==
+            (inputFilter.relationTargetFieldMetadataId ?? null);
 
         if (hasChanged) {
           const {
             fieldMetadataUniversalIdentifier,
             viewFilterGroupUniversalIdentifier,
+            relationTargetFieldMetadataUniversalIdentifier,
           } = resolveEntityRelationUniversalIdentifiers({
             metadataName: 'viewFilter',
             foreignKeyValues: {
               fieldMetadataId: inputFilter.fieldMetadataId,
               viewFilterGroupId: inputFilter.viewFilterGroupId,
+              relationTargetFieldMetadataId:
+                inputFilter.relationTargetFieldMetadataId,
             },
             flatEntityMaps: {
               flatFieldMetadataMaps,
@@ -751,6 +762,9 @@ export class ViewWidgetUpsertService {
               existingFilter.positionInViewFilterGroup,
             subFieldName:
               inputFilter.subFieldName ?? existingFilter.subFieldName,
+            relationTargetFieldMetadataId:
+              inputFilter.relationTargetFieldMetadataId ?? null,
+            relationTargetFieldMetadataUniversalIdentifier,
             updatedAt: now,
           });
         }

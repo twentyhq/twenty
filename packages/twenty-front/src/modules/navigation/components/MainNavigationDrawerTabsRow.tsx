@@ -120,7 +120,7 @@ const StyledNewChatButton = styled.div`
   justify-content: center;
   min-width: 0;
   overflow: hidden;
-  padding-inline: ${themeCssVariables.spacing[1]};
+  padding-inline: ${themeCssVariables.spacing[2]};
   transition:
     background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease;

@@ -1158,7 +1158,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
     description:
-      'Decrypt-only fallback key. During rotation, set this to the previous ENCRYPTION_KEY so rows encrypted with the old key remain readable.',
+      'Verification-only fallback key. During rotation, set this to the previous ENCRYPTION_KEY so rows encrypted with the old key remain decryptable and session cookies signed under it still verify.',
     isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })

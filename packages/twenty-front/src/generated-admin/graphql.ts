@@ -379,6 +379,7 @@ export type Mutation = {
   removeAiProvider: Scalars['Boolean'];
   removeModelFromProvider: Scalars['Boolean'];
   retryJobs: RetryJobsResponse;
+  revokeSigningKey: SigningKeyDto;
   setAdminAiModelEnabled: Scalars['Boolean'];
   setAdminAiModelRecommended: Scalars['Boolean'];
   setAdminAiModelsEnabled: Scalars['Boolean'];
@@ -433,6 +434,11 @@ export type MutationRemoveModelFromProviderArgs = {
 export type MutationRetryJobsArgs = {
   jobIds: Array<Scalars['String']>;
   queueName: Scalars['String'];
+};
+
+
+export type MutationRevokeSigningKeyArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -505,6 +511,7 @@ export type Query = {
   getModelsDevSuggestions: Array<ModelsDevModelSuggestion>;
   getQueueJobs: QueueJobsResponse;
   getQueueMetrics: QueueMetricsData;
+  getSigningKeys: SigningKeysAdminPanelDto;
   getSystemHealthStatus: SystemHealth;
   getUpgradeStatus: Array<WorkspaceUpgradeStatus>;
   userLookupAdminPanel: UserLookup;
@@ -659,6 +666,23 @@ export type RetryJobsResponse = {
   __typename?: 'RetryJobsResponse';
   results: Array<JobOperationResult>;
   retriedCount: Scalars['Int'];
+};
+
+export type SigningKeyDto = {
+  __typename?: 'SigningKeyDTO';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  isCurrent: Scalars['Boolean'];
+  publicKey: Scalars['String'];
+  revokedAt?: Maybe<Scalars['DateTime']>;
+  verifyCountInWindow: Scalars['Int'];
+};
+
+export type SigningKeysAdminPanelDto = {
+  __typename?: 'SigningKeysAdminPanelDTO';
+  legacyVerifyCountInWindow: Scalars['Int'];
+  signingKeys: Array<SigningKeyDto>;
+  verifyWindowDays: Scalars['Int'];
 };
 
 export enum SubscriptionInterval {
@@ -1074,6 +1098,18 @@ export type GetMaintenanceModeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetMaintenanceModeQuery = { __typename?: 'Query', getMaintenanceMode?: { __typename?: 'MaintenanceMode', startAt: string, endAt: string, link?: string | null } | null };
 
+export type RevokeSigningKeyMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type RevokeSigningKeyMutation = { __typename?: 'Mutation', revokeSigningKey: { __typename?: 'SigningKeyDTO', id: string, isCurrent: boolean, createdAt: string, revokedAt?: string | null, verifyCountInWindow: number } };
+
+export type GetSigningKeysQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetSigningKeysQuery = { __typename?: 'Query', getSigningKeys: { __typename?: 'SigningKeysAdminPanelDTO', legacyVerifyCountInWindow: number, verifyWindowDays: number, signingKeys: Array<{ __typename?: 'SigningKeyDTO', id: string, publicKey: string, isCurrent: boolean, createdAt: string, revokedAt?: string | null, verifyCountInWindow: number }> } };
+
 export type ApplicationRegistrationFragmentFragment = { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, logoUrl?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, isListed: boolean, isFeatured: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string };
 
 export const UserInfoFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserInfoFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<UserInfoFragmentFragment, unknown>;
@@ -1120,3 +1156,5 @@ export const GetSystemHealthStatusDocument = {"kind":"Document","definitions":[{
 export const ClearMaintenanceModeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClearMaintenanceMode"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"clearMaintenanceMode"}}]}}]} as unknown as DocumentNode<ClearMaintenanceModeMutation, ClearMaintenanceModeMutationVariables>;
 export const SetMaintenanceModeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetMaintenanceMode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endAt"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"link"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setMaintenanceMode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"startAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"endAt"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endAt"}}},{"kind":"Argument","name":{"kind":"Name","value":"link"},"value":{"kind":"Variable","name":{"kind":"Name","value":"link"}}}]}]}}]} as unknown as DocumentNode<SetMaintenanceModeMutation, SetMaintenanceModeMutationVariables>;
 export const GetMaintenanceModeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMaintenanceMode"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getMaintenanceMode"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"startAt"}},{"kind":"Field","name":{"kind":"Name","value":"endAt"}},{"kind":"Field","name":{"kind":"Name","value":"link"}}]}}]}}]} as unknown as DocumentNode<GetMaintenanceModeQuery, GetMaintenanceModeQueryVariables>;
+export const RevokeSigningKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RevokeSigningKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revokeSigningKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isCurrent"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}},{"kind":"Field","name":{"kind":"Name","value":"verifyCountInWindow"}}]}}]}}]} as unknown as DocumentNode<RevokeSigningKeyMutation, RevokeSigningKeyMutationVariables>;
+export const GetSigningKeysDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSigningKeys"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getSigningKeys"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signingKeys"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"publicKey"}},{"kind":"Field","name":{"kind":"Name","value":"isCurrent"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}},{"kind":"Field","name":{"kind":"Name","value":"verifyCountInWindow"}}]}},{"kind":"Field","name":{"kind":"Name","value":"legacyVerifyCountInWindow"}},{"kind":"Field","name":{"kind":"Name","value":"verifyWindowDays"}}]}}]}}]} as unknown as DocumentNode<GetSigningKeysQuery, GetSigningKeysQueryVariables>;

@@ -164,6 +164,26 @@ describe('2-5 slow instance command 1798000005000 - EncryptApplicationVariableSl
     expect(row.value).toBe(plaintext);
   });
 
+  it('treats plaintext-under-isSecret=true as plaintext and re-encrypts as v2', async () => {
+    const plaintext =
+      'https://hooks.slack.com/services/T09QGPB2ZP1/B09QUQ5LY2Z/abc';
+    const id = await seedRow({ isSecret: true, value: plaintext });
+
+    await command.runDataMigration(dataSource);
+
+    const [row] = await dataSource.query(
+      `SELECT "value" FROM "core"."applicationVariable" WHERE id = $1`,
+      [id],
+    );
+
+    expect(row.value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)).toBe(
+      true,
+    );
+    expect(
+      secretEncryptionService.decryptVersioned(row.value, { workspaceId }),
+    ).toBe(plaintext);
+  });
+
   it('leaves enc:v2 rows untouched and is idempotent across re-runs', async () => {
     const plaintext = 'already-v2-secret';
     const preexistingV2 = secretEncryptionService.encryptVersioned(plaintext, {

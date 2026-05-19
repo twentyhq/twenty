@@ -21,6 +21,7 @@ import {
   JWT_LEGACY_ALGORITHM,
 } from 'src/engine/core-modules/jwt/constants/jwt-algorithm.constant';
 import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-key-manager.service';
+import { SigningKeyVerifyCounterService } from 'src/engine/core-modules/jwt/services/signing-key-verify-counter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
 import { decodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
@@ -45,6 +46,7 @@ export class JwtWrapperService {
     private readonly jwtService: JwtService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly jwtKeyManagerService: JwtKeyManagerService,
+    private readonly signingKeyVerifyCounterService: SigningKeyVerifyCounterService,
   ) {}
 
   async signAsyncOrThrow(
@@ -131,6 +133,7 @@ export class JwtWrapperService {
     options?: JwtVerifyOptions,
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   ): Promise<any> {
+    const header = decodeJwtHeader(token);
     const payload = this.decode<JwtPayload>(token, { json: true });
 
     if (!isDefined(payload)) {
@@ -140,7 +143,14 @@ export class JwtWrapperService {
     const { key, algorithm } = await this.resolveVerificationKey(token);
 
     try {
-      return jwt.verify(token, key, { ...options, algorithms: [algorithm] });
+      const verified = jwt.verify(token, key, {
+        ...options,
+        algorithms: [algorithm],
+      });
+
+      this.recordVerifyForAlgorithm(algorithm, header);
+
+      return verified;
     } catch (error) {
       // API_KEY tokens created before 12/12/2025 were accidentally signed
       // with ACCESS type instead of API_KEY. Fall back to the legacy ACCESS
@@ -154,11 +164,15 @@ export class JwtWrapperService {
 
         if (isDefined(appSecretBody)) {
           try {
-            return jwt.verify(
+            const verified = jwt.verify(
               token,
               this.generateAppSecret(JwtTokenTypeEnum.ACCESS, appSecretBody),
               { ...options, algorithms: [JWT_LEGACY_ALGORITHM] },
             );
+
+            this.recordVerifyForAlgorithm(JWT_LEGACY_ALGORITHM, header);
+
+            return verified;
           } catch {
             throw this.toAuthException(error);
           }
@@ -183,6 +197,22 @@ export class JwtWrapperService {
 
   extractJwtFromRequest(): JwtFromRequestFunction {
     return ExtractJwt.fromAuthHeaderAsBearerToken();
+  }
+
+  private recordVerifyForAlgorithm(
+    algorithm: ResolvedVerificationKey['algorithm'],
+    header: ReturnType<typeof decodeJwtHeader>,
+  ): void {
+    if (
+      algorithm === JWT_ASYMMETRIC_ALGORITHM &&
+      isAsymmetricJwtHeader(header)
+    ) {
+      this.signingKeyVerifyCounterService.recordKidVerify(header.kid);
+
+      return;
+    }
+
+    this.signingKeyVerifyCounterService.recordLegacyVerify();
   }
 
   private extractAppSecretBody(payload: JwtPayload): string | undefined {

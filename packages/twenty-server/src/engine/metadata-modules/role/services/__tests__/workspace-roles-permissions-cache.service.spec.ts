@@ -1,14 +1,17 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type Repository } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
+import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
@@ -23,7 +26,7 @@ const PERSON_OBJECT_METADATA_ID = '44444444-4444-4444-8444-444444444444';
 
 const createBaseRole = (
   overrides: Partial<RoleEntity> &
-    Pick<RoleEntity, 'permissionFlags' | 'objectPermissions'>,
+    Pick<RoleEntity, 'rolePermissionFlags' | 'objectPermissions'>,
 ): RoleEntity =>
   ({
     id: ROLE_ID,
@@ -56,8 +59,8 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
   let objectPermissionRepository: jest.Mocked<
     Pick<Repository<ObjectPermissionEntity>, 'find'>
   >;
-  let permissionFlagRepository: jest.Mocked<
-    Pick<Repository<PermissionFlagEntity>, 'find'>
+  let rolePermissionFlagRepository: jest.Mocked<
+    Pick<Repository<RolePermissionFlagEntity>, 'find'>
   >;
 
   const workspaceObjectMetadataFixture: ObjectMetadataEntity[] = [
@@ -94,7 +97,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       find: jest.fn().mockResolvedValue([]),
     };
 
-    permissionFlagRepository = {
+    rolePermissionFlagRepository = {
       find: jest.fn().mockResolvedValue([]),
     };
     const fieldPermissionRepository = {
@@ -123,8 +126,8 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
           useValue: objectPermissionRepository,
         },
         {
-          provide: getRepositoryToken(PermissionFlagEntity),
-          useValue: permissionFlagRepository,
+          provide: getRepositoryToken(RolePermissionFlagEntity),
+          useValue: rolePermissionFlagRepository,
         },
         {
           provide: getRepositoryToken(FieldPermissionEntity),
@@ -148,7 +151,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
     it('should deny all record permissions when role has neither workspace members access nor update-all-settings', async () => {
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlags: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -164,16 +167,19 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
     });
 
     it('should grant all record permissions when role has WORKSPACE_MEMBERS permission flag', async () => {
-      permissionFlagRepository.find.mockResolvedValue([
+      rolePermissionFlagRepository.find.mockResolvedValue([
         {
           roleId: ROLE_ID,
-          flag: PermissionFlagType.WORKSPACE_MEMBERS,
-        } as PermissionFlagEntity,
+          permissionFlag: {
+            key: PermissionFlagType.WORKSPACE_MEMBERS,
+            universalIdentifier: SystemPermissionFlag.WORKSPACE_MEMBERS,
+          },
+        } as RolePermissionFlagEntity,
       ]);
 
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlags: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -192,7 +198,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       roleRepository.find.mockResolvedValue([
         createBaseRole({
           canUpdateAllSettings: true,
-          permissionFlags: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -210,7 +216,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
     it('should deny all record permissions when role has neither workflows access nor update-all-settings', async () => {
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlags: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -225,16 +231,19 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
     });
 
     it('should grant all record permissions when role has WORKFLOWS permission flag', async () => {
-      permissionFlagRepository.find.mockResolvedValue([
+      rolePermissionFlagRepository.find.mockResolvedValue([
         {
           roleId: ROLE_ID,
-          flag: PermissionFlagType.WORKFLOWS,
-        } as PermissionFlagEntity,
+          permissionFlag: {
+            key: PermissionFlagType.WORKFLOWS,
+            universalIdentifier: SystemPermissionFlag.WORKFLOWS,
+          },
+        } as RolePermissionFlagEntity,
       ]);
 
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlags: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -264,7 +273,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
 
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlags: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -285,7 +294,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
           canUpdateAllObjectRecords: true,
           canSoftDeleteAllObjectRecords: true,
           canDestroyAllObjectRecords: true,
-          permissionFlags: [],
+          rolePermissionFlags: [],
           objectPermissions: [],
         }),
       ]);

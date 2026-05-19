@@ -72,6 +72,7 @@ export const useFindManyRecordsSelectedInContextStore = ({
     contextStoreFilters,
     contextStoreFilterGroups,
     objectMetadataItem,
+    flattenedFieldMetadataItems: allFieldMetadataItems,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
   });
