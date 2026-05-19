@@ -7,25 +7,16 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const UNIVERSAL_IDENTIFIERS_TO_FIX = new Set<string>([
-  STANDARD_COMMAND_MENU_ITEMS.importRecords.universalIdentifier,
-  STANDARD_COMMAND_MENU_ITEMS.exportView.universalIdentifier,
-  STANDARD_COMMAND_MENU_ITEMS.seeDeletedRecords.universalIdentifier,
-  STANDARD_COMMAND_MENU_ITEMS.createNewView.universalIdentifier,
-  STANDARD_COMMAND_MENU_ITEMS.hideDeletedRecords.universalIdentifier,
-]);
-
 @RegisteredWorkspaceCommand('2.6.0', 1798000020000)
 @Command({
-  name: 'upgrade:2-6:gate-index-page-command-menu-items-by-page-type',
+  name: 'upgrade:2-6:sync-command-menu-item-availability-expressions',
   description:
-    'Gate index-only command menu items (importRecords, exportView, seeDeletedRecords, createNewView, hideDeletedRecords) behind pageType == "INDEX_PAGE"',
+    'Re-sync conditionalAvailabilityExpression on all standard command menu items in existing workspaces (heals drift between source-of-truth constant and workspace DB)',
 })
-export class GateIndexPageCommandMenuItemsByPageTypeCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class SyncCommandMenuItemAvailabilityExpressionsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -42,7 +33,7 @@ export class GateIndexPageCommandMenuItemsByPageTypeCommand extends ActiveOrSusp
     const isDryRun = options.dryRun ?? false;
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Gating index-page command menu items by pageType for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Syncing command menu item availability expressions for workspace ${workspaceId}`,
     );
 
     const { twentyStandardFlatApplication } =
@@ -62,18 +53,17 @@ export class GateIndexPageCommandMenuItemsByPageTypeCommand extends ActiveOrSusp
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const itemsToUpdate = [...UNIVERSAL_IDENTIFIERS_TO_FIX]
-      .map((universalIdentifier) => {
-        const standardItem =
-          standardAllFlatEntityMaps.flatCommandMenuItemMaps
-            .byUniversalIdentifier[universalIdentifier];
+    const itemsToUpdate = Object.values(
+      standardAllFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .map((standardItem) => {
         const existingItem =
           existingFlatCommandMenuItemMaps.byUniversalIdentifier[
-            universalIdentifier
+            standardItem.universalIdentifier
           ];
 
         if (
-          !isDefined(standardItem) ||
           !isDefined(existingItem) ||
           existingItem.conditionalAvailabilityExpression ===
             standardItem.conditionalAvailabilityExpression
@@ -92,19 +82,19 @@ export class GateIndexPageCommandMenuItemsByPageTypeCommand extends ActiveOrSusp
 
     if (itemsToUpdate.length === 0) {
       this.logger.log(
-        `Index-page command menu item expressions already up to date for workspace ${workspaceId}`,
+        `Command menu item availability expressions already up to date for workspace ${workspaceId}`,
       );
 
       return;
     }
 
     this.logger.log(
-      `Found ${itemsToUpdate.length} command menu item(s) to update for workspace ${workspaceId}`,
+      `Found ${itemsToUpdate.length} command menu item(s) with drifted availability expressions for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Would update ${itemsToUpdate.length} command menu item availability expression(s) for workspace ${workspaceId}`,
+        `[DRY RUN] Would sync ${itemsToUpdate.length} command menu item availability expression(s) for workspace ${workspaceId}`,
       );
 
       return;
@@ -128,16 +118,16 @@ export class GateIndexPageCommandMenuItemsByPageTypeCommand extends ActiveOrSusp
 
     if (validateAndBuildResult.status === 'fail') {
       this.logger.error(
-        `Failed to update command menu item availability expressions:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        `Failed to sync command menu item availability expressions:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
 
       throw new Error(
-        `Failed to gate index-page command menu items by pageType for workspace ${workspaceId}`,
+        `Failed to sync command menu item availability expressions for workspace ${workspaceId}`,
       );
     }
 
     this.logger.log(
-      `Successfully updated ${itemsToUpdate.length} command menu item availability expression(s) for workspace ${workspaceId}`,
+      `Successfully synced ${itemsToUpdate.length} command menu item availability expression(s) for workspace ${workspaceId}`,
     );
   }
 }
