@@ -245,6 +245,7 @@
     "@yarnpkg/types": "^4.0.0",
     "jest": "29.7.0",
     "jest-environment-node": "^29.4.1",
+    "nest-commander-testing": "^3.5.1",
     "prettier": "^3.1.1",
     "rimraf": "^5.0.5",
     "supertest": "^6.1.3",

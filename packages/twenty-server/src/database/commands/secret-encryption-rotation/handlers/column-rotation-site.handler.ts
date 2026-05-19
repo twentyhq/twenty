@@ -143,7 +143,7 @@ export class ColumnRotationSiteHandler<
           .update()
           .set(setValues)
           .where('id = :rowId', { rowId })
-          .andWhere(`${encryptedColumn} = :currentValue`, { currentValue })
+          .andWhere(`"${encryptedColumn}" = :currentValue`, { currentValue })
           .execute();
 
         if ((updateResult.affected ?? 0) === 0) {
