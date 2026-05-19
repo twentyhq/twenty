@@ -2,11 +2,9 @@ import { Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type FindOptionsOrder,
-  type FindOptionsWhere,
-  MoreThan,
   type ObjectLiteral,
   type Repository,
+  type SelectQueryBuilder,
 } from 'typeorm';
 
 import {
@@ -14,22 +12,24 @@ import {
   type SecretEncryptionRotationContext,
   type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
-import { buildNonCurrentEnvelopeRawFilter } from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
+import { buildCurrentEncryptionKeyIdEnvelopeLikePattern } from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
 
-export type ColumnRotationSiteConfig<Entity extends ObjectLiteral> = {
+type EntityWithId = ObjectLiteral & { id: string };
+
+export type ColumnRotationSiteConfig<Entity extends EntityWithId> = {
   siteName: string;
   repository: Repository<Entity>;
-  encryptedColumns: string[];
+  encryptedColumns: readonly (keyof Entity & string)[];
   isWorkspaceScoped?: boolean;
-  extraWhere?: FindOptionsWhere<Entity>;
+  extraWhere?: Partial<Entity>;
 };
 
 export class ColumnRotationSiteHandler<
-  Entity extends ObjectLiteral = ObjectLiteral,
+  Entity extends EntityWithId = EntityWithId,
 > extends SecretEncryptionRotationHandler {
   readonly siteName: string;
   private readonly logger = new Logger(ColumnRotationSiteHandler.name);
@@ -47,19 +47,20 @@ export class ColumnRotationSiteHandler<
   }: {
     currentEncryptionKeyId: string;
   }): Promise<number> {
-    const nonCurrentEnvelopeFilter = buildNonCurrentEnvelopeRawFilter(
-      currentEncryptionKeyId,
+    const currentEnvelopePattern =
+      buildCurrentEncryptionKeyIdEnvelopeLikePattern(currentEncryptionKeyId);
+
+    const qb = this.applyExtraWhere(
+      this.config.repository.createQueryBuilder('row'),
     );
 
-    const where = this.config.encryptedColumns.map(
-      (encryptedColumn) =>
-        ({
-          ...this.config.extraWhere,
-          [encryptedColumn]: nonCurrentEnvelopeFilter,
-        }) as unknown as FindOptionsWhere<Entity>,
-    );
+    const orClause = this.config.encryptedColumns
+      .map((encryptedColumn) => `row.${encryptedColumn} NOT LIKE :p`)
+      .join(' OR ');
 
-    return this.config.repository.count({ where });
+    qb.andWhere(`(${orClause})`, { p: currentEnvelopePattern });
+
+    return qb.getCount();
   }
 
   async rotate(
@@ -91,28 +92,30 @@ export class ColumnRotationSiteHandler<
     batchSize,
     dryRun,
   }: SecretEncryptionRotationContext & {
-    encryptedColumn: string;
+    encryptedColumn: keyof Entity & string;
   }): Promise<SecretEncryptionRotationOutcome> {
     const outcome: SecretEncryptionRotationOutcome = {
       rotated: 0,
       skipped: 0,
       errors: 0,
     };
-    let cursor: string = ZERO_UUID;
-    const nonCurrentEnvelopeFilter = buildNonCurrentEnvelopeRawFilter(
-      currentEncryptionKeyId,
-    );
+    const currentEnvelopePattern =
+      buildCurrentEncryptionKeyIdEnvelopeLikePattern(currentEncryptionKeyId);
+    let cursor = ZERO_UUID;
 
     while (true) {
-      const rows = await this.config.repository.find({
-        where: {
-          ...this.config.extraWhere,
-          id: MoreThan(cursor),
-          [encryptedColumn]: nonCurrentEnvelopeFilter,
-        } as unknown as FindOptionsWhere<Entity>,
-        order: { id: 'ASC' } as unknown as FindOptionsOrder<Entity>,
-        take: batchSize,
-      });
+      const qb = this.applyExtraWhere(
+        this.config.repository.createQueryBuilder('row'),
+      );
+
+      const rows = await qb
+        .andWhere('row.id > :cursor', { cursor })
+        .andWhere(`row.${encryptedColumn} NOT LIKE :p`, {
+          p: currentEnvelopePattern,
+        })
+        .orderBy('row.id', 'ASC')
+        .take(batchSize)
+        .getMany();
 
       if (rows.length === 0) {
         break;
@@ -130,7 +133,7 @@ export class ColumnRotationSiteHandler<
         outcome.errors += rowOutcome.errors;
       }
 
-      cursor = rows[rows.length - 1].id as string;
+      cursor = rows[rows.length - 1].id;
     }
 
     return outcome;
@@ -142,10 +145,10 @@ export class ColumnRotationSiteHandler<
     dryRun,
   }: {
     row: Entity;
-    encryptedColumn: string;
+    encryptedColumn: keyof Entity & string;
     dryRun: boolean;
   }): Promise<SecretEncryptionRotationOutcome> {
-    const rowId = row.id as string;
+    const rowId = row.id;
     const currentValue = row[encryptedColumn] as string | null | undefined;
 
     if (
@@ -170,15 +173,14 @@ export class ColumnRotationSiteHandler<
       );
 
       if (!dryRun) {
-        const updateResult = await this.config.repository.update(
-          {
-            id: rowId,
-            [encryptedColumn]: currentValue,
-          } as unknown as FindOptionsWhere<Entity>,
-          { [encryptedColumn]: reEncrypted } as unknown as Parameters<
-            Repository<Entity>['update']
-          >[1],
-        );
+        const setValues = { [encryptedColumn]: reEncrypted } as Partial<Entity>;
+        const updateResult = await this.config.repository
+          .createQueryBuilder()
+          .update()
+          .set(setValues)
+          .where('id = :rowId', { rowId })
+          .andWhere(`${encryptedColumn} = :currentValue`, { currentValue })
+          .execute();
 
         if ((updateResult.affected ?? 0) === 0) {
           return { rotated: 0, skipped: 1, errors: 0 };
@@ -194,5 +196,22 @@ export class ColumnRotationSiteHandler<
       );
       return { rotated: 0, skipped: 0, errors: 1 };
     }
+  }
+
+  private applyExtraWhere(
+    qb: SelectQueryBuilder<Entity>,
+  ): SelectQueryBuilder<Entity> {
+    if (!isDefined(this.config.extraWhere)) {
+      return qb;
+    }
+
+    for (const [column, value] of Object.entries(this.config.extraWhere)) {
+      const parameterKey = `extra_${column}`;
+      qb.andWhere(`row.${column} = :${parameterKey}`, {
+        [parameterKey]: value,
+      });
+    }
+
+    return qb;
   }
 }
