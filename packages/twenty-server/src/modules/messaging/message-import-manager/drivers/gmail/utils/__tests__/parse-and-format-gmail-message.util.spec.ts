@@ -88,4 +88,16 @@ describe('parseAndFormatGmailMessage', () => {
 
     expect(result).toBeNull();
   });
+
+  it('should return null when no recipients are present', () => {
+    const result = parseAndFormatGmailMessage(
+      buildMessage([
+        { name: 'From', value: 'sender@example.com' },
+        { name: 'Message-ID', value: '<abc@example.com>' },
+      ]),
+      connectedAccount,
+    );
+
+    expect(result).toBeNull();
+  });
 });

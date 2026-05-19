@@ -31,18 +31,7 @@ export const parseAndFormatGmailMessage = (
     labelIds,
   } = parseGmailMessage(message);
 
-  const hasRecipients =
-    isNonEmptyArray(to) ||
-    isNonEmptyString(deliveredTo) ||
-    isNonEmptyArray(cc) ||
-    isNonEmptyArray(bcc);
-
-  if (
-    !isDefined(from) ||
-    !isDefined(headerMessageId) ||
-    !isDefined(threadId) ||
-    !hasRecipients
-  ) {
+  if (!isDefined(from) || !isDefined(headerMessageId) || !isDefined(threadId)) {
     return null;
   }
 
@@ -64,6 +53,14 @@ export const parseAndFormatGmailMessage = (
     ...formatAddressObjectAsParticipants(cc, MessageParticipantRole.CC),
     ...formatAddressObjectAsParticipants(bcc, MessageParticipantRole.BCC),
   ];
+
+  const hasRecipientParticipant = participants.some(
+    (participant) => participant.role !== MessageParticipantRole.FROM,
+  );
+
+  if (!hasRecipientParticipant) {
+    return null;
+  }
 
   const textWithoutReplyQuotations = text
     ? planer.extractFrom(text, 'text/plain')
