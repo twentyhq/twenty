@@ -37,7 +37,5 @@ export const getWasRemovedInUpgradeClassMetadata = (
 export const getWasRemovedInUpgradePropertyMetadata = (
   target: Function,
 ): WasRemovedInUpgradePropertyMap =>
-  Reflect.getMetadata(
-    WAS_REMOVED_IN_UPGRADE_PROPERTIES_METADATA_KEY,
-    target,
-  ) ?? {};
+  Reflect.getMetadata(WAS_REMOVED_IN_UPGRADE_PROPERTIES_METADATA_KEY, target) ??
+  {};
