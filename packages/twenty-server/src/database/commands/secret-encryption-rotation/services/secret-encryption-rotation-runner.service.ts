@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { performance } from 'perf_hooks';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -163,11 +164,11 @@ export class SecretEncryptionRotationRunnerService {
 
     const handlersToRun = this.resolveHandlersToRun(options.site);
 
-    const startedAt = Date.now();
+    const startedAt = performance.now();
     const results: SecretEncryptionRotationSiteResult[] = [];
 
     for (const handler of handlersToRun) {
-      const siteStartedAt = Date.now();
+      const siteStartedAt = performance.now();
 
       const remainingBefore = await handler.countRemaining({
         currentEncryptionKeyId,
@@ -183,7 +184,7 @@ export class SecretEncryptionRotationRunnerService {
         dryRun: options.dryRun,
       });
 
-      const durationMs = Date.now() - siteStartedAt;
+      const durationMs = Math.round(performance.now() - siteStartedAt);
       const result: SecretEncryptionRotationSiteResult = {
         siteName: handler.siteName,
         remainingBefore,
@@ -200,7 +201,7 @@ export class SecretEncryptionRotationRunnerService {
       );
     }
 
-    const totalDurationMs = Date.now() - startedAt;
+    const totalDurationMs = Math.round(performance.now() - startedAt);
 
     this.logSummary({
       currentEncryptionKeyId,
