@@ -18,6 +18,10 @@ import {
   TimeoutError,
   ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type CustomException } from 'src/utils/custom-exception';
 
 const graphQLPredefinedExceptions = {
@@ -77,6 +81,13 @@ export const shouldCaptureException = (
   }
 
   if (exception instanceof HttpException && exception.getStatus() < 500) {
+    return false;
+  }
+
+  if (
+    exception instanceof TwentyORMException &&
+    exception.code === TwentyORMExceptionCode.QUERY_READ_TIMEOUT
+  ) {
     return false;
   }
 

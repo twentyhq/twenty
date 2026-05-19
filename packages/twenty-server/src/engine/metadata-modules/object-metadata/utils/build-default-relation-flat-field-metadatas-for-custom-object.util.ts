@@ -19,6 +19,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 const morphIdByRelationObjectNameSingular = {
@@ -41,11 +42,13 @@ export type BuildDefaultRelationFieldsForCustomObjectArgs = {
 type SourceAndTargetFlatFieldMetadatasRecord = {
   standardSourceFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   standardTargetFlatFieldMetadatas: UniversalFlatFieldMetadata[];
+  standardRelationFlatIndexMetadatas: UniversalFlatIndexMetadata[];
 };
 const EMPTY_SOURCE_AND_TARGET_FLAT_FIELD_METADATAS_RECORD: SourceAndTargetFlatFieldMetadatasRecord =
   {
     standardSourceFlatFieldMetadatas: [],
     standardTargetFlatFieldMetadatas: [],
+    standardRelationFlatIndexMetadatas: [],
   };
 
 export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
@@ -107,7 +110,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
         const morphId =
           morphIdByRelationObjectNameSingular[objectMetadataNameSingular];
 
-        const { flatFieldMetadatas } =
+        const { flatFieldMetadatas, indexMetadatas } =
           generateMorphOrRelationFlatFieldMetadataPair({
             sourceFlatObjectMetadata,
             targetFlatObjectMetadata,
@@ -143,6 +146,10 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
           standardTargetFlatFieldMetadatas: [
             ...sourceAndTargetFlatFieldMetadatasRecord.standardTargetFlatFieldMetadatas,
             flatFieldMetadatas[1],
+          ],
+          standardRelationFlatIndexMetadatas: [
+            ...sourceAndTargetFlatFieldMetadatasRecord.standardRelationFlatIndexMetadatas,
+            ...indexMetadatas,
           ],
         };
       },

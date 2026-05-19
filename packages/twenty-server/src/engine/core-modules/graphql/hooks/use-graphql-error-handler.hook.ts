@@ -149,6 +149,7 @@ export const useGraphQLErrorHandlerHook = <
               [ErrorCode.UNAUTHENTICATED]: MetricsKeys.GraphqlOperation401,
               [ErrorCode.FORBIDDEN]: MetricsKeys.GraphqlOperation403,
               [ErrorCode.NOT_FOUND]: MetricsKeys.GraphqlOperation404,
+              [ErrorCode.TIMEOUT]: MetricsKeys.GraphqlOperation500,
               [ErrorCode.INTERNAL_SERVER_ERROR]:
                 MetricsKeys.GraphqlOperation500,
             };
