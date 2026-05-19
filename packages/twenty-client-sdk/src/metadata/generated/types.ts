@@ -2828,6 +2828,46 @@ export default {
                 1
             ]
         },
+        "EnterpriseLicenseInfoDTO": {
+            "isValid": [
+                6
+            ],
+            "licensee": [
+                1
+            ],
+            "expiresAt": [
+                4
+            ],
+            "subscriptionId": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "EnterpriseSubscriptionStatusDTO": {
+            "status": [
+                1
+            ],
+            "licensee": [
+                1
+            ],
+            "expiresAt": [
+                4
+            ],
+            "cancelAt": [
+                4
+            ],
+            "currentPeriodEnd": [
+                4
+            ],
+            "isCancellationScheduled": [
+                6
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "Analytics": {
             "success": [
                 6
@@ -2868,46 +2908,6 @@ export default {
             ],
             "url": [
                 1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "EnterpriseLicenseInfoDTO": {
-            "isValid": [
-                6
-            ],
-            "licensee": [
-                1
-            ],
-            "expiresAt": [
-                4
-            ],
-            "subscriptionId": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "EnterpriseSubscriptionStatusDTO": {
-            "status": [
-                1
-            ],
-            "licensee": [
-                1
-            ],
-            "expiresAt": [
-                4
-            ],
-            "cancelAt": [
-                4
-            ],
-            "currentPeriodEnd": [
-                4
-            ],
-            "isCancellationScheduled": [
-                6
             ],
             "__typename": [
                 1
@@ -5819,6 +5819,25 @@ export default {
                     ]
                 }
             ],
+            "enterprisePortalSession": [
+                1,
+                {
+                    "returnUrlPath": [
+                        1
+                    ]
+                }
+            ],
+            "enterpriseCheckoutSession": [
+                1,
+                {
+                    "billingInterval": [
+                        1
+                    ]
+                }
+            ],
+            "enterpriseSubscriptionStatus": [
+                128
+            ],
             "getViewFilterGroups": [
                 61,
                 {
@@ -5939,25 +5958,6 @@ export default {
                     ]
                 }
             ],
-            "enterprisePortalSession": [
-                1,
-                {
-                    "returnUrlPath": [
-                        1
-                    ]
-                }
-            ],
-            "enterpriseCheckoutSession": [
-                1,
-                {
-                    "billingInterval": [
-                        1
-                    ]
-                }
-            ],
-            "enterpriseSubscriptionStatus": [
-                131
-            ],
             "billingPortalSession": [
                 151,
                 {
@@ -5976,7 +5976,7 @@ export default {
                 154
             ],
             "getApprovedAccessDomains": [
-                128
+                130
             ],
             "getPageLayoutTabs": [
                 122,
@@ -6759,7 +6759,7 @@ export default {
                 }
             ],
             "uploadEmailAttachmentFile": [
-                129,
+                131,
                 {
                     "file": [
                         342,
@@ -6767,8 +6767,20 @@ export default {
                     ]
                 }
             ],
+            "refreshEnterpriseValidityToken": [
+                6
+            ],
+            "setEnterpriseKey": [
+                127,
+                {
+                    "enterpriseKey": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "uploadAiChatFile": [
-                129,
+                131,
                 {
                     "file": [
                         342,
@@ -6777,7 +6789,7 @@ export default {
                 }
             ],
             "uploadWorkflowFile": [
-                129,
+                131,
                 {
                     "file": [
                         342,
@@ -6786,7 +6798,7 @@ export default {
                 }
             ],
             "uploadWorkspaceLogo": [
-                129,
+                131,
                 {
                     "file": [
                         342,
@@ -6795,7 +6807,7 @@ export default {
                 }
             ],
             "uploadWorkspaceMemberProfilePicture": [
-                129,
+                131,
                 {
                     "file": [
                         342,
@@ -6804,7 +6816,7 @@ export default {
                 }
             ],
             "uploadFilesFieldFile": [
-                129,
+                131,
                 {
                     "file": [
                         342,
@@ -6817,7 +6829,7 @@ export default {
                 }
             ],
             "uploadFilesFieldFileByUniversalIdentifier": [
-                129,
+                131,
                 {
                     "file": [
                         342,
@@ -7130,7 +7142,7 @@ export default {
                 }
             ],
             "createObjectEvent": [
-                127,
+                129,
                 {
                     "event": [
                         1,
@@ -7150,7 +7162,7 @@ export default {
                 }
             ],
             "trackAnalytics": [
-                127,
+                129,
                 {
                     "type": [
                         378,
@@ -7164,18 +7176,6 @@ export default {
                     ],
                     "properties": [
                         15
-                    ]
-                }
-            ],
-            "refreshEnterpriseValidityToken": [
-                6
-            ],
-            "setEnterpriseKey": [
-                130,
-                {
-                    "enterpriseKey": [
-                        1,
-                        "String!"
                     ]
                 }
             ],
@@ -7263,7 +7263,7 @@ export default {
                 }
             ],
             "createApprovedAccessDomain": [
-                128,
+                130,
                 {
                     "input": [
                         379,
@@ -7281,7 +7281,7 @@ export default {
                 }
             ],
             "validateApprovedAccessDomain": [
-                128,
+                130,
                 {
                     "input": [
                         381,
