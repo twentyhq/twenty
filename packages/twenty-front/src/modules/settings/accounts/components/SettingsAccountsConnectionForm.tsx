@@ -84,10 +84,6 @@ export const SettingsAccountsConnectionForm = ({
     existingProtocols.includes(protocol) &&
     !isProtocolPasswordBeingEdited[protocol];
 
-  const unlockPassword = (protocol: AccountType) => {
-    setIsProtocolPasswordBeingEdited((prev) => ({ ...prev, [protocol]: true }));
-  };
-
   const getDescription = () => {
     if (isEditing) {
       return t`Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed.`;
@@ -162,7 +158,7 @@ export const SettingsAccountsConnectionForm = ({
             label={t`IMAP Password`}
             control={control}
             disabled={isPasswordInputDisabled('IMAP')}
-            onUnlock={() => unlockPassword('IMAP')}
+            onUnlock={() => setIsProtocolPasswordBeingEdited((prev) => ({ ...prev, IMAP: true }))}
           />
 
           <StyledFieldRow>
@@ -252,7 +248,7 @@ export const SettingsAccountsConnectionForm = ({
             label={t`SMTP Password`}
             control={control}
             disabled={isPasswordInputDisabled('SMTP')}
-            onUnlock={() => unlockPassword('SMTP')}
+            onUnlock={() => setIsProtocolPasswordBeingEdited((prev) => ({ ...prev, SMTP: true }))}
           />
 
           <StyledFieldRow>
@@ -342,7 +338,7 @@ export const SettingsAccountsConnectionForm = ({
             label={t`CalDAV Password`}
             control={control}
             disabled={isPasswordInputDisabled('CALDAV')}
-            onUnlock={() => unlockPassword('CALDAV')}
+            onUnlock={() => setIsProtocolPasswordBeingEdited((prev) => ({ ...prev, CALDAV: true }))}
           />
         </StyledConnectionSection>
       </StyledFormContainer>
