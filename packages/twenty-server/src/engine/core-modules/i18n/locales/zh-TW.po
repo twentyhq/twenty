@@ -5831,6 +5831,11 @@ msgstr ""
 msgid "Please confirm your updated email"
 msgstr ""
 
+#. js-lingui-id: qgasuj
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "Please provide a password for this connection."
+msgstr ""
+
 #. js-lingui-id: NR22yi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
@@ -5841,11 +5846,6 @@ msgstr "請提供有效的HTTP或HTTPS URL"
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "Please provide connection details to configure your email account."
 msgstr "請提供連接詳情以配置您的電子郵件帳戶。"
-
-#. js-lingui-id: 0ldKS0
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
-msgstr "請選擇有效的連接類型（IMAP、SMTP或CalDAV）並重試。"
 
 #. js-lingui-id: sa9Q+R
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -7294,11 +7294,6 @@ msgstr "您的邀請有問題。請再試一次。"
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "There is an issue with your token. Please try again."
 msgstr "您的權杖有問題。請再試一次。"
-
-#. js-lingui-id: Kfwq7n
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
-msgid "There was an issue with your connection settings. Please try again."
-msgstr "您的連接設置出現問題。 請再試一次。"
 
 #. js-lingui-id: Iy9pZw
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
