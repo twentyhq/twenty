@@ -43,7 +43,7 @@ The scaffolder offers to start one for you:
 > **Would you like to set up a local Twenty instance?**
 
 - **Yes (recommended)** — pulls the `twentycrm/twenty-app-dev` Docker image and starts it on port `2020`. Make sure Docker is running first.
-- **No** — choose this if you already have a Twenty server you want to connect to. You can wire it up later with `yarn twenty remote add`.
+- **No** — choose this if you already have a Twenty server you want to connect to. You can wire it up later with `yarn twenty remote:add`.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Should start local instance?" />
@@ -73,7 +73,7 @@ Your terminal will confirm everything is set up.
 **After this phase:** you have a running Twenty server at [http://localhost:2020](http://localhost:2020) with your CLI authorized to sync to it.
 
 <Note>
-If Docker isn't installed or running, the scaffolder will tell you the right start command for your OS. Once Docker is up, you can resume with `yarn twenty server start` — no need to re-scaffold.
+If Docker isn't installed or running, the scaffolder will tell you the right start command for your OS. Once Docker is up, you can resume with `yarn twenty docker:start` — no need to re-scaffold.
 </Note>
 
 ---

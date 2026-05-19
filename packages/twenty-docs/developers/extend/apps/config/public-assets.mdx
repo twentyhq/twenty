@@ -13,7 +13,7 @@ Files placed in `public/` are:
 - **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
 - **Used for marketplace metadata** — the `logoUrl` and `screenshots` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published.
 - **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-- **Included in builds** — `yarn twenty build` bundles all public assets into the distribution output.
+- **Included in builds** — `yarn twenty dev:build` bundles all public assets into the distribution output.
 
 ## Accessing public assets with `getPublicAssetUrl`
 

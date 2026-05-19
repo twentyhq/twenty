@@ -18,10 +18,10 @@ Both paths start from the same **build** step.
 Run the build command to compile your app and generate a distribution-ready `manifest.json`:
 
 ```bash filename="Terminal"
-yarn twenty build
+yarn twenty dev:build
 ```
 
-This compiles TypeScript sources, transpiles logic functions and front components, and writes everything to `.twenty/output/`. Add `--tarball` to also produce a `.tgz` package for manual distribution or the deploy command.
+This compiles TypeScript sources, transpiles logic functions and front components, and writes everything to `.twenty/output/`. Add `--tarball` to also produce a `.tgz` package for manual distribution or the publish command.
 
 ## Deploying to a server (tarball)
 
@@ -34,7 +34,7 @@ Before deploying, you need a configured remote pointing to the target server. Re
 Add a remote:
 
 ```bash filename="Terminal"
-yarn twenty remote add --api-url https://your-twenty-server.com --as production
+yarn twenty remote:add --api-url https://your-twenty-server.com --as production
 ```
 
 ### Deploying
@@ -42,9 +42,9 @@ yarn twenty remote add --api-url https://your-twenty-server.com --as production
 Build and upload your app to the server in one step:
 
 ```bash filename="Terminal"
-yarn twenty deploy
+yarn twenty app:publish --private
 # To deploy to a specific remote:
-# yarn twenty deploy --remote production
+# yarn twenty app:publish --private --remote production
 ```
 
 ### Sharing a deployed app
@@ -68,7 +68,7 @@ When updating an already deployed tarball app, the server requires the `version`
 To release an update:
 
 1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
-2. Run `yarn twenty deploy` (or `yarn twenty deploy --remote production`)
+2. Run `yarn twenty app:publish --private` (or `yarn twenty app:publish --private --remote production`)
 3. Workspaces that have the app installed will see the upgrade available in their settings
 
 <Note>
@@ -121,7 +121,7 @@ Runs integration tests on every push to `main` and every pull request.
 **What it does:**
 
 1. Checks out your app's source.
-2. Spawns an isolated Twenty test instance using the `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` composite action (the CI equivalent of `yarn twenty server start --test`).
+2. Spawns an isolated Twenty test instance using the `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` composite action (the CI equivalent of `yarn twenty docker:start --test`).
 3. Enables Corepack, sets up Node.js from your `.nvmrc`, and installs dependencies with `yarn install --immutable`.
 4. Runs `yarn test`, passing `TWENTY_API_URL` and `TWENTY_API_KEY` from the spawned instance so your tests can talk to a real server.
 
@@ -139,7 +139,7 @@ Deploys your app to a configured Twenty server on every push to `main`, and opti
 **What it does:**
 
 1. Checks out the PR head (for labeled PRs) or the pushed commit.
-2. Runs `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — the CI equivalent of `yarn twenty deploy`.
+2. Runs `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — the CI equivalent of `yarn twenty app:publish --private`.
 3. Runs `twentyhq/twenty/.github/actions/install-twenty-app@main` so the newly deployed version is installed into the target workspace.
 
 **Required configuration:**
@@ -208,13 +208,13 @@ Screenshots of any aspect ratio are displayed in full and are never cropped, but
 ### Publish
 
 ```bash filename="Terminal"
-yarn twenty publish
+yarn twenty app:publish
 ```
 
 To publish under a specific dist-tag (e.g., `beta` or `next`):
 
 ```bash filename="Terminal"
-yarn twenty publish --tag beta
+yarn twenty app:publish --tag beta
 ```
 
 ### How marketplace discovery works
@@ -224,9 +224,9 @@ The Twenty server syncs its marketplace catalog from the npm registry **every ho
 You can trigger the sync immediately instead of waiting:
 
 ```bash filename="Terminal"
-yarn twenty app:catalog-sync
+yarn twenty docker:catalog-sync
 # To target a specific remote:
-# yarn twenty app:catalog-sync --remote production
+# yarn twenty docker:catalog-sync --remote production
 ```
 
 The metadata shown in the marketplace comes from your `defineApplication()` config — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
@@ -259,12 +259,12 @@ jobs:
           node-version: "24"
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
-      - run: npx twenty build
+      - run: npx twenty dev:build
       - run: npm publish --provenance --access public
         working-directory: .twenty/output
 ```
 
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `yarn twenty build`, then `npm publish` from `.twenty/output`.
+For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `yarn twenty dev:build`, then `npm publish` from `.twenty/output`.
 
 <Note>
 **npm provenance** is optional but recommended. Publishing with `--provenance` adds a trust badge to your npm listing, letting users verify the package was built from a specific commit in a public CI pipeline. See the [npm provenance docs](https://docs.npmjs.com/generating-provenance-statements) for setup instructions.
@@ -281,7 +281,7 @@ Go to the **Settings > Applications** page in Twenty, where both marketplace and
 You can also install apps from the command line:
 
 ```bash filename="Terminal"
-yarn twenty install
+yarn twenty app:install
 ```
 
 <Note>
@@ -290,5 +290,5 @@ The server enforces semver versioning on install, mirroring the rules on deploy:
 - Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
 - Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
 
-To install a newer version, deploy or publish it first, then re-run `yarn twenty install`.
+To install a newer version, deploy or publish it first, then re-run `yarn twenty app:install`.
 </Note>
