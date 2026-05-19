@@ -1,3 +1,5 @@
+import { ConfigService } from '@nestjs/config';
+
 import { DataSource } from 'typeorm';
 
 import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
@@ -8,7 +10,8 @@ import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/a
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { type EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
@@ -37,9 +40,10 @@ export const buildSecretEncryptionRotationRunnerFromEnv =
     await dataSource.initialize();
 
     const secretEncryptionService = buildSecretEncryptionServiceFromEnv();
-    const environmentConfigDriver = {
-      get: (key: string) => process.env[key],
-    } as unknown as EnvironmentConfigDriver;
+    const environmentConfigDriver = new EnvironmentConfigDriver(
+      new ConfigService(process.env),
+      new ConfigVariables(),
+    );
 
     const sensitiveConfigStorageRotationHandler =
       new SensitiveConfigStorageRotationHandler(

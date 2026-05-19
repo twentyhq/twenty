@@ -24,7 +24,7 @@ type EntityWithId = ObjectLiteral & { id: string };
 export type ColumnRotationSiteConfig<Entity extends EntityWithId> = {
   siteName: SecretEncryptionRotationSiteName;
   repository: Repository<Entity>;
-  encryptedColumns: readonly (keyof Entity & string)[];
+  encryptedColumn: keyof Entity & string;
   isWorkspaceScoped?: boolean;
   extraWhere?: Partial<Entity>;
 };
@@ -51,50 +51,20 @@ export class ColumnRotationSiteHandler<
     const currentEnvelopePattern =
       buildCurrentEncryptionKeyIdEnvelopeLikePattern(currentEncryptionKeyId);
 
-    const qb = this.applyExtraWhere(
+    return this.applyExtraWhere(
       this.config.repository.createQueryBuilder('row'),
-    );
-
-    const orClause = this.config.encryptedColumns
-      .map((encryptedColumn) => `row.${encryptedColumn} NOT LIKE :p`)
-      .join(' OR ');
-
-    qb.andWhere(`(${orClause})`, { p: currentEnvelopePattern });
-
-    return qb.getCount();
+    )
+      .andWhere(`row.${this.config.encryptedColumn} NOT LIKE :p`, {
+        p: currentEnvelopePattern,
+      })
+      .getCount();
   }
 
-  async rotate(
-    context: SecretEncryptionRotationContext,
-  ): Promise<SecretEncryptionRotationOutcome> {
-    const aggregated: SecretEncryptionRotationOutcome = {
-      rotated: 0,
-      skipped: 0,
-      errors: 0,
-    };
-
-    for (const encryptedColumn of this.config.encryptedColumns) {
-      const outcome = await this.rotateColumn({
-        ...context,
-        encryptedColumn,
-      });
-
-      aggregated.rotated += outcome.rotated;
-      aggregated.skipped += outcome.skipped;
-      aggregated.errors += outcome.errors;
-    }
-
-    return aggregated;
-  }
-
-  private async rotateColumn({
-    encryptedColumn,
+  async rotate({
     currentEncryptionKeyId,
     batchSize,
     dryRun,
-  }: SecretEncryptionRotationContext & {
-    encryptedColumn: keyof Entity & string;
-  }): Promise<SecretEncryptionRotationOutcome> {
+  }: SecretEncryptionRotationContext): Promise<SecretEncryptionRotationOutcome> {
     const outcome: SecretEncryptionRotationOutcome = {
       rotated: 0,
       skipped: 0,
@@ -105,13 +75,11 @@ export class ColumnRotationSiteHandler<
     let cursor = ZERO_UUID;
 
     while (true) {
-      const qb = this.applyExtraWhere(
+      const rows = await this.applyExtraWhere(
         this.config.repository.createQueryBuilder('row'),
-      );
-
-      const rows = await qb
+      )
         .andWhere('row.id > :cursor', { cursor })
-        .andWhere(`row.${encryptedColumn} NOT LIKE :p`, {
+        .andWhere(`row.${this.config.encryptedColumn} NOT LIKE :p`, {
           p: currentEnvelopePattern,
         })
         .orderBy('row.id', 'ASC')
@@ -123,11 +91,7 @@ export class ColumnRotationSiteHandler<
       }
 
       for (const row of rows) {
-        const rowOutcome = await this.rotateRow({
-          row,
-          encryptedColumn,
-          dryRun,
-        });
+        const rowOutcome = await this.rotateRow({ row, dryRun });
 
         outcome.rotated += rowOutcome.rotated;
         outcome.skipped += rowOutcome.skipped;
@@ -142,13 +106,12 @@ export class ColumnRotationSiteHandler<
 
   private async rotateRow({
     row,
-    encryptedColumn,
     dryRun,
   }: {
     row: Entity;
-    encryptedColumn: keyof Entity & string;
     dryRun: boolean;
   }): Promise<SecretEncryptionRotationOutcome> {
+    const { encryptedColumn } = this.config;
     const rowId = row.id;
     const currentValue = row[encryptedColumn] as string | null | undefined;
 

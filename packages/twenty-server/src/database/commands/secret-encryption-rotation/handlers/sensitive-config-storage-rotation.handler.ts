@@ -125,7 +125,7 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
         const updateResult = await this.keyValuePairRepository
           .createQueryBuilder()
           .update()
-          .set({ value: reEncrypted as unknown as JSON })
+          .set({ value: reEncrypted as never })
           .where('id = :id', { id: row.id })
           .andWhere('CAST(value AS text) = :originalValueText', {
             originalValueText: JSON.stringify(rawValue),

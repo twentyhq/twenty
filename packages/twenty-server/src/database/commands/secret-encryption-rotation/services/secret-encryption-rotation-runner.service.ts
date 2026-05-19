@@ -67,9 +67,19 @@ export class SecretEncryptionRotationRunnerService {
       new ColumnRotationSiteHandler(
         {
           siteName:
-            SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_TOKENS,
+            SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_ACCESS_TOKEN,
           repository: connectedAccountRepository,
-          encryptedColumns: ['accessToken', 'refreshToken'],
+          encryptedColumn: 'accessToken',
+          isWorkspaceScoped: true,
+        },
+        secretEncryptionService,
+      ),
+      new ColumnRotationSiteHandler(
+        {
+          siteName:
+            SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_REFRESH_TOKEN,
+          repository: connectedAccountRepository,
+          encryptedColumn: 'refreshToken',
           isWorkspaceScoped: true,
         },
         secretEncryptionService,
@@ -78,7 +88,7 @@ export class SecretEncryptionRotationRunnerService {
         {
           siteName: SECRET_ENCRYPTION_ROTATION_SITE_NAME.APPLICATION_VARIABLE,
           repository: applicationVariableRepository,
-          encryptedColumns: ['value'],
+          encryptedColumn: 'value',
           isWorkspaceScoped: true,
           extraWhere: { isSecret: true },
         },
@@ -89,24 +99,24 @@ export class SecretEncryptionRotationRunnerService {
           siteName:
             SECRET_ENCRYPTION_ROTATION_SITE_NAME.APPLICATION_REGISTRATION_VARIABLE,
           repository: applicationRegistrationVariableRepository,
-          encryptedColumns: ['encryptedValue'],
+          encryptedColumn: 'encryptedValue',
         },
         secretEncryptionService,
       ),
       new ColumnRotationSiteHandler(
         {
           siteName:
-            SECRET_ENCRYPTION_ROTATION_SITE_NAME.SIGNING_KEY_PRIVATE_KEYS,
+            SECRET_ENCRYPTION_ROTATION_SITE_NAME.SIGNING_KEY_PRIVATE_KEY,
           repository: signingKeyRepository,
-          encryptedColumns: ['privateKey'],
+          encryptedColumn: 'privateKey',
         },
         secretEncryptionService,
       ),
       new ColumnRotationSiteHandler(
         {
-          siteName: SECRET_ENCRYPTION_ROTATION_SITE_NAME.TOTP_SECRETS,
+          siteName: SECRET_ENCRYPTION_ROTATION_SITE_NAME.TOTP_SECRET,
           repository: twoFactorAuthenticationMethodRepository,
-          encryptedColumns: ['secret'],
+          encryptedColumn: 'secret',
           isWorkspaceScoped: true,
         },
         secretEncryptionService,
