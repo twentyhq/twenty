@@ -373,8 +373,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         .catch((error) => {
           this.logger.error(error);
           throw new WorkspaceMigrationV2Exception(
-            WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR,
             error.message,
+            WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR,
           );
         });
 
