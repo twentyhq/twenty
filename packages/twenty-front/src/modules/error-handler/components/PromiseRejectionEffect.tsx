@@ -44,11 +44,13 @@ export const PromiseRejectionEffect = () => {
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError';
 
-      if (!isAbortError) {
-        enqueueErrorSnackBar(
-          error instanceof Error ? { message: error.message } : {},
-        );
+      if (isAbortError) {
+        return;
       }
+
+      enqueueErrorSnackBar(
+        error instanceof Error ? { message: error.message } : {},
+      );
 
       try {
         const { captureException } = await import('@sentry/react');
@@ -56,8 +58,15 @@ export const PromiseRejectionEffect = () => {
           scope.setExtras({ mechanism: 'onUnhandle' });
 
           const fingerprint = hasErrorCode(error) ? error.code : error.message;
-          scope.setFingerprint([fingerprint]);
-          error.name = error.message;
+
+          if (isDefined(fingerprint)) {
+            scope.setFingerprint([fingerprint]);
+          }
+
+          if (error instanceof Error) {
+            error.name = error.message;
+          }
+
           return scope;
         });
       } catch (sentryError) {

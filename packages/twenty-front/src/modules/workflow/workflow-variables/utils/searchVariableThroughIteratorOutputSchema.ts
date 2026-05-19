@@ -84,7 +84,16 @@ export const searchVariableThroughIteratorOutputSchema = ({
   }
 
   if (iteratorResultKey === 'currentItem') {
-    const schema = iteratorOutputSchema.currentItem.value;
+    const currentItem = iteratorOutputSchema.currentItem;
+
+    if (!isDefined(currentItem)) {
+      return {
+        variableLabel: undefined,
+        variablePathLabel: undefined,
+      };
+    }
+
+    const schema = currentItem.value;
 
     if (!isDefined(schema)) {
       return {
@@ -113,11 +122,9 @@ export const searchVariableThroughIteratorOutputSchema = ({
     }
 
     return {
-      variableLabel: iteratorOutputSchema.currentItem.label,
-      variablePathLabel: `${stepName} > ${iteratorOutputSchema.currentItem.label}`,
-      variableType: iteratorOutputSchema.currentItem.isLeaf
-        ? iteratorOutputSchema.currentItem.type
-        : 'unknown',
+      variableLabel: currentItem.label,
+      variablePathLabel: `${stepName} > ${currentItem.label}`,
+      variableType: currentItem.isLeaf ? currentItem.type : 'unknown',
     };
   }
 

@@ -129,6 +129,23 @@ describe('searchVariableThroughIteratorOutputSchema', () => {
     });
   });
 
+  it('should return undefined when currentItem is missing from iterator output schema', () => {
+    const result = searchVariableThroughIteratorOutputSchema({
+      stepName: 'Iterate Companies',
+      iteratorOutputSchema: {
+        currentItemIndex: 0,
+        hasProcessedAllItems: false,
+      } as any,
+      rawVariableName: '{{step1.currentItem.name}}',
+      isFullRecord: false,
+    });
+
+    expect(result).toEqual({
+      variableLabel: undefined,
+      variablePathLabel: undefined,
+    });
+  });
+
   it('should return undefined when stepId or iteratorResultKey is undefined', () => {
     const result = searchVariableThroughIteratorOutputSchema({
       stepName: 'Iterate Companies',
