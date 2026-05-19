@@ -308,7 +308,18 @@ export const convertObjectMetadataToSchemaProperties = ({
             additionalPhones: {
               type: 'array',
               items: {
-                type: 'string',
+                type: 'object',
+                properties: {
+                  number: {
+                    type: 'string',
+                  },
+                  countryCode: {
+                    type: 'string',
+                  },
+                  callingCode: {
+                    type: 'string',
+                  },
+                },
               },
             },
             primaryPhoneCountryCode: {

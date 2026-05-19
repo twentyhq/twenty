@@ -269,14 +269,9 @@ describe('MessagingMessagesImportService', () => {
       connectedAccountRefreshTokensService.refreshAndSaveTokens,
     ).toHaveBeenCalledWith(mockConnectedAccount, workspaceId);
 
-    expect(emailAliasManagerService.refreshHandleAliases).toHaveBeenCalledWith(
-      {
-        ...mockConnectedAccount,
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
-      },
-      workspaceId,
-    );
+    expect(
+      emailAliasManagerService.refreshHandleAliases,
+    ).not.toHaveBeenCalled();
     expect(messagingGetMessagesService.getMessages).toHaveBeenCalledWith(
       ['message-id-1', 'message-id-2'],
       {

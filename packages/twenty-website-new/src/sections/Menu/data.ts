@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { getPublishedArticles } from '@/lib/articles';
 import { getLatestReleasePreview } from '@/lib/releases/get-latest-release-preview';
 import type {
   MenuDataType,
@@ -16,14 +15,12 @@ const FALLBACK_RELEASES_PREVIEW: MenuNavChildPreview = {
   description: msg`Track every release with changelogs, highlights and demos of the newest features.`,
 };
 
-const HAS_PUBLISHED_ARTICLES = getPublishedArticles().length > 0;
-
 function buildNavItems(): MenuNavItemType[] {
   const releasesPreview =
     getLatestReleasePreview() ?? FALLBACK_RELEASES_PREVIEW;
 
   return [
-    { label: msg`Product`, href: '/product' },
+    { label: msg`Why`, href: '/why-twenty' },
     {
       label: msg`Resources`,
       children: [
@@ -56,18 +53,6 @@ function buildNavItems(): MenuNavItemType[] {
           },
         },
         {
-          label: msg`Why Twenty`,
-          description: msg`Our story and vision`,
-          href: '/why-twenty',
-          icon: 'lightbulb',
-          preview: {
-            image: '/images/product/demo/kanban.webp',
-            imageAlt: 'Twenty CRM pipeline view',
-            title: msg`Why Twenty`,
-            description: msg`Our story: building a CRM teams can truly own.`,
-          },
-        },
-        {
           label: msg`Partners`,
           description: msg`Find a Twenty partner`,
           href: '/partners',
@@ -87,16 +72,6 @@ function buildNavItems(): MenuNavItemType[] {
           icon: 'tag',
           preview: releasesPreview,
         },
-        ...(HAS_PUBLISHED_ARTICLES
-          ? [
-              {
-                label: msg`Articles`,
-                description: msg`Read Twenty insights`,
-                href: '/articles',
-                icon: 'book' as const,
-              },
-            ]
-          : []),
       ],
     },
     { label: msg`Customers`, href: '/customers' },

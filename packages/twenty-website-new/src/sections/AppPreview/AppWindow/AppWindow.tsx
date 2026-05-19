@@ -1,13 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import {
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { theme } from '@/theme';
 import { VISUAL_TOKENS } from '../Shared/utils/app-preview-tokens';
 import { useWindowPointerInteractions } from '../WindowInteraction/use-window-pointer-interactions';
@@ -130,13 +124,14 @@ type AppWindowProps = {
 
 export const AppWindow = ({ children }: AppWindowProps) => {
   const shellRef = useRef<HTMLDivElement>(null);
+  const interactingRef = useRef(false);
 
   const [position, setPosition] = useState<Position | null>(null);
   const [size, setSize] = useState<Size | null>(null);
 
   const { activate, zIndex } = useWindowOrder(WINDOW_ID);
 
-  useLayoutEffect(() => {
+  const recalcLayout = () => {
     const shell = shellRef.current;
     const parent = shell?.parentElement as HTMLElement | null;
     if (!parent) {
@@ -145,33 +140,52 @@ export const AppWindow = ({ children }: AppWindowProps) => {
     const parentRect = parent.getBoundingClientRect();
 
     if (parentRect.width < MOBILE_PARENT_BREAKPOINT) {
-      const mobileWidth = Math.min(parentRect.width, 320);
+      const mobileWidth = parentRect.width;
       const mobileHeight = Math.min(
         parentRect.height,
-        mobileWidth / INITIAL_ASPECT_RATIO + 100,
+        mobileWidth / INITIAL_ASPECT_RATIO,
       );
       setSize({ width: mobileWidth, height: mobileHeight });
       setPosition({ left: 0, top: 0 });
       return;
     }
 
-    const initialWidth = Math.min(parentRect.width, INITIAL_MAX_WIDTH);
-    const initialHeight = Math.min(
+    const newWidth = Math.min(parentRect.width, INITIAL_MAX_WIDTH);
+    const newHeight = Math.min(
       parentRect.height,
-      initialWidth / INITIAL_ASPECT_RATIO,
+      newWidth / INITIAL_ASPECT_RATIO,
     );
 
-    setSize({ width: initialWidth, height: initialHeight });
+    setSize({ width: newWidth, height: newHeight });
     setPosition({
-      left: Math.max(0, (parentRect.width - initialWidth) / 2),
+      left: Math.max(0, (parentRect.width - newWidth) / 2),
       top: MIN_EDGE_GAP,
     });
+  };
+
+  useLayoutEffect(() => {
+    recalcLayout();
+
+    const parent = shellRef.current?.parentElement as HTMLElement | null;
+    if (!parent) {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      if (!interactingRef.current) {
+        recalcLayout();
+      }
+    });
+    observer.observe(parent);
+
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getParentRect = useCallback(() => {
+  const getParentRect = () => {
     const parent = shellRef.current?.parentElement as HTMLElement | null;
     return parent?.getBoundingClientRect() ?? null;
-  }, []);
+  };
 
   const {
     handleDragStart,
@@ -194,13 +208,10 @@ export const AppWindow = ({ children }: AppWindowProps) => {
     size,
   });
 
-  const handleShellPointerDown = useCallback(() => {
-    activate();
-  }, [activate]);
-
   const isReady = position !== null && size !== null;
 
   const isInteracting = isDragging || isResizing;
+  interactingRef.current = isInteracting;
   const renderPosition = isInteracting
     ? (latestPositionRef.current ?? position)
     : position;
@@ -211,7 +222,7 @@ export const AppWindow = ({ children }: AppWindowProps) => {
       $isActive={isReady && zIndex > 2}
       $isReady={isReady}
       $isResizing={isResizing}
-      onPointerDown={handleShellPointerDown}
+      onPointerDown={activate}
       ref={shellRef}
       style={{
         height: renderSize ? `${renderSize.height}px` : undefined,

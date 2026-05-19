@@ -171,11 +171,6 @@ msgstr "2 years contract"
 msgid "2,000+"
 msgstr "2,000+"
 
-#. js-lingui-id: oadHWW
-#: src/app/[locale]/pricing/plan-table.data.ts
-msgid "200 per minute"
-msgstr "200 per minute"
-
 #. js-lingui-id: FKcV/y
 #: src/lib/customers/case-study-catalog.ts
 #: src/lib/customers/case-study-catalog.ts
@@ -219,6 +214,21 @@ msgstr "30+"
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
 msgid "4 tools"
 msgstr "4 tools"
+
+#. js-lingui-id: 2ScEtE
+#: src/sections/Plans/data.ts
+msgid "5 workflow credits/month included"
+msgstr "5 workflow credits/month included"
+
+#. js-lingui-id: Z2TH0F
+#: src/app/[locale]/pricing/plan-table.data.ts
+msgid "50 per minute"
+msgstr "50 per minute"
+
+#. js-lingui-id: CiRGZ8
+#: src/sections/Plans/data.ts
+msgid "50 workflow credits/year included"
+msgstr "50 workflow credits/year included"
 
 #. js-lingui-id: tZvajW
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -398,11 +408,6 @@ msgstr "Adoption"
 msgid "advanced"
 msgstr "advanced"
 
-#. js-lingui-id: cBdysG
-#: src/app/[locale]/pricing/plan-table.data.ts
-msgid "Advanced Encryption"
-msgstr "Advanced Encryption"
-
 #. js-lingui-id: /C6Pwb
 #: src/app/[locale]/product/feature.data.ts
 msgid "Aggregate, bar, line, pie, and gauge widgets"
@@ -418,11 +423,6 @@ msgstr "Agribusiness"
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "AI (Einstein)"
 msgstr "AI (Einstein)"
-
-#. js-lingui-id: CKVA1O
-#: src/app/[locale]/product/page.tsx
-msgid "AI & Automation"
-msgstr "AI & Automation"
 
 #. js-lingui-id: aUn7Ps
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -589,11 +589,10 @@ msgstr "Architecture"
 msgid "around it"
 msgstr "around it"
 
-#. js-lingui-id: Tt5T6+
-#: src/sections/Menu/data.ts
-#: src/sections/Footer/data.ts
-msgid "Articles"
-msgstr "Articles"
+#. js-lingui-id: 4YKyFV
+#: src/app/[locale]/product/page.tsx
+msgid "Ask questions, automate tasks, and get insights. All powered by AI that understands your data."
+msgstr "Ask questions, automate tasks, and get insights. All powered by AI that understands your data."
 
 #. js-lingui-id: yYKNWp
 #: src/app/[locale]/(home)/page.tsx
@@ -1009,10 +1008,10 @@ msgstr "Costs down more than"
 msgid "Create a workflow"
 msgstr "Create a workflow"
 
-#. js-lingui-id: /S4Rov
-#: src/app/[locale]/product/tabs.data.ts
-msgid "Create a workflow that send an email sequence"
-msgstr "Create a workflow that send an email sequence"
+#. js-lingui-id: Pg0blE
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
+msgid "Create a workflow that sends an email sequence"
+msgstr "Create a workflow that sends an email sequence"
 
 #. js-lingui-id: B9nLrl
 #: src/sections/Menu/data.ts
@@ -1027,7 +1026,7 @@ msgid "Create custom apps"
 msgstr "Create custom apps"
 
 #. js-lingui-id: mmx00G
-#: src/app/[locale]/product/tabs.data.ts
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Create follow-up tasks for my top 10 accounts"
 msgstr "Create follow-up tasks for my top 10 accounts"
 
@@ -1088,6 +1087,7 @@ msgid "CSV import flow"
 msgstr "CSV import flow"
 
 #. js-lingui-id: lh6aPn
+#: src/sections/Plans/data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Custom AI models"
 msgstr "Custom AI models"
@@ -1106,6 +1106,12 @@ msgstr "Custom deal stages for your process"
 #: src/app/[locale]/product/feature.data.ts
 msgid "Custom deal stages, drag-and-drop boards, and real-time tracking so your pipeline reflects reality."
 msgstr "Custom deal stages, drag-and-drop boards, and real-time tracking so your pipeline reflects reality."
+
+#. js-lingui-id: GAD3Dx
+#: src/sections/Plans/data.ts
+#: src/sections/Plans/data.ts
+msgid "Custom domain"
+msgstr "Custom domain"
 
 #. js-lingui-id: Vz1Vq2
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -1312,6 +1318,11 @@ msgstr "Emails and events linked to CRM records"
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Encrypt your data"
 msgstr "Encrypt your data"
+
+#. js-lingui-id: Iy8Gze
+#: src/app/[locale]/pricing/plan-table.data.ts
+msgid "Encryption key rotation"
+msgstr "Encryption key rotation"
 
 #. js-lingui-id: Ijh+h+
 #: src/app/[locale]/(home)/page.tsx
@@ -2079,10 +2090,10 @@ msgstr "Monthly"
 msgid "More options available!"
 msgstr "More options available!"
 
-#. js-lingui-id: ZPjy5q
+#. js-lingui-id: HmvqZe
 #: src/app/[locale]/product/page.tsx
-msgid "moves fast"
-msgstr "moves fast"
+msgid "move fast"
+msgstr "move fast"
 
 #. js-lingui-id: dlKkNL
 #: src/app/[locale]/product/feature.data.ts
@@ -2155,11 +2166,6 @@ msgstr "No more renting someone else's"
 #: src/app/[locale]/customers/act-education/page.tsx
 msgid "No more renting someone else's structure"
 msgstr "No more renting someone else's structure"
-
-#. js-lingui-id: K1QTmg
-#: src/sections/Plans/data.ts
-msgid "No open-source distribution requirement"
-msgstr "No open-source distribution requirement"
 
 #. js-lingui-id: q9f4Tp
 #: src/lib/customers/case-study-catalog.ts
@@ -2278,16 +2284,6 @@ msgstr "Organization"
 #: src/app/[locale]/partners/page.tsx
 msgid "our partner"
 msgstr "our partner"
-
-#. js-lingui-id: U46+HD
-#: src/sections/Menu/data.ts
-msgid "Our story and vision"
-msgstr "Our story and vision"
-
-#. js-lingui-id: uB6QTq
-#: src/sections/Menu/data.ts
-msgid "Our story: building a CRM teams can truly own."
-msgstr "Our story: building a CRM teams can truly own."
 
 #. js-lingui-id: dKGg8T
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -2413,12 +2409,6 @@ msgstr "Privacy Policy | Twenty"
 msgid "Pro"
 msgstr "Pro"
 
-#. js-lingui-id: K47k8R
-#: src/sections/Menu/data.ts
-#: src/sections/Footer/data.ts
-msgid "Product"
-msgstr "Product"
-
 #. js-lingui-id: kIGKva
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
 msgid "Production grade quality"
@@ -2455,11 +2445,6 @@ msgstr "Q1 2026"
 #: src/sections/Helped/components/HelpedCard.tsx
 msgid "Read the case"
 msgstr "Read the case"
-
-#. js-lingui-id: 0ybw+o
-#: src/sections/Menu/data.ts
-msgid "Read Twenty insights"
-msgstr "Read Twenty insights"
 
 #. js-lingui-id: EqCbT9
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -2594,14 +2579,10 @@ msgstr "Rich notes attached to records"
 msgid "Roadmap"
 msgstr "Roadmap"
 
-#. js-lingui-id: C77N5M
-#: src/sections/Plans/data.ts
-#: src/sections/Plans/data.ts
-#: src/sections/Plans/data.ts
-msgid "Roles & Permissions"
-msgstr "Roles & Permissions"
-
 #. js-lingui-id: Wdh41P
+#: src/sections/Plans/data.ts
+#: src/sections/Plans/data.ts
+#: src/sections/Plans/data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Row-level permissions"
 msgstr "Row-level permissions"
@@ -2781,7 +2762,7 @@ msgid "Show less"
 msgstr "Show less"
 
 #. js-lingui-id: qv84H6
-#: src/app/[locale]/product/tabs.data.ts
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Show me all deals closing this month"
 msgstr "Show me all deals closing this month"
 
@@ -2926,7 +2907,7 @@ msgid "Submitting…"
 msgstr "Submitting…"
 
 #. js-lingui-id: KY4KBn
-#: src/app/[locale]/product/tabs.data.ts
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Summarize this customer's history"
 msgstr "Summarize this customer's history"
 
@@ -3034,11 +3015,6 @@ msgstr "that's quick to flex"
 #: src/lib/website-routing/static-website-routes.ts
 msgid "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
 msgstr "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
-
-#. js-lingui-id: xnVX2j
-#: src/app/[locale]/product/page.tsx
-msgid "The AI understands your CRM and takes action."
-msgstr "The AI understands your CRM and takes action."
 
 #. js-lingui-id: G2IgPj
 #: src/app/[locale]/customers/netzero/page.tsx
@@ -3412,15 +3388,10 @@ msgstr "Unified timeline (emails, events, tasks, notes, files)"
 msgid "Unlimited"
 msgstr "Unlimited"
 
-#. js-lingui-id: LF0tzk
+#. js-lingui-id: aGpTSC
 #: src/sections/Plans/data.ts
-msgid "Up to 50M automation credits/year"
-msgstr "Up to 50M automation credits/year"
-
-#. js-lingui-id: RDRePw
-#: src/sections/Plans/data.ts
-msgid "Up to 5M automation credits/month"
-msgstr "Up to 5M automation credits/month"
+msgid "Up to 5 workspaces"
+msgstr "Up to 5 workspaces"
 
 #. js-lingui-id: 2vanwz
 #: src/app/[locale]/product/feature.data.ts
@@ -3616,9 +3587,12 @@ msgstr "Which partner program is right for you?"
 msgid "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
 msgstr "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
 
+#. js-lingui-id: DJlSwA
+#: src/sections/Menu/data.ts
+msgid "Why"
+msgstr "Why"
+
 #. js-lingui-id: 4sOVu+
-#: src/sections/Menu/data.ts
-#: src/sections/Menu/data.ts
 #: src/sections/Footer/data.ts
 msgid "Why Twenty"
 msgstr "Why Twenty"
@@ -3695,7 +3669,6 @@ msgstr "Yearly"
 
 #. js-lingui-id: l75CjT
 #: src/sections/PlanTable/components/Content.tsx
-#: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts

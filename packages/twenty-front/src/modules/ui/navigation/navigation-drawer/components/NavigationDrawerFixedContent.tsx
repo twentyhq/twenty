@@ -10,14 +10,14 @@ const StyledFixedContainer = styled.div<{
   isSettings?: boolean;
   isMobile?: boolean;
 }>`
-  padding-left: ${({ isSettings }) =>
-    isSettings ? themeCssVariables.spacing[5] : '0'};
+  padding-left: ${({ isSettings, isMobile }) =>
+    isSettings || isMobile ? themeCssVariables.spacing[5] : '0'};
   padding-right: ${({ isSettings, isMobile }) =>
-    isSettings
-      ? isMobile
-        ? themeCssVariables.spacing[5]
-        : themeCssVariables.spacing[8]
-      : '0'};
+    isMobile
+      ? themeCssVariables.spacing[5]
+      : isSettings
+        ? themeCssVariables.spacing[8]
+        : '0'};
 `;
 export const NavigationDrawerFixedContent = ({
   children,

@@ -153,6 +153,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
+      appliesTo: 'selfHost',
       featureLabel: msg`Custom AI models`,
       tiers: {
         organization: { kind: 'yes', label: msg`Yes` },
@@ -213,7 +214,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
-      featureLabel: msg`Advanced Encryption`,
+      featureLabel: msg`Encryption key rotation`,
       tiers: {
         organization: { kind: 'yes', label: msg`Yes` },
         pro: { kind: 'dash' },
@@ -330,7 +331,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       featureLabel: msg`Custom domain (crm.yourco.com)`,
       tiers: {
         organization: { kind: 'yes', label: msg`Yes` },
-        pro: { kind: 'yes', label: msg`Yes` },
+        pro: { kind: 'dash' },
       },
       type: 'row',
     },
@@ -374,8 +375,8 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       appliesTo: 'cloud',
       featureLabel: msg`API calls`,
       tiers: {
-        organization: { kind: 'text', text: msg`200 per minute` },
-        pro: { kind: 'text', text: msg`100 per minute` },
+        organization: { kind: 'text', text: msg`100 per minute` },
+        pro: { kind: 'text', text: msg`50 per minute` },
       },
       type: 'row',
     },

@@ -41,6 +41,7 @@ export function KanbanPage({ page }: { page: KanbanPageDefinition }) {
         {page.lanes.map((lane, index) => (
           <KanbanLane
             key={lane.id}
+            index={index}
             isLast={index === page.lanes.length - 1}
             lane={lane}
           />

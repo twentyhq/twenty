@@ -1,5 +1,4 @@
 import { copyBaseApplicationProject } from '@/utils/app-template';
-import { downloadExample } from '@/utils/download-example';
 import { convertToLabel } from '@/utils/convert-to-label';
 import { install } from '@/utils/install';
 import { tryGitInit } from '@/utils/try-git-init';
@@ -31,11 +30,10 @@ export type AuthenticationMethod = 'oauth' | 'apiKey';
 
 type CreateAppOptions = {
   directory?: string;
-  example?: string;
   name?: string;
   displayName?: string;
   description?: string;
-  apiUrl?: string;
+  workspaceUrl?: string;
   authenticationMethod?: AuthenticationMethod;
 };
 
@@ -47,9 +45,9 @@ export class CreateAppCommand {
     const { appName, appDisplayName, appDirectory, appDescription } =
       this.getAppInfos(options);
 
-    const apiUrl = options.apiUrl ?? DEV_API_URL;
+    const workspaceUrl = options.workspaceUrl ?? DEV_API_URL;
 
-    const skipLocalInstance = apiUrl !== DEV_API_URL;
+    const skipLocalInstance = workspaceUrl !== DEV_API_URL;
 
     if (!skipLocalInstance && !isDockerInstalled()) {
       console.log(chalk.yellow('\n' + getDockerInstallInstructions() + '\n'));
@@ -92,30 +90,13 @@ export class CreateAppCommand {
 
       this.logNextStep('Scaffolding project files');
 
-      if (options.example) {
-        const exampleSucceeded = await this.tryDownloadExample(
-          options.example,
-          appDirectory,
-        );
-
-        if (!exampleSucceeded) {
-          await copyBaseApplicationProject({
-            appName,
-            appDisplayName,
-            appDescription,
-            appDirectory,
-            onProgress: (message) => this.logDetail(message),
-          });
-        }
-      } else {
-        await copyBaseApplicationProject({
-          appName,
-          appDisplayName,
-          appDescription,
-          appDirectory,
-          onProgress: (message) => this.logDetail(message),
-        });
-      }
+      await copyBaseApplicationProject({
+        appName,
+        appDisplayName,
+        appDescription,
+        appDirectory,
+        onProgress: (message) => this.logDetail(message),
+      });
 
       this.logNextStep('Installing dependencies');
 
@@ -137,7 +118,7 @@ export class CreateAppCommand {
       console.log('');
 
       let authSucceeded = false;
-      let resolvedApiUrl = apiUrl;
+      let resolvedWorkspaceUrl = workspaceUrl;
       let serverReady = skipLocalInstance;
 
       if (!skipLocalInstance) {
@@ -145,20 +126,49 @@ export class CreateAppCommand {
         const serverResult = await this.ensureDockerServer(dockerPullPromise);
 
         if (isDefined(serverResult.url)) {
-          resolvedApiUrl = serverResult.url;
+          resolvedWorkspaceUrl = serverResult.url;
           serverReady = true;
         }
       }
 
-      if (serverReady && authenticationMethod === 'oauth') {
-        this.logNextStep('Authenticating via OAuth');
-        authSucceeded = await this.authenticateWithOAuth(resolvedApiUrl);
-      } else if (serverReady && authenticationMethod === 'apiKey') {
-        this.logNextStep('Authenticating via API key');
-        authSucceeded = await this.authenticateWithDevKey(resolvedApiUrl);
+      if (serverReady) {
+        this.logNextStep('Authenticating');
+
+        authSucceeded = await this.tryExistingAuth(resolvedWorkspaceUrl);
+
+        if (authSucceeded) {
+          this.logDetail('Reusing existing credentials');
+        } else if (authenticationMethod === 'oauth') {
+          this.logDetail('Starting OAuth flow');
+          authSucceeded =
+            await this.authenticateWithOAuth(resolvedWorkspaceUrl);
+        } else {
+          this.logDetail('Using development API key');
+          authSucceeded =
+            await this.authenticateWithDevKey(resolvedWorkspaceUrl);
+        }
       }
 
-      this.logSuccess(appDirectory, resolvedApiUrl, authSucceeded);
+      this.logNextStep('Installing application');
+
+      let syncSucceeded = false;
+
+      if (serverReady && authSucceeded) {
+        syncSucceeded = await this.syncApplication(appDirectory);
+
+        if (!syncSucceeded) {
+          this.logDetail('Sync failed. Run `yarn twenty dev --once` manually.');
+          return;
+        }
+      } else {
+        this.logDetail('Skipped (server or authentication not available)');
+      }
+
+      if (syncSucceeded) {
+        await this.openMainPage(appDirectory, resolvedWorkspaceUrl);
+      }
+
+      this.logSuccess(appDirectory, resolvedWorkspaceUrl, authSucceeded);
     } catch (error) {
       console.error(
         chalk.red('\nCreate application failed:'),
@@ -180,6 +190,7 @@ export class CreateAppCommand {
     }
 
     steps += 1; // authenticate (oauth or apiKey)
+    steps += 1; // sync application
 
     return steps;
   }
@@ -193,7 +204,6 @@ export class CreateAppCommand {
     const appName = (
       options.name ??
       options.directory ??
-      options.example ??
       'my-twenty-app'
     ).trim();
 
@@ -219,28 +229,6 @@ export class CreateAppCommand {
       throw new Error(
         `Directory ${appDirectory} already exists and is not empty`,
       );
-    }
-  }
-
-  private async tryDownloadExample(
-    example: string,
-    appDirectory: string,
-  ): Promise<boolean> {
-    try {
-      await downloadExample(example, appDirectory);
-
-      return true;
-    } catch (error) {
-      console.log(
-        chalk.yellow(
-          `\n${error instanceof Error ? error.message : 'Failed to download example.'}`,
-        ),
-      );
-      this.logDetail('Falling back to default template...');
-
-      await fs.emptyDir(appDirectory);
-
-      return false;
     }
   }
 
@@ -325,11 +313,253 @@ export class CreateAppCommand {
     return {};
   }
 
-  private async authenticateWithDevKey(apiUrl: string): Promise<boolean> {
+  private async openMainPage(
+    appDirectory: string,
+    workspaceUrl: string,
+  ): Promise<void> {
+    try {
+      const configService = new ConfigService();
+      const config = await configService.getConfig();
+      const token = config.twentyCLIAccessToken ?? config.apiKey;
+
+      if (!token) {
+        return;
+      }
+
+      const [universalIdentifier, frontUrl] = await Promise.all([
+        this.readMainPageLayoutUniversalIdentifier(appDirectory),
+        this.resolveWorkspaceFrontUrl(workspaceUrl, token),
+      ]);
+
+      if (!universalIdentifier || !frontUrl) {
+        return;
+      }
+
+      const pageLayoutId = await this.resolvePageLayoutId(
+        workspaceUrl,
+        universalIdentifier,
+        token,
+      );
+
+      if (!pageLayoutId) {
+        return;
+      }
+
+      const url = `${frontUrl}/page/${pageLayoutId}`;
+
+      this.logDetail(`Opening app welcome page: ${url}`);
+      this.openInBrowser(url);
+    } catch {
+      // Best-effort — don't fail the scaffold if browser open fails
+    }
+  }
+
+  private async resolveWorkspaceFrontUrl(
+    workspaceUrl: string,
+    token: string,
+  ): Promise<string | null> {
+    const query = `{ currentWorkspace { workspaceUrls { subdomainUrl customUrl } } }`;
+
+    const response = await fetch(`${workspaceUrl}/metadata`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const body = (await response.json()) as {
+      data?: {
+        currentWorkspace?: {
+          workspaceUrls?: { subdomainUrl?: string; customUrl?: string };
+        };
+      };
+    };
+
+    const urls = body.data?.currentWorkspace?.workspaceUrls;
+
+    if (!urls) {
+      return null;
+    }
+
+    const frontUrl = urls.customUrl ?? urls.subdomainUrl;
+
+    return frontUrl?.replace(/\/+$/, '') ?? null;
+  }
+
+  private async readMainPageLayoutUniversalIdentifier(
+    appDirectory: string,
+  ): Promise<string | null> {
+    const filePath = path.join(
+      appDirectory,
+      'src',
+      'constants',
+      'universal-identifiers.ts',
+    );
+    const content = await fs.readFile(filePath, 'utf-8');
+    const match = content.match(
+      /MAIN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER\s*=\s*'([^']+)'/,
+    );
+
+    return match?.[1] ?? null;
+  }
+
+  private async resolvePageLayoutId(
+    workspaceUrl: string,
+    universalIdentifier: string,
+    token: string,
+  ): Promise<string | null> {
+    const query = `{ getPageLayouts { id universalIdentifier } }`;
+
+    const response = await fetch(`${workspaceUrl}/metadata`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const body = (await response.json()) as {
+      data?: {
+        getPageLayouts?: { id: string; universalIdentifier: string }[];
+      };
+    };
+
+    const matching = body.data?.getPageLayouts?.find(
+      (layout) => layout.universalIdentifier === universalIdentifier,
+    );
+
+    return matching?.id ?? null;
+  }
+
+  private sanitizeBrowserUrl(url: string): string | null {
+    if (/[^\u0020-\u007E]/.test(url)) {
+      return null;
+    }
+
+    try {
+      const parsed = new URL(url);
+
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        return null;
+      }
+
+      return parsed.toString();
+    } catch {
+      return null;
+    }
+  }
+
+  private openInBrowser(url: string): void {
+    const safeUrl = this.sanitizeBrowserUrl(url);
+
+    if (!safeUrl) {
+      return;
+    }
+
+    const isWindows = process.platform === 'win32';
+    const command = isWindows
+      ? 'rundll32'
+      : process.platform === 'darwin'
+        ? 'open'
+        : 'xdg-open';
+    const args = isWindows
+      ? ['url.dll,FileProtocolHandler', safeUrl]
+      : [safeUrl];
+
+    const child = spawn(command, args, {
+      stdio: 'ignore',
+      detached: !isWindows,
+    });
+    child.on('error', () => undefined);
+    if (!isWindows) {
+      child.unref();
+    }
+  }
+
+  private async syncApplication(appDirectory: string): Promise<boolean> {
+    this.logDetail('Running `yarn twenty dev --once`...');
+    return new Promise((resolve) => {
+      const child = spawn('yarn', ['twenty', 'dev', '--once'], {
+        cwd: appDirectory,
+        stdio: ['inherit', 'pipe', 'pipe'],
+      });
+
+      child.stdout?.resume();
+      child.stderr?.resume();
+
+      child.on('close', (code) => resolve(code === 0));
+      child.on('error', () => resolve(false));
+    });
+  }
+
+  private async tryExistingAuth(workspaceUrl: string): Promise<boolean> {
+    try {
+      const configService = new ConfigService();
+      const remoteNames = await configService.getRemotes();
+
+      for (const remoteName of remoteNames) {
+        const remoteConfig = await configService.getConfigForRemote(remoteName);
+
+        if (remoteConfig.apiUrl !== workspaceUrl) {
+          continue;
+        }
+
+        const token = remoteConfig.twentyCLIAccessToken ?? remoteConfig.apiKey;
+
+        if (!token) {
+          continue;
+        }
+
+        const response = await fetch(`${workspaceUrl}/metadata`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            query: '{ currentWorkspace { id } }',
+          }),
+        });
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const body = (await response.json()) as {
+          data?: { currentWorkspace?: { id: string } };
+          errors?: unknown[];
+        };
+
+        if (isDefined(body.data?.currentWorkspace) && !body.errors) {
+          ConfigService.setActiveRemote(remoteName);
+          await configService.setDefaultRemote(remoteName);
+
+          return true;
+        }
+      }
+
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
+  private async authenticateWithDevKey(workspaceUrl: string): Promise<boolean> {
     try {
       const result = await authLogin({
         apiKey: DEV_API_KEY,
-        apiUrl,
+        apiUrl: workspaceUrl,
         remote: 'local',
       });
 
@@ -368,21 +598,21 @@ export class CreateAppCommand {
     }
   }
 
-  private async authenticateWithOAuth(apiUrl: string): Promise<boolean> {
+  private async authenticateWithOAuth(workspaceUrl: string): Promise<boolean> {
     try {
-      const remoteName = this.deriveRemoteName(apiUrl);
+      const remoteName = this.deriveRemoteName(workspaceUrl);
 
       ConfigService.setActiveRemote(remoteName);
 
       this.logDetail('Opening browser for OAuth...');
 
-      const result = await authLoginOAuth({ apiUrl });
+      const result = await authLoginOAuth({ apiUrl: workspaceUrl });
 
       if (result.success) {
         const configService = new ConfigService();
 
         await configService.setDefaultRemote(remoteName);
-        this.logDetail(`Authenticated via OAuth to ${apiUrl}`);
+        this.logDetail(`Authenticated via OAuth to ${workspaceUrl}`);
 
         return true;
       }
@@ -390,7 +620,7 @@ export class CreateAppCommand {
       console.log(
         chalk.yellow(
           `  OAuth failed: ${result.error.message}\n` +
-            `  Run \`yarn twenty remote add --api-url ${apiUrl}\` manually.`,
+            `  Run \`yarn twenty remote add --api-url ${workspaceUrl}\` manually.`,
         ),
       );
 
@@ -398,7 +628,7 @@ export class CreateAppCommand {
     } catch {
       console.log(
         chalk.yellow(
-          `  Authentication failed. Run \`yarn twenty remote add --api-url ${apiUrl}\` manually.`,
+          `  Authentication failed. Run \`yarn twenty remote add --api-url ${workspaceUrl}\` manually.`,
         ),
       );
 
@@ -408,7 +638,7 @@ export class CreateAppCommand {
 
   private logSuccess(
     appDirectory: string,
-    apiUrl: string,
+    workspaceUrl: string,
     authSucceeded: boolean,
   ): void {
     const dirName = basename(appDirectory);
@@ -438,7 +668,7 @@ export class CreateAppCommand {
     stepNumber++;
 
     console.log(chalk.white(`  ${stepNumber}. Open your twenty instance`));
-    console.log(chalk.cyan(`     ${apiUrl}\n`));
+    console.log(chalk.cyan(`     ${workspaceUrl}\n`));
 
     console.log(
       chalk.gray(

@@ -11,13 +11,26 @@ import {
   KANBAN_PAGE_TABLER_STROKE,
 } from './kanban-page-theme';
 
-const Lane = styled.div<{ $last?: boolean }>`
+const Lane = styled.div<{ $index: number; $last?: boolean }>`
+  animation: kanbanLaneAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: ${({ $index }) => `${120 + $index * 80}ms`};
   border-right: ${({ $last }) =>
     $last ? 'none' : `1px solid ${KANBAN_PAGE_COLORS.borderLight}`};
   display: flex;
   flex-direction: column;
   min-height: 0;
   min-width: 0;
+
+  @keyframes kanbanLaneAppear {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const LaneHeader = styled.div`
@@ -77,15 +90,17 @@ const AddCardButton = styled.div`
 
 export function KanbanLane({
   lane,
+  index = 0,
   isLast,
 }: {
+  index?: number;
   isLast: boolean;
   lane: KanbanLane;
 }) {
   const tone = KANBAN_LANE_TONES[lane.tone] ?? KANBAN_LANE_TONES.gray;
 
   return (
-    <Lane $last={isLast}>
+    <Lane $index={index} $last={isLast}>
       <LaneHeader>
         <LaneTag $background={tone.background} $color={tone.color}>
           {lane.label}

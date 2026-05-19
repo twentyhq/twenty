@@ -8,7 +8,7 @@ const PRO_BULLETS_MONTHLY = [
   msg`Full customization`,
   msg`Create custom apps`,
   msg`AI Agents with custom skills`,
-  msg`Up to 5M automation credits/month`,
+  msg`5 workflow credits/month included`,
   msg`Standard support`,
 ];
 
@@ -16,7 +16,7 @@ const PRO_BULLETS_YEARLY = [
   msg`Full customization`,
   msg`Create custom apps`,
   msg`AI Agents with custom skills`,
-  msg`Up to 50M automation credits/year`,
+  msg`50 workflow credits/year included`,
   msg`Standard support`,
 ];
 
@@ -28,24 +28,27 @@ const PRO_BULLETS_SELF_HOST = [
 
 const ORGANIZATION_BULLETS_MONTHLY = [
   msg`Everything in Pro`,
-  msg`Roles & Permissions`,
+  msg`Row-level permissions`,
   msg`SAML/OIDC SSO`,
+  msg`Custom domain`,
   msg`Priority support`,
 ];
 
 const ORGANIZATION_BULLETS_YEARLY = [
   msg`Everything in Pro`,
-  msg`Roles & Permissions`,
+  msg`Row-level permissions`,
   msg`SAML/OIDC SSO`,
+  msg`Custom domain`,
   msg`Priority support`,
 ];
 
 const ORGANIZATION_BULLETS_SELF_HOST = [
   msg`Everything in Pro`,
-  msg`Roles & Permissions`,
+  msg`Custom AI models`,
+  msg`Row-level permissions`,
   msg`SAML/OIDC SSO`,
   msg`Twenty team support`,
-  msg`No open-source distribution requirement`,
+  msg`Up to 5 workspaces`,
 ];
 
 export const PLANS_DATA = {

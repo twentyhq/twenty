@@ -41,51 +41,55 @@ export class BlocklistReimportCalendarEventsJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      for (const eventPayload of data.events) {
-        const workspaceMemberId =
-          eventPayload.properties.before.workspaceMemberId;
-
-        const workspaceMember = await workspaceMemberRepository.findOne({
-          where: { id: workspaceMemberId },
-        });
-
-        if (!isDefined(workspaceMember)) {
-          continue;
-        }
-
-        const userWorkspace = await this.userWorkspaceRepository.findOne({
-          where: { userId: workspaceMember.userId, workspaceId },
-          select: ['id'],
-        });
-
-        if (!isDefined(userWorkspace)) {
-          continue;
-        }
-
-        const calendarChannels = await this.calendarChannelRepository.find({
-          select: ['id'],
-          where: {
-            connectedAccount: { userWorkspaceId: userWorkspace.id },
-            syncStage: Not(
-              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-            ),
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
             workspaceId,
-          },
-        });
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
-        await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
-          calendarChannels.map((calendarChannel) => calendarChannel.id),
-          workspaceId,
-        );
-      }
-    }, authContext);
+        for (const eventPayload of data.events) {
+          const workspaceMemberId =
+            eventPayload.properties.before.workspaceMemberId;
+
+          const workspaceMember = await workspaceMemberRepository.findOne({
+            where: { id: workspaceMemberId },
+          });
+
+          if (!isDefined(workspaceMember)) {
+            continue;
+          }
+
+          const userWorkspace = await this.userWorkspaceRepository.findOne({
+            where: { userId: workspaceMember.userId, workspaceId },
+            select: ['id'],
+          });
+
+          if (!isDefined(userWorkspace)) {
+            continue;
+          }
+
+          const calendarChannels = await this.calendarChannelRepository.find({
+            select: ['id'],
+            where: {
+              connectedAccount: { userWorkspaceId: userWorkspace.id },
+              syncStage: Not(
+                CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+              ),
+              workspaceId,
+            },
+          });
+
+          await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
+            calendarChannels.map((calendarChannel) => calendarChannel.id),
+            workspaceId,
+          );
+        }
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

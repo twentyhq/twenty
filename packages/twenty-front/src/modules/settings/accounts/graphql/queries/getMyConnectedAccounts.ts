@@ -21,19 +21,16 @@ export const GET_MY_CONNECTED_ACCOUNTS = gql`
           port
           secure
           username
-          password
         }
         SMTP {
           host
           port
           secure
           username
-          password
         }
         CALDAV {
           host
           username
-          password
         }
       }
       createdAt

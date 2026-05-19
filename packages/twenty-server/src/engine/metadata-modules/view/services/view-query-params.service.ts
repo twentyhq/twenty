@@ -107,39 +107,12 @@ export class ViewQueryParamsService {
           : RecordFilterGroupLogicalOperator.AND,
     }));
 
-    const filterFieldMetadataIds = recordFilters.flatMap((filter) =>
-      isDefined(filter.relationTargetFieldMetadataId)
-        ? [filter.fieldMetadataId, filter.relationTargetFieldMetadataId]
-        : [filter.fieldMetadataId],
-    );
-
-    const fields = filterFieldMetadataIds
-      .map((fieldMetadataId) => {
-        const field = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-
-        if (!field) return null;
-
-        return {
-          id: field.id,
-          name: field.name,
-          type: field.type,
-          label: field.label,
-          options: field.options?.map((opt) => ({
-            id: opt.id ?? '',
-            label: opt.label,
-            value: opt.value,
-            color: 'color' in opt ? opt.color : undefined,
-            position: opt.position,
-          })),
-        };
-      })
-      .filter(isDefined);
-
     const filter = computeRecordGqlOperationFilter({
-      fields,
+      findFieldMetadataItemById: (id) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: id,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
       recordFilters,
       recordFilterGroups,
       filterValueDependencies: { currentWorkspaceMemberId, timeZone },
