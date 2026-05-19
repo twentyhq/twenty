@@ -1,7 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectLiteral, type Repository } from 'typeorm';
+import {
+  type FindOptionsOrder,
+  type FindOptionsSelect,
+  type FindOptionsWhere,
+  MoreThan,
+  type ObjectLiteral,
+  Raw,
+  type Repository,
+} from 'typeorm';
 
 import {
   type SecretEncryptionRotationContext,
@@ -15,7 +23,6 @@ import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/se
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
-const ROW_ALIAS = 'row';
 
 @Injectable()
 export class SecretEncryptionColumnRotationService {
@@ -31,35 +38,26 @@ export class SecretEncryptionColumnRotationService {
     repository,
     currentEncryptionKeyId,
     encryptedColumns,
-    extraWhereSql,
+    extraWhere,
   }: {
     repository: Repository<Entity>;
     currentEncryptionKeyId: string;
     encryptedColumns: string[];
-    extraWhereSql?: string;
+    extraWhere?: FindOptionsWhere<Entity>;
   }): Promise<number> {
-    const currentEnvelopePattern =
-      buildCurrentEncryptionKeyIdEnvelopeLikePattern(currentEncryptionKeyId);
+    const nonCurrentEnvelopeFilter = this.buildNonCurrentEnvelopeRawFilter(
+      currentEncryptionKeyId,
+    );
 
-    const orClauses = encryptedColumns
-      .map(
-        (column) =>
-          `(${ROW_ALIAS}."${column}" LIKE :anyV2 AND ${ROW_ALIAS}."${column}" NOT LIKE :current)`,
-      )
-      .join(' OR ');
+    const where = encryptedColumns.map(
+      (encryptedColumn) =>
+        ({
+          ...extraWhere,
+          [encryptedColumn]: nonCurrentEnvelopeFilter,
+        }) as FindOptionsWhere<Entity>,
+    );
 
-    const queryBuilder = repository
-      .createQueryBuilder(ROW_ALIAS)
-      .where(`(${orClauses})`, {
-        anyV2: ANY_V2_ENVELOPE_LIKE_PATTERN,
-        current: currentEnvelopePattern,
-      });
-
-    if (isDefined(extraWhereSql)) {
-      queryBuilder.andWhere(extraWhereSql);
-    }
-
-    return queryBuilder.getCount();
+    return repository.count({ where });
   }
 
   async rotateColumn<Entity extends ObjectLiteral>({
@@ -67,7 +65,7 @@ export class SecretEncryptionColumnRotationService {
     siteName,
     encryptedColumn,
     workspaceIdColumn,
-    extraWhereSql,
+    extraWhere,
     currentEncryptionKeyId,
     batchSize,
     dryRun,
@@ -76,50 +74,44 @@ export class SecretEncryptionColumnRotationService {
     siteName: string;
     encryptedColumn: string;
     workspaceIdColumn?: string;
-    extraWhereSql?: string;
+    extraWhere?: FindOptionsWhere<Entity>;
   }): Promise<SecretEncryptionRotationOutcome> {
     let rotated = 0;
     let skipped = 0;
     let errors = 0;
-    let cursor = ZERO_UUID;
+    let cursor: string = ZERO_UUID;
+
+    const select = {
+      id: true,
+      [encryptedColumn]: true,
+      ...(isDefined(workspaceIdColumn) ? { [workspaceIdColumn]: true } : {}),
+    } as unknown as FindOptionsSelect<Entity>;
 
     while (true) {
-      const queryBuilder = repository
-        .createQueryBuilder(ROW_ALIAS)
-        .where(
-          `${ROW_ALIAS}."${encryptedColumn}" LIKE :anyV2 AND ${ROW_ALIAS}."${encryptedColumn}" NOT LIKE :current`,
-          {
-            anyV2: ANY_V2_ENVELOPE_LIKE_PATTERN,
-            current: buildCurrentEncryptionKeyIdEnvelopeLikePattern(
-              currentEncryptionKeyId,
-            ),
-          },
-        )
-        .andWhere(`${ROW_ALIAS}.id > :cursor`, { cursor })
-        .orderBy(`${ROW_ALIAS}.id`, 'ASC')
-        .limit(batchSize)
-        .select([`${ROW_ALIAS}.id`, `${ROW_ALIAS}."${encryptedColumn}"`]);
+      const where = {
+        ...extraWhere,
+        id: MoreThan(cursor),
+        [encryptedColumn]: this.buildNonCurrentEnvelopeRawFilter(
+          currentEncryptionKeyId,
+        ),
+      } as unknown as FindOptionsWhere<Entity>;
 
-      if (isDefined(extraWhereSql)) {
-        queryBuilder.andWhere(extraWhereSql);
-      }
-
-      if (isDefined(workspaceIdColumn)) {
-        queryBuilder.addSelect(`${ROW_ALIAS}."${workspaceIdColumn}"`);
-      }
-
-      const rows =
-        await queryBuilder.getRawMany<Record<string, string | null>>();
+      const rows = await repository.find({
+        where,
+        order: { id: 'ASC' } as unknown as FindOptionsOrder<Entity>,
+        take: batchSize,
+        select,
+      });
 
       if (rows.length === 0) {
         break;
       }
 
       for (const row of rows) {
-        const rowId = row[`${ROW_ALIAS}_id`] as string;
-        const currentValue = row[`${ROW_ALIAS}_${encryptedColumn}`];
+        const rowId = row.id as string;
+        const currentValue = row[encryptedColumn] as string | null | undefined;
         const workspaceId = isDefined(workspaceIdColumn)
-          ? (row[`${ROW_ALIAS}_${workspaceIdColumn}`] as string | null)
+          ? (row[workspaceIdColumn] as string | null)
           : undefined;
 
         if (!isDefined(currentValue)) {
@@ -148,15 +140,15 @@ export class SecretEncryptionColumnRotationService {
           );
 
           if (!dryRun) {
-            const updateResult = await repository
-              .createQueryBuilder()
-              .update()
-              .set({ [encryptedColumn]: reEncrypted } as Partial<Entity>)
-              .where('id = :id', { id: rowId })
-              .andWhere(`"${encryptedColumn}" = :originalValue`, {
-                originalValue: currentValue,
-              })
-              .execute();
+            const updateResult = await repository.update(
+              {
+                id: rowId,
+                [encryptedColumn]: currentValue,
+              } as unknown as FindOptionsWhere<Entity>,
+              { [encryptedColumn]: reEncrypted } as unknown as Parameters<
+                Repository<Entity>['update']
+              >[1],
+            );
 
             if ((updateResult.affected ?? 0) === 0) {
               skipped++;
@@ -175,11 +167,21 @@ export class SecretEncryptionColumnRotationService {
         }
       }
 
-      const lastRow = rows[rows.length - 1];
-
-      cursor = lastRow[`${ROW_ALIAS}_id`] as string;
+      cursor = rows[rows.length - 1].id as string;
     }
 
     return { rotated, skipped, errors };
+  }
+
+  private buildNonCurrentEnvelopeRawFilter(currentEncryptionKeyId: string) {
+    return Raw<string>(
+      (alias) => `${alias} LIKE :anyV2 AND ${alias} NOT LIKE :current`,
+      {
+        anyV2: ANY_V2_ENVELOPE_LIKE_PATTERN,
+        current: buildCurrentEncryptionKeyIdEnvelopeLikePattern(
+          currentEncryptionKeyId,
+        ),
+      },
+    );
   }
 }

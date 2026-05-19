@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository, type SelectQueryBuilder } from 'typeorm';
+import { type FindOptionsWhere, In, IsNull, Raw, Repository } from 'typeorm';
 
 import {
   type SecretEncryptionRotationContext,
@@ -19,8 +19,6 @@ import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-va
 import { type ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { TypedReflect } from 'src/utils/typed-reflect';
-
-const ROW_ALIAS = 'kvp';
 
 @Injectable()
 export class SensitiveConfigStorageRotationHandler
@@ -48,10 +46,12 @@ export class SensitiveConfigStorageRotationHandler
       return 0;
     }
 
-    return this.buildRowsNeedingRotationQuery({
-      currentEncryptionKeyId,
-      sensitiveStringConfigKeys,
-    }).getCount();
+    return this.keyValuePairRepository.count({
+      where: this.buildRotationFilter({
+        currentEncryptionKeyId,
+        sensitiveStringConfigKeys,
+      }),
+    });
   }
 
   async rotate({
@@ -64,10 +64,12 @@ export class SensitiveConfigStorageRotationHandler
       return { rotated: 0, skipped: 0, errors: 0 };
     }
 
-    const rows = await this.buildRowsNeedingRotationQuery({
-      currentEncryptionKeyId,
-      sensitiveStringConfigKeys,
-    }).getMany();
+    const rows = await this.keyValuePairRepository.find({
+      where: this.buildRotationFilter({
+        currentEncryptionKeyId,
+        sensitiveStringConfigKeys,
+      }),
+    });
 
     let rotated = 0;
     let skipped = 0;
@@ -88,18 +90,15 @@ export class SensitiveConfigStorageRotationHandler
           this.secretEncryptionService.encryptVersioned(plaintext);
 
         if (!dryRun) {
-          const updateResult = await this.keyValuePairRepository
-            .createQueryBuilder()
-            .update()
-            .set({ value: () => 'to_jsonb(:reEncrypted::text)' })
-            .where('id = :id')
-            .andWhere('value::text = :originalValueText')
-            .setParameters({
+          const updateResult = await this.keyValuePairRepository.update(
+            {
               id: row.id,
-              reEncrypted,
-              originalValueText: JSON.stringify(rawValue),
-            })
-            .execute();
+              value: Raw((alias) => `${alias}::text = :originalValueText`, {
+                originalValueText: JSON.stringify(rawValue),
+              }) as unknown as JSON,
+            },
+            { value: reEncrypted as unknown as JSON },
+          );
 
           if ((updateResult.affected ?? 0) === 0) {
             skipped++;
@@ -121,32 +120,27 @@ export class SensitiveConfigStorageRotationHandler
     return { rotated, skipped, errors };
   }
 
-  private buildRowsNeedingRotationQuery({
+  private buildRotationFilter({
     currentEncryptionKeyId,
     sensitiveStringConfigKeys,
   }: {
     currentEncryptionKeyId: string;
     sensitiveStringConfigKeys: string[];
-  }): SelectQueryBuilder<KeyValuePairEntity> {
+  }): FindOptionsWhere<KeyValuePairEntity> {
     const anyV2Pattern = `"${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}%"`;
     const currentEnvelopePattern = `"${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}${currentEncryptionKeyId}:%"`;
 
-    return this.keyValuePairRepository
-      .createQueryBuilder(ROW_ALIAS)
-      .where(`${ROW_ALIAS}.type = :type`, {
-        type: KeyValuePairType.CONFIG_VARIABLE,
-      })
-      .andWhere(`${ROW_ALIAS}."userId" IS NULL`)
-      .andWhere(`${ROW_ALIAS}."workspaceId" IS NULL`)
-      .andWhere(`${ROW_ALIAS}.key IN (:...sensitiveStringConfigKeys)`, {
-        sensitiveStringConfigKeys,
-      })
-      .andWhere(`${ROW_ALIAS}.value::text LIKE :anyV2`, {
-        anyV2: anyV2Pattern,
-      })
-      .andWhere(`${ROW_ALIAS}.value::text NOT LIKE :current`, {
-        current: currentEnvelopePattern,
-      });
+    return {
+      type: KeyValuePairType.CONFIG_VARIABLE,
+      userId: IsNull(),
+      workspaceId: IsNull(),
+      key: In(sensitiveStringConfigKeys),
+      value: Raw(
+        (alias) =>
+          `${alias}::text LIKE :anyV2 AND ${alias}::text NOT LIKE :current`,
+        { anyV2: anyV2Pattern, current: currentEnvelopePattern },
+      ) as unknown as JSON,
+    };
   }
 
   private collectSensitiveStringConfigKeys(): string[] {

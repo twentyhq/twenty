@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type FindOptionsWhere, Repository } from 'typeorm';
 
 import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import {
@@ -12,7 +12,9 @@ import {
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 
 const ENCRYPTED_COLUMN = 'value';
-const ONLY_SECRET_ROWS_WHERE = `"isSecret" = true`;
+const ONLY_SECRET_ROWS_WHERE: FindOptionsWhere<ApplicationVariableEntity> = {
+  isSecret: true,
+};
 
 @Injectable()
 export class ApplicationVariableRotationHandler
@@ -35,7 +37,7 @@ export class ApplicationVariableRotationHandler
       repository: this.applicationVariableRepository,
       currentEncryptionKeyId,
       encryptedColumns: [ENCRYPTED_COLUMN],
-      extraWhereSql: ONLY_SECRET_ROWS_WHERE,
+      extraWhere: ONLY_SECRET_ROWS_WHERE,
     });
   }
 
@@ -48,7 +50,7 @@ export class ApplicationVariableRotationHandler
       siteName: this.siteName,
       encryptedColumn: ENCRYPTED_COLUMN,
       workspaceIdColumn: 'workspaceId',
-      extraWhereSql: ONLY_SECRET_ROWS_WHERE,
+      extraWhere: ONLY_SECRET_ROWS_WHERE,
     });
   }
 }
