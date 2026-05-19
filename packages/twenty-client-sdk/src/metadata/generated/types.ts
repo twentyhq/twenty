@@ -2780,6 +2780,9 @@ export default {
             "defaultTabToFocusOnMobileAndSidePanelId": [
                 3
             ],
+            "universalIdentifier": [
+                3
+            ],
             "createdAt": [
                 4
             ],

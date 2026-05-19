@@ -3864,6 +3864,7 @@ export type PageLayout = {
   objectMetadataId?: Maybe<Scalars['UUID']>;
   tabs?: Maybe<Array<PageLayoutTab>>;
   type: PageLayoutType;
+  universalIdentifier: Scalars['UUID'];
   updatedAt: Scalars['DateTime'];
 };
 

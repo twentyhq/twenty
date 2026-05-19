@@ -230,7 +230,7 @@ const MainPage = () => {
           alignItems: 'flex-start',
         }}
       >
-        {CATEGORIES.map((category, index) => (
+        {CATEGORIES.map((category) => (
           <CategoryCard
             key={category.title}
             title={category.title}
