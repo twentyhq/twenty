@@ -158,7 +158,12 @@ export const SettingsAccountsConnectionForm = ({
             label={t`IMAP Password`}
             control={control}
             disabled={isPasswordInputDisabled('IMAP')}
-            onUnlock={() => setIsProtocolPasswordBeingEdited((prev) => ({ ...prev, IMAP: true }))}
+            onUnlock={() =>
+              setIsProtocolPasswordBeingEdited((prev) => ({
+                ...prev,
+                IMAP: true,
+              }))
+            }
           />
 
           <StyledFieldRow>
@@ -248,7 +253,12 @@ export const SettingsAccountsConnectionForm = ({
             label={t`SMTP Password`}
             control={control}
             disabled={isPasswordInputDisabled('SMTP')}
-            onUnlock={() => setIsProtocolPasswordBeingEdited((prev) => ({ ...prev, SMTP: true }))}
+            onUnlock={() =>
+              setIsProtocolPasswordBeingEdited((prev) => ({
+                ...prev,
+                SMTP: true,
+              }))
+            }
           />
 
           <StyledFieldRow>
@@ -338,7 +348,12 @@ export const SettingsAccountsConnectionForm = ({
             label={t`CalDAV Password`}
             control={control}
             disabled={isPasswordInputDisabled('CALDAV')}
-            onUnlock={() => setIsProtocolPasswordBeingEdited((prev) => ({ ...prev, CALDAV: true }))}
+            onUnlock={() =>
+              setIsProtocolPasswordBeingEdited((prev) => ({
+                ...prev,
+                CALDAV: true,
+              }))
+            }
           />
         </StyledConnectionSection>
       </StyledFormContainer>
