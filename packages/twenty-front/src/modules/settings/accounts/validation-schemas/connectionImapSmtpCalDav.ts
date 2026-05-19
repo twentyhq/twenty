@@ -69,4 +69,3 @@ export const connectionImapSmtpCalDavUpdate = z
         'At least one account type (IMAP, SMTP, or CalDAV) must be completely configured',
     },
   );
-
