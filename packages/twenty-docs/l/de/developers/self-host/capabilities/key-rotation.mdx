@@ -6,9 +6,9 @@ icon: rotate
 Twenty hat zwei unabhängige Schlüsselfamilien:
 
 * **JWT-Signaturschlüssel** — asymmetrische ES256-Schlüsselpaare (`kid`-markiert), die in `core."signingKey"` gespeichert sind und zum Signieren und Verifizieren von Access-/Refresh-Tokens verwendet werden.
-* **At-Rest-Verschlüsselungsschlüssel** — `ENCRYPTION_KEY`, wird verwendet, um OAuth-Tokens, Anwendungsvariablen, Signierschlüssel-Private-Keys, sensible Konfigurationswerte und TOTP-Geheimnisse innerhalb eines `enc:v2:`-Umschlags zu verschlüsseln.
+* **Verschlüsselungsschlüssel im Ruhezustand** — `ENCRYPTION_KEY`, wird verwendet, um OAuth-Tokens, Anwendungsvariablen, die privaten Schlüssel der Signierschlüssel, sensible Konfigurationswerte und TOTP-Geheimnisse innerhalb eines `enc:v2:`-Umschlags zu verschlüsseln.
 
-`APP_SECRET` ist ein veraltetes Secret, das aus Gründen der Abwärtskompatibilität beibehalten wird: Wenn `ENCRYPTION_KEY` nicht gesetzt ist, fungiert es als Fallback für At-Rest-Verschlüsselung / Session-Cookie und verifiziert weiterhin bereits bestehende HS256-Access-Tokens. Es wird verworfen werden.
+`APP_SECRET` ist ein veraltetes Secret, das aus Gründen der Abwärtskompatibilität beibehalten wird: Wenn `ENCRYPTION_KEY` nicht gesetzt ist, fungiert es als Fallback für At-Rest-Verschlüsselung / Session-Cookie und verifiziert weiterhin bereits bestehende HS256-Access-Tokens. Es wird als veraltet markiert werden.
 
 ## JWT-Signierschlüssel
 
