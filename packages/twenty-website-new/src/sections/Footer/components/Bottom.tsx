@@ -2,7 +2,6 @@ import { ArrowRightUpIcon, SOCIAL_ICONS } from '@/icons';
 import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
 import type { MessageDescriptor } from '@lingui/core';
 import type { FooterSocialLinkType } from '@/sections/Footer/types';
-import { LocaleSwitcher } from '@/sections/Footer/components/LocaleSwitcher';
 import { theme } from '@/theme';
 import { Separator } from '@base-ui/react/separator';
 import { styled } from '@linaria/react';
@@ -95,7 +94,6 @@ export function Bottom({ copyright, links }: BottomProps) {
     <BottomGrid>
       <CopyrightRow>
         <Copyright>{i18n._(copyright)}</Copyright>
-        <LocaleSwitcher />
       </CopyrightRow>
       <SocialNav aria-label="Social media">
         {links.map((link, index) => {
