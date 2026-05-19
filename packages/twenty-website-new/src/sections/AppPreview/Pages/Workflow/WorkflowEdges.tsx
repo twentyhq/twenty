@@ -8,8 +8,10 @@ import { getWorkflowEdgePath } from './workflow-page-geometry';
 import {
   WORKFLOW_CANVAS_HEIGHT,
   WORKFLOW_CANVAS_WIDTH,
+  WORKFLOW_NODE_HEIGHT,
   WORKFLOW_PAGE_COLORS,
 } from './workflow-page-theme';
+import { getWorkflowNodeById } from './get-workflow-node-by-id';
 
 const CanvasOverlay = styled.svg`
   inset: 0;
@@ -21,10 +23,17 @@ const CanvasOverlay = styled.svg`
 export function WorkflowEdges({
   edges,
   nodes,
+  plusNode,
 }: {
   edges: ReadonlyArray<WorkflowEdgeDefinition>;
   nodes: ReadonlyArray<WorkflowNodeDefinition>;
+  plusNode?: { x: number; y: number };
 }) {
+  const completedEdge = edges.find((e) => e.type === 'loopRight');
+  const completedSourceNode = completedEdge
+    ? getWorkflowNodeById(nodes, completedEdge.from)
+    : undefined;
+
   return (
     <CanvasOverlay
       aria-hidden
@@ -51,16 +60,63 @@ export function WorkflowEdges({
       </defs>
       {edges.map((edge) => (
         <path
-          key={`${edge.from}-${edge.to}`}
+          key={`${edge.from}-${edge.to}-${edge.type}`}
           d={getWorkflowEdgePath({ edge, nodes })}
           fill="none"
-          markerEnd="url(#workflow-arrow)"
+          markerEnd={
+            edge.type === 'loopBack' ? undefined : 'url(#workflow-arrow)'
+          }
           stroke={WORKFLOW_PAGE_COLORS.arrowStroke}
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="1"
         />
       ))}
+      {plusNode && completedSourceNode && (
+        <path
+          d={`M${completedSourceNode.x + completedSourceNode.width / 2} ${completedSourceNode.y + WORKFLOW_NODE_HEIGHT + 1} L${plusNode.x} ${plusNode.y}`}
+          fill="none"
+          stroke={WORKFLOW_PAGE_COLORS.arrowStroke}
+          strokeDasharray="4 3"
+          strokeLinecap="round"
+          strokeWidth="1"
+        />
+      )}
+      {nodes.map((node) => {
+        const cx = node.x + node.width / 2;
+        const bottomY = node.y + WORKFLOW_NODE_HEIGHT + 1;
+        const rightX = node.x + node.width;
+        const midY = node.y + WORKFLOW_NODE_HEIGHT / 2;
+
+        return (
+          <g key={`ports-${node.id}`}>
+            <circle
+              cx={cx}
+              cy={node.y}
+              fill={WORKFLOW_PAGE_COLORS.nodeSurface}
+              r="4"
+              stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
+              strokeWidth="1"
+            />
+            <circle
+              cx={cx}
+              cy={bottomY}
+              fill={WORKFLOW_PAGE_COLORS.nodeSurface}
+              r="4"
+              stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
+              strokeWidth="1"
+            />
+            <circle
+              cx={rightX}
+              cy={midY}
+              fill={WORKFLOW_PAGE_COLORS.nodeSurface}
+              r="4"
+              stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
+              strokeWidth="1"
+            />
+          </g>
+        );
+      })}
     </CanvasOverlay>
   );
 }

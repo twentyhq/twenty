@@ -20,6 +20,10 @@ import { AddProviderExecutedToAgentMessagePartFastInstanceCommand } from 'src/da
 import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-slow-1795000002000-backfill-page-layout-widget-position';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
+import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
+import { AddRelationTargetFieldMetadataIdToViewFilterEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234300000-add-relation-target-field-metadata-id-to-view-filter';
+import { AddRelationTargetFieldMetadataIdToViewFilterEarly2_4FastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1747234400000-add-relation-target-field-metadata-id-to-view-filter';
+import { AddRelationTargetFieldMetadataIdToViewFilterEarly2_5FastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1747234500000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777308014234-add-upgrade-migration-workspace-id-index';
 import { AddDeletedAtToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777682000000-add-deleted-at-to-agent-chat-thread';
 import { ConnectionProviderSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777896012579-connection-provider-syncable-entity';
@@ -29,6 +33,10 @@ import { AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand } from 'src/
 import { BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1777966965588-backfill-application-variable-universal-identifier';
 import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1797000002000-migrate-tool-trigger-settings';
 import { AddMetadataToBillingPriceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1777100000000-add-metadata-to-billing-price';
+import { RenamePermissionFlagToRolePermissionFlagFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778235340020-rename-permission-flag-to-role-permission-flag';
+import { PermissionFlagSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778235340021-permission-flag-syncable-entity';
+import { LinkRolePermissionFlagToPermissionFlagFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778235340022-link-role-permission-flag-to-permission-flag';
+import { BackfillRolePermissionFlagPermissionFlagIdSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-slow-1778235340023-backfill-role-permission-flag-permission-flag-id';
 import { AddEmailGroupChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778256809018-add-email-group-channel-type';
 import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1798000003000-add-application-id-to-public-domain';
 import { AddIsInternalMessagesImportEnabledFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778525104406-add-is-internal-messages-import-enabled';
@@ -36,6 +44,16 @@ import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/c
 import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddEmailingDomainTenantStatusFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778862608620-add-emailing-domain-tenant-status';
 import { UniqueEmailingDomainGloballyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778865501791-unique-emailing-domain-globally';
+import { EncryptApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000005000-encrypt-application-variable';
+import { EncryptApplicationRegistrationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000006000-encrypt-application-registration-variable';
+import { EncryptSigningKeyPrivateKeysSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000007000-encrypt-signing-key-private-keys';
+import { EncryptSensitiveConfigStorageSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000008000-encrypt-sensitive-config-storage';
+import { EncryptTotpSecretsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000009000-encrypt-totp-secrets';
+import { EncryptConnectionParametersSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-slow-1798000010000-encrypt-connection-parameters';
+import { AddSubFieldNameToViewSortFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778502963794-add-sub-field-name-to-view-sort';
+import { DropPostgresCredentialsTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1798500000000-drop-postgres-credentials-table';
+import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
+import { AddChannelSyncStageIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000010000-add-channel-sync-stage-indexes';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -53,6 +71,10 @@ export const INSTANCE_COMMANDS = [
   AddGlobalObjectContextToCommandMenuItemAvailabilityTypeFastInstanceCommand,
   AddPageLayoutIdToCommandMenuItemFastInstanceCommand,
   AddConditionalAvailabilityExpressionToPageLayoutWidgetFastInstanceCommand,
+  AddSubFieldNameToViewSortEarlyFastInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFilterEarlyFastInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFilterEarly2_4FastInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFilterEarly2_5FastInstanceCommand,
   AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand,
   AddIsPreInstalledToApplicationRegistrationFastInstanceCommand,
   AddProviderExecutedToAgentMessagePartFastInstanceCommand,
@@ -67,6 +89,10 @@ export const INSTANCE_COMMANDS = [
   RemoveUserDefaultAvatarUrlFastInstanceCommand,
   TransformApplicationVariableToSyncableEntityFastInstanceCommand,
   BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand,
+  RenamePermissionFlagToRolePermissionFlagFastInstanceCommand,
+  PermissionFlagSyncableEntityFastInstanceCommand,
+  LinkRolePermissionFlagToPermissionFlagFastInstanceCommand,
+  BackfillRolePermissionFlagPermissionFlagIdSlowInstanceCommand,
   AddEmailGroupChannelTypeFastInstanceCommand,
   AddApplicationIdToPublicDomainFastInstanceCommand,
   AddIsInternalMessagesImportEnabledFastInstanceCommand,
@@ -74,4 +100,14 @@ export const INSTANCE_COMMANDS = [
   AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand,
   AddEmailingDomainTenantStatusFastInstanceCommand,
   UniqueEmailingDomainGloballyFastInstanceCommand,
+  EncryptApplicationVariableSlowInstanceCommand,
+  EncryptApplicationRegistrationVariableSlowInstanceCommand,
+  EncryptSigningKeyPrivateKeysSlowInstanceCommand,
+  EncryptSensitiveConfigStorageSlowInstanceCommand,
+  EncryptTotpSecretsSlowInstanceCommand,
+  EncryptConnectionParametersSlowInstanceCommand,
+  AddSubFieldNameToViewSortFastInstanceCommand,
+  DropPostgresCredentialsTableFastInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand,
+  AddChannelSyncStageIndexesFastInstanceCommand,
 ];

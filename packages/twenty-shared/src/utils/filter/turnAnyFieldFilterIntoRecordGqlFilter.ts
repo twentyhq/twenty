@@ -221,11 +221,13 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
     }
   }
 
+  const fieldById = new Map(fields.map((field) => [field.id, field]));
+
   const baseRecordGqlOperationFilters = anyFieldRecordFilters
     .map((recordFilter) =>
       turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies: {},
-        fieldMetadataItems: fields,
+        findFieldMetadataItemById: (id) => fieldById.get(id),
         recordFilter,
       }),
     )

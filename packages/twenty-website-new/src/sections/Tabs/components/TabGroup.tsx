@@ -2,18 +2,15 @@
 
 import { useId, useState } from 'react';
 
-import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
 import type { TabType } from '@/sections/Tabs/types';
 
 import { TabButtons } from './TabButtons';
-import { TabVisuals } from './TabVisuals';
 
 const StyledTabGroup = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${theme.spacing(18)};
   width: 100%;
 `;
 
@@ -31,12 +28,6 @@ export function TabGroup({ tabs }: TabGroupProps) {
         activeIndex={activeIndex}
         idPrefix={idPrefix}
         onSelect={setActiveIndex}
-        tabs={tabs}
-      />
-      <TabVisuals
-        activeIndex={activeIndex}
-        panelId={`${idPrefix}-panel`}
-        tabId={`${idPrefix}-tab-${activeIndex}`}
         tabs={tabs}
       />
     </StyledTabGroup>

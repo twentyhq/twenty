@@ -103,8 +103,6 @@ export type {
   ViewSortManifest,
 } from 'twenty-shared/application';
 
-export { getPublicAssetUrl } from '@/sdk/define/get-public-asset-url';
-
 export {
   AggregateOperations,
   DateDisplayFormat,

@@ -3,6 +3,7 @@ import { type ReactNode, useContext } from 'react';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
@@ -104,6 +105,7 @@ export const PageHeader = ({
   className,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
+  const isSettingsPage = useIsSettingsPage();
   const { theme } = useContext(ThemeContext);
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
 
@@ -111,7 +113,7 @@ export const PageHeader = ({
     <AnimatePresence initial={false}>
       <StyledTopBarContainer className={className} isMobile={isMobile}>
         <StyledLeftContainer>
-          {!isMobile && !isNavigationDrawerExpanded && (
+          {!isNavigationDrawerExpanded && (!isMobile || isSettingsPage) && (
             <NavigationDrawerCollapseButton direction="right" />
           )}
           {hasClosePageButton && (

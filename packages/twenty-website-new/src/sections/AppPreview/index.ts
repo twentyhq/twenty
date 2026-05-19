@@ -8,5 +8,6 @@ export type {
   DashboardData,
   DashboardPageDefinition,
   KanbanPageDefinition,
+  RecordPageDefinition,
   TablePageDefinition,
 } from './types';

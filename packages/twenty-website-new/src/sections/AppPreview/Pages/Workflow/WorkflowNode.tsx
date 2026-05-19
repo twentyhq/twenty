@@ -9,8 +9,10 @@ import {
   WORKFLOW_PAGE_TABLER_STROKE,
 } from './workflow-page-theme';
 
-const Node = styled.div`
+const Node = styled.div<{ $index: number }>`
   align-items: center;
+  animation: workflowNodeAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: ${({ $index }) => `${150 + $index * 120}ms`};
   background: ${WORKFLOW_PAGE_COLORS.nodeSurface};
   border: 1px solid ${WORKFLOW_PAGE_COLORS.nodeBorder};
   border-radius: 8px;
@@ -23,6 +25,17 @@ const Node = styled.div`
   position: absolute;
   top: 0;
   z-index: 1;
+
+  @keyframes workflowNodeAppear {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const NodeIconContainer = styled.div`
@@ -68,16 +81,17 @@ const NodeTitle = styled.div`
 `;
 
 export function WorkflowNode({
-  x,
-  y,
-  width,
-  label,
-  title,
   Icon,
   iconColor,
-}: WorkflowNodeDefinition) {
+  index = 0,
+  label,
+  title,
+  width,
+  x,
+  y,
+}: Omit<WorkflowNodeDefinition, 'id'> & { index?: number }) {
   return (
-    <Node style={{ left: x, top: y, width }}>
+    <Node $index={index} style={{ left: x, top: y, width }}>
       <NodeIconContainer>
         <Icon
           aria-hidden

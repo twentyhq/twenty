@@ -1,7 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -60,7 +63,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlags: [],
+          rolePermissionFlags: [],
           workspaceId: 'test-workspace-id',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -133,7 +136,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlags: [],
+          rolePermissionFlags: [],
           workspaceId: 'test-workspace-id',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -184,7 +187,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlags: [],
+          rolePermissionFlags: [],
           roleTargets: [],
           objectPermissions: [],
           fieldPermissions: [],
@@ -254,7 +257,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlags: [],
+          rolePermissionFlags: [],
           roleTargets: [],
           objectPermissions: [],
           fieldPermissions: [],
@@ -292,8 +295,8 @@ describe('PermissionsService', () => {
       });
     });
 
-    describe('Granular permissions with permissionFlags', () => {
-      it('should grant specific tool permission when included in permissionFlags even if canAccessAllTools is false', () => {
+    describe('Granular permissions with rolePermissionFlags', () => {
+      it('should grant specific tool permission when included in rolePermissionFlags even if canAccessAllTools is false', () => {
         const roleWithSpecificPermission: Partial<RoleEntity> = {
           id: 'test-role-id',
           label: 'Test Role',
@@ -308,10 +311,13 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlags: [
+          rolePermissionFlags: [
             {
               id: 'permission-1',
-              flag: PermissionFlagType.UPLOAD_FILE,
+              permissionFlag: {
+                key: PermissionFlagType.UPLOAD_FILE,
+                universalIdentifier: SystemPermissionFlag.UPLOAD_FILE,
+              },
               roleId: 'test-role-id',
               workspaceId: 'test-workspace-id',
               createdAt: new Date(),
@@ -338,7 +344,7 @@ describe('PermissionsService', () => {
         ).toBe(false);
       });
 
-      it('should grant specific settings permission when included in permissionFlags even if canUpdateAllSettings is false', () => {
+      it('should grant specific settings permission when included in rolePermissionFlags even if canUpdateAllSettings is false', () => {
         const roleWithSpecificPermission: Partial<RoleEntity> = {
           id: 'test-role-id',
           label: 'Test Role',
@@ -353,10 +359,13 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlags: [
+          rolePermissionFlags: [
             {
               id: 'permission-1',
-              flag: PermissionFlagType.ROLES,
+              permissionFlag: {
+                key: PermissionFlagType.ROLES,
+                universalIdentifier: SystemPermissionFlag.ROLES,
+              },
               roleId: 'test-role-id',
               workspaceId: 'test-workspace-id',
               createdAt: new Date(),
@@ -400,7 +409,7 @@ describe('PermissionsService', () => {
           canBeAssignedToUsers: true,
           canBeAssignedToAgents: true,
           canBeAssignedToApiKeys: true,
-          permissionFlags: [],
+          rolePermissionFlags: [],
           roleTargets: [],
           objectPermissions: [],
           fieldPermissions: [],

@@ -11,7 +11,7 @@ import {
 
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
+import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
@@ -81,10 +81,10 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   objectPermissions: Relation<ObjectPermissionEntity[]>;
 
   @OneToMany(
-    () => PermissionFlagEntity,
-    (permissionFlag: PermissionFlagEntity) => permissionFlag.role,
+    () => RolePermissionFlagEntity,
+    (rolePermissionFlag: RolePermissionFlagEntity) => rolePermissionFlag.role,
   )
-  permissionFlags: Relation<PermissionFlagEntity[]>;
+  rolePermissionFlags: Relation<RolePermissionFlagEntity[]>;
 
   @OneToMany(
     () => FieldPermissionEntity,

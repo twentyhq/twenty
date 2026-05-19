@@ -1,11 +1,10 @@
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
-import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { augmentFieldsWithRelationTargets } from '@/object-record/record-filter/utils/augmentFieldsWithRelationTargets';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -41,8 +40,8 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const flattenedFieldMetadataItems = useAtomStateValue(
-    flattenedFieldMetadataItemsSelector,
+  const fieldMetadataItemByIdMap = useAtomStateValue(
+    fieldMetadataItemByIdMapSelector,
   );
 
   const currentRecordFilters = useAtomComponentStateValue(
@@ -64,11 +63,7 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
         filter: computeRecordGqlOperationFilter({
-          fields: augmentFieldsWithRelationTargets({
-            baseFields: objectMetadataItem.fields,
-            recordFilters: currentRecordFilters,
-            allFieldMetadataItems: flattenedFieldMetadataItems,
-          }),
+          findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
           recordFilters: currentRecordFilters,
           recordFilterGroups: currentRecordFilterGroups,
           filterValueDependencies,
@@ -82,7 +77,7 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
       currentRecordFilterGroups,
       filterValueDependencies,
       currentRecordSorts,
-      flattenedFieldMetadataItems,
+      fieldMetadataItemByIdMap,
     ],
   );
 
