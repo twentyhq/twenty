@@ -12,6 +12,7 @@ export const BACKFILL_SOURCE_ORDER: SupportedSourceTable[] = [
   'customer_expertise',
   'affiliates',
   'orders',
+  'payments',
   'order_items',
   'commission_ledger',
 ];

@@ -165,6 +165,29 @@ const mapCommissionStatus = (value: unknown): string => {
   }
 };
 
+const mapPaymentStatus = (value: unknown): string => {
+  const normalized = normalizeToken(value);
+
+  switch (normalized) {
+    case 'PROCESSING':
+      return 'PROCESSING';
+    case 'SUCCEEDED':
+    case 'COMPLETE':
+      return 'SUCCEEDED';
+    case 'FAILED':
+      return 'FAILED';
+    case 'REFUNDED':
+      return 'REFUNDED';
+    case 'PARTIALLY_REFUNDED':
+      return 'PARTIALLY_REFUNDED';
+    case 'CANCELLED':
+    case 'CANCELED':
+      return 'CANCELLED';
+    default:
+      return 'PENDING';
+  }
+};
+
 const withLastSyncedAt = (
   record: Record<string, unknown>,
   fieldValues: Record<string, unknown>,
@@ -432,6 +455,42 @@ const mapCommission = (record: Record<string, unknown>) =>
     payableAt: isoDateValue(record.payable_at),
   });
 
+const mapPaymentRelations = (
+  record: Record<string, unknown>,
+): RelationReference[] => {
+  const relations: RelationReference[] = [];
+  const orderId = stringValue(record.order_id);
+
+  if (orderId) {
+    relations.push({
+      fieldName: 'order',
+      relationIdFieldName: 'orderId',
+      targetObject: 'xopureOrder',
+      externalIdField: 'supabaseOrderId',
+      externalIdValue: orderId,
+      required: true,
+    });
+  }
+
+  return relations;
+};
+
+const mapPayment = (record: Record<string, unknown>) =>
+  withLastSyncedAt(record, {
+    name: `${stringValue(record.provider) ?? 'Payment'} ${stringValue(record.id) ?? ''}`.trim(),
+    supabasePaymentId: stringValue(record.id),
+    orderExternalId: stringValue(record.order_id),
+    provider: stringValue(record.provider),
+    rail: stringValue(record.rail),
+    methodCode: stringValue(record.method_code),
+    amountCents: integerValue(record.amount_cents) ?? 0,
+    currency: stringValue(record.currency) ?? 'USD',
+    status: mapPaymentStatus(record.status),
+    providerPaymentId: stringValue(record.provider_payment_id),
+    refundCents: integerValue(record.refund_amount_cents) ?? 0,
+    description: stringValue(record.description),
+  });
+
 const mapFieldValues = (
   sourceTable: SupportedSourceTable,
   record: Record<string, unknown>,
@@ -451,6 +510,8 @@ const mapFieldValues = (
       return mapOrderItem(record);
     case 'commission_ledger':
       return mapCommission(record);
+    case 'payments':
+      return mapPayment(record);
   }
 };
 
@@ -465,6 +526,8 @@ const mapRelations = (
       return mapOrderItemRelations(record);
     case 'commission_ledger':
       return mapCommissionRelations(record);
+    case 'payments':
+      return mapPaymentRelations(record);
     case 'profiles':
     case 'customer_expertise':
     case 'affiliates':

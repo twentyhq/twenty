@@ -72,6 +72,14 @@ export const SOURCE_TABLE_MAPPINGS: Record<
     createMutationName: 'createXopureCommission',
     updateMutationName: 'updateXopureCommission',
   },
+  payments: {
+    sourceTable: 'payments',
+    targetObject: 'xopurePayment',
+    externalIdField: 'supabasePaymentId',
+    pluralApiName: 'xopurePayments',
+    createMutationName: 'createXopurePayment',
+    updateMutationName: 'updateXopurePayment',
+  },
 };
 
 export const TABLE_ALIASES: Record<string, SupportedSourceTable> = {
@@ -82,6 +90,7 @@ export const TABLE_ALIASES: Record<string, SupportedSourceTable> = {
   order_item: 'order_items',
   customer: 'customer_expertise',
   profile: 'profiles',
+  payment: 'payments',
 };
 
 export const getSourceTableMapping = (

@@ -4,6 +4,7 @@ export type SupportedSourceTable =
   | 'affiliates'
   | 'products'
   | 'orders'
+  | 'payments'
   | 'order_items'
   | 'commission_ledger';
 
@@ -13,6 +14,7 @@ export type TargetObjectName =
   | 'xopureCustomer'
   | 'xopureProduct'
   | 'xopureOrder'
+  | 'xopurePayment'
   | 'xopureOrderLine'
   | 'xopureCommission';
 
