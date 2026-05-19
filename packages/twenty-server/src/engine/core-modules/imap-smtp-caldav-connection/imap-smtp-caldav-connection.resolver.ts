@@ -1,7 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
-import { ACCOUNT_TYPES, PermissionFlagType } from 'twenty-shared/constants';
+import { PermissionFlagType } from 'twenty-shared/constants';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -12,9 +13,7 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { ConnectedImapSmtpCaldavAccountDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
 import { ImapSmtpCaldavConnectionSuccessDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
 import { EmailAccountConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.input';
-import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -32,7 +31,6 @@ export class ImapSmtpCaldavResolver {
   constructor(
     private readonly imapSmtpCaldavService: ImapSmtpCaldavService,
     private readonly imapSmtpCaldavApisService: ImapSmtpCalDavAPIService,
-    private readonly mailConnectionValidatorService: ImapSmtpCaldavValidatorService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
@@ -54,7 +52,10 @@ export class ImapSmtpCaldavResolver {
         workspaceId: workspace.id,
       });
 
-    if (!isDefined(connectedAccount)) {
+    if (
+      !isDefined(connectedAccount) ||
+      connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV
+    ) {
       throw new UserInputError('Connected account not found');
     }
 
@@ -88,7 +89,11 @@ export class ImapSmtpCaldavResolver {
         })
       : null;
 
-    if (isDefined(id) && !existingAccount) {
+    if (
+      isDefined(id) &&
+      (!existingAccount ||
+        existingAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV)
+    ) {
       throw new UserInputError('Connected account not found');
     }
 
@@ -101,11 +106,12 @@ export class ImapSmtpCaldavResolver {
         )
       : null;
 
-    const validatedParams = await this.validateAndTestConnectionParameters({
-      connectionParameters,
-      handle,
-      existingConnectionParameters: decryptedExistingParams,
-    });
+    const validatedParams =
+      await this.imapSmtpCaldavService.validateAndTestConnectionParameters({
+        connectionParameters,
+        handle,
+        existingConnectionParameters: decryptedExistingParams,
+      });
 
     const connectedAccountId =
       await this.imapSmtpCaldavApisService.upsertConnectedAccount({
@@ -120,44 +126,5 @@ export class ImapSmtpCaldavResolver {
       success: true,
       connectedAccountId,
     };
-  }
-
-  private async validateAndTestConnectionParameters({
-    connectionParameters,
-    handle,
-    existingConnectionParameters,
-  }: {
-    connectionParameters: EmailAccountConnectionParametersInput;
-    handle: string;
-    existingConnectionParameters: ImapSmtpCaldavParams | null;
-  }): Promise<ImapSmtpCaldavParams> {
-    const validatedParams: ImapSmtpCaldavParams = {};
-
-    for (const protocol of ACCOUNT_TYPES) {
-      const params = connectionParameters[protocol];
-
-      if (params) {
-        const existingProtocolParams =
-          existingConnectionParameters?.[protocol] ?? null;
-
-        const validatedProtocolParams =
-          await this.mailConnectionValidatorService.validateProtocolConnectionParams(
-            {
-              params,
-              existingProtocolParams,
-            },
-          );
-
-        await this.imapSmtpCaldavService.testImapSmtpCaldav({
-          handle,
-          params: validatedProtocolParams,
-          accountType: protocol,
-        });
-
-        validatedParams[protocol] = validatedProtocolParams;
-      }
-    }
-
-    return validatedParams;
   }
 }

@@ -3,12 +3,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { ImapFlow } from 'imapflow';
 import { createTransport } from 'nodemailer';
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type EmailAccountConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.input';
+import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import {
   type AccountType,
   type ConnectionParameters,
+  type ImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -24,6 +28,7 @@ export class ImapSmtpCaldavService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly caldavClientService: CalDavClientService,
     private readonly caldavFetchEventsService: CalDavFetchEventsService,
+    private readonly imapSmtpCaldavValidatorService: ImapSmtpCaldavValidatorService,
   ) {}
 
   async testImapConnection(
@@ -203,5 +208,42 @@ export class ImapSmtpCaldavService {
       default:
         assertUnreachable(accountType);
     }
+  }
+
+  async validateAndTestConnectionParameters({
+    connectionParameters,
+    handle,
+    existingConnectionParameters,
+  }: {
+    connectionParameters: EmailAccountConnectionParametersInput;
+    handle: string;
+    existingConnectionParameters: ImapSmtpCaldavParams | null;
+  }): Promise<ImapSmtpCaldavParams> {
+    const validatedParams: ImapSmtpCaldavParams = {};
+
+    for (const protocol of ACCOUNT_TYPES) {
+      const params = connectionParameters[protocol];
+
+      if (params) {
+        const existingProtocolParams =
+          existingConnectionParameters?.[protocol] ?? null;
+
+        const validatedProtocolParams =
+          await this.imapSmtpCaldavValidatorService.validateProtocolConnectionParams({
+            params,
+            existingProtocolParams,
+          });
+
+        await this.testImapSmtpCaldav({
+          handle,
+          params: validatedProtocolParams,
+          accountType: protocol,
+        });
+
+        validatedParams[protocol] = validatedProtocolParams;
+      }
+    }
+
+    return validatedParams;
   }
 }
