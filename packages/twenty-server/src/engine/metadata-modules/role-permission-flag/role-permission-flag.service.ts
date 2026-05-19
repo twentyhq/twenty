@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import {
-  type PermissionFlagType,
-  SystemPermissionFlag,
-} from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -98,12 +94,10 @@ export class RolePermissionFlagService {
         .map(({ permissionFlag }) => permissionFlag?.universalIdentifier)
         .filter(isDefined),
     );
-    const getEffectiveUniversalIdentifier = (
-      pf: FlatRolePermissionFlag,
-    ): string =>
-      pf.permissionFlagUniversalIdentifier ?? SystemPermissionFlag[pf.flag];
     const existingSet = new Set(
-      currentRolePermissionFlagsForRole.map(getEffectiveUniversalIdentifier),
+      currentRolePermissionFlagsForRole.map(
+        (pf) => pf.permissionFlagUniversalIdentifier,
+      ),
     );
 
     const { workspaceCustomFlatApplication } =
@@ -123,7 +117,6 @@ export class RolePermissionFlagService {
           createRolePermissionFlagInput: {
             roleId: input.roleId,
             permissionFlagId: permissionFlag.id,
-            flag: permissionFlag.key as PermissionFlagType,
           },
           flatApplication: workspaceCustomFlatApplication,
           flatPermissionFlagMaps,
@@ -132,12 +125,12 @@ export class RolePermissionFlagService {
       );
 
     const flatEntityToDelete = currentRolePermissionFlagsForRole.filter(
-      (pf) => !inputSet.has(getEffectiveUniversalIdentifier(pf)),
+      (pf) => !inputSet.has(pf.permissionFlagUniversalIdentifier),
     );
 
     if (flatEntityToCreate.length === 0 && flatEntityToDelete.length === 0) {
       return currentRolePermissionFlagsForRole.filter((pf) =>
-        inputSet.has(getEffectiveUniversalIdentifier(pf)),
+        inputSet.has(pf.permissionFlagUniversalIdentifier),
       );
     }
 

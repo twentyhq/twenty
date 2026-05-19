@@ -21,7 +21,7 @@ export const fromCreateRolePermissionFlagInputToFlatRolePermissionFlagToCreate =
   >): UniversalFlatRolePermissionFlag & {
     id: string;
   } => {
-    const { roleId, permissionFlagId, flag, universalIdentifier } =
+    const { roleId, permissionFlagId, universalIdentifier } =
       createRolePermissionFlagInput;
     const now = new Date().toISOString();
 
@@ -38,7 +38,6 @@ export const fromCreateRolePermissionFlagInputToFlatRolePermissionFlagToCreate =
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
       permissionFlagUniversalIdentifier,
       roleUniversalIdentifier,
-      flag,
       createdAt: now,
       updatedAt: now,
     };
