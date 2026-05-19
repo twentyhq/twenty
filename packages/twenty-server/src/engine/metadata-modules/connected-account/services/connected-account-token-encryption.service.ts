@@ -3,11 +3,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  type ConnectionParameters,
+  type ImapSmtpCaldavParams,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { SECRET_ENCRYPTION_ENVELOPE_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
+import {
   SecretEncryptionException,
   SecretEncryptionExceptionCode,
 } from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { parseSecretEncryptionEnvelopeOrThrow } from 'src/engine/core-modules/secret-encryption/utils/parse-secret-encryption-envelope-or-throw.util';
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 
 @Injectable()
 export class ConnectedAccountTokenEncryptionService {
@@ -52,9 +57,6 @@ export class ConnectedAccountTokenEncryptionService {
     return this.encrypt({ plaintext, workspaceId });
   }
 
-  // v2.4.0 rollout-window tolerance: rows written before the encryption
-  // backfill ran may still be plaintext. Returning them as-is lets the slow
-  // command finish; once it has run everywhere this branch can throw.
   decrypt({
     ciphertext,
     workspaceId,
@@ -62,14 +64,11 @@ export class ConnectedAccountTokenEncryptionService {
     ciphertext: string;
     workspaceId: string;
   }): string {
-    const parsed = parseSecretEncryptionEnvelopeOrThrow({ value: ciphertext });
-
-    if (!isDefined(parsed.version)) {
-      this.logger.warn(
-        'Decrypted a legacy plaintext token. Expected during the rollout window until the slow instance command finishes backfilling.',
+    if (!ciphertext.startsWith(SECRET_ENCRYPTION_ENVELOPE_PREFIX)) {
+      throw new SecretEncryptionException(
+        'Received a plaintext value where ciphertext was expected. The encryption backfill migration may not have run.',
+        SecretEncryptionExceptionCode.MALFORMED_ENVELOPE,
       );
-
-      return ciphertext;
     }
 
     return this.secretEncryptionService.decryptVersioned(ciphertext, {
@@ -116,12 +115,85 @@ export class ConnectedAccountTokenEncryptionService {
   }
 
   private looksLikeCiphertext(value: string): boolean {
-    try {
-      const parsed = parseSecretEncryptionEnvelopeOrThrow({ value });
+    return value.startsWith(SECRET_ENCRYPTION_ENVELOPE_PREFIX);
+  }
 
-      return parsed.version === 2;
-    } catch {
-      return false;
+  encryptConnectionParameters({
+    connectionParameters,
+    workspaceId,
+  }: {
+    connectionParameters: ImapSmtpCaldavParams;
+    workspaceId: string;
+  }): ImapSmtpCaldavParams {
+    const result: ImapSmtpCaldavParams = {};
+
+    for (const protocol of ACCOUNT_TYPES) {
+      const params = connectionParameters[protocol];
+
+      if (!isDefined(params)) {
+        continue;
+      }
+
+      result[protocol] = {
+        ...params,
+        password: this.encrypt({ plaintext: params.password, workspaceId }),
+      };
     }
+
+    return result;
+  }
+
+  decryptConnectionParameters({
+    connectionParameters,
+    workspaceId,
+  }: {
+    connectionParameters: ImapSmtpCaldavParams;
+    workspaceId: string;
+  }): ImapSmtpCaldavParams {
+    const result: ImapSmtpCaldavParams = {};
+
+    for (const protocol of ACCOUNT_TYPES) {
+      const params = connectionParameters[protocol];
+
+      if (!isDefined(params)) {
+        continue;
+      }
+
+      result[protocol] = this.decryptProtocolPassword({
+        protocolParams: params,
+        workspaceId,
+      });
+    }
+
+    return result;
+  }
+
+  decryptProtocolPassword({
+    protocolParams,
+    workspaceId,
+  }: {
+    protocolParams: ConnectionParameters;
+    workspaceId: string;
+  }): ConnectionParameters {
+    const isEncrypted = protocolParams.password.startsWith(
+      SECRET_ENCRYPTION_ENVELOPE_PREFIX,
+    );
+
+    // TODO: Remove after 2-5 slow instance command has been run everywhere
+    if (!isEncrypted) {
+      this.logger.warn(
+        'Protocol password is not encrypted. Expected during the rollout window until the slow instance command finishes backfilling.',
+      );
+
+      return protocolParams;
+    }
+
+    return {
+      ...protocolParams,
+      password: this.decrypt({
+        ciphertext: protocolParams.password,
+        workspaceId,
+      }),
+    };
   }
 }

@@ -22,7 +22,8 @@ Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a fi
 **In a logic function:**
 
 ```ts src/logic-functions/send-invoice.ts
-import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
 const handler = async (): Promise<any> => {
   const logoUrl = getPublicAssetUrl('logo.png');
@@ -47,12 +48,19 @@ export default defineLogicFunction({
 **In a front component:**
 
 ```tsx src/front-components/company-card.tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
-export default defineFrontComponent(() => {
+const CompanyCard = () => {
   const logoUrl = getPublicAssetUrl('logo.png');
 
   return <img src={logoUrl} alt="App logo" />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'company-card',
+  component: CompanyCard,
 });
 ```
 

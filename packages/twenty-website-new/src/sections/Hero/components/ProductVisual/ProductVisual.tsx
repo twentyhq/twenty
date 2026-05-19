@@ -3,13 +3,13 @@
 import { styled } from '@linaria/react';
 
 import type { AppPreviewConfig } from '@/sections/AppPreview';
+import { AppWindow } from '@/sections/AppPreview/AppWindow/AppWindow';
 import { COLORS } from '@/sections/AppPreview/Shared/utils/app-preview-theme';
 import { VISUAL_TOKENS } from '@/sections/AppPreview/Shared/utils/app-preview-tokens';
 import { AppPreviewNavbar } from '@/sections/AppPreview/Shell/AppPreviewNavbar';
 import { AppPreviewSidebar } from '@/sections/AppPreview/Shell/AppPreviewSidebar';
 import { AppPreviewViewbar } from '@/sections/AppPreview/Shell/AppPreviewViewbar';
 import { renderPageDefinition } from '@/sections/AppPreview/Shell/PageRenderers';
-import { AppWindow } from '@/sections/AppPreview/AppWindow/AppWindow';
 import { WindowOrderProvider } from '@/sections/AppPreview/WindowOrder/WindowOrderProvider';
 import { theme } from '@/theme';
 
@@ -24,20 +24,16 @@ const StyledRoot = styled.div`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    margin-top: ${theme.spacing(8)};
+    margin-top: ${theme.spacing(11)};
   }
 `;
 
 const ShellScene = styled.div`
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1280 / 832;
   margin: 0 auto;
   max-height: 740px;
   position: relative;
   width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    aspect-ratio: 1280 / 832;
-  }
 `;
 
 const AppLayout = styled.div`
@@ -268,10 +264,11 @@ const SendBtn = styled.span`
 `;
 
 type ProductVisualProps = {
+  activeScene?: number;
   visual: AppPreviewConfig;
 };
 
-export function ProductVisual({ visual }: ProductVisualProps) {
+export function ProductVisual({ activeScene, visual }: ProductVisualProps) {
   const {
     activeItem,
     activeLabel,
@@ -280,19 +277,20 @@ export function ProductVisual({ visual }: ProductVisualProps) {
     handleSelectLabel,
     handleToggleFolder,
     highlightedItemId,
+    isScrollDriven,
     openFolderIds,
     revealedObjectIds,
     selectedOption,
     streamComplete,
     streamedText,
     workspaceNav,
-  } = useProductVisualAutoplay(visual);
+  } = useProductVisualAutoplay(visual, { externalScene: activeScene });
 
   const activeHeader = displayPage?.header;
   const showViewBar =
-    displayPage !== null &&
-    displayPage !== undefined &&
+    displayPage != null &&
     displayPage.type !== 'dashboard' &&
+    displayPage.type !== 'record' &&
     displayPage.type !== 'workflow';
 
   return (
@@ -379,21 +377,19 @@ export function ProductVisual({ visual }: ProductVisualProps) {
                         <ThinkingText>Thinking...</ThinkingText>
                       )}
                     </AiMessages>
-                    {streamComplete ? (
+                    {streamComplete && !isScrollDriven ? (
                       <PromptOptions>
-                        {PROMPT_OPTIONS.filter(
-                          (_, index) => index !== selectedOption,
-                        ).map((option, index) => (
-                          <PromptOption
-                            key={index}
-                            onClick={() =>
-                              handleOptionSelect(PROMPT_OPTIONS.indexOf(option))
-                            }
-                          >
-                            <PromptOptionIcon>{option.icon}</PromptOptionIcon>
-                            {option.label}
-                          </PromptOption>
-                        ))}
+                        {PROMPT_OPTIONS.map((option, index) =>
+                          index === selectedOption ? null : (
+                            <PromptOption
+                              key={option.label}
+                              onClick={() => handleOptionSelect(index)}
+                            >
+                              <PromptOptionIcon>{option.icon}</PromptOptionIcon>
+                              {option.label}
+                            </PromptOption>
+                          ),
+                        )}
                       </PromptOptions>
                     ) : null}
                     <AiInputArea>

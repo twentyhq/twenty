@@ -12,7 +12,6 @@ export const FOOTER_DATA: FooterDataType = {
       ctas: [],
       links: [
         { label: msg`Home`, href: '/', external: false },
-        { label: msg`Product`, href: '/product', external: false },
         { label: msg`Pricing`, href: '/pricing', external: false },
         { label: msg`Partners`, href: '/partners', external: false },
         {
@@ -20,7 +19,6 @@ export const FOOTER_DATA: FooterDataType = {
           href: '/why-twenty',
           external: false,
         },
-        { label: msg`Articles`, href: '/articles', external: false },
       ],
     },
     {

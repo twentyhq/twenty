@@ -7,6 +7,8 @@
  *                              |___/
  */
 
+export type { AccountType } from './AccountTypes';
+export { ACCOUNT_TYPES } from './AccountTypes';
 export { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from './AllowedFullNameSortSubfields';
 export { AUTO_SELECT_FAST_MODEL_ID } from './AutoSelectFastModelId';
 export { AUTO_SELECT_SMART_MODEL_ID } from './AutoSelectSmartModelId';
