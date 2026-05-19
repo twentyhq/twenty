@@ -1,11 +1,6 @@
----
-name: app-readme-and-visuals
-description: Use when the user wants to create, review, or improve a Twenty app README, npm or marketplace description, defineApplication marketplace metadata, logo, screenshots, or public visual assets for a Twenty app.
----
-
 # Prepare App Listing
 
-Use this skill for the publish-facing documentation and visuals of a Twenty app. It complements Create Twenty App (`create-an-app`); load this when the app is ready for packaging, marketplace listing, npm publishing, private sharing, or user-facing review.
+Use this reference for the publish-facing documentation and visuals of a Twenty app. It complements `create-app`; read this when the app is ready for packaging, marketplace listing, npm publishing, private sharing, or user-facing review.
 
 ## When To Use
 

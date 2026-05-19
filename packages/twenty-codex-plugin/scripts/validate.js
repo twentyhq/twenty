@@ -10,6 +10,14 @@ const repoRoot = path.resolve(pluginRoot, '..', '..');
 const failures = [];
 const PUBLIC_DOCS_MCP_SERVER_NAME = 'twenty-docs';
 const PUBLIC_DOCS_MCP_URL = 'https://docs.twenty.com/mcp';
+const LEGACY_SKILL_NAMES = [
+  'app-readme-and-visuals',
+  'build-app-features',
+  'create-an-app',
+  'design-front-components',
+  'retrieve-and-present-data',
+  'setup-mcp',
+];
 
 const fail = (message) => {
   failures.push(message);
@@ -50,6 +58,16 @@ const readJson = (relativePath) => {
     fail(`${relativePath} is not valid JSON: ${error.message}`);
     return undefined;
   }
+};
+
+const readOptionalJson = (relativePath) => {
+  const absolutePath = path.join(repoRoot, relativePath);
+
+  if (!fs.existsSync(absolutePath)) {
+    return undefined;
+  }
+
+  return readJson(relativePath);
 };
 
 const listFiles = (directory) => {
@@ -100,7 +118,7 @@ const assertJsonMetadata = () => {
   const packageJson = readJson('packages/twenty-codex-plugin/package.json');
   const pluginJson = readJson('packages/twenty-codex-plugin/.codex-plugin/plugin.json');
   const mcpJson = readJson('packages/twenty-codex-plugin/.mcp.json');
-  const marketplaceJson = readJson('.agents/plugins/marketplace.json');
+  const marketplaceJson = readOptionalJson('.agents/plugins/marketplace.json');
 
   if (packageJson?.version !== pluginJson?.version) {
     fail('package.json version must match .codex-plugin/plugin.json version');
@@ -151,9 +169,9 @@ const assertJsonMetadata = () => {
 
   const marketplaceEntry = marketplaceJson?.plugins?.find((entry) => entry.name === 'twenty');
 
-  if (!marketplaceEntry) {
-    fail('.agents/plugins/marketplace.json must include the twenty plugin entry');
-  } else if (marketplaceEntry.source?.path !== './packages/twenty-codex-plugin') {
+  if (marketplaceJson && !marketplaceEntry) {
+    fail('.agents/plugins/marketplace.json includes plugins but not the twenty plugin entry');
+  } else if (marketplaceEntry && marketplaceEntry.source?.path !== './packages/twenty-codex-plugin') {
     fail('marketplace twenty source path must be ./packages/twenty-codex-plugin');
   }
 
@@ -222,12 +240,7 @@ const assertSkills = () => {
     'use-twenty-mcp',
   ];
   const legacySkillDirectories = [
-    'app-readme-and-visuals',
-    'build-app-features',
-    'create-an-app',
-    'design-front-components',
-    'retrieve-and-present-data',
-    'setup-mcp',
+    ...LEGACY_SKILL_NAMES,
   ];
   const skillDirectories = fs
     .readdirSync(skillsRoot, { withFileTypes: true })
@@ -304,13 +317,46 @@ const assertSkills = () => {
   }
 };
 
+const assertNoLegacySkillReferences = () => {
+  const filesToCheck = listFiles(pluginRoot).filter((filePath) => {
+    const extension = path.extname(filePath);
+
+    return ['.md', '.yaml', '.yml'].includes(extension);
+  });
+
+  for (const filePath of filesToCheck) {
+    const relativePath = path.relative(pluginRoot, filePath);
+    const contents = readText(filePath);
+
+    for (const legacySkillName of LEGACY_SKILL_NAMES) {
+      if (contents.includes(`name: ${legacySkillName}`)) {
+        fail(`${relativePath} must not declare legacy skill name ${legacySkillName}`);
+      }
+
+      const mentionPattern =
+        legacySkillName === 'setup-mcp'
+          ? /(^|[^A-Za-z0-9_-])setup-mcp(?!\.sh)(?=$|[^A-Za-z0-9_-])/
+          : new RegExp(
+              `(^|[^A-Za-z0-9_-])${legacySkillName}(?=$|[^A-Za-z0-9_-])`,
+            );
+
+      if (mentionPattern.test(contents)) {
+        fail(`${relativePath} must not mention legacy skill name ${legacySkillName}`);
+      }
+    }
+  }
+};
+
 const assertReferences = () => {
   const requiredReferences = [
     'references/design/front-component-ui.md',
-    'references/develop-app/app-structure-and-cli.md',
+    'references/develop-app/app-structure.md',
     'references/develop-app/data-model.md',
+    'references/develop-app/front-components.md',
     'references/develop-app/logic.md',
     'references/develop-app/layout.md',
+    'references/develop-app/standalone-pages.md',
+    'references/manage-app/cli-and-sync.md',
     'references/publish-app/prepare-for-app-store.md',
     'references/use-twenty-mcp/setup.md',
     'references/use-twenty-mcp/result-formatting.md',
@@ -370,6 +416,248 @@ const assertTwentyMcpFormattingContract = () => {
   }
 };
 
+const assertFrontComponentGuidance = () => {
+  const developSkillPath = path.join(
+    pluginRoot,
+    'skills/develop-app/SKILL.md',
+  );
+  const layoutPath = path.join(
+    pluginRoot,
+    'references/develop-app/layout.md',
+  );
+  const frontComponentsPath = path.join(
+    pluginRoot,
+    'references/develop-app/front-components.md',
+  );
+  const standalonePagesPath = path.join(
+    pluginRoot,
+    'references/develop-app/standalone-pages.md',
+  );
+  const appStructurePath = path.join(
+    pluginRoot,
+    'references/develop-app/app-structure.md',
+  );
+  const frontComponentUiPath = path.join(
+    pluginRoot,
+    'references/design/front-component-ui.md',
+  );
+  const developSkill = readText(developSkillPath);
+  const layout = readText(layoutPath);
+  const frontComponents = readText(frontComponentsPath);
+  const standalonePages = readText(standalonePagesPath);
+  const appStructure = readText(appStructurePath);
+  const frontComponentUi = readText(frontComponentUiPath);
+
+  const requiredDevelopSkillFragments = [
+    'references/develop-app/front-components.md',
+    'references/develop-app/standalone-pages.md',
+    'Twenty UI imports',
+    'Use `layout.md` for placement, `standalone-pages.md` for full-page custom UI, and `front-component-ui.md` for visual design and Twenty UI component selection',
+  ];
+
+  for (const fragment of requiredDevelopSkillFragments) {
+    if (!developSkill.includes(fragment)) {
+      fail(`develop-app/SKILL.md is missing front component guidance: ${fragment}`);
+    }
+  }
+
+  const requiredLayoutFragments = [
+    '## Front Component Widgets',
+    'frontComponentUniversalIdentifier',
+    'A `frontComponentId` is not the same value',
+    'use `front-components.md`',
+  ];
+
+  for (const fragment of requiredLayoutFragments) {
+    if (!layout.includes(fragment)) {
+      fail(`layout.md is missing front component guidance: ${fragment}`);
+    }
+  }
+
+  const requiredFrontComponentFragments = [
+    '# Front Components',
+    'defineFrontComponent',
+    'Use `twenty-sdk/front-component`',
+    'Use `twenty-client-sdk/core` or `twenty-client-sdk/metadata`',
+    'Use `twenty-sdk/ui` for Twenty UI components',
+    'Do not import from `twenty-ui` directly',
+    'ThemeProvider',
+    'example-sources/twenty-ui-example.front-component.tsx',
+    'themeCssVariables',
+    'mocks `twenty-sdk/ui` during manifest extraction',
+    'A clean typecheck and sync is not runtime verification',
+    'without a `FrontComponent error`',
+    'hard refresh',
+  ];
+
+  for (const fragment of requiredFrontComponentFragments) {
+    if (!frontComponents.includes(fragment)) {
+      fail(`front-components.md is missing runtime guidance: ${fragment}`);
+    }
+  }
+
+  const requiredStandalonePageFragments = [
+    '# Standalone Pages',
+    'custom page content should be rendered through a `FRONT_COMPONENT` widget',
+    'There does not appear to be a separate public "page body component" API',
+    "type: 'STANDALONE_PAGE'",
+    'NavigationMenuItemType.PAGE_LAYOUT',
+    'PageLayoutTabLayoutMode.CANVAS',
+    'gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 }',
+    '12 x 12 fill pattern',
+    'Full-Page Layout Guidance',
+    'black screen',
+    'yarn twenty dev --once',
+  ];
+
+  for (const fragment of requiredStandalonePageFragments) {
+    if (!standalonePages.includes(fragment)) {
+      fail(`standalone-pages.md is missing standalone page guidance: ${fragment}`);
+    }
+  }
+
+  const requiredAppStructureFragments = [
+    'yarn twenty typecheck',
+    'yarn lint',
+    'yarn twenty dev --once',
+  ];
+
+  for (const fragment of requiredAppStructureFragments) {
+    if (!appStructure.includes(fragment)) {
+      fail(`app-structure.md is missing validation checklist command: ${fragment}`);
+    }
+  }
+
+  const requiredUiDesignFragments = [
+    '# Design Rules',
+    'Do not use this reference for source files, registration, runtime imports, data access, CLI commands, or browser verification',
+    '## Twenty UI Defaults',
+    'Prefer Twenty UI primitives',
+    'Use `Callout`',
+    'Use `Button`',
+    'Use `Tag`, `Status`, `Chip`, `Label`, and `Avatar`',
+    'Use `themeCssVariables`',
+    'Design the visible states',
+  ];
+
+  for (const fragment of requiredUiDesignFragments) {
+    if (!frontComponentUi.includes(fragment)) {
+      fail(`front-component-ui.md is missing design-only guidance: ${fragment}`);
+    }
+  }
+
+  const forbiddenUiFragments = [
+    '# Runtime Safety',
+    'ReactCurrentDispatcher',
+    'yarn twenty',
+    'without a `FrontComponent error`',
+  ];
+
+  for (const fragment of forbiddenUiFragments) {
+    if (frontComponentUi.includes(fragment)) {
+      fail(`front-component-ui.md should stay design-only and not include: ${fragment}`);
+    }
+  }
+};
+
+const assertCliGuidanceSplit = () => {
+  const developSkillPath = path.join(
+    pluginRoot,
+    'skills/develop-app/SKILL.md',
+  );
+  const manageSkillPath = path.join(
+    pluginRoot,
+    'skills/manage-app/SKILL.md',
+  );
+  const appStructurePath = path.join(
+    pluginRoot,
+    'references/develop-app/app-structure.md',
+  );
+  const cliAndSyncPath = path.join(
+    pluginRoot,
+    'references/manage-app/cli-and-sync.md',
+  );
+  const developSkill = readText(developSkillPath);
+  const manageSkill = readText(manageSkillPath);
+  const appStructure = readText(appStructurePath);
+  const cliAndSync = readText(cliAndSyncPath);
+
+  const requiredDevelopFragments = [
+    'references/develop-app/app-structure.md',
+    'After entity changes, run the validation checklist in `app-structure.md`',
+    'switch to `manage-app`',
+  ];
+
+  for (const fragment of requiredDevelopFragments) {
+    if (!developSkill.includes(fragment)) {
+      fail(`develop-app/SKILL.md is missing CLI split guidance: ${fragment}`);
+    }
+  }
+
+  const requiredManageFragments = [
+    'references/manage-app/cli-and-sync.md',
+    'validation command semantics',
+    'sync modes',
+  ];
+
+  for (const fragment of requiredManageFragments) {
+    if (!manageSkill.includes(fragment)) {
+      fail(`manage-app/SKILL.md is missing CLI reference guidance: ${fragment}`);
+    }
+  }
+
+  const requiredAppStructureFragments = [
+    '# App Structure',
+    '../manage-app/cli-and-sync.md',
+    '## Entity Creation',
+    '## Validation Checklist',
+    'yarn twenty typecheck',
+    'yarn lint',
+    'yarn twenty dev --once',
+  ];
+
+  for (const fragment of requiredAppStructureFragments) {
+    if (!appStructure.includes(fragment)) {
+      fail(`app-structure.md is missing develop-app structure guidance: ${fragment}`);
+    }
+  }
+
+  const forbiddenAppStructureFragments = [
+    '# App Structure And CLI',
+    'Use watch mode only',
+    'Use watch mode for interactive development',
+    'Use one-shot mode for agents',
+    'yarn twenty dev --once --verbose',
+    'yarn twenty remote list',
+  ];
+
+  for (const fragment of forbiddenAppStructureFragments) {
+    if (appStructure.includes(fragment)) {
+      fail(`app-structure.md should not own CLI semantics: ${fragment}`);
+    }
+  }
+
+  const requiredCliFragments = [
+    '# CLI And Sync',
+    'yarn twenty typecheck',
+    'yarn lint',
+    'yarn twenty dev --once',
+    'Use watch mode for interactive development',
+    'Use one-shot mode for agents, scripts, CI, and quick verification',
+    'yarn twenty dev --once --verbose',
+    'yarn twenty remote list',
+    'yarn twenty build',
+    'yarn twenty deploy',
+    'yarn twenty logs',
+  ];
+
+  for (const fragment of requiredCliFragments) {
+    if (!cliAndSync.includes(fragment)) {
+      fail(`cli-and-sync.md is missing command guidance: ${fragment}`);
+    }
+  }
+};
+
 const assertSetupHelper = () => {
   const setupScript = path.join(pluginRoot, 'scripts', 'setup-mcp.sh');
   const syntaxCheck = spawnSync('bash', ['-n', setupScript], { encoding: 'utf8' });
@@ -399,8 +687,11 @@ const assertSetupHelper = () => {
 assertJsonMetadata();
 assertNoBundledMcpConfig();
 assertSkills();
+assertNoLegacySkillReferences();
 assertReferences();
 assertTwentyMcpFormattingContract();
+assertFrontComponentGuidance();
+assertCliGuidanceSplit();
 assertSetupHelper();
 
 if (failures.length > 0) {

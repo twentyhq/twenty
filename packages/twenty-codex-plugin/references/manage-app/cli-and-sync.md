@@ -1,39 +1,37 @@
----
-name: manage-app
-description: Use when the user wants to manage or troubleshoot tooling, remotes, sync, build, deploy, logs, CI/CD, or operational workflows for an existing Twenty app.
----
+# CLI And Sync
 
-# Boundaries
+Use this reference for Twenty app CLI command behavior, remotes, authentication, sync, validation commands, build, deploy, logs, function execution, and CI/CD troubleshooting.
 
-Do not scaffold a new app here. Use `$create-app` when the app does not exist.
+Use `../develop-app/app-structure.md` only for app file layout and post-entity-edit validation checklists.
 
-Do not add or modify app entities here. Use `$develop-app` for objects, fields, logic functions, roles, views, navigation, page layouts, skills, agents, connection providers, and front component registration.
+## App Checks
 
-Do not prepare marketplace README, screenshots, logos, or npm listing copy here. Use `$publish-app` for public listing work.
-
-Do not retrieve CRM records here. Use `$use-twenty-mcp` for workspace data retrieval.
-
-# Operating Rules
-
-First confirm the current directory is a Twenty app:
+Before running operational commands, confirm the current directory is a Twenty app and inspect the active scripts and remotes:
 
 ```bash
 test -f package.json
 test -f src/application-config.ts
-```
-
-Inspect current app and scripts before running operational commands:
-
-```bash
 sed -n '1,220p' package.json
 yarn twenty remote list
 ```
 
 Treat deploys, uninstalls, production remote changes, and production syncs as externally visible actions. Ask for explicit confirmation before running them when the target is production or user data could be affected.
 
-For command details, remotes, validation command semantics, sync modes, troubleshooting, build, deploy, logs, exec, and CI/CD, read `../../references/manage-app/cli-and-sync.md`.
+## Validation Commands
 
-# Remotes
+Use these commands to validate an app after changes:
+
+```bash
+yarn twenty typecheck
+yarn lint
+yarn twenty dev --once
+```
+
+`yarn twenty typecheck` checks generated app types and TypeScript compatibility. `yarn lint` checks local lint rules. `yarn twenty dev --once` performs a bounded build/sync against the active remote.
+
+If a validation command fails because of entity definitions, switch to `develop-app` for the fix. If it fails because of remotes, authentication, build tooling, sync, logs, deploys, or CI/CD, stay in `manage-app`.
+
+## Remotes
 
 A remote is a Twenty server that the app can sync or deploy to. Credentials are stored locally in `~/.twenty/config.json`.
 
@@ -58,7 +56,7 @@ yarn twenty remote switch <name>
 
 When the user says "prod", "production", or "workspace de prod", identify the target remote before syncing or deploying. If it is missing, add it with `--as production` or the user-provided name.
 
-# Development Sync
+## Development Sync
 
 Use watch mode for interactive development:
 
@@ -74,7 +72,13 @@ yarn twenty dev --once
 
 Both modes require an authenticated remote. If authentication fails, re-add or switch the remote before retrying.
 
-# Troubleshooting
+Use verbose one-shot sync for bounded troubleshooting:
+
+```bash
+yarn twenty dev --once --verbose
+```
+
+## Troubleshooting
 
 Start by identifying which layer is failing:
 
@@ -105,26 +109,9 @@ For sync issues:
 
 - Prefer `yarn twenty dev --once --verbose` to get a bounded failure.
 - Check generated type or schema errors before editing app entities.
-- If the app depends on a changed data model, use `$develop-app` to fix the entity definitions.
+- If the app depends on a changed data model, use `develop-app` to fix the entity definitions.
 
-For build or deploy issues:
-
-- Run `yarn twenty build` before `yarn twenty deploy`.
-- Check `package.json` version when updating an already deployed app.
-- Confirm the deploy target with `yarn twenty deploy --remote <name>` instead of relying on the active remote when production is involved.
-
-For runtime behavior:
-
-- Use `yarn twenty logs` to inspect function execution logs.
-- Use `yarn twenty exec -n <function-name> -p '<json>'` to reproduce a logic function with a controlled payload.
-
-For CI/CD failures:
-
-- Check `.github/workflows/`.
-- Confirm `TWENTY_DEPLOY_URL` points to a reachable server from the runner.
-- Confirm `TWENTY_DEPLOY_API_KEY` is configured as a secret, not committed in source.
-
-# Build And Deploy
+## Build, Deploy, Logs, And Exec
 
 Build before deploy when the user asks for release readiness or when debugging packaging issues:
 
@@ -140,10 +127,6 @@ yarn twenty deploy --remote production
 ```
 
 Before deploying an update, check that `package.json` has a strictly higher semver `version` than the currently deployed version. Re-deploying the same version is rejected.
-
-Use `$publish-app` instead when the user wants npm marketplace publishing, listing copy, screenshots, or public app store metadata.
-
-# Logs, Exec, And Cleanup
 
 Use function logs when debugging runtime behavior on the connected server:
 
@@ -166,7 +149,7 @@ yarn twenty uninstall
 yarn twenty uninstall --yes
 ```
 
-# CI/CD
+## CI/CD
 
 Apps generated with `create-twenty-app` can use GitHub Actions for CI and CD. For deployment automation, check the app's `.github/workflows/` files and configure:
 

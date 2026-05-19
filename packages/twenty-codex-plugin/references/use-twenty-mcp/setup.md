@@ -1,13 +1,8 @@
----
-name: setup-mcp
-description: Use when the user wants to set up, connect, reconfigure, or troubleshoot the Twenty MCP server for Codex or another MCP client, especially when the workspace URL can be a Twenty Cloud subdomain, a custom domain, or a localhost development domain.
----
-
 # Set Up Twenty MCP
 
 ## Overview
 
-Use this skill to configure a workspace-specific Twenty MCP endpoint. The plugin must not assume a fixed workspace domain; collect the user's workspace URL first, normalize it to an MCP URL, then configure and authenticate the MCP client.
+Use this reference to configure a workspace-specific Twenty MCP endpoint. The plugin must not assume a fixed workspace domain; collect the user's workspace URL first, normalize it to an MCP URL, then configure and authenticate the MCP client.
 
 ## Required User Input
 

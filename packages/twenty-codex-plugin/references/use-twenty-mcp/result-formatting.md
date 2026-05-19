@@ -1,8 +1,3 @@
----
-name: retrieve-and-present-data
-description: Use when retrieving or presenting Twenty MCP, CRM, app, or workspace records in chat. Convert raw tool output, dates, IDs, links, icons, nested fields, money, booleans, and nulls into concise, readable Markdown.
----
-
 # Retrieve Workspace Data
 
 ## Overview
@@ -16,7 +11,7 @@ Resolve the intended workspace before selecting a Twenty MCP server:
 - If the user names a workspace, host, MCP server, or URL, use only the matching Twenty MCP namespace or server.
 - If multiple Twenty MCP namespaces or configured servers are available and the intended workspace is ambiguous, ask one concise clarifying question before retrieving data.
 - If exactly one Twenty MCP namespace is available and the user did not specify a workspace, use it and mention which workspace or server was used when reporting results.
-- If a configured server exists but the matching MCP tools are not visible in the current thread, use the Set Up Twenty MCP (`setup-mcp`) skill's troubleshooting workflow instead of falling back to a different workspace.
+- If a configured server exists but the matching MCP tools are not visible in the current thread, use the MCP setup troubleshooting workflow in `setup.md` instead of falling back to a different workspace.
 - Before querying workspace data, confirm the callable Twenty MCP namespace or server name corresponds to the intended workspace whenever there is any ambiguity.
 
 Use the selected connected Twenty MCP server when it is available:
@@ -30,7 +25,7 @@ get_tool_catalog -> learn_tools -> execute_tool
 - For "latest", "most recent", or "recent" requests, show the timestamp used for sorting.
 - Limit broad lists and state how many records are shown.
 - Ask one clarifying question only when tools cannot supply required context.
-- If no Twenty MCP tools are available, use `setup-mcp`; do not invent workspace data.
+- If no Twenty MCP tools are available, use the setup workflow in `setup.md`; do not invent workspace data.
 
 ## Workspace Origin
 

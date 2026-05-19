@@ -1,11 +1,6 @@
----
-name: design-front-components
-description: Use when the user wants to design or improve the UI of a Twenty app front component.
----
-
 # When to Use
 
-Use this when the user wants to design, build, or polish a Twenty front component UI.
+Use this when the user wants to design or polish a Twenty front component UI.
 
 Examples:
 
@@ -16,9 +11,9 @@ Examples:
 
 # Boundaries
 
-Do not scaffold a new app here. Use `create-an-app` first when the app does not exist.
+Do not scaffold a new app here. Use `create-app` first when the app does not exist.
 
-Do not create app data models, roles, logic functions, views, or front component registrations here. Use `build-app-features` first when the component or app entity does not exist.
+Do not use this reference for source files, registration, runtime imports, data access, CLI commands, or browser verification.
 
 # Design Rules
 
@@ -32,16 +27,20 @@ Keep text short and make sure it fits in narrow component widths. Do not let lab
 
 Reuse existing project components, tokens, and styling patterns before adding new ones.
 
+## Twenty UI Defaults
+
+Prefer Twenty UI primitives for CRM-native front component UI:
+
+- Use `H2Title` or `H3Title` for compact section headings.
+- Use `Callout` with a matching icon for loading, empty, error, and blocked states.
+- Use `Button` for primary and secondary actions.
+- Use `Tag`, `Status`, `Chip`, `Label`, and `Avatar` for metadata, state, people, and small summaries.
+- Use `themeCssVariables` for spacing, colors, border radius, typography, and borders.
+
+Use local inline styles for layout containers and custom data displays, but keep them aligned with Twenty tokens. Use `front-components.md` for exact imports and runtime rules.
+
 # Workflow
 
 First, identify the target front component file and the user workflow it supports.
 
-If the component is missing, use `build-app-features` to create or register it.
-
-After editing the UI, run the app workflow:
-
-```bash
-yarn twenty dev
-```
-
-Verify the component in the relevant Twenty surface when possible.
+Design the visible states the user will naturally encounter: loading, empty, error, disabled, success, and the primary working state.

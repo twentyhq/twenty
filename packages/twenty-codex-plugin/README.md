@@ -2,13 +2,13 @@
 
 This plugin packages the official Twenty app creation workflow, app operations tooling, app development guidance, publish-facing asset guidance, Twenty documentation MCP server, Twenty workspace MCP setup, and readable CRM record retrieval for Codex.
 
-This workspace package is the source of the repo-local Codex plugin. The repo-local marketplace entry points directly to this package.
+This workspace package is the source of the Twenty Codex plugin.
 
 ## Included Skills
 
 - **Create App** (`create-app`): scaffold a new Twenty app with `create-twenty-app`.
 - **Manage App** (`manage-app`): manage and troubleshoot remotes, authentication, dev sync, builds, deploys, logs, function execution, uninstall, and CI/CD for an existing Twenty app.
-- **Develop App** (`develop-app`): add objects, fields, logic functions, roles, views, layouts, skills, agents, connection providers, and front component registrations.
+- **Develop App** (`develop-app`): add objects, fields, logic functions, roles, views, layouts, skills, agents, connection providers, and Twenty UI front components.
 - **Publish App** (`publish-app`): prepare a Twenty app README, marketplace metadata, logo, screenshots, and public visual assets.
 - **Use Twenty MCP** (`use-twenty-mcp`): configure Twenty MCP, retrieve workspace records, and present results as readable Markdown.
 
@@ -16,11 +16,14 @@ The canonical workflow names are the five skills above.
 
 ## Included References
 
-- `references/design/front-component-ui.md`: front component UI guidance.
-- `references/develop-app/app-structure-and-cli.md`: app checks, CLI usage, and app structure.
+- `references/design/front-component-ui.md`: front component visual design guidance and Twenty UI component defaults.
+- `references/develop-app/app-structure.md`: app checks, entity creation, file structure, and validation checklist.
 - `references/develop-app/data-model.md`: objects, fields, relations, roles, and permissions.
+- `references/develop-app/front-components.md`: front component source, Twenty UI imports, data hooks, and browser verification.
 - `references/develop-app/logic.md`: logic functions, skills, agents, and connection providers.
 - `references/develop-app/layout.md`: views, navigation, page layouts, tabs, and front component placement.
+- `references/develop-app/standalone-pages.md`: full-page custom UI through standalone page layouts and front component widgets.
+- `references/manage-app/cli-and-sync.md`: CLI command behavior, remotes, sync modes, build, deploy, logs, and CI/CD.
 - `references/publish-app/prepare-for-app-store.md`: README, marketplace metadata, logos, screenshots, and public assets.
 - `references/use-twenty-mcp/setup.md`: workspace MCP URL normalization and OAuth setup.
 - `references/use-twenty-mcp/result-formatting.md`: readable Twenty MCP result formatting.
@@ -84,4 +87,4 @@ After creating the Twenty app in ChatGPT Developer Mode with your workspace MCP 
 
 Then add `"apps": "./.app.json"` to `packages/twenty-codex-plugin/.codex-plugin/plugin.json` and include `.app.json` in this package's `files` array.
 
-The repo-local marketplace entry is defined in `.agents/plugins/marketplace.json`.
+For local Codex Desktop discovery, keep a user-local `.agents/plugins/marketplace.json` entry that points to `./packages/twenty-codex-plugin`. That file is machine-local configuration and is not required by the plugin package.
