@@ -5,7 +5,7 @@ import { type ConnectionParametersInput } from '~/generated-metadata/graphql';
 import {
   isProtocolConfigured,
   isProtocolConfiguredForUpdate,
-} from '@/settings/accounts/utils/is-protocol-configured';
+} from '@/settings/accounts/utils/isProtocolConfigured';
 
 const connectionParameters = z
   .object({

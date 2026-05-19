@@ -17,7 +17,7 @@ import { type ImapSmtpCaldavAccountInput } from '@/accounts/types/ImapSmtpCaldav
 import {
   isProtocolConfigured,
   isProtocolConfiguredForUpdate,
-} from '@/settings/accounts/utils/is-protocol-configured';
+} from '@/settings/accounts/utils/isProtocolConfigured';
 import {
   connectionImapSmtpCalDav,
   connectionImapSmtpCalDavUpdate,
