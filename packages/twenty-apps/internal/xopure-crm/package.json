@@ -20,8 +20,10 @@
     "app-factory:pip3r": "cd ../../../.. && yarn tsx packages/twenty-apps/internal/xopure-crm/src/app-factory/plugin/pip3r-plugin.ts",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "vitest run -c vitest.unit.config.ts",
+    "test:watch": "vitest -c vitest.unit.config.ts",
+    "test:integration": "vitest run -c vitest.config.ts --passWithNoTests",
+    "test:integration:watch": "vitest -c vitest.config.ts --passWithNoTests"
   },
   "dependencies": {
     "twenty-client-sdk": "2.3.0",
