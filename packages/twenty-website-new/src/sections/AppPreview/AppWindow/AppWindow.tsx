@@ -1,12 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import {
-  useLayoutEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { theme } from '@/theme';
 import { VISUAL_TOKENS } from '../Shared/utils/app-preview-tokens';
 import { useWindowPointerInteractions } from '../WindowInteraction/use-window-pointer-interactions';

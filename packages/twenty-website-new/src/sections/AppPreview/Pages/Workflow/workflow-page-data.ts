@@ -30,7 +30,13 @@ export type WorkflowBranchLabel = {
 export type WorkflowEdgeDefinition = {
   from: string;
   to: string;
-  type: 'branch' | 'curve' | 'loopBack' | 'loopRight' | 'smoothStep' | 'vertical';
+  type:
+    | 'branch'
+    | 'curve'
+    | 'loopBack'
+    | 'loopRight'
+    | 'smoothStep'
+    | 'vertical';
 };
 
 export const workflowNodes: WorkflowNodeDefinition[] = [

@@ -385,9 +385,7 @@ export function ProductVisual({ activeScene, visual }: ProductVisualProps) {
                               key={option.label}
                               onClick={() => handleOptionSelect(index)}
                             >
-                              <PromptOptionIcon>
-                                {option.icon}
-                              </PromptOptionIcon>
+                              <PromptOptionIcon>{option.icon}</PromptOptionIcon>
                               {option.label}
                             </PromptOption>
                           ),

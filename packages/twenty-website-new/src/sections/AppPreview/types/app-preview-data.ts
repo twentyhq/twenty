@@ -118,7 +118,13 @@ export type WorkflowNodeDef = {
 export type WorkflowEdgeDef = {
   from: string;
   to: string;
-  type: 'branch' | 'curve' | 'loopBack' | 'loopRight' | 'smoothStep' | 'vertical';
+  type:
+    | 'branch'
+    | 'curve'
+    | 'loopBack'
+    | 'loopRight'
+    | 'smoothStep'
+    | 'vertical';
 };
 
 export type WorkflowBranchLabelDef = {

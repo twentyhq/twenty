@@ -467,10 +467,7 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
             {section.items.map((item) => (
               <RelationItem key={item.name}>
                 {item.avatarUrl ? (
-                  <PersonAvatar
-                    alt={item.name}
-                    src={item.avatarUrl}
-                  />
+                  <PersonAvatar alt={item.name} src={item.avatarUrl} />
                 ) : item.domain ? (
                   <FaviconLogo
                     domain={item.domain}

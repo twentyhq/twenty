@@ -33,7 +33,6 @@ function getNodeRightCenter(node: WorkflowNodeDefinition): Point {
   };
 }
 
-// Exits from source RIGHT side, goes right to target's X, then turns down to target TOP
 function getRightDownPath(
   fromNode: WorkflowNodeDefinition,
   toNode: WorkflowNodeDefinition,
@@ -50,8 +49,6 @@ function getRightDownPath(
   ].join(' ');
 }
 
-// Open loop-back path: exits Send Email bottom → down → right → up → left,
-// merging into the vertical Trigger→Iterator line.
 function getLoopBackPath(
   fromNode: WorkflowNodeDefinition,
   toNode: WorkflowNodeDefinition,

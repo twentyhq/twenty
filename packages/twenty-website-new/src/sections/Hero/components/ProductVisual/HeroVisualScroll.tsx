@@ -248,9 +248,7 @@ export function HeroVisualScroll({
               <ContentLayer data-active={phase === 0}>
                 {introHeading}
               </ContentLayer>
-              <ContentLayer data-active={phase === 1}>
-                {aiHeading}
-              </ContentLayer>
+              <ContentLayer data-active={phase === 1}>{aiHeading}</ContentLayer>
             </HeadingSlot>
 
             <BodyText data-phase={phase}>

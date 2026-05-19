@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 
 import type { AppPreviewConfig } from '@/sections/AppPreview';
 import { useAppPreviewState } from '@/sections/AppPreview/Shell/use-app-preview-state';
-import { QONTO_RECORD_PAGE } from '@/app/[locale]/(home)/app-preview.data';
 
 import {
   NEW_COMPANY_ROW,
   NEW_PERSON_ROW,
   NEW_TASK_ROWS,
   PROMPT_OPTIONS,
+  QONTO_RECORD_PAGE,
 } from './product-visual.data';
 
 type AutoplayOptions = {
