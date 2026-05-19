@@ -1,45 +1,43 @@
-import { msg } from '@lingui/core/macro';
-import type { AppLocale } from 'twenty-shared/translations';
-import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
-import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
-import { TalkToUsButton } from '@/sections/ContactCal';
 import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
+import { AI_HERO_TABS } from '@/app/[locale]/product/ai-hero-tabs.data';
 import { FEATURE_TILES } from '@/app/[locale]/product/feature.data';
-import { TABS } from '@/app/[locale]/product/tabs.data';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/product/three-cards.data';
 import {
-  Body,
   Eyebrow,
   Heading,
   HeadingPart,
   LinkButton,
 } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import {
   getRouteI18n,
   type LocaleRouteParams,
 } from '@/lib/i18n/utils/get-route-i18n';
 import { Pages } from '@/lib/pages';
-import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Feature } from '@/sections/Feature';
-import { Hero } from '@/sections/Hero';
-import { Menu, MENU_DATA } from '@/sections/Menu';
-import { Demo } from '@/sections/Demo';
-import {
-  ProductStepper,
-  type ProductStepperStepType,
-} from '@/sections/ProductStepper';
-import { DataModelVisual } from '@/sections/ProductStepper/visuals/DataModelVisual';
-import { WorkflowVisual } from '@/sections/ProductStepper/visuals/WorkflowVisual';
-import { LayoutVisual } from '@/sections/ProductStepper/visuals/LayoutVisual';
-import { Tabs } from '@/sections/Tabs';
-import { ThreeCards } from '@/sections/ThreeCards';
-import { theme } from '@/theme';
 import {
   buildBreadcrumbListJsonLd,
   buildRouteMetadata,
   JsonLd,
 } from '@/lib/seo';
+import { TalkToUsButton } from '@/sections/ContactCal';
+import { Demo } from '@/sections/Demo';
+import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
+import { Feature } from '@/sections/Feature';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import {
+  ProductStepper,
+  type ProductStepperStepType,
+} from '@/sections/ProductStepper';
+import { DataModelVisual } from '@/sections/ProductStepper/visuals/DataModelVisual';
+import { LayoutVisual } from '@/sections/ProductStepper/visuals/LayoutVisual';
+import { WorkflowVisual } from '@/sections/ProductStepper/visuals/WorkflowVisual';
+import { ThreeCards } from '@/sections/ThreeCards';
+import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
+import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
+import type { AppLocale } from 'twenty-shared/translations';
 
 export const generateMetadata = buildRouteMetadata('product');
 
@@ -104,60 +102,52 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
-      <Hero.Root scheme="light">
-        <Hero.Heading page={Pages.Product}>
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`A CRM for teams`)}
-          </HeadingPart>
-          <br />
-          <HeadingPart fontFamily="serif">{i18n._(msg`that`)}</HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">{i18n._(msg`moves fast`)}</HeadingPart>
-        </Hero.Heading>
-        <Hero.Body page={Pages.Product}>
-          {i18n._(
-            msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
-          )}
-        </Hero.Body>
-        <Hero.Cta>
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label={i18n._(msg`Get started`)}
-            variant="contained"
-          />
-        </Hero.Cta>
-        <Hero.ProductVisual visual={APP_PREVIEW_DATA.visual} />
-      </Hero.Root>
+      <Hero.HeroVisualScroll
+        aiBody={i18n._(
+          msg`Ask questions, automate tasks, and get insights. All powered by AI that understands your data.`,
+        )}
+        aiHeading={
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`AI that actually`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`helps you`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`work faster`)}
+            </HeadingPart>
+          </Heading>
+        }
+        ctaHref="https://app.twenty.com/welcome"
+        ctaLabel={i18n._(msg`Get started`)}
+        introBody={i18n._(
+          msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
+        )}
+        introHeading={
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`A CRM for teams`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`that`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`move fast`)}
+            </HeadingPart>
+          </Heading>
+        }
+        tabs={AI_HERO_TABS}
+        visual={APP_PREVIEW_DATA.visual}
+      />
 
       <TrustedBy.Root
         separator={i18n._(msg`trusted by`)}
         logos={TRUSTED_BY_LOGOS}
         clientCount={i18n._(msg`+10k others`)}
       />
-
-      <Tabs.Root>
-        <Eyebrow colorScheme="secondary">
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`AI & Automation`)}
-          </HeadingPart>
-        </Eyebrow>
-        <Heading size="lg" weight="light">
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`AI that actually`)}
-          </HeadingPart>
-          <br />
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`helps you`)}
-          </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`work faster`)}
-          </HeadingPart>
-        </Heading>
-        <Body size="sm">
-          {i18n._(msg`The AI understands your CRM and takes action.`)}
-        </Body>
-        <Tabs.TabGroup tabs={TABS} />
-      </Tabs.Root>
 
       <Feature.Root scheme="light">
         <Feature.Intro align="center" page={Pages.Product}>

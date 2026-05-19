@@ -9,11 +9,14 @@ import type {
   KanbanPageDefinition,
   PageDefinition,
   PageType,
+  RecordPageDefinition,
   TablePageDefinition,
   WorkflowPageDefinition,
 } from '../types';
 import { KanbanPage } from '../Pages/Kanban/KanbanPage';
+import { RecordPage } from '../Pages/Record/RecordPage';
 import { TablePage } from '../Pages/Table/TablePage';
+import { WorkflowPage } from '../Pages/Workflow/WorkflowPage';
 import { PagePreviewLoader } from '../Shared/components/PagePreviewLoader';
 
 const DashboardViewport = styled.div`
@@ -32,8 +35,6 @@ const DashboardViewport = styled.div`
 const loadSalesDashboardPageModule = () =>
   import('../Pages/Dashboard/SalesDashboardPage');
 
-const loadWorkflowPageModule = () => import('../Pages/Workflow/WorkflowPage');
-
 const SalesDashboardPage = dynamic(
   () =>
     loadSalesDashboardPageModule().then((mod) => ({
@@ -43,17 +44,6 @@ const SalesDashboardPage = dynamic(
     loading: () => (
       <PagePreviewLoader ariaLabel="Loading sales dashboard preview" />
     ),
-    ssr: false,
-  },
-);
-
-const WorkflowPage = dynamic(
-  () =>
-    loadWorkflowPageModule().then((mod) => ({
-      default: mod.WorkflowPage,
-    })),
-  {
-    loading: () => <PagePreviewLoader ariaLabel="Loading workflow preview" />,
     ssr: false,
   },
 );
@@ -68,6 +58,7 @@ const PAGE_RENDERERS = {
       <SalesDashboardPage page={page} />
     </DashboardViewport>
   ),
+  record: (page: RecordPageDefinition) => <RecordPage page={page} />,
   workflow: (page: WorkflowPageDefinition) => <WorkflowPage page={page} />,
 } satisfies {
   [K in PageType]: (page: Extract<PageDefinition, { type: K }>) => ReactNode;
@@ -91,6 +82,8 @@ export function renderPageDefinition(
       return PAGE_RENDERERS.kanban(page);
     case 'dashboard':
       return PAGE_RENDERERS.dashboard(page);
+    case 'record':
+      return PAGE_RENDERERS.record(page);
     case 'workflow':
       return PAGE_RENDERERS.workflow(page);
   }
