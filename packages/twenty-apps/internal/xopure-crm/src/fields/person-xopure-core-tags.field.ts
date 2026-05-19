@@ -13,7 +13,6 @@ export default defineField({
   description:
     'Primary segmentation tags separating customers, ambassadors, orders/commission participants, and prospects.',
   icon: 'IconTags',
-  defaultValue: [],
   options: [
     { id: 'da247f13-593b-48ef-a415-81de4ad4ce13', value: 'CUSTOMER', label: 'Customer', position: 0, color: 'green' },
     { id: 'd83306fa-7c8f-43f7-8dd0-bc2933cc460a', value: 'AMBASSADOR', label: 'Ambassador', position: 1, color: 'blue' },

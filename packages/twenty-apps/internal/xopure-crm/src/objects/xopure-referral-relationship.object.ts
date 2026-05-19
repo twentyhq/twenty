@@ -1,9 +1,9 @@
 import { defineObject, FieldType } from 'twenty-sdk/define';
 
 export const XOPURE_REFERRAL_RELATIONSHIP_OBJECT_ID =
-  '6ba7b820-9dad-11d1-80b4-00c04fd430c8';
+  '857eeffc-f6ca-4515-8380-916953f5fd95';
 export const XOPURE_REFERRAL_RELATIONSHIP_NAME_FIELD_ID =
-  '6ba7b821-9dad-11d1-80b4-00c04fd430c8';
+  'ca57e8ba-b78a-4b45-9c7e-0d1b6bce13e1';
 
 export default defineObject({
   universalIdentifier: XOPURE_REFERRAL_RELATIONSHIP_OBJECT_ID,
@@ -25,21 +25,21 @@ export default defineObject({
       icon: 'IconTopologyStarRing3',
     },
     {
-      universalIdentifier: 'a1c2d3e4-5678-4abc-def0-1234567890a1',
+      universalIdentifier: '181faf6a-53b2-438d-9a3f-4379f1c73685',
       type: FieldType.TEXT,
       name: 'sponsorAmbassadorExternalId',
       label: 'Sponsor ambassador ID',
       icon: 'IconUserStar',
     },
     {
-      universalIdentifier: 'b2d3e4f5-6789-4bcd-efa0-2345678901b2',
+      universalIdentifier: '55d2dec8-d549-4f2b-a615-0cdb00e7b268',
       type: FieldType.TEXT,
       name: 'sponsoredAmbassadorExternalId',
       label: 'Sponsored ambassador ID',
       icon: 'IconUser',
     },
     {
-      universalIdentifier: 'c3e4f5a6-7890-4cde-fab0-3456789012c3',
+      universalIdentifier: '061c1ddc-c40e-4e9a-8254-5fc1679d69d8',
       type: FieldType.TEXT,
       name: 'sponsorName',
       label: 'Sponsor name',
@@ -61,7 +61,7 @@ export default defineObject({
       defaultValue: 1,
     },
     {
-      universalIdentifier: 'f6b7c8d9-0123-4fab-cde0-6789012345f6',
+      universalIdentifier: 'b20ccebd-2ce8-4664-abcd-82e27cbb09ef',
       type: FieldType.BOOLEAN,
       name: 'isActive',
       label: 'Is active',
@@ -69,7 +69,7 @@ export default defineObject({
       defaultValue: true,
     },
     {
-      universalIdentifier: 'a7c8d9e0-1234-4abc-def0-7890123456a7',
+      universalIdentifier: '04fc5e01-4b4e-4a58-826b-347b7ac958d8',
       type: FieldType.DATE_TIME,
       name: 'activatedAt',
       label: 'Activated at',
@@ -78,7 +78,7 @@ export default defineObject({
       defaultValue: null,
     },
     {
-      universalIdentifier: 'b8d9e0f1-2345-4bcd-efa0-8901234567b8',
+      universalIdentifier: 'ef467df5-222a-43ae-ab3c-2cafad3c2544',
       type: FieldType.DATE_TIME,
       name: 'lastSyncedAt',
       label: 'Last synced at',

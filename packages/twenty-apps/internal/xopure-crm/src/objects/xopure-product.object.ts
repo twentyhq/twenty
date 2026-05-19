@@ -20,7 +20,7 @@ export default defineObject({
     { universalIdentifier: XOPURE_PRODUCT_SKU_FIELD_ID, type: FieldType.TEXT, name: 'sku', label: 'SKU', icon: 'IconBarcode' },
     { universalIdentifier: '01fd8a3d-88b9-43a0-b46b-4171654ad47b', type: FieldType.TEXT, name: 'slug', label: 'Slug', icon: 'IconLink' },
     { universalIdentifier: '30d632bf-a64e-48d1-a5c2-47139c00dce8', type: FieldType.NUMBER, name: 'priceCents', label: 'Price cents', icon: 'IconCurrencyDollar', defaultValue: 0 },
-    { universalIdentifier: '3a317cbd-48fd-453e-991c-7b4e7a105fe8', type: FieldType.TEXT, name: 'currency', label: 'Currency', icon: 'IconCash' },
+    { universalIdentifier: '3a317cbd-48fd-453e-991c-7b4e7a105fe8', type: FieldType.TEXT, name: 'currencyCode', label: 'Currency code', icon: 'IconCash' },
     { universalIdentifier: '0fb15744-00ee-408b-aff0-9a26edc06dbd', type: FieldType.TEXT, name: 'category', label: 'Category', icon: 'IconCategory' },
     {
       universalIdentifier: XOPURE_PRODUCT_STATUS_FIELD_ID,

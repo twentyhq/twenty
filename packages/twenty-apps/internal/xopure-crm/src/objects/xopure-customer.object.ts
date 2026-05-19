@@ -67,7 +67,7 @@ export default defineObject({
       name: 'coreTags',
       label: 'Core tags',
       icon: 'IconTags',
-      defaultValue: ['CUSTOMER'],
+      defaultValue: ["'CUSTOMER'"],
       options: [
         { id: '434d3631-d20d-4665-b861-1001c738de85', value: 'CUSTOMER', label: 'Customer', position: 0, color: 'green' },
         { id: '897910bb-746c-4a6a-bae6-2193021a8af2', value: 'AMBASSADOR', label: 'Ambassador', position: 1, color: 'blue' },

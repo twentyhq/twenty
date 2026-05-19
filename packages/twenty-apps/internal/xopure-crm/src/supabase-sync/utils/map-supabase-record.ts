@@ -207,7 +207,7 @@ const mapProduct = (record: Record<string, unknown>) =>
     sku: stringValue(record.sku),
     slug: stringValue(record.slug),
     priceCents: integerValue(record.price_cents) ?? 0,
-    currency: stringValue(record.currency) ?? 'USD',
+    currencyCode: stringValue(record.currency) ?? 'USD',
     category: stringValue(record.category),
     status: mapProductStatus(record),
     stockQuantity: integerValue(record.stock_quantity) ?? 0,
@@ -334,7 +334,7 @@ const mapOrder = (record: Record<string, unknown>) =>
     refundCents: integerValue(record.refund_amount_cents) ?? 0,
     totalCents:
       integerValue(record.total_cents) ?? integerValue(record.subtotal_cents) ?? 0,
-    currency: stringValue(record.currency) ?? 'USD',
+    currencyCode: stringValue(record.currency) ?? 'USD',
     paymentStatus: normalizeToken(record.payment_status) ?? 'UNKNOWN',
     orderedAt: isoDateValue(record.created_at),
     customerExternalId:
@@ -484,7 +484,7 @@ const mapPayment = (record: Record<string, unknown>) =>
     rail: stringValue(record.rail),
     methodCode: stringValue(record.method_code),
     amountCents: integerValue(record.amount_cents) ?? 0,
-    currency: stringValue(record.currency) ?? 'USD',
+    currencyCode: stringValue(record.currency) ?? 'USD',
     status: mapPaymentStatus(record.status),
     providerPaymentId: stringValue(record.provider_payment_id),
     refundCents: integerValue(record.refund_amount_cents) ?? 0,
