@@ -244,7 +244,7 @@ const MainPage = () => {
           e.currentTarget.style.borderColor = '#e0e0e0';
         }}
       >
-        See app settings
+        Open app settings
         <ArrowUpRight color="#333" />
       </a>
       <div
