@@ -7,8 +7,8 @@ const DARK_HEADING = '#ffffff';
 const LIGHT_BODY = 'rgba(28, 28, 28, 0.6)';
 const DARK_BODY = 'rgba(255, 255, 255, 0.7)';
 
-export const HERO_COLOR_TRANSITION_START = 0.15;
-export const HERO_COLOR_TRANSITION_END = 0.55;
+export const HERO_COLOR_TRANSITION_START = 0.3;
+export const HERO_COLOR_TRANSITION_END = 0.75;
 
 export const HERO_PANEL_TRANSITION_START = 0.2;
 export const HERO_PANEL_TRANSITION_END = 0.6;
@@ -49,6 +49,19 @@ export function mapScrollToPanelMix(progress: number): number {
 
 function smoothstep(value: number): number {
   return value * value * (3 - 2 * value);
+}
+
+// Dark reads as a layer fading in over white — ramps up slowly, then completes.
+function mapColorMixToDarkOpacity(colorMix: number): number {
+  if (colorMix <= 0) {
+    return 0;
+  }
+
+  if (colorMix >= 1) {
+    return 1;
+  }
+
+  return Math.pow(colorMix, 1.85);
 }
 
 function parseHexColor(hex: string): [number, number, number] {
@@ -102,16 +115,97 @@ function interpolateRgba(from: string, to: string, mix: number): string {
 }
 
 export function getHeroScrollColors(colorMix: number) {
+  const darkOverlayOpacity = mapColorMixToDarkOpacity(colorMix);
+
   return {
-    backgroundColor: interpolateHex(
+    backgroundColor: LIGHT_BACKGROUND,
+    darkOverlayOpacity,
+    headingColor: interpolateHex(
+      LIGHT_HEADING,
+      DARK_HEADING,
+      darkOverlayOpacity,
+    ),
+    bodyColor: interpolateRgba(LIGHT_BODY, DARK_BODY, darkOverlayOpacity),
+    menuBackgroundColor: interpolateHex(
       LIGHT_BACKGROUND,
       DARK_BACKGROUND,
-      colorMix,
+      darkOverlayOpacity,
     ),
-    headingColor: interpolateHex(LIGHT_HEADING, DARK_HEADING, colorMix),
-    bodyColor: interpolateRgba(LIGHT_BODY, DARK_BODY, colorMix),
-    patternOpacity: colorMix * 0.4,
+    patternOpacity: darkOverlayOpacity * 0.4,
   };
+}
+
+export function getHeroMenuScheme(darkOverlayOpacity: number) {
+  return darkOverlayOpacity >= 0.55 ? 'secondary' : 'primary';
+}
+
+type GetHeroMenuColorMixOptions = {
+  aiPanelRect: DOMRect | null;
+  colorMix: number;
+  isScrollDriven: boolean;
+  navHeight: number;
+  panelMix: number;
+  trackRect: DOMRect | null;
+  viewportHeight: number;
+};
+
+export function getHeroMenuColorMix({
+  aiPanelRect,
+  colorMix,
+  isScrollDriven,
+  navHeight,
+  panelMix,
+  trackRect,
+  viewportHeight,
+}: GetHeroMenuColorMixOptions): number {
+  if (!trackRect || trackRect.bottom <= navHeight) {
+    return 0;
+  }
+
+  if (!isScrollDriven) {
+    if (!aiPanelRect || aiPanelRect.bottom <= navHeight) {
+      return 0;
+    }
+
+    const visibleTop = Math.max(aiPanelRect.top, navHeight);
+    const visibleBottom = Math.min(aiPanelRect.bottom, viewportHeight);
+    const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+    const visibilityRatio =
+      visibleHeight / Math.max(aiPanelRect.height, 1);
+
+    if (visibilityRatio <= 0.2) {
+      return 0;
+    }
+
+    const exitFadeStart = navHeight + aiPanelRect.height * 0.35;
+    const exitFade =
+      aiPanelRect.top >= exitFadeStart
+        ? 1
+        : (aiPanelRect.bottom - navHeight) /
+          Math.max(exitFadeStart - navHeight, 1);
+
+    return Math.min(1, visibilityRatio) * smoothstep(Math.min(1, exitFade));
+  }
+
+  let menuColorMix = colorMix;
+
+  if (panelMix < 0.5) {
+    menuColorMix = colorMix * (panelMix / 0.5);
+  }
+
+  const isExitingHero =
+    trackRect.top < 0 && trackRect.bottom < viewportHeight;
+
+  if (isExitingHero) {
+    const exitProgress =
+      (viewportHeight - trackRect.bottom) /
+      Math.max(viewportHeight - navHeight, 1);
+    const exitFade = smoothstep(Math.min(1, Math.max(0, exitProgress)));
+
+    menuColorMix = menuColorMix * (1 - exitFade);
+  }
+
+  return menuColorMix;
 }
 
 export function getHeroScrollMotion(

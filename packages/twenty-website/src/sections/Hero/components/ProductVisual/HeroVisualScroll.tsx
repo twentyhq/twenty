@@ -2,6 +2,7 @@
 
 import {
   type ReactNode,
+  useEffect,
   useId,
   useLayoutEffect,
   useRef,
@@ -17,7 +18,12 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
-import { getHeroScrollColors, getHeroScrollMotion } from './hero-scroll-colors';
+import {
+  getHeroMenuColorMix,
+  getHeroScrollColors,
+  getHeroScrollMotion,
+} from './hero-scroll-colors';
+import { useProductHeroMenuSync } from './product-hero-menu-sync';
 import { ProductVisual } from './ProductVisual';
 import { useHeroScrollProgress } from './use-hero-scroll-progress';
 
@@ -44,8 +50,10 @@ const ScrollTrack = styled.section`
 `;
 
 const StickyFrame = styled.div`
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
+  position: relative;
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
@@ -54,6 +62,14 @@ const StickyFrame = styled.div`
     position: sticky;
     top: ${NAV_HEIGHT}px;
   }
+`;
+
+const DarkColorOverlay = styled.div`
+  background-color: #141414;
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
 `;
 
 const PatternOverlay = styled.div`
@@ -214,6 +230,8 @@ export function HeroVisualScroll({
 }: HeroScrollProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const heroViewportRef = useRef<HTMLDivElement>(null);
+  const aiPanelRef = useRef<HTMLDivElement>(null);
+  const menuSync = useProductHeroMenuSync();
   const { colorMix, isScrollDriven, panelMix } =
     useHeroScrollProgress(trackRef);
   const [activeTab, setActiveTab] = useState(0);
@@ -246,15 +264,47 @@ export function HeroVisualScroll({
     return () => resizeObserver.disconnect();
   }, [aiBody, aiHeading, introBody, introHeading, isScrollDriven, tabs]);
 
+  useEffect(() => {
+    if (!menuSync) {
+      return;
+    }
+
+    const updateMenuColorMix = () => {
+      const track = trackRef.current;
+      const trackRect = track?.getBoundingClientRect() ?? null;
+      const aiPanelRect = aiPanelRef.current?.getBoundingClientRect() ?? null;
+
+      menuSync.setMenuColorMix(
+        getHeroMenuColorMix({
+          aiPanelRect,
+          colorMix,
+          isScrollDriven,
+          navHeight: NAV_HEIGHT,
+          panelMix,
+          trackRect,
+          viewportHeight: window.innerHeight,
+        }),
+      );
+    };
+
+    updateMenuColorMix();
+    window.addEventListener('scroll', updateMenuColorMix, { passive: true });
+    window.addEventListener('resize', updateMenuColorMix);
+
+    return () => {
+      window.removeEventListener('scroll', updateMenuColorMix);
+      window.removeEventListener('resize', updateMenuColorMix);
+    };
+  }, [colorMix, isScrollDriven, menuSync, panelMix]);
+
   return (
     <ScrollTrack ref={trackRef}>
-      <StickyFrame
-        style={
-          isScrollDriven
-            ? { backgroundColor: heroColors.backgroundColor }
-            : { backgroundColor: INTRO_PANEL_COLORS.backgroundColor }
-        }
-      >
+      <StickyFrame>
+        {isScrollDriven ? (
+          <DarkColorOverlay
+            style={{ opacity: heroColors.darkOverlayOpacity }}
+          />
+        ) : null}
         <ScrollPatternOverlay style={{ opacity: heroColors.patternOpacity }}>
           <NextImage
             alt=""
@@ -310,6 +360,7 @@ export function HeroVisualScroll({
             </HeroPanel>
 
             <AiHeroPanel
+              ref={aiPanelRef}
               style={
                 isScrollDriven
                   ? {
