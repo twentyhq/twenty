@@ -140,12 +140,7 @@ export const AppWindow = ({ children }: AppWindowProps) => {
     const parentRect = parent.getBoundingClientRect();
 
     if (parentRect.width < MOBILE_PARENT_BREAKPOINT) {
-      const mobileWidth = parentRect.width;
-      const mobileHeight = Math.min(
-        parentRect.height,
-        mobileWidth / INITIAL_ASPECT_RATIO,
-      );
-      setSize({ width: mobileWidth, height: mobileHeight });
+      setSize({ width: parentRect.width, height: parentRect.height });
       setPosition({ left: 0, top: 0 });
       return;
     }
