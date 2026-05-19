@@ -15,10 +15,13 @@ import type {
   MenuSocialLinkType,
 } from '@/sections/Menu/types';
 
-import { getHeroMenuScheme, getHeroScrollColors } from './hero-scroll-colors';
+import {
+  getHeroMenuScheme,
+  getHeroScrollColorsFromOpacity,
+} from './hero-scroll-colors';
 
 type ProductHeroMenuContextValue = {
-  setMenuColorMix: (colorMix: number) => void;
+  setMenuDarkOpacity: (darkOverlayOpacity: number) => void;
 };
 
 const ProductHeroMenuContext =
@@ -39,9 +42,9 @@ export function ProductHeroMenuSync({
   navItems,
   socialLinks,
 }: ProductHeroMenuSyncProps) {
-  const [menuColorMix, setMenuColorMix] = useState(0);
+  const [menuDarkOpacity, setMenuDarkOpacity] = useState(0);
 
-  const heroMenuColors = getHeroScrollColors(menuColorMix);
+  const heroMenuColors = getHeroScrollColorsFromOpacity(menuDarkOpacity);
   const menuScheme: MenuScheme = getHeroMenuScheme(
     heroMenuColors.darkOverlayOpacity,
   );
@@ -49,7 +52,7 @@ export function ProductHeroMenuSync({
 
   const contextValue = useMemo(
     () => ({
-      setMenuColorMix,
+      setMenuDarkOpacity,
     }),
     [],
   );
