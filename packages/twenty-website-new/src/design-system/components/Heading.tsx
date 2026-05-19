@@ -1,15 +1,7 @@
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { Fragment } from 'react';
-
-export type HeadingType = {
-  fontFamily: 'sans' | 'serif' | 'mono';
-  text: string;
-  fontWeight?: 'light' | 'regular' | 'medium';
-  newLine?: boolean;
-  lineBreakBefore?: boolean;
-};
+import type { ReactNode } from 'react';
 
 const headingRootClassName = css`
   margin: 0;
@@ -113,20 +105,38 @@ export type HeadingFamily = 'sans' | 'serif' | 'mono';
 export type HeadingWeight = 'light' | 'regular' | 'medium';
 export type HeadingSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 
+type HeadingPartProps = {
+  children: ReactNode;
+  fontFamily: HeadingFamily;
+  fontWeight?: HeadingWeight;
+};
+
+export function HeadingPart({
+  children,
+  fontFamily,
+  fontWeight,
+}: HeadingPartProps) {
+  return (
+    <StyledSpan data-family={fontFamily} data-weight={fontWeight}>
+      {children}
+    </StyledSpan>
+  );
+}
+
 export type HeadingProps = {
   as?: HeadingAs;
-  segments: HeadingType | HeadingType[];
-  weight?: HeadingWeight;
-  size?: HeadingSize;
+  children: ReactNode;
   className?: string;
+  size?: HeadingSize;
+  weight?: HeadingWeight;
 };
 
 export function Heading({
-  as: Tag = 'h1',
-  segments,
-  weight = 'regular',
-  size = 'md',
+  as: Tag = 'h2',
+  children,
   className,
+  size = 'md',
+  weight = 'regular',
 }: HeadingProps) {
   const rootClassName = [headingRootClassName, className]
     .filter(Boolean)
@@ -134,31 +144,7 @@ export function Heading({
 
   return (
     <Tag className={rootClassName} data-weight={weight} data-size={size}>
-      {Array.isArray(segments) ? (
-        segments.map((segment, index) => {
-          const lineBreakBefore =
-            segment.newLine === true || segment.lineBreakBefore === true;
-
-          return (
-            <Fragment key={index}>
-              {lineBreakBefore ? <br /> : null}
-              <StyledSpan
-                data-family={segment.fontFamily}
-                data-weight={segment.fontWeight}
-              >
-                {segment.text}
-              </StyledSpan>
-            </Fragment>
-          );
-        })
-      ) : (
-        <StyledSpan
-          data-family={segments.fontFamily}
-          data-weight={segments.fontWeight}
-        >
-          {segments.text}
-        </StyledSpan>
-      )}
+      {children}
     </Tag>
   );
 }

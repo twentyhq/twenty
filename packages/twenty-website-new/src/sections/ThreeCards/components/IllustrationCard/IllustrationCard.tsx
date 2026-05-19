@@ -1,15 +1,17 @@
 'use client';
 
 import { ButtonShape } from '@/design-system/components/Button/ButtonShape';
-import { Body, Heading } from '@/design-system/components';
+import { Body, Heading, HeadingPart } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import { INFORMATIVE_ICONS } from '@/icons/informative';
-import { usePartnerApplicationModal } from '@/lib/partner-application';
+import { LocalizedLink } from '@/lib/i18n';
+import { usePartnerApplicationModal } from '@/sections/PartnerApplication';
 import { WebGlMount } from '@/lib/visual-runtime';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { THREE_CARDS_VISUALS } from '@/sections/ThreeCards/visuals';
 import { theme } from '@/theme';
-import { LocalizedLink } from '@/lib/i18n';
+import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { ThreeCardsCardShape } from './CardShape';
@@ -111,13 +113,12 @@ const BenefitIconSlot = styled.span`
 const benefitLabelClassName = css`
   display: block;
   overflow-wrap: anywhere;
-  --body-sm-color: ${theme.colors.primary.text[80]};
+  --color-text-muted: ${theme.colors.primary.text[80]};
 `;
 
 const simpleCardBodyClassName = css`
   && {
-    color: ${theme.colors.primary.text[80]};
-    --body-sm-color: ${theme.colors.primary.text[80]};
+    --color-text-muted: ${theme.colors.primary.text[80]};
   }
 `;
 
@@ -321,10 +322,12 @@ function PartnerProgramAction({
   label,
   programId,
 }: {
-  label: string;
+  label: MessageDescriptor;
   programId: 'technology' | 'content' | 'solutions';
 }) {
+  const { i18n } = useLingui();
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
+  const translatedLabel = i18n._(label);
 
   const openModal = () => {
     openPartnerApplicationModal(programId);
@@ -333,10 +336,10 @@ function PartnerProgramAction({
   return (
     <PartnerActionRow>
       <PartnerActionButton type="button" onClick={openModal}>
-        {label}
+        {translatedLabel}
       </PartnerActionButton>
       <PartnerActionIconButton
-        aria-label={label}
+        aria-label={translatedLabel}
         type="button"
         onClick={openModal}
       >
@@ -367,6 +370,7 @@ export function IllustrationCard({
   illustrationCard,
   variant = 'shaped',
 }: IllustrationCardProps) {
+  const { i18n } = useLingui();
   const Visual = THREE_CARDS_VISUALS[illustrationCard.illustration];
 
   return (
@@ -377,12 +381,11 @@ export function IllustrationCard({
           strokeColor={CARD_OUTLINE_COLOR}
         />
       )}
-      <Heading
-        as="h3"
-        segments={illustrationCard.heading}
-        size="xs"
-        weight="medium"
-      />
+      <Heading as="h3" size="xs" weight="medium">
+        <HeadingPart fontFamily="sans">
+          {i18n._(illustrationCard.heading)}
+        </HeadingPart>
+      </Heading>
       <CardRule />
       <CardEmbed>
         <WebGlMount>
@@ -393,22 +396,23 @@ export function IllustrationCard({
       <CardLowerSection>
         <CardBodyCell>
           <Body
-            body={illustrationCard.body}
             className={
               variant === 'simple' ? simpleCardBodyClassName : undefined
             }
             size="sm"
             weight="regular"
-          />
+          >
+            {i18n._(illustrationCard.body)}
+          </Body>
         </CardBodyCell>
 
         {variant === 'simple' && illustrationCard.benefits?.length ? (
           <BenefitList>
-            {illustrationCard.benefits.map((benefit) => {
+            {illustrationCard.benefits.map((benefit, benefitIndex) => {
               const BenefitIcon = INFORMATIVE_ICONS[benefit.icon ?? 'check'];
 
               return (
-                <BenefitItem key={benefit.text}>
+                <BenefitItem key={benefitIndex}>
                   <BenefitIconSlot aria-hidden>
                     <BenefitIcon
                       color="currentColor"
@@ -418,11 +422,12 @@ export function IllustrationCard({
                   </BenefitIconSlot>
                   <Body
                     as="span"
-                    body={benefit}
                     className={benefitLabelClassName}
                     size="sm"
                     weight="regular"
-                  />
+                  >
+                    {i18n._(benefit.text)}
+                  </Body>
                 </BenefitItem>
               );
             })}
@@ -439,17 +444,13 @@ export function IllustrationCard({
 
         {illustrationCard.attribution && (
           <CardFooter>
-            <Body
-              body={illustrationCard.attribution.role}
-              size="xs"
-              weight="medium"
-            />
+            <Body size="xs" weight="medium">
+              {i18n._(illustrationCard.attribution.role)}
+            </Body>
             <AttributionPipe aria-hidden />
-            <Body
-              body={illustrationCard.attribution.company}
-              size="xs"
-              weight="regular"
-            />
+            <Body size="xs" weight="regular">
+              {i18n._(illustrationCard.attribution.company)}
+            </Body>
             {illustrationCard.caseStudySlug !== undefined ? (
               <FooterTrailingAction>
                 <PartnerActionIconLinkButton

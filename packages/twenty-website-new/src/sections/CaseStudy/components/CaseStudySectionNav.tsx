@@ -1,7 +1,10 @@
 'use client';
 
+import { useLingui } from '@lingui/react';
 import { useScheduledOnScroll } from '@/lib/scroll';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import {
   IconBrandDiscord,
@@ -10,6 +13,8 @@ import {
   IconBrandX,
 } from '@tabler/icons-react';
 import { useCallback, useState, type MouseEvent } from 'react';
+
+const DEFAULT_LABEL = msg`On this page`;
 
 const HERO_ANCHOR_ID = 'case-study-hero';
 const SECTION_ID_PREFIX = 'case-study-section';
@@ -141,10 +146,18 @@ const SocialLink = styled.a`
 `;
 
 type CaseStudySectionNavProps = {
-  items: string[];
+  items: MessageDescriptor[];
+  label?: MessageDescriptor;
 };
 
-export function CaseStudySectionNav({ items }: CaseStudySectionNavProps) {
+export function CaseStudySectionNav({
+  items,
+  label = DEFAULT_LABEL,
+}: CaseStudySectionNavProps) {
+  const { i18n } = useLingui();
+  const resolvedLabel = i18n._(label);
+  const resolvedItems = items.map((item) => i18n._(item));
+
   const [visible, setVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -202,13 +215,13 @@ export function CaseStudySectionNav({ items }: CaseStudySectionNavProps) {
   return (
     <Shell $visible={visible} aria-hidden={!visible}>
       <Panel>
-        <Eyebrow>On this page</Eyebrow>
+        <Eyebrow>{resolvedLabel}</Eyebrow>
         <NavBody>
           <RailTrack>
             <RailFill $percent={progressPercent} />
           </RailTrack>
-          <NavList aria-label="On this page">
-            {items.map((item, index) => (
+          <NavList aria-label={resolvedLabel}>
+            {resolvedItems.map((item, index) => (
               <NavLink
                 key={index}
                 $active={index === activeIndex}

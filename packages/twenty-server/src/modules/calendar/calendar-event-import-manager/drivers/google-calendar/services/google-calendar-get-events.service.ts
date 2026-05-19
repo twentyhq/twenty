@@ -22,7 +22,7 @@ export class GoogleCalendarGetEventsService {
   public async getCalendarEvents(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'provider' | 'refreshToken' | 'id'
+      'provider' | 'refreshToken' | 'id' | 'workspaceId'
     >,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {
@@ -47,6 +47,7 @@ export class GoogleCalendarGetEventsService {
         .list({
           calendarId: 'primary',
           maxResults: 500,
+          singleEvents: true,
           syncToken: syncCursor,
           pageToken: nextPageToken,
           showDeleted: true,

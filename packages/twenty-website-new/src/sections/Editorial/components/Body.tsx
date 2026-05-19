@@ -1,11 +1,11 @@
 import { Body as BaseBody } from '@/design-system/components';
-import type { BodyType } from '@/design-system/components/Body';
 import { theme } from '@/theme';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { Children, type ReactNode } from 'react';
 
-const BodyParagraph = styled.div<{ $color: string }>`
-  --body-paragraph-color: ${({ $color }) => $color};
-  color: ${({ $color }) => $color};
+const bodyParagraphClassName = css`
+  color: var(--color-text-muted);
   min-width: 0;
 `;
 
@@ -44,8 +44,7 @@ const SingleColumnBody = styled.div`
 `;
 
 type EditorialBodyProps = {
-  body: BodyType | BodyType[];
-  color: string;
+  children: ReactNode;
   layout:
     | 'centered'
     | 'indented'
@@ -54,32 +53,20 @@ type EditorialBodyProps = {
     | 'two-column-right';
 };
 
-export function Body({ body, color, layout }: EditorialBodyProps) {
-  const paragraphs = Array.isArray(body) ? (
-    body.map((item, index) => (
-      <BodyParagraph $color={color} key={index}>
-        <BaseBody
-          as="p"
-          body={item}
-          family="sans"
-          size="md"
-          variant="body-paragraph"
-          weight="regular"
-        />
-      </BodyParagraph>
-    ))
-  ) : (
-    <BodyParagraph $color={color}>
+export function Body({ children, layout }: EditorialBodyProps) {
+  const paragraphs = Children.map(children, (child) => (
+    <div className={bodyParagraphClassName}>
       <BaseBody
         as="p"
-        body={body}
         family="sans"
         size="md"
         variant="body-paragraph"
         weight="regular"
-      />
-    </BodyParagraph>
-  );
+      >
+        {child}
+      </BaseBody>
+    </div>
+  ));
 
   if (
     layout === 'two-column' ||

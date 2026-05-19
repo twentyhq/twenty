@@ -1,12 +1,12 @@
 'use client';
 
-import { useTimeoutRegistry } from '@/lib/react';
+import { useLingui } from '@lingui/react';
+import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { useEffect, useState } from 'react';
 
-export const WRONG_CHOICE_POPUP_WIDTH = 321;
-const POPUP_VISIBLE_DURATION_MS = 3000;
+import { useTimedPopupDismissal } from './use-timed-popup-dismissal';
+import { WRONG_CHOICE_POPUP_WIDTH } from './wrong-choice-popup-constants';
 const POPUP_FADE_DURATION_MS = 240;
 
 const Shell = styled.div<{
@@ -97,14 +97,14 @@ const BodyText = styled.p`
   margin: 0;
 `;
 
-export type WrongChoicePopupProps = {
-  body: string;
+type WrongChoicePopupProps = {
+  body: MessageDescriptor;
   isClosingRequested?: boolean;
   layerIndex: number;
   left: number;
   onClose: () => void;
   top: number;
-  titleBar: string;
+  titleBar: MessageDescriptor;
   titleId: string;
 };
 
@@ -118,30 +118,8 @@ export function WrongChoicePopup({
   titleBar,
   titleId,
 }: WrongChoicePopupProps) {
-  const timeoutRegistry = useTimeoutRegistry();
-  const [isClosing, setIsClosing] = useState(false);
-
-  useEffect(() => {
-    return timeoutRegistry.schedule(() => {
-      setIsClosing(true);
-    }, POPUP_VISIBLE_DURATION_MS);
-  }, [timeoutRegistry]);
-
-  useEffect(() => {
-    if (isClosingRequested) {
-      setIsClosing(true);
-    }
-  }, [isClosingRequested]);
-
-  useEffect(() => {
-    if (!isClosing) {
-      return;
-    }
-
-    return timeoutRegistry.schedule(() => {
-      onClose();
-    }, POPUP_FADE_DURATION_MS);
-  }, [isClosing, onClose, timeoutRegistry]);
+  const { i18n } = useLingui();
+  const isClosing = useTimedPopupDismissal(isClosingRequested, onClose);
 
   return (
     <Shell
@@ -153,7 +131,7 @@ export function WrongChoicePopup({
       top={top}
     >
       <TitleBar>
-        <TitleText id={titleId}>{titleBar}</TitleText>
+        <TitleText id={titleId}>{i18n._(titleBar)}</TitleText>
         <CloseButton
           aria-label="Close dialog"
           onClick={() => undefined}
@@ -164,7 +142,7 @@ export function WrongChoicePopup({
       </TitleBar>
       <BodyRow>
         <IconMark aria-hidden="true">⊘</IconMark>
-        <BodyText>{body}</BodyText>
+        <BodyText>{i18n._(body)}</BodyText>
       </BodyRow>
     </Shell>
   );

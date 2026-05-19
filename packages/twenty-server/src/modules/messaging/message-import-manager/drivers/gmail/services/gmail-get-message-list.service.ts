@@ -31,7 +31,12 @@ export class GmailGetMessageListService {
   private async getMessageListWithoutCursor(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'provider' | 'accessToken' | 'refreshToken' | 'id' | 'handle'
+      | 'provider'
+      | 'accessToken'
+      | 'refreshToken'
+      | 'id'
+      | 'handle'
+      | 'workspaceId'
     >,
     messageFolders: Pick<
       MessageFolderEntity,

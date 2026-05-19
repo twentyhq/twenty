@@ -1,24 +1,18 @@
 import {
   Body as BaseBody,
-  type BodyProps,
+  type BodyAs,
+  type BodyFamily,
+  type BodySize,
+  type BodyVariant,
+  type BodyWeight,
 } from '@/design-system/components/Body';
 import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-
-const defaultHeroBodyColor = `var(--hero-body-color, ${theme.colors.primary.text[60]})`;
+import type { ReactNode } from 'react';
 
 const StyledBody = styled.div`
-  --body-sm-color: ${defaultHeroBodyColor};
-  color: ${defaultHeroBodyColor};
-
-  &[data-color-scheme='primary'] {
-    --hero-body-color: ${theme.colors.primary.text[60]};
-  }
-
-  &[data-color-scheme='secondary'] {
-    --hero-body-color: ${theme.colors.secondary.text[80]};
-  }
+  color: var(--color-text-muted, ${theme.colors.primary.text[60]});
 
   &[data-preserve-line-breaks='true'] {
     white-space: pre-line;
@@ -54,33 +48,51 @@ const StyledBody = styled.div`
       white-space: pre-line;
     }
 
+    &[data-page='articles'] {
+      max-width: 550px;
+    }
+
     &[data-page='caseStudies'] {
       max-width: 550px;
     }
   }
 `;
 
-export type HeroBodyColorScheme = 'primary' | 'secondary';
-
-export type HeroBodyProps = BodyProps & {
+type HeroBodyProps = {
+  as?: BodyAs;
+  children: ReactNode;
+  className?: string;
+  family?: BodyFamily;
   page: Page;
-  colorScheme?: HeroBodyColorScheme;
   preserveLineBreaks?: boolean;
+  size?: BodySize;
+  variant?: BodyVariant;
+  weight?: BodyWeight;
 };
 
 export function Body({
+  as,
+  children,
+  className,
+  family,
   page,
-  colorScheme,
   preserveLineBreaks = false,
-  ...bodyProps
+  size,
+  variant,
+  weight,
 }: HeroBodyProps) {
   return (
-    <StyledBody
-      data-color-scheme={colorScheme}
-      data-page={page}
-      data-preserve-line-breaks={preserveLineBreaks}
-    >
-      <BaseBody {...bodyProps} />
+    <StyledBody data-page={page} data-preserve-line-breaks={preserveLineBreaks}>
+      <BaseBody
+        as={as}
+        className={className}
+        family={family}
+        size={size}
+        variant={variant}
+        weight={weight}
+      >
+        {children}
+      </BaseBody>
     </StyledBody>
   );
 }

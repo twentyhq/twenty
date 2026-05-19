@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Determine project and artifact name
         id: project
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const workflowName = context.payload.workflow_run.name;
@@ -43,7 +43,7 @@ jobs:
 
       - name: Check if storybook artifact exists
         id: check-artifact
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const artifactName = '${{ steps.project.outputs.artifact_name }}';
@@ -65,7 +65,7 @@ jobs:
       - name: Get PR number
         if: steps.check-artifact.outputs.exists == 'true'
         id: pr-info
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const headBranch = context.payload.workflow_run.head_branch;
@@ -107,7 +107,7 @@ jobs:
 
       - name: Download storybook artifact from triggering run
         if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: ${{ steps.project.outputs.artifact_name }}
           path: storybook-static
@@ -120,7 +120,7 @@ jobs:
 
       - name: Upload storybook tarball
         if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ${{ steps.project.outputs.tarball_name }}
           path: /tmp/${{ steps.project.outputs.tarball_file }}
@@ -128,17 +128,20 @@ jobs:
 
       - name: Dispatch to ci-privileged
         if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          repository: twentyhq/ci-privileged
-          event-type: visual-regression
-          client-payload: >-
-            {
-              "pr_number": "${{ steps.pr-info.outputs.pr_number }}",
-              "run_id": "${{ github.run_id }}",
-              "repo": "${{ github.repository }}",
-              "project": "${{ steps.project.outputs.project }}",
-              "branch": "${{ github.event.workflow_run.head_branch }}",
-              "commit": "${{ github.event.workflow_run.head_sha }}"
-            }
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          PR_NUMBER: ${{ steps.pr-info.outputs.pr_number }}
+          RUN_ID: ${{ github.run_id }}
+          REPOSITORY: ${{ github.repository }}
+          PROJECT: ${{ steps.project.outputs.project }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          COMMIT: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            -f event_type=visual-regression \
+            -f "client_payload[pr_number]=$PR_NUMBER" \
+            -f "client_payload[run_id]=$RUN_ID" \
+            -f "client_payload[repo]=$REPOSITORY" \
+            -f "client_payload[project]=$PROJECT" \
+            -f "client_payload[branch]=$BRANCH" \
+            -f "client_payload[commit]=$COMMIT"

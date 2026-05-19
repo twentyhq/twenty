@@ -10,7 +10,6 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { beautifyExactDate } from '~/utils/date-utils';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
-import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -29,7 +28,6 @@ export const useBillingWording = () => {
   const { formatPrices } = useFormatPrices();
 
   const { currentPlan } = useCurrentPlan();
-  const { currentMeteredBillingPrice } = useCurrentMetered();
 
   const subscriptionStatus = useSubscriptionStatus();
 
@@ -74,8 +72,7 @@ export const useBillingWording = () => {
 
   const getCurrentIntervalLabel = () =>
     getIntervalLabelAsAdjectiveCapitalize(
-      currentMeteredBillingPrice.recurringInterval ===
-        SubscriptionInterval.Month,
+      currentBillingSubscription.interval === SubscriptionInterval.Month,
     );
 
   const enterprisePrice =

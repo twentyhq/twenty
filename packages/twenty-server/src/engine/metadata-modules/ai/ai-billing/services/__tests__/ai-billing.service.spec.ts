@@ -9,6 +9,7 @@ import { BillingUsageService } from 'src/engine/core-modules/billing/services/bi
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 describe('AiBillingService', () => {
@@ -84,7 +85,19 @@ describe('AiBillingService', () => {
         {
           provide: BillingUsageService,
           useValue: {
-            decrementAvailableCredits: jest.fn().mockResolvedValue(undefined),
+            decrementAvailableCreditsInCache: jest
+              .fn()
+              .mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              billingSubscription: {
+                currentPeriodStart: new Date('2026-04-01T00:00:00Z'),
+              },
+            }),
           },
         },
       ],
@@ -339,8 +352,8 @@ describe('AiBillingService', () => {
   });
 
   describe('calculateAndBillUsage', () => {
-    it('should calculate cost and emit billing event when model exists', () => {
-      service.calculateAndBillUsage(
+    it('should calculate cost and emit billing event when model exists', async () => {
+      await service.calculateAndBillUsage(
         'gpt-4o',
         { usage: mockTokenUsage },
         'workspace-1',

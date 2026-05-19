@@ -1,5 +1,5 @@
-import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
@@ -11,6 +11,7 @@ import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconFunction } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -28,7 +29,9 @@ export const SidePanelWorkflowSelectAction = ({
 
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
 
-  const toolFunctions = logicFunctions.filter((fn) => fn.isTool === true);
+  const toolFunctions = logicFunctions.filter((fn) =>
+    isDefined(fn.workflowActionTriggerSettings),
+  );
 
   const handleActionClick = (actionType: WorkflowActionType) => {
     onActionSelected({ type: actionType });
@@ -100,7 +103,7 @@ export const SidePanelWorkflowSelectAction = ({
                   size={16}
                 />
               )}
-              text={fn.name}
+              text={fn.workflowActionTriggerSettings?.label ?? fn.name}
               onClick={() => handleFunctionClick(fn.id)}
             />
           ))}

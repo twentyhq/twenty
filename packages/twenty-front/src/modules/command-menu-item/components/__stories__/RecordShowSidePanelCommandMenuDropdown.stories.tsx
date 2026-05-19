@@ -3,13 +3,13 @@ import { Provider as JotaiProvider } from 'jotai';
 import { userEvent, within } from 'storybook/test';
 
 import { RecordPageSidePanelCommandMenuDropdown } from '@/command-menu-item/components/RecordPageSidePanelCommandMenuDropdown';
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -44,6 +44,7 @@ const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
                     ...EMPTY_COMMAND_MENU_CONTEXT_API,
                     isInSidePanel: true,
                   },
+                  isInPreviewMode: false,
                 }}
               >
                 <Story />

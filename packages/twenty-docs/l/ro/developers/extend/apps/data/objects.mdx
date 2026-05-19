@@ -1,0 +1,93 @@
+---
+title: Obiecte
+description: Declarați noi tipuri de înregistrări — tabele personalizate cu propriile câmpuri — folosind defineObject.
+icon: tabel
+---
+
+**Obiectele** personalizate sunt tipuri noi de înregistrări pe care aplicația dvs. le adaugă într-un spațiu de lucru — carte poștală, factură, abonament, orice este specific domeniului dvs. Fiecare obiect își declară propria schemă (câmpuri, relații, valori implicite) și un identificator universal stabil, care este păstrat între sincronizări și implementări.
+
+```ts src/objects/post-card.object.ts
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+## Puncte cheie
+
+* `universalIdentifier` trebuie să fie unic și stabil între implementări.
+* Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
+* Tabloul `fields` este opțional — puteți defini obiecte fără câmpuri personalizate.
+* Câmpurile inline definite aici **nu** au nevoie de `objectUniversalIdentifier` — este moștenit de la obiectul părinte. Folosiți [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects) pentru a adăuga câmpuri la obiecte care nu vă aparțin.
+* Puteți genera obiecte noi cu `yarn twenty add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/l/ro/developers/extend/apps/getting-started/scaffolding).
+
+<Note>
+**Câmpurile de bază sunt adăugate automat.** Când definiți un obiect personalizat, Twenty creează pentru dvs. câmpuri standard precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`. Nu trebuie să le declarați în tabloul `fields` — doar câmpurile dvs. personalizate. Puteți suprascrie un câmp implicit declarând unul cu același nume, dar acest lucru este rareori o idee bună.
+</Note>
+
+## Ce urmează
+
+* **Conectați acest obiect la altele** — consultați [Relații](/l/ro/developers/extend/apps/data/relations) pentru modelul de relație bidirecțională.
+* **Adăugați câmpuri la obiecte din alte aplicații** — consultați [Extinderea obiectelor](/l/ro/developers/extend/apps/data/extending-objects) pentru `defineField()`.
+* **Afișați acest obiect în interfața utilizatorului** — consultați [Vizualizări](/l/ro/developers/extend/apps/layout/views) și [Elemente de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) pentru a-l plasa în bara laterală.

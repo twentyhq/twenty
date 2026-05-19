@@ -162,7 +162,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         colorScheme: 'System',
         userId: user.id,
         userEmail: user.email,
-        avatarUrl: userWorkspace.defaultAvatarUrl ?? '',
+        avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
         locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
       });
 
@@ -502,7 +502,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
             queryRunner,
           });
 
-        return savedFile.url;
+        return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
+          fileId: savedFile.id,
+          fileFolder: FileFolder.CorePicture,
+        });
       } catch (error) {
         if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
           return;
@@ -523,16 +526,23 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         },
       );
 
-    return savedFile?.url;
+    if (!isDefined(savedFile)) {
+      return;
+    }
+
+    return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
+      fileId: savedFile.id,
+      fileFolder: FileFolder.CorePicture,
+    });
   }
 
-  castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {
+  async castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {
     return {
       id: workspace.id,
       displayName: workspace.displayName,
       workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       logo: isDefined(workspace.logoFileId)
-        ? this.fileUrlService.signFileByIdUrl({
+        ? await this.fileUrlService.signFileByIdUrl({
             fileId: workspace.logoFileId,
             workspaceId: workspace.id,
             fileFolder: FileFolder.CorePicture,
@@ -573,37 +583,44 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     user: Pick<UserEntity, 'email'>,
     authProvider: AuthProviderEnum,
   ) {
+    const [availableWorkspacesForSignUp, availableWorkspacesForSignIn] =
+      await Promise.all([
+        Promise.all(
+          availableWorkspaces.availableWorkspacesForSignUp.map(
+            async ({ workspace, appToken }) => {
+              return {
+                ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
+                ...(appToken ? { personalInviteToken: appToken.value } : {}),
+              };
+            },
+          ),
+        ),
+        Promise.all(
+          availableWorkspaces.availableWorkspacesForSignIn.map(
+            async ({ workspace }) => {
+              return {
+                ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
+                loginToken: workspaceValidator.isAuthEnabled(
+                  authProvider,
+                  workspace,
+                )
+                  ? (
+                      await this.loginTokenService.generateLoginToken(
+                        user.email,
+                        workspace.id,
+                        AuthProviderEnum.Password,
+                      )
+                    ).token
+                  : undefined,
+              };
+            },
+          ),
+        ),
+      ]);
+
     return {
-      availableWorkspacesForSignUp:
-        availableWorkspaces.availableWorkspacesForSignUp.map(
-          ({ workspace, appToken }) => {
-            return {
-              ...this.castWorkspaceToAvailableWorkspace(workspace),
-              ...(appToken ? { personalInviteToken: appToken.value } : {}),
-            };
-          },
-        ),
-      availableWorkspacesForSignIn: await Promise.all(
-        availableWorkspaces.availableWorkspacesForSignIn.map(
-          async ({ workspace }) => {
-            return {
-              ...this.castWorkspaceToAvailableWorkspace(workspace),
-              loginToken: workspaceValidator.isAuthEnabled(
-                authProvider,
-                workspace,
-              )
-                ? (
-                    await this.loginTokenService.generateLoginToken(
-                      user.email,
-                      workspace.id,
-                      AuthProviderEnum.Password,
-                    )
-                  ).token
-                : undefined,
-            };
-          },
-        ),
-      ),
+      availableWorkspacesForSignUp,
+      availableWorkspacesForSignIn,
     };
   }
 

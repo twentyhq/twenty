@@ -264,7 +264,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Edit Layout',
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and not isLayoutCustomizationModeEnabled and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
+      'pageType == "RECORD_PAGE" and not isLayoutCustomizationModeEnabled and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT,

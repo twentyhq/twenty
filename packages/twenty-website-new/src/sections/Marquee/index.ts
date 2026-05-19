@@ -1,0 +1,1 @@
+export { Marquee } from './Marquee';

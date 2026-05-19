@@ -36,6 +36,7 @@ type FrontComponentWorkerEffectProps = {
   applicationAccessToken?: string;
   apiUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  applicationVariables?: Record<string, string>;
   frontComponentId: string;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   setThread: React.Dispatch<
@@ -52,6 +53,7 @@ export const FrontComponentWorkerEffect = ({
   applicationAccessToken,
   apiUrl,
   sdkClientUrls,
+  applicationVariables,
   frontComponentId,
   setReceiver,
   setThread,
@@ -121,6 +123,7 @@ export const FrontComponentWorkerEffect = ({
         applicationAccessToken,
         apiUrl,
         sdkClientUrls,
+        applicationVariables,
       })
       .catch((error: Error) => {
         setError(error);
@@ -143,6 +146,7 @@ export const FrontComponentWorkerEffect = ({
     applicationAccessToken,
     apiUrl,
     sdkClientUrls,
+    applicationVariables,
     frontComponentId,
     setError,
     setReceiver,

@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, type Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -61,10 +61,7 @@ export class ApplicationRegistrationService {
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
-      where: [
-        { id, ownerWorkspaceId },
-        { id, ownerWorkspaceId: IsNull() },
-      ],
+      where: { id, ownerWorkspaceId },
     });
 
     if (!registration) {
@@ -278,6 +275,14 @@ export class ApplicationRegistrationService {
       params.universalIdentifier,
     );
 
+    const curatedIdentifiers = new Set(
+      MARKETPLACE_CURATED_APPLICATIONS.map(
+        (entry) => entry.universalIdentifier,
+      ),
+    );
+
+    const isFeatured = curatedIdentifiers.has(params.universalIdentifier);
+
     if (isDefined(existing)) {
       await this.applicationRegistrationRepository.save({
         ...existing,
@@ -286,16 +291,9 @@ export class ApplicationRegistrationService {
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
+        isFeatured,
       });
     } else {
-      const curatedIdentifiers = new Set(
-        MARKETPLACE_CURATED_APPLICATIONS.map(
-          (entry) => entry.universalIdentifier,
-        ),
-      );
-
-      const isFeatured = curatedIdentifiers.has(params.universalIdentifier);
-
       const registration = this.applicationRegistrationRepository.create({
         universalIdentifier: params.universalIdentifier,
         name: params.name,

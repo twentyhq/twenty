@@ -32,9 +32,9 @@ import {
   type CodeInterpreterFileInput,
   type CodeInterpreterInput,
 } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/types/code-interpreter-input.type';
+import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -110,7 +110,7 @@ export class CodeInterpreterTool implements Tool {
       );
 
       const serverUrl = this.twentyConfigService.get('SERVER_URL');
-      const sessionToken = this.generateSessionToken(
+      const sessionToken = await this.generateSessionToken(
         workspaceId,
         userId,
         userWorkspaceId,
@@ -212,20 +212,20 @@ export class CodeInterpreterTool implements Tool {
         ),
       );
 
-      return {
+      const output = {
         success: result.exitCode === 0,
         message:
           result.exitCode === 0
             ? 'Code executed successfully'
             : 'Code execution failed',
-        result: {
-          stdout: result.stdout,
-          stderr: result.stderr,
-          exitCode: result.exitCode,
-          files: allOutputFileUrls,
-        },
+        stdout: result.stdout,
+        stderr: result.stderr,
+        exitCode: result.exitCode,
+        files: allOutputFileUrls,
         error: result.error,
       };
+
+      return output;
     } catch (error) {
       this.logger.error('Code interpreter execution failed', error);
 
@@ -293,16 +293,11 @@ export class CodeInterpreterTool implements Tool {
     return inputFiles;
   }
 
-  private generateSessionToken(
+  private async generateSessionToken(
     workspaceId: string,
     userId?: string,
     userWorkspaceId?: string,
-  ): string {
-    const secret = this.jwtWrapperService.generateAppSecret(
-      JwtTokenTypeEnum.ACCESS,
-      workspaceId,
-    );
-
+  ): Promise<string> {
     const payload: AccessTokenJwtPayload = {
       sub: userId ?? workspaceId,
       type: JwtTokenTypeEnum.ACCESS,
@@ -312,9 +307,8 @@ export class CodeInterpreterTool implements Tool {
       authProvider: AuthProviderEnum.Password,
     };
 
-    return this.jwtWrapperService.sign(payload, {
-      secret,
-      expiresIn: '5m', // Short-lived token for code execution session
+    return this.jwtWrapperService.signAsyncOrThrow(payload, {
+      expiresIn: '5m',
     });
   }
 
@@ -349,7 +343,7 @@ export class CodeInterpreterTool implements Tool {
         },
       });
 
-      const signedUrl = this.fileUrlService.signFileByIdUrl({
+      const signedUrl = await this.fileUrlService.signFileByIdUrl({
         fileId: savedFile.id,
         workspaceId,
         fileFolder: FileFolder.AgentChat,

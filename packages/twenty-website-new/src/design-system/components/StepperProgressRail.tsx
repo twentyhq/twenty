@@ -117,7 +117,10 @@ export function StepperProgressRail({
                   data-active={String(isActive)}
                   style={{ backgroundColor: inactiveColor }}
                 >
-                  <PillFill style={{ height: `${fillPercentage}%` }} />
+                  <PillFill
+                    style={{ height: `${fillPercentage}%` }}
+                    suppressHydrationWarning
+                  />
                 </PillTrack>
                 <StepLabel data-visible={String(isActive)}>
                   {String(index + 1).padStart(2, '0')}

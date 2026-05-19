@@ -1,44 +1,96 @@
-import { FAQ_DATA } from '@/sections/Faq/data';
-import { MENU_DATA } from '@/sections/Menu/data';
-import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
-import { TalkToUsButton } from '@/lib/contact-cal';
-import { FEATURE_DATA } from '@/app/[locale]/product/feature.data';
-import { HERO_DATA } from '@/app/[locale]/product/hero.data';
-import { SIGNOFF_DATA } from '@/app/[locale]/product/signoff.data';
-import { STEPPER_DATA } from '@/app/[locale]/product/stepper.data';
-import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/[locale]/product/three-cards.data';
-import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
-import { Pages } from '@/lib/pages';
+import { msg } from '@lingui/core/macro';
+import type { AppLocale } from 'twenty-shared/translations';
+import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
+import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
+import { TalkToUsButton } from '@/sections/ContactCal';
+import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
+import { FEATURE_TILES } from '@/app/[locale]/product/feature.data';
+import { TABS } from '@/app/[locale]/product/tabs.data';
+import { ILLUSTRATION_CARDS } from '@/app/[locale]/product/three-cards.data';
+import {
+  Body,
+  Eyebrow,
+  Heading,
+  HeadingPart,
+  LinkButton,
+} from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/utils/get-route-i18n';
+import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Faq } from '@/sections/Faq/components';
-import { Feature } from '@/sections/Feature/components';
-import { Hero } from '@/sections/Hero/components';
-import { Menu } from '@/sections/Menu/components';
-import { ProductStepper } from '@/sections/ProductStepper/components';
-import { Signoff } from '@/sections/Signoff/components';
-import { ThreeCards } from '@/sections/ThreeCards/components';
-import { TrustedBy } from '@/sections/TrustedBy/components';
+import { Feature } from '@/sections/Feature';
+import { Hero } from '@/sections/Hero';
+import { Menu, MENU_DATA } from '@/sections/Menu';
+import { Demo } from '@/sections/Demo';
+import {
+  ProductStepper,
+  type ProductStepperStepType,
+} from '@/sections/ProductStepper';
+import { DataModelVisual } from '@/sections/ProductStepper/visuals/DataModelVisual';
+import { WorkflowVisual } from '@/sections/ProductStepper/visuals/WorkflowVisual';
+import { LayoutVisual } from '@/sections/ProductStepper/visuals/LayoutVisual';
+import { Tabs } from '@/sections/Tabs';
+import { ThreeCards } from '@/sections/ThreeCards';
 import { theme } from '@/theme';
-import { buildRouteMetadata } from '@/lib/seo';
+import {
+  buildBreadcrumbListJsonLd,
+  buildRouteMetadata,
+  JsonLd,
+} from '@/lib/seo';
 
 export const generateMetadata = buildRouteMetadata('product');
 
-export default async function ProductPage() {
-  const stats = await fetchCommunityStats();
+type ProductPageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function ProductPage({ params }: ProductPageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
+
+  const PRODUCT_STEPS: ProductStepperStepType[] = [
+    {
+      icon: 'users',
+      heading: (
+        <HeadingPart fontFamily="sans">{i18n._(msg`Data model`)}</HeadingPart>
+      ),
+      body: msg`Add objects and fields`,
+      visual: DataModelVisual,
+    },
+    {
+      icon: 'check',
+      heading: (
+        <HeadingPart fontFamily="sans">{i18n._(msg`Automation`)}</HeadingPart>
+      ),
+      body: msg`Create a workflow`,
+      visual: WorkflowVisual,
+    },
+    {
+      icon: 'eye',
+      heading: (
+        <HeadingPart fontFamily="sans">{i18n._(msg`Layout`)}</HeadingPart>
+      ),
+      body: msg`Tailor record pages, menus, and views`,
+      visual: LayoutVisual,
+    },
+  ];
 
   return (
     <>
-      {/*
-       * Above-the-fold hero scene. Preload kicks off the GLB fetch in
-       * parallel with the JS chunk download, so the model is already in
-       * the browser cache by the time Three.js asks for it.
-       */}
-      <link
-        as="fetch"
-        href="/illustrations/product/hero/hero.glb"
-        rel="preload"
+      <JsonLd
+        data={buildBreadcrumbListJsonLd(
+          [
+            { name: 'Home', path: '/' },
+            { name: 'Product', path: '/product' },
+          ],
+          i18n.locale as AppLocale,
+        )}
       />
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
@@ -52,106 +104,169 @@ export default async function ProductPage() {
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
-      <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
-        <Hero.Heading page={Pages.Product} segments={HERO_DATA.heading} />
-        <Hero.Body body={HERO_DATA.body} page={Pages.Product} />
+      <Hero.Root scheme="light">
+        <Hero.Heading page={Pages.Product}>
+          <HeadingPart fontFamily="serif">
+            {i18n._(msg`A CRM for teams`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="serif">{i18n._(msg`that`)}</HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">{i18n._(msg`moves fast`)}</HeadingPart>
+        </Hero.Heading>
+        <Hero.Body page={Pages.Product}>
+          {i18n._(
+            msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
+          )}
+        </Hero.Body>
         <Hero.Cta>
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label="Get started"
-            type="anchor"
+            label={i18n._(msg`Get started`)}
             variant="contained"
           />
         </Hero.Cta>
-        <Hero.ProductVisual />
+        <Hero.ProductVisual visual={APP_PREVIEW_DATA.visual} />
       </Hero.Root>
 
-      <TrustedBy.Root>
-        <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
-        <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
-        <TrustedBy.ClientCount label={TRUSTED_BY_DATA.clientCountLabel.text} />
-      </TrustedBy.Root>
+      <TrustedBy.Root
+        separator={i18n._(msg`trusted by`)}
+        logos={TRUSTED_BY_LOGOS}
+        clientCount={i18n._(msg`+10k others`)}
+      />
 
-      <Feature.Root backgroundColor={theme.colors.primary.background[100]}>
+      <Tabs.Root>
+        <Eyebrow colorScheme="secondary">
+          <HeadingPart fontFamily="sans">
+            {i18n._(msg`AI & Automation`)}
+          </HeadingPart>
+        </Eyebrow>
+        <Heading size="lg" weight="light">
+          <HeadingPart fontFamily="serif">
+            {i18n._(msg`AI that actually`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="serif">
+            {i18n._(msg`helps you`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {i18n._(msg`work faster`)}
+          </HeadingPart>
+        </Heading>
+        <Body size="sm">
+          {i18n._(msg`The AI understands your CRM and takes action.`)}
+        </Body>
+        <Tabs.TabGroup tabs={TABS} />
+      </Tabs.Root>
+
+      <Feature.Root scheme="light">
         <Feature.Intro align="center" page={Pages.Product}>
-          <Eyebrow
-            colorScheme="primary"
-            heading={FEATURE_DATA.eyebrow.heading}
-          />
-          <Heading segments={FEATURE_DATA.heading} size="lg" weight="light" />
+          <Eyebrow>
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Core Features`)}
+            </HeadingPart>
+          </Eyebrow>
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`Everything you need,`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`out of the box`)}
+            </HeadingPart>
+          </Heading>
         </Feature.Intro>
-        <Feature.Tiles mask={FEATURE_DATA.mask} tiles={FEATURE_DATA.tiles} />
+        <Feature.Tiles tiles={FEATURE_TILES} />
       </Feature.Root>
 
-      <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
+      <ThreeCards.Root scheme="light">
         <ThreeCards.Intro page={Pages.Product} align="left">
-          <Eyebrow
-            colorScheme="primary"
-            heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
-          />
-          <Heading
-            segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
-            size="lg"
-            weight="light"
-          />
-          <Body body={THREE_CARDS_ILLUSTRATION_DATA.body} size="sm" />
+          <Eyebrow>
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Stop settling for trade-offs.`)}
+            </HeadingPart>
+          </Eyebrow>
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`A modern CRM with`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`an intuitive interface`)}
+            </HeadingPart>
+          </Heading>
         </ThreeCards.Intro>
-        <ThreeCards.IllustrationCards
-          illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
-        />
+        <ThreeCards.IllustrationCards illustrationCards={ILLUSTRATION_CARDS} />
       </ThreeCards.Root>
 
       <ProductStepper.Flow
-        body={STEPPER_DATA.body}
-        eyebrow={STEPPER_DATA.eyebrow}
-        heading={STEPPER_DATA.heading}
-        steps={STEPPER_DATA.steps}
-      />
-
-      <Signoff.Root
-        backgroundColor={theme.colors.secondary.background[5]}
-        color={theme.colors.primary.text[100]}
-        page={Pages.Product}
+        body={i18n._(
+          msg`Need a quick change? Skip the engineering ticket. Customize your workspace in minutes.`,
+        )}
+        eyebrow={i18n._(msg`Customization`)}
+        steps={PRODUCT_STEPS}
       >
-        <Signoff.Heading page={Pages.Product} segments={SIGNOFF_DATA.heading} />
-        <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.Product} />
-        <Signoff.Cta>
+        <HeadingPart fontFamily="serif">
+          {i18n._(msg`Go the extra mile`)}
+        </HeadingPart>{' '}
+        <HeadingPart fontFamily="sans">{i18n._(msg`with no-code`)}</HeadingPart>
+      </ProductStepper.Flow>
+
+      <Demo.Root>
+        <Eyebrow>
+          <HeadingPart fontFamily="sans">
+            {i18n._(msg`Try it live`)}
+          </HeadingPart>
+        </Eyebrow>
+        <Heading size="lg" weight="light">
+          <HeadingPart fontFamily="serif">
+            {i18n._(msg`A demo worth a`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">
+            {i18n._(msg`thousand words`)}
+          </HeadingPart>
+        </Heading>
+        <Demo.Cta>
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label="Get started"
-            type="anchor"
+            label={i18n._(msg`Try Twenty Cloud`)}
             variant="contained"
           />
-          <TalkToUsButton
-            color="secondary"
-            label="Talk to us"
-            variant="outlined"
-          />
-        </Signoff.Cta>
-      </Signoff.Root>
+        </Demo.Cta>
+        <Demo.Preview visual={APP_PREVIEW_DATA.visual} />
+      </Demo.Root>
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
-          <Faq.Heading segments={FAQ_DATA.heading} />
+          <Eyebrow colorScheme="secondary">
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Any Questions?`)}
+            </HeadingPart>
+          </Eyebrow>
+          <Faq.Heading>
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`Stop fighting custom.`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Start building, with Twenty`)}
+            </HeadingPart>
+          </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label="Get started"
-              type="anchor"
+              label={i18n._(msg`Get started`)}
               variant="contained"
             />
             <TalkToUsButton
               color="primary"
-              label="Talk to us"
+              label={msg`Talk to us`}
               variant="outlined"
             />
           </Faq.Cta>
         </Faq.Intro>
-        <Faq.Items questions={FAQ_DATA.questions} />
+        <Faq.Items questions={FAQ_QUESTIONS} />
       </Faq.Root>
     </>
   );

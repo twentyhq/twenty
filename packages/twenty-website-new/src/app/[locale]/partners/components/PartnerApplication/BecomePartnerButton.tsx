@@ -4,7 +4,10 @@ import {
   BaseButton,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
-import { usePartnerApplicationModal } from '@/lib/partner-application';
+import { useLingui } from '@lingui/react';
+import { usePartnerApplicationModal } from '@/sections/PartnerApplication';
+import type { MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 const StyledTrigger = styled.button`
@@ -13,15 +16,16 @@ const StyledTrigger = styled.button`
 
 type BecomePartnerButtonProps = {
   color?: 'primary' | 'secondary';
-  label?: string;
+  label?: MessageDescriptor;
   variant?: 'contained' | 'outlined';
 };
 
 export function BecomePartnerButton({
   color = 'secondary',
-  label = 'Become a partner',
+  label = msg`Become a partner`,
   variant = 'contained',
 }: BecomePartnerButtonProps) {
+  const { i18n } = useLingui();
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
 
   return (
@@ -33,7 +37,7 @@ export function BecomePartnerButton({
         openPartnerApplicationModal();
       }}
     >
-      <BaseButton color={color} label={label} variant={variant} />
+      <BaseButton color={color} label={i18n._(label)} variant={variant} />
     </StyledTrigger>
   );
 }

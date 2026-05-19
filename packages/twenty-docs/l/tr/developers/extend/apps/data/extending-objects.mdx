@@ -1,0 +1,48 @@
+---
+title: Nesneleri Genişletme
+description: Standart Twenty nesnelerine (Person, Company, …) alanlar ekleyin veya `defineField` kullanarak diğer uygulamalardaki nesnelere alan ekleyin.
+icon: wand-magic-sparkles
+---
+
+Sahibi olmadığınız bir nesneye alan eklemek için `defineField()` kullanın — Person veya Company gibi standart bir Twenty nesnesi ya da başka bir yüklü uygulama tarafından sağlanan bir nesne. [`defineObject`](/l/tr/developers/extend/apps/data/objects) içinde tanımlanan satır içi alanların aksine, bağımsız alanlar, hangi nesneyi genişlettiklerini belirtmek için bir `objectUniversalIdentifier` gerektirir.
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+## Önemli noktalar
+
+* `objectUniversalIdentifier` hedef nesneyi tanımlar. Standart Twenty nesneleri için sabiti `twenty-sdk` içinden içe aktarın:
+
+  ```ts
+  import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier
+  // STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier
+  // …
+  ```
+
+* Alanları **`defineObject()` içinde satır içi tanımlarken**, `objectUniversalIdentifier`'a **ihtiyaç duymazsınız** — üst nesneden devralınır.
+
+* `defineField()`, `defineObject()` ile oluşturmadığınız nesnelere alan eklemenin tek yoludur.
+
+* Dosya konumu size bağlıdır. Genel kabul gören yapı `src/fields/\<name>.field.ts` şeklindedir, ancak SDK `src/` içinde herhangi bir yerdeki alanları algılar.
+
+## Mevcut bir nesneye ilişki ekleme
+
+Bir ilişki alanı eklemek için (örneğin özel nesnenizi standart bir `Person` nesnesine bağlamak), `FieldType.RELATION` ile `defineField()` kullanın. Desen, satır içi ilişkilerle aynıdır ancak `objectUniversalIdentifier` açıkça ayarlanır. Çift yönlü desen için [Relations](/l/tr/developers/extend/apps/data/relations) bölümüne bakın.

@@ -1,4 +1,4 @@
-export type ReadJsonBodyResult<T> =
+type ReadJsonBodyResult<T> =
   | { ok: true; value: T }
   | { ok: false; error: 'invalid-json' | 'too-large' | 'wrong-content-type' };
 

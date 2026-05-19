@@ -44,6 +44,7 @@ export const registerCommands = (program: Command): void => {
       '-o, --once',
       'Build and sync once, then exit (useful for CI, scripts, and pre-commit hooks)',
     )
+    .option('--debounceMs <ms>', 'Debounce in ms (default: 2 000)')
     .option('-v, --verbose', 'Show detailed logs')
     .option('-d, --debug', 'Show detailed logs (alias for --verbose)')
     .action(async (appPath, options) => {
@@ -59,6 +60,9 @@ export const registerCommands = (program: Command): void => {
       const commonOptions = {
         appPath: formatPath(appPath),
         verbose: options.verbose || options.debug,
+        debounceMs: options.debounceMs
+          ? parseInt(options.debounceMs, 10)
+          : undefined,
       };
 
       if (options.once) {
@@ -93,7 +97,7 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('deploy [appPath]')
-    .description('Build and upload application to a Twenty server')
+    .description("Publish a new version to a Twenty server's registry")
     .option('-r, --remote <name>', 'Deploy to a specific remote')
     .action(async (appPath, options) => {
       await deployCommand.execute({
@@ -115,9 +119,18 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('catalog-sync')
-    .description('Trigger marketplace catalog sync on the server')
+    .description(
+      '[Deprecated] Moved under server. Use `yarn twenty server catalog-sync`.',
+    )
     .option('-r, --remote <name>', 'Sync on a specific remote')
     .action(async (options) => {
+      console.warn(
+        chalk.yellow(
+          '`yarn twenty catalog-sync` is deprecated and will be removed in a future release.\n' +
+            'Use `yarn twenty server catalog-sync` instead.\n',
+        ),
+      );
+
       await catalogSyncCommand.execute({
         remote: options.remote,
       });

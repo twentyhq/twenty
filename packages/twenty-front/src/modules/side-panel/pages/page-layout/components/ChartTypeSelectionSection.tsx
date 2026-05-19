@@ -12,7 +12,6 @@ const graphTypeOptions = [
   GraphType.LINE,
   GraphType.PIE,
   GraphType.AGGREGATE,
-  GraphType.GAUGE,
 ];
 
 const StyledChartTypeSelectionContainer = styled.div`

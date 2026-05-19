@@ -8,6 +8,9 @@ import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.enti
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
+import { ConnectionProviderOAuthController } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth.controller';
+import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
@@ -60,6 +63,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -115,11 +119,14 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     DomainServerConfigModule,
     ApplicationRegistrationModule,
     ApplicationModule,
+    ConnectionProviderModule,
+    ApplicationConnectionsModule,
     WorkspaceCacheModule,
     CoreEntityCacheModule,
     SecureHttpClientModule,
     EnterpriseModule,
     FileModule,
+    ConnectedAccountTokenEncryptionModule,
   ],
   controllers: [
     GoogleAuthController,
@@ -128,6 +135,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MicrosoftAPIsAuthController,
     OAuthPropagatorController,
     SSOAuthController,
+    ConnectionProviderOAuthController,
   ],
   providers: [
     SignInUpService,

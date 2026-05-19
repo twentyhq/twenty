@@ -1,10 +1,9 @@
-import { Heading, type HeadingType } from '@/design-system/components/Heading';
+import { Heading } from '@/design-system/components/Heading';
 import { RectangleFillIcon } from '@/icons';
-
-export type EyebrowType = { heading: HeadingType };
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import type { ReactNode } from 'react';
 
 const EyebrowRow = styled.div`
   align-items: center;
@@ -37,16 +36,16 @@ const eyebrowLabelClassName = css`
   }
 `;
 
-type EyebrowProps = {
-  heading: HeadingType;
-  colorScheme: 'primary' | 'secondary';
+export type EyebrowProps = {
+  children: ReactNode;
+  colorScheme?: 'primary' | 'secondary';
   markerHeight?: number;
   markerWidth?: number;
 };
 
 export function Eyebrow({
-  heading,
-  colorScheme,
+  children,
+  colorScheme = 'primary',
   markerHeight,
   markerWidth,
 }: EyebrowProps) {
@@ -64,13 +63,9 @@ export function Eyebrow({
           width={markerWidth}
         />
       </IconWrapper>
-      <Heading
-        as="h3"
-        className={headingClassName}
-        segments={{ fontFamily: heading.fontFamily, text: heading.text }}
-        size="xs"
-        weight="medium"
-      />
+      <Heading as="h3" className={headingClassName} size="xs" weight="medium">
+        {children}
+      </Heading>
     </EyebrowRow>
   );
 }

@@ -11,6 +11,7 @@ import { FrontComponentService } from 'src/engine/metadata-modules/front-compone
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -23,6 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     PermissionsModule,
     FlatFrontComponentModule,
     SubscriptionsModule,
+    WorkspaceCacheModule,
   ],
   controllers: [FrontComponentController],
   providers: [

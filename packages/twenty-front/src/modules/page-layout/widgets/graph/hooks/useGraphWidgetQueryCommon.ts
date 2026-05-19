@@ -1,5 +1,8 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { augmentFieldsWithRelationTargets } from '@/object-record/record-filter/utils/augmentFieldsWithRelationTargets';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
@@ -36,14 +39,22 @@ export const useGraphWidgetQueryCommon = ({
     throw new Error('Aggregate field not found');
   }
 
-  const { userTimezone } = useUserTimezone();
+  const { filterValueDependencies } = useFilterValueDependencies();
+
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
+
+  const widgetRecordFilters = configuration.filter?.recordFilters ?? [];
 
   const gqlOperationFilter = computeRecordGqlOperationFilter({
-    fields: objectMetadataItem.fields,
-    filterValueDependencies: {
-      timeZone: userTimezone,
-    },
-    recordFilters: configuration.filter?.recordFilters ?? [],
+    fields: augmentFieldsWithRelationTargets({
+      baseFields: objectMetadataItem.fields,
+      recordFilters: widgetRecordFilters,
+      allFieldMetadataItems: flattenedFieldMetadataItems,
+    }),
+    filterValueDependencies,
+    recordFilters: widgetRecordFilters,
     recordFilterGroups: configuration.filter?.recordFilterGroups ?? [],
   });
 

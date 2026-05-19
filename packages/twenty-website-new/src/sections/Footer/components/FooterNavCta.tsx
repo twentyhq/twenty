@@ -1,7 +1,6 @@
-'use client';
-
-import { TalkToUsButton } from '@/lib/contact-cal';
+import { TalkToUsButton } from '@/sections/ContactCal';
 import { LinkButton } from '@/design-system/components';
+import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
 import type { FooterCtaType } from '@/sections/Footer/types';
 
 type FooterNavCtaProps = {
@@ -9,6 +8,7 @@ type FooterNavCtaProps = {
 };
 
 export function FooterNavCta({ cta }: FooterNavCtaProps) {
+  const i18n = getServerI18n();
   if (cta.kind === 'contactModal') {
     return (
       <TalkToUsButton
@@ -23,8 +23,7 @@ export function FooterNavCta({ cta }: FooterNavCtaProps) {
     <LinkButton
       color={cta.color}
       href={cta.href}
-      label={cta.label}
-      type="anchor"
+      label={i18n._(cta.label)}
       variant={cta.variant}
     />
   );

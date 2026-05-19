@@ -42,12 +42,13 @@ export type CurrentWorkspace = Pick<
   | 'editableProfileFields'
   | 'enabledAiModelIds'
   | 'useRecommendedModels'
+  | 'isInternalMessagesImportEnabled'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
   workspaceCustomApplication: Pick<Application, 'id'> | null;
   installedApplications: Pick<
     Application,
-    'id' | 'name' | 'universalIdentifier'
+    'id' | 'name' | 'universalIdentifier' | 'logo'
   >[];
 };
 

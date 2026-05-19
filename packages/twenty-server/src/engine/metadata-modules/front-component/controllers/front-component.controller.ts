@@ -20,16 +20,22 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { FrontComponentRestApiExceptionFilter } from 'src/engine/metadata-modules/front-component/filters/front-component-rest-api-exception.filter';
 import {
   FrontComponentException,
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
+import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
 @Controller('rest/front-components')
 @UseGuards(WorkspaceAuthGuard)
-@UseFilters(FrontComponentRestApiExceptionFilter)
+@UseFilters(
+  FrontComponentRestApiExceptionFilter,
+  FlatEntityMapsRestApiExceptionFilter,
+  WorkspaceMigrationRunnerRestApiExceptionFilter,
+)
 export class FrontComponentController {
   constructor(private readonly frontComponentService: FrontComponentService) {}
 

@@ -26,6 +26,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('MessagingMessagesImportService', () => {
   let service: MessagingMessagesImportService;
@@ -184,6 +185,14 @@ describe('MessagingMessagesImportService', () => {
         },
       },
       {
+        provide: getRepositoryToken(WorkspaceEntity),
+        useValue: {
+          findOne: jest
+            .fn()
+            .mockResolvedValue({ isInternalMessagesImportEnabled: false }),
+        },
+      },
+      {
         provide: TwentyConfigService,
         useValue: {
           get: jest.fn().mockReturnValue(400),
@@ -237,7 +246,7 @@ describe('MessagingMessagesImportService', () => {
     mockMessageChannel.syncStage =
       MessageChannelSyncStage.MESSAGES_IMPORT_PENDING;
 
-    expect(
+    await expect(
       service.processMessageBatchImport(
         mockMessageChannel as MessageChannelEntity,
         mockConnectedAccount,

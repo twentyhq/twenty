@@ -5,6 +5,8 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type GetDefaultFlatFieldMetadataArgs = {
@@ -23,6 +25,8 @@ export const getDefaultFlatFieldMetadata = ({
   );
 
   const createdAt = new Date().toISOString();
+  const resolvedDefaultValue =
+    defaultValue ?? generateDefaultValue(createFieldInput.type);
 
   return {
     description: createFieldInput.description ?? null,
@@ -42,7 +46,12 @@ export const getDefaultFlatFieldMetadata = ({
     type: createFieldInput.type,
     universalIdentifier: createFieldInput.universalIdentifier ?? v4(),
     options: createFieldInput.options ?? null,
-    defaultValue: defaultValue ?? generateDefaultValue(createFieldInput.type),
+    defaultValue: isCompositeFieldMetadataType(createFieldInput.type)
+      ? nullifyEmptyCompositeDefaultValue({
+          defaultValue: resolvedDefaultValue,
+          fieldType: createFieldInput.type,
+        })
+      : resolvedDefaultValue,
     createdAt,
     updatedAt: createdAt,
     isUIReadOnly: createFieldInput.isUIReadOnly ?? false,

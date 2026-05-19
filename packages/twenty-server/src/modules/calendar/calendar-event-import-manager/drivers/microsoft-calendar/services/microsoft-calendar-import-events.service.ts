@@ -17,7 +17,7 @@ export class MicrosoftCalendarImportEventsService {
   public async getCalendarEvents(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'provider' | 'accessToken' | 'refreshToken' | 'id'
+      'provider' | 'accessToken' | 'refreshToken' | 'id' | 'workspaceId'
     >,
     changedEventIds: string[],
   ): Promise<FetchedCalendarEvent[]> {

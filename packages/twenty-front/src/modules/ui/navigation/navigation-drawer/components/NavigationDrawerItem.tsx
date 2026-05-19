@@ -1,4 +1,4 @@
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
@@ -92,14 +92,14 @@ const StyledItem = styled.button<StyledItemProps>`
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   color: ${({ active, isSoon, variant }) => {
+    if (variant === 'tertiary') {
+      return themeCssVariables.font.color.tertiary;
+    }
     if (active === true) {
       return themeCssVariables.font.color.primary;
     }
     if (isSoon) {
       return themeCssVariables.font.color.light;
-    }
-    if (variant === 'tertiary') {
-      return themeCssVariables.font.color.tertiary;
     }
     return themeCssVariables.font.color.secondary;
   }};
@@ -129,7 +129,10 @@ const StyledItem = styled.button<StyledItemProps>`
 
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
-    color: ${themeCssVariables.font.color.primary};
+    color: ${({ variant }) =>
+      variant === 'tertiary'
+        ? themeCssVariables.font.color.tertiary
+        : themeCssVariables.font.color.primary};
   }
 
   &:hover .keyboard-shortcuts {
@@ -270,7 +273,7 @@ export const NavigationDrawerItem = ({
 }: NavigationDrawerItemProps) => {
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
-  const isSettingsPage = useIsSettingsPage();
+  const isExpanded = useNavigationDrawerExpanded();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);
 
@@ -333,7 +336,7 @@ export const NavigationDrawerItem = ({
         isSoon={isSoon}
         variant={variant}
         indentationLevel={indentationLevel}
-        isNavigationDrawerExpanded={isNavigationDrawerExpanded}
+        isNavigationDrawerExpanded={isExpanded}
         isDragging={isDragging}
         hasRightOptions={isDefined(rightOptions)}
         isSelectedInEditMode={isSelectedInEditMode}
@@ -366,9 +369,7 @@ export const NavigationDrawerItem = ({
                   size={theme.icon.size.md}
                   stroke={theme.icon.stroke.md}
                   color={
-                    showBreadcrumb &&
-                    !isSettingsPage &&
-                    !isNavigationDrawerExpanded
+                    showBreadcrumb && !isExpanded
                       ? theme.font.color.light
                       : 'currentColor'
                   }
@@ -445,7 +446,7 @@ export const NavigationDrawerItem = ({
         </StyledItemElementsContainer>
       </StyledItem>
 
-      {!isNavigationDrawerExpanded && !isMobile && (
+      {!isExpanded && !isMobile && (
         <AppTooltip
           anchorSelect={`#${navigationItemId}`}
           content={label}

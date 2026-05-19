@@ -100,12 +100,7 @@ export class OpenApiService {
       serverUrlFallback: `${request.protocol}://${request.get('host')}`,
     });
 
-    const tokenFromQuery = request.query.token;
-    const schema = baseSchema(
-      'core',
-      baseUrl,
-      typeof tokenFromQuery === 'string' ? tokenFromQuery : undefined,
-    );
+    const schema = baseSchema('core', baseUrl);
 
     const workspace = await this.getWorkspaceFromRequest(request);
 
@@ -263,12 +258,7 @@ export class OpenApiService {
       serverUrlFallback: `${request.protocol}://${request.get('host')}`,
     });
 
-    const tokenFromQuery = request.query.token;
-    const schema = baseSchema(
-      'metadata',
-      baseUrl,
-      typeof tokenFromQuery === 'string' ? tokenFromQuery : undefined,
-    );
+    const schema = baseSchema('metadata', baseUrl);
 
     const workspace = await this.getWorkspaceFromRequest(request);
 
@@ -342,7 +332,7 @@ export class OpenApiService {
             { $ref: '#/components/parameters/endingBefore' },
           ],
           responses: {
-            '200': getFindManyResponse200(item, true),
+            '200': getFindManyResponse200(item),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -353,7 +343,7 @@ export class OpenApiService {
           operationId: `createOne${capitalize(item.nameSingular)}`,
           requestBody: getRequestBody(capitalize(item.nameSingular)),
           responses: {
-            '200': getCreateOneResponse201(item, true),
+            '201': getCreateOneResponse201(item, true),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },

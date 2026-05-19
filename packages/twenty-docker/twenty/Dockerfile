@@ -1,8 +1,26 @@
 # ===========================================================================
-# Shared build stages (used by both targets)
+# Dependency stages
 # ===========================================================================
 
-FROM node:24-alpine AS common-deps
+FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS front-deps
+
+WORKDIR /app
+
+COPY ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /app/
+COPY ./.yarn/releases /app/.yarn/releases
+COPY ./.yarn/patches /app/.yarn/patches
+
+COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
+COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
+COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
+COPY ./packages/twenty-front-component-renderer/package.json /app/packages/twenty-front-component-renderer/
+COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
+COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
+
+RUN yarn workspaces focus twenty twenty-front twenty-front-component-renderer twenty-ui twenty-shared twenty-sdk twenty-client-sdk && yarn cache clean && npx nx reset
+
+
+FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS server-deps
 
 WORKDIR /app
 
@@ -13,22 +31,16 @@ COPY ./.yarn/patches /app/.yarn/patches
 COPY ./packages/twenty-emails/package.json /app/packages/twenty-emails/
 COPY ./packages/twenty-server/package.json /app/packages/twenty-server/
 COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
-COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
 COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
-COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
-COPY ./packages/twenty-front-component-renderer/package.json /app/packages/twenty-front-component-renderer/
-COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 
-RUN yarn && yarn cache clean && npx nx reset
+RUN yarn workspaces focus twenty twenty-server twenty-emails twenty-shared twenty-client-sdk && yarn cache clean && npx nx reset
 
 
-FROM common-deps AS twenty-server-build
+FROM server-deps AS twenty-server-build
 
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
-COPY ./packages/twenty-ui /app/packages/twenty-ui
-COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
 COPY ./packages/twenty-server /app/packages/twenty-server
 
@@ -44,10 +56,10 @@ RUN npx nx run twenty-server:build
 RUN find /app/packages/twenty-server/dist -name '*.d.ts' -delete \
  && rm -rf /app/packages/twenty-server/dist/packages/twenty-server/test
 
-RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk twenty-client-sdk twenty-server
+RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-client-sdk twenty-server
 
 
-FROM common-deps AS twenty-front-build
+FROM front-deps AS twenty-front-build
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-front-component-renderer /app/packages/twenty-front-component-renderer
@@ -72,7 +84,7 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 #   docker build --target twenty-server -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
-FROM node:24-alpine AS twenty-server
+FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS twenty-server
 
 RUN apk add --no-cache curl jq postgresql-client
 
@@ -99,11 +111,8 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-shared/package
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-shared/dist /app/packages/twenty-shared/dist
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/package.json /app/packages/twenty-emails/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/dist /app/packages/twenty-emails/dist
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packages/twenty-client-sdk/dist
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-front/package.json /app/packages/twenty-front/
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
@@ -178,7 +187,7 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
     echo "$NOARCH_SUM  s6-overlay-noarch.tar.xz" | sha256sum -c - && \
     echo "$ARCH_SUM  s6-overlay-arch.tar.xz" | sha256sum -c -
 
-FROM node:24-alpine AS twenty-app-dev
+FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS twenty-app-dev
 
 # s6-overlay
 COPY --from=s6-fetch /tmp/s6-overlay-noarch.tar.xz /tmp/
@@ -188,7 +197,7 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
  && rm /tmp/s6-overlay-*.tar.xz
 
 RUN apk add --no-cache \
-    postgresql16 postgresql16-contrib \
+    postgresql18 postgresql18-contrib \
     redis \
     curl jq su-exec
 
@@ -208,11 +217,8 @@ COPY --from=twenty-server-build /app/packages/twenty-shared/package.json /app/pa
 COPY --from=twenty-server-build /app/packages/twenty-shared/dist /app/packages/twenty-shared/dist
 COPY --from=twenty-server-build /app/packages/twenty-emails/package.json /app/packages/twenty-emails/
 COPY --from=twenty-server-build /app/packages/twenty-emails/dist /app/packages/twenty-emails/dist
-COPY --from=twenty-server-build /app/packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY --from=twenty-server-build /app/packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 COPY --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packages/twenty-client-sdk/dist
-COPY --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
-COPY --from=twenty-server-build /app/packages/twenty-front/package.json /app/packages/twenty-front/
 
 # Frontend static build
 COPY --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front

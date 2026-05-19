@@ -3,6 +3,7 @@ import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMe
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
+import { DEFAULT_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultRecordPageLayoutId';
 import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/PageLayoutLeftPanelContainerWidth';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
@@ -20,12 +21,9 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
-
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;
   grid-template-columns: ${({ hasPinnedTab }) =>
@@ -73,10 +71,6 @@ export const PageLayoutTabsRenderer = () => {
 
   const isMobile = useIsMobile();
 
-  const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
-  );
-
   const metadataStore = useAtomFamilyStateValue(
     metadataStoreState,
     'objectMetadataItems',
@@ -90,10 +84,7 @@ export const PageLayoutTabsRenderer = () => {
 
   const canEnableTabEditing =
     isPageLayoutInEditMode &&
-    shouldEnableTabEditingFeatures(
-      currentPageLayout.type,
-      isRecordPageGlobalEditionEnabled,
-    );
+    shouldEnableTabEditingFeatures(currentPageLayout.type);
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
@@ -104,11 +95,15 @@ export const PageLayoutTabsRenderer = () => {
 
   const SYSTEM_OBJECT_TABS = ['Home', 'Timeline', 'Overview', 'Flow'];
 
-  const tabsForCurrentObject = isSystemObject
-    ? tabsWithVisibleWidgets.filter((tab) =>
-        SYSTEM_OBJECT_TABS.includes(tab.title),
-      )
-    : tabsWithVisibleWidgets;
+  const isUsingDefaultRecordPageLayout =
+    currentPageLayout.id === DEFAULT_RECORD_PAGE_LAYOUT_ID;
+
+  const tabsForCurrentObject =
+    isSystemObject && isUsingDefaultRecordPageLayout
+      ? tabsWithVisibleWidgets.filter((tab) =>
+          SYSTEM_OBJECT_TABS.includes(tab.title),
+        )
+      : tabsWithVisibleWidgets;
 
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
     tabs: tabsForCurrentObject,

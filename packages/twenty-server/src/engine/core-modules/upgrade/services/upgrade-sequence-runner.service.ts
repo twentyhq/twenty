@@ -17,6 +17,7 @@ import {
   UpgradeSequenceReaderService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
+import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
@@ -75,9 +76,17 @@ export class UpgradeSequenceRunnerService {
           isDefined(options.workspaceCountLimit)
         ) {
           this.logger.log(
-            `Stopping before instance step "${step.name}": ` +
-              'upgrade was run with a workspace filter (-w, --start-from-workspace-id, or --workspace-count-limit). ' +
-              'Instance commands require all workspaces to be aligned.',
+            formatUpgradeLog({
+              humanMessage:
+                `Stopping before instance step "${step.name}": ` +
+                'upgrade was run with a workspace filter (-w, --start-from-workspace-id, or --workspace-count-limit). ' +
+                'Instance commands require all workspaces to be aligned.',
+              event: 'sequence.stopped',
+              logFields: {
+                before: step.name,
+                reason: 'workspace-filter-active',
+              },
+            }),
           );
 
           break;
@@ -120,8 +129,16 @@ export class UpgradeSequenceRunnerService {
 
       if (report.fail.length > 0) {
         this.logger.error(
-          `Workspace steps ended with ${report.fail.length} failure(s). ` +
-            'Aborting — cannot proceed to next instance step.',
+          formatUpgradeLog({
+            humanMessage:
+              `Workspace steps ended with ${report.fail.length} failure(s). ` +
+              'Aborting — cannot proceed to next instance step.',
+            event: 'sequence.aborted',
+            logFields: {
+              failures: report.fail.length,
+              reason: 'workspace-failures',
+            },
+          }),
         );
 
         return { totalSuccesses, totalFailures };

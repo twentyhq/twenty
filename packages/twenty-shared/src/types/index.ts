@@ -10,6 +10,7 @@
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
 export { AggregateOperations } from './AggregateOperations';
+export type { AllowedFullNameSortSubField } from './AllowedFullNameSortSubField';
 export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
@@ -278,6 +279,7 @@ export type {
 } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
+export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
 export { ViewRoadmapZoom } from './view-roadmap-zoom.enum';
 export { ViewCalendarLayout } from './ViewCalendarLayout';

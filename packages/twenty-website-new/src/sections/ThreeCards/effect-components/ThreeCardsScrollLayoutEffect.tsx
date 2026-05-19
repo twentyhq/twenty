@@ -1,16 +1,15 @@
 'use client';
 
-import { useCallback } from 'react';
+import { type RefObject, useCallback } from 'react';
 
 import { useScheduledOnScroll } from '@/lib/scroll';
-import {
-  applyThreeCardsScrollLayout,
-  type ThreeCardsScrollLayoutOptions,
-  type ThreeCardsScrollLayoutRefs,
-} from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
+import { applyThreeCardsScrollLayout } from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
+import type { ThreeCardsScrollLayoutOptions } from '@/sections/ThreeCards/utils/three-cards-scroll-layout-options';
 
-type ThreeCardsScrollLayoutEffectProps = ThreeCardsScrollLayoutRefs & {
+type ThreeCardsScrollLayoutEffectProps = {
   cardCount: number;
+  cardRefs: RefObject<(HTMLDivElement | null)[]>;
+  gridRef: RefObject<HTMLDivElement | null>;
   layoutOptions?: ThreeCardsScrollLayoutOptions;
 };
 

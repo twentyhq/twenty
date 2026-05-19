@@ -297,7 +297,9 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   },
   frontComponent: {},
   webhook: {},
+  applicationVariable: {},
   viewSort: {},
+  connectionProvider: {},
 } as const satisfies OneToManyMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys

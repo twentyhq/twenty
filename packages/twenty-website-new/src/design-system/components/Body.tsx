@@ -1,9 +1,6 @@
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
-
-export type BodyType = {
-  text: string;
-};
+import type { ReactNode } from 'react';
 
 const bodyClassName = css`
   color: inherit;
@@ -41,7 +38,7 @@ const bodyClassName = css`
   }
 
   &[data-size='sm'] {
-    color: var(--body-sm-color, ${theme.colors.primary.text[60]});
+    color: var(--color-text-muted, ${theme.colors.primary.text[60]});
     font-size: ${theme.font.size(4)};
     line-height: 1.55;
   }
@@ -69,7 +66,7 @@ const bodyClassName = css`
   }
 
   &[data-variant='body-paragraph'] {
-    color: var(--body-paragraph-color, ${theme.colors.primary.text[80]});
+    color: var(--color-text-muted, ${theme.colors.primary.text[80]});
     line-height: 1.55;
   }
 `;
@@ -82,7 +79,7 @@ export type BodyVariant = 'default' | 'body-paragraph';
 
 export type BodyProps = {
   as?: BodyAs;
-  body: BodyType;
+  children: ReactNode;
   family?: BodyFamily;
   weight?: BodyWeight;
   size?: BodySize;
@@ -92,7 +89,7 @@ export type BodyProps = {
 
 export function Body({
   as: Tag = 'p',
-  body,
+  children,
   family = 'sans',
   weight = 'regular',
   size = 'md',
@@ -109,7 +106,7 @@ export function Body({
       data-size={size}
       data-variant={variant}
     >
-      {body.text}
+      {children}
     </Tag>
   );
 }

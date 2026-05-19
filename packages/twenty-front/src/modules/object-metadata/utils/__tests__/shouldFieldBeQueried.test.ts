@@ -44,7 +44,7 @@ describe('shouldFieldBeQueried', () => {
       const res = shouldFieldBeQueried({
         gqlField: 'fieldNameId',
         fieldMetadata: {
-          name: 'fieldNameId',
+          name: 'fieldName',
           type: FieldMetadataType.RELATION,
           settings: {
             relationType: RelationType.MANY_TO_ONE,

@@ -1,22 +1,20 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
 import {
   BaseButton,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
-import { Body, Heading } from '@/design-system/components';
+import { Body, Heading, HeadingPart } from '@/design-system/components';
+import { useLingui } from '@lingui/react';
 import { useTimeoutRegistry } from '@/lib/react';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-type ActivationResult = {
-  enterpriseKey: string;
-  licensee: string;
-  subscriptionId: string;
-};
+import { useEnterpriseActivation } from './use-enterprise-activation';
 
 const ContentStack = styled.div`
   display: flex;
@@ -44,6 +42,12 @@ const LicenseeRow = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${theme.spacing(1)};
+`;
+
+const LicenseeValue = styled.span`
+  font-family: ${theme.font.family.sans};
+  font-size: ${theme.font.size(4)};
+  line-height: 1.55;
 `;
 
 const KeySection = styled.div`
@@ -132,71 +136,12 @@ const nextStepItemClassName = css`
 `;
 
 export function EnterpriseActivateClient() {
+  const { i18n } = useLingui();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const timeoutRegistry = useTimeoutRegistry();
-  const [result, setResult] = useState<ActivationResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { result, error, loading } = useEnterpriseActivation(sessionId);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (!sessionId) {
-      setError('No session ID provided. Please complete the checkout first.');
-      setLoading(false);
-
-      return;
-    }
-
-    const abortController = new AbortController();
-
-    const activate = async () => {
-      try {
-        const response = await fetch(
-          `/api/enterprise/activate?session_id=${encodeURIComponent(sessionId)}`,
-          { signal: abortController.signal },
-        );
-        const data: { error?: string } & Partial<ActivationResult> =
-          await response.json();
-
-        if (abortController.signal.aborted) {
-          return;
-        }
-
-        if (!response.ok) {
-          setError(data.error ?? 'Activation failed');
-
-          return;
-        }
-
-        if (data.enterpriseKey && data.licensee && data.subscriptionId) {
-          setResult({
-            enterpriseKey: data.enterpriseKey,
-            licensee: data.licensee,
-            subscriptionId: data.subscriptionId,
-          });
-        } else {
-          setError('Activation response was incomplete.');
-        }
-      } catch {
-        if (abortController.signal.aborted) {
-          return;
-        }
-
-        setError('Failed to activate enterprise key. Please try again.');
-      } finally {
-        if (!abortController.signal.aborted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void activate();
-
-    return () => {
-      abortController.abort();
-    };
-  }, [sessionId]);
 
   const handleCopy = async () => {
     if (!result) {
@@ -213,50 +158,39 @@ export function EnterpriseActivateClient() {
   return (
     <ContentStack>
       {loading && (
-        <Body
-          body={{ text: 'Activating your enterprise license…' }}
-          size="sm"
-          variant="body-paragraph"
-        />
+        <Body size="sm" variant="body-paragraph">
+          {i18n._(msg`Activating your enterprise license…`)}
+        </Body>
       )}
 
       {error !== null && <ErrorBox>{error}</ErrorBox>}
 
       {result !== null && (
         <>
-          <Body
-            body={{
-              text: 'Your enterprise license has been activated successfully.',
-            }}
-            className={successLeadClassName}
-            size="md"
-            weight="medium"
-          />
+          <Body className={successLeadClassName} size="md" weight="medium">
+            {i18n._(
+              msg`Your enterprise license has been activated successfully.`,
+            )}
+          </Body>
 
           <LicenseeRow>
-            <Body
-              as="span"
-              body={{ text: 'Licensee: ' }}
-              size="sm"
-              weight="medium"
-            />
-            <Body as="span" body={{ text: result.licensee }} size="sm" />
+            <Body as="span" size="sm" weight="medium">
+              {i18n._(msg`Licensee:`)}
+            </Body>{' '}
+            <LicenseeValue>{result.licensee}</LicenseeValue>
           </LicenseeRow>
 
           <KeySection>
-            <Heading
-              as="h2"
-              segments={{ fontFamily: 'sans', text: 'Your enterprise key' }}
-              size="xs"
-              weight="medium"
-            />
-            <Body
-              body={{
-                text: 'Copy this key and paste it into your Twenty self-hosted instance settings.',
-              }}
-              size="sm"
-              variant="body-paragraph"
-            />
+            <Heading as="h2" size="xs" weight="medium">
+              <HeadingPart fontFamily="sans">
+                {i18n._(msg`Your enterprise key`)}
+              </HeadingPart>
+            </Heading>
+            <Body size="sm" variant="body-paragraph">
+              {i18n._(
+                msg`Copy this key and paste it into your Twenty self-hosted instance settings.`,
+              )}
+            </Body>
 
             <KeyBlock>
               {result.enterpriseKey}
@@ -270,7 +204,7 @@ export function EnterpriseActivateClient() {
               >
                 <BaseButton
                   color="primary"
-                  label={copied ? 'Copied!' : 'Copy'}
+                  label={i18n._(copied ? msg`Copied!` : msg`Copy`)}
                   size="small"
                   variant="contained"
                 />
@@ -279,32 +213,28 @@ export function EnterpriseActivateClient() {
           </KeySection>
 
           <NextStepsBox>
-            <Heading
-              as="h3"
-              segments={{ fontFamily: 'sans', text: 'Next steps' }}
-              size="xs"
-              weight="medium"
-            />
+            <Heading as="h3" size="xs" weight="medium">
+              <HeadingPart fontFamily="sans">
+                {i18n._(msg`Next steps`)}
+              </HeadingPart>
+            </Heading>
             <NextStepsList>
               <li className={nextStepItemClassName}>
-                <Body
-                  body={{ text: 'Copy the enterprise key above.' }}
-                  size="sm"
-                />
+                <Body size="sm">
+                  {i18n._(msg`Copy the enterprise key above.`)}
+                </Body>
               </li>
               <li className={nextStepItemClassName}>
-                <Body
-                  body={{
-                    text: 'Open your Twenty self-hosted instance Settings → Enterprise.',
-                  }}
-                  size="sm"
-                />
+                <Body size="sm">
+                  {i18n._(
+                    msg`Open your Twenty self-hosted instance Settings → Enterprise.`,
+                  )}
+                </Body>
               </li>
               <li className={nextStepItemClassName}>
-                <Body
-                  body={{ text: 'Paste the key and click Activate.' }}
-                  size="sm"
-                />
+                <Body size="sm">
+                  {i18n._(msg`Paste the key and click Activate.`)}
+                </Body>
               </li>
             </NextStepsList>
           </NextStepsBox>

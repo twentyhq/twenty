@@ -92,7 +92,7 @@ const Label = styled.span`
 
 export type BaseButtonProps = {
   color: 'primary' | 'secondary';
-  label: string;
+  label: ReactNode;
   leadingIcon?: ReactNode;
   size?: ButtonSize;
   variant: 'contained' | 'outlined';

@@ -29,6 +29,7 @@ import {
   type UUIDFilter,
 } from 'twenty-shared/types';
 import {
+  computeRelationGqlFieldJoinColumnName,
   isDefined,
   isEmptyObject,
   isMatchingArrayFilter,
@@ -203,7 +204,8 @@ export const isRecordMatchingFilter = ({
         (field) =>
           (field.type === FieldMetadataType.RELATION ||
             field.type === FieldMetadataType.MORPH_RELATION) &&
-          field.settings?.joinColumnName === filterKey,
+          computeRelationGqlFieldJoinColumnName({ name: field.name }) ===
+            filterKey,
       ) ??
       objectMetadataItem.fields.find(
         (field) =>
@@ -415,7 +417,9 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         const isJoinColumn =
-          objectMetadataField.settings?.joinColumnName === filterKey ||
+          computeRelationGqlFieldJoinColumnName({
+            name: objectMetadataField.name,
+          }) === filterKey ||
           (objectMetadataField.type === FieldMetadataType.MORPH_RELATION &&
             isMorphRelationJoinColumnKey({
               fieldMetadataItem: objectMetadataField,

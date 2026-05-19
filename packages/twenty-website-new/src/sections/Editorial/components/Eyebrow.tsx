@@ -1,11 +1,11 @@
 import { Eyebrow as BaseEyebrow } from '@/design-system/components';
-import type { EyebrowType } from '@/design-system/components/Eyebrow';
+import type { ReactNode } from 'react';
 
 type EditorialEyebrowProps = {
-  colorScheme: 'primary' | 'secondary';
-  eyebrow: EyebrowType;
+  children: ReactNode;
+  colorScheme?: 'primary' | 'secondary';
 };
 
-export function Eyebrow({ colorScheme, eyebrow }: EditorialEyebrowProps) {
-  return <BaseEyebrow colorScheme={colorScheme} heading={eyebrow.heading} />;
+export function Eyebrow({ children, colorScheme }: EditorialEyebrowProps) {
+  return <BaseEyebrow colorScheme={colorScheme}>{children}</BaseEyebrow>;
 }

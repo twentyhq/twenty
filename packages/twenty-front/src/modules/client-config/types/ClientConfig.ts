@@ -31,6 +31,7 @@ export type ClientConfig = {
   isMicrosoftMessagingEnabled: boolean;
   isMultiWorkspaceEnabled: boolean;
   isImapSmtpCaldavEnabled: boolean;
+  isEmailGroupEnabled: boolean;
   isEmailingDomainsEnabled: boolean;
   isCloudflareIntegrationEnabled: boolean;
   isClickHouseConfigured: boolean;

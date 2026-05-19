@@ -74,6 +74,14 @@ const SettingsEditImapSmtpCaldavConnection = lazy(() =>
   })),
 );
 
+const SettingsNewEmailGroupChannel = lazy(() =>
+  import(
+    '@/settings/accounts/components/SettingsAccountsNewEmailGroupChannel'
+  ).then((module) => ({
+    default: module.SettingsAccountsNewEmailGroupChannel,
+  })),
+);
+
 const SettingsObjectDetailPage = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectDetailPage').then(
     (module) => ({
@@ -120,9 +128,11 @@ const SettingsWorkspace = lazy(() =>
   })),
 );
 
-const SettingsDomains = lazy(() =>
-  import('~/pages/settings/domains/SettingsDomains').then((module) => ({
-    default: module.SettingsDomains,
+const SettingsWorkspaceEmailGroupChannelDetail = lazy(() =>
+  import(
+    '~/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail'
+  ).then((module) => ({
+    default: module.SettingsWorkspaceEmailGroupChannelDetail,
   })),
 );
 
@@ -180,11 +190,27 @@ const SettingsApplicationDetails = lazy(() =>
   ),
 );
 
+const SettingsApplicationConnectionDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsApplicationConnectionDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationConnectionDetail,
+  })),
+);
+
 const SettingsApplicationFrontComponentDetail = lazy(() =>
   import(
     '~/pages/settings/applications/SettingsApplicationFrontComponentDetail'
   ).then((module) => ({
     default: module.SettingsApplicationFrontComponentDetail,
+  })),
+);
+
+const SettingsApplicationCommandMenuItemDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsApplicationCommandMenuItemDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationCommandMenuItemDetail,
   })),
 );
 
@@ -423,6 +449,30 @@ const SettingsAdminIndicatorHealthStatus = lazy(() =>
   })),
 );
 
+const SettingsAdminInferredVersion = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminInferredVersion').then(
+    (module) => ({
+      default: module.SettingsAdminInferredVersion,
+    }),
+  ),
+);
+
+const SettingsAdminInstanceStatus = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminInstanceStatus').then(
+    (module) => ({
+      default: module.SettingsAdminInstanceStatus,
+    }),
+  ),
+);
+
+const SettingsAdminWorkspacesStatus = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminWorkspacesStatus').then(
+    (module) => ({
+      default: module.SettingsAdminWorkspacesStatus,
+    }),
+  ),
+);
+
 const SettingsAdminQueueDetail = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdminQueueDetail').then(
     (module) => ({
@@ -493,32 +543,30 @@ const SettingsUpdates = lazy(() =>
   })),
 );
 
-const SettingsRoles = lazy(() =>
-  import('~/pages/settings/roles/SettingsRoles').then((module) => ({
-    default: module.SettingsRoles,
-  })),
-);
-
 const SettingsRoleCreate = lazy(() =>
-  import('~/pages/settings/roles/SettingsRoleCreate').then((module) => ({
-    default: module.SettingsRoleCreate,
-  })),
+  import('~/pages/settings/members/roles/SettingsRoleCreate').then(
+    (module) => ({
+      default: module.SettingsRoleCreate,
+    }),
+  ),
 );
 
 const SettingsRoleEdit = lazy(() =>
-  import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
+  import('~/pages/settings/members/roles/SettingsRoleEdit').then((module) => ({
     default: module.SettingsRoleEdit,
   })),
 );
 
 const SettingsRoleObjectLevel = lazy(() =>
-  import('~/pages/settings/roles/SettingsRoleObjectLevel').then((module) => ({
-    default: module.SettingsRoleObjectLevel,
-  })),
+  import('~/pages/settings/members/roles/SettingsRoleObjectLevel').then(
+    (module) => ({
+      default: module.SettingsRoleObjectLevel,
+    }),
+  ),
 );
 
 const SettingsRoleAddObjectLevel = lazy(() =>
-  import('~/pages/settings/roles/SettingsRoleAddObjectLevel').then(
+  import('~/pages/settings/members/roles/SettingsRoleAddObjectLevel').then(
     (module) => ({
       default: module.SettingsRoleAddObjectLevel,
     }),
@@ -580,7 +628,14 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         }
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
-        <Route path={SettingsPath.Domains} element={<SettingsDomains />} />
+        <Route
+          path={SettingsPath.NewEmailGroupChannel}
+          element={<SettingsNewEmailGroupChannel />}
+        />
+        <Route
+          path={SettingsPath.EmailGroupChannelDetail}
+          element={<SettingsWorkspaceEmailGroupChannelDetail />}
+        />
         <Route
           path={SettingsPath.ApiWebhooks}
           element={<SettingsApiWebhooks />}
@@ -699,7 +754,15 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           />
         }
       >
-        <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
+        <Route
+          path={SettingsPath.Roles}
+          element={
+            <Navigate
+              to={`/settings/${SettingsPath.WorkspaceMembersPage}#roles`}
+              replace
+            />
+          }
+        />
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
         <Route
           path={SettingsPath.RoleCreate}
@@ -763,6 +826,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsApplicationDetails />}
         />
         <Route
+          path={SettingsPath.ApplicationConnectionDetail}
+          element={<SettingsApplicationConnectionDetail />}
+        />
+        <Route
           path={SettingsPath.AvailableApplicationDetail}
           element={<SettingsAvailableApplicationDetails />}
         />
@@ -777,6 +844,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApplicationFrontComponentDetail}
           element={<SettingsApplicationFrontComponentDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationCommandMenuItemDetail}
+          element={<SettingsApplicationCommandMenuItemDetail />}
         />
         <Route
           path={SettingsPath.ApplicationViewDetail}
@@ -822,6 +893,18 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
                 replace
               />
             }
+          />
+          <Route
+            path={SettingsPath.AdminPanelInferredVersion}
+            element={<SettingsAdminInferredVersion />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelInstanceStatus}
+            element={<SettingsAdminInstanceStatus />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelWorkspacesStatus}
+            element={<SettingsAdminWorkspacesStatus />}
           />
           <Route
             path={SettingsPath.AdminPanelIndicatorHealthStatus}

@@ -188,10 +188,12 @@ export class StreamAgentChatJob {
         outputTokens: 0,
         inputCredits: 0,
         outputCredits: 0,
+        cacheReadTokens: 0,
       };
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
       let streamError: unknown;
+      let checkHasNoMoreAvailableCredits: () => boolean = () => false;
 
       // onFinish fires before the uiStream is fully drained. We use this
       // promise to coordinate: the IIFE waits for DB persist to complete
@@ -223,7 +225,7 @@ export class StreamAgentChatJob {
             });
           };
 
-          const { stream, modelConfig } =
+          const { stream, modelConfig, hasNoMoreAvailableCredits } =
             await this.chatExecutionService.streamChat({
               workspace,
               userWorkspaceId: data.userWorkspaceId,
@@ -235,6 +237,8 @@ export class StreamAgentChatJob {
               abortSignal,
               conversationSizeTokens: data.conversationSizeTokens,
             });
+
+          checkHasNoMoreAvailableCredits = hasNoMoreAvailableCredits;
 
           const titleWritePromise = titlePromise.then((generatedTitle) => {
             if (generatedTitle) {
@@ -279,6 +283,7 @@ export class StreamAgentChatJob {
                     workspaceId: data.workspaceId,
                     streamUsage,
                     lastStepConversationSize,
+                    totalCacheCreationTokens,
                     modelConfig,
                     userMessagePromise,
                   });
@@ -296,7 +301,7 @@ export class StreamAgentChatJob {
 
       // Publish all chunks first, then signal completion. This guarantees
       // message-persisted arrives after every stream-chunk on the client.
-      (async () => {
+      void (async () => {
         try {
           for await (const chunk of uiStream) {
             await this.eventPublisherService.publish({
@@ -313,6 +318,13 @@ export class StreamAgentChatJob {
 
           if (streamError) {
             reject(streamError);
+          } else if (checkHasNoMoreAvailableCredits()) {
+            await this.eventPublisherService.publish({
+              threadId: data.threadId,
+              workspaceId: data.workspaceId,
+              event: { type: 'credits-exhausted' },
+            });
+            resolve();
           } else {
             await this.eventPublisherService.publish({
               threadId: data.threadId,
@@ -359,6 +371,7 @@ export class StreamAgentChatJob {
       outputTokens: number;
       inputCredits: number;
       outputCredits: number;
+      cacheReadTokens: number;
     }) => void;
     onUpdateConversationSize: (size: number) => void;
     onUpdateCacheCreationTokens: (tokens: number) => void;
@@ -395,6 +408,7 @@ export class StreamAgentChatJob {
         outputTokens: part.totalUsage?.outputTokens ?? 0,
         inputCredits,
         outputCredits,
+        cacheReadTokens: breakdown.tokenCounts.cachedInputTokens,
       });
 
       return {
@@ -422,6 +436,7 @@ export class StreamAgentChatJob {
     workspaceId,
     streamUsage,
     lastStepConversationSize,
+    totalCacheCreationTokens,
     modelConfig,
     userMessagePromise,
   }: {
@@ -433,12 +448,23 @@ export class StreamAgentChatJob {
       outputTokens: number;
       inputCredits: number;
       outputCredits: number;
+      cacheReadTokens: number;
     };
     lastStepConversationSize: number;
+    totalCacheCreationTokens: number;
     modelConfig: AiModelConfig;
     userMessagePromise: Promise<{ turnId: string | null }>;
   }): Promise<void> {
     if (responseMessage.parts.length === 0) {
+      return;
+    }
+
+    const threadStatus = await this.threadRepository.findOne({
+      where: { id: threadId },
+      select: ['id', 'deletedAt'],
+    });
+
+    if (!threadStatus || threadStatus.deletedAt) {
       return;
     }
 
@@ -459,6 +485,10 @@ export class StreamAgentChatJob {
         `"totalInputCredits" + ${streamUsage.inputCredits}`,
       totalOutputCredits: () =>
         `"totalOutputCredits" + ${streamUsage.outputCredits}`,
+      totalCacheReadTokens: () =>
+        `"totalCacheReadTokens" + ${streamUsage.cacheReadTokens}`,
+      totalCacheCreationTokens: () =>
+        `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
       contextWindowTokens: modelConfig.contextWindowTokens,
       conversationSize: lastStepConversationSize,
     });

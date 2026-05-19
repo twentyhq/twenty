@@ -59,6 +59,13 @@ describe('getConflictingFields', () => {
     isUnique: true,
   });
 
+  const phonesUniqueField = createMockField({
+    id: 'phones-unique-id',
+    name: 'phonesField',
+    type: FieldMetadataType.PHONES,
+    isUnique: true,
+  });
+
   const phonesNotUniqueField = createMockField({
     id: 'phones-not-unique-id',
     name: 'phonesField',
@@ -130,11 +137,15 @@ describe('getConflictingFields', () => {
 
     expect(result).toEqual(
       expect.arrayContaining([
-        { baseField: 'id', fullPath: 'id', column: 'id' },
+        {
+          baseField: 'id',
+          conflictingProperties: [{ fullPath: 'id', column: 'id' }],
+        },
         {
           baseField: 'uniqueText',
-          fullPath: 'uniqueText',
-          column: 'uniqueText',
+          conflictingProperties: [
+            { fullPath: 'uniqueText', column: 'uniqueText' },
+          ],
         },
       ]),
     );
@@ -152,14 +163,56 @@ describe('getConflictingFields', () => {
 
     expect(result).toEqual(
       expect.arrayContaining([
-        { baseField: 'id', fullPath: 'id', column: 'id' },
+        {
+          baseField: 'id',
+          conflictingProperties: [{ fullPath: 'id', column: 'id' }],
+        },
         {
           baseField: 'emailsField',
-          fullPath: 'emailsField.primaryEmail',
-          column: 'emailsFieldPrimaryEmail',
+          conflictingProperties: [
+            {
+              fullPath: 'emailsField.primaryEmail',
+              column: 'emailsFieldPrimaryEmail',
+            },
+          ],
         },
       ]),
     );
+  });
+
+  it('returns every included unique property for phone composite fields', () => {
+    const fields = [idField, phonesUniqueField];
+    const flatObjectMetadata = buildFlatObjectMetadata(fields);
+    const flatFieldMetadataMaps = buildFlatFieldMetadataMaps(fields);
+
+    const result = getConflictingFields(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    expect(result).toEqual([
+      {
+        baseField: 'id',
+        conflictingProperties: [{ fullPath: 'id', column: 'id' }],
+      },
+      {
+        baseField: 'phonesField',
+        conflictingProperties: [
+          {
+            fullPath: 'phonesField.primaryPhoneNumber',
+            column: 'phonesFieldPrimaryPhoneNumber',
+          },
+          {
+            fullPath: 'phonesField.primaryPhoneCountryCode',
+            column: 'phonesFieldPrimaryPhoneCountryCode',
+          },
+          {
+            fullPath: 'phonesField.primaryPhoneCallingCode',
+            column: 'phonesFieldPrimaryPhoneCallingCode',
+          },
+        ],
+      },
+    ]);
   });
 
   it('does not include composite fields without included unique property', () => {
@@ -172,7 +225,12 @@ describe('getConflictingFields', () => {
       flatFieldMetadataMaps,
     );
 
-    expect(result).toEqual([{ baseField: 'id', fullPath: 'id', column: 'id' }]);
+    expect(result).toEqual([
+      {
+        baseField: 'id',
+        conflictingProperties: [{ fullPath: 'id', column: 'id' }],
+      },
+    ]);
   });
 
   it('ignores non-unique fields', () => {
@@ -185,6 +243,11 @@ describe('getConflictingFields', () => {
       flatFieldMetadataMaps,
     );
 
-    expect(result).toEqual([{ baseField: 'id', fullPath: 'id', column: 'id' }]);
+    expect(result).toEqual([
+      {
+        baseField: 'id',
+        conflictingProperties: [{ fullPath: 'id', column: 'id' }],
+      },
+    ]);
   });
 });
