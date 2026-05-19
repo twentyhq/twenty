@@ -7,9 +7,9 @@ import {
   type RecordFilterValueDependencies,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   computeRecordGqlOperationFilter,
-  type FindFieldMetadataItemById,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -18,7 +18,7 @@ type ComputeContextStoreFiltersProps = {
   contextStoreFilters: RecordFilter[];
   contextStoreFilterGroups: RecordFilterGroup[];
   objectMetadataItem: EnrichedObjectMetadataItem;
-  findFieldMetadataItemById: FindFieldMetadataItemById;
+  fieldMetadataItems: FieldMetadataItem[];
   filterValueDependencies: RecordFilterValueDependencies;
   contextStoreAnyFieldFilterValue: string;
 };
@@ -28,7 +28,7 @@ export const computeContextStoreFilters = ({
   contextStoreFilters,
   contextStoreFilterGroups,
   objectMetadataItem,
-  findFieldMetadataItemById,
+  fieldMetadataItems,
   filterValueDependencies,
   contextStoreAnyFieldFilterValue,
 }: ComputeContextStoreFiltersProps) => {
@@ -45,7 +45,7 @@ export const computeContextStoreFilters = ({
       recordGqlFilterForAnyFieldFilter,
       computeRecordGqlOperationFilter({
         filterValueDependencies,
-        findFieldMetadataItemById,
+        fieldMetadataItems,
         recordFilters: contextStoreFilters,
         recordFilterGroups: contextStoreFilterGroups,
       }),
@@ -74,7 +74,7 @@ export const computeContextStoreFilters = ({
       },
       computeRecordGqlOperationFilter({
         filterValueDependencies,
-        findFieldMetadataItemById,
+        fieldMetadataItems,
         recordFilters: contextStoreFilters,
         recordFilterGroups: contextStoreFilterGroups,
       }),

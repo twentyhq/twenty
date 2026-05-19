@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -16,8 +16,8 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const fieldMetadataItemByIdMap = useAtomStateValue(
-    fieldMetadataItemByIdMapSelector,
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
   );
 
   const currentRecordFilters = useAtomComponentStateValue(
@@ -39,7 +39,7 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
         filter: computeRecordGqlOperationFilter({
-          findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
+          fieldMetadataItems: flattenedFieldMetadataItems,
           recordFilters: currentRecordFilters,
           recordFilterGroups: currentRecordFilterGroups,
           filterValueDependencies,
@@ -53,7 +53,7 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
       currentRecordFilterGroups,
       filterValueDependencies,
       currentRecordSorts,
-      fieldMetadataItemByIdMap,
+      flattenedFieldMetadataItems,
     ],
   );
 

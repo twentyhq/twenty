@@ -6,6 +6,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
@@ -54,6 +55,10 @@ export const useFindManyRecordsSelectedInContextStore = ({
     fieldMetadataItemByIdMapSelector,
   );
 
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
+
   const isSoftDeleteFilterActive = contextStoreFilters.some(
     (filter) =>
       fieldMetadataItemByIdMap.get(filter.fieldMetadataId)?.name ===
@@ -65,7 +70,7 @@ export const useFindManyRecordsSelectedInContextStore = ({
     contextStoreFilters,
     contextStoreFilterGroups,
     objectMetadataItem,
-    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
+    fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
   });
