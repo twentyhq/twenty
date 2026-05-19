@@ -12,6 +12,7 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
+import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(ConnectedAccountGraphqlApiExceptionInterceptor)
@@ -27,10 +28,15 @@ export class ConnectedAccountResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountPublicDTO[]> {
-    return this.connectedAccountMetadataService.findByUserWorkspaceId({
-      userWorkspaceId,
-      workspaceId: workspace.id,
-    });
+    const accounts =
+      await this.connectedAccountMetadataService.findByUserWorkspaceId({
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+
+    return accounts.map(
+      (account) => buildPublicConnectedAccount(account)!,
+    );
   }
 
   @Mutation(() => ConnectedAccountPublicDTO)
@@ -46,9 +52,11 @@ export class ConnectedAccountResolver {
       workspaceId: workspace.id,
     });
 
-    return this.connectedAccountMetadataService.delete({
+    const deleted = await this.connectedAccountMetadataService.delete({
       id,
       workspaceId: workspace.id,
     });
+
+    return buildPublicConnectedAccount(deleted)!;
   }
 }

@@ -11,7 +11,6 @@ import {
   ConnectedAccountException,
   ConnectedAccountExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
-import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -43,7 +42,7 @@ export class ConnectedAccountMetadataService {
   }: {
     userWorkspaceId: string;
     workspaceId: string;
-  }): Promise<ConnectedAccountDTO[]> {
+  }): Promise<ConnectedAccountEntity[]> {
     return this.repository.find({
       where: { userWorkspaceId, workspaceId },
     });
@@ -55,7 +54,7 @@ export class ConnectedAccountMetadataService {
   }: {
     id: string;
     workspaceId: string;
-  }): Promise<ConnectedAccountDTO | null> {
+  }): Promise<ConnectedAccountEntity | null> {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
@@ -125,7 +124,7 @@ export class ConnectedAccountMetadataService {
       provider: string;
       userWorkspaceId: string;
     },
-  ): Promise<ConnectedAccountDTO> {
+  ): Promise<ConnectedAccountEntity> {
     const entity = this.repository.create(data);
 
     return this.repository.save(entity);
@@ -139,7 +138,7 @@ export class ConnectedAccountMetadataService {
     id: string;
     workspaceId: string;
     data: Partial<ConnectedAccountEntity>;
-  }): Promise<ConnectedAccountDTO> {
+  }): Promise<ConnectedAccountEntity> {
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
@@ -154,7 +153,7 @@ export class ConnectedAccountMetadataService {
   }: {
     id: string;
     workspaceId: string;
-  }): Promise<ConnectedAccountDTO> {
+  }): Promise<ConnectedAccountEntity> {
     const connectedAccount = await this.repository.findOneOrFail({
       where: { id, workspaceId },
     });
