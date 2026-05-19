@@ -138,20 +138,6 @@ yarn twenty dev --once
 | `--debounceMs \<ms>` | 以毫秒为单位设置文件更改的防抖延迟（默认值：`2000`）。 |
 | `--verbose` / `--debug`               | 显示详细的构建日志、同步请求和错误跟踪。           |
 
----
-
-## 从示例开始
-
-使用 `--example` 从一个更完整的项目开始（自定义对象、字段、逻辑函数、前端组件）：
-
-```bash filename="Terminal"
-npx create-twenty-app@latest my-twenty-app --example postcard
-```
-
-示例位于 [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples)。 你也可以使用 `yarn twenty add` 为现有项目生成单个实体的脚手架——参见[脚手架](/l/zh/developers/extend/apps/getting-started/scaffolding)。
-
----
-
 ## 你可以构建的内容
 
 应用由**实体**组成——每个实体定义为一个包含单一 `export default` 的 TypeScript 文件：
