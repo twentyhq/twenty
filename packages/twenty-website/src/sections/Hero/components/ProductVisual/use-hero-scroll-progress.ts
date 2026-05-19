@@ -1,36 +1,71 @@
-import { type RefObject, useEffect, useState } from 'react';
+'use client';
 
-const TRANSITION_POINT = 0.25;
-const MOBILE_BREAKPOINT = 921;
+import { type RefObject, useCallback, useEffect, useState } from 'react';
+
+import { useScrollProgress } from '@/lib/scroll/use-scroll-progress';
+import { breakpoints } from '@/theme/breakpoints';
+
+import { mapScrollToColorMix, mapScrollToPanelMix } from './hero-scroll-colors';
+
+export type HeroScrollState = {
+  colorMix: number;
+  isScrollDriven: boolean;
+  panelMix: number;
+  phase: 0 | 1;
+  progress: number;
+};
+
+const INITIAL_SCROLL_STATE: HeroScrollState = {
+  colorMix: 0,
+  isScrollDriven: false,
+  panelMix: 0,
+  phase: 0,
+  progress: 0,
+};
 
 export function useHeroScrollProgress(
   trackRef: RefObject<HTMLDivElement | null>,
-): number {
-  const [phase, setPhase] = useState(0);
+): HeroScrollState {
+  const [scrollState, setScrollState] =
+    useState<HeroScrollState>(INITIAL_SCROLL_STATE);
+  const [isScrollDriven, setIsScrollDriven] = useState(false);
 
   useEffect(() => {
-    const element = trackRef.current;
-    if (!element) return;
-
-    if (window.innerWidth < MOBILE_BREAKPOINT) return;
-
-    const handleScroll = () => {
-      const rect = element.getBoundingClientRect();
-      const scrollableDistance = element.offsetHeight - window.innerHeight;
-
-      if (scrollableDistance <= 0) return;
-
-      const scrolled = -rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
-
-      setPhase(progress >= TRANSITION_POINT ? 1 : 0);
+    const updateScrollMode = () => {
+      setIsScrollDriven(window.innerWidth >= breakpoints.md);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    updateScrollMode();
+    window.addEventListener('resize', updateScrollMode);
 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [trackRef]);
+    return () => window.removeEventListener('resize', updateScrollMode);
+  }, []);
 
-  return phase;
+  useEffect(() => {
+    if (!isScrollDriven) {
+      setScrollState(INITIAL_SCROLL_STATE);
+    }
+  }, [isScrollDriven]);
+
+  const handleScrollProgress = useCallback((progress: number) => {
+    const colorMix = mapScrollToColorMix(progress);
+    const panelMix = mapScrollToPanelMix(progress);
+
+    setScrollState({
+      colorMix,
+      isScrollDriven: true,
+      panelMix,
+      phase: panelMix >= 0.5 ? 1 : 0,
+      progress,
+    });
+  }, []);
+
+  useScrollProgress(trackRef, handleScrollProgress, {
+    enabled: isScrollDriven,
+  });
+
+  return {
+    ...scrollState,
+    isScrollDriven,
+  };
 }
