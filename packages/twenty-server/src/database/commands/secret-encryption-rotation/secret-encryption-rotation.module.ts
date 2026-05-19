@@ -8,6 +8,7 @@ import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/sec
 import { SigningKeyPrivateKeysRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/signing-key-private-keys-rotation.handler';
 import { TotpSecretsRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/totp-secrets-rotation.handler';
 import { RotateSecretEncryptionCommand } from 'src/database/commands/secret-encryption-rotation/rotate-secret-encryption.command';
+import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import { SecretEncryptionRotationRunnerService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-rotation-runner.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
@@ -32,6 +33,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
     ]),
   ],
   providers: [
+    SecretEncryptionColumnRotationService,
     ConnectedAccountTokensRotationHandler,
     ApplicationVariableRotationHandler,
     ApplicationRegistrationVariableRotationHandler,

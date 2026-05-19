@@ -1,19 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import {
   type SecretEncryptionRotationContext,
   type SecretEncryptionRotationHandler,
   type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
-import {
-  countEncryptedColumnNonCurrentRows,
-  rotateEncryptedColumn,
-} from 'src/database/commands/secret-encryption-rotation/utils/rotate-encrypted-column.util';
 import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 const ENCRYPTED_COLUMN = 'privateKey';
 
@@ -22,14 +18,11 @@ export class SigningKeyPrivateKeysRotationHandler
   implements SecretEncryptionRotationHandler
 {
   readonly siteName = 'signing-key-private-keys';
-  private readonly logger = new Logger(
-    SigningKeyPrivateKeysRotationHandler.name,
-  );
 
   constructor(
     @InjectRepository(SigningKeyEntity)
     private readonly signingKeyRepository: Repository<SigningKeyEntity>,
-    private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly secretEncryptionColumnRotationService: SecretEncryptionColumnRotationService,
   ) {}
 
   async countRemaining({
@@ -37,7 +30,7 @@ export class SigningKeyPrivateKeysRotationHandler
   }: {
     primaryKeyId: string;
   }): Promise<number> {
-    return countEncryptedColumnNonCurrentRows({
+    return this.secretEncryptionColumnRotationService.countNonCurrentRows({
       repository: this.signingKeyRepository,
       primaryKeyId,
       encryptedColumns: [ENCRYPTED_COLUMN],
@@ -47,11 +40,9 @@ export class SigningKeyPrivateKeysRotationHandler
   async rotate(
     context: SecretEncryptionRotationContext,
   ): Promise<SecretEncryptionRotationOutcome> {
-    return rotateEncryptedColumn({
+    return this.secretEncryptionColumnRotationService.rotateColumn({
       ...context,
       repository: this.signingKeyRepository,
-      secretEncryptionService: this.secretEncryptionService,
-      logger: this.logger,
       siteName: this.siteName,
       encryptedColumn: ENCRYPTED_COLUMN,
     });
