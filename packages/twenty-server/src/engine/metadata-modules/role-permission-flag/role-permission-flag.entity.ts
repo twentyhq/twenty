@@ -1,3 +1,4 @@
+import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   Column,
   CreateDateColumn,
@@ -12,6 +13,7 @@ import {
 } from 'typeorm';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -43,6 +45,13 @@ export class RolePermissionFlagEntity extends SyncableEntity {
   })
   @JoinColumn({ name: 'roleId' })
   role: Relation<RoleEntity>;
+
+  @WasRemovedInUpgrade({
+    upgradeCommandName:
+      '2.7.0_FinalizeRolePermissionFlagCutoverFastInstanceCommand_1779600000000',
+  })
+  @Column({ nullable: false, type: 'varchar' })
+  flag: PermissionFlagType;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

@@ -20,6 +20,7 @@ export const fromPermissionFlagToUniversalFlatRolePermissionFlag = ({
     roleUniversalIdentifier,
     permissionFlagUniversalIdentifier:
       SystemPermissionFlag[permissionFlag.flag],
+    flag: permissionFlag.flag,
     createdAt: now,
     updatedAt: now,
   };
