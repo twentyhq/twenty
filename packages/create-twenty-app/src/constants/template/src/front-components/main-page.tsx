@@ -37,7 +37,7 @@ const CATEGORIES = [
         href: `${DOCS_BASE_URL}/logic/logic-functions`,
       },
       {
-        label: 'SERVERLESS FUNCT.',
+        label: 'LOGIC FUNCTION',
         href: `${DOCS_BASE_URL}/logic/logic-functions`,
       },
       {
