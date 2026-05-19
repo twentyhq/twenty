@@ -43,8 +43,6 @@ export class RotateSigningKeysCronJob {
         );
       }
     } catch (error) {
-      // Re-throw after logging so BullMQ marks the job as failed and the
-      // Sentry cron monitor reports a non-ok check-in.
       this.logger.error(
         `Signing key rotation failed: ${
           error instanceof Error ? error.message : String(error)

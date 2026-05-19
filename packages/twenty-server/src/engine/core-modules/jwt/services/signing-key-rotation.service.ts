@@ -32,8 +32,6 @@ export class SigningKeyRotationService {
       await this.jwtKeyManagerService.getCurrentSigningKeyMetadata();
 
     if (!isDefined(current)) {
-      // No current key at all — the regular load path will auto-create one
-      // on the next sign request, so there's nothing to rotate here.
       return { rotated: false, previousId: null, newId: null };
     }
 

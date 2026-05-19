@@ -99,9 +99,6 @@ export class JwtKeyManagerService {
       async (entityManager) => {
         const repository = entityManager.getRepository(SigningKeyEntity);
 
-        // Demote the existing current key first; the partial unique index on
-        // (isCurrent = true) is checked at statement end, so the subsequent
-        // insert never observes two current rows.
         await repository.update({ isCurrent: true }, { isCurrent: false });
 
         await repository.insert({
