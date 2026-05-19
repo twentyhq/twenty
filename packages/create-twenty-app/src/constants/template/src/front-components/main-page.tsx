@@ -1,4 +1,11 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  Avatar,
+  IconBox,
+  IconHierarchy,
+  IconLayout,
+  IconSettingsAutomation,
+} from 'twenty-sdk/ui';
 import { useState } from 'react';
 
 import {
@@ -59,15 +66,6 @@ const CATEGORIES = [
   },
 ] as const;
 
-const ItemIcon = ({ color }: { color: string }) => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <rect x="2" y="2" width="5" height="5" rx="1" fill={color} />
-    <rect x="9" y="2" width="5" height="5" rx="1" fill={color} opacity="0.6" />
-    <rect x="2" y="9" width="5" height="5" rx="1" fill={color} opacity="0.6" />
-    <rect x="9" y="9" width="5" height="5" rx="1" fill={color} opacity="0.3" />
-  </svg>
-);
-
 const ArrowUpRight = ({ color = '#999' }: { color?: string }) => (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
     <path
@@ -93,6 +91,18 @@ const CategoryCard = ({
 }) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
+  const CategoryIcon = () => {
+    if (title === 'Data model') {
+      return <IconHierarchy color={color} size={'20px'} />;
+    }
+    if (title === 'Logic') {
+      return <IconSettingsAutomation color={color} size={'20px'} />;
+    }
+    if (title === 'Layout') {
+      return <IconLayout color={color} size={'20px'} />;
+    }
+  };
+
   return (
     <div
       style={{
@@ -111,8 +121,12 @@ const CategoryCard = ({
         style={{
           padding: '16px 20px',
           background: `${color}22`,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
         }}
       >
+        <CategoryIcon />
         <span
           style={{
             fontSize: '16px',
@@ -154,7 +168,7 @@ const CategoryCard = ({
                 transition: 'background 0.15s',
               }}
             >
-              <ItemIcon color={color} />
+              <IconBox color={color} size={'20px'} />
               <span
                 style={{
                   fontSize: '13px',
@@ -190,13 +204,11 @@ const MainPage = () => {
         padding: '40px',
       }}
     >
-      {/*<Avatar
-        avatarUrl={getPublicAssetUrl('logo.svg')}
+      <Avatar
         placeholder={APP_DISPLAY_NAME}
         placeholderColorSeed={APP_DISPLAY_NAME}
-        type="squared"
         size="xl"
-      />*/}
+      />
       <span
         style={{
           fontSize: '24px',
