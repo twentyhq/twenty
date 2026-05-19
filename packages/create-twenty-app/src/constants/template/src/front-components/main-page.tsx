@@ -1,11 +1,7 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Avatar } from 'twenty-sdk/ui';
 import { useState } from 'react';
 
-import {
-  APP_DISPLAY_NAME,
-  MAIN_PAGE_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/universal-identifiers';
+import { APP_DISPLAY_NAME, MAIN_PAGE_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER, } from 'src/constants/universal-identifiers';
 
 const DOCS_BASE_URL = 'https://docs.twenty.com/developers/extend/apps';
 
@@ -191,14 +187,13 @@ const MainPage = () => {
         padding: '40px',
       }}
     >
-      <Avatar
-        /*avatarUrl={getPublicAssetUrl('logo.svg')}*/ // TODO: uncomment when getPublicAssetUrl is available in twenty-sdk/utils
-        avatarUrl={null}
+      {/*<Avatar
+        avatarUrl={getPublicAssetUrl('logo.svg')}
         placeholder={APP_DISPLAY_NAME}
         placeholderColorSeed={APP_DISPLAY_NAME}
         type="squared"
         size="xl"
-      />
+      />*/}
       <span
         style={{
           fontSize: '24px',
