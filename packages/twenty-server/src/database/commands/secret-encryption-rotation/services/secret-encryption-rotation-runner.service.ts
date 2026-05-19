@@ -10,10 +10,10 @@ import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationSiteResult,
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
-import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
 import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-encryption/utils/resolve-encryption-keys-or-throw.util';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
@@ -46,7 +46,7 @@ export class SecretEncryptionRotationRunnerService {
 
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
-    secretEncryptionColumnRotationService: SecretEncryptionColumnRotationService,
+    secretEncryptionService: SecretEncryptionService,
     sensitiveConfigStorageRotationHandler: SensitiveConfigStorageRotationHandler,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
@@ -67,7 +67,7 @@ export class SecretEncryptionRotationRunnerService {
           encryptedColumns: ['accessToken', 'refreshToken'],
           isWorkspaceScoped: true,
         },
-        secretEncryptionColumnRotationService,
+        secretEncryptionService,
       ),
       new ColumnRotationSiteHandler(
         {
@@ -77,7 +77,7 @@ export class SecretEncryptionRotationRunnerService {
           isWorkspaceScoped: true,
           extraWhere: { isSecret: true },
         },
-        secretEncryptionColumnRotationService,
+        secretEncryptionService,
       ),
       new ColumnRotationSiteHandler(
         {
@@ -85,7 +85,7 @@ export class SecretEncryptionRotationRunnerService {
           repository: applicationRegistrationVariableRepository,
           encryptedColumns: ['encryptedValue'],
         },
-        secretEncryptionColumnRotationService,
+        secretEncryptionService,
       ),
       new ColumnRotationSiteHandler(
         {
@@ -93,7 +93,7 @@ export class SecretEncryptionRotationRunnerService {
           repository: signingKeyRepository,
           encryptedColumns: ['privateKey'],
         },
-        secretEncryptionColumnRotationService,
+        secretEncryptionService,
       ),
       new ColumnRotationSiteHandler(
         {
@@ -102,7 +102,7 @@ export class SecretEncryptionRotationRunnerService {
           encryptedColumns: ['secret'],
           isWorkspaceScoped: true,
         },
-        secretEncryptionColumnRotationService,
+        secretEncryptionService,
       ),
       sensitiveConfigStorageRotationHandler,
     ];
