@@ -13,6 +13,7 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
   name: 'Default Record Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
+  universalIdentifier: '00000000-0000-0000-0000-000000000000',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,

@@ -138,20 +138,6 @@ Beide Modi benötigen ein authentifiziertes Remote-Repository.
 | `--debounceMs \<ms>` | Legt die Entprellzeit für Dateiänderungen in Millisekunden fest (Standard: `2000`). |
 | `--verbose` / `--debug`               | Zeigt ausführliche Build-Protokolle, Sync-Anfragen und Fehler-Traces an.            |
 
----
-
-## Mit einem Beispiel beginnen
-
-Verwenden Sie `--example`, um mit einem vollständigeren Projekt zu starten (benutzerdefinierte Objekte, Felder, Logikfunktionen, Frontend-Komponenten):
-
-```bash filename="Terminal"
-npx create-twenty-app@latest my-twenty-app --example postcard
-```
-
-Die Beispiele befinden sich unter [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). Sie können auch einzelne Entitäten in einem bestehenden Projekt mit `yarn twenty add` erzeugen — siehe [Scaffolding](/l/de/developers/extend/apps/getting-started/scaffolding).
-
----
-
 ## Was Sie erstellen können
 
 Apps bestehen aus **Entitäten** — jede ist als TypeScript-Datei mit einem einzigen `export default` definiert:

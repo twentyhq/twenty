@@ -390,7 +390,8 @@ export default defineFrontComponent({
 前端组件可以使用 `getPublicAssetUrl` 访问应用的 `public/` 目录中的文件：
 
 ```tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
 const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
 

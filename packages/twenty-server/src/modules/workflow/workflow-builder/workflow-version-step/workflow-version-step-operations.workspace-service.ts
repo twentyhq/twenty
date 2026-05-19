@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import {
   FieldMetadataType,
   StepLogicalOperator,
@@ -33,6 +34,7 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
@@ -220,6 +222,23 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           flatLogicFunctionMaps,
         });
 
+        const declaredOutputSchema =
+          flatLogicFunction.workflowActionTriggerSettings?.outputSchema;
+
+        const initialOutputSchema: OutputSchema = isDefined(
+          declaredOutputSchema,
+        )
+          ? inputSchemaToOutputSchema(declaredOutputSchema)
+          : {
+              link: {
+                isLeaf: true,
+                icon: 'IconVariable',
+                tab: 'test',
+                label: 'Generate Function Output',
+              },
+              _outputSchemaType: 'LINK',
+            };
+
         return {
           builtStep: {
             ...baseStep,
@@ -229,15 +248,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             type: WorkflowActionType.LOGIC_FUNCTION,
             settings: {
               ...BASE_STEP_DEFINITION,
-              outputSchema: {
-                link: {
-                  isLeaf: true,
-                  icon: 'IconVariable',
-                  tab: 'test',
-                  label: 'Generate Function Output',
-                },
-                _outputSchemaType: 'LINK',
-              },
+              outputSchema: initialOutputSchema,
               input: {
                 logicFunctionId,
                 logicFunctionInput: isDefined(

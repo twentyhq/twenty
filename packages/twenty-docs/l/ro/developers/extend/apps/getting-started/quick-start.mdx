@@ -138,20 +138,6 @@ Ambele moduri necesită o conexiune la distanță autentificată.
 | `--debounceMs \<ms>` | Setează întârzierea de debounce pentru modificarea fișierului în milisecunde (implicit: `2000`). |
 | `--verbose` / `--debug`               | Afișează jurnale detaliate de construire, cereri de sincronizare și urme ale erorilor.           |
 
----
-
-## Pornind de la un exemplu
-
-Folosiți `--example` pentru a începe cu un proiect mai complet (obiecte personalizate, câmpuri, funcții logice, componente front-end):
-
-```bash filename="Terminal"
-npx create-twenty-app@latest my-twenty-app --example postcard
-```
-
-Exemplele se află în [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). Puteți, de asemenea, să creați scheletul entităților individuale într-un proiect existent cu `yarn twenty add` — vedeți [Crearea scheletului](/l/ro/developers/extend/apps/getting-started/scaffolding).
-
----
-
 ## Ce puteți construi
 
 Aplicațiile sunt compuse din **entități** — fiecare definită într-un fișier TypeScript cu un singur `export default`:
