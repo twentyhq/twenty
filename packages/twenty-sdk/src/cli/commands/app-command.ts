@@ -222,6 +222,16 @@ export const registerCommands = (program: Command): void => {
       }
     });
 
+  program
+    .command('app:catalog-sync')
+    .description('Trigger marketplace catalog sync')
+    .option('-r, --remote <name>', 'Sync on a specific remote')
+    .action(async (options: { remote?: string }) => {
+      const { CatalogSyncCommand } = await import('./catalog-sync');
+      const cmd = new CatalogSyncCommand();
+      await cmd.execute({ remote: options.remote });
+    });
+
   // ── Infrastructure ───────────────────────────────────────────────
 
   registerRemoteCommands(program);
@@ -393,11 +403,7 @@ export const registerCommands = (program: Command): void => {
     .command('catalog-sync', { hidden: true })
     .option('-r, --remote <name>', 'Sync on a specific remote')
     .action(async (options: { remote?: string }) => {
-      console.warn(
-        chalk.yellow(
-          '⚠ `twenty catalog-sync` is removed. Use `twenty docker:catalog-sync` instead.',
-        ),
-      );
+      deprecate('catalog-sync', 'app:catalog-sync');
       const { CatalogSyncCommand } = await import('./catalog-sync');
       const cmd = new CatalogSyncCommand();
       await cmd.execute({ remote: options.remote });

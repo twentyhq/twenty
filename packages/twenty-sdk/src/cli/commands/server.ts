@@ -14,7 +14,7 @@ import { checkServerHealth } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { execSync, spawnSync } from 'node:child_process';
-import { CatalogSyncCommand } from './catalog-sync';
+
 
 const startAction = async (options: { port?: string; test?: boolean }) => {
   const defaultPort = options.test ? DEFAULT_TEST_PORT : DEFAULT_PORT;
@@ -172,11 +172,6 @@ const upgradeAction = async (
   }
 };
 
-const catalogSyncAction = async (options: { remote?: string }) => {
-  const command = new CatalogSyncCommand();
-  await command.execute({ remote: options.remote });
-};
-
 export const registerServerCommands = (program: Command): void => {
   program
     .command('docker:start')
@@ -215,12 +210,6 @@ export const registerServerCommands = (program: Command): void => {
     .description('Upgrade the Docker image')
     .option('--test', 'Upgrade the test instance')
     .action(upgradeAction);
-
-  program
-    .command('docker:catalog-sync')
-    .description('Trigger marketplace catalog sync')
-    .option('-r, --remote <name>', 'Sync on a specific remote')
-    .action(catalogSyncAction);
 
   // Deprecated: `server <subcommand>` forwarding to `docker:<subcommand>`
   const server = program
@@ -292,7 +281,9 @@ export const registerServerCommands = (program: Command): void => {
     .command('catalog-sync')
     .option('-r, --remote <name>', 'Sync on a specific remote')
     .action(async (options: { remote?: string }) => {
-      deprecate('catalog-sync', 'docker:catalog-sync');
-      await catalogSyncAction(options);
+      deprecate('catalog-sync', 'app:catalog-sync');
+      const { CatalogSyncCommand } = await import('./catalog-sync');
+      const cmd = new CatalogSyncCommand();
+      await cmd.execute({ remote: options.remote });
     });
 };
