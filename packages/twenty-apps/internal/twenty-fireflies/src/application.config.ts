@@ -16,6 +16,12 @@ export default defineApplication({
   author: 'Twenty',
   category: 'Productivity',
   aboutDescription: ABOUT_DESCRIPTION,
+  screenshots: [
+    'public/gallery/transcript-on-calendar-event.png',
+    'public/gallery/summary-on-calendar-event.png',
+    'public/gallery/workflow-builder-actions.png',
+    'public/gallery/app-settings.png',
+  ],
   websiteUrl: 'https://docs.twenty.com/developers/extend/apps/getting-started',
   termsUrl: 'https://www.twenty.com/terms',
   emailSupport: 'contact@twenty.com',
