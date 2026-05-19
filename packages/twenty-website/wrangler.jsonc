@@ -16,7 +16,7 @@
       "name": "twenty-website-dev",
       "routes": [
         {
-          "pattern": "website-new.twenty-main.com",
+          "pattern": "website.twenty-main.com",
           "custom_domain": true,
         },
       ],
