@@ -52,14 +52,12 @@ export class JwtKeyManagerService {
       const result = await this.currentSigningKeyPromise;
 
       if (!isDefined(result)) {
-        this.currentSigningKeyPromise = null;
-        this.currentSigningKeyCachedAt = 0;
+        this.invalidateCurrentSigningKeyLocalCache();
       }
 
       return result;
     } catch (error) {
-      this.currentSigningKeyPromise = null;
-      this.currentSigningKeyCachedAt = 0;
+      this.invalidateCurrentSigningKeyLocalCache();
       throw error;
     }
   }
@@ -104,8 +102,7 @@ export class JwtKeyManagerService {
     );
 
     await this.coreEntityCacheService.invalidate('signingKeyPublicKey', newId);
-    this.currentSigningKeyPromise = null;
-    this.currentSigningKeyCachedAt = 0;
+    this.invalidateCurrentSigningKeyLocalCache();
 
     return { id: newId, privateKeyPem: generated.privateKeyPem };
   }
@@ -139,10 +136,14 @@ export class JwtKeyManagerService {
     }
 
     await this.coreEntityCacheService.invalidate('signingKeyPublicKey', id);
-    this.currentSigningKeyPromise = null;
-    this.currentSigningKeyCachedAt = 0;
+    this.invalidateCurrentSigningKeyLocalCache();
 
     return this.signingKeyRepository.findOneByOrFail({ id });
+  }
+
+  private invalidateCurrentSigningKeyLocalCache(): void {
+    this.currentSigningKeyPromise = null;
+    this.currentSigningKeyCachedAt = 0;
   }
 
   private async loadOrCreateCurrentSigningKey(): Promise<CurrentSigningKey | null> {
