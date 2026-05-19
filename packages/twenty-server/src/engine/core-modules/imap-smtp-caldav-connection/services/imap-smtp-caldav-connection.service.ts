@@ -204,5 +204,4 @@ export class ImapSmtpCaldavService {
         assertUnreachable(accountType);
     }
   }
-
 }
