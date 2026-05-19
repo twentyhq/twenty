@@ -61,25 +61,6 @@ export class ImapSmtpCalDavAPIService {
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
-  async getImapSmtpCaldavConnectedAccount({
-    workspaceId,
-    id,
-    userWorkspaceId,
-  }: {
-    workspaceId: string;
-    id: string;
-    userWorkspaceId: string;
-  }): Promise<ConnectedAccountEntity | null> {
-    return this.connectedAccountRepository.findOne({
-      where: {
-        id,
-        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-        workspaceId,
-        userWorkspaceId,
-      },
-    });
-  }
-
   async upsertConnectedAccount(input: {
     handle: string;
     userWorkspaceId: string;

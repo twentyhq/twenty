@@ -143,6 +143,31 @@ export class ConnectedAccountTokenEncryptionService {
     return result;
   }
 
+  decryptConnectionParameters({
+    connectionParameters,
+    workspaceId,
+  }: {
+    connectionParameters: ImapSmtpCaldavParams;
+    workspaceId: string;
+  }): ImapSmtpCaldavParams {
+    const result: ImapSmtpCaldavParams = {};
+
+    for (const protocol of ACCOUNT_TYPES) {
+      const params = connectionParameters[protocol];
+
+      if (!isDefined(params)) {
+        continue;
+      }
+
+      result[protocol] = this.decryptProtocolPassword({
+        protocolParams: params,
+        workspaceId,
+      });
+    }
+
+    return result;
+  }
+
   decryptProtocolPassword({
     protocolParams,
     workspaceId,

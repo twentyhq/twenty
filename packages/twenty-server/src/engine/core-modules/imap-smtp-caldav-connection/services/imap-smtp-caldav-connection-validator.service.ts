@@ -4,12 +4,10 @@ import { msg } from '@lingui/core/macro';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { connectionParametersUpdateSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters-update.schema';
 import { connectionParametersSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters.schema';
-import {
-  type ConnectionParameters,
-  type ConnectionParametersUpdate,
-} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 
 @Injectable()
@@ -22,7 +20,7 @@ export class ImapSmtpCaldavValidatorService {
     params,
     existingProtocolParams,
   }: {
-    params: ConnectionParametersUpdate;
+    params: ConnectionParametersInput;
     existingProtocolParams: ConnectionParameters | null;
   }): Promise<ConnectionParameters> {
     if (!params) {

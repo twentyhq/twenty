@@ -20,6 +20,8 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 
@@ -28,9 +30,11 @@ import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 export class ImapSmtpCaldavResolver {
   constructor(
-    private readonly ImapSmtpCaldavConnectionService: ImapSmtpCaldavService,
+    private readonly imapSmtpCaldavService: ImapSmtpCaldavService,
     private readonly imapSmtpCaldavApisService: ImapSmtpCalDavAPIService,
     private readonly mailConnectionValidatorService: ImapSmtpCaldavValidatorService,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
   @Query(() => ConnectedImapSmtpCaldavAccountDTO)
@@ -44,13 +48,13 @@ export class ImapSmtpCaldavResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedImapSmtpCaldavAccountDTO> {
     const connectedAccount =
-      await this.imapSmtpCaldavApisService.getImapSmtpCaldavConnectedAccount({
-        workspaceId: workspace.id,
+      await this.connectedAccountMetadataService.findByIdAndUserWorkspaceId({
         id,
         userWorkspaceId,
+        workspaceId: workspace.id,
       });
 
-    if (!isDefined(connectedAccount) || !isDefined(connectedAccount?.handle)) {
+    if (!isDefined(connectedAccount)) {
       throw new UserInputError('Connected account not found');
     }
 
@@ -77,10 +81,10 @@ export class ImapSmtpCaldavResolver {
     @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
   ): Promise<ImapSmtpCaldavConnectionSuccessDTO> {
     const existingAccount = isDefined(id)
-      ? await this.ImapSmtpCaldavConnectionService.getImapSmtpCaldav({
-          workspaceId: workspace.id,
-          connectionId: id,
+      ? await this.connectedAccountMetadataService.findByIdAndUserWorkspaceId({
+          id,
           userWorkspaceId,
+          workspaceId: workspace.id,
         })
       : null;
 
@@ -88,11 +92,19 @@ export class ImapSmtpCaldavResolver {
       throw new UserInputError('Connected account not found');
     }
 
+    const decryptedExistingParams = existingAccount?.connectionParameters
+      ? this.connectedAccountTokenEncryptionService.decryptConnectionParameters(
+          {
+            connectionParameters: existingAccount.connectionParameters,
+            workspaceId: workspace.id,
+          },
+        )
+      : null;
+
     const validatedParams = await this.validateAndTestConnectionParameters({
       connectionParameters,
       handle,
-      existingConnectionParameters:
-        existingAccount?.connectionParameters ?? null,
+      existingConnectionParameters: decryptedExistingParams,
     });
 
     const connectedAccountId =
@@ -136,7 +148,7 @@ export class ImapSmtpCaldavResolver {
             },
           );
 
-        await this.ImapSmtpCaldavConnectionService.testImapSmtpCaldav({
+        await this.imapSmtpCaldavService.testImapSmtpCaldav({
           handle,
           params: validatedProtocolParams,
           accountType: protocol,

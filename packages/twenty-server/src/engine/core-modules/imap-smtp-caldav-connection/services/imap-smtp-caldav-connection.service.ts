@@ -1,24 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { ImapFlow } from 'imapflow';
 import { createTransport } from 'nodemailer';
-import { ACCOUNT_TYPES } from 'twenty-shared/constants';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   type AccountType,
   type ConnectionParameters,
-  type ImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 
@@ -27,13 +20,10 @@ export class ImapSmtpCaldavService {
   private readonly logger = new Logger(ImapSmtpCaldavService.name);
 
   constructor(
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly caldavClientService: CalDavClientService,
     private readonly caldavFetchEventsService: CalDavFetchEventsService,
-    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
   async testImapConnection(
@@ -215,47 +205,4 @@ export class ImapSmtpCaldavService {
     }
   }
 
-  async getImapSmtpCaldav({
-    workspaceId,
-    connectionId,
-    userWorkspaceId,
-  }: {
-    workspaceId: string;
-    connectionId: string;
-    userWorkspaceId: string;
-  }): Promise<ConnectedAccountEntity | null> {
-    const connectedAccount = await this.connectedAccountRepository.findOne({
-      where: {
-        id: connectionId,
-        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-        workspaceId,
-        userWorkspaceId,
-      },
-    });
-
-    if (!connectedAccount?.connectionParameters) {
-      return connectedAccount;
-    }
-
-    const decryptedParams: ImapSmtpCaldavParams = {};
-
-    for (const protocol of ACCOUNT_TYPES) {
-      const protocolParams = connectedAccount.connectionParameters[protocol];
-
-      if (!isDefined(protocolParams)) {
-        continue;
-      }
-
-      decryptedParams[protocol] =
-        this.connectedAccountTokenEncryptionService.decryptProtocolPassword({
-          protocolParams,
-          workspaceId,
-        });
-    }
-
-    return {
-      ...connectedAccount,
-      connectionParameters: decryptedParams,
-    };
-  }
 }
