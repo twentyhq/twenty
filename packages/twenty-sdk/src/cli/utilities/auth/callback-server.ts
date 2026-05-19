@@ -1,4 +1,7 @@
+import fs from 'node:fs';
 import http from 'node:http';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 type CallbackResult =
   | { success: true; code: string }
@@ -11,11 +14,19 @@ type CallbackServer = {
   close: () => void;
 };
 
-const TWENTY_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 96 96">
-<rect width="96" height="96" rx="11.3" fill="#000"/>
-<path fill="#fff" d="M19.25 35.75c0-5.25 4.26-9.5 9.5-9.5h18.29c.27 0 .51.16.63.4.11.25.06.54-.12.75l-4.01 4.35c-.7.76-1.68 1.2-2.71 1.2H28.8c-1.57 0-2.85 1.27-2.85 2.85v7.18c0 .93-.75 1.67-1.68 1.67h-3.34c-.93 0-1.67-.75-1.67-1.67v-7.23z"/>
-<path fill="#fff" d="M76.15 60.25c0 5.25-4.26 9.5-9.5 9.5h-7.77c-5.25 0-9.5-4.25-9.5-9.5V46.65c0-.93.35-1.82.98-2.5l4.53-4.92c.19-.2.49-.27.75-.17.26.11.44.36.44.64v20.52c0 1.57 1.28 2.85 2.85 2.85h7.68c1.57 0 2.85-1.28 2.85-2.85V35.8c0-1.57-1.28-2.85-2.85-2.85h-8.93c-1.02 0-2 .43-2.7 1.18L28.35 63.06h16c.92 0 1.67.75 1.67 1.68v3.34c0 .93-.75 1.67-1.67 1.67H22.79c-1.95 0-3.55-1.59-3.55-3.54v-1.77c0-.89.33-1.75.94-2.4l29.86-32.43c1.98-2.15 4.75-3.36 7.67-3.36h8.93c5.25 0 9.5 4.25 9.5 9.5v24.5z"/>
-</svg>`;
+let cachedHeaderImageBase64: string | undefined;
+
+const getHeaderImageBase64 = (): string => {
+  if (cachedHeaderImageBase64 === undefined) {
+    const currentDir = path.dirname(fileURLToPath(import.meta.url));
+
+    cachedHeaderImageBase64 = fs
+      .readFileSync(path.join(currentDir, 'assets', 'oauth-modal-header.png'))
+      .toString('base64');
+  }
+
+  return cachedHeaderImageBase64;
+};
 
 const pageHtml = ({
   title,
@@ -48,34 +59,67 @@ const pageHtml = ({
     .card {
       background: #fff;
       border-radius: 8px;
-      box-shadow: 2px 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
-      padding: 32px;
-      width: 400px;
-      max-width: calc(100vw - 32px);
+      box-shadow: 2px 4px 16px 0 rgba(0,0,0,0.16), 0 2px 4px 0 rgba(0,0,0,0.08);
+      max-width: min(100%, 360px);
+      width: fit-content;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 16px;
+      overflow: hidden;
     }
-    .logo { margin-bottom: 4px; }
-    .icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
+    .header {
+      height: 120px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      background-image: url('data:image/png;base64,${getHeaderImageBase64()}');
+      background-position: center;
+      background-size: cover;
+    }
+    .logo-tile {
+      width: 36px;
+      height: 36px;
+      padding: 4px;
+      background: #fff;
+      border-radius: 100%;
+      box-shadow: 2px 4px 16px 0 rgba(0,0,0,0.16), 0 2px 4px 0 rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .status-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .icon-success { background: #f0faf0; }
-    .icon-error { background: #fef0f0; }
-    .icon svg { width: 24px; height: 24px; }
+    .status-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+    .status-icon-success { background: #f0faf0; }
+    .status-icon-error { background: #fef0f0; }
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
     h2 {
-      font-size: 1.23rem;
-      font-weight: 600;
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.1;
       color: #333;
+      text-align: center;
+      text-wrap: balance;
+      margin-bottom: 16px;
     }
     p {
-      font-size: 0.92rem;
+      font-size: 0.82rem;
       color: #666;
       text-align: center;
       line-height: 1.5;
@@ -84,25 +128,31 @@ const pageHtml = ({
 </head>
 <body>
   <div class="card">
-    <div class="logo">${TWENTY_LOGO_SVG}</div>
-    <div class="icon ${isSuccess ? 'icon-success' : 'icon-error'}">
-      ${
-        isSuccess
-          ? '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
-          : '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
-      }
+    <div class="header">
+      <div class="logo-tile">
+        <div class="status-icon ${isSuccess ? 'status-icon-success' : 'status-icon-error'}">
+          ${
+            isSuccess
+              ? '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+              : '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+          }
+        </div>
+      </div>
     </div>
-    <h2>${title}</h2>
-    <p>${message}</p>
+    <div class="content">
+      <h2>${title}</h2>
+      <p>${message}</p>
+    </div>
   </div>
 </body>
 </html>`;
 
-const SUCCESS_HTML = pageHtml({
-  title: 'Authentication successful',
-  message: 'You can close this window and return to the terminal.',
-  isSuccess: true,
-});
+const successHtml = () =>
+  pageHtml({
+    title: 'Authentication successful',
+    message: 'You can close this window and return to the terminal.',
+    isSuccess: true,
+  });
 
 const escapeHtml = (text: string): string =>
   text
@@ -152,7 +202,7 @@ export const startCallbackServer = (options?: {
 
       if (code) {
         res.writeHead(200, headers);
-        res.end(SUCCESS_HTML);
+        res.end(successHtml());
         callbackResolve({ success: true, code });
       } else {
         const errorMessage =
