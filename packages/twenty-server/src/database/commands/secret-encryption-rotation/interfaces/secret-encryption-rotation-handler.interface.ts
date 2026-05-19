@@ -17,12 +17,14 @@ export type SecretEncryptionRotationSiteResult =
     durationMs: number;
   };
 
-export type SecretEncryptionRotationHandler = {
-  readonly siteName: string;
+export abstract class SecretEncryptionRotationHandler {
+  abstract readonly siteName: string;
 
-  countRemaining(args: { currentEncryptionKeyId: string }): Promise<number>;
+  abstract countRemaining(args: {
+    currentEncryptionKeyId: string;
+  }): Promise<number>;
 
-  rotate(
+  abstract rotate(
     context: SecretEncryptionRotationContext,
   ): Promise<SecretEncryptionRotationOutcome>;
-};
+}

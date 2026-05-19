@@ -12,7 +12,7 @@ import {
 import {
   type SecretEncryptionRotationContext,
   type SecretEncryptionRotationOutcome,
-} from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
+} from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import { buildNonCurrentEnvelopeRawFilter } from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';

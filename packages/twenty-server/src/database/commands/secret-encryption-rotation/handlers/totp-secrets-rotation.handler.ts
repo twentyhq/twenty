@@ -3,27 +3,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import {
+  SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
-  type SecretEncryptionRotationHandler,
   type SecretEncryptionRotationOutcome,
-} from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
+} from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
+import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 
 const ENCRYPTED_COLUMN = 'secret';
 
 @Injectable()
-export class TotpSecretsRotationHandler
-  implements SecretEncryptionRotationHandler
-{
+export class TotpSecretsRotationHandler extends SecretEncryptionRotationHandler {
   readonly siteName = 'totp-secrets';
 
   constructor(
     @InjectRepository(TwoFactorAuthenticationMethodEntity)
     private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethodEntity>,
     private readonly secretEncryptionColumnRotationService: SecretEncryptionColumnRotationService,
-  ) {}
+  ) {
+    super();
+  }
 
   async countRemaining({
     currentEncryptionKeyId,

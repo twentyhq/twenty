@@ -3,27 +3,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import {
+  SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
-  type SecretEncryptionRotationHandler,
   type SecretEncryptionRotationOutcome,
-} from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
+} from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
+import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 const ENCRYPTED_COLUMNS = ['accessToken', 'refreshToken'] as const;
 
 @Injectable()
-export class ConnectedAccountTokensRotationHandler
-  implements SecretEncryptionRotationHandler
-{
+export class ConnectedAccountTokensRotationHandler extends SecretEncryptionRotationHandler {
   readonly siteName = 'connected-account-tokens';
 
   constructor(
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly secretEncryptionColumnRotationService: SecretEncryptionColumnRotationService,
-  ) {}
+  ) {
+    super();
+  }
 
   async countRemaining({
     currentEncryptionKeyId,

@@ -3,12 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type FindOptionsWhere, Repository } from 'typeorm';
 
-import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import {
+  SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
-  type SecretEncryptionRotationHandler,
   type SecretEncryptionRotationOutcome,
-} from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
+} from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
+import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 
 const ENCRYPTED_COLUMN = 'value';
@@ -17,16 +17,16 @@ const ONLY_SECRET_ROWS_WHERE: FindOptionsWhere<ApplicationVariableEntity> = {
 };
 
 @Injectable()
-export class ApplicationVariableRotationHandler
-  implements SecretEncryptionRotationHandler
-{
+export class ApplicationVariableRotationHandler extends SecretEncryptionRotationHandler {
   readonly siteName = 'application-variable';
 
   constructor(
     @InjectRepository(ApplicationVariableEntity)
     private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
     private readonly secretEncryptionColumnRotationService: SecretEncryptionColumnRotationService,
-  ) {}
+  ) {
+    super();
+  }
 
   async countRemaining({
     currentEncryptionKeyId,

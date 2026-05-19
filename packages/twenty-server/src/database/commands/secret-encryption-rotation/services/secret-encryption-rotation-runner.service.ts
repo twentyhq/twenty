@@ -9,9 +9,9 @@ import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/sec
 import { SigningKeyPrivateKeysRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/signing-key-private-keys-rotation.handler';
 import { TotpSecretsRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/totp-secrets-rotation.handler';
 import {
-  type SecretEncryptionRotationHandler,
+  SecretEncryptionRotationHandler,
   type SecretEncryptionRotationSiteResult,
-} from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
+} from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
 import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-encryption/utils/resolve-encryption-keys-or-throw.util';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';

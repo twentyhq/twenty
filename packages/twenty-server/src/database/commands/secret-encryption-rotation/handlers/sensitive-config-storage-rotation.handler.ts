@@ -5,10 +5,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere, In, IsNull, Raw, Repository } from 'typeorm';
 
 import {
+  SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
-  type SecretEncryptionRotationHandler,
   type SecretEncryptionRotationOutcome,
-} from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
+} from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import {
   KeyValuePairEntity,
   KeyValuePairType,
@@ -21,9 +21,7 @@ import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 @Injectable()
-export class SensitiveConfigStorageRotationHandler
-  implements SecretEncryptionRotationHandler
-{
+export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotationHandler {
   readonly siteName = 'sensitive-config-storage';
   private readonly logger = new Logger(
     SensitiveConfigStorageRotationHandler.name,
@@ -33,7 +31,9 @@ export class SensitiveConfigStorageRotationHandler
     @InjectRepository(KeyValuePairEntity)
     private readonly keyValuePairRepository: Repository<KeyValuePairEntity>,
     private readonly secretEncryptionService: SecretEncryptionService,
-  ) {}
+  ) {
+    super();
+  }
 
   async countRemaining({
     currentEncryptionKeyId,

@@ -3,27 +3,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import {
+  SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
-  type SecretEncryptionRotationHandler,
   type SecretEncryptionRotationOutcome,
-} from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
+} from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
+import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 
 const ENCRYPTED_COLUMN = 'encryptedValue';
 
 @Injectable()
-export class ApplicationRegistrationVariableRotationHandler
-  implements SecretEncryptionRotationHandler
-{
+export class ApplicationRegistrationVariableRotationHandler extends SecretEncryptionRotationHandler {
   readonly siteName = 'application-registration-variable';
 
   constructor(
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
     private readonly secretEncryptionColumnRotationService: SecretEncryptionColumnRotationService,
-  ) {}
+  ) {
+    super();
+  }
 
   async countRemaining({
     currentEncryptionKeyId,

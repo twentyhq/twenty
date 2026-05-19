@@ -3,27 +3,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import {
+  SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
-  type SecretEncryptionRotationHandler,
   type SecretEncryptionRotationOutcome,
-} from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
+} from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
+import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
 
 const ENCRYPTED_COLUMN = 'privateKey';
 
 @Injectable()
-export class SigningKeyPrivateKeysRotationHandler
-  implements SecretEncryptionRotationHandler
-{
+export class SigningKeyPrivateKeysRotationHandler extends SecretEncryptionRotationHandler {
   readonly siteName = 'signing-key-private-keys';
 
   constructor(
     @InjectRepository(SigningKeyEntity)
     private readonly signingKeyRepository: Repository<SigningKeyEntity>,
     private readonly secretEncryptionColumnRotationService: SecretEncryptionColumnRotationService,
-  ) {}
+  ) {
+    super();
+  }
 
   async countRemaining({
     currentEncryptionKeyId,
