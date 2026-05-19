@@ -73,15 +73,19 @@ export const SettingsAccountsConnectionForm = ({
 }: SettingsAccountsConnectionFormProps) => {
   const { t } = useLingui();
 
-  const [isPasswordEdited, setIsPasswordEdited] = useState<
-    Record<AccountType, boolean>
-  >({ IMAP: false, SMTP: false, CALDAV: false });
+  const [isProtocolPasswordBeingEdited, setIsProtocolPasswordBeingEdited] =
+    useState<Record<AccountType, boolean>>({
+      IMAP: false,
+      SMTP: false,
+      CALDAV: false,
+    });
 
   const isPasswordInputDisabled = (protocol: AccountType) =>
-    existingProtocols.includes(protocol) && !isPasswordEdited[protocol];
+    existingProtocols.includes(protocol) &&
+    !isProtocolPasswordBeingEdited[protocol];
 
   const unlockPassword = (protocol: AccountType) => {
-    setIsPasswordEdited((prev) => ({ ...prev, [protocol]: true }));
+    setIsProtocolPasswordBeingEdited((prev) => ({ ...prev, [protocol]: true }));
   };
 
   const getDescription = () => {
