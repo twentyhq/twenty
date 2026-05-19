@@ -4,9 +4,9 @@ import { useForm } from 'react-hook-form';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { useMutation } from '@apollo/client/react';
 import {
   type ConnectionParametersInput,
   SaveImapSmtpCaldavAccountDocument,
@@ -14,7 +14,6 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { type ImapSmtpCaldavAccountInput } from '@/accounts/types/ImapSmtpCaldavAccountInput';
-import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import {
   connectionImapSmtpCalDav,
   connectionImapSmtpCalDavUpdate,
@@ -23,6 +22,7 @@ import {
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isNonEmptyString } from '@sniptt/guards';
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { useConnectedImapSmtpCaldavAccount } from './useConnectedImapSmtpCaldavAccount';
 
@@ -97,14 +97,15 @@ export const useImapSmtpCaldavConnectionForm = ({
     (
       values: ConnectionFormData = watchedValues,
     ): (keyof ImapSmtpCaldavAccountInput)[] => {
-      const checkFn = isEditing
+      const isProtocolConfiguredCheckFunction = isEditing
         ? isProtocolConfiguredForUpdate
         : isProtocolConfigured;
 
       return ACCOUNT_TYPES.filter((protocol) => {
         const protocolConfig = values[protocol];
         return (
-          protocolConfig && checkFn(protocolConfig as ConnectionParametersInput)
+          isDefined(protocolConfig) &&
+          isProtocolConfiguredCheckFunction(protocolConfig)
         );
       });
     },
