@@ -35,11 +35,8 @@ export const SettingsConnectedAccountsTableRow = ({
 
   return (
     <StyledTableRowContainer>
-      <TableRow
-        key={account.id}
-        gridTemplateColumns="minmax(0, 1fr) auto"
-      >
-        <TableCell overflow="hidden">
+      <TableRow key={account.id} gridTemplateColumns="minmax(0, 1fr) auto">
+        <TableCell>
           <StyledNameCell>
             <IconComponent
               size={theme.icon.size.md}
@@ -48,7 +45,7 @@ export const SettingsConnectedAccountsTableRow = ({
             {account.handle}
           </StyledNameCell>
         </TableCell>
-        <TableCell align="right" minWidth="0" overflow="hidden">
+        <TableCell align="right">
           <SettingsAccountsConnectedAccountsRowRightContainer
             account={account}
           />
