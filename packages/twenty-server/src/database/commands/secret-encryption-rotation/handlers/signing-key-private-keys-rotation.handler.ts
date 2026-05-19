@@ -26,13 +26,13 @@ export class SigningKeyPrivateKeysRotationHandler
   ) {}
 
   async countRemaining({
-    primaryKeyId,
+    primaryEncryptionKeyId,
   }: {
-    primaryKeyId: string;
+    primaryEncryptionKeyId: string;
   }): Promise<number> {
     return this.secretEncryptionColumnRotationService.countNonCurrentRows({
       repository: this.signingKeyRepository,
-      primaryKeyId,
+      primaryEncryptionKeyId,
       encryptedColumns: [ENCRYPTED_COLUMN],
     });
   }

@@ -9,7 +9,7 @@ import {
   type SecretEncryptionRotationHandler,
   type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
-import { buildPrimaryKeyIdEnvelopeLikePattern } from 'src/database/commands/secret-encryption-rotation/utils/build-non-current-keyid-like-pattern.util';
+import { buildPrimaryEncryptionKeyIdEnvelopeLikePattern } from 'src/database/commands/secret-encryption-rotation/utils/build-non-current-encryption-key-id-like-pattern.util';
 import {
   KeyValuePairEntity,
   KeyValuePairType,
@@ -37,27 +37,33 @@ export class SensitiveConfigStorageRotationHandler
   ) {}
 
   async countRemaining({
-    primaryKeyId,
+    primaryEncryptionKeyId,
   }: {
-    primaryKeyId: string;
+    primaryEncryptionKeyId: string;
   }): Promise<number> {
-    const sensitiveStringKeys = this.collectSensitiveStringConfigKeys();
+    const sensitiveStringConfigKeys = this.collectSensitiveStringConfigKeys();
 
-    if (sensitiveStringKeys.length === 0) {
+    if (sensitiveStringConfigKeys.length === 0) {
       return 0;
     }
 
-    const primaryPrefix = buildPrimaryKeyIdEnvelopeLikePattern(
-      primaryKeyId,
-    ).slice(0, -1);
+    const primaryEncryptionKeyEnvelopePrefix =
+      buildPrimaryEncryptionKeyIdEnvelopeLikePattern(
+        primaryEncryptionKeyId,
+      ).slice(0, -1);
 
     let total = 0;
 
-    for (const key of sensitiveStringKeys) {
-      const rows = await this.findInstanceConfigRows(key);
+    for (const configKey of sensitiveStringConfigKeys) {
+      const rows = await this.findInstanceConfigRows(configKey);
 
       for (const row of rows) {
-        if (this.isV2EnvelopeNotOnPrimary(row.value, primaryPrefix)) {
+        if (
+          this.isV2EnvelopeNotOnPrimary(
+            row.value,
+            primaryEncryptionKeyEnvelopePrefix,
+          )
+        ) {
           total++;
         }
       }
@@ -67,25 +73,26 @@ export class SensitiveConfigStorageRotationHandler
   }
 
   async rotate({
-    primaryKeyId,
+    primaryEncryptionKeyId,
     dryRun,
   }: SecretEncryptionRotationContext): Promise<SecretEncryptionRotationOutcome> {
-    const sensitiveStringKeys = this.collectSensitiveStringConfigKeys();
+    const sensitiveStringConfigKeys = this.collectSensitiveStringConfigKeys();
 
-    if (sensitiveStringKeys.length === 0) {
+    if (sensitiveStringConfigKeys.length === 0) {
       return { rotated: 0, skipped: 0, errors: 0 };
     }
 
-    const primaryPrefix = buildPrimaryKeyIdEnvelopeLikePattern(
-      primaryKeyId,
-    ).slice(0, -1);
+    const primaryEncryptionKeyEnvelopePrefix =
+      buildPrimaryEncryptionKeyIdEnvelopeLikePattern(
+        primaryEncryptionKeyId,
+      ).slice(0, -1);
 
     let rotated = 0;
     let skipped = 0;
     let errors = 0;
 
-    for (const key of sensitiveStringKeys) {
-      const rows = await this.findInstanceConfigRows(key);
+    for (const configKey of sensitiveStringConfigKeys) {
+      const rows = await this.findInstanceConfigRows(configKey);
 
       for (const row of rows) {
         const rawValue = row.value;
@@ -100,7 +107,7 @@ export class SensitiveConfigStorageRotationHandler
           continue;
         }
 
-        if (rawValue.startsWith(primaryPrefix)) {
+        if (rawValue.startsWith(primaryEncryptionKeyEnvelopePrefix)) {
           skipped++;
           continue;
         }
@@ -137,7 +144,7 @@ export class SensitiveConfigStorageRotationHandler
         } catch (error) {
           errors++;
           this.logger.warn(
-            `[${this.siteName}] failed to re-encrypt config key '${key}' row ${row.id}: ${
+            `[${this.siteName}] failed to re-encrypt config key '${configKey}' row ${row.id}: ${
               error instanceof Error ? error.message : String(error)
             }`,
           );
@@ -149,14 +156,14 @@ export class SensitiveConfigStorageRotationHandler
   }
 
   private async findInstanceConfigRows(
-    key: string,
+    configKey: string,
   ): Promise<{ id: string; value: unknown }[]> {
     const rows = await this.keyValuePairRepository.find({
       where: {
         type: KeyValuePairType.CONFIG_VARIABLE,
         userId: IsNull(),
         workspaceId: IsNull(),
-        key,
+        key: configKey,
       },
     });
 
@@ -168,11 +175,11 @@ export class SensitiveConfigStorageRotationHandler
 
   private isV2EnvelopeNotOnPrimary(
     value: unknown,
-    primaryPrefix: string,
+    primaryEncryptionKeyEnvelopePrefix: string,
   ): boolean {
     if (typeof value !== 'string') return false;
     if (!value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) return false;
-    if (value.startsWith(primaryPrefix)) return false;
+    if (value.startsWith(primaryEncryptionKeyEnvelopePrefix)) return false;
 
     return true;
   }
@@ -193,6 +200,6 @@ export class SensitiveConfigStorageRotationHandler
           descriptor?.isSensitive === true &&
           descriptor?.type === ConfigVariableType.STRING,
       )
-      .map(([key]) => key);
+      .map(([configKey]) => configKey);
   }
 }

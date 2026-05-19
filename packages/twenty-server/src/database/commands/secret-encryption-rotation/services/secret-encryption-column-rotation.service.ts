@@ -9,8 +9,8 @@ import {
 } from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
 import {
   ANY_V2_ENVELOPE_LIKE_PATTERN,
-  buildPrimaryKeyIdEnvelopeLikePattern,
-} from 'src/database/commands/secret-encryption-rotation/utils/build-non-current-keyid-like-pattern.util';
+  buildPrimaryEncryptionKeyIdEnvelopeLikePattern,
+} from 'src/database/commands/secret-encryption-rotation/utils/build-non-current-encryption-key-id-like-pattern.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
@@ -29,16 +29,18 @@ export class SecretEncryptionColumnRotationService {
 
   async countNonCurrentRows<Entity extends ObjectLiteral>({
     repository,
-    primaryKeyId,
+    primaryEncryptionKeyId,
     encryptedColumns,
     extraWhereSql,
   }: {
     repository: Repository<Entity>;
-    primaryKeyId: string;
+    primaryEncryptionKeyId: string;
     encryptedColumns: string[];
     extraWhereSql?: string;
   }): Promise<number> {
-    const primaryPattern = buildPrimaryKeyIdEnvelopeLikePattern(primaryKeyId);
+    const primaryPattern = buildPrimaryEncryptionKeyIdEnvelopeLikePattern(
+      primaryEncryptionKeyId,
+    );
 
     const orClauses = encryptedColumns
       .map(
@@ -67,7 +69,7 @@ export class SecretEncryptionColumnRotationService {
     encryptedColumn,
     workspaceIdColumn,
     extraWhereSql,
-    primaryKeyId,
+    primaryEncryptionKeyId,
     batchSize,
     dryRun,
   }: SecretEncryptionRotationContext & {
@@ -89,7 +91,9 @@ export class SecretEncryptionColumnRotationService {
           `${ROW_ALIAS}."${encryptedColumn}" LIKE :anyV2 AND ${ROW_ALIAS}."${encryptedColumn}" NOT LIKE :primary`,
           {
             anyV2: ANY_V2_ENVELOPE_LIKE_PATTERN,
-            primary: buildPrimaryKeyIdEnvelopeLikePattern(primaryKeyId),
+            primary: buildPrimaryEncryptionKeyIdEnvelopeLikePattern(
+              primaryEncryptionKeyId,
+            ),
           },
         )
         .andWhere(`${ROW_ALIAS}.id > :cursor`, { cursor })

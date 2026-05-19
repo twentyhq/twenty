@@ -26,13 +26,13 @@ export class TotpSecretsRotationHandler
   ) {}
 
   async countRemaining({
-    primaryKeyId,
+    primaryEncryptionKeyId,
   }: {
-    primaryKeyId: string;
+    primaryEncryptionKeyId: string;
   }): Promise<number> {
     return this.secretEncryptionColumnRotationService.countNonCurrentRows({
       repository: this.twoFactorAuthenticationMethodRepository,
-      primaryKeyId,
+      primaryEncryptionKeyId,
       encryptedColumns: [ENCRYPTED_COLUMN],
     });
   }
