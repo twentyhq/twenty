@@ -9,7 +9,9 @@ const DEPLOYED_LOCALE_URL_SEGMENTS = ['en', 'fr'] as const;
 
 // Raw locale codes (e.g. fr-FR, de-DE) that should redirect to the un-prefixed
 // path. Excludes pseudo-* locales and the deployed URL segments themselves.
-const RAW_LOCALE_PREFIXES_TO_STRIP = (Object.values(APP_LOCALES) as string[]).filter(
+const RAW_LOCALE_PREFIXES_TO_STRIP = (
+  Object.values(APP_LOCALES) as string[]
+).filter(
   (locale) =>
     !locale.startsWith('pseudo-') &&
     !(DEPLOYED_LOCALE_URL_SEGMENTS as readonly string[]).includes(locale),
@@ -112,7 +114,11 @@ const nextConfig: LinariaConfig = {
       // (e.g. /fr-FR/foo → /foo, /de-DE/foo → /foo). Mirrors proxy.ts Rule 3.
       ...RAW_LOCALE_PREFIXES_TO_STRIP.flatMap((locale) => [
         { source: `/${locale}`, destination: '/', permanent: true },
-        { source: `/${locale}/:path*`, destination: '/:path*', permanent: true },
+        {
+          source: `/${locale}/:path*`,
+          destination: '/:path*',
+          permanent: true,
+        },
       ]),
       {
         source: '/user-guide',

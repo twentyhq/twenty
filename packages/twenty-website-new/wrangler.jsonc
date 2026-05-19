@@ -7,13 +7,13 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
-    "run_worker_first": true
+    "run_worker_first": true,
   },
   "images": {
-    "binding": "IMAGES"
+    "binding": "IMAGES",
   },
   "observability": {
-    "enabled": true
+    "enabled": true,
   },
   "env": {
     "dev": {
@@ -21,34 +21,34 @@
       "routes": [
         {
           "pattern": "website-new.twenty-main.com",
-          "custom_domain": true
-        }
+          "custom_domain": true,
+        },
       ],
       "r2_buckets": [
         {
           "binding": "NEXT_INC_CACHE_R2_BUCKET",
-          "bucket_name": "twenty-website-cache-dev"
-        }
-      ]
+          "bucket_name": "twenty-website-cache-dev",
+        },
+      ],
     },
     "prod": {
       "name": "twenty-website-prod",
       "routes": [
         {
           "pattern": "twenty.com",
-          "custom_domain": true
+          "custom_domain": true,
         },
         {
           "pattern": "www.twenty.com",
-          "custom_domain": true
-        }
+          "custom_domain": true,
+        },
       ],
       "r2_buckets": [
         {
           "binding": "NEXT_INC_CACHE_R2_BUCKET",
-          "bucket_name": "twenty-website-cache-prod"
-        }
-      ]
-    }
-  }
+          "bucket_name": "twenty-website-cache-prod",
+        },
+      ],
+    },
+  },
 }
