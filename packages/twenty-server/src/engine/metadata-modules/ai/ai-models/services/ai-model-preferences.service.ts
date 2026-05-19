@@ -43,8 +43,9 @@ export class AiModelPreferencesService implements OnModuleInit {
 
   getPreferences(): AiModelPreferences {
     const { source } =
-      this.twentyConfigService.getVariableWithMetadata('AI_MODEL_PREFERENCES') ??
-      {};
+      this.twentyConfigService.getVariableWithMetadata(
+        'AI_MODEL_PREFERENCES',
+      ) ?? {};
 
     if (source !== ConfigSource.DEFAULT) {
       return this.twentyConfigService.get('AI_MODEL_PREFERENCES');
@@ -121,10 +122,7 @@ export class AiModelPreferencesService implements OnModuleInit {
     if (add) {
       const existing = new Set(current);
 
-      prefs[key] = [
-        ...current,
-        ...modelIds.filter((id) => !existing.has(id)),
-      ];
+      prefs[key] = [...current, ...modelIds.filter((id) => !existing.has(id))];
     } else {
       prefs[key] = current.filter((id) => !idSet.has(id));
     }
@@ -133,8 +131,8 @@ export class AiModelPreferencesService implements OnModuleInit {
   }
 
   private async persistPreferences(prefs: AiModelPreferences): Promise<void> {
-    this.filePreferences = null;
     await this.twentyConfigService.set('AI_MODEL_PREFERENCES', prefs);
+    this.filePreferences = null;
   }
 
   private async fetchPreferences(
