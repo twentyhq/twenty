@@ -11,6 +11,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useGetViewGroupsFilters } from '@/views/hooks/useGetViewGroupsFilters';
 import {
   computeRecordGqlOperationFilter,
+  hydrateRecordFilters,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -35,9 +36,11 @@ export const useGetRecordIndexTotalCount = () => {
 
   const filter = computeRecordGqlOperationFilter({
     filterValueDependencies,
-    recordFilters: [...currentRecordFilters, ...recordGroupsVisibilityFilter],
+    recordFilters: hydrateRecordFilters(
+      [...currentRecordFilters, ...recordGroupsVisibilityFilter],
+      (id) => fieldMetadataItemByIdMap.get(id),
+    ),
     recordFilterGroups: currentRecordFilterGroups,
-    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
   });
 
   const anyFieldFilterValue = useAtomComponentStateValue(

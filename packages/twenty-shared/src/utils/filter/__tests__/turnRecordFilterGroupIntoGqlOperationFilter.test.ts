@@ -3,32 +3,31 @@ import {
   RecordFilterGroupLogicalOperator,
   ViewFilterOperand,
 } from '@/types';
+import { type HydratedRecordFilter } from '@/utils/filter/HydratedRecordFilter';
 import { turnRecordFilterGroupsIntoGqlOperationFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 
 describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
-  const fields = [
-    {
-      id: 'f1',
-      name: 'name',
-      type: FieldMetadataType.TEXT,
-      label: 'Name',
-    },
-    {
-      id: 'f2',
-      name: 'age',
-      type: FieldMetadataType.NUMBER,
-      label: 'Age',
-    },
-  ];
+  const nameField = {
+    id: 'f1',
+    name: 'name',
+    type: FieldMetadataType.TEXT,
+    label: 'Name',
+  };
 
-  const fieldById = new Map(fields.map((field) => [field.id, field]));
-  const findFieldMetadataItemById = (id: string) => fieldById.get(id);
+  const filterInGroup = (
+    recordFilterGroupId: string,
+  ): HydratedRecordFilter => ({
+    field: nameField,
+    value: 'test',
+    type: 'TEXT',
+    operand: ViewFilterOperand.CONTAINS,
+    recordFilterGroupId,
+  });
 
   it('should return undefined when group is not found', () => {
     const result = turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies: {},
       filters: [],
-      findFieldMetadataItemById,
       recordFilterGroups: [],
       currentRecordFilterGroupId: 'nonexistent',
     });
@@ -39,16 +38,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
   it('should return AND filter for AND logical operator', () => {
     const result = turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies: {},
-      filters: [
-        {
-          fieldMetadataId: 'f1',
-          value: 'test',
-          type: 'TEXT',
-          operand: ViewFilterOperand.CONTAINS,
-          recordFilterGroupId: 'group1',
-        },
-      ],
-      findFieldMetadataItemById,
+      filters: [filterInGroup('group1')],
       recordFilterGroups: [
         {
           id: 'group1',
@@ -64,16 +54,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
   it('should return OR filter for OR logical operator', () => {
     const result = turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies: {},
-      filters: [
-        {
-          fieldMetadataId: 'f1',
-          value: 'test',
-          type: 'TEXT',
-          operand: ViewFilterOperand.CONTAINS,
-          recordFilterGroupId: 'group1',
-        },
-      ],
-      findFieldMetadataItemById,
+      filters: [filterInGroup('group1')],
       recordFilterGroups: [
         {
           id: 'group1',
@@ -89,16 +70,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
   it('should handle nested groups', () => {
     const result = turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies: {},
-      filters: [
-        {
-          fieldMetadataId: 'f1',
-          value: 'test',
-          type: 'TEXT',
-          operand: ViewFilterOperand.CONTAINS,
-          recordFilterGroupId: 'subgroup1',
-        },
-      ],
-      findFieldMetadataItemById,
+      filters: [filterInGroup('subgroup1')],
       recordFilterGroups: [
         {
           id: 'group1',
@@ -114,7 +86,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
     });
 
     expect(result).toHaveProperty('and');
-    const andFilters = (result as any).and;
+    const andFilters = (result as { and: unknown[] }).and;
 
     expect(andFilters.length).toBeGreaterThan(0);
   });

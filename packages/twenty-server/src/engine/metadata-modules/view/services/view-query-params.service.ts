@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
+  hydrateRecordFilters,
   isDefined,
   type RecordFilter,
   type RecordFilterGroup,
@@ -108,12 +109,12 @@ export class ViewQueryParamsService {
     }));
 
     const filter = computeRecordGqlOperationFilter({
-      findFieldMetadataItemById: (id) =>
+      recordFilters: hydrateRecordFilters(recordFilters, (id) =>
         findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: id,
           flatEntityMaps: flatFieldMetadataMaps,
         }),
-      recordFilters,
+      ),
       recordFilterGroups,
       filterValueDependencies: { currentWorkspaceMemberId, timeZone },
     });

@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
+  hydrateRecordFilters,
   isDefined,
   type RecordFilter,
   type RecordFilterGroup,
@@ -74,12 +75,14 @@ export const convertChartFilterToGqlOperationFilter = ({
     }));
 
   return computeRecordGqlOperationFilter({
-    findFieldMetadataItemById: (id) =>
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: id,
-        flatEntityMaps: flatFieldMetadataMaps,
-      }),
-    recordFilters: convertedRecordFilters,
+    recordFilters: hydrateRecordFilters(
+      convertedRecordFilters as RecordFilter[],
+      (id) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: id,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
+    ),
     recordFilterGroups: convertedRecordFilterGroups,
     filterValueDependencies: {
       timeZone: userTimezone,

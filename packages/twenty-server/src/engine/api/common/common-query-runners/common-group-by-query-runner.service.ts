@@ -11,6 +11,7 @@ import {
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
+  hydrateRecordFilters,
   isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
@@ -257,13 +258,13 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     }));
 
     const filtersFromView = computeRecordGqlOperationFilter({
-      recordFilters,
-      recordFilterGroups: recordFilterGroups,
-      findFieldMetadataItemById: (id) =>
+      recordFilters: hydrateRecordFilters(recordFilters, (id) =>
         findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: id,
           flatEntityMaps: flatFieldMetadataMaps,
         }),
+      ),
+      recordFilterGroups: recordFilterGroups,
       filterValueDependencies: {
         timeZone: 'UTC', // TODO: see if we use workspace member timezone here
       },

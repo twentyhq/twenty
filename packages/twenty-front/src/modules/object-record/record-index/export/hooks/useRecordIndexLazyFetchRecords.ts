@@ -107,7 +107,7 @@ export const useRecordIndexLazyFetchRecords = ({
     contextStoreFilters,
     contextStoreFilterGroups,
     objectMetadataItem,
-    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
+    fieldMetadataItemByIdMap,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
   });

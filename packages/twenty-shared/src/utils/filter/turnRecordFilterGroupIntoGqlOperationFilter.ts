@@ -8,10 +8,8 @@ import {
 } from '@/types';
 
 import { isDefined } from '@/utils';
-import {
-  type FindFieldMetadataItemById,
-  turnRecordFilterIntoRecordGqlOperationFilter,
-} from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
+import { type HydratedRecordFilter } from '@/utils/filter/HydratedRecordFilter';
+import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 
 export type RecordFilter = {
   id: string;
@@ -33,13 +31,11 @@ export type RecordFilterGroup = {
 export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
   filterValueDependencies,
   filters,
-  findFieldMetadataItemById,
   recordFilterGroups,
   currentRecordFilterGroupId,
 }: {
   filterValueDependencies: RecordFilterValueDependencies;
-  filters: Omit<RecordFilter, 'id'>[];
-  findFieldMetadataItemById: FindFieldMetadataItemById;
+  filters: HydratedRecordFilter[];
   recordFilterGroups: RecordFilterGroup[];
   currentRecordFilterGroupId?: string;
 }): RecordGqlOperationFilter | undefined => {
@@ -59,8 +55,7 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
     .map((recordFilter) =>
       turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
-        recordFilter: recordFilter,
-        findFieldMetadataItemById,
+        recordFilter,
       }),
     )
     .filter(isDefined);
@@ -75,7 +70,6 @@ export const turnRecordFilterGroupsIntoGqlOperationFilter = ({
       turnRecordFilterGroupsIntoGqlOperationFilter({
         filterValueDependencies,
         filters,
-        findFieldMetadataItemById,
         recordFilterGroups,
         currentRecordFilterGroupId: subRecordFilterGroup.id,
       }),

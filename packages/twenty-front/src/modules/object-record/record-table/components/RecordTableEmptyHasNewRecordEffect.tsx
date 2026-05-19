@@ -18,7 +18,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 import { useStore } from 'jotai';
 import { useCallback, useMemo } from 'react';
-import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
+import {
+  computeRecordGqlOperationFilter,
+  hydrateRecordFilters,
+} from 'twenty-shared/utils';
 
 export const RecordTableEmptyHasNewRecordEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -63,8 +66,9 @@ export const RecordTableEmptyHasNewRecordEffect = () => {
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
         filter: computeRecordGqlOperationFilter({
-          findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
-          recordFilters: currentRecordFilters,
+          recordFilters: hydrateRecordFilters(currentRecordFilters, (id) =>
+            fieldMetadataItemByIdMap.get(id),
+          ),
           recordFilterGroups: currentRecordFilterGroups,
           filterValueDependencies,
         }),

@@ -12,6 +12,7 @@ import {
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
+  hydrateRecordFilters,
   isDefined,
   type RecordFilter,
   type RecordFilterGroup,
@@ -216,13 +217,13 @@ export const buildRowLevelPermissionRecordFilter = ({
     }));
 
   return computeRecordGqlOperationFilter({
-    recordFilters,
-    recordFilterGroups,
-    findFieldMetadataItemById: (id) =>
+    recordFilters: hydrateRecordFilters(recordFilters, (id) =>
       findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: id,
         flatEntityMaps: flatFieldMetadataMaps,
       }),
+    ),
+    recordFilterGroups,
     filterValueDependencies: {
       currentWorkspaceMemberId: workspaceMember?.id,
     },

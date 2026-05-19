@@ -5,6 +5,9 @@ export * from './compute-record-gql-operation-filter/for-composite-field/compute
 export * from './computeEmptyGqlOperationFilterForEmails';
 export * from './computeEmptyGqlOperationFilterForLinks';
 export * from './computeRecordGqlOperationFilter';
+export * from './HydratedRecordFilter';
+export * from './hydrateRecordFilter';
+export * from './hydrateRecordFilters';
 export * from './isEmptinessOperand';
 export * from './isRecordFilterOperandExpectingValue';
 export * from './isRecordFilterValueValid';

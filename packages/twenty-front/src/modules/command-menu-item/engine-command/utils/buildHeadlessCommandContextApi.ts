@@ -100,7 +100,7 @@ export const buildHeadlessCommandContextApi = ({
         contextStoreFilters: filters,
         contextStoreFilterGroups: filterGroups,
         objectMetadataItem,
-        findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
+        fieldMetadataItemByIdMap,
         filterValueDependencies: {
           currentWorkspaceMemberId: currentWorkspaceMember?.id,
           timeZone: userTimezone,

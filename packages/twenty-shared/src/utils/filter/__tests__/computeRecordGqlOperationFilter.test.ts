@@ -1,5 +1,5 @@
 import { computeRecordGqlOperationFilter } from '../computeRecordGqlOperationFilter';
-import type { RecordFilter } from '../turnRecordFilterGroupIntoGqlOperationFilter';
+import { type HydratedRecordFilter } from '../HydratedRecordFilter';
 
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 import type { PartialFieldMetadataItem } from '@/types/PartialFieldMetadataItem';
@@ -16,10 +16,10 @@ describe('computeRecordGqlOperationFilter', () => {
 
     const uuidValue = '4f83d5c0-7c7a-4f67-9f29-0a6aad1f4eb1';
 
-    const recordFilters: RecordFilter[] = [
+    const recordFilters: HydratedRecordFilter[] = [
       {
         id: 'uuid-filter',
-        fieldMetadataId: companyIdField.id,
+        field: companyIdField,
         value: uuidValue,
         type: 'UUID',
         operand: ViewFilterOperand.IS,
@@ -27,8 +27,6 @@ describe('computeRecordGqlOperationFilter', () => {
     ];
 
     const filter = computeRecordGqlOperationFilter({
-      findFieldMetadataItemById: (id) =>
-        id === companyIdField.id ? companyIdField : undefined,
       recordFilters,
       recordFilterGroups: [],
       filterValueDependencies: {

@@ -17,6 +17,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
+  hydrateRecordFilters,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -44,9 +45,10 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
 
   const requestFilters = computeRecordGqlOperationFilter({
     filterValueDependencies,
-    recordFilters: currentRecordFilters,
+    recordFilters: hydrateRecordFilters(currentRecordFilters, (id) =>
+      fieldMetadataItemByIdMap.get(id),
+    ),
     recordFilterGroups: currentRecordFilterGroups,
-    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
   });
 
   const anyFieldFilterValue = useAtomComponentStateValue(

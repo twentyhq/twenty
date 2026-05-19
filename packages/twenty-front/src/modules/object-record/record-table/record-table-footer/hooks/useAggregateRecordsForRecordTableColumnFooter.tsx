@@ -23,6 +23,7 @@ import { useContext } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import {
   computeRecordGqlOperationFilter,
+  hydrateRecordFilters,
   findById,
   isDefined,
   isFieldMetadataDateKind,
@@ -53,10 +54,11 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const requestFilters = computeRecordGqlOperationFilter({
-    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
     filterValueDependencies,
     recordFilterGroups: currentRecordFilterGroups,
-    recordFilters: currentRecordFilters,
+    recordFilters: hydrateRecordFilters(currentRecordFilters, (id) =>
+      fieldMetadataItemByIdMap.get(id),
+    ),
   });
 
   const { viewFieldId } = useContext(

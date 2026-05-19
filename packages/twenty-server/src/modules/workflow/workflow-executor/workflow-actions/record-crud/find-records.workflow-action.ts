@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   computeRecordGqlOperationFilter,
+  hydrateRecordFilters,
   isRecordFilterValueValid,
   resolveInput,
 } from 'twenty-shared/utils';
@@ -79,12 +80,14 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       workflowActionInput.filter?.recordFilters &&
       workflowActionInput.filter?.recordFilterGroups
         ? computeRecordGqlOperationFilter({
-            findFieldMetadataItemById: (id) =>
-              findFlatEntityByIdInFlatEntityMaps({
-                flatEntityId: id,
-                flatEntityMaps: flatFieldMetadataMaps,
-              }),
-            recordFilters: workflowActionInput.filter.recordFilters,
+            recordFilters: hydrateRecordFilters(
+              workflowActionInput.filter.recordFilters,
+              (id) =>
+                findFlatEntityByIdInFlatEntityMaps({
+                  flatEntityId: id,
+                  flatEntityMaps: flatFieldMetadataMaps,
+                }),
+            ),
             recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
             filterValueDependencies: {
               timeZone: 'UTC',

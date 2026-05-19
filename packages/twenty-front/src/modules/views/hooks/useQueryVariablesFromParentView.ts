@@ -33,7 +33,7 @@ export const useQueryVariablesFromParentView = ({
     recordSorts: contextStoreRecordShowParentView?.parentViewSorts ?? [],
     objectMetadataItem,
     objectMetadataItems,
-    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
+    fieldMetadataItemByIdMap,
     filterValueDependencies,
   });
 

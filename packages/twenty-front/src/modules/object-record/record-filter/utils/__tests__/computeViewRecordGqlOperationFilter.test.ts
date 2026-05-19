@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
+  hydrateRecordFilters,
   isDefined,
 } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -61,9 +62,8 @@ describe('computeViewRecordGqlOperationFilter', () => {
 
     const result = computeRecordGqlOperationFilter({
       filterValueDependencies: mockFilterValueDependencies,
-      recordFilters: [nameFilter],
+      recordFilters: hydrateRecordFilters([nameFilter], findCompanyFieldById),
       recordFilterGroups: [],
-      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -114,9 +114,11 @@ describe('computeViewRecordGqlOperationFilter', () => {
 
     const result = computeRecordGqlOperationFilter({
       filterValueDependencies: mockFilterValueDependencies,
-      recordFilters: [nameFilter, employeesFilter],
+      recordFilters: hydrateRecordFilters(
+        [nameFilter, employeesFilter],
+        findCompanyFieldById,
+      ),
       recordFilterGroups: [],
-      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -189,14 +191,16 @@ describe('should work as expected for the different field types', () => {
 
     const result = computeRecordGqlOperationFilter({
       filterValueDependencies: mockFilterValueDependencies,
-      recordFilters: [
-        addressFilterContains,
-        addressFilterDoesNotContain,
-        addressFilterIsEmpty,
-        addressFilterIsNotEmpty,
-      ],
+      recordFilters: hydrateRecordFilters(
+        [
+          addressFilterContains,
+          addressFilterDoesNotContain,
+          addressFilterIsEmpty,
+          addressFilterIsNotEmpty,
+        ],
+        findCompanyFieldById,
+      ),
       recordFilterGroups: [],
-      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -653,14 +657,16 @@ describe('should work as expected for the different field types', () => {
 
     const result = computeRecordGqlOperationFilter({
       filterValueDependencies: mockFilterValueDependencies,
-      recordFilters: [
-        phonesFilterContains,
-        phonesFilterDoesNotContain,
-        phonesFilterIsEmpty,
-        phonesFilterIsNotEmpty,
-      ],
+      recordFilters: hydrateRecordFilters(
+        [
+          phonesFilterContains,
+          phonesFilterDoesNotContain,
+          phonesFilterIsEmpty,
+          phonesFilterIsNotEmpty,
+        ],
+        findPersonFieldById,
+      ),
       recordFilterGroups: [],
-      findFieldMetadataItemById: findPersonFieldById,
     });
 
     expect(result).toEqual({
@@ -850,14 +856,16 @@ describe('should work as expected for the different field types', () => {
 
     const result = computeRecordGqlOperationFilter({
       filterValueDependencies: mockFilterValueDependencies,
-      recordFilters: [
-        emailsFilterContains,
-        emailsFilterDoesNotContain,
-        emailsFilterIsEmpty,
-        emailsFilterIsNotEmpty,
-      ],
+      recordFilters: hydrateRecordFilters(
+        [
+          emailsFilterContains,
+          emailsFilterDoesNotContain,
+          emailsFilterIsEmpty,
+          emailsFilterIsNotEmpty,
+        ],
+        findPersonFieldById,
+      ),
       recordFilterGroups: [],
-      findFieldMetadataItemById: findPersonFieldById,
     });
 
     expect(result).toEqual({
@@ -1061,15 +1069,17 @@ describe('should work as expected for the different field types', () => {
 
     const result = computeRecordGqlOperationFilter({
       filterValueDependencies: mockFilterValueDependencies,
-      recordFilters: [
-        dateFilterIsAfter,
-        dateFilterIsBefore,
-        dateFilterIs,
-        dateFilterIsEmpty,
-        dateFilterIsNotEmpty,
-      ],
+      recordFilters: hydrateRecordFilters(
+        [
+          dateFilterIsAfter,
+          dateFilterIsBefore,
+          dateFilterIs,
+          dateFilterIsEmpty,
+          dateFilterIsNotEmpty,
+        ],
+        findCompanyFieldById,
+      ),
       recordFilterGroups: [],
-      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -1164,14 +1174,16 @@ describe('should work as expected for the different field types', () => {
 
     const result = computeRecordGqlOperationFilter({
       filterValueDependencies: mockFilterValueDependencies,
-      recordFilters: [
-        employeesFilterIsGreaterThan,
-        employeesFilterIsLessThan,
-        employeesFilterIsEmpty,
-        employeesFilterIsNotEmpty,
-      ],
+      recordFilters: hydrateRecordFilters(
+        [
+          employeesFilterIsGreaterThan,
+          employeesFilterIsLessThan,
+          employeesFilterIsEmpty,
+          employeesFilterIsNotEmpty,
+        ],
+        findCompanyFieldById,
+      ),
       recordFilterGroups: [],
-      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -1266,14 +1278,16 @@ describe('should work as expected for the different field types', () => {
 
     const result = computeRecordGqlOperationFilter({
       filterValueDependencies: mockFilterValueDependencies,
-      recordFilters: [
-        ARRFilterIsGreaterThan,
-        ARRFilterIsLessThan,
-        ARRFilterIs,
-        ARRFilterIsNot,
-      ],
+      recordFilters: hydrateRecordFilters(
+        [
+          ARRFilterIsGreaterThan,
+          ARRFilterIsLessThan,
+          ARRFilterIs,
+          ARRFilterIsNot,
+        ],
+        findCompanyFieldById,
+      ),
       recordFilterGroups: [],
-      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -1348,9 +1362,11 @@ describe('should work as expected for the different field types', () => {
 
     const result = computeRecordGqlOperationFilter({
       filterValueDependencies: mockFilterValueDependencies,
-      recordFilters: [ARRFilterIn, ARRFilterNotIn],
+      recordFilters: hydrateRecordFilters(
+        [ARRFilterIn, ARRFilterNotIn],
+        findCompanyFieldById,
+      ),
       recordFilterGroups: [],
-      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({
@@ -1408,9 +1424,11 @@ describe('should work as expected for the different field types', () => {
 
     const result = computeRecordGqlOperationFilter({
       filterValueDependencies: mockFilterValueDependencies,
-      recordFilters: [selectFilterIs, selectFilterIsNot],
+      recordFilters: hydrateRecordFilters(
+        [selectFilterIs, selectFilterIsNot],
+        findPetFieldById,
+      ),
       recordFilterGroups: [],
-      findFieldMetadataItemById: findPetFieldById,
     });
 
     expect(result).toEqual({
@@ -1478,12 +1496,11 @@ describe('should work as expected for the different field types', () => {
 
     const result = computeRecordGqlOperationFilter({
       filterValueDependencies: mockFilterValueDependencies,
-      recordFilters: [
-        multiSelectFilterContains,
-        multiSelectFilterDoesNotContain,
-      ],
+      recordFilters: hydrateRecordFilters(
+        [multiSelectFilterContains, multiSelectFilterDoesNotContain],
+        findCompanyFieldById,
+      ),
       recordFilterGroups: [],
-      findFieldMetadataItemById: findCompanyFieldById,
     });
 
     expect(result).toEqual({

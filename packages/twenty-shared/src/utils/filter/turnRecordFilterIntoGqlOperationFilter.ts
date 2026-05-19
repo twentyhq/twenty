@@ -38,6 +38,7 @@ import {
 } from '@/utils/filter';
 
 import { type DateTimeFilter } from '@/types/RecordGqlOperationFilter';
+import { type HydratedRecordFilter } from '@/utils/filter/HydratedRecordFilter';
 import {
   checkIfShouldComputeEmptinessFilter,
   CustomError,
@@ -49,65 +50,38 @@ import {
   resolveDateFilter,
   resolveDateTimeFilter,
   resolveRelativeDateFilterStringified,
-  type RecordFilter,
 } from '@/utils';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 import { arrayOfUuidOrVariableSchema } from '@/utils/filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/utils/filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 
-type FieldShared = {
-  id: string;
-  name: string;
-  type: FieldMetadataType;
-  label: string;
-};
-
-export type FindFieldMetadataItemById = (id: string) => FieldShared | undefined;
-
 type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
   filterValueDependencies: RecordFilterValueDependencies;
-  recordFilter: Omit<RecordFilter, 'id'>;
-  findFieldMetadataItemById: FindFieldMetadataItemById;
+  recordFilter: HydratedRecordFilter;
 };
 
 export const turnRecordFilterIntoRecordGqlOperationFilter = ({
   recordFilter,
-  findFieldMetadataItemById,
   filterValueDependencies,
 }: TurnRecordFilterIntoRecordGqlOperationFilterParams):
   | RecordGqlOperationFilter
   | undefined => {
-  const sourceFieldMetadataItem = findFieldMetadataItemById(
-    recordFilter.fieldMetadataId,
-  );
-
-  if (!isDefined(sourceFieldMetadataItem)) {
-    return;
-  }
-
   if (!isRecordFilterValueValid(recordFilter)) {
     return;
   }
 
+  const sourceFieldMetadataItem = recordFilter.field;
+
   if (
     sourceFieldMetadataItem.type === FieldMetadataType.RELATION &&
-    isDefined(recordFilter.relationTargetFieldMetadataId)
+    isDefined(recordFilter.targetField)
   ) {
-    const targetFieldMetadataItem = findFieldMetadataItemById(
-      recordFilter.relationTargetFieldMetadataId,
-    );
-
-    if (!isDefined(targetFieldMetadataItem)) {
-      return;
-    }
-
     const innerFilter = buildDirectFieldGqlOperationFilter({
       recordFilter: {
         ...recordFilter,
-        fieldMetadataId: targetFieldMetadataItem.id,
-        relationTargetFieldMetadataId: null,
+        field: recordFilter.targetField,
+        targetField: undefined,
       },
-      fieldMetadataItem: targetFieldMetadataItem,
       filterValueDependencies,
     });
 
@@ -122,24 +96,22 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
 
   return buildDirectFieldGqlOperationFilter({
     recordFilter,
-    fieldMetadataItem: sourceFieldMetadataItem,
     filterValueDependencies,
   });
 };
 
 type BuildDirectFieldGqlOperationFilterParams = {
   filterValueDependencies: RecordFilterValueDependencies;
-  recordFilter: Omit<RecordFilter, 'id'>;
-  fieldMetadataItem: FieldShared;
+  recordFilter: HydratedRecordFilter;
 };
 
 const buildDirectFieldGqlOperationFilter = ({
   recordFilter,
-  fieldMetadataItem,
   filterValueDependencies,
 }: BuildDirectFieldGqlOperationFilterParams):
   | RecordGqlOperationFilter
   | undefined => {
+  const fieldMetadataItem = recordFilter.field;
   const shouldComputeEmptinessFilter = checkIfShouldComputeEmptinessFilter({
     recordFilterOperand: recordFilter.operand,
     correspondingFieldMetadataItem: fieldMetadataItem,

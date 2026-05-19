@@ -19,6 +19,7 @@ import { useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
+  hydrateRecordFilters,
   isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
@@ -54,9 +55,10 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
 
   const requestFilters = computeRecordGqlOperationFilter({
     filterValueDependencies,
-    recordFilters: currentRecordFilters,
+    recordFilters: hydrateRecordFilters(currentRecordFilters, (id) =>
+      fieldMetadataItemByIdMap.get(id),
+    ),
     recordFilterGroups: currentRecordFilterGroups,
-    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
   });
 
   const { recordAggregateGqlField } =

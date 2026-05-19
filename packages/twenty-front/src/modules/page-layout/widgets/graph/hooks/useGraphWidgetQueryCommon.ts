@@ -4,7 +4,9 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   computeRecordGqlOperationFilter,
+  hydrateRecordFilters,
   isDefined,
+  type RecordFilter,
 } from 'twenty-shared/utils';
 import {
   type AggregateChartConfiguration,
@@ -47,9 +49,11 @@ export const useGraphWidgetQueryCommon = ({
   const widgetRecordFilters = configuration.filter?.recordFilters ?? [];
 
   const gqlOperationFilter = computeRecordGqlOperationFilter({
-    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
     filterValueDependencies,
-    recordFilters: widgetRecordFilters,
+    recordFilters: hydrateRecordFilters(
+      widgetRecordFilters as RecordFilter[],
+      (id) => fieldMetadataItemByIdMap.get(id),
+    ),
     recordFilterGroups: configuration.filter?.recordFilterGroups ?? [],
   });
 

@@ -63,7 +63,7 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       contextStoreFilters,
       contextStoreFilterGroups,
       objectMetadataItem,
-      findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
+      fieldMetadataItemByIdMap,
       filterValueDependencies,
       contextStoreAnyFieldFilterValue,
     });

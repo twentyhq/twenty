@@ -16,6 +16,7 @@ import { type Temporal } from 'temporal-polyfill';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
+  hydrateRecordFilters,
   isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
   turnPlainDateIntoUserTimeZoneInstantString,
@@ -108,9 +109,10 @@ export const useRecordCalendarQueryDateRangeFilter = (
 
   const dateRangeFilter = computeRecordGqlOperationFilter({
     filterValueDependencies,
-    recordFilters: calendarRecordFilters,
+    recordFilters: hydrateRecordFilters(calendarRecordFilters, (id) =>
+      fieldMetadataItemByIdMap.get(id),
+    ),
     recordFilterGroups: currentRecordFilterGroups,
-    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
   });
 
   const { recordGqlOperationFilter: anyFieldFilter } =
