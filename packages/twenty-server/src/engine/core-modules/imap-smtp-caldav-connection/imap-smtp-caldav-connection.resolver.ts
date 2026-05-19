@@ -44,21 +44,14 @@ export class ImapSmtpCaldavResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedImapSmtpCaldavAccountDTO> {
     const connectedAccount =
-      await this.imapSmtpCaldavApisService.getImapSmtpCaldavConnectedAccount(
-        workspace.id,
+      await this.imapSmtpCaldavApisService.getImapSmtpCaldavConnectedAccount({
+        workspaceId: workspace.id,
         id,
-      );
+        userWorkspaceId,
+      });
 
     if (!isDefined(connectedAccount) || !isDefined(connectedAccount?.handle)) {
-      throw new UserInputError(
-        `Connected mail account with ID ${id} not found`,
-      );
-    }
-
-    if (connectedAccount.userWorkspaceId !== userWorkspaceId) {
-      throw new UserInputError(
-        `Connected mail account with ID ${id} not found`,
-      );
+      throw new UserInputError('Connected account not found');
     }
 
     return {

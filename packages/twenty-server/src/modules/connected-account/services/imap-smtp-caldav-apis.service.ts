@@ -22,8 +22,6 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   CalendarEventListFetchJob,
   type CalendarEventListFetchJobData,
@@ -42,7 +40,6 @@ export class ImapSmtpCalDavAPIService {
   private readonly logger = new Logger(ImapSmtpCalDavAPIService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     @InjectRepository(ConnectedAccountEntity)
@@ -64,26 +61,23 @@ export class ImapSmtpCalDavAPIService {
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
-  async getImapSmtpCaldavConnectedAccount(
-    workspaceId: string,
-    id: string,
-  ): Promise<ConnectedAccountEntity | null> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const connectedAccount = await this.connectedAccountRepository.findOne({
-          where: {
-            id,
-            provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-            workspaceId,
-          },
-        });
-
-        return connectedAccount;
+  async getImapSmtpCaldavConnectedAccount({
+    workspaceId,
+    id,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    id: string;
+    userWorkspaceId: string;
+  }): Promise<ConnectedAccountEntity | null> {
+    return this.connectedAccountRepository.findOne({
+      where: {
+        id,
+        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+        workspaceId,
+        userWorkspaceId,
       },
-      authContext,
-    );
+    });
   }
 
   async upsertConnectedAccount(input: {
