@@ -125,9 +125,13 @@ export default defineConfig(({ command }) => {
         name: 'twenty-ui',
       },
       rollupOptions: {
-        external: Object.keys(packageJson.dependencies || {}).filter(
-          (dep) => !BUNDLED_DEPS.includes(dep),
-        ),
+        external: (id: string) => {
+          const deps = Object.keys(packageJson.dependencies || {}).filter(
+            (dep) => !BUNDLED_DEPS.includes(dep),
+          );
+
+          return deps.some((dep) => id === dep || id.startsWith(dep + '/'));
+        },
         output: [
           {
             assetFileNames: 'style.css',
