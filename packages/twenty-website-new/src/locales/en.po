@@ -589,12 +589,6 @@ msgstr "Architecture"
 msgid "around it"
 msgstr "around it"
 
-#. js-lingui-id: Tt5T6+
-#: src/sections/Menu/data.ts
-#: src/sections/Footer/data.ts
-msgid "Articles"
-msgstr "Articles"
-
 #. js-lingui-id: 4YKyFV
 #: src/app/[locale]/product/page.tsx
 msgid "Ask questions, automate tasks, and get insights. All powered by AI that understands your data."
@@ -2291,16 +2285,6 @@ msgstr "Organization"
 msgid "our partner"
 msgstr "our partner"
 
-#. js-lingui-id: U46+HD
-#: src/sections/Menu/data.ts
-msgid "Our story and vision"
-msgstr "Our story and vision"
-
-#. js-lingui-id: uB6QTq
-#: src/sections/Menu/data.ts
-msgid "Our story: building a CRM teams can truly own."
-msgstr "Our story: building a CRM teams can truly own."
-
 #. js-lingui-id: dKGg8T
 #: src/app/[locale]/pricing/salesforce.data.ts
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -2425,12 +2409,6 @@ msgstr "Privacy Policy | Twenty"
 msgid "Pro"
 msgstr "Pro"
 
-#. js-lingui-id: K47k8R
-#: src/sections/Menu/data.ts
-#: src/sections/Footer/data.ts
-msgid "Product"
-msgstr "Product"
-
 #. js-lingui-id: kIGKva
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
 msgid "Production grade quality"
@@ -2467,11 +2445,6 @@ msgstr "Q1 2026"
 #: src/sections/Helped/components/HelpedCard.tsx
 msgid "Read the case"
 msgstr "Read the case"
-
-#. js-lingui-id: 0ybw+o
-#: src/sections/Menu/data.ts
-msgid "Read Twenty insights"
-msgstr "Read Twenty insights"
 
 #. js-lingui-id: EqCbT9
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -3614,9 +3587,12 @@ msgstr "Which partner program is right for you?"
 msgid "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
 msgstr "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
 
+#. js-lingui-id: DJlSwA
+#: src/sections/Menu/data.ts
+msgid "Why"
+msgstr "Why"
+
 #. js-lingui-id: 4sOVu+
-#: src/sections/Menu/data.ts
-#: src/sections/Menu/data.ts
 #: src/sections/Footer/data.ts
 msgid "Why Twenty"
 msgstr "Why Twenty"
