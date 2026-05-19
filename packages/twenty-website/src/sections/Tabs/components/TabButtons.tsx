@@ -5,6 +5,9 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
 import { TabButton } from './TabButton';
+import { SlidingTabButtons } from './sliding-tab-buttons';
+
+type TabButtonsSelectionStyle = 'default' | 'sliding';
 
 const TabButtonsGrid = styled.div`
   display: grid;
@@ -26,6 +29,7 @@ type TabButtonsProps = {
   activeIndex: number;
   idPrefix: string;
   onSelect: (index: number) => void;
+  selectionStyle?: TabButtonsSelectionStyle;
   tabs: TabType[];
 };
 
@@ -33,8 +37,20 @@ export function TabButtons({
   activeIndex,
   idPrefix,
   onSelect,
+  selectionStyle = 'default',
   tabs,
 }: TabButtonsProps) {
+  if (selectionStyle === 'sliding') {
+    return (
+      <SlidingTabButtons
+        activeIndex={activeIndex}
+        idPrefix={idPrefix}
+        onSelect={onSelect}
+        tabs={tabs}
+      />
+    );
+  }
+
   return (
     <TabButtonsGrid role="tablist">
       {tabs.map((tab, index) => (

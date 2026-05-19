@@ -11,7 +11,6 @@ import {
 
 import { Container, LinkButton } from '@/design-system/components';
 import type { AppPreviewConfig } from '@/sections/AppPreview';
-import { TabButtons } from '@/sections/Tabs/components/TabButtons';
 import type { TabType } from '@/sections/Tabs/types';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
@@ -23,6 +22,7 @@ import {
   getHeroScrollColors,
   getHeroScrollMotion,
 } from './hero-scroll-colors';
+import { TabButtons } from '@/sections/Tabs/components/TabButtons';
 import { useProductHeroMenuSync } from './product-hero-menu-sync';
 import { PRODUCT_HERO_AI_TABS_ID } from './product-hero-tabs-id';
 import { ProductVisual } from './ProductVisual';
@@ -231,6 +231,7 @@ export function HeroVisualScroll({
 }: HeroScrollProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const heroViewportRef = useRef<HTMLDivElement>(null);
+  const introPanelRef = useRef<HTMLDivElement>(null);
   const aiPanelRef = useRef<HTMLDivElement>(null);
   const menuSync = useProductHeroMenuSync();
   const { colorMix, isScrollDriven, panelMix } =
@@ -272,13 +273,19 @@ export function HeroVisualScroll({
     const track = trackRef.current;
     const trackRect = track?.getBoundingClientRect() ?? null;
     const aiPanelRect = aiPanelRef.current?.getBoundingClientRect() ?? null;
+    const introPanelRect =
+      introPanelRef.current?.getBoundingClientRect() ?? null;
+    const measuredNavHeight =
+      menuSync.menuSectionRef.current?.getBoundingClientRect().height ??
+      NAV_HEIGHT;
 
     menuSync.setMenuDarkOpacity(
       getHeroMenuColorMix({
         aiPanelRect,
         colorMix,
+        introPanelRect,
         isScrollDriven,
-        navHeight: NAV_HEIGHT,
+        navHeight: measuredNavHeight,
         panelMix,
         trackRect,
         viewportHeight: window.innerHeight,
@@ -287,15 +294,64 @@ export function HeroVisualScroll({
   }, [colorMix, isScrollDriven, menuSync, panelMix]);
 
   useEffect(() => {
-    syncMenuColorMix();
-    window.addEventListener('scroll', syncMenuColorMix, { passive: true });
-    window.addEventListener('resize', syncMenuColorMix);
+    let animationFrameId = 0;
+
+    const scheduleSyncMenuColorMix = () => {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(syncMenuColorMix);
+    };
+
+    scheduleSyncMenuColorMix();
+
+    const introPanel = introPanelRef.current;
+    const aiPanel = aiPanelRef.current;
+    const track = trackRef.current;
+    const menuSection = menuSync?.menuSectionRef.current;
+
+    const resizeObserver = new ResizeObserver(scheduleSyncMenuColorMix);
+
+    if (introPanel) {
+      resizeObserver.observe(introPanel);
+    }
+
+    if (aiPanel) {
+      resizeObserver.observe(aiPanel);
+    }
+
+    if (track) {
+      resizeObserver.observe(track);
+    }
+
+    if (menuSection) {
+      resizeObserver.observe(menuSection);
+    }
+
+    const intersectionObserver = new IntersectionObserver(
+      scheduleSyncMenuColorMix,
+      { threshold: [0, 0.25, 0.5, 0.75, 1] },
+    );
+
+    if (introPanel) {
+      intersectionObserver.observe(introPanel);
+    }
+
+    if (aiPanel) {
+      intersectionObserver.observe(aiPanel);
+    }
+
+    window.addEventListener('scroll', scheduleSyncMenuColorMix, {
+      passive: true,
+    });
+    window.addEventListener('resize', scheduleSyncMenuColorMix);
 
     return () => {
-      window.removeEventListener('scroll', syncMenuColorMix);
-      window.removeEventListener('resize', syncMenuColorMix);
+      cancelAnimationFrame(animationFrameId);
+      resizeObserver.disconnect();
+      intersectionObserver.disconnect();
+      window.removeEventListener('scroll', scheduleSyncMenuColorMix);
+      window.removeEventListener('resize', scheduleSyncMenuColorMix);
     };
-  }, [syncMenuColorMix]);
+  }, [menuSync, syncMenuColorMix]);
 
   return (
     <ScrollTrack ref={trackRef}>
@@ -327,6 +383,7 @@ export function HeroVisualScroll({
             }
           >
             <HeroPanel
+              ref={introPanelRef}
               style={
                 isScrollDriven
                   ? {
@@ -395,6 +452,7 @@ export function HeroVisualScroll({
                     activeIndex={activeTab}
                     idPrefix={PRODUCT_HERO_AI_TABS_ID}
                     onSelect={setActiveTab}
+                    selectionStyle="sliding"
                     tabs={tabs}
                   />
                 </TabsActions>
