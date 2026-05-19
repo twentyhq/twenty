@@ -13,7 +13,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-import { type ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
+import { type ImapSmtpCaldavAccountInput } from '@/accounts/types/ImapSmtpCaldavAccountInput';
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import {
   connectionImapSmtpCalDav,
@@ -33,7 +33,7 @@ type UseConnectionFormProps = {
 
 export type ConnectionFormData = {
   handle: string;
-} & ImapSmtpCaldavAccount;
+} & ImapSmtpCaldavAccountInput;
 
 export const useImapSmtpCaldavConnectionForm = ({
   isEditing = false,
@@ -96,7 +96,7 @@ export const useImapSmtpCaldavConnectionForm = ({
   const getConfiguredProtocols = useCallback(
     (
       values: ConnectionFormData = watchedValues,
-    ): (keyof ImapSmtpCaldavAccount)[] => {
+    ): (keyof ImapSmtpCaldavAccountInput)[] => {
       const checkFn = isEditing
         ? isProtocolConfiguredForUpdate
         : isProtocolConfigured;
@@ -127,7 +127,7 @@ export const useImapSmtpCaldavConnectionForm = ({
       }
 
       const connectionParameters: Partial<
-        Record<keyof ImapSmtpCaldavAccount, ConnectionParametersInput>
+        Record<keyof ImapSmtpCaldavAccountInput, ConnectionParametersInput>
       > = {};
       configuredProtocols.forEach((protocol) => {
         const protocolConfig = formValues[protocol];

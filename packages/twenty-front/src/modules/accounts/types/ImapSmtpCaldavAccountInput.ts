@@ -1,6 +1,6 @@
 import { type ConnectionParametersInput } from '~/generated-metadata/graphql';
 
-export type ImapSmtpCaldavAccount = {
+export type ImapSmtpCaldavAccountInput = {
   IMAP?: ConnectionParametersInput;
   SMTP?: ConnectionParametersInput;
   CALDAV?: ConnectionParametersInput;
