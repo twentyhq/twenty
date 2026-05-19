@@ -24,9 +24,7 @@ describe('SecretEncryptionRotationRunnerService (integration)', () => {
   let runner: SecretEncryptionRotationRunnerService;
 
   beforeAll(() => {
-    runner = global.app.get(SecretEncryptionRotationRunnerService, {
-      strict: false,
-    });
+    runner = global.app.get(SecretEncryptionRotationRunnerService);
   });
 
   it('exposes the expected stable list of sites', () => {
