@@ -131,9 +131,7 @@ const fields = [
 
 const filterValueDependencies = { timeZone: 'UTC' };
 
-const fieldMetadataItemById = new Map(
-  fields.map((field) => [field.id, field]),
-);
+const fieldMetadataItemById = new Map(fields.map((field) => [field.id, field]));
 
 const makeFilter = (
   fieldMetadataId: string,
