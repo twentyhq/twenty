@@ -6,7 +6,7 @@ import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
-import { type ClipboardEvent, useContext, useRef } from 'react';
+import { type ClipboardEvent, useContext } from 'react';
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
 import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
@@ -159,9 +159,6 @@ export const BlockEditor = ({
   const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
   const getMentionItems = useMentionMenu(editor);
 
-  // oxlint-disable-next-line twenty/no-state-useref
-  const lastSlashCommandQueryLengthRef = useRef(0);
-
   const getSlashMenuItems = async (query: string) => {
     const filtered = filterSuggestionItems<SuggestionItem>(
       getSlashMenu(editor),
@@ -169,13 +166,7 @@ export const BlockEditor = ({
     );
 
     if (filtered.length > 0) {
-      lastSlashCommandQueryLengthRef.current = query.length;
       return filtered;
-    }
-
-    if (query.length - lastSlashCommandQueryLengthRef.current > 3) {
-      editor.getExtension(SuggestionMenu)?.closeMenu();
-      return [];
     }
 
     return [
