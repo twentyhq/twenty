@@ -229,10 +229,12 @@ export class ImapSmtpCaldavService {
           existingConnectionParameters?.[protocol] ?? null;
 
         const validatedProtocolParams =
-          await this.imapSmtpCaldavValidatorService.validateProtocolConnectionParams({
-            params,
-            existingProtocolParams,
-          });
+          await this.imapSmtpCaldavValidatorService.validateProtocolConnectionParams(
+            {
+              params,
+              existingProtocolParams,
+            },
+          );
 
         await this.testImapSmtpCaldav({
           handle,
