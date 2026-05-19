@@ -2,9 +2,15 @@ import { buildPublicConnectionParameters } from 'src/engine/core-modules/imap-sm
 import { type ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
-export const buildPublicConnectedAccount = (
+export function buildPublicConnectedAccount(
+  account: ConnectedAccountEntity,
+): ConnectedAccountPublicDTO;
+export function buildPublicConnectedAccount(
   account: ConnectedAccountEntity | null,
-): ConnectedAccountPublicDTO | null => {
+): ConnectedAccountPublicDTO | null;
+export function buildPublicConnectedAccount(
+  account: ConnectedAccountEntity | null,
+): ConnectedAccountPublicDTO | null {
   if (!account) {
     return null;
   }
@@ -15,4 +21,4 @@ export const buildPublicConnectedAccount = (
       account.connectionParameters,
     ),
   };
-};
+}

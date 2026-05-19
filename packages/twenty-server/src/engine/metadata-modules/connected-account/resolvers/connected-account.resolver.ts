@@ -58,6 +58,6 @@ export class ConnectedAccountResolver {
       workspaceId: workspace.id,
     });
 
-    return buildPublicConnectedAccount(deleted)!;
+    return buildPublicConnectedAccount(deleted);
   }
 }
