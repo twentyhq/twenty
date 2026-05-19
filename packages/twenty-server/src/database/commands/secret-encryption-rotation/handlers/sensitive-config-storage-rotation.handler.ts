@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsWhere, In, IsNull, Raw, Repository } from 'typeorm';
+import { Repository, type SelectQueryBuilder } from 'typeorm';
 
 import {
   SecretEncryptionRotationHandler,
@@ -46,12 +46,10 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
       return 0;
     }
 
-    return this.keyValuePairRepository.count({
-      where: this.buildRotationFilter({
-        currentEncryptionKeyId,
-        sensitiveStringConfigKeys,
-      }),
-    });
+    return this.buildRotationQuery({
+      currentEncryptionKeyId,
+      sensitiveStringConfigKeys,
+    }).getCount();
   }
 
   async rotate({
@@ -64,12 +62,10 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
       return { rotated: 0, skipped: 0, errors: 0 };
     }
 
-    const rows = await this.keyValuePairRepository.find({
-      where: this.buildRotationFilter({
-        currentEncryptionKeyId,
-        sensitiveStringConfigKeys,
-      }),
-    });
+    const rows = await this.buildRotationQuery({
+      currentEncryptionKeyId,
+      sensitiveStringConfigKeys,
+    }).getMany();
 
     let rotated = 0;
     let skipped = 0;
@@ -93,15 +89,15 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
           this.secretEncryptionService.encryptVersioned(plaintext);
 
         if (!dryRun) {
-          const updateResult = await this.keyValuePairRepository.update(
-            {
-              id: row.id,
-              value: Raw((alias) => `${alias}::text = :originalValueText`, {
-                originalValueText: JSON.stringify(rawValue),
-              }) as unknown as JSON,
-            },
-            { value: reEncrypted as unknown as JSON },
-          );
+          const updateResult = await this.keyValuePairRepository
+            .createQueryBuilder()
+            .update()
+            .set({ value: reEncrypted as unknown as JSON })
+            .where('id = :id', { id: row.id })
+            .andWhere('CAST(value AS text) = :originalValueText', {
+              originalValueText: JSON.stringify(rawValue),
+            })
+            .execute();
 
           if ((updateResult.affected ?? 0) === 0) {
             skipped++;
@@ -123,24 +119,26 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
     return { rotated, skipped, errors };
   }
 
-  private buildRotationFilter({
+  private buildRotationQuery({
     currentEncryptionKeyId,
     sensitiveStringConfigKeys,
   }: {
     currentEncryptionKeyId: string;
     sensitiveStringConfigKeys: string[];
-  }): FindOptionsWhere<KeyValuePairEntity> {
+  }): SelectQueryBuilder<KeyValuePairEntity> {
     const currentEnvelopePattern = `"${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}${currentEncryptionKeyId}:%"`;
 
-    return {
-      type: KeyValuePairType.CONFIG_VARIABLE,
-      userId: IsNull(),
-      workspaceId: IsNull(),
-      key: In(sensitiveStringConfigKeys),
-      value: Raw((alias) => `${alias}::text NOT LIKE :current`, {
+    return this.keyValuePairRepository
+      .createQueryBuilder('kvp')
+      .where('kvp.type = :type', { type: KeyValuePairType.CONFIG_VARIABLE })
+      .andWhere('kvp.userId IS NULL')
+      .andWhere('kvp.workspaceId IS NULL')
+      .andWhere('kvp.key IN (:...sensitiveStringConfigKeys)', {
+        sensitiveStringConfigKeys,
+      })
+      .andWhere('CAST(kvp.value AS text) NOT LIKE :current', {
         current: currentEnvelopePattern,
-      }) as unknown as JSON,
-    };
+      });
   }
 
   private collectSensitiveStringConfigKeys(): string[] {
