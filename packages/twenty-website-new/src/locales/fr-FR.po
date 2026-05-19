@@ -75,9 +75,11 @@ msgstr "+$7000/organisation par mois"
 #: src/app/[locale]/pricing/salesforce.data.ts
 #: src/app/[locale]/pricing/salesforce.data.ts
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "+$75/user per month\n"
+msgid ""
+"+$75/user per month\n"
 "Switch to enterprise!"
-msgstr "+$75/utilisateur par mois\n"
+msgstr ""
+"+$75/utilisateur par mois\n"
 "Passez à Enterprise !"
 
 #. js-lingui-id: iK+ikF
@@ -91,10 +93,12 @@ msgstr "+10k autres"
 
 #. js-lingui-id: nRtVCK
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "+20% of net spend\n"
+msgid ""
+"+20% of net spend\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr "+20% des dépenses nettes\n"
+msgstr ""
+"+20% des dépenses nettes\n"
 "+$75/utilisateur par mois\n"
 "Passez à Enterprise !"
 
@@ -105,10 +109,12 @@ msgstr "$0"
 
 #. js-lingui-id: 6inRXo
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "$1/orchestration run/org\n"
+msgid ""
+"$1/orchestration run/org\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr "$1/exécution d’orchestration/organisation\n"
+msgstr ""
+"$1/exécution d’orchestration/organisation\n"
 "+$75/utilisateur par mois\n"
 "Passez à Enterprise !"
 
@@ -141,9 +147,11 @@ msgstr "100 par minute"
 
 #. js-lingui-id: uuKUqZ
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "11 permissions\n"
+msgid ""
+"11 permissions\n"
 "groups"
-msgstr "11 groupes\n"
+msgstr ""
+"11 groupes\n"
 "d’autorisations"
 
 #. js-lingui-id: SaSafJ
@@ -187,9 +195,11 @@ msgstr "3"
 
 #. js-lingui-id: BL47wE
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "3 2 years contract\n"
+msgid ""
+"3 2 years contract\n"
 "-33% off"
-msgstr "3 contrat de 2 ans\n"
+msgstr ""
+"3 contrat de 2 ans\n"
 "-33% de réduction"
 
 #. js-lingui-id: /jgC+9
@@ -1219,9 +1229,11 @@ msgstr "Directeur du numérique et de l’information, Elevate Consulting"
 
 #. js-lingui-id: 5MOmDI
 #: src/app/[locale]/releases/page.tsx
-msgid "Discover the newest features and improvements in Twenty,\n"
+msgid ""
+"Discover the newest features and improvements in Twenty,\n"
 "the #1 Open Source CRM."
-msgstr "Découvrez les dernières fonctionnalités et améliorations de Twenty,\n"
+msgstr ""
+"Découvrez les dernières fonctionnalités et améliorations de Twenty,\n"
 "le CRM Open Source n°1."
 
 #. js-lingui-id: W+b/DF
@@ -1457,9 +1469,11 @@ msgstr "Flexibilité"
 
 #. js-lingui-id: HBJ0P5
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "Flow\n"
+msgid ""
+"Flow\n"
 "orchestration"
-msgstr "Orchestration\n"
+msgstr ""
+"Orchestration\n"
 "des flux"
 
 #. js-lingui-id: obrJBN
@@ -1862,17 +1876,21 @@ msgstr "Rejoignez notre écosystème de partenaires en pleine croissance"
 
 #. js-lingui-id: 4721j2
 #: src/app/[locale]/partners/page.tsx
-msgid "Join our partner ecosystem and help businesses\n"
+msgid ""
+"Join our partner ecosystem and help businesses\n"
 "take control of their CRM."
-msgstr "Rejoignez notre écosystème de partenaires et aidez les entreprises\n"
+msgstr ""
+"Rejoignez notre écosystème de partenaires et aidez les entreprises\n"
 "à prendre le contrôle de leur CRM."
 
 #. js-lingui-id: 4QqdtB
 #: src/app/[locale]/customers/page.tsx
 #: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
-msgid "Join the teams that chose to own their CRM.\n"
+msgid ""
+"Join the teams that chose to own their CRM.\n"
 "Start building with Twenty today."
-msgstr "Rejoignez les équipes qui ont choisi de posséder leur CRM.\n"
+msgstr ""
+"Rejoignez les équipes qui ont choisi de posséder leur CRM.\n"
 "Commencez à créer avec Twenty dès aujourd’hui."
 
 #. js-lingui-id: pB76mP
@@ -2450,9 +2468,11 @@ msgstr "Prêt à grandir"
 
 #. js-lingui-id: 1d+b/h
 #: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
-msgid "Ready to grow\n"
+msgid ""
+"Ready to grow\n"
 "with Twenty?"
-msgstr "Prêt à grandir\n"
+msgstr ""
+"Prêt à grandir\n"
 "avec Twenty ?"
 
 #. js-lingui-id: zTY2by
@@ -2834,9 +2854,11 @@ msgstr "Commencer gratuitement"
 
 #. js-lingui-id: sBOFB0
 #: src/app/[locale]/pricing/page.tsx
-msgid "Start your free trial today\n"
+msgid ""
+"Start your free trial today\n"
 "without credit card."
-msgstr "Commencez votre essai gratuit dès aujourd’hui\n"
+msgstr ""
+"Commencez votre essai gratuit dès aujourd’hui\n"
 "sans carte bancaire."
 
 #. js-lingui-id: FT+TW7
@@ -3766,4 +3788,3 @@ msgstr "Zéro travail manuel"
 #: src/app/[locale]/customers/w3villa/page.tsx
 msgid "Zero manual work at the core. Full automation. Built on Twenty."
 msgstr "Zéro travail manuel au cœur. Automatisation totale. Construit sur Twenty."
-
