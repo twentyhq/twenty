@@ -2,6 +2,7 @@ import path from 'path';
 
 import { appBuild } from '@/cli/operations/build';
 import { appDeploy } from '@/cli/operations/deploy';
+import { appPublish } from '@/cli/operations/publish';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { readJson } from '@/cli/utilities/file/fs-utils';
@@ -11,10 +12,42 @@ import chalk from 'chalk';
 export type DeployCommandOptions = {
   appPath?: string;
   remote?: string;
+  private?: boolean;
+  tag?: string;
 };
 
 export class DeployCommand {
   async execute(options: DeployCommandOptions): Promise<void> {
+    if (options.private) {
+      await this.executePrivate(options);
+    } else {
+      await this.executeNpm(options);
+    }
+  }
+
+  private async executeNpm(options: DeployCommandOptions): Promise<void> {
+    const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+
+    await checkSdkVersionCompatibility(appPath);
+
+    console.log(chalk.blue('Publishing to npm...'));
+    console.log(chalk.gray(`App path: ${appPath}\n`));
+
+    const result = await appPublish({
+      appPath,
+      npmTag: options.tag,
+      onProgress: (message) => console.log(chalk.gray(message)),
+    });
+
+    if (!result.success) {
+      console.error(chalk.red(result.error.message));
+      process.exit(1);
+    }
+
+    console.log(chalk.green('✓ Published to npm successfully'));
+  }
+
+  private async executePrivate(options: DeployCommandOptions): Promise<void> {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
     await checkSdkVersionCompatibility(appPath);
@@ -57,6 +90,6 @@ export class DeployCommand {
     console.log(
       chalk.green(`\n✓ Published ${appName} v${appVersion} to ${remoteName}\n`),
     );
-    console.log('  To install deployed application: `yarn twenty install`');
+    console.log('  To install deployed application: `yarn twenty app:install`');
   }
 }

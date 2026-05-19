@@ -4,42 +4,67 @@ import type { Command } from 'commander';
 import { SyncableEntity } from 'twenty-shared/application';
 import { EntityAddCommand } from './add';
 import { AppBuildCommand } from './build';
-import { CatalogSyncCommand } from './catalog-sync';
 import { DeployCommand } from './deploy';
 import { AppDevCommand } from './dev';
 import { LogicFunctionExecuteCommand } from './exec';
 import { AppInstallCommand } from './install';
 import { LogicFunctionLogsCommand } from './logs';
-import { AppPublishCommand } from './publish';
 import { registerRemoteCommands } from './remote';
 import { registerServerCommands } from './server';
 import { AppDevOnceCommand } from './dev-once';
 import { AppTypecheckCommand } from './typecheck';
 import { AppUninstallCommand } from './uninstall';
 
+const deprecate = (oldCmd: string, newCmd: string) =>
+  console.warn(
+    chalk.yellow(
+      `⚠ \`twenty ${oldCmd}\` is deprecated. Use \`twenty ${newCmd}\` instead.`,
+    ),
+  );
+
 export const registerCommands = (program: Command): void => {
   const buildCommand = new AppBuildCommand();
   const devCommand = new AppDevCommand();
   const devOnceCommand = new AppDevOnceCommand();
   const installCommand = new AppInstallCommand();
-  const publishCommand = new AppPublishCommand();
   const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
-  const catalogSyncCommand = new CatalogSyncCommand();
   const deployCommand = new DeployCommand();
   const addCommand = new EntityAddCommand();
   const logsCommand = new LogicFunctionLogsCommand();
   const executeCommand = new LogicFunctionExecuteCommand();
 
+  // ── Development ──────────────────────────────────────────────────
+
+  const devAction = async (
+    appPath: string | undefined,
+    options: {
+      once?: boolean;
+      verbose?: boolean;
+      debug?: boolean;
+      debounceMs?: string;
+    },
+  ) => {
+    const commonOptions = {
+      appPath: formatPath(appPath),
+      verbose: options.verbose || options.debug,
+      debounceMs: options.debounceMs
+        ? parseInt(options.debounceMs, 10)
+        : undefined,
+    };
+
+    if (options.once) {
+      await devOnceCommand.execute(commonOptions);
+
+      return;
+    }
+
+    await devCommand.execute(commonOptions);
+  };
+
   program
-    .command('dev [appPath]')
-    .description(
-      'Build and sync local application changes (watches by default; use --once for a one-shot sync)',
-    )
-    .option(
-      '-w, --watch',
-      'Watch source files and re-sync on every change (default behavior)',
-    )
+    .command('dev [appPath]', { isDefault: true })
+    .description('Build and sync local changes (default command)')
     .option(
       '-o, --once',
       'Build and sync once, then exit (useful for CI, scripts, and pre-commit hooks)',
@@ -47,35 +72,11 @@ export const registerCommands = (program: Command): void => {
     .option('--debounceMs <ms>', 'Debounce in ms (default: 2 000)')
     .option('-v, --verbose', 'Show detailed logs')
     .option('-d, --debug', 'Show detailed logs (alias for --verbose)')
-    .action(async (appPath, options) => {
-      if (options.once && options.watch) {
-        console.error(
-          chalk.red(
-            'Error: --once and --watch are mutually exclusive. Watch mode is the default.',
-          ),
-        );
-        process.exit(1);
-      }
-
-      const commonOptions = {
-        appPath: formatPath(appPath),
-        verbose: options.verbose || options.debug,
-        debounceMs: options.debounceMs
-          ? parseInt(options.debounceMs, 10)
-          : undefined,
-      };
-
-      if (options.once) {
-        await devOnceCommand.execute(commonOptions);
-        return;
-      }
-
-      await devCommand.execute(commonOptions);
-    });
+    .action(devAction);
 
   program
-    .command('build [appPath]')
-    .description('Build, sync, and generate API client into .twenty/output/')
+    .command('dev:build [appPath]')
+    .description('Build and generate API client')
     .option('--tarball', 'Also pack into a .tgz tarball')
     .action(async (appPath, options) => {
       await buildCommand.execute({
@@ -85,60 +86,8 @@ export const registerCommands = (program: Command): void => {
     });
 
   program
-    .command('install [appPath]')
-    .description('Install a deployed application on the connected server')
-    .option('-r, --remote <name>', 'Install on a specific remote')
-    .action(async (appPath, options) => {
-      await installCommand.execute({
-        appPath: formatPath(appPath),
-        remote: options.remote,
-      });
-    });
-
-  program
-    .command('deploy [appPath]')
-    .description("Publish a new version to a Twenty server's registry")
-    .option('-r, --remote <name>', 'Deploy to a specific remote')
-    .action(async (appPath, options) => {
-      await deployCommand.execute({
-        appPath: formatPath(appPath),
-        remote: options.remote,
-      });
-    });
-
-  program
-    .command('publish [appPath]')
-    .description('Build and publish to npm')
-    .option('--tag <tag>', 'npm dist-tag (e.g. beta, next)')
-    .action(async (appPath, options) => {
-      await publishCommand.execute({
-        appPath: formatPath(appPath),
-        tag: options.tag,
-      });
-    });
-
-  program
-    .command('catalog-sync')
-    .description(
-      '[Deprecated] Moved under server. Use `yarn twenty server catalog-sync`.',
-    )
-    .option('-r, --remote <name>', 'Sync on a specific remote')
-    .action(async (options) => {
-      console.warn(
-        chalk.yellow(
-          '`yarn twenty catalog-sync` is deprecated and will be removed in a future release.\n' +
-            'Use `yarn twenty server catalog-sync` instead.\n',
-        ),
-      );
-
-      await catalogSyncCommand.execute({
-        remote: options.remote,
-      });
-    });
-
-  program
-    .command('typecheck [appPath]')
-    .description('Run TypeScript type checking on the application')
+    .command('dev:typecheck [appPath]')
+    .description('Run TypeScript type checking')
     .action(async (appPath) => {
       await typecheckCommand.execute({
         appPath: formatPath(appPath),
@@ -146,36 +95,34 @@ export const registerCommands = (program: Command): void => {
     });
 
   program
-    .command('uninstall [appPath]')
-    .description('Uninstall application from Twenty')
-    .option('-y, --yes', 'Skip confirmation prompt')
-    .action(async (appPath?: string, options?: { yes?: boolean }) => {
-      try {
-        const result = await uninstallCommand.execute({
-          appPath: formatPath(appPath),
-          askForConfirmation: !options?.yes,
-        });
-        process.exit(result.success ? 0 : 1);
-      } catch {
-        process.exit(1);
-      }
-    });
-
-  registerRemoteCommands(program);
-  registerServerCommands(program);
-
-  program
-    .command('add [entityType]')
-    .option('--path <path>', 'Path in which the entity should be created.')
-    .description(
-      `Add a new entity to your application (${Object.values(SyncableEntity).join('|')})`,
+    .command('dev:fn-logs [appPath]')
+    .description('Stream logic function logs')
+    .option(
+      '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
+      'Only show logs for the function with this universal ID',
     )
-    .action(async (entityType?: string, options?: { path?: string }) => {
-      await addCommand.execute(entityType as SyncableEntity, options?.path);
-    });
+    .option(
+      '-n, --functionName <functionName>',
+      'Only show logs for the function with this name',
+    )
+    .action(
+      async (
+        appPath?: string,
+        options?: {
+          functionUniversalIdentifier?: string;
+          functionName?: string;
+        },
+      ) => {
+        await logsCommand.execute({
+          ...options,
+          appPath: formatPath(appPath),
+        });
+      },
+    );
 
   program
-    .command('exec [appPath]')
+    .command('dev:fn-exec [appPath]')
+    .description('Execute a logic function')
     .option('--postInstall', 'Execute post-install logic function if defined')
     .option('--preInstall', 'Execute pre-install logic function if defined')
     .option(
@@ -191,7 +138,6 @@ export const registerCommands = (program: Command): void => {
       '-n, --functionName <functionName>',
       'Name of the function to execute',
     )
-    .description('Execute a logic function with a JSON payload')
     .action(
       async (
         appPath?: string,
@@ -225,7 +171,88 @@ export const registerCommands = (program: Command): void => {
     );
 
   program
-    .command('logs [appPath]')
+    .command('dev:add [entityType]')
+    .description(
+      `Scaffold a new entity (${Object.values(SyncableEntity).join('|')})`,
+    )
+    .option('--path <path>', 'Path in which the entity should be created.')
+    .action(async (entityType?: string, options?: { path?: string }) => {
+      await addCommand.execute(entityType as SyncableEntity, options?.path);
+    });
+
+  // ── App Lifecycle ────────────────────────────────────────────────
+
+  program
+    .command('app:publish [appPath]')
+    .description('Build and publish to npm (default) or server registry')
+    .option('--private', "Push to a Twenty server's registry instead of npm")
+    .option('--tag <tag>', 'npm dist-tag (e.g. beta, next)')
+    .action(async (appPath, options) => {
+      await deployCommand.execute({
+        appPath: formatPath(appPath),
+        private: options.private,
+        tag: options.tag,
+      });
+    });
+
+  program
+    .command('app:install [appPath]')
+    .description('Install a deployed app on the server')
+    .option('-r, --remote <name>', 'Install on a specific remote')
+    .action(async (appPath, options) => {
+      await installCommand.execute({
+        appPath: formatPath(appPath),
+        remote: options.remote,
+      });
+    });
+
+  program
+    .command('app:uninstall [appPath]')
+    .description('Uninstall app from server')
+    .option('-y, --yes', 'Skip confirmation prompt')
+    .action(async (appPath?: string, options?: { yes?: boolean }) => {
+      try {
+        const result = await uninstallCommand.execute({
+          appPath: formatPath(appPath),
+          askForConfirmation: !options?.yes,
+        });
+        process.exit(result.success ? 0 : 1);
+      } catch {
+        process.exit(1);
+      }
+    });
+
+  // ── Infrastructure ───────────────────────────────────────────────
+
+  registerRemoteCommands(program);
+  registerServerCommands(program);
+
+  // ── Deprecated root commands (hidden, forward to new names) ──────
+
+  program
+    .command('build [appPath]', { hidden: true })
+    .option('--tarball', 'Also pack into a .tgz tarball')
+    .action(
+      async (appPath: string | undefined, options: { tarball?: boolean }) => {
+        deprecate('build', 'dev:build');
+        await buildCommand.execute({
+          appPath: formatPath(appPath),
+          tarball: options.tarball,
+        });
+      },
+    );
+
+  program
+    .command('typecheck [appPath]', { hidden: true })
+    .action(async (appPath: string | undefined) => {
+      deprecate('typecheck', 'dev:typecheck');
+      await typecheckCommand.execute({
+        appPath: formatPath(appPath),
+      });
+    });
+
+  program
+    .command('logs [appPath]', { hidden: true })
     .option(
       '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
       'Only show logs for the function with this universal ID',
@@ -234,7 +261,6 @@ export const registerCommands = (program: Command): void => {
       '-n, --functionName <functionName>',
       'Only show logs for the function with this name',
     )
-    .description('Watch application function logs')
     .action(
       async (
         appPath?: string,
@@ -243,10 +269,137 @@ export const registerCommands = (program: Command): void => {
           functionName?: string;
         },
       ) => {
+        deprecate('logs', 'dev:fn-logs');
         await logsCommand.execute({
           ...options,
           appPath: formatPath(appPath),
         });
       },
     );
+
+  program
+    .command('exec [appPath]', { hidden: true })
+    .option('--postInstall', 'Execute post-install logic function if defined')
+    .option('--preInstall', 'Execute pre-install logic function if defined')
+    .option(
+      '-p, --payload <payload>',
+      'JSON payload to send to the function',
+      '{}',
+    )
+    .option(
+      '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
+      'Universal ID of the function to execute',
+    )
+    .option(
+      '-n, --functionName <functionName>',
+      'Name of the function to execute',
+    )
+    .action(
+      async (
+        appPath?: string,
+        options?: {
+          postInstall?: boolean;
+          preInstall?: boolean;
+          payload?: string;
+          functionUniversalIdentifier?: string;
+          functionName?: string;
+        },
+      ) => {
+        deprecate('exec', 'dev:fn-exec');
+        if (
+          !options?.postInstall &&
+          !options?.preInstall &&
+          !options?.functionUniversalIdentifier &&
+          !options?.functionName
+        ) {
+          console.error(
+            chalk.red(
+              'Error: Either --postInstall, --preInstall, --functionName (-n), or --functionUniversalIdentifier (-u) is required.',
+            ),
+          );
+          process.exit(1);
+        }
+        await executeCommand.execute({
+          ...options,
+          payload: options?.payload ?? '{}',
+          appPath: formatPath(appPath),
+        });
+      },
+    );
+
+  program
+    .command('add [entityType]', { hidden: true })
+    .option('--path <path>', 'Path in which the entity should be created.')
+    .action(async (entityType?: string, options?: { path?: string }) => {
+      deprecate('add', 'dev:add');
+      await addCommand.execute(entityType as SyncableEntity, options?.path);
+    });
+
+  program
+    .command('publish [appPath]', { hidden: true })
+    .option('--tag <tag>', 'npm dist-tag (e.g. beta, next)')
+    .action(async (appPath: string | undefined, options: { tag?: string }) => {
+      deprecate('publish', 'app:publish');
+      await deployCommand.execute({
+        appPath: formatPath(appPath),
+        tag: options.tag,
+      });
+    });
+
+  program
+    .command('deploy [appPath]', { hidden: true })
+    .option('-r, --remote <name>', 'Deploy to a specific remote')
+    .action(
+      async (appPath: string | undefined, options: { remote?: string }) => {
+        deprecate('deploy', 'app:publish --private');
+        await deployCommand.execute({
+          appPath: formatPath(appPath),
+          private: true,
+          remote: options.remote,
+        });
+      },
+    );
+
+  program
+    .command('install [appPath]', { hidden: true })
+    .option('-r, --remote <name>', 'Install on a specific remote')
+    .action(
+      async (appPath: string | undefined, options: { remote?: string }) => {
+        deprecate('install', 'app:install');
+        await installCommand.execute({
+          appPath: formatPath(appPath),
+          remote: options.remote,
+        });
+      },
+    );
+
+  program
+    .command('uninstall [appPath]', { hidden: true })
+    .option('-y, --yes', 'Skip confirmation prompt')
+    .action(async (appPath?: string, options?: { yes?: boolean }) => {
+      deprecate('uninstall', 'app:uninstall');
+      try {
+        const result = await uninstallCommand.execute({
+          appPath: formatPath(appPath),
+          askForConfirmation: !options?.yes,
+        });
+        process.exit(result.success ? 0 : 1);
+      } catch {
+        process.exit(1);
+      }
+    });
+
+  program
+    .command('catalog-sync', { hidden: true })
+    .option('-r, --remote <name>', 'Sync on a specific remote')
+    .action(async (options: { remote?: string }) => {
+      console.warn(
+        chalk.yellow(
+          '⚠ `twenty catalog-sync` is removed. Use `twenty docker:catalog-sync` instead.',
+        ),
+      );
+      const { CatalogSyncCommand } = await import('./catalog-sync');
+      const cmd = new CatalogSyncCommand();
+      await cmd.execute({ remote: options.remote });
+    });
 };
