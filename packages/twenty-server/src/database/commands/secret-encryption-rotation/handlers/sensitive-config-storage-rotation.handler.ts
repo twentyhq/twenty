@@ -1,23 +1,25 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import {
+  type SecretEncryptionRotationContext,
   type SecretEncryptionRotationHandler,
-  type SecretEncryptionRotationHandlerOptions,
+  type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
 import { buildPrimaryKeyIdEnvelopeLikePattern } from 'src/database/commands/secret-encryption-rotation/utils/build-non-current-keyid-like-pattern.util';
-import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import {
+  KeyValuePairEntity,
+  KeyValuePairType,
+} from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { type ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { TypedReflect } from 'src/utils/typed-reflect';
-
-type SensitiveConfigRow = { id: string; value: unknown };
 
 @Injectable()
 export class SensitiveConfigStorageRotationHandler
@@ -29,16 +31,11 @@ export class SensitiveConfigStorageRotationHandler
   );
 
   constructor(
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
+    @InjectRepository(KeyValuePairEntity)
+    private readonly keyValuePairRepository: Repository<KeyValuePairEntity>,
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  // ConfigStorage shares the `keyValuePair.value` (jsonb) column with
-  // user/feature-flag entries — so there's no CHECK constraint and we have
-  // to filter sensitive STRING config keys via reflection metadata, then
-  // walk those rows row-by-row to skip any that are already on the primary
-  // keyId.
   async countRemaining({
     primaryKeyId,
   }: {
@@ -57,15 +54,7 @@ export class SensitiveConfigStorageRotationHandler
     let total = 0;
 
     for (const key of sensitiveStringKeys) {
-      const rows: SensitiveConfigRow[] = await this.dataSource.query(
-        `SELECT id, value
-           FROM "core"."keyValuePair"
-          WHERE type = $1
-            AND "userId" IS NULL
-            AND "workspaceId" IS NULL
-            AND key = $2`,
-        [KeyValuePairType.CONFIG_VARIABLE, key],
-      );
+      const rows = await this.findInstanceConfigRows(key);
 
       for (const row of rows) {
         if (this.isV2EnvelopeNotOnPrimary(row.value, primaryPrefix)) {
@@ -77,15 +66,10 @@ export class SensitiveConfigStorageRotationHandler
     return total;
   }
 
-  async run({
+  async rotate({
     primaryKeyId,
-    batchSize: _batchSize,
     dryRun,
-  }: SecretEncryptionRotationHandlerOptions): Promise<{
-    rotated: number;
-    skipped: number;
-    errors: number;
-  }> {
+  }: SecretEncryptionRotationContext): Promise<SecretEncryptionRotationOutcome> {
     const sensitiveStringKeys = this.collectSensitiveStringConfigKeys();
 
     if (sensitiveStringKeys.length === 0) {
@@ -101,15 +85,7 @@ export class SensitiveConfigStorageRotationHandler
     let errors = 0;
 
     for (const key of sensitiveStringKeys) {
-      const rows: SensitiveConfigRow[] = await this.dataSource.query(
-        `SELECT id, value
-           FROM "core"."keyValuePair"
-          WHERE type = $1
-            AND "userId" IS NULL
-            AND "workspaceId" IS NULL
-            AND key = $2`,
-        [KeyValuePairType.CONFIG_VARIABLE, key],
-      );
+      const rows = await this.findInstanceConfigRows(key);
 
       for (const row of rows) {
         const rawValue = row.value;
@@ -132,16 +108,29 @@ export class SensitiveConfigStorageRotationHandler
         try {
           const plaintext =
             this.secretEncryptionService.decryptVersioned(rawValue);
-          const encrypted =
+          const reEncrypted =
             this.secretEncryptionService.encryptVersioned(plaintext);
 
           if (!dryRun) {
-            await this.dataSource.query(
-              `UPDATE "core"."keyValuePair"
-                  SET value = to_jsonb($1::text)
-                WHERE id = $2`,
-              [encrypted, row.id],
-            );
+            const updateResult = await this.keyValuePairRepository
+              .createQueryBuilder()
+              .update()
+              .set({
+                value: () => 'to_jsonb(:reEncrypted::text)',
+              })
+              .where('id = :id')
+              .andWhere('value::text = :originalValueText')
+              .setParameters({
+                id: row.id,
+                reEncrypted,
+                originalValueText: JSON.stringify(rawValue),
+              })
+              .execute();
+
+            if ((updateResult.affected ?? 0) === 0) {
+              skipped++;
+              continue;
+            }
           }
 
           rotated++;
@@ -157,6 +146,24 @@ export class SensitiveConfigStorageRotationHandler
     }
 
     return { rotated, skipped, errors };
+  }
+
+  private async findInstanceConfigRows(
+    key: string,
+  ): Promise<{ id: string; value: unknown }[]> {
+    const rows = await this.keyValuePairRepository.find({
+      where: {
+        type: KeyValuePairType.CONFIG_VARIABLE,
+        userId: IsNull(),
+        workspaceId: IsNull(),
+        key,
+      },
+    });
+
+    return rows.map((row) => ({
+      id: row.id,
+      value: row.value as unknown,
+    }));
   }
 
   private isV2EnvelopeNotOnPrimary(

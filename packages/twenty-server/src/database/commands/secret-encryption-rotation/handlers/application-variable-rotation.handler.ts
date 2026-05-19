@@ -1,17 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
+  type SecretEncryptionRotationContext,
   type SecretEncryptionRotationHandler,
-  type SecretEncryptionRotationHandlerOptions,
+  type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
-import { countNonCurrentKeyIdRows } from 'src/database/commands/secret-encryption-rotation/utils/count-non-current-keyid-rows.util';
-import { rotateSingleVarcharColumn } from 'src/database/commands/secret-encryption-rotation/utils/rotate-single-column.util';
+import {
+  countEncryptedColumnNonCurrentRows,
+  rotateEncryptedColumn,
+} from 'src/database/commands/secret-encryption-rotation/utils/rotate-encrypted-column.util';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
-const ONLY_SECRET_ROWS = `"isSecret" = true`;
+const ENCRYPTED_COLUMN = 'value';
+const ONLY_SECRET_ROWS_WHERE = `"isSecret" = true`;
 
 @Injectable()
 export class ApplicationVariableRotationHandler
@@ -21,8 +26,8 @@ export class ApplicationVariableRotationHandler
   private readonly logger = new Logger(ApplicationVariableRotationHandler.name);
 
   constructor(
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
+    @InjectRepository(ApplicationVariableEntity)
+    private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
@@ -31,34 +36,26 @@ export class ApplicationVariableRotationHandler
   }: {
     primaryKeyId: string;
   }): Promise<number> {
-    return countNonCurrentKeyIdRows({
-      dataSource: this.dataSource,
-      schema: 'core',
-      table: 'applicationVariable',
-      columns: ['value'],
+    return countEncryptedColumnNonCurrentRows({
+      repository: this.applicationVariableRepository,
       primaryKeyId,
-      extraWhereClause: ONLY_SECRET_ROWS,
+      encryptedColumns: [ENCRYPTED_COLUMN],
+      extraWhereSql: ONLY_SECRET_ROWS_WHERE,
     });
   }
 
-  async run({
-    primaryKeyId,
-    batchSize,
-    dryRun,
-  }: SecretEncryptionRotationHandlerOptions) {
-    return rotateSingleVarcharColumn({
-      dataSource: this.dataSource,
+  async rotate(
+    context: SecretEncryptionRotationContext,
+  ): Promise<SecretEncryptionRotationOutcome> {
+    return rotateEncryptedColumn({
+      ...context,
+      repository: this.applicationVariableRepository,
       secretEncryptionService: this.secretEncryptionService,
       logger: this.logger,
       siteName: this.siteName,
-      schema: 'core',
-      table: 'applicationVariable',
-      column: 'value',
+      encryptedColumn: ENCRYPTED_COLUMN,
       workspaceIdColumn: 'workspaceId',
-      primaryKeyId,
-      batchSize,
-      dryRun,
-      extraWhereClause: ONLY_SECRET_ROWS,
+      extraWhereSql: ONLY_SECRET_ROWS_WHERE,
     });
   }
 }

@@ -109,7 +109,7 @@ export class SecretEncryptionRotationRunnerService {
         `[${handler.siteName}] start: ${remainingBefore} row(s) need rotation`,
       );
 
-      const { rotated, skipped, errors } = await handler.run({
+      const { rotated, skipped, errors } = await handler.rotate({
         primaryKeyId,
         batchSize: options.batchSize,
         dryRun: options.dryRun,

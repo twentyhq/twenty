@@ -1,15 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
+  type SecretEncryptionRotationContext,
   type SecretEncryptionRotationHandler,
-  type SecretEncryptionRotationHandlerOptions,
+  type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
-import { countNonCurrentKeyIdRows } from 'src/database/commands/secret-encryption-rotation/utils/count-non-current-keyid-rows.util';
-import { rotateSingleVarcharColumn } from 'src/database/commands/secret-encryption-rotation/utils/rotate-single-column.util';
+import {
+  countEncryptedColumnNonCurrentRows,
+  rotateEncryptedColumn,
+} from 'src/database/commands/secret-encryption-rotation/utils/rotate-encrypted-column.util';
+import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+
+const ENCRYPTED_COLUMN = 'privateKey';
 
 @Injectable()
 export class SigningKeyPrivateKeysRotationHandler
@@ -21,8 +27,8 @@ export class SigningKeyPrivateKeysRotationHandler
   );
 
   constructor(
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
+    @InjectRepository(SigningKeyEntity)
+    private readonly signingKeyRepository: Repository<SigningKeyEntity>,
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
@@ -31,31 +37,23 @@ export class SigningKeyPrivateKeysRotationHandler
   }: {
     primaryKeyId: string;
   }): Promise<number> {
-    return countNonCurrentKeyIdRows({
-      dataSource: this.dataSource,
-      schema: 'core',
-      table: 'signingKey',
-      columns: ['privateKey'],
+    return countEncryptedColumnNonCurrentRows({
+      repository: this.signingKeyRepository,
       primaryKeyId,
+      encryptedColumns: [ENCRYPTED_COLUMN],
     });
   }
 
-  async run({
-    primaryKeyId,
-    batchSize,
-    dryRun,
-  }: SecretEncryptionRotationHandlerOptions) {
-    return rotateSingleVarcharColumn({
-      dataSource: this.dataSource,
+  async rotate(
+    context: SecretEncryptionRotationContext,
+  ): Promise<SecretEncryptionRotationOutcome> {
+    return rotateEncryptedColumn({
+      ...context,
+      repository: this.signingKeyRepository,
       secretEncryptionService: this.secretEncryptionService,
       logger: this.logger,
       siteName: this.siteName,
-      schema: 'core',
-      table: 'signingKey',
-      column: 'privateKey',
-      primaryKeyId,
-      batchSize,
-      dryRun,
+      encryptedColumn: ENCRYPTED_COLUMN,
     });
   }
 }
