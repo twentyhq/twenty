@@ -84,9 +84,7 @@ const addAction = async (options: {
 }) => {
   if (options.apiUrl) {
     console.warn(
-      chalk.yellow(
-        '⚠ --api-url is deprecated. Use --workspace-url instead.',
-      ),
+      chalk.yellow('⚠ --api-url is deprecated. Use --workspace-url instead.'),
     );
   }
   const configPath = options.test ? getConfigPath(true) : undefined;

@@ -15,7 +15,6 @@ import chalk from 'chalk';
 import type { Command } from 'commander';
 import { execSync, spawnSync } from 'node:child_process';
 
-
 const startAction = async (options: { port?: string; test?: boolean }) => {
   const defaultPort = options.test ? DEFAULT_TEST_PORT : DEFAULT_PORT;
   const port = options.port ? parseInt(options.port, 10) : defaultPort;
