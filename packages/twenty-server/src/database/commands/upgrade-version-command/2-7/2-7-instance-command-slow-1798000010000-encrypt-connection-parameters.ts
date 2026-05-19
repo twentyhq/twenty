@@ -34,7 +34,7 @@ const hasPlaintextPassword = (params: ImapSmtpCaldavParams): boolean => {
   return false;
 };
 
-@RegisteredInstanceCommand('2.6.0', 1798000010000, { type: 'slow' })
+@RegisteredInstanceCommand('2.7.0', 1798000010000, { type: 'slow' })
 export class EncryptConnectionParametersSlowInstanceCommand
   implements SlowInstanceCommand
 {
@@ -110,8 +110,6 @@ export class EncryptConnectionParametersSlowInstanceCommand
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Validates that all password fields inside the JSONB are encrypted.
-    // Checks each protocol key; if a password exists it must have the enc:v2: prefix.
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
        ADD CONSTRAINT "${CHECK_CONSTRAINT_NAME}"
