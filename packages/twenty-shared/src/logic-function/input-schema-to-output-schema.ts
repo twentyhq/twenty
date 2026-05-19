@@ -1,4 +1,3 @@
-import { isDefined } from '@/utils';
 import {
   type InputSchema,
   type InputSchemaProperty,
@@ -29,12 +28,12 @@ const convertProperty = (
 ): Leaf | Node => {
   const label = property.label ?? key;
 
-  if (isObject(property.type)) {
+  if (property.type === 'object') {
     return {
       isLeaf: false,
       type: 'object',
       label,
-      value: isDefined(property.properties)
+      value: isObject(property.properties)
         ? convertProperties(property.properties)
         : {},
     };
@@ -66,7 +65,7 @@ export const inputSchemaToOutputSchema = (
 ): BaseOutputSchemaV2 => {
   const root = inputSchema[0];
 
-  if (!isDefined(root) || !isObject(root.type) || !isDefined(root.properties)) {
+  if (root?.type !== 'object' || !isObject(root.properties)) {
     return {};
   }
 
