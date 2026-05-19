@@ -1,5 +1,21 @@
 import path from 'path';
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 import withLinaria, { type LinariaConfig } from 'next-with-linaria';
+import { APP_LOCALES } from 'twenty-shared/translations';
+
+// Locale URL segments that are actually served (others are normalised away).
+// Mirrors LOCALE_BY_URL_SEGMENT keys in src/lib/i18n/utils/website-locale-segments.ts.
+const DEPLOYED_LOCALE_URL_SEGMENTS = ['en', 'fr'] as const;
+
+// Raw locale codes (e.g. fr-FR, de-DE) that should redirect to the un-prefixed
+// path. Excludes pseudo-* locales and the deployed URL segments themselves.
+const RAW_LOCALE_PREFIXES_TO_STRIP = (
+  Object.values(APP_LOCALES) as string[]
+).filter(
+  (locale) =>
+    !locale.startsWith('pseudo-') &&
+    !(DEPLOYED_LOCALE_URL_SEGMENTS as readonly string[]).includes(locale),
+);
 
 const SECURITY_HEADERS = [
   {
@@ -66,8 +82,44 @@ const nextConfig: LinariaConfig = {
       },
     ];
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        // Root rewrites to the source locale.
+        { source: '/', destination: '/en' },
+        // Any path that isn't already locale-prefixed (en/, fr/), an internal
+        // Next.js path, a static asset folder, or a file with an extension
+        // rewrites to the source locale prefix. Mirrors proxy.ts Rule 4.
+        {
+          source:
+            '/:rest((?!en$|en/|fr$|fr/|api|_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml|illustrations|lottie|fonts|.+\\..+).+)',
+          destination: '/en/:rest',
+        },
+      ],
+    };
+  },
   async redirects() {
     return [
+      // Canonicalise www → apex. Host-based; fires before any locale logic.
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.twenty.com' }],
+        destination: 'https://twenty.com/:path*',
+        permanent: true,
+      },
+      // Strip the source-locale prefix: /en/foo → /foo (301). Mirrors proxy.ts Rule 1.
+      { source: '/en', destination: '/', statusCode: 301 },
+      { source: '/en/:path*', destination: '/:path*', statusCode: 301 },
+      // Normalise raw locale codes that aren't deployed URL segments
+      // (e.g. /fr-FR/foo → /foo, /de-DE/foo → /foo). Mirrors proxy.ts Rule 3.
+      ...RAW_LOCALE_PREFIXES_TO_STRIP.flatMap((locale) => [
+        { source: `/${locale}`, destination: '/', permanent: true },
+        {
+          source: `/${locale}/:path*`,
+          destination: '/:path*',
+          permanent: true,
+        },
+      ]),
       {
         source: '/user-guide',
         destination: 'https://docs.twenty.com/user-guide/introduction',
@@ -176,5 +228,7 @@ const nextConfig: LinariaConfig = {
     ];
   },
 };
+
+initOpenNextCloudflareForDev();
 
 module.exports = withLinaria(nextConfig);

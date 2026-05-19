@@ -1,0 +1,50 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "twenty-website",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-01-15",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  "observability": {
+    "enabled": true,
+  },
+  "env": {
+    "dev": {
+      "name": "twenty-website-dev",
+      "routes": [
+        {
+          "pattern": "website-new.twenty-main.com",
+          "custom_domain": true,
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "twenty-website-cache-dev",
+        },
+      ],
+    },
+    "prod": {
+      "name": "twenty-website-prod",
+      "routes": [
+        {
+          "pattern": "twenty.com",
+          "custom_domain": true,
+        },
+        {
+          "pattern": "www.twenty.com",
+          "custom_domain": true,
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "twenty-website-cache-prod",
+        },
+      ],
+    },
+  },
+}

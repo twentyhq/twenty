@@ -31,8 +31,8 @@ function buildNavItems(): MenuNavItemType[] {
           external: true,
           icon: 'book',
           preview: {
-            image: '/images/product/feature/contacts.webp',
-            imageAlt: 'Twenty companies list',
+            image: '/images/shared/menu/user-guide-preview.webp',
+            imageAlt: 'Twenty user guide preview',
             title: msg`Master every corner of Twenty`,
             description: msg`Step-by-step guides and playbooks to help your team get the most out of their workspace.`,
           },
