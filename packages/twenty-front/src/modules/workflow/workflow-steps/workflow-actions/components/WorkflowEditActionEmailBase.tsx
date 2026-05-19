@@ -5,7 +5,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { GET_CONNECTED_ACCOUNT_BY_ID } from '@/settings/accounts/graphql/queries/getConnectedAccountById';
+import { WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE } from '@/workflow/graphql/queries/workflowStepConnectedAccountHandle';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { Select } from '@/ui/input/components/Select';
@@ -118,17 +118,12 @@ export const WorkflowEditActionEmailBase = ({
   );
 
   const { data: otherAccountData, loading: otherAccountLoading } = useQuery<{
-    connectedAccountById: Pick<
+    workflowStepConnectedAccountHandle: Pick<
       ConnectedAccount,
-      | 'id'
-      | 'handle'
-      | 'provider'
-      | 'scopes'
-      | 'userWorkspaceId'
-      | 'connectionParameters'
+      'id' | 'handle' | 'provider'
     > | null;
-  }>(GET_CONNECTED_ACCOUNT_BY_ID, {
-    variables: { id: configuredAccountId },
+  }>(WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE, {
+    variables: { connectedAccountId: configuredAccountId },
     skip:
       !isDefined(configuredAccountId) ||
       configuredAccountId === '' ||
@@ -137,25 +132,27 @@ export const WorkflowEditActionEmailBase = ({
 
   const loading = myAccountsLoading || otherAccountLoading;
 
-  const otherAccount = otherAccountData?.connectedAccountById ?? null;
+  const otherAccount =
+    otherAccountData?.workflowStepConnectedAccountHandle ?? null;
 
-  const selectedAccount =
-    myAccounts.find((account) => account.id === configuredAccountId) ??
-    otherAccount ??
-    undefined;
+  const ownAccount = myAccounts.find(
+    (account) => account.id === configuredAccountId,
+  );
+
+  const selectedAccount = ownAccount ?? otherAccount ?? undefined;
 
   const missingDraftScopes =
-    action.type === 'DRAFT_EMAIL' && isDefined(selectedAccount)
-      ? getMissingDraftEmailScopes(selectedAccount)
+    action.type === 'DRAFT_EMAIL' && isDefined(ownAccount)
+      ? getMissingDraftEmailScopes(ownAccount)
       : [];
 
   const missingScopes =
-    isDefined(selectedAccount) &&
-    selectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+    isDefined(ownAccount) &&
+    ownAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
     missingDraftScopes.length > 0
       ? {
-          provider: selectedAccount.provider,
-          loginHint: selectedAccount.handle,
+          provider: ownAccount.provider,
+          loginHint: ownAccount.handle,
         }
       : null;
 
@@ -179,13 +176,7 @@ export const WorkflowEditActionEmailBase = ({
     });
   });
 
-  if (
-    isDefined(otherAccount) &&
-    !(
-      otherAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
-      !isDefined(otherAccount.connectionParameters?.SMTP)
-    )
-  ) {
+  if (isDefined(otherAccount)) {
     emptyOption = {
       label: otherAccount.handle,
       value: otherAccount.id,
