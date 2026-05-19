@@ -2,8 +2,8 @@
 
 import {
   type ReactNode,
+  useCallback,
   useEffect,
-  useId,
   useLayoutEffect,
   useRef,
   useState,
@@ -24,6 +24,7 @@ import {
   getHeroScrollMotion,
 } from './hero-scroll-colors';
 import { useProductHeroMenuSync } from './product-hero-menu-sync';
+import { PRODUCT_HERO_AI_TABS_ID } from './product-hero-tabs-id';
 import { ProductVisual } from './ProductVisual';
 import { useHeroScrollProgress } from './use-hero-scroll-progress';
 
@@ -215,8 +216,8 @@ const PanelVisual = styled.div`
   }
 `;
 
-const INTRO_PANEL_COLORS = getHeroScrollColors(0);
-const AI_PANEL_COLORS = getHeroScrollColors(1);
+const INTRO_PANEL_COLORS = getHeroScrollColors(0, 0);
+const AI_PANEL_COLORS = getHeroScrollColors(1, 1);
 
 export function HeroVisualScroll({
   aiBody,
@@ -236,9 +237,8 @@ export function HeroVisualScroll({
     useHeroScrollProgress(trackRef);
   const [activeTab, setActiveTab] = useState(0);
   const [panelStepPixels, setPanelStepPixels] = useState(0);
-  const idPrefix = useId();
 
-  const heroColors = getHeroScrollColors(colorMix);
+  const heroColors = getHeroScrollColors(colorMix, panelMix);
   const heroMotion = getHeroScrollMotion(panelMix, panelStepPixels);
   const introPanelColors = isScrollDriven ? heroColors : INTRO_PANEL_COLORS;
   const aiPanelColors = isScrollDriven ? heroColors : AI_PANEL_COLORS;
@@ -264,38 +264,38 @@ export function HeroVisualScroll({
     return () => resizeObserver.disconnect();
   }, [aiBody, aiHeading, introBody, introHeading, isScrollDriven, tabs]);
 
-  useEffect(() => {
+  const syncMenuColorMix = useCallback(() => {
     if (!menuSync) {
       return;
     }
 
-    const updateMenuColorMix = () => {
-      const track = trackRef.current;
-      const trackRect = track?.getBoundingClientRect() ?? null;
-      const aiPanelRect = aiPanelRef.current?.getBoundingClientRect() ?? null;
+    const track = trackRef.current;
+    const trackRect = track?.getBoundingClientRect() ?? null;
+    const aiPanelRect = aiPanelRef.current?.getBoundingClientRect() ?? null;
 
-      menuSync.setMenuColorMix(
-        getHeroMenuColorMix({
-          aiPanelRect,
-          colorMix,
-          isScrollDriven,
-          navHeight: NAV_HEIGHT,
-          panelMix,
-          trackRect,
-          viewportHeight: window.innerHeight,
-        }),
-      );
-    };
+    menuSync.setMenuDarkOpacity(
+      getHeroMenuColorMix({
+        aiPanelRect,
+        colorMix,
+        isScrollDriven,
+        navHeight: NAV_HEIGHT,
+        panelMix,
+        trackRect,
+        viewportHeight: window.innerHeight,
+      }),
+    );
+  }, [colorMix, isScrollDriven, menuSync, panelMix]);
 
-    updateMenuColorMix();
-    window.addEventListener('scroll', updateMenuColorMix, { passive: true });
-    window.addEventListener('resize', updateMenuColorMix);
+  useEffect(() => {
+    syncMenuColorMix();
+    window.addEventListener('scroll', syncMenuColorMix, { passive: true });
+    window.addEventListener('resize', syncMenuColorMix);
 
     return () => {
-      window.removeEventListener('scroll', updateMenuColorMix);
-      window.removeEventListener('resize', updateMenuColorMix);
+      window.removeEventListener('scroll', syncMenuColorMix);
+      window.removeEventListener('resize', syncMenuColorMix);
     };
-  }, [colorMix, isScrollDriven, menuSync, panelMix]);
+  }, [syncMenuColorMix]);
 
   return (
     <ScrollTrack ref={trackRef}>
@@ -393,7 +393,7 @@ export function HeroVisualScroll({
                 >
                   <TabButtons
                     activeIndex={activeTab}
-                    idPrefix={idPrefix}
+                    idPrefix={PRODUCT_HERO_AI_TABS_ID}
                     onSelect={setActiveTab}
                     tabs={tabs}
                   />
