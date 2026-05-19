@@ -14,6 +14,7 @@ import { ConnectedImapSmtpCaldavAccountDTO } from 'src/engine/core-modules/imap-
 import { ImapSmtpCaldavConnectionSuccessDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
 import { EmailAccountConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.input';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
+import { buildPublicConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-public-connection-parameters.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -63,7 +64,9 @@ export class ImapSmtpCaldavResolver {
       id: connectedAccount.id,
       handle: connectedAccount.handle,
       provider: connectedAccount.provider,
-      connectionParameters: connectedAccount.connectionParameters,
+      connectionParameters: buildPublicConnectionParameters(
+        connectedAccount.connectionParameters,
+      ),
       userWorkspaceId: connectedAccount.userWorkspaceId,
     };
   }
