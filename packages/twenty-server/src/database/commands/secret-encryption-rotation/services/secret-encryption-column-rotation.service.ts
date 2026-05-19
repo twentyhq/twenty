@@ -9,8 +9,8 @@ import {
 } from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
 import {
   ANY_V2_ENVELOPE_LIKE_PATTERN,
-  buildPrimaryEncryptionKeyIdEnvelopeLikePattern,
-} from 'src/database/commands/secret-encryption-rotation/utils/build-non-current-encryption-key-id-like-pattern.util';
+  buildCurrentEncryptionKeyIdEnvelopeLikePattern,
+} from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
@@ -29,23 +29,22 @@ export class SecretEncryptionColumnRotationService {
 
   async countNonCurrentRows<Entity extends ObjectLiteral>({
     repository,
-    primaryEncryptionKeyId,
+    currentEncryptionKeyId,
     encryptedColumns,
     extraWhereSql,
   }: {
     repository: Repository<Entity>;
-    primaryEncryptionKeyId: string;
+    currentEncryptionKeyId: string;
     encryptedColumns: string[];
     extraWhereSql?: string;
   }): Promise<number> {
-    const primaryPattern = buildPrimaryEncryptionKeyIdEnvelopeLikePattern(
-      primaryEncryptionKeyId,
-    );
+    const currentEnvelopePattern =
+      buildCurrentEncryptionKeyIdEnvelopeLikePattern(currentEncryptionKeyId);
 
     const orClauses = encryptedColumns
       .map(
         (column) =>
-          `(${ROW_ALIAS}."${column}" LIKE :anyV2 AND ${ROW_ALIAS}."${column}" NOT LIKE :primary)`,
+          `(${ROW_ALIAS}."${column}" LIKE :anyV2 AND ${ROW_ALIAS}."${column}" NOT LIKE :current)`,
       )
       .join(' OR ');
 
@@ -53,7 +52,7 @@ export class SecretEncryptionColumnRotationService {
       .createQueryBuilder(ROW_ALIAS)
       .where(`(${orClauses})`, {
         anyV2: ANY_V2_ENVELOPE_LIKE_PATTERN,
-        primary: primaryPattern,
+        current: currentEnvelopePattern,
       });
 
     if (isDefined(extraWhereSql)) {
@@ -69,7 +68,7 @@ export class SecretEncryptionColumnRotationService {
     encryptedColumn,
     workspaceIdColumn,
     extraWhereSql,
-    primaryEncryptionKeyId,
+    currentEncryptionKeyId,
     batchSize,
     dryRun,
   }: SecretEncryptionRotationContext & {
@@ -88,11 +87,11 @@ export class SecretEncryptionColumnRotationService {
       const queryBuilder = repository
         .createQueryBuilder(ROW_ALIAS)
         .where(
-          `${ROW_ALIAS}."${encryptedColumn}" LIKE :anyV2 AND ${ROW_ALIAS}."${encryptedColumn}" NOT LIKE :primary`,
+          `${ROW_ALIAS}."${encryptedColumn}" LIKE :anyV2 AND ${ROW_ALIAS}."${encryptedColumn}" NOT LIKE :current`,
           {
             anyV2: ANY_V2_ENVELOPE_LIKE_PATTERN,
-            primary: buildPrimaryEncryptionKeyIdEnvelopeLikePattern(
-              primaryEncryptionKeyId,
+            current: buildCurrentEncryptionKeyIdEnvelopeLikePattern(
+              currentEncryptionKeyId,
             ),
           },
         )

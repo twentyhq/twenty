@@ -2,14 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { Repository, type SelectQueryBuilder } from 'typeorm';
 
 import {
   type SecretEncryptionRotationContext,
   type SecretEncryptionRotationHandler,
   type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
-import { buildPrimaryEncryptionKeyIdEnvelopeLikePattern } from 'src/database/commands/secret-encryption-rotation/utils/build-non-current-encryption-key-id-like-pattern.util';
 import {
   KeyValuePairEntity,
   KeyValuePairType,
@@ -20,6 +19,8 @@ import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-va
 import { type ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { TypedReflect } from 'src/utils/typed-reflect';
+
+const ROW_ALIAS = 'kvp';
 
 @Injectable()
 export class SensitiveConfigStorageRotationHandler
@@ -37,9 +38,9 @@ export class SensitiveConfigStorageRotationHandler
   ) {}
 
   async countRemaining({
-    primaryEncryptionKeyId,
+    currentEncryptionKeyId,
   }: {
-    primaryEncryptionKeyId: string;
+    currentEncryptionKeyId: string;
   }): Promise<number> {
     const sensitiveStringConfigKeys = this.collectSensitiveStringConfigKeys();
 
@@ -47,33 +48,14 @@ export class SensitiveConfigStorageRotationHandler
       return 0;
     }
 
-    const primaryEncryptionKeyEnvelopePrefix =
-      buildPrimaryEncryptionKeyIdEnvelopeLikePattern(
-        primaryEncryptionKeyId,
-      ).slice(0, -1);
-
-    let total = 0;
-
-    for (const configKey of sensitiveStringConfigKeys) {
-      const rows = await this.findInstanceConfigRows(configKey);
-
-      for (const row of rows) {
-        if (
-          this.isV2EnvelopeNotOnPrimary(
-            row.value,
-            primaryEncryptionKeyEnvelopePrefix,
-          )
-        ) {
-          total++;
-        }
-      }
-    }
-
-    return total;
+    return this.buildRowsNeedingRotationQuery({
+      currentEncryptionKeyId,
+      sensitiveStringConfigKeys,
+    }).getCount();
   }
 
   async rotate({
-    primaryEncryptionKeyId,
+    currentEncryptionKeyId,
     dryRun,
   }: SecretEncryptionRotationContext): Promise<SecretEncryptionRotationOutcome> {
     const sensitiveStringConfigKeys = this.collectSensitiveStringConfigKeys();
@@ -82,106 +64,89 @@ export class SensitiveConfigStorageRotationHandler
       return { rotated: 0, skipped: 0, errors: 0 };
     }
 
-    const primaryEncryptionKeyEnvelopePrefix =
-      buildPrimaryEncryptionKeyIdEnvelopeLikePattern(
-        primaryEncryptionKeyId,
-      ).slice(0, -1);
+    const rows = await this.buildRowsNeedingRotationQuery({
+      currentEncryptionKeyId,
+      sensitiveStringConfigKeys,
+    }).getMany();
 
     let rotated = 0;
     let skipped = 0;
     let errors = 0;
 
-    for (const configKey of sensitiveStringConfigKeys) {
-      const rows = await this.findInstanceConfigRows(configKey);
+    for (const row of rows) {
+      const rawValue = row.value as unknown;
 
-      for (const row of rows) {
-        const rawValue = row.value;
+      if (typeof rawValue !== 'string') {
+        skipped++;
+        continue;
+      }
 
-        if (typeof rawValue !== 'string') {
-          skipped++;
-          continue;
-        }
+      try {
+        const plaintext =
+          this.secretEncryptionService.decryptVersioned(rawValue);
+        const reEncrypted =
+          this.secretEncryptionService.encryptVersioned(plaintext);
 
-        if (!rawValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) {
-          skipped++;
-          continue;
-        }
+        if (!dryRun) {
+          const updateResult = await this.keyValuePairRepository
+            .createQueryBuilder()
+            .update()
+            .set({ value: () => 'to_jsonb(:reEncrypted::text)' })
+            .where('id = :id')
+            .andWhere('value::text = :originalValueText')
+            .setParameters({
+              id: row.id,
+              reEncrypted,
+              originalValueText: JSON.stringify(rawValue),
+            })
+            .execute();
 
-        if (rawValue.startsWith(primaryEncryptionKeyEnvelopePrefix)) {
-          skipped++;
-          continue;
-        }
-
-        try {
-          const plaintext =
-            this.secretEncryptionService.decryptVersioned(rawValue);
-          const reEncrypted =
-            this.secretEncryptionService.encryptVersioned(plaintext);
-
-          if (!dryRun) {
-            const updateResult = await this.keyValuePairRepository
-              .createQueryBuilder()
-              .update()
-              .set({
-                value: () => 'to_jsonb(:reEncrypted::text)',
-              })
-              .where('id = :id')
-              .andWhere('value::text = :originalValueText')
-              .setParameters({
-                id: row.id,
-                reEncrypted,
-                originalValueText: JSON.stringify(rawValue),
-              })
-              .execute();
-
-            if ((updateResult.affected ?? 0) === 0) {
-              skipped++;
-              continue;
-            }
+          if ((updateResult.affected ?? 0) === 0) {
+            skipped++;
+            continue;
           }
-
-          rotated++;
-        } catch (error) {
-          errors++;
-          this.logger.warn(
-            `[${this.siteName}] failed to re-encrypt config key '${configKey}' row ${row.id}: ${
-              error instanceof Error ? error.message : String(error)
-            }`,
-          );
         }
+
+        rotated++;
+      } catch (error) {
+        errors++;
+        this.logger.warn(
+          `[${this.siteName}] failed to re-encrypt config key '${row.key}' row ${row.id}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
       }
     }
 
     return { rotated, skipped, errors };
   }
 
-  private async findInstanceConfigRows(
-    configKey: string,
-  ): Promise<{ id: string; value: unknown }[]> {
-    const rows = await this.keyValuePairRepository.find({
-      where: {
+  private buildRowsNeedingRotationQuery({
+    currentEncryptionKeyId,
+    sensitiveStringConfigKeys,
+  }: {
+    currentEncryptionKeyId: string;
+    sensitiveStringConfigKeys: string[];
+  }): SelectQueryBuilder<KeyValuePairEntity> {
+    const anyV2Pattern = `"${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}%"`;
+    const currentEnvelopePattern = `"${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}${currentEncryptionKeyId}:%"`;
+
+    return this.keyValuePairRepository
+      .createQueryBuilder(ROW_ALIAS)
+      .where(`${ROW_ALIAS}.type = :type`, {
         type: KeyValuePairType.CONFIG_VARIABLE,
-        userId: IsNull(),
-        workspaceId: IsNull(),
-        key: configKey,
-      },
-    });
-
-    return rows.map((row) => ({
-      id: row.id,
-      value: row.value as unknown,
-    }));
-  }
-
-  private isV2EnvelopeNotOnPrimary(
-    value: unknown,
-    primaryEncryptionKeyEnvelopePrefix: string,
-  ): boolean {
-    if (typeof value !== 'string') return false;
-    if (!value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) return false;
-    if (value.startsWith(primaryEncryptionKeyEnvelopePrefix)) return false;
-
-    return true;
+      })
+      .andWhere(`${ROW_ALIAS}."userId" IS NULL`)
+      .andWhere(`${ROW_ALIAS}."workspaceId" IS NULL`)
+      .andWhere(`${ROW_ALIAS}.key IN (:...sensitiveStringConfigKeys)`, {
+        sensitiveStringConfigKeys,
+      })
+      .andWhere(`${ROW_ALIAS}.value::text LIKE :anyV2`, {
+        anyV2: anyV2Pattern,
+      })
+      .andWhere(`${ROW_ALIAS}.value::text NOT LIKE :current`, {
+        current: currentEnvelopePattern,
+      });
   }
 
   private collectSensitiveStringConfigKeys(): string[] {

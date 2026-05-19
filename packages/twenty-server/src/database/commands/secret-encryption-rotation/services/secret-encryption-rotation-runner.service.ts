@@ -23,7 +23,7 @@ export type RotationRunOptions = {
 };
 
 export type RotationRunSummary = {
-  primaryEncryptionKeyId: string;
+  currentEncryptionKeyId: string;
   fallbackEncryptionKeyId: string | null;
   results: SecretEncryptionRotationSiteResult[];
   totalDurationMs: number;
@@ -61,18 +61,19 @@ export class SecretEncryptionRotationRunnerService {
   }
 
   async run(options: RotationRunOptions): Promise<RotationRunSummary> {
-    const encryptionKeys = resolveEncryptionKeysOrThrow({
-      environmentConfigDriver: this.environmentConfigDriver,
+    const { primary: currentEncryptionKey, fallback: fallbackEncryptionKey } =
+      resolveEncryptionKeysOrThrow({
+        environmentConfigDriver: this.environmentConfigDriver,
+      });
+    const currentEncryptionKeyId = computeEncryptionKeyId({
+      rawKey: currentEncryptionKey,
     });
-    const primaryEncryptionKeyId = computeEncryptionKeyId({
-      rawKey: encryptionKeys.primary,
-    });
-    const fallbackEncryptionKeyId = isDefined(encryptionKeys.fallback)
-      ? computeEncryptionKeyId({ rawKey: encryptionKeys.fallback })
+    const fallbackEncryptionKeyId = isDefined(fallbackEncryptionKey)
+      ? computeEncryptionKeyId({ rawKey: fallbackEncryptionKey })
       : null;
 
     this.logger.log(
-      `[secret-encryption:rotate] primary encryption key id: ${primaryEncryptionKeyId}${
+      `[secret-encryption:rotate] current encryption key id: ${currentEncryptionKeyId}${
         options.dryRun ? ' (dry-run)' : ''
       }`,
     );
@@ -83,7 +84,7 @@ export class SecretEncryptionRotationRunnerService {
       );
     } else {
       this.logger.warn(
-        '[secret-encryption:rotate] FALLBACK_ENCRYPTION_KEY is not set — rows currently encrypted under a previous ENCRYPTION_KEY cannot be decrypted by this command. Set FALLBACK_ENCRYPTION_KEY to the previous ENCRYPTION_KEY before running rotation.',
+        '[secret-encryption:rotate] FALLBACK_ENCRYPTION_KEY is not set — rows encrypted under a previous ENCRYPTION_KEY cannot be decrypted by this command. Set FALLBACK_ENCRYPTION_KEY to the previous ENCRYPTION_KEY before running rotation.',
       );
     }
 
@@ -106,7 +107,7 @@ export class SecretEncryptionRotationRunnerService {
       const siteStartedAt = Date.now();
 
       const remainingBefore = await handler.countRemaining({
-        primaryEncryptionKeyId,
+        currentEncryptionKeyId,
       });
 
       this.logger.log(
@@ -114,7 +115,7 @@ export class SecretEncryptionRotationRunnerService {
       );
 
       const { rotated, skipped, errors } = await handler.rotate({
-        primaryEncryptionKeyId,
+        currentEncryptionKeyId,
         batchSize: options.batchSize,
         dryRun: options.dryRun,
       });
@@ -139,14 +140,14 @@ export class SecretEncryptionRotationRunnerService {
     const totalDurationMs = Date.now() - startedAt;
 
     this.logSummary({
-      primaryEncryptionKeyId,
+      currentEncryptionKeyId,
       fallbackEncryptionKeyId,
       results,
       totalDurationMs,
     });
 
     return {
-      primaryEncryptionKeyId,
+      currentEncryptionKeyId,
       fallbackEncryptionKeyId,
       results,
       totalDurationMs,

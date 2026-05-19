@@ -1,5 +1,5 @@
 export type SecretEncryptionRotationContext = {
-  primaryEncryptionKeyId: string;
+  currentEncryptionKeyId: string;
   batchSize: number;
   dryRun: boolean;
 };
@@ -20,7 +20,7 @@ export type SecretEncryptionRotationSiteResult =
 export type SecretEncryptionRotationHandler = {
   readonly siteName: string;
 
-  countRemaining(args: { primaryEncryptionKeyId: string }): Promise<number>;
+  countRemaining(args: { currentEncryptionKeyId: string }): Promise<number>;
 
   rotate(
     context: SecretEncryptionRotationContext,

@@ -26,13 +26,13 @@ export class ApplicationRegistrationVariableRotationHandler
   ) {}
 
   async countRemaining({
-    primaryEncryptionKeyId,
+    currentEncryptionKeyId,
   }: {
-    primaryEncryptionKeyId: string;
+    currentEncryptionKeyId: string;
   }): Promise<number> {
     return this.secretEncryptionColumnRotationService.countNonCurrentRows({
       repository: this.applicationRegistrationVariableRepository,
-      primaryEncryptionKeyId,
+      currentEncryptionKeyId,
       encryptedColumns: [ENCRYPTED_COLUMN],
     });
   }

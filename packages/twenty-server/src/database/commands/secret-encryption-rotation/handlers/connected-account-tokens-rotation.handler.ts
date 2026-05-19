@@ -26,13 +26,13 @@ export class ConnectedAccountTokensRotationHandler
   ) {}
 
   async countRemaining({
-    primaryEncryptionKeyId,
+    currentEncryptionKeyId,
   }: {
-    primaryEncryptionKeyId: string;
+    currentEncryptionKeyId: string;
   }): Promise<number> {
     return this.secretEncryptionColumnRotationService.countNonCurrentRows({
       repository: this.connectedAccountRepository,
-      primaryEncryptionKeyId,
+      currentEncryptionKeyId,
       encryptedColumns: [...ENCRYPTED_COLUMNS],
     });
   }
