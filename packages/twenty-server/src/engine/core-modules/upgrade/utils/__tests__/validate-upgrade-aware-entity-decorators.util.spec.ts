@@ -1,4 +1,5 @@
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { validateUpgradeAwareEntityDecorators } from 'src/engine/core-modules/upgrade/utils/validate-upgrade-aware-entity-decorators.util';
 
@@ -46,6 +47,72 @@ describe('validateUpgradeAwareEntityDecorators', () => {
         upgradeCommandName: UNKNOWN_CMD,
       },
     ]);
+  });
+
+  it('should report an unknown step name on @WasRemovedInUpgrade', () => {
+    class BrokenRemoved {
+      @WasRemovedInUpgrade({ upgradeCommandName: UNKNOWN_CMD })
+      doomedColumn!: string;
+    }
+
+    const problems = validateUpgradeAwareEntityDecorators({
+      entityClasses: [BrokenRemoved],
+      stepNameToIndex: buildStepNameToIndex([KNOWN_CMD]),
+    });
+
+    expect(problems).toEqual([
+      {
+        kind: 'unknown-step-name',
+        entityName: 'BrokenRemoved',
+        decorator: '@WasRemovedInUpgrade',
+        scope: 'property:doomedColumn',
+        upgradeCommandName: UNKNOWN_CMD,
+      },
+    ]);
+  });
+
+  it('should report when a property is removed before it is introduced', () => {
+    class BackwardsLifecycle {
+      @WasIntroducedInUpgrade({ upgradeCommandName: KNOWN_LATER_RENAME_CMD })
+      @WasRemovedInUpgrade({ upgradeCommandName: KNOWN_CMD })
+      transientColumn!: string;
+    }
+
+    const problems = validateUpgradeAwareEntityDecorators({
+      entityClasses: [BackwardsLifecycle],
+      stepNameToIndex: buildStepNameToIndex([
+        KNOWN_CMD,
+        KNOWN_LATER_RENAME_CMD,
+      ]),
+    });
+
+    expect(problems).toEqual([
+      {
+        kind: 'removal-before-introduction',
+        entityName: 'BackwardsLifecycle',
+        scope: 'property:transientColumn',
+        introductionUpgradeCommandName: KNOWN_LATER_RENAME_CMD,
+        removalUpgradeCommandName: KNOWN_CMD,
+      },
+    ]);
+  });
+
+  it('accepts a property that is introduced before being removed', () => {
+    class ProperLifecycle {
+      @WasIntroducedInUpgrade({ upgradeCommandName: KNOWN_CMD })
+      @WasRemovedInUpgrade({ upgradeCommandName: KNOWN_LATER_RENAME_CMD })
+      transientColumn!: string;
+    }
+
+    const problems = validateUpgradeAwareEntityDecorators({
+      entityClasses: [ProperLifecycle],
+      stepNameToIndex: buildStepNameToIndex([
+        KNOWN_CMD,
+        KNOWN_LATER_RENAME_CMD,
+      ]),
+    });
+
+    expect(problems).toEqual([]);
   });
 
   it('should report a rename history that is out of order versus the sequence', () => {

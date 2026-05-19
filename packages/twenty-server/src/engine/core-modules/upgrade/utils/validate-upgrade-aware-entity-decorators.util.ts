@@ -5,6 +5,10 @@ import {
   getWasIntroducedInUpgradePropertyMetadata,
 } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import {
+  getWasRemovedInUpgradeClassMetadata,
+  getWasRemovedInUpgradePropertyMetadata,
+} from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import {
   getWasRenamedInUpgradeClassMetadata,
   getWasRenamedInUpgradePropertyMetadata,
   type WasRenamedInUpgradeHistoryEntry,
@@ -14,7 +18,10 @@ export type UpgradeAwareDecoratorReferenceProblem =
   | {
       kind: 'unknown-step-name';
       entityName: string;
-      decorator: '@WasIntroducedInUpgrade' | '@WasRenamedInUpgrade';
+      decorator:
+        | '@WasIntroducedInUpgrade'
+        | '@WasRemovedInUpgrade'
+        | '@WasRenamedInUpgrade';
       scope: 'class' | `property:${string}`;
       upgradeCommandName: string;
     }
@@ -24,6 +31,13 @@ export type UpgradeAwareDecoratorReferenceProblem =
       scope: 'class' | `property:${string}`;
       offendingUpgradeCommandName: string;
       precedingUpgradeCommandName: string;
+    }
+  | {
+      kind: 'removal-before-introduction';
+      entityName: string;
+      scope: 'class' | `property:${string}`;
+      introductionUpgradeCommandName: string;
+      removalUpgradeCommandName: string;
     };
 
 export const validateUpgradeAwareEntityDecorators = ({
@@ -53,6 +67,30 @@ export const validateUpgradeAwareEntityDecorators = ({
       });
     }
 
+    const classRemoved = getWasRemovedInUpgradeClassMetadata(entityClass);
+
+    if (
+      isDefined(classRemoved) &&
+      !stepNameToIndex.has(classRemoved.upgradeCommandName)
+    ) {
+      problems.push({
+        kind: 'unknown-step-name',
+        entityName,
+        decorator: '@WasRemovedInUpgrade',
+        scope: 'class',
+        upgradeCommandName: classRemoved.upgradeCommandName,
+      });
+    }
+
+    checkRemovalAfterIntroduction({
+      entityName,
+      scope: 'class',
+      introduced: classIntroduced,
+      removed: classRemoved,
+      stepNameToIndex,
+      problems,
+    });
+
     const classRenameHistory =
       getWasRenamedInUpgradeClassMetadata(entityClass) ?? [];
 
@@ -77,6 +115,29 @@ export const validateUpgradeAwareEntityDecorators = ({
           upgradeCommandName: options.upgradeCommandName,
         });
       }
+    }
+
+    const propRemovedMap = getWasRemovedInUpgradePropertyMetadata(entityClass);
+
+    for (const [propertyName, options] of Object.entries(propRemovedMap)) {
+      if (!stepNameToIndex.has(options.upgradeCommandName)) {
+        problems.push({
+          kind: 'unknown-step-name',
+          entityName,
+          decorator: '@WasRemovedInUpgrade',
+          scope: `property:${propertyName}`,
+          upgradeCommandName: options.upgradeCommandName,
+        });
+      }
+
+      checkRemovalAfterIntroduction({
+        entityName,
+        scope: `property:${propertyName}`,
+        introduced: propIntroducedMap[propertyName],
+        removed: options,
+        stepNameToIndex,
+        problems,
+      });
     }
 
     const propRenameMap = getWasRenamedInUpgradePropertyMetadata(entityClass);
@@ -140,6 +201,43 @@ const checkHistoryForReferenceAndOrder = ({
   }
 };
 
+const checkRemovalAfterIntroduction = ({
+  entityName,
+  scope,
+  introduced,
+  removed,
+  stepNameToIndex,
+  problems,
+}: {
+  entityName: string;
+  scope: 'class' | `property:${string}`;
+  introduced: { upgradeCommandName: string } | undefined;
+  removed: { upgradeCommandName: string } | undefined;
+  stepNameToIndex: ReadonlyMap<string, number>;
+  problems: UpgradeAwareDecoratorReferenceProblem[];
+}): void => {
+  if (!isDefined(introduced) || !isDefined(removed)) {
+    return;
+  }
+
+  const introducedIndex = stepNameToIndex.get(introduced.upgradeCommandName);
+  const removedIndex = stepNameToIndex.get(removed.upgradeCommandName);
+
+  if (!isDefined(introducedIndex) || !isDefined(removedIndex)) {
+    return;
+  }
+
+  if (removedIndex <= introducedIndex) {
+    problems.push({
+      kind: 'removal-before-introduction',
+      entityName,
+      scope,
+      introductionUpgradeCommandName: introduced.upgradeCommandName,
+      removalUpgradeCommandName: removed.upgradeCommandName,
+    });
+  }
+};
+
 export const formatUpgradeAwareDecoratorReferenceProblems = (
   problems: UpgradeAwareDecoratorReferenceProblem[],
 ): string =>
@@ -149,6 +247,10 @@ export const formatUpgradeAwareDecoratorReferenceProblems = (
         return `  - ${problem.entityName} ${problem.decorator} (${problem.scope}): unknown upgradeCommandName "${problem.upgradeCommandName}"`;
       }
 
-      return `  - ${problem.entityName} @WasRenamedInUpgrade (${problem.scope}): "${problem.offendingUpgradeCommandName}" must come after "${problem.precedingUpgradeCommandName}" in the upgrade sequence`;
+      if (problem.kind === 'rename-history-out-of-order') {
+        return `  - ${problem.entityName} @WasRenamedInUpgrade (${problem.scope}): "${problem.offendingUpgradeCommandName}" must come after "${problem.precedingUpgradeCommandName}" in the upgrade sequence`;
+      }
+
+      return `  - ${problem.entityName} @WasRemovedInUpgrade (${problem.scope}): removal step "${problem.removalUpgradeCommandName}" must come after introduction step "${problem.introductionUpgradeCommandName}" in the upgrade sequence`;
     })
     .join('\n');
