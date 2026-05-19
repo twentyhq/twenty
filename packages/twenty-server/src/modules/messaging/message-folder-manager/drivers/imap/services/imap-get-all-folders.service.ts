@@ -29,7 +29,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
   public async getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'id' | 'provider' | 'connectionParameters' | 'handle'
+      'id' | 'provider' | 'connectionParameters' | 'handle' | 'workspaceId'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<DiscoveredMessageFolder[]> {
