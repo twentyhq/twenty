@@ -1,20 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
-import { ApplicationRegistrationVariableRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/application-registration-variable-rotation.handler';
-import { ApplicationVariableRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/application-variable-rotation.handler';
-import { ConnectedAccountTokensRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/connected-account-tokens-rotation.handler';
+import { ColumnRotationSiteHandler } from 'src/database/commands/secret-encryption-rotation/handlers/column-rotation-site.handler';
 import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/sensitive-config-storage-rotation.handler';
-import { SigningKeyPrivateKeysRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/signing-key-private-keys-rotation.handler';
-import { TotpSecretsRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/totp-secrets-rotation.handler';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationSiteResult,
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
+import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
+import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
+import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
 import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
 import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-encryption/utils/resolve-encryption-keys-or-throw.util';
+import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 export type RotationRunOptions = {
   site?: string;
@@ -35,29 +39,81 @@ export class SecretEncryptionRotationRunnerService {
     SecretEncryptionRotationRunnerService.name,
   );
 
-  private readonly handlers: SecretEncryptionRotationHandler[];
+  private readonly handlersBySiteName: Map<
+    string,
+    SecretEncryptionRotationHandler
+  >;
 
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
-    connectedAccountTokensRotationHandler: ConnectedAccountTokensRotationHandler,
-    applicationVariableRotationHandler: ApplicationVariableRotationHandler,
-    applicationRegistrationVariableRotationHandler: ApplicationRegistrationVariableRotationHandler,
-    signingKeyPrivateKeysRotationHandler: SigningKeyPrivateKeysRotationHandler,
+    secretEncryptionColumnRotationService: SecretEncryptionColumnRotationService,
     sensitiveConfigStorageRotationHandler: SensitiveConfigStorageRotationHandler,
-    totpSecretsRotationHandler: TotpSecretsRotationHandler,
+    @InjectRepository(ApplicationRegistrationVariableEntity)
+    applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
+    @InjectRepository(ApplicationVariableEntity)
+    applicationVariableRepository: Repository<ApplicationVariableEntity>,
+    @InjectRepository(ConnectedAccountEntity)
+    connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    @InjectRepository(SigningKeyEntity)
+    signingKeyRepository: Repository<SigningKeyEntity>,
+    @InjectRepository(TwoFactorAuthenticationMethodEntity)
+    twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethodEntity>,
   ) {
-    this.handlers = [
-      connectedAccountTokensRotationHandler,
-      applicationVariableRotationHandler,
-      applicationRegistrationVariableRotationHandler,
-      signingKeyPrivateKeysRotationHandler,
+    const handlers: SecretEncryptionRotationHandler[] = [
+      new ColumnRotationSiteHandler(
+        {
+          siteName: 'connected-account-tokens',
+          repository: connectedAccountRepository,
+          encryptedColumns: ['accessToken', 'refreshToken'],
+          isWorkspaceScoped: true,
+        },
+        secretEncryptionColumnRotationService,
+      ),
+      new ColumnRotationSiteHandler(
+        {
+          siteName: 'application-variable',
+          repository: applicationVariableRepository,
+          encryptedColumns: ['value'],
+          isWorkspaceScoped: true,
+          extraWhere: { isSecret: true },
+        },
+        secretEncryptionColumnRotationService,
+      ),
+      new ColumnRotationSiteHandler(
+        {
+          siteName: 'application-registration-variable',
+          repository: applicationRegistrationVariableRepository,
+          encryptedColumns: ['encryptedValue'],
+        },
+        secretEncryptionColumnRotationService,
+      ),
+      new ColumnRotationSiteHandler(
+        {
+          siteName: 'signing-key-private-keys',
+          repository: signingKeyRepository,
+          encryptedColumns: ['privateKey'],
+        },
+        secretEncryptionColumnRotationService,
+      ),
+      new ColumnRotationSiteHandler(
+        {
+          siteName: 'totp-secrets',
+          repository: twoFactorAuthenticationMethodRepository,
+          encryptedColumns: ['secret'],
+          isWorkspaceScoped: true,
+        },
+        secretEncryptionColumnRotationService,
+      ),
       sensitiveConfigStorageRotationHandler,
-      totpSecretsRotationHandler,
     ];
+
+    this.handlersBySiteName = new Map(
+      handlers.map((handler) => [handler.siteName, handler]),
+    );
   }
 
   listSiteNames(): string[] {
-    return this.handlers.map((handler) => handler.siteName);
+    return Array.from(this.handlersBySiteName.keys());
   }
 
   async run(options: RotationRunOptions): Promise<RotationRunSummary> {
@@ -88,17 +144,7 @@ export class SecretEncryptionRotationRunnerService {
       );
     }
 
-    const handlersToRun = isDefined(options.site)
-      ? this.handlers.filter((handler) => handler.siteName === options.site)
-      : this.handlers;
-
-    if (handlersToRun.length === 0) {
-      throw new Error(
-        `Unknown rotation site: '${options.site}'. Known sites: ${this.listSiteNames().join(
-          ', ',
-        )}.`,
-      );
-    }
+    const handlersToRun = this.resolveHandlersToRun(options.site);
 
     const startedAt = Date.now();
     const results: SecretEncryptionRotationSiteResult[] = [];
@@ -152,6 +198,26 @@ export class SecretEncryptionRotationRunnerService {
       results,
       totalDurationMs,
     };
+  }
+
+  private resolveHandlersToRun(
+    site: string | undefined,
+  ): SecretEncryptionRotationHandler[] {
+    if (!isDefined(site)) {
+      return Array.from(this.handlersBySiteName.values());
+    }
+
+    const handler = this.handlersBySiteName.get(site);
+
+    if (!isDefined(handler)) {
+      throw new Error(
+        `Unknown rotation site: '${site}'. Known sites: ${this.listSiteNames().join(
+          ', ',
+        )}.`,
+      );
+    }
+
+    return [handler];
   }
 
   private logSummary(summary: RotationRunSummary): void {

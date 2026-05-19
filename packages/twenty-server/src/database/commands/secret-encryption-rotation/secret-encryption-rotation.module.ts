@@ -1,12 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationRegistrationVariableRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/application-registration-variable-rotation.handler';
-import { ApplicationVariableRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/application-variable-rotation.handler';
-import { ConnectedAccountTokensRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/connected-account-tokens-rotation.handler';
 import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/sensitive-config-storage-rotation.handler';
-import { SigningKeyPrivateKeysRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/signing-key-private-keys-rotation.handler';
-import { TotpSecretsRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/totp-secrets-rotation.handler';
 import { RotateSecretEncryptionCommand } from 'src/database/commands/secret-encryption-rotation/rotate-secret-encryption.command';
 import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
 import { SecretEncryptionRotationRunnerService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-rotation-runner.service';
@@ -34,12 +29,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
   ],
   providers: [
     SecretEncryptionColumnRotationService,
-    ConnectedAccountTokensRotationHandler,
-    ApplicationVariableRotationHandler,
-    ApplicationRegistrationVariableRotationHandler,
-    SigningKeyPrivateKeysRotationHandler,
     SensitiveConfigStorageRotationHandler,
-    TotpSecretsRotationHandler,
     SecretEncryptionRotationRunnerService,
     RotateSecretEncryptionCommand,
   ],

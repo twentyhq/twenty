@@ -7,17 +7,11 @@ export const buildCurrentEncryptionKeyIdEnvelopeLikePattern = (
 ): string =>
   `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}${currentEncryptionKeyId}:%`;
 
-export const ANY_V2_ENVELOPE_LIKE_PATTERN = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}%`;
-
 export const buildNonCurrentEnvelopeRawFilter = (
   currentEncryptionKeyId: string,
 ) =>
-  Raw<string>(
-    (alias) => `${alias} LIKE :anyV2 AND ${alias} NOT LIKE :current`,
-    {
-      anyV2: ANY_V2_ENVELOPE_LIKE_PATTERN,
-      current: buildCurrentEncryptionKeyIdEnvelopeLikePattern(
-        currentEncryptionKeyId,
-      ),
-    },
-  );
+  Raw<string>((alias) => `${alias} NOT LIKE :current`, {
+    current: buildCurrentEncryptionKeyIdEnvelopeLikePattern(
+      currentEncryptionKeyId,
+    ),
+  });

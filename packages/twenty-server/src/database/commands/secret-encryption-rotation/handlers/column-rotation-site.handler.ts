@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
+import {
+  type FindOptionsWhere,
+  type ObjectLiteral,
+  type Repository,
+} from 'typeorm';
 
 import {
   SecretEncryptionRotationHandler,
@@ -9,20 +10,26 @@ import {
   type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import { SecretEncryptionColumnRotationService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-column-rotation.service';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
-const ENCRYPTED_COLUMNS = ['accessToken', 'refreshToken'] as const;
+export type ColumnRotationSiteConfig<Entity extends ObjectLiteral> = {
+  siteName: string;
+  repository: Repository<Entity>;
+  encryptedColumns: string[];
+  isWorkspaceScoped?: boolean;
+  extraWhere?: FindOptionsWhere<Entity>;
+};
 
-@Injectable()
-export class ConnectedAccountTokensRotationHandler extends SecretEncryptionRotationHandler {
-  readonly siteName = 'connected-account-tokens';
+export class ColumnRotationSiteHandler<
+  Entity extends ObjectLiteral = ObjectLiteral,
+> extends SecretEncryptionRotationHandler {
+  readonly siteName: string;
 
   constructor(
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly config: ColumnRotationSiteConfig<Entity>,
     private readonly secretEncryptionColumnRotationService: SecretEncryptionColumnRotationService,
   ) {
     super();
+    this.siteName = config.siteName;
   }
 
   async countRemaining({
@@ -31,9 +38,10 @@ export class ConnectedAccountTokensRotationHandler extends SecretEncryptionRotat
     currentEncryptionKeyId: string;
   }): Promise<number> {
     return this.secretEncryptionColumnRotationService.countNonCurrentRows({
-      repository: this.connectedAccountRepository,
+      repository: this.config.repository,
       currentEncryptionKeyId,
-      encryptedColumns: [...ENCRYPTED_COLUMNS],
+      encryptedColumns: this.config.encryptedColumns,
+      extraWhere: this.config.extraWhere,
     });
   }
 
@@ -46,14 +54,15 @@ export class ConnectedAccountTokensRotationHandler extends SecretEncryptionRotat
       errors: 0,
     };
 
-    for (const encryptedColumn of ENCRYPTED_COLUMNS) {
+    for (const encryptedColumn of this.config.encryptedColumns) {
       const outcome =
         await this.secretEncryptionColumnRotationService.rotateColumn({
           ...context,
-          repository: this.connectedAccountRepository,
+          repository: this.config.repository,
           siteName: this.siteName,
           encryptedColumn,
-          isWorkspaceScoped: true,
+          isWorkspaceScoped: this.config.isWorkspaceScoped,
+          extraWhere: this.config.extraWhere,
         });
 
       aggregated.rotated += outcome.rotated;

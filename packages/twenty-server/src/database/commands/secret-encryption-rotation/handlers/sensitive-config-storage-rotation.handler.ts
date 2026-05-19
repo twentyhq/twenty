@@ -78,7 +78,10 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
     for (const row of rows) {
       const rawValue = row.value as unknown;
 
-      if (typeof rawValue !== 'string') {
+      if (
+        typeof rawValue !== 'string' ||
+        !rawValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)
+      ) {
         skipped++;
         continue;
       }
@@ -127,7 +130,6 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
     currentEncryptionKeyId: string;
     sensitiveStringConfigKeys: string[];
   }): FindOptionsWhere<KeyValuePairEntity> {
-    const anyV2Pattern = `"${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}%"`;
     const currentEnvelopePattern = `"${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}${currentEncryptionKeyId}:%"`;
 
     return {
@@ -135,11 +137,9 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
       userId: IsNull(),
       workspaceId: IsNull(),
       key: In(sensitiveStringConfigKeys),
-      value: Raw(
-        (alias) =>
-          `${alias}::text LIKE :anyV2 AND ${alias}::text NOT LIKE :current`,
-        { anyV2: anyV2Pattern, current: currentEnvelopePattern },
-      ) as unknown as JSON,
+      value: Raw((alias) => `${alias}::text NOT LIKE :current`, {
+        current: currentEnvelopePattern,
+      }) as unknown as JSON,
     };
   }
 
