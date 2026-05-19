@@ -577,12 +577,6 @@ msgstr ""
 msgid "around it"
 msgstr ""
 
-#. js-lingui-id: Tt5T6+
-#: src/sections/Menu/data.ts
-#: src/sections/Footer/data.ts
-msgid "Articles"
-msgstr ""
-
 #. js-lingui-id: 4YKyFV
 #: src/app/[locale]/product/page.tsx
 msgid "Ask questions, automate tasks, and get insights. All powered by AI that understands your data."
@@ -2271,16 +2265,6 @@ msgstr ""
 msgid "our partner"
 msgstr ""
 
-#. js-lingui-id: U46+HD
-#: src/sections/Menu/data.ts
-msgid "Our story and vision"
-msgstr ""
-
-#. js-lingui-id: uB6QTq
-#: src/sections/Menu/data.ts
-msgid "Our story: building a CRM teams can truly own."
-msgstr ""
-
 #. js-lingui-id: dKGg8T
 #: src/app/[locale]/pricing/salesforce.data.ts
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -2405,12 +2389,6 @@ msgstr ""
 msgid "Pro"
 msgstr ""
 
-#. js-lingui-id: K47k8R
-#: src/sections/Menu/data.ts
-#: src/sections/Footer/data.ts
-msgid "Product"
-msgstr ""
-
 #. js-lingui-id: kIGKva
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
 msgid "Production grade quality"
@@ -2446,11 +2424,6 @@ msgstr ""
 #. js-lingui-id: gSQVmr
 #: src/sections/Helped/components/HelpedCard.tsx
 msgid "Read the case"
-msgstr ""
-
-#. js-lingui-id: 0ybw+o
-#: src/sections/Menu/data.ts
-msgid "Read Twenty insights"
 msgstr ""
 
 #. js-lingui-id: EqCbT9
@@ -3590,9 +3563,12 @@ msgstr ""
 msgid "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
 msgstr ""
 
+#. js-lingui-id: DJlSwA
+#: src/sections/Menu/data.ts
+msgid "Why"
+msgstr ""
+
 #. js-lingui-id: 4sOVu+
-#: src/sections/Menu/data.ts
-#: src/sections/Menu/data.ts
 #: src/sections/Footer/data.ts
 msgid "Why Twenty"
 msgstr ""
