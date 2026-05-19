@@ -262,6 +262,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       });
       mockUserWorkspaceRepository.findOne.mockResolvedValue({
         id: 'user-workspace-id',
+        userId: 'user-id',
       });
 
       await service.upsertConnectedAccount(baseInput);
@@ -325,6 +326,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       });
       mockUserWorkspaceRepository.findOne.mockResolvedValue({
         id: 'user-workspace-id',
+        userId: 'user-id',
       });
 
       const inputWithConnectedAccountId = {
@@ -415,6 +417,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       });
       mockUserWorkspaceRepository.findOne.mockResolvedValue({
         id: 'user-workspace-id',
+        userId: 'user-id',
       });
 
       await service.upsertConnectedAccount({
@@ -438,6 +441,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       });
       mockUserWorkspaceRepository.findOne.mockResolvedValue({
         id: 'user-workspace-id',
+        userId: 'user-id',
       });
 
       await service.upsertConnectedAccount(baseInput);
@@ -477,6 +481,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       });
       mockUserWorkspaceRepository.findOne.mockResolvedValue({
         id: 'user-workspace-id',
+        userId: 'user-id',
       });
 
       await service.upsertConnectedAccount(imapOnlyInput);
@@ -512,6 +517,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       });
       mockUserWorkspaceRepository.findOne.mockResolvedValue({
         id: 'user-workspace-id',
+        userId: 'user-id',
       });
 
       await service.upsertConnectedAccount(caldavOnlyInput);
@@ -553,6 +559,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       });
       mockUserWorkspaceRepository.findOne.mockResolvedValue({
         id: 'user-workspace-id',
+        userId: 'user-id',
       });
 
       await service.upsertConnectedAccount(imapSmtpInput);
@@ -601,6 +608,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       });
       mockUserWorkspaceRepository.findOne.mockResolvedValue({
         id: 'user-workspace-id',
+        userId: 'user-id',
       });
 
       await service.upsertConnectedAccount(fullConfigInput);
@@ -633,6 +641,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       });
       mockUserWorkspaceRepository.findOne.mockResolvedValue({
         id: 'user-workspace-id',
+        userId: 'user-id',
       });
 
       await service.upsertConnectedAccount(baseInput);
@@ -681,6 +690,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       });
       mockUserWorkspaceRepository.findOne.mockResolvedValue({
         id: 'user-workspace-id',
+        userId: 'user-id',
       });
 
       await service.upsertConnectedAccount(smtpOnlyInput);
@@ -703,6 +713,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       });
       mockUserWorkspaceRepository.findOne.mockResolvedValue({
         id: 'user-workspace-id',
+        userId: 'user-id',
       });
 
       await service.upsertConnectedAccount(baseInput);
