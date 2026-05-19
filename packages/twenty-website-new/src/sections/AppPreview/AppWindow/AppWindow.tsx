@@ -2,7 +2,6 @@
 
 import { styled } from '@linaria/react';
 import {
-  useCallback,
   useLayoutEffect,
   useRef,
   useState,
@@ -137,7 +136,7 @@ export const AppWindow = ({ children }: AppWindowProps) => {
 
   const { activate, zIndex } = useWindowOrder(WINDOW_ID);
 
-  const recalcLayout = useCallback(() => {
+  const recalcLayout = () => {
     const shell = shellRef.current;
     const parent = shell?.parentElement as HTMLElement | null;
     if (!parent) {
@@ -167,13 +166,11 @@ export const AppWindow = ({ children }: AppWindowProps) => {
       left: Math.max(0, (parentRect.width - newWidth) / 2),
       top: MIN_EDGE_GAP,
     });
-  }, []);
+  };
 
   useLayoutEffect(() => {
     recalcLayout();
-  }, [recalcLayout]);
 
-  useLayoutEffect(() => {
     const parent = shellRef.current?.parentElement as HTMLElement | null;
     if (!parent) {
       return;
@@ -187,12 +184,13 @@ export const AppWindow = ({ children }: AppWindowProps) => {
     observer.observe(parent);
 
     return () => observer.disconnect();
-  }, [recalcLayout]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const getParentRect = useCallback(() => {
+  const getParentRect = () => {
     const parent = shellRef.current?.parentElement as HTMLElement | null;
     return parent?.getBoundingClientRect() ?? null;
-  }, []);
+  };
 
   const {
     handleDragStart,
@@ -215,10 +213,6 @@ export const AppWindow = ({ children }: AppWindowProps) => {
     size,
   });
 
-  const handleShellPointerDown = useCallback(() => {
-    activate();
-  }, [activate]);
-
   const isReady = position !== null && size !== null;
 
   const isInteracting = isDragging || isResizing;
@@ -233,7 +227,7 @@ export const AppWindow = ({ children }: AppWindowProps) => {
       $isActive={isReady && zIndex > 2}
       $isReady={isReady}
       $isResizing={isResizing}
-      onPointerDown={handleShellPointerDown}
+      onPointerDown={activate}
       ref={shellRef}
       style={{
         height: renderSize ? `${renderSize.height}px` : undefined,
