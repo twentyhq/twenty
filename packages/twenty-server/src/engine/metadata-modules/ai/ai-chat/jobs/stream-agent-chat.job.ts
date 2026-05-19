@@ -281,6 +281,7 @@ export class StreamAgentChatJob {
                     responseMessage,
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
+                    userWorkspaceId: data.userWorkspaceId,
                     streamUsage,
                     lastStepConversationSize,
                     totalCacheCreationTokens,
@@ -434,6 +435,7 @@ export class StreamAgentChatJob {
     responseMessage,
     threadId,
     workspaceId,
+    userWorkspaceId,
     streamUsage,
     lastStepConversationSize,
     totalCacheCreationTokens,
@@ -443,6 +445,7 @@ export class StreamAgentChatJob {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
     threadId: string;
     workspaceId: string;
+    userWorkspaceId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
@@ -492,5 +495,10 @@ export class StreamAgentChatJob {
       contextWindowTokens: modelConfig.contextWindowTokens,
       conversationSize: lastStepConversationSize,
     });
+
+    await this.agentChatService.notifyThreadUsageUpdated(
+      threadId,
+      userWorkspaceId,
+    );
   }
 }

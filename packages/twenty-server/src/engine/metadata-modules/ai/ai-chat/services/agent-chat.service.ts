@@ -23,6 +23,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 
 const serializeThreadForBroadcast = (
@@ -37,8 +38,8 @@ const serializeThreadForBroadcast = (
   totalCacheCreationTokens: thread.totalCacheCreationTokens,
   contextWindowTokens: thread.contextWindowTokens,
   conversationSize: thread.conversationSize,
-  totalInputCredits: thread.totalInputCredits,
-  totalOutputCredits: thread.totalOutputCredits,
+  totalInputCredits: toDisplayCredits(thread.totalInputCredits),
+  totalOutputCredits: toDisplayCredits(thread.totalOutputCredits),
   deletedAt: thread.deletedAt,
   lastMessageAt,
   createdAt: thread.createdAt,
@@ -525,6 +526,26 @@ export class AgentChatService {
     await this.broadcastThreadUpdated(
       thread,
       ['lastMessageAt'],
+      userWorkspaceId,
+    );
+  }
+
+  async notifyThreadUsageUpdated(
+    threadId: string,
+    userWorkspaceId: string,
+  ): Promise<void> {
+    const thread = await this.getThreadById(threadId, userWorkspaceId);
+
+    await this.broadcastThreadUpdated(
+      thread,
+      [
+        'totalInputTokens',
+        'totalOutputTokens',
+        'totalInputCredits',
+        'totalOutputCredits',
+        'conversationSize',
+        'contextWindowTokens',
+      ],
       userWorkspaceId,
     );
   }
