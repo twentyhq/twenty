@@ -186,7 +186,10 @@ export const registerCommands = (program: Command): void => {
     .command('app:publish [appPath]')
     .description('Build and publish to npm (default) or server registry')
     .option('--private', "Push to a Twenty server's registry instead of npm")
-    .option('-r, --remote <name>', 'Publish to a specific remote (with --private)')
+    .option(
+      '-r, --remote <name>',
+      'Publish to a specific remote (with --private)',
+    )
     .option('--tag <tag>', 'npm dist-tag (e.g. beta, next)')
     .action(async (appPath, options) => {
       await deployCommand.execute({
