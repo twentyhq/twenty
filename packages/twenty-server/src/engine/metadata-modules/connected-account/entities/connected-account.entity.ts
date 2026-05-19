@@ -34,6 +34,14 @@ export type ConnectedAccountVisibility = 'user' | 'workspace';
   'CHK_connectedAccount_refreshToken_encrypted',
   `"refreshToken" IS NULL OR "refreshToken" LIKE 'enc:v2:%'`,
 )
+@Check(
+  'CHK_connectedAccount_connectionParameters_encrypted',
+  `"connectionParameters" IS NULL OR (` +
+    `(("connectionParameters"->'IMAP'->>'password') IS NULL OR ("connectionParameters"->'IMAP'->>'password') LIKE 'enc:v2:%') ` +
+    `AND (("connectionParameters"->'SMTP'->>'password') IS NULL OR ("connectionParameters"->'SMTP'->>'password') LIKE 'enc:v2:%') ` +
+    `AND (("connectionParameters"->'CALDAV'->>'password') IS NULL OR ("connectionParameters"->'CALDAV'->>'password') LIKE 'enc:v2:%')` +
+    `)`,
+)
 export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

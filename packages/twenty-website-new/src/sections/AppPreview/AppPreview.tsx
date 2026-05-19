@@ -103,6 +103,7 @@ export function AppPreview({ showTerminal = true, visual }: AppPreviewProps) {
     activePage !== null &&
     activePage !== undefined &&
     activePage.type !== 'dashboard' &&
+    activePage.type !== 'record' &&
     activePage.type !== 'workflow';
 
   useEffect(

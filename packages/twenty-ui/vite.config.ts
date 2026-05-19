@@ -58,6 +58,10 @@ export default defineConfig(({ command }) => {
 
   const BUNDLED_DEPS = ['@tabler/icons-react'];
 
+  const externalDeps = Object.keys(packageJson.dependencies || {}).filter(
+    (dep) => !BUNDLED_DEPS.includes(dep),
+  );
+
   return {
     resolve: {
       alias: {
@@ -125,9 +129,8 @@ export default defineConfig(({ command }) => {
         name: 'twenty-ui',
       },
       rollupOptions: {
-        external: Object.keys(packageJson.dependencies || {}).filter(
-          (dep) => !BUNDLED_DEPS.includes(dep),
-        ),
+        external: (id: string) =>
+          externalDeps.some((dep) => id === dep || id.startsWith(dep + '/')),
         output: [
           {
             assetFileNames: 'style.css',

@@ -5,7 +5,7 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
@@ -50,29 +50,22 @@ export const useFindManyRecordsSelectedInContextStore = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-
-  const allFieldMetadataItems = objectMetadataItems.flatMap(
-    (objectMetadataItem) => objectMetadataItem.fields,
+  const fieldMetadataItemByIdMap = useAtomStateValue(
+    fieldMetadataItemByIdMapSelector,
   );
 
-  const isSoftDeleteFilterActive = contextStoreFilters.some((filter) => {
-    const foundFieldMetadataItem = allFieldMetadataItems.find(
-      (fieldMetadataItem) => fieldMetadataItem.id === filter.fieldMetadataId,
-    );
-
-    return (
-      foundFieldMetadataItem?.name === 'deletedAt' &&
-      filter.operand === RecordFilterOperand.IS_NOT_EMPTY
-    );
-  });
+  const isSoftDeleteFilterActive = contextStoreFilters.some(
+    (filter) =>
+      fieldMetadataItemByIdMap.get(filter.fieldMetadataId)?.name ===
+        'deletedAt' && filter.operand === RecordFilterOperand.IS_NOT_EMPTY,
+  );
 
   const queryFilter = computeContextStoreFilters({
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
     contextStoreFilterGroups,
     objectMetadataItem,
-    flattenedFieldMetadataItems: allFieldMetadataItems,
+    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
   });
