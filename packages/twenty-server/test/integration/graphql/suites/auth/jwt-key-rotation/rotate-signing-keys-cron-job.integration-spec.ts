@@ -1,121 +1,181 @@
 /* @license Enterprise */
 
-import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { config } from 'dotenv';
+import { DataSource, type Repository } from 'typeorm';
+
+import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
+
+import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { type EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { RotateSigningKeysCronJob } from 'src/engine/core-modules/jwt/crons/jobs/rotate-signing-keys.cron.job';
+import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
 import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-key-manager.service';
 import { SigningKeyRotationService } from 'src/engine/core-modules/jwt/services/signing-key-rotation.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+jest.useRealTimers();
+
+config({
+  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+  override: true,
+});
+
+const ROTATION_DAYS = 90;
 
 describe('RotateSigningKeysCronJob (integration)', () => {
-  let cronJob: RotateSigningKeysCronJob;
-  let enterprisePlanService: EnterprisePlanService;
+  let dataSource: DataSource;
+  let repository: Repository<SigningKeyEntity>;
   let jwtKeyManagerService: JwtKeyManagerService;
   let signingKeyRotationService: SigningKeyRotationService;
-  let rotationDays: number;
-  let isValidSpy: jest.SpyInstance;
+  let cronJob: RotateSigningKeysCronJob;
+  let isValidStub: jest.Mock<boolean, []>;
+  let originalCurrentKeyId: string | null = null;
+  const rotatedKeyIds: string[] = [];
+
+  const getCurrentKeyIdFromDb = async (): Promise<string | null> => {
+    const rows = await dataSource.query(
+      `SELECT id FROM core."signingKey" WHERE "isCurrent" = true LIMIT 1`,
+    );
+
+    return rows.length > 0 ? (rows[0].id as string) : null;
+  };
 
   beforeAll(async () => {
-    // RotateSigningKeysCronJob and SigningKeyRotationService live in JwtModule,
-    // and EnterprisePlanService lives in EnterpriseModule; neither is @Global,
-    // so we have to widen the lookup with { strict: false }.
-    cronJob = global.app.get(RotateSigningKeysCronJob, { strict: false });
-    enterprisePlanService = global.app.get(EnterprisePlanService, {
-      strict: false,
+    dataSource = new DataSource({
+      type: 'postgres',
+      url: process.env.PG_DATABASE_URL,
+      schema: 'core',
+      entities: [SigningKeyEntity],
+      synchronize: false,
     });
-    jwtKeyManagerService = global.app.get(JwtKeyManagerService, {
-      strict: false,
-    });
-    signingKeyRotationService = global.app.get(SigningKeyRotationService, {
-      strict: false,
-    });
-    rotationDays = global.app
-      .get(TwentyConfigService, { strict: false })
-      .get('SIGNING_KEY_ROTATION_DAYS');
+    await dataSource.initialize();
+    repository = dataSource.getRepository(SigningKeyEntity);
 
-    // Current signing keys are created lazily on first sign. Force creation
-    // so this suite is robust when run in isolation.
-    await jwtKeyManagerService.getCurrentSigningKey();
-  });
+    const secretEncryptionService = buildSecretEncryptionServiceFromEnv();
+    const coreEntityCacheStub = {
+      invalidate: jest.fn().mockResolvedValue(undefined),
+    } as unknown as CoreEntityCacheService;
+    const twentyConfigStub = {
+      get: (key: string) =>
+        key === 'SIGNING_KEY_ROTATION_DAYS' ? ROTATION_DAYS : undefined,
+    } as unknown as TwentyConfigService;
+
+    jwtKeyManagerService = new JwtKeyManagerService(
+      repository,
+      coreEntityCacheStub,
+      secretEncryptionService,
+    );
+    signingKeyRotationService = new SigningKeyRotationService(
+      jwtKeyManagerService,
+      twentyConfigStub,
+    );
+
+    isValidStub = jest.fn<boolean, []>();
+    const enterprisePlanServiceStub = {
+      isValid: isValidStub,
+    } as unknown as EnterprisePlanService;
+
+    cronJob = new RotateSigningKeysCronJob(
+      enterprisePlanServiceStub,
+      signingKeyRotationService,
+    );
+
+    // Ensure a current signing key exists for the suite. Current keys are
+    // created lazily on first sign, so this is robust when the suite runs in
+    // isolation.
+    const anchor = await jwtKeyManagerService.getCurrentSigningKey();
+
+    originalCurrentKeyId = anchor?.id ?? null;
+  }, 30000);
 
   beforeEach(() => {
-    isValidSpy = jest.spyOn(enterprisePlanService, 'isValid');
+    isValidStub.mockReset();
   });
 
-  afterEach(() => {
-    isValidSpy.mockRestore();
+  afterAll(async () => {
+    if (rotatedKeyIds.length > 0) {
+      await dataSource.query(
+        `DELETE FROM core."signingKey" WHERE id = ANY($1::uuid[])`,
+        [rotatedKeyIds],
+      );
+    }
+
+    // Re-promote the snapshot key so other test suites in the same shard see
+    // the same current signing key as before this suite ran.
+    if (originalCurrentKeyId !== null) {
+      await dataSource.query(
+        `UPDATE core."signingKey" SET "isCurrent" = true WHERE id = $1`,
+        [originalCurrentKeyId],
+      );
+    }
+
+    await dataSource?.destroy();
   });
 
   it('is a no-op when the Enterprise plan is not valid', async () => {
-    isValidSpy.mockReturnValue(false);
+    isValidStub.mockReturnValue(false);
 
-    const before = await global.testDataSource.query(
-      `SELECT "id" FROM core."signingKey" WHERE "isCurrent" = true LIMIT 1`,
-    );
-    const previousCurrentId: string = before[0].id;
+    const before = await getCurrentKeyIdFromDb();
 
     await cronJob.handle();
 
-    const after = await global.testDataSource.query(
-      `SELECT "id" FROM core."signingKey" WHERE "isCurrent" = true LIMIT 1`,
-    );
+    const after = await getCurrentKeyIdFromDb();
 
-    expect(after).toHaveLength(1);
-    expect(after[0].id).toBe(previousCurrentId);
+    expect(after).toBe(before);
   });
 
   it('does not rotate when the current key is younger than SIGNING_KEY_ROTATION_DAYS', async () => {
-    isValidSpy.mockReturnValue(true);
+    isValidStub.mockReturnValue(true);
 
-    const before = await global.testDataSource.query(
-      `SELECT "id" FROM core."signingKey" WHERE "isCurrent" = true LIMIT 1`,
-    );
-    const previousCurrentId: string = before[0].id;
+    const before = await getCurrentKeyIdFromDb();
 
     await cronJob.handle();
 
-    const after = await global.testDataSource.query(
-      `SELECT "id" FROM core."signingKey" WHERE "isCurrent" = true LIMIT 1`,
-    );
+    const after = await getCurrentKeyIdFromDb();
 
-    expect(after).toHaveLength(1);
-    expect(after[0].id).toBe(previousCurrentId);
+    expect(after).toBe(before);
   });
 
   it('rotates the current key when it is older than SIGNING_KEY_ROTATION_DAYS and preserves the previous private key', async () => {
-    isValidSpy.mockReturnValue(true);
+    isValidStub.mockReturnValue(true);
 
-    const before = await global.testDataSource.query(
-      `SELECT "id", "privateKey" FROM core."signingKey" WHERE "isCurrent" = true LIMIT 1`,
+    const previousCurrentId = await getCurrentKeyIdFromDb();
+
+    expect(previousCurrentId).not.toBeNull();
+
+    const [previousBefore] = await dataSource.query(
+      `SELECT "privateKey" FROM core."signingKey" WHERE id = $1`,
+      [previousCurrentId],
     );
-    const previousCurrentId: string = before[0].id;
-    const previousPrivateKey: string = before[0].privateKey;
+    const previousPrivateKey: string = previousBefore.privateKey;
 
-    await global.testDataSource.query(
+    await dataSource.query(
       `UPDATE core."signingKey"
        SET "createdAt" = NOW() - ($1 || ' days')::interval
-       WHERE "id" = $2`,
-      [String(rotationDays + 1), previousCurrentId],
+       WHERE id = $2`,
+      [String(ROTATION_DAYS + 1), previousCurrentId],
     );
 
     await cronJob.handle();
 
-    const previousAfter = await global.testDataSource.query(
+    const [previousAfter] = await dataSource.query(
       `SELECT "isCurrent", "revokedAt", "privateKey"
-       FROM core."signingKey" WHERE "id" = $1`,
+       FROM core."signingKey" WHERE id = $1`,
       [previousCurrentId],
     );
 
-    expect(previousAfter[0].isCurrent).toBe(false);
-    expect(previousAfter[0].revokedAt).toBeNull();
-    expect(previousAfter[0].privateKey).toBe(previousPrivateKey);
+    expect(previousAfter.isCurrent).toBe(false);
+    expect(previousAfter.revokedAt).toBeNull();
+    expect(previousAfter.privateKey).toBe(previousPrivateKey);
 
-    const currentRows = await global.testDataSource.query(
-      `SELECT "id", "isCurrent", "revokedAt", "privateKey", "publicKey"
+    const currentRows = await dataSource.query(
+      `SELECT id, "isCurrent", "revokedAt", "privateKey", "publicKey"
        FROM core."signingKey" WHERE "isCurrent" = true`,
     );
 
     expect(currentRows).toHaveLength(1);
     expect(currentRows[0].id).not.toBe(previousCurrentId);
+    rotatedKeyIds.push(currentRows[0].id as string);
     expect(currentRows[0].revokedAt).toBeNull();
     expect(currentRows[0].privateKey).toMatch(/^enc:v2:/);
     expect(currentRows[0].publicKey).toMatch(
@@ -124,7 +184,7 @@ describe('RotateSigningKeysCronJob (integration)', () => {
   });
 
   it('rethrows rotation errors so the BullMQ job is marked failed and the Sentry monitor reports non-ok', async () => {
-    isValidSpy.mockReturnValue(true);
+    isValidStub.mockReturnValue(true);
 
     const rotateSpy = jest
       .spyOn(signingKeyRotationService, 'rotateIfDue')
