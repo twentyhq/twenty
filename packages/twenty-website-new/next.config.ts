@@ -98,6 +98,13 @@ const nextConfig: LinariaConfig = {
   },
   async redirects() {
     return [
+      // Canonicalise www → apex. Host-based; fires before any locale logic.
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.twenty.com' }],
+        destination: 'https://twenty.com/:path*',
+        permanent: true,
+      },
       // Strip the source-locale prefix: /en/foo → /foo (301). Mirrors proxy.ts Rule 1.
       { source: '/en', destination: '/', statusCode: 301 },
       { source: '/en/:path*', destination: '/:path*', statusCode: 301 },
