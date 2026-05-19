@@ -1,7 +1,10 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useState } from 'react';
 
-import { APP_DISPLAY_NAME, MAIN_PAGE_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER, } from 'src/constants/universal-identifiers';
+import {
+  APP_DISPLAY_NAME,
+  MAIN_PAGE_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 
 const DOCS_BASE_URL = 'https://docs.twenty.com/developers/extend/apps';
 
@@ -65,11 +68,11 @@ const ItemIcon = ({ color }: { color: string }) => (
   </svg>
 );
 
-const ArrowUpRight = () => (
+const ArrowUpRight = ({ color = '#999' }: { color?: string }) => (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
     <path
       d="M4.5 3.5H10.5V9.5M10.5 3.5L3.5 10.5"
-      stroke="#999"
+      stroke={color}
       strokeWidth="1.2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -216,6 +219,34 @@ const MainPage = () => {
         <br />
         You can now add content to your app.
       </span>
+      <a
+        href="/settings/applications"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          marginTop: '16px',
+          fontSize: '13px',
+          color: '#333',
+          textDecoration: 'none',
+          padding: '8px 16px',
+          borderRadius: '8px',
+          border: '1px solid #e0e0e0',
+          background: '#fafafa',
+          transition: 'background 0.15s, border-color 0.15s',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#f0f0f0';
+          e.currentTarget.style.borderColor = '#ccc';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = '#fafafa';
+          e.currentTarget.style.borderColor = '#e0e0e0';
+        }}
+      >
+        See app settings
+        <ArrowUpRight color="#333" />
+      </a>
       <div
         style={{
           display: 'flex',
