@@ -9,6 +9,7 @@ import {
   type LeafType,
   type Node,
 } from '@/workflow/workflow-schema/types/base-output-schema.type';
+import { isObject } from '@sniptt/guards';
 
 const LEAF_TYPES: LeafType[] = [
   'string',
@@ -28,7 +29,7 @@ const convertProperty = (
 ): Leaf | Node => {
   const label = property.label ?? key;
 
-  if (property.type === 'object') {
+  if (isObject(property.type)) {
     return {
       isLeaf: false,
       type: 'object',
@@ -65,11 +66,7 @@ export const inputSchemaToOutputSchema = (
 ): BaseOutputSchemaV2 => {
   const root = inputSchema[0];
 
-  if (
-    !isDefined(root) ||
-    root.type !== 'object' ||
-    !isDefined(root.properties)
-  ) {
+  if (!isDefined(root) || !isObject(root.type) || !isDefined(root.properties)) {
     return {};
   }
 
