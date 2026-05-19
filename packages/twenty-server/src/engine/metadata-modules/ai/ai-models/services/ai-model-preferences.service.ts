@@ -27,18 +27,10 @@ export class AiModelPreferencesService implements OnModuleInit {
       return;
     }
 
-    try {
-      this.filePreferences = await this.fetchPreferences(storagePath);
-      this.logger.log(
-        `Loaded AI model preferences from storage: ${storagePath}`,
-      );
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-
-      this.logger.warn(
-        `Failed to load AI model preferences from storage: ${message}`,
-      );
-    }
+    this.filePreferences = await this.fetchPreferences(storagePath);
+    this.logger.log(
+      `AI_MODEL_PREF - Loaded AI model preferences from storage: ${storagePath}`,
+    );
   }
 
   getPreferences(): AiModelPreferences {
@@ -132,7 +124,6 @@ export class AiModelPreferencesService implements OnModuleInit {
 
   private async persistPreferences(prefs: AiModelPreferences): Promise<void> {
     await this.twentyConfigService.set('AI_MODEL_PREFERENCES', prefs);
-    this.filePreferences = null;
   }
 
   private async fetchPreferences(
