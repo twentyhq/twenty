@@ -11,7 +11,7 @@ const tsConfig = JSON.parse(
 );
 
 const jestConfig = {
-  displayName: 'twenty-website-new',
+  displayName: 'twenty-website',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transformIgnorePatterns: ['../../node_modules/'],

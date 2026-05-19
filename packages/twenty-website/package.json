@@ -1,8 +1,8 @@
 {
-  "name": "twenty-website-new",
+  "name": "twenty-website",
   "private": true,
   "scripts": {
-    "nx": "NX_DEFAULT_PROJECT=twenty-website-new node ../../node_modules/nx/bin/nx.js",
+    "nx": "NX_DEFAULT_PROJECT=twenty-website node ../../node_modules/nx/bin/nx.js",
     "dev": "npx next dev",
     "build": "npx next build",
     "start": "npx next start",

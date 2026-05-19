@@ -110,7 +110,7 @@ packages/
 ├── twenty-ui/             # Shared UI components library
 ├── twenty-shared/         # Common types and utilities
 ├── twenty-emails/         # Email templates with React Email
-├── twenty-website-new/    # Next.js marketing website
+├── twenty-website/    # Next.js marketing website
 ├── twenty-docs/           # Documentation website
 ├── twenty-zapier/         # Zapier integration
 └── twenty-e2e-testing/    # Playwright E2E tests
