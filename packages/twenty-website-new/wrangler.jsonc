@@ -1,0 +1,68 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "twenty-website",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-01-15",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "images": {
+    "binding": "IMAGES"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "env": {
+    "dev": {
+      "name": "twenty-website-dev",
+      "routes": [
+        {
+          "pattern": "website-new.twenty-main.com",
+          "custom_domain": true
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "twenty-website-cache-dev"
+        }
+      ],
+      "vars": {
+        "NEXT_PUBLIC_WEBSITE_URL": "https://website-new.twenty-main.com",
+        "PARTNER_APPLICATION_WEBHOOK_URL": "",
+        "STRIPE_ENTERPRISE_MONTHLY_PRICE_ID": "",
+        "STRIPE_ENTERPRISE_YEARLY_PRICE_ID": "",
+        "ENTERPRISE_JWT_PUBLIC_KEY": ""
+      }
+    },
+    "prod": {
+      "name": "twenty-website-prod",
+      "routes": [
+        {
+          "pattern": "twenty.com",
+          "custom_domain": true
+        },
+        {
+          "pattern": "www.twenty.com",
+          "custom_domain": true
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "twenty-website-cache-prod"
+        }
+      ],
+      "vars": {
+        "NEXT_PUBLIC_WEBSITE_URL": "https://twenty.com",
+        "PARTNER_APPLICATION_WEBHOOK_URL": "https://twentyfortwenty.twenty.com/webhooks/workflows/ae1d9137-d083-4921-bb62-817eb1579c8f/3fb5b93f-6388-45c7-81f1-cf52280b05d9",
+        "STRIPE_ENTERPRISE_MONTHLY_PRICE_ID": "price_1T9nc4HnM5uuRsfGO9f5XKp6",
+        "STRIPE_ENTERPRISE_YEARLY_PRICE_ID": "price_1T9nc4HnM5uuRsfGQd1b3J4H",
+        "ENTERPRISE_JWT_PUBLIC_KEY": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl12Me8NXrQhsgBTr8slx2lTZNJCLwWCIs3zRWZzuHelUgNj2wFEM7R7wx0v/OxQHoXzXqAbgEu67HHNXTAnAgcYGzjSqa6o8NZHqUrzjOgvP0Ck8EQYxNYrxHAiDUChMHsFNYvcx/savm6Pn1sTLgcYnGuuuAYdsV0L78N5WsdbSfyAPyPv5ULYMSci7OLGUBlIa55da9Qwmie1HC+J4MtSSnw9o9OzR1ekw9JxQdho+Rj1mQ9BuvBplGNLabolFZweYdYEyqXReRbqMmNz/EuZs6PhKiH6l3sXY6kocC0ZV25rFhHgOChVA91BE8a+Wj0MtGGI/UL/b21G3zsr76wIDAQAB\n-----END PUBLIC KEY-----"
+      }
+    }
+  }
+}

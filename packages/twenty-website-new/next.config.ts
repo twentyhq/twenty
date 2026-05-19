@@ -1,4 +1,5 @@
 import path from 'path';
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 import withLinaria, { type LinariaConfig } from 'next-with-linaria';
 
 const SECURITY_HEADERS = [
@@ -176,5 +177,7 @@ const nextConfig: LinariaConfig = {
     ];
   },
 };
+
+initOpenNextCloudflareForDev();
 
 module.exports = withLinaria(nextConfig);
