@@ -19,6 +19,7 @@ import { AddIsPreInstalledToApplicationRegistrationFastInstanceCommand } from 's
 import { AddProviderExecutedToAgentMessagePartFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1777012800000-add-provider-executed-to-agent-message-part';
 import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-slow-1795000002000-backfill-page-layout-widget-position';
 import { AddMetadataToBillingPriceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1777100000000-add-metadata-to-billing-price';
+import { AddRelationTargetFieldMetadataIdToViewFilterEarly2_4FastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1747234400000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777308014234-add-upgrade-migration-workspace-id-index';
@@ -53,6 +54,7 @@ export const INSTANCE_COMMANDS = [
   AddProviderExecutedToAgentMessagePartFastInstanceCommand,
   BackfillPageLayoutWidgetPositionSlowInstanceCommand,
   AddMetadataToBillingPriceFastInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFilterEarly2_4FastInstanceCommand,
   AddCacheTokensToAgentChatThreadFastInstanceCommand,
   AddLogoToApplicationFastInstanceCommand,
   AddDeletedAtToAgentChatThreadFastInstanceCommand,
