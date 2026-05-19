@@ -424,11 +424,6 @@ msgstr "Agribusiness"
 msgid "AI (Einstein)"
 msgstr "AI (Einstein)"
 
-#. js-lingui-id: CKVA1O
-#: src/app/[locale]/product/page.tsx
-msgid "AI & Automation"
-msgstr "AI & Automation"
-
 #. js-lingui-id: aUn7Ps
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "AI & Automations"
@@ -599,6 +594,11 @@ msgstr "around it"
 #: src/sections/Footer/data.ts
 msgid "Articles"
 msgstr "Articles"
+
+#. js-lingui-id: 4YKyFV
+#: src/app/[locale]/product/page.tsx
+msgid "Ask questions, automate tasks, and get insights. All powered by AI that understands your data."
+msgstr "Ask questions, automate tasks, and get insights. All powered by AI that understands your data."
 
 #. js-lingui-id: yYKNWp
 #: src/app/[locale]/(home)/page.tsx
@@ -1014,10 +1014,10 @@ msgstr "Costs down more than"
 msgid "Create a workflow"
 msgstr "Create a workflow"
 
-#. js-lingui-id: /S4Rov
-#: src/app/[locale]/product/tabs.data.ts
-msgid "Create a workflow that send an email sequence"
-msgstr "Create a workflow that send an email sequence"
+#. js-lingui-id: Pg0blE
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
+msgid "Create a workflow that sends an email sequence"
+msgstr "Create a workflow that sends an email sequence"
 
 #. js-lingui-id: B9nLrl
 #: src/sections/Menu/data.ts
@@ -1032,7 +1032,7 @@ msgid "Create custom apps"
 msgstr "Create custom apps"
 
 #. js-lingui-id: mmx00G
-#: src/app/[locale]/product/tabs.data.ts
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Create follow-up tasks for my top 10 accounts"
 msgstr "Create follow-up tasks for my top 10 accounts"
 
@@ -2096,10 +2096,10 @@ msgstr "Monthly"
 msgid "More options available!"
 msgstr "More options available!"
 
-#. js-lingui-id: ZPjy5q
+#. js-lingui-id: HmvqZe
 #: src/app/[locale]/product/page.tsx
-msgid "moves fast"
-msgstr "moves fast"
+msgid "move fast"
+msgstr "move fast"
 
 #. js-lingui-id: dlKkNL
 #: src/app/[locale]/product/feature.data.ts
@@ -2789,7 +2789,7 @@ msgid "Show less"
 msgstr "Show less"
 
 #. js-lingui-id: qv84H6
-#: src/app/[locale]/product/tabs.data.ts
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Show me all deals closing this month"
 msgstr "Show me all deals closing this month"
 
@@ -2934,7 +2934,7 @@ msgid "Submitting…"
 msgstr "Submitting…"
 
 #. js-lingui-id: KY4KBn
-#: src/app/[locale]/product/tabs.data.ts
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Summarize this customer's history"
 msgstr "Summarize this customer's history"
 
@@ -3042,11 +3042,6 @@ msgstr "that's quick to flex"
 #: src/lib/website-routing/static-website-routes.ts
 msgid "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
 msgstr "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
-
-#. js-lingui-id: xnVX2j
-#: src/app/[locale]/product/page.tsx
-msgid "The AI understands your CRM and takes action."
-msgstr "The AI understands your CRM and takes action."
 
 #. js-lingui-id: G2IgPj
 #: src/app/[locale]/customers/netzero/page.tsx

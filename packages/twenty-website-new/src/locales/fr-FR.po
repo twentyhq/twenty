@@ -412,11 +412,6 @@ msgstr ""
 msgid "AI (Einstein)"
 msgstr ""
 
-#. js-lingui-id: CKVA1O
-#: src/app/[locale]/product/page.tsx
-msgid "AI & Automation"
-msgstr ""
-
 #. js-lingui-id: aUn7Ps
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "AI & Automations"
@@ -586,6 +581,11 @@ msgstr ""
 #: src/sections/Menu/data.ts
 #: src/sections/Footer/data.ts
 msgid "Articles"
+msgstr ""
+
+#. js-lingui-id: 4YKyFV
+#: src/app/[locale]/product/page.tsx
+msgid "Ask questions, automate tasks, and get insights. All powered by AI that understands your data."
 msgstr ""
 
 #. js-lingui-id: yYKNWp
@@ -1002,9 +1002,9 @@ msgstr ""
 msgid "Create a workflow"
 msgstr ""
 
-#. js-lingui-id: /S4Rov
-#: src/app/[locale]/product/tabs.data.ts
-msgid "Create a workflow that send an email sequence"
+#. js-lingui-id: Pg0blE
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
+msgid "Create a workflow that sends an email sequence"
 msgstr ""
 
 #. js-lingui-id: B9nLrl
@@ -1020,7 +1020,7 @@ msgid "Create custom apps"
 msgstr ""
 
 #. js-lingui-id: mmx00G
-#: src/app/[locale]/product/tabs.data.ts
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Create follow-up tasks for my top 10 accounts"
 msgstr ""
 
@@ -2076,9 +2076,9 @@ msgstr ""
 msgid "More options available!"
 msgstr ""
 
-#. js-lingui-id: ZPjy5q
+#. js-lingui-id: HmvqZe
 #: src/app/[locale]/product/page.tsx
-msgid "moves fast"
+msgid "move fast"
 msgstr ""
 
 #. js-lingui-id: dlKkNL
@@ -2767,7 +2767,7 @@ msgid "Show less"
 msgstr ""
 
 #. js-lingui-id: qv84H6
-#: src/app/[locale]/product/tabs.data.ts
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Show me all deals closing this month"
 msgstr ""
 
@@ -2910,7 +2910,7 @@ msgid "Submitting…"
 msgstr ""
 
 #. js-lingui-id: KY4KBn
-#: src/app/[locale]/product/tabs.data.ts
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Summarize this customer's history"
 msgstr ""
 
@@ -3017,11 +3017,6 @@ msgstr ""
 #. js-lingui-id: zXlFuT
 #: src/lib/website-routing/static-website-routes.ts
 msgid "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
-msgstr ""
-
-#. js-lingui-id: xnVX2j
-#: src/app/[locale]/product/page.tsx
-msgid "The AI understands your CRM and takes action."
 msgstr ""
 
 #. js-lingui-id: G2IgPj
