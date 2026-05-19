@@ -13,7 +13,6 @@ import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
 import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
-import { isDefined } from 'twenty-shared/utils';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(ConnectedAccountGraphqlApiExceptionInterceptor)
@@ -35,9 +34,7 @@ export class ConnectedAccountResolver {
         workspaceId: workspace.id,
       });
 
-    return accounts
-      .map((account) => buildPublicConnectedAccount(account))
-      .filter(isDefined);
+    return accounts.map((account) => buildPublicConnectedAccount(account));
   }
 
   @Mutation(() => ConnectedAccountPublicDTO)
