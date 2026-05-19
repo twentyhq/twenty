@@ -1056,6 +1056,7 @@ export interface PageLayout {
     objectMetadataId?: Scalars['UUID']
     tabs?: PageLayoutTab[]
     defaultTabToFocusOnMobileAndSidePanelId?: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
@@ -3983,6 +3984,7 @@ export interface PageLayoutGenqlSelection{
     objectMetadataId?: boolean | number
     tabs?: PageLayoutTabGenqlSelection
     defaultTabToFocusOnMobileAndSidePanelId?: boolean | number
+    universalIdentifier?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number

@@ -32,20 +32,11 @@ The scaffolder will:
 
 | Flag                               | Description                                                           |
 | ---------------------------------- | --------------------------------------------------------------------- |
-| `--example <name>`                 | Initialize from an example                                            |
 | `--name <name>`                    | Set the app name                                                      |
 | `--display-name <displayName>`     | Set the display name                                                  |
 | `--description <description>`      | Set the description                                                   |
-| `--api-url <url>`                  | Twenty instance URL (default: `http://localhost:2020`)                |
+| `--workspace-url <url>`            | Twenty workspace URL (default: `http://localhost:2020`)               |
 | `--authentication-method <method>` | `oauth` or `apiKey` (default: `apiKey` for local, `oauth` for remote) |
-
-By default (no flags), a minimal app is generated with core files and an integration test. Use `--example` to start from a richer example:
-
-```bash
-npx create-twenty-app@latest my-twenty-app --example hello-world
-```
-
-Examples are sourced from [twentyhq/twenty/packages/twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples).
 
 ## Documentation
 

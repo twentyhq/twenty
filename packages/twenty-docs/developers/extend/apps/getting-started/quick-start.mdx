@@ -138,20 +138,6 @@ Both modes need an authenticated remote.
 | `--debounceMs <ms>` | Set the file-change debounce delay in milliseconds (default: `2000`). |
 | `--verbose` / `--debug` | Show detailed build logs, sync requests, and error traces. |
 
----
-
-## Starting from an example
-
-Use `--example` to start with a more complete project (custom objects, fields, logic functions, front components):
-
-```bash filename="Terminal"
-npx create-twenty-app@latest my-twenty-app --example postcard
-```
-
-Examples live in [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). You can also scaffold individual entities into an existing project with `yarn twenty add` — see [Scaffolding](/developers/extend/apps/getting-started/scaffolding).
-
----
-
 ## What you can build
 
 Apps are composed of **entities** — each defined as a TypeScript file with a single `export default`:
