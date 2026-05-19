@@ -114,9 +114,13 @@ const PlusNodeSquare = styled.div`
 `;
 
 export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
-  const nodes = page.nodes ? resolveWorkflowNodes(page.nodes) : defaultNodes;
-  const edges = page.edges ?? defaultEdges;
-  const branchLabels = page.branchLabels ?? defaultBranchLabels;
+  const hasCustomNodes = Boolean(page.nodes);
+  const nodes = hasCustomNodes
+    ? resolveWorkflowNodes(page.nodes!)
+    : defaultNodes;
+  const edges = page.edges ?? (hasCustomNodes ? [] : defaultEdges);
+  const branchLabels =
+    page.branchLabels ?? (hasCustomNodes ? [] : defaultBranchLabels);
 
   return (
     <PageShell>

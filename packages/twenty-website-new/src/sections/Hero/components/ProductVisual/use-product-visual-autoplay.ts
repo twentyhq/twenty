@@ -30,7 +30,11 @@ export function useProductVisualAutoplay(
 
   useEffect(() => {
     if (externalScene !== undefined) {
-      setSelectedOption(externalScene);
+      const clamped = Math.max(
+        0,
+        Math.min(externalScene, PROMPT_OPTIONS.length - 1),
+      );
+      setSelectedOption(clamped);
     }
   }, [externalScene]);
 
