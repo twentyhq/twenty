@@ -1395,6 +1395,7 @@ type PageLayout {
   objectMetadataId: UUID
   tabs: [PageLayoutTab!]
   defaultTabToFocusOnMobileAndSidePanelId: UUID
+  universalIdentifier: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime

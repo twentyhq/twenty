@@ -136,8 +136,6 @@ export class CreateAppCommand {
 
         authSucceeded = await this.tryExistingAuth(resolvedWorkspaceUrl);
 
-        console.log('authSucceeded', authSucceeded);
-
         if (authSucceeded) {
           this.logDetail('Reusing existing credentials');
         } else if (authenticationMethod === 'oauth') {
@@ -160,6 +158,7 @@ export class CreateAppCommand {
 
         if (!syncSucceeded) {
           this.logDetail('Sync failed. Run `yarn twenty dev --once` manually.');
+          return;
         }
       } else {
         this.logDetail('Skipped (server or authentication not available)');
@@ -415,20 +414,28 @@ export class CreateAppCommand {
     universalIdentifier: string,
     token: string,
   ): Promise<string | null> {
-    const response = await fetch(`${workspaceUrl}/rest/metadata/pageLayouts`, {
-      headers: { Authorization: `Bearer ${token}` },
+    const query = `{ getPageLayouts { id universalIdentifier } }`;
+
+    const response = await fetch(`${workspaceUrl}/metadata`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query }),
     });
 
     if (!response.ok) {
       return null;
     }
 
-    const pageLayouts = (await response.json()) as {
-      id: string;
-      universalIdentifier?: string;
-    }[];
+    const body = (await response.json()) as {
+      data?: {
+        getPageLayouts?: { id: string; universalIdentifier: string }[];
+      };
+    };
 
-    const matching = pageLayouts.find(
+    const matching = body.data?.getPageLayouts?.find(
       (layout) => layout.universalIdentifier === universalIdentifier,
     );
 
@@ -436,14 +443,25 @@ export class CreateAppCommand {
   }
 
   private openInBrowser(url: string): void {
-    const command = process.platform === 'darwin' ? 'open' : 'xdg-open';
+    const isWindows = process.platform === 'win32';
+    const command = isWindows
+      ? 'cmd'
+      : process.platform === 'darwin'
+        ? 'open'
+        : 'xdg-open';
+    const args = isWindows ? ['/c', 'start', url] : [url];
 
-    const child = spawn(command, [url], { stdio: 'ignore', detached: true });
+    const child = spawn(command, args, {
+      stdio: 'ignore',
+      detached: !isWindows,
+    });
     child.on('error', () => undefined);
-    child.unref();
+    if (!isWindows) {
+      child.unref();
+    }
   }
 
-  private syncApplication(appDirectory: string): Promise<boolean> {
+  private async syncApplication(appDirectory: string): Promise<boolean> {
     this.logDetail('Running `yarn twenty dev --once`...');
     return new Promise((resolve) => {
       const child = spawn('yarn', ['twenty', 'dev', '--once'], {
