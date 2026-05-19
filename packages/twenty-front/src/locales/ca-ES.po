@@ -3462,6 +3462,11 @@ msgstr "Tanca"
 msgid "Close banner"
 msgstr "Tanca el bàner"
 
+#. js-lingui-id: vcpc5o
+#: src/modules/blocknote-editor/components/BlockEditor.tsx
+msgid "Close menu"
+msgstr ""
+
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Close side panel"
