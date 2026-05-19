@@ -1,4 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { Avatar } from 'twenty-sdk/ui';
 import { useState } from 'react';
 
 import {
@@ -190,14 +191,14 @@ const MainPage = () => {
         padding: '40px',
       }}
     >
-      {/*TODO: uncomment when Avatar import is fixed*/}
-      {/*<Avatar
-        avatarUrl={getPublicAssetUrl('logo.svg')}
+      <Avatar
+        /*avatarUrl={getPublicAssetUrl('logo.svg')}*/ // TODO: uncomment when getPublicAssetUrl is available in twenty-sdk/utils
+        avatarUrl={null}
         placeholder={APP_DISPLAY_NAME}
         placeholderColorSeed={APP_DISPLAY_NAME}
         type="squared"
         size="xl"
-      />*/}
+      />
       <span
         style={{
           fontSize: '24px',
