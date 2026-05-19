@@ -1,11 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { Trans } from '@lingui/react/macro';
 import { type Control, Controller } from 'react-hook-form';
 
 import { type AccountType } from 'twenty-shared/constants';
 
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPasswordFieldContainer = styled.div`
@@ -14,19 +16,8 @@ const StyledPasswordFieldContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledEditPasswordLink = styled.button`
+const StyledChangePasswordLink = styled(ClickToActionLink)`
   align-self: flex-end;
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: 0;
-  text-decoration: underline;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
 `;
 
 const MASKED_PASSWORD_PLACEHOLDER = '••••••••';
@@ -65,9 +56,9 @@ export const SettingsAccountsPasswordController = ({
             disabled={disabled}
           />
           {disabled && (
-            <StyledEditPasswordLink type="button" onClick={onUnlock}>
-              {t`Change password`}
-            </StyledEditPasswordLink>
+            <StyledChangePasswordLink onClick={onUnlock}>
+              <Trans>Change password</Trans>
+            </StyledChangePasswordLink>
           )}
         </StyledPasswordFieldContainer>
       )}
