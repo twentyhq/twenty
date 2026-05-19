@@ -77,10 +77,18 @@ const runOAuthWithApiKeyFallback = async (
 const addAction = async (options: {
   as?: string;
   apiKey?: string;
+  workspaceUrl?: string;
   apiUrl?: string;
   local?: boolean;
   test?: boolean;
 }) => {
+  if (options.apiUrl) {
+    console.warn(
+      chalk.yellow(
+        '⚠ --api-url is deprecated. Use --workspace-url instead.',
+      ),
+    );
+  }
   const configPath = options.test ? getConfigPath(true) : undefined;
   const configService = new ConfigService(
     configPath ? { configPath } : undefined,
@@ -103,7 +111,7 @@ const addAction = async (options: {
     return;
   }
 
-  let apiUrl = options.apiUrl;
+  let apiUrl = options.workspaceUrl ?? options.apiUrl;
 
   if (!apiUrl) {
     const detectedUrl = await detectLocalServer();
@@ -272,7 +280,8 @@ export const registerRemoteCommands = (program: Command): void => {
     .description('Add or re-authenticate a remote')
     .option('--as <name>', 'Name for this remote')
     .option('--api-key <apiKey>', 'API key for non-interactive auth')
-    .option('--api-url <apiUrl>', 'Server URL')
+    .option('--workspace-url <workspaceUrl>', 'Server URL')
+    .option('--api-url <apiUrl>', '[deprecated: use --workspace-url]')
     .option('--local', 'Connect to a local Twenty server (auto-detect)')
     .option('--test', 'Write to config.test.json (for integration tests)')
     .action(addAction);
@@ -313,13 +322,15 @@ export const registerRemoteCommands = (program: Command): void => {
     .command('add')
     .option('--as <name>', 'Name for this remote')
     .option('--api-key <apiKey>', 'API key for non-interactive auth')
-    .option('--api-url <apiUrl>', 'Server URL')
+    .option('--workspace-url <workspaceUrl>', 'Server URL')
+    .option('--api-url <apiUrl>', '[deprecated: use --workspace-url]')
     .option('--local', 'Connect to a local Twenty server (auto-detect)')
     .option('--test', 'Write to config.test.json (for integration tests)')
     .action(
       async (options: {
         as?: string;
         apiKey?: string;
+        workspaceUrl?: string;
         apiUrl?: string;
         local?: boolean;
         test?: boolean;
