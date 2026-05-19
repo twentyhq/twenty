@@ -53,7 +53,7 @@ export class ConnectedAccountTokensRotationHandler
           repository: this.connectedAccountRepository,
           siteName: this.siteName,
           encryptedColumn,
-          workspaceIdColumn: 'workspaceId',
+          isWorkspaceScoped: true,
         });
 
       aggregated.rotated += outcome.rotated;

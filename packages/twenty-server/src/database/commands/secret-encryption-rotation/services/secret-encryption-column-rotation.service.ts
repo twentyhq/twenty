@@ -3,11 +3,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type FindOptionsOrder,
-  type FindOptionsSelect,
   type FindOptionsWhere,
   MoreThan,
   type ObjectLiteral,
-  Raw,
   type Repository,
 } from 'typeorm';
 
@@ -15,10 +13,7 @@ import {
   type SecretEncryptionRotationContext,
   type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/types/secret-encryption-rotation-handler.type';
-import {
-  ANY_V2_ENVELOPE_LIKE_PATTERN,
-  buildCurrentEncryptionKeyIdEnvelopeLikePattern,
-} from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
+import { buildNonCurrentEnvelopeRawFilter } from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
@@ -45,7 +40,7 @@ export class SecretEncryptionColumnRotationService {
     encryptedColumns: string[];
     extraWhere?: FindOptionsWhere<Entity>;
   }): Promise<number> {
-    const nonCurrentEnvelopeFilter = this.buildNonCurrentEnvelopeRawFilter(
+    const nonCurrentEnvelopeFilter = buildNonCurrentEnvelopeRawFilter(
       currentEncryptionKeyId,
     );
 
@@ -54,7 +49,7 @@ export class SecretEncryptionColumnRotationService {
         ({
           ...extraWhere,
           [encryptedColumn]: nonCurrentEnvelopeFilter,
-        }) as FindOptionsWhere<Entity>,
+        }) as unknown as FindOptionsWhere<Entity>,
     );
 
     return repository.count({ where });
@@ -64,7 +59,7 @@ export class SecretEncryptionColumnRotationService {
     repository,
     siteName,
     encryptedColumn,
-    workspaceIdColumn,
+    isWorkspaceScoped,
     extraWhere,
     currentEncryptionKeyId,
     batchSize,
@@ -73,34 +68,28 @@ export class SecretEncryptionColumnRotationService {
     repository: Repository<Entity>;
     siteName: string;
     encryptedColumn: string;
-    workspaceIdColumn?: string;
+    isWorkspaceScoped?: boolean;
     extraWhere?: FindOptionsWhere<Entity>;
   }): Promise<SecretEncryptionRotationOutcome> {
-    let rotated = 0;
-    let skipped = 0;
-    let errors = 0;
+    const outcome: SecretEncryptionRotationOutcome = {
+      rotated: 0,
+      skipped: 0,
+      errors: 0,
+    };
     let cursor: string = ZERO_UUID;
-
-    const select = {
-      id: true,
-      [encryptedColumn]: true,
-      ...(isDefined(workspaceIdColumn) ? { [workspaceIdColumn]: true } : {}),
-    } as unknown as FindOptionsSelect<Entity>;
+    const nonCurrentEnvelopeFilter = buildNonCurrentEnvelopeRawFilter(
+      currentEncryptionKeyId,
+    );
 
     while (true) {
-      const where = {
-        ...extraWhere,
-        id: MoreThan(cursor),
-        [encryptedColumn]: this.buildNonCurrentEnvelopeRawFilter(
-          currentEncryptionKeyId,
-        ),
-      } as unknown as FindOptionsWhere<Entity>;
-
       const rows = await repository.find({
-        where,
+        where: {
+          ...extraWhere,
+          id: MoreThan(cursor),
+          [encryptedColumn]: nonCurrentEnvelopeFilter,
+        } as unknown as FindOptionsWhere<Entity>,
         order: { id: 'ASC' } as unknown as FindOptionsOrder<Entity>,
         take: batchSize,
-        select,
       });
 
       if (rows.length === 0) {
@@ -108,80 +97,89 @@ export class SecretEncryptionColumnRotationService {
       }
 
       for (const row of rows) {
-        const rowId = row.id as string;
-        const currentValue = row[encryptedColumn] as string | null | undefined;
-        const workspaceId = isDefined(workspaceIdColumn)
-          ? (row[workspaceIdColumn] as string | null)
-          : undefined;
+        const rowOutcome = await this.rotateRow({
+          repository,
+          row,
+          encryptedColumn,
+          isWorkspaceScoped: isWorkspaceScoped ?? false,
+          siteName,
+          dryRun,
+        });
 
-        if (!isDefined(currentValue)) {
-          skipped++;
-          continue;
-        }
-
-        if (!currentValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) {
-          skipped++;
-          continue;
-        }
-
-        try {
-          const cryptoOptions = isDefined(workspaceId)
-            ? { workspaceId }
-            : undefined;
-
-          const plaintext = this.secretEncryptionService.decryptVersioned(
-            currentValue,
-            cryptoOptions,
-          );
-
-          const reEncrypted = this.secretEncryptionService.encryptVersioned(
-            plaintext,
-            cryptoOptions,
-          );
-
-          if (!dryRun) {
-            const updateResult = await repository.update(
-              {
-                id: rowId,
-                [encryptedColumn]: currentValue,
-              } as unknown as FindOptionsWhere<Entity>,
-              { [encryptedColumn]: reEncrypted } as unknown as Parameters<
-                Repository<Entity>['update']
-              >[1],
-            );
-
-            if ((updateResult.affected ?? 0) === 0) {
-              skipped++;
-              continue;
-            }
-          }
-
-          rotated++;
-        } catch (error) {
-          errors++;
-          this.logger.warn(
-            `[${siteName}] failed to re-encrypt row ${rowId}: ${
-              error instanceof Error ? error.message : String(error)
-            }`,
-          );
-        }
+        outcome.rotated += rowOutcome.rotated;
+        outcome.skipped += rowOutcome.skipped;
+        outcome.errors += rowOutcome.errors;
       }
 
       cursor = rows[rows.length - 1].id as string;
     }
 
-    return { rotated, skipped, errors };
+    return outcome;
   }
 
-  private buildNonCurrentEnvelopeRawFilter(currentEncryptionKeyId: string) {
-    return Raw<string>(
-      (alias) => `${alias} LIKE :anyV2 AND ${alias} NOT LIKE :current`,
-      {
-        anyV2: ANY_V2_ENVELOPE_LIKE_PATTERN,
-        current: buildCurrentEncryptionKeyIdEnvelopeLikePattern(
-          currentEncryptionKeyId,
-        ),
-      },
-    );
+  private async rotateRow<Entity extends ObjectLiteral>({
+    repository,
+    row,
+    encryptedColumn,
+    isWorkspaceScoped,
+    siteName,
+    dryRun,
+  }: {
+    repository: Repository<Entity>;
+    row: Entity;
+    encryptedColumn: string;
+    isWorkspaceScoped: boolean;
+    siteName: string;
+    dryRun: boolean;
+  }): Promise<SecretEncryptionRotationOutcome> {
+    const rowId = row.id as string;
+    const currentValue = row[encryptedColumn] as string | null | undefined;
+
+    if (
+      !isDefined(currentValue) ||
+      !currentValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)
+    ) {
+      return { rotated: 0, skipped: 1, errors: 0 };
+    }
+
+    const cryptoOptions = isWorkspaceScoped
+      ? { workspaceId: row.workspaceId as string }
+      : undefined;
+
+    try {
+      const plaintext = this.secretEncryptionService.decryptVersioned(
+        currentValue,
+        cryptoOptions,
+      );
+      const reEncrypted = this.secretEncryptionService.encryptVersioned(
+        plaintext,
+        cryptoOptions,
+      );
+
+      if (!dryRun) {
+        const updateResult = await repository.update(
+          {
+            id: rowId,
+            [encryptedColumn]: currentValue,
+          } as unknown as FindOptionsWhere<Entity>,
+          { [encryptedColumn]: reEncrypted } as unknown as Parameters<
+            Repository<Entity>['update']
+          >[1],
+        );
+
+        if ((updateResult.affected ?? 0) === 0) {
+          return { rotated: 0, skipped: 1, errors: 0 };
+        }
+      }
+
+      return { rotated: 1, skipped: 0, errors: 0 };
+    } catch (error) {
+      this.logger.warn(
+        `[${siteName}] failed to re-encrypt row ${rowId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+      return { rotated: 0, skipped: 0, errors: 1 };
+    }
   }
 }

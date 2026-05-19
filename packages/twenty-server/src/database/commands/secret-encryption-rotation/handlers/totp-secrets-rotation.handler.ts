@@ -45,7 +45,7 @@ export class TotpSecretsRotationHandler
       repository: this.twoFactorAuthenticationMethodRepository,
       siteName: this.siteName,
       encryptedColumn: ENCRYPTED_COLUMN,
-      workspaceIdColumn: 'workspaceId',
+      isWorkspaceScoped: true,
     });
   }
 }

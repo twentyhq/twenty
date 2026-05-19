@@ -49,7 +49,7 @@ export class ApplicationVariableRotationHandler
       repository: this.applicationVariableRepository,
       siteName: this.siteName,
       encryptedColumn: ENCRYPTED_COLUMN,
-      workspaceIdColumn: 'workspaceId',
+      isWorkspaceScoped: true,
       extraWhere: ONLY_SECRET_ROWS_WHERE,
     });
   }
