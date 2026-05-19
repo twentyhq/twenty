@@ -24,7 +24,7 @@ function resolveReleasesDirectory(): string | null {
     path.join(
       process.cwd(),
       'packages',
-      'twenty-website-new',
+      'twenty-website',
       'src',
       'content',
       'releases',

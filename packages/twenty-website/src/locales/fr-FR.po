@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-Project: 05979aaf4e7789e4424376136c855f77\n"
 "X-Crowdin-Project-ID: 4\n"
 "X-Crowdin-Language: fr\n"
-"X-Crowdin-File: /packages/twenty-website-new/src/locales/en.po\n"
+"X-Crowdin-File: /packages/twenty-website/src/locales/en.po\n"
 "X-Crowdin-File-ID: 2116\n"
 
 #. js-lingui-id: BUIzFF

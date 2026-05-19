@@ -10,7 +10,7 @@ on:
   push:
     branches: ['main']
     paths:
-      - 'packages/twenty-website-new/**'
+      - 'packages/twenty-website/**'
       - '.github/crowdin-website.yml'
       - '.github/workflows/website-i18n-push.yaml'
 
@@ -41,14 +41,14 @@ jobs:
         run: npx nx build twenty-shared
 
       - name: Extract website translations
-        run: npx nx run twenty-website-new:lingui:extract
+        run: npx nx run twenty-website:lingui:extract
 
       - name: Check and commit extracted files
         id: check_extract_changes
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
-          git add packages/twenty-website-new/src/locales
+          git add packages/twenty-website/src/locales
           if ! git diff --staged --quiet --exit-code; then
             git commit -m "chore: extract website translations"
             echo "changes_detected=true" >> $GITHUB_OUTPUT
@@ -57,14 +57,14 @@ jobs:
           fi
 
       - name: Compile website translations
-        run: npx nx run twenty-website-new:lingui:compile
+        run: npx nx run twenty-website:lingui:compile
 
       - name: Check and commit compiled files
         id: check_compile_changes
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
-          git add packages/twenty-website-new/src/locales/generated
+          git add packages/twenty-website/src/locales/generated
           if ! git diff --staged --quiet --exit-code; then
             git commit -m "chore: compile website translations"
             echo "changes_detected=true" >> $GITHUB_OUTPUT

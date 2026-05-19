@@ -54,7 +54,7 @@ jobs:
       # Strict mode fails if there are missing website translations.
       - name: Compile website translations
         id: compile_translations_strict
-        run: npx nx run twenty-website-new:lingui:compile --strict
+        run: npx nx run twenty-website:lingui:compile --strict
         continue-on-error: true
 
       - name: Stash any changes before pulling translations
@@ -71,8 +71,8 @@ jobs:
           upload_sources: false
           upload_translations: false
           download_translations: true
-          source: 'packages/twenty-website-new/src/locales/en.po'
-          translation: 'packages/twenty-website-new/src/locales/%locale%.po'
+          source: 'packages/twenty-website/src/locales/en.po'
+          translation: 'packages/twenty-website/src/locales/%locale%.po'
           export_only_approved: false
           localization_branch_name: i18n-website
           base_url: 'https://twenty.api.crowdin.com'
@@ -101,9 +101,9 @@ jobs:
       - name: Compile website translations
         id: compile_translations
         run: |
-          npx nx run twenty-website-new:lingui:compile
+          npx nx run twenty-website:lingui:compile
           git status
-          git add packages/twenty-website-new/src/locales
+          git add packages/twenty-website/src/locales
           if ! git diff --staged --quiet --exit-code; then
             git commit -m "chore: compile website translations"
             echo "changes_detected=true" >> $GITHUB_OUTPUT

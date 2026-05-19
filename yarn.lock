@@ -56574,9 +56574,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-website-new@workspace:packages/twenty-website-new":
+"twenty-website@workspace:packages/twenty-website":
   version: 0.0.0-use.local
-  resolution: "twenty-website-new@workspace:packages/twenty-website-new"
+  resolution: "twenty-website@workspace:packages/twenty-website"
   dependencies:
     "@base-ui/react": "npm:^1.3.0"
     "@base-ui/utils": "npm:^0.2.6"

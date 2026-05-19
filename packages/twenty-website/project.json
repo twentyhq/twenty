@@ -1,7 +1,7 @@
 {
-  "name": "twenty-website-new",
+  "name": "twenty-website",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/twenty-website-new/src",
+  "sourceRoot": "packages/twenty-website/src",
   "projectType": "application",
   "tags": ["scope:website"],
   "targets": {
