@@ -78,19 +78,6 @@ export class JwtKeyManagerService {
     });
   }
 
-  async getCurrentSigningKeyMetadata(): Promise<{
-    id: string;
-    createdAt: Date;
-  } | null> {
-    const current = await this.findCurrentSigningKeyRow();
-
-    if (!isDefined(current)) {
-      return null;
-    }
-
-    return { id: current.id, createdAt: current.createdAt };
-  }
-
   async rotateCurrent(): Promise<CurrentSigningKey> {
     const generated = this.generateEcP256KeyPair();
     const newId = randomUUID();

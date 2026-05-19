@@ -28,8 +28,19 @@ export class SigningKeyRotationService {
     const rotationDays = this.twentyConfigService.get(
       'SIGNING_KEY_ROTATION_DAYS',
     );
-    const current =
-      await this.jwtKeyManagerService.getCurrentSigningKeyMetadata();
+
+    if (!isDefined(rotationDays)) {
+      this.logger.log(
+        'SIGNING_KEY_ROTATION_DAYS is not configured, skipping signing key rotation',
+      );
+
+      return { rotated: false, previousId: null, newId: null };
+    }
+
+    const signingKeys = await this.jwtKeyManagerService.listSigningKeys();
+    const current = signingKeys.find(
+      (signingKey) => signingKey.isCurrent && !isDefined(signingKey.revokedAt),
+    );
 
     if (!isDefined(current)) {
       return { rotated: false, previousId: null, newId: null };
