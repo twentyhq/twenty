@@ -53,9 +53,9 @@ export class CheckServerOrchestratorStep {
             message:
               'Cannot reach Twenty server.\n\n' +
               '  Start a local server:\n' +
-              '    yarn twenty server start\n\n' +
+              '    yarn twenty docker:start\n\n' +
               '  Check server status:\n' +
-              '    yarn twenty server status\n\n' +
+              '    yarn twenty docker:status\n\n' +
               '  Waiting for server...',
             status: 'error',
           },
@@ -73,7 +73,7 @@ export class CheckServerOrchestratorStep {
         this.state.applyStepEvents([
           {
             message:
-              'Authentication failed. Run `yarn twenty remote add --local` to authenticate.',
+              'Authentication failed. Run `yarn twenty remote:add --local` to authenticate.',
             status: 'error',
           },
         ]);

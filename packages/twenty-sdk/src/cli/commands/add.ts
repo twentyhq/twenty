@@ -412,7 +412,7 @@ export class EntityAddCommand {
   // Connection providers reference two serverVariables (`<NAME>_CLIENT_ID`
   // and `<NAME>_CLIENT_SECRET`) that the dev needs to declare on
   // `defineApplication.serverVariables`. Auto-append them so the dev
-  // doesn't have to remember the wiring after `twenty add connection-provider`.
+  // doesn't have to remember the wiring after `twenty dev:add connection-provider`.
   // The util is best-effort: it handles the common file shapes and falls
   // back to a printed snippet for anything it can't safely modify.
   private async registerConnectionProviderServerVariables(

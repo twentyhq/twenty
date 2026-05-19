@@ -17,7 +17,7 @@ program
 
 program.option(
   '-r, --remote <name>',
-  'Use a specific remote (overrides the default set by remote switch)',
+  'Use a specific remote (overrides the default set by remote:use)',
 );
 
 program.hook('preAction', async (thisCommand) => {

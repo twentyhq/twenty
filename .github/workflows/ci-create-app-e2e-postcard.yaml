@@ -157,29 +157,29 @@ jobs:
       - name: Authenticate with twenty-server
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          npx --no-install twenty remote add --api-key ${{ env.TWENTY_API_KEY }} --api-url ${{ env.TWENTY_API_URL }}
+          npx --no-install twenty remote:add --api-key ${{ env.TWENTY_API_KEY }} --api-url ${{ env.TWENTY_API_URL }}
 
       - name: Deploy scaffolded app
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          npx --no-install twenty deploy
+          npx --no-install twenty app:publish --private
 
       - name: Install scaffolded app
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          npx --no-install twenty install
+          npx --no-install twenty app:install
 
       - name: Execute postcard logic function
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          EXEC_OUTPUT=$(npx --no-install twenty exec --functionName postcard-logic-function)
+          EXEC_OUTPUT=$(npx --no-install twenty dev:fn-exec --functionName postcard-logic-function)
           echo "$EXEC_OUTPUT"
           echo "$EXEC_OUTPUT" | grep -q "Hello, World!"
 
       - name: Execute create-postcard-company logic function
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          EXEC_OUTPUT=$(npx --no-install twenty exec --functionName create-postcard-company)
+          EXEC_OUTPUT=$(npx --no-install twenty dev:fn-exec --functionName create-postcard-company)
           echo "$EXEC_OUTPUT"
           echo "$EXEC_OUTPUT" | grep -q 'Created company.*Hello World.*with id'
 

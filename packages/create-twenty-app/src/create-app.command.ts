@@ -344,7 +344,7 @@ export class CreateAppCommand {
 
       console.log(
         chalk.yellow(
-          '  Authentication failed. Run `yarn twenty remote add --local` manually.',
+          '  Authentication failed. Run `yarn twenty remote:add --local` manually.',
         ),
       );
 
@@ -352,7 +352,7 @@ export class CreateAppCommand {
     } catch {
       console.log(
         chalk.yellow(
-          '  Authentication failed. Run `yarn twenty remote add --local` manually.',
+          '  Authentication failed. Run `yarn twenty remote:add --local` manually.',
         ),
       );
 
@@ -390,7 +390,7 @@ export class CreateAppCommand {
       console.log(
         chalk.yellow(
           `  OAuth failed: ${result.error.message}\n` +
-            `  Run \`yarn twenty remote add --api-url ${apiUrl}\` manually.`,
+            `  Run \`yarn twenty remote:add --api-url ${apiUrl}\` manually.`,
         ),
       );
 
@@ -398,7 +398,7 @@ export class CreateAppCommand {
     } catch {
       console.log(
         chalk.yellow(
-          `  Authentication failed. Run \`yarn twenty remote add --api-url ${apiUrl}\` manually.`,
+          `  Authentication failed. Run \`yarn twenty remote:add --api-url ${apiUrl}\` manually.`,
         ),
       );
 
@@ -427,7 +427,7 @@ export class CreateAppCommand {
       console.log(chalk.white(`  ${stepNumber}. Connect to a Twenty instance`));
       console.log(
         chalk.cyan(
-          '     yarn twenty remote add --api-url <your-instance-url>\n',
+          '     yarn twenty remote:add --api-url <your-instance-url>\n',
         ),
       );
       stepNumber++;

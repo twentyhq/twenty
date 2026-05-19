@@ -32,7 +32,7 @@ const innerServerUpgrade = async (
 
   if (!checkDockerRunning()) {
     const retryCommand = [
-      'yarn twenty server upgrade',
+      'yarn twenty docker:upgrade',
       version !== 'latest' ? version : null,
       isTest ? '--test' : null,
     ]

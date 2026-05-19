@@ -153,7 +153,7 @@ jobs:
       - name: Authenticate with twenty-server
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          npx --no-install twenty remote add --api-key ${{ env.TWENTY_API_KEY }} --api-url ${{ env.TWENTY_API_URL }}
+          npx --no-install twenty remote:add --api-key ${{ env.TWENTY_API_KEY }} --api-url ${{ env.TWENTY_API_URL }}
 
       - name: Run scaffolded app integration test (deploys, installs, and verifies the app)
         run: |

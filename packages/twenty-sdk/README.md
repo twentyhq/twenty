@@ -54,11 +54,11 @@ Run `yarn twenty help` to see all available commands.
 
 ## Configuration
 
-The CLI stores credentials per remote in `~/.twenty/config.json`. Run `yarn twenty remote add` to configure a remote, or `yarn twenty remote list` to see existing ones.
+The CLI stores credentials per remote in `~/.twenty/config.json`. Run `yarn twenty remote:add` to configure a remote, or `yarn twenty remote:list` to see existing ones.
 
 ## Troubleshooting
 
-- Auth errors: run `yarn twenty remote add` to re-authenticate.
+- Auth errors: run `yarn twenty remote:add` to re-authenticate.
 - Typings out of date: restart `yarn twenty dev` to refresh the client and types.
 - Not seeing changes in dev: make sure dev mode is running (`yarn twenty dev`).
 
