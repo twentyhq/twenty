@@ -220,7 +220,7 @@ const MainPage = () => {
         You can now add content to your app.
       </span>
       <a
-        href="/settings/applications"
+        href="/settings/applications#installed"
         style={{
           display: 'inline-flex',
           alignItems: 'center',
