@@ -442,14 +442,40 @@ export class CreateAppCommand {
     return matching?.id ?? null;
   }
 
+  private sanitizeBrowserUrl(url: string): string | null {
+    if (/[^\u0020-\u007E]/.test(url)) {
+      return null;
+    }
+
+    try {
+      const parsed = new URL(url);
+
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        return null;
+      }
+
+      return parsed.toString();
+    } catch {
+      return null;
+    }
+  }
+
   private openInBrowser(url: string): void {
+    const safeUrl = this.sanitizeBrowserUrl(url);
+
+    if (!safeUrl) {
+      return;
+    }
+
     const isWindows = process.platform === 'win32';
     const command = isWindows
-      ? 'cmd'
+      ? 'rundll32'
       : process.platform === 'darwin'
         ? 'open'
         : 'xdg-open';
-    const args = isWindows ? ['/c', 'start', url] : [url];
+    const args = isWindows
+      ? ['url.dll,FileProtocolHandler', safeUrl]
+      : [safeUrl];
 
     const child = spawn(command, args, {
       stdio: 'ignore',
