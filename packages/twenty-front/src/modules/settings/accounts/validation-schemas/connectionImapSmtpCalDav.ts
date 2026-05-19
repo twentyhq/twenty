@@ -2,6 +2,11 @@ import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { z } from 'zod';
 import { type ConnectionParametersInput } from '~/generated-metadata/graphql';
 
+import {
+  isProtocolConfigured,
+  isProtocolConfiguredForUpdate,
+} from '@/settings/accounts/utils/is-protocol-configured';
+
 const connectionParameters = z
   .object({
     host: z.string().default(''),
@@ -65,14 +70,3 @@ export const connectionImapSmtpCalDavUpdate = z
     },
   );
 
-export const isProtocolConfigured = (
-  config: ConnectionParametersInput,
-): boolean => {
-  return Boolean(config?.host?.trim() && config?.password?.trim());
-};
-
-export const isProtocolConfiguredForUpdate = (
-  config: ConnectionParametersInput,
-): boolean => {
-  return Boolean(config?.host?.trim());
-};

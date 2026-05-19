@@ -15,10 +15,12 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { type ImapSmtpCaldavAccountInput } from '@/accounts/types/ImapSmtpCaldavAccountInput';
 import {
-  connectionImapSmtpCalDav,
-  connectionImapSmtpCalDavUpdate,
   isProtocolConfigured,
   isProtocolConfiguredForUpdate,
+} from '@/settings/accounts/utils/is-protocol-configured';
+import {
+  connectionImapSmtpCalDav,
+  connectionImapSmtpCalDavUpdate,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isNonEmptyString } from '@sniptt/guards';
