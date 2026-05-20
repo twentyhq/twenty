@@ -550,6 +550,8 @@ export class AgentChatService {
       [
         'totalInputTokens',
         'totalOutputTokens',
+        'totalCacheReadTokens',
+        'totalCacheCreationTokens',
         'totalInputCredits',
         'totalOutputCredits',
         'conversationSize',
