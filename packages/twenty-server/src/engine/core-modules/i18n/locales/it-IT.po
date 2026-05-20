@@ -7917,11 +7917,6 @@ msgstr "L'ID utente è richiesto."
 msgid "User is not a member of the workspace."
 msgstr "L'utente non fa parte dello spazio di lavoro."
 
-#. js-lingui-id: B43Kks
-#: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "User is not part of the workspace"
-msgstr "L'utente non fa parte dello spazio di lavoro"
-
 #. js-lingui-id: siJgSI
 #: src/engine/core-modules/user/user.exception.ts
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -8709,6 +8704,7 @@ msgid "Workspace ID and role mismatch."
 msgstr "ID dello spazio di lavoro e ruolo non corrispondono."
 
 #. js-lingui-id: rklt6M
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
 msgstr "Lo spazio di lavoro non è pronto ad accogliere nuovi membri"
