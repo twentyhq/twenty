@@ -496,11 +496,9 @@ export class StreamAgentChatJob {
       conversationSize: lastStepConversationSize,
     });
 
-    await this.agentChatService.notifyThreadUsageUpdated(
-      {
-        threadId,
-        userWorkspaceId,
-      },
-    );
+    await this.agentChatService.notifyThreadUsageUpdated({
+      threadId,
+      userWorkspaceId,
+    });
   }
 }
