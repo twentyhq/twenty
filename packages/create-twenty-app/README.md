@@ -35,7 +35,7 @@ The scaffolder will:
 | `--name <name>`                    | Set the app name                                                      |
 | `--display-name <displayName>`     | Set the display name                                                  |
 | `--description <description>`      | Set the description                                                   |
-| `--workspace-url <url>`            | Twenty workspace URL (default: `http://localhost:2020`)               |
+| `--url <url>`                      | Twenty workspace URL (default: `http://localhost:2020`)               |
 | `--authentication-method <method>` | `oauth` or `apiKey` (default: `apiKey` for local, `oauth` for remote) |
 
 ## Documentation
@@ -48,8 +48,8 @@ Full documentation is available at **[docs.twenty.com/developers/extend/apps](ht
 
 ## Troubleshooting
 
-- Server not starting: check Docker is running (`docker info`), then try `yarn twenty server logs`.
-- Auth not working: run `yarn twenty remote add --local` to re-authenticate.
+- Server not starting: check Docker is running (`docker info`), then try `yarn twenty docker:logs`.
+- Auth not working: run `yarn twenty remote:add --local` to re-authenticate.
 - Types not generated: ensure `yarn twenty dev` is running — it auto-generates the typed client.
 
 ## Contributing

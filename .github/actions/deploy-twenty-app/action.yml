@@ -50,4 +50,4 @@ runs:
     - name: Deploy
       shell: bash
       working-directory: ${{ inputs.app-path }}
-      run: yarn twenty deploy --remote target
+      run: yarn twenty app:publish --private --remote target
