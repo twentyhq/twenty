@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledDescription = styled.p`
-  color: ${themeCssVariables.font.color.extraLight}
+  color: ${themeCssVariables.font.color.extraLight};
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
