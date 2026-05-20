@@ -14,7 +14,7 @@ import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain
 
 import { AWS_SES_EVENT_BUS_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-event-bus-name.constant';
 import { AWS_SES_MAIL_FROM_SUBDOMAIN } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-mail-from-subdomain.constant';
-import { AWS_SES_TRANSACTIONAL_TOPIC_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-transactional-topic-name.constant';
+import { AWS_SES_MARKETING_TOPIC_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-marketing-topic-name.constant';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 
 type RegisterDomainInput = {
@@ -122,8 +122,8 @@ export class AwsSesRegisterDomainService {
         ContactListName: input.contactListName,
         Topics: [
           {
-            TopicName: AWS_SES_TRANSACTIONAL_TOPIC_NAME,
-            DisplayName: 'Transactional',
+            TopicName: AWS_SES_MARKETING_TOPIC_NAME,
+            DisplayName: 'Marketing',
             DefaultSubscriptionStatus: 'OPT_IN',
           },
         ],

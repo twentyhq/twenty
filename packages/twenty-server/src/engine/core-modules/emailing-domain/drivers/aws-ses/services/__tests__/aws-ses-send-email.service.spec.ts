@@ -61,7 +61,7 @@ describe('AwsSesSendEmailService', () => {
       TenantName: 'twenty-workspace-ws1',
       ListManagementOptions: {
         ContactListName: 'twenty-workspace-ws1',
-        TopicName: 'transactional',
+        TopicName: 'marketing',
       },
     });
     expect(command.input.EmailTags).toEqual(
