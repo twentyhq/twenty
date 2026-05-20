@@ -8,7 +8,7 @@ export type WebsiteRouteId =
   | 'product'
   | 'pricing'
   | 'partners'
-  | 'partnersMarketplace'
+  | 'partnersList'
   | 'releases'
   | 'customers'
   | 'articles'

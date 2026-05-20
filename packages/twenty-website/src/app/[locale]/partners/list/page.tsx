@@ -16,7 +16,7 @@ import { getPartners } from '@/lib/partners-api';
 import { MarketplaceHeader } from './components';
 import { MarketplaceClient } from './MarketplaceClient';
 
-const baseGenerateMetadata = buildRouteMetadata('partnersMarketplace');
+const baseGenerateMetadata = buildRouteMetadata('partnersList');
 
 export const generateMetadata = async (
   ...args: Parameters<typeof baseGenerateMetadata>
@@ -26,7 +26,7 @@ export const generateMetadata = async (
     ...base,
     alternates: {
       ...base.alternates,
-      canonical: '/partners-marketplace',
+      canonical: '/partners/list',
     },
   };
 };

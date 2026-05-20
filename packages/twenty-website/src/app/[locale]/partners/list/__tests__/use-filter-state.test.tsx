@@ -8,7 +8,7 @@ const mockReplace = jest.fn();
 jest.mock('next/navigation', () => ({
   useSearchParams: () => mockSearchParams,
   useRouter: () => ({ replace: mockReplace }),
-  usePathname: () => '/en/partners-marketplace',
+  usePathname: () => '/en/partners/list',
 }));
 
 type FilterStateResult = ReturnType<typeof useFilterState>;
@@ -80,7 +80,7 @@ describe('useFilterState', () => {
     mockSearchParams = new URLSearchParams('regions=EUROPE&languages=FRENCH');
     const state = getState();
     state.clearAll();
-    expect(mockReplace).toHaveBeenCalledWith('/en/partners-marketplace', {
+    expect(mockReplace).toHaveBeenCalledWith('/en/partners/list', {
       scroll: false,
     });
   });
