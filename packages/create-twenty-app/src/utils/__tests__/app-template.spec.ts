@@ -175,7 +175,10 @@ describe('copyBaseApplicationProject', () => {
   });
 
   it('should rename yarnrc.yml to .yarnrc.yml in the scaffolded project', async () => {
-    await fs.writeFile(join(testAppDirectory, YARNRC_PATH), 'nodeLinker: node-modules');
+    await fs.writeFile(
+      join(testAppDirectory, YARNRC_PATH),
+      'nodeLinker: node-modules',
+    );
 
     await copyBaseApplicationProject({
       appName: 'my-test-app',
@@ -184,8 +187,12 @@ describe('copyBaseApplicationProject', () => {
       appDirectory: testAppDirectory,
     });
 
-    expect(await fs.pathExists(join(testAppDirectory, YARNRC_PATH))).toBe(false);
-    expect(await fs.pathExists(join(testAppDirectory, '.yarnrc.yml'))).toBe(true);
+    expect(await fs.pathExists(join(testAppDirectory, YARNRC_PATH))).toBe(
+      false,
+    );
+    expect(await fs.pathExists(join(testAppDirectory, '.yarnrc.yml'))).toBe(
+      true,
+    );
   });
 
   it('should handle empty description', async () => {
