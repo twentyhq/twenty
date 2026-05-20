@@ -14,6 +14,11 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
+const StyledDescription = styled.p`
+  color: ${themeCssVariables.font.color.extraLight}
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
+
 export const SettingsApplicationDetailEnvironmentVariablesTable = ({
   envVariables,
   onUpdate,
@@ -38,24 +43,29 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
       <H2Title title={t`Configuration`} description={description} />
       <StyledContainer>
         {editedEnvVariables.map((editedEnvVariable) => (
-          <TextInput
-            key={editedEnvVariable.key}
-            label={editedEnvVariable.key}
-            value={editedEnvVariable.value}
-            onChange={(newValue) => {
-              setEditedEnvVariables((prevState) =>
-                prevState.map((val) => {
-                  if (val.key === editedEnvVariable.key) {
-                    return { ...val, value: newValue };
-                  }
-                  return val;
-                }),
-              );
-              onUpdateDebounced({ ...editedEnvVariable, value: newValue });
-            }}
-            placeholder={t`Value`}
-            fullWidth
-          />
+          <div>
+            <TextInput
+              key={editedEnvVariable.key}
+              label={editedEnvVariable.key}
+              value={editedEnvVariable.value}
+              onChange={(newValue) => {
+                setEditedEnvVariables((prevState) =>
+                  prevState.map((val) => {
+                    if (val.key === editedEnvVariable.key) {
+                      return { ...val, value: newValue };
+                    }
+                    return val;
+                  }),
+                );
+                onUpdateDebounced({ ...editedEnvVariable, value: newValue });
+              }}
+              placeholder={t`Value`}
+              fullWidth
+            />
+            <StyledDescription>
+              {editedEnvVariable.description}
+            </StyledDescription>
+          </div>
         ))}
       </StyledContainer>
     </Section>
