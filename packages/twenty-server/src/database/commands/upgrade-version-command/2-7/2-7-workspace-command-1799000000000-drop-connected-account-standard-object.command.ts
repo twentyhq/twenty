@@ -72,11 +72,12 @@ export class DropConnectedAccountStandardObjectCommand extends ActiveOrSuspended
           universalIdentifier,
         }),
       )
-      .filter(
-        (field): field is FlatFieldMetadata => field !== undefined,
-      );
+      .filter((field): field is FlatFieldMetadata => field !== undefined);
 
-    if (!connectedAccountObjectMetadata && relationFieldsToDelete.length === 0) {
+    if (
+      !connectedAccountObjectMetadata &&
+      relationFieldsToDelete.length === 0
+    ) {
       this.logger.log(
         `connectedAccount standard object already absent for workspace ${workspaceId}`,
       );
