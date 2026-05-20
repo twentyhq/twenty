@@ -32,6 +32,9 @@ export type AppDevOnceResult = {
   applicationUniversalIdentifier: string;
 };
 
+const APP_DEV_UPLOAD_BATCH_SIZE = 25;
+const APP_DEV_UPLOAD_BATCH_DELAY_MS = 30_000;
+
 const innerAppDevOnce = async (
   options: AppDevOnceOptions,
 ): Promise<CommandResult<AppDevOnceResult>> => {
@@ -158,27 +161,46 @@ const innerAppDevOnce = async (
   });
 
   const uploadErrors: string[] = [];
+  const builtFileInfos = Array.from(buildResult.builtFileInfos.values());
 
-  const uploadPromises = Array.from(buildResult.builtFileInfos.values()).map(
-    async (builtFileInfo) => {
-      if (verbose) {
-        onProgress?.(`Uploading ${builtFileInfo.builtPath}`);
-      }
+  for (
+    let startIndex = 0;
+    startIndex < builtFileInfos.length;
+    startIndex += APP_DEV_UPLOAD_BATCH_SIZE
+  ) {
+    const uploadBatch = builtFileInfos.slice(
+      startIndex,
+      startIndex + APP_DEV_UPLOAD_BATCH_SIZE,
+    );
 
-      const result = await fileUploader.uploadFile({
-        builtPath: builtFileInfo.builtPath,
-        fileFolder: builtFileInfo.fileFolder,
-      });
+    await Promise.all(
+      uploadBatch.map(async (builtFileInfo) => {
+        if (verbose) {
+          onProgress?.(`Uploading ${builtFileInfo.builtPath}`);
+        }
 
-      if (!result.success) {
-        uploadErrors.push(
-          `Failed to upload ${builtFileInfo.builtPath}: ${serializeError(result.error)}`,
-        );
-      }
-    },
-  );
+        const result = await fileUploader.uploadFile({
+          builtPath: builtFileInfo.builtPath,
+          fileFolder: builtFileInfo.fileFolder,
+        });
 
-  await Promise.all(uploadPromises);
+        if (!result.success) {
+          uploadErrors.push(
+            `Failed to upload ${builtFileInfo.builtPath}: ${serializeError(result.error)}`,
+          );
+        }
+      }),
+    );
+
+    const hasMoreBatches =
+      startIndex + APP_DEV_UPLOAD_BATCH_SIZE < builtFileInfos.length;
+
+    if (hasMoreBatches) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, APP_DEV_UPLOAD_BATCH_DELAY_MS),
+      );
+    }
+  }
 
   if (uploadErrors.length > 0) {
     return {
