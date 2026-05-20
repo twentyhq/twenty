@@ -108,6 +108,22 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
     const flatPageLayoutWidgetMaps = createEmptyFlatEntityMaps();
 
     for (const pageLayoutWidgetEntity of existingPageLayoutWidgets) {
+      const isMissingRequiredRelation =
+        !applicationIdToUniversalIdentifierMap.has(
+          pageLayoutWidgetEntity.applicationId,
+        ) ||
+        !pageLayoutTabIdToUniversalIdentifierMap.has(
+          pageLayoutWidgetEntity.pageLayoutTabId,
+        ) ||
+        (pageLayoutWidgetEntity.objectMetadataId !== null &&
+          !objectMetadataIdToUniversalIdentifierMap.has(
+            pageLayoutWidgetEntity.objectMetadataId,
+          ));
+
+      if (isMissingRequiredRelation) {
+        continue;
+      }
+
       const flatPageLayoutWidget =
         fromPageLayoutWidgetEntityToFlatPageLayoutWidget({
           entity: pageLayoutWidgetEntity,
