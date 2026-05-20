@@ -45,7 +45,7 @@ export default definePostInstallLogicFunction({
 你也可以随时使用 CLI 手动执行安装后函数：
 
 ```bash filename="Terminal"
-yarn twenty exec --postInstall
+yarn twenty dev:function:exec --postInstall
 ```
 
 关键点：
@@ -60,7 +60,7 @@ yarn twenty exec --postInstall
 * 每个应用仅允许一个安装后函数。 如果检测到多个，清单构建将报错。
 * 构建期间，函数的 `universalIdentifier`、`shouldRunOnVersionUpgrade` 和 `shouldRunSynchronously` 会自动附加到应用清单的 `postInstallLogicFunction` 字段下——你无需在 [`defineApplication()`](/l/zh/developers/extend/apps/config/application) 中引用它们。
 * 默认超时时间设置为 300 秒（5 分钟），以便支持更长的设置任务，如数据填充。
-* **开发模式下不执行**：当应用在本地注册（通过 `yarn twenty dev`）时，服务器会完全跳过安装流程，并通过 CLI 监视器直接同步文件——因此无论 `shouldRunSynchronously` 如何，安装后在开发模式下都不会运行。 使用 `yarn twenty exec --postInstall` 在运行中的工作区上手动触发它。
+* **开发模式下不执行**：当应用在本地注册（通过 `yarn twenty dev`）时，服务器会完全跳过安装流程，并通过 CLI 监视器直接同步文件——因此无论 `shouldRunSynchronously` 如何，安装后在开发模式下都不会运行。 使用 `yarn twenty dev:function:exec --postInstall` 在运行中的工作区上手动触发它。
 
 </Accordion>
 <Accordion title="definePreInstallLogicFunction" description="在应用工作区元数据迁移之前运行">
@@ -87,7 +87,7 @@ export default definePreInstallLogicFunction({
 你也可以随时使用 CLI 手动执行安装前函数：
 
 ```bash filename="Terminal"
-yarn twenty exec --preInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 关键点：
@@ -96,7 +96,7 @@ yarn twenty exec --preInstall
 * **钩子何时运行**：位于工作区元数据迁移（`synchronizeFromManifest`）之前。 在执行之前，服务器会运行一次纯增量的“精简同步”，将**新**版本的安装前函数注册到工作区元数据中——不会触及其他任何内容——然后再执行它。 由于此次同步仅为增量操作，当你的处理程序运行时，上一版本的对象、字段和数据仍完好无损：你可以安全地读取并备份迁移前的状态。
 * **执行模型**：安装前以**同步**方式执行，并且**会阻塞安装**。 如果处理程序抛出异常，安装会在任何架构更改应用之前被中止——工作区将保持在上一版本且处于一致状态。 这是有意为之：安装前是你拒绝高风险升级的最后机会。
 * 与安装后相同，每个应用仅允许一个安装前函数。 在构建期间，它会自动附加到应用清单的 `preInstallLogicFunction` 下。
-* **开发模式下不执行**：与安装后相同——对于本地注册的应用将完全跳过安装流程，因此在 `yarn twenty dev` 下不会运行安装前。 使用 `yarn twenty exec --preInstall` 手动触发它。
+* **开发模式下不执行**：与安装后相同——对于本地注册的应用将完全跳过安装流程，因此在 `yarn twenty dev` 下不会运行安装前。 使用 `yarn twenty dev:function:exec --preInstall` 手动触发它。
 
 </Accordion>
 <Accordion title="安装前 vs 安装后：何时使用哪一个" description="选择合适的安装钩子">

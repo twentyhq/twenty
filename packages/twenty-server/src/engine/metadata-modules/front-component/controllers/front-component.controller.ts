@@ -27,11 +27,13 @@ import {
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
 @Controller('rest/front-components')
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(
+  PermissionsRestApiExceptionFilter,
   FrontComponentRestApiExceptionFilter,
   FlatEntityMapsRestApiExceptionFilter,
   WorkspaceMigrationRunnerRestApiExceptionFilter,

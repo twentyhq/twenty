@@ -8,7 +8,7 @@ import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 export type RemoteConfig = {
   apiUrl: string;
   apiKey?: string;
-  // CLI OAuth app credentials (from `yarn twenty remote add`)
+  // CLI OAuth app credentials (from `yarn twenty remote:add`)
   twentyCLIRegistrationId?: string;
   twentyCLIRegistrationClientId?: string;
   twentyCLIAccessToken?: string;

@@ -43,7 +43,7 @@ Generatorul de schelet vă propune să pornească unul pentru dvs.:
 > **Doriți să configurați o instanță Twenty locală?**
 
 * **Yes (recomandat)** — descarcă imaginea Docker `twentycrm/twenty-app-dev` și o pornește pe portul `2020`. Asigurați-vă mai întâi că Docker rulează.
-* **No** — alegeți această opțiune dacă aveți deja un server Twenty la care doriți să vă conectați. Îl puteți conecta ulterior cu `yarn twenty remote add`.
+* **No** — alegeți această opțiune dacă aveți deja un server Twenty la care doriți să vă conectați. Îl puteți conecta ulterior cu `yarn twenty remote:add`.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Porniți instanța locală?" />
@@ -73,7 +73,7 @@ Terminalul va confirma că totul este configurat.
 **După această fază:** aveți un server Twenty care rulează la [http://localhost:2020](http://localhost:2020), iar CLI-ul dvs. este autorizat să sincronizeze cu acesta.
 
 <Note>
-Dacă Docker nu este instalat sau nu rulează, generatorul de schelet vă va indica comanda corectă de pornire pentru sistemul dvs. de operare. După ce Docker rulează, puteți continua cu `yarn twenty server start` — nu este nevoie să recreați scheletul.
+Dacă Docker nu este instalat sau nu rulează, generatorul de schelet vă va indica comanda corectă de pornire pentru sistemul dvs. de operare. După ce Docker rulează, puteți continua cu `yarn twenty docker:start` — nu este nevoie să recreați scheletul.
 </Note>
 
 ---
@@ -137,20 +137,6 @@ Ambele moduri necesită o conexiune la distanță autentificată.
 | `--once`                              | Construiește și sincronizează o singură dată, apoi iese.                                         |
 | `--debounceMs \<ms>` | Setează întârzierea de debounce pentru modificarea fișierului în milisecunde (implicit: `2000`). |
 | `--verbose` / `--debug`               | Afișează jurnale detaliate de construire, cereri de sincronizare și urme ale erorilor.           |
-
----
-
-## Pornind de la un exemplu
-
-Folosiți `--example` pentru a începe cu un proiect mai complet (obiecte personalizate, câmpuri, funcții logice, componente front-end):
-
-```bash filename="Terminal"
-npx create-twenty-app@latest my-twenty-app --example postcard
-```
-
-Exemplele se află în [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). Puteți, de asemenea, să creați scheletul entităților individuale într-un proiect existent cu `yarn twenty add` — vedeți [Crearea scheletului](/l/ro/developers/extend/apps/getting-started/scaffolding).
-
----
 
 ## Ce puteți construi
 

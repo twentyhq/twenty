@@ -114,6 +114,7 @@ export class MessagingProcessFolderActionsService {
           }
         },
         authContext,
+        { lite: true },
       );
     }
   }

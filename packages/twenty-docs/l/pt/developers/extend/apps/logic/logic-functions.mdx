@@ -13,8 +13,8 @@ Cada arquivo de função usa `defineLogicFunction()` para exportar uma configura
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
-import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -61,27 +61,27 @@ Tipos de gatilho disponíveis:
 Você também pode executar manualmente uma função usando a CLI:
 
 ```bash filename="Terminal"
-yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
 ```
 
 ```bash filename="Terminal"
-yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 Você pode acompanhar os logs com:
 
 ```bash filename="Terminal"
-yarn twenty logs
+yarn twenty dev:function:logs
 ```
 </Note>
 
 #### Payload de gatilho de rota
 
 Quando um gatilho de rota invoca sua função de lógica, ela recebe um objeto `RoutePayload` que segue o [formato HTTP API v2 da AWS](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
-Importe o tipo `RoutePayload` de `twenty-sdk`:
+Importe o tipo `RoutePayload` de `twenty-sdk/logic-function`:
 
 ```ts
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
 
 const handler = async (event: RoutePayload) => {
   const { headers, queryStringParameters, pathParameters, body } = event;
@@ -139,6 +139,115 @@ const handler = async (event: RoutePayload) => {
 <Note>
 Os nomes dos cabeçalhos são normalizados para minúsculas. Acesse-os usando chaves em minúsculas (por exemplo, `event.headers['content-type']`).
 </Note>
+
+#### Payload do gatilho de evento do banco de dados
+
+Quando um gatilho de evento do banco de dados invoca sua função lógica, ela recebe um `DatabaseEventPayload` por registro alterado. O payload combina metadados sobre o workspace e o objeto de origem com o evento em nível de registro.
+
+```ts
+import type {
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+} from 'twenty-sdk/logic-function';
+
+type Person = {
+  id: string;
+  emails?: { primaryEmail?: string };
+};
+```
+
+O payload inclui:
+
+| Propriedade                                      | Descrição                                                                                                 |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `name`                                           | Nome do evento, como `person.updated`.                                                                    |
+| `workspaceId`                                    | Workspace onde o evento aconteceu.                                                                        |
+| `objectMetadata`                                 | Metadados do objeto que foi alterado.                                                                     |
+| `recordId`                                       | ID do registro alterado.                                                                                  |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | Campos do autor quando o evento foi causado por um usuário do workspace.                                  |
+| `properties`                                     | Dados do registro para o evento, com `before`, `after`, `diff` e `updatedFields`, dependendo da operação. |
+
+| Evento             | Dados do registro                                                                                              |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `person.created`   | `event.properties.after`                                                                                       |
+| `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
+| `person.destroyed` | `event.properties.before`                                                                                      |
+
+Para exclusões lógicas, `.deleted` segue o formato de atualização porque o campo `deletedAt` do registro é alterado.
+Para exclusões permanentes, use `.destroyed`.
+
+<Note>
+`databaseEventTriggerSettings.updatedFields` filtra quais eventos de atualização disparam a função.
+`event.properties.updatedFields` informa quais campos realmente foram alterados no evento atual.
+</Note>
+
+Exemplo de evento de criação:
+
+```ts
+type PersonCreatedEvent = DatabaseEventPayload<
+  ObjectRecordCreateEvent<Person>
+>;
+
+const handler = async (event: PersonCreatedEvent) => {
+  const person = event.properties.after;
+
+  return {
+    personId: event.recordId,
+    email: person.emails?.primaryEmail,
+  };
+};
+```
+
+Exemplo de evento de atualização:
+
+```ts
+type PersonUpdatedEvent = DatabaseEventPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (event: PersonUpdatedEvent) => {
+  const { before, after, diff, updatedFields } = event.properties;
+
+  return {
+    personId: event.recordId,
+    updatedFields,
+    previousEmail: before.emails?.primaryEmail,
+    currentEmail: after.emails?.primaryEmail,
+    emailDiff: diff.emails,
+  };
+};
+```
+
+Disparar somente em atualizações de email:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    updatedFields: ['emails'],
+  },
+});
+```
+
+Exemplo de evento de destruição:
+
+```ts
+type PersonDestroyedEvent = DatabaseEventPayload<
+  ObjectRecordDestroyEvent<Person>
+>;
+
+const handler = async (event: PersonDestroyedEvent) => {
+  const personBeforeDestroy = event.properties.before;
+
+  return {
+    personId: event.recordId,
+    email: personBeforeDestroy.emails?.primaryEmail,
+  };
+};
+```
 
 #### Expor uma função como ferramenta de IA ou como ação de fluxo de trabalho
 
@@ -231,7 +340,7 @@ O pacote `twenty-client-sdk` fornece dois clientes GraphQL tipados para interagi
 <AccordionGroup>
 <Accordion title="CoreApiClient" description="Consultar e modificar dados do espaço de trabalho (registros, objetos)">
 
-`CoreApiClient` é o cliente principal para consultar e mutar dados do espaço de trabalho. Ele é **gerado a partir do schema do seu espaço de trabalho** durante `yarn twenty dev` ou `yarn twenty build`, então é totalmente tipado para corresponder aos seus objetos e campos.
+`CoreApiClient` é o cliente principal para consultar e mutar dados do espaço de trabalho. Ele é **gerado a partir do schema do seu espaço de trabalho** durante `yarn twenty dev` ou `yarn twenty dev:build`, então é totalmente tipado para corresponder aos seus objetos e campos.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -271,7 +380,7 @@ const { createCompany } = await client.mutation({
 O cliente usa uma sintaxe de selection-set: passe `true` para incluir um campo, use `__args` para argumentos e aninhe objetos para relações. Você tem preenchimento automático e verificação de tipos completos com base no schema do seu espaço de trabalho.
 
 <Note>
-**CoreApiClient é gerado em tempo de dev/build.** Se você usá-lo sem executar primeiro `yarn twenty dev` ou `yarn twenty build`, ele lançará um erro. A geração ocorre automaticamente — a CLI analisa o schema GraphQL do seu espaço de trabalho e gera um cliente tipado usando `@genql/cli`.
+**CoreApiClient é gerado em tempo de dev/build.** Se você usá-lo sem executar primeiro `yarn twenty dev` ou `yarn twenty dev:build`, ele lançará um erro. A geração ocorre automaticamente — a CLI analisa o schema GraphQL do seu espaço de trabalho e gera um cliente tipado usando `@genql/cli`.
 </Note>
 
 #### Usando CoreSchema para anotações de tipo

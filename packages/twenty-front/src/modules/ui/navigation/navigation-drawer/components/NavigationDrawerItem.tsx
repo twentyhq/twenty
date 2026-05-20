@@ -24,6 +24,7 @@ import {
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/display';
+import { MenuItemIconBoxContainer } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -140,7 +141,7 @@ const StyledItem = styled.button<StyledItemProps>`
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    font-size: ${themeCssVariables.font.size.lg};
+    height: ${themeCssVariables.spacing[8]};
   }
 `;
 
@@ -161,7 +162,7 @@ const StyledLabelParent = styled.div`
 `;
 
 const StyledItemLabel = styled.span`
-  font-weight: ${themeCssVariables.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
 const StyledItemSecondaryLabel = styled.span`
@@ -193,27 +194,13 @@ const StyledSpacer = styled.span`
   flex-grow: 1;
 `;
 
-const StyledIcon = styled.div<{
-  $backgroundColor?: string;
-  $borderColor?: string;
-}>`
+const StyledIcon = styled.div`
   align-items: center;
-  background-color: ${({ $backgroundColor }) =>
-    $backgroundColor || 'transparent'};
-  border: ${({ $backgroundColor, $borderColor }) =>
-    $backgroundColor && $borderColor ? `1px solid ${$borderColor}` : 'none'};
-  border-radius: ${({ $backgroundColor }) => ($backgroundColor ? '4px' : '0')};
-  box-sizing: ${({ $backgroundColor }) =>
-    $backgroundColor ? 'border-box' : 'content-box'};
   display: flex;
   flex-grow: 0;
   flex-shrink: 0;
-  height: ${({ $backgroundColor }) =>
-    $backgroundColor ? themeCssVariables.spacing[4] : 'auto'};
   justify-content: center;
   margin-right: ${themeCssVariables.spacing[2]};
-  width: ${({ $backgroundColor }) =>
-    $backgroundColor ? themeCssVariables.spacing[4] : 'auto'};
 `;
 
 const StyledRightOptionsContainer = styled.div`
@@ -362,18 +349,20 @@ export const NavigationDrawerItem = ({
               </StyledIcon>
             ) : (
               <StyledIcon>
-                <Icon
-                  style={{
-                    minWidth: theme.icon.size.md,
-                  }}
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.md}
-                  color={
-                    showBreadcrumb && !isExpanded
-                      ? theme.font.color.light
-                      : 'currentColor'
-                  }
-                />
+                <MenuItemIconBoxContainer>
+                  <Icon
+                    style={{
+                      minWidth: theme.icon.size.md,
+                    }}
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.md}
+                    color={
+                      showBreadcrumb && !isExpanded
+                        ? theme.font.color.light
+                        : 'currentColor'
+                    }
+                  />
+                </MenuItemIconBoxContainer>
               </StyledIcon>
             ))}
 

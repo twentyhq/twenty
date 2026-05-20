@@ -93,7 +93,6 @@ export class ChartDataQueryService {
   }: ExecuteGroupByQueryParams): Promise<GroupByRawResult[]> {
     const gqlOperationFilter = convertChartFilterToGqlOperationFilter({
       filter,
-      flatObjectMetadata,
       flatFieldMetadataMaps,
       userTimezone,
     });
