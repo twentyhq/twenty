@@ -4,20 +4,24 @@ permissions:
   contents: read
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened, closed, labeled]
     paths:
       - packages/twenty-website/**
-      - packages/twenty-shared/**
       - .github/workflows/website-preview-dispatch.yaml
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # Keyed on PR number so independent PRs don't cancel each other. `github.ref`
+  # would resolve to the base branch under pull_request and collide.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   trigger-build:
+    # Same fork PRs from outside the org don't have `secrets.*` so the dispatch
+    # call would fail anyway — skip explicitly to avoid noise.
     if: |
+      github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.action != 'closed' && (
         (github.event.action == 'labeled' && github.event.label.name == 'preview-website') ||
         (
@@ -45,7 +49,13 @@ jobs:
             -f "client_payload[pr_head_ref]=$PR_HEAD_REF"
 
   trigger-cleanup:
-    if: github.event.action == 'closed'
+    # Covers both merge and close-without-merge — pull_request `closed` fires
+    # for both. PRs left open forever are covered by OpenNext's
+    # `maxVersionAgeDays: 14` + `maxNumberOfVersions: 50` auto-pruning in
+    # open-next.config.ts, so nothing leaks even if cleanup never runs.
+    if: |
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.action == 'closed'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
