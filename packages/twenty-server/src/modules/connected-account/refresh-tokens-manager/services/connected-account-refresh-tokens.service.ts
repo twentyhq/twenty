@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -21,7 +19,7 @@ import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-acc
 
 export type ConnectedAccountTokens = {
   accessToken: string;
-  refreshToken: string | null;
+  refreshToken: string;
 };
 
 const CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;
@@ -51,6 +49,13 @@ export class ConnectedAccountRefreshTokensService {
       accessToken: encryptedAccessToken,
     } = connectedAccount;
 
+    if (!isDefined(encryptedRefreshToken)) {
+      throw new ConnectedAccountRefreshAccessTokenException(
+        `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+        ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
+      );
+    }
+
     const isAccessTokenValid =
       await this.isAccessTokenStillValid(connectedAccount);
 
@@ -70,20 +75,11 @@ export class ConnectedAccountRefreshTokensService {
           ciphertext: encryptedAccessToken,
           workspaceId,
         }),
-        refreshToken: isDefined(encryptedRefreshToken)
-          ? this.connectedAccountTokenEncryptionService.decrypt({
-              ciphertext: encryptedRefreshToken,
-              workspaceId,
-            })
-          : null,
+        refreshToken: this.connectedAccountTokenEncryptionService.decrypt({
+          ciphertext: encryptedRefreshToken,
+          workspaceId,
+        }),
       };
-    }
-
-    if (!isNonEmptyString(encryptedRefreshToken)) {
-      throw new ConnectedAccountRefreshAccessTokenException(
-        `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
-        ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
-      );
     }
 
     this.logger.debug(
@@ -132,7 +128,8 @@ export class ConnectedAccountRefreshTokensService {
   ): Promise<boolean> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
-      case ConnectedAccountProvider.MICROSOFT: {
+      case ConnectedAccountProvider.MICROSOFT:
+      case ConnectedAccountProvider.APP: {
         if (!connectedAccount.lastCredentialsRefreshedAt) {
           return false;
         }
@@ -141,29 +138,6 @@ export class ConnectedAccountRefreshTokensService {
 
         const tokenExpirationTime =
           CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION - BUFFER_TIME;
-
-        return (
-          connectedAccount.lastCredentialsRefreshedAt >
-          new Date(Date.now() - tokenExpirationTime)
-        );
-      }
-      case ConnectedAccountProvider.APP: {
-        if (!isDefined(connectedAccount.accessToken)) {
-          return false;
-        }
-
-        if (!isNonEmptyString(connectedAccount.refreshToken)) {
-          return true;
-        }
-
-        if (!connectedAccount.lastCredentialsRefreshedAt) {
-          return false;
-        }
-
-        const bufferTime = 5 * 60 * 1000;
-
-        const tokenExpirationTime =
-          CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION - bufferTime;
 
         return (
           connectedAccount.lastCredentialsRefreshedAt >

@@ -24,7 +24,6 @@ describe('ConnectedAccountRefreshTokensService', () => {
   let service: ConnectedAccountRefreshTokensService;
   let googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService;
   let microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService;
-  let appOAuthRefreshAccessTokenService: AppOAuthRefreshAccessTokenService;
   let connectedAccountRepository: { update: jest.Mock };
   let connectedAccountTokenEncryptionService: {
     decrypt: jest.Mock;
@@ -139,10 +138,6 @@ describe('ConnectedAccountRefreshTokensService', () => {
     microsoftAPIRefreshAccessTokenService =
       module.get<MicrosoftAPIRefreshAccessTokenService>(
         MicrosoftAPIRefreshAccessTokenService,
-      );
-    appOAuthRefreshAccessTokenService =
-      module.get<AppOAuthRefreshAccessTokenService>(
-        AppOAuthRefreshAccessTokenService,
       );
     connectedAccountRepository = module.get(
       getRepositoryToken(ConnectedAccountEntity),
@@ -320,36 +315,6 @@ describe('ConnectedAccountRefreshTokensService', () => {
       );
     });
 
-    it('should reuse APP access token when provider issued no refresh_token (e.g. Slack bot)', async () => {
-      const connectedAccount = {
-        id: mockConnectedAccountId,
-        provider: ConnectedAccountProvider.APP,
-        accessToken: mockEncryptedAccessToken,
-        refreshToken: null,
-        lastCredentialsRefreshedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      } as unknown as ConnectedAccountEntity;
-
-      const result = await service.refreshAndSaveTokens(
-        connectedAccount,
-        mockWorkspaceId,
-      );
-
-      expect(result).toEqual({
-        accessToken: mockAccessTokenPlaintext,
-        refreshToken: null,
-      });
-      expect(
-        connectedAccountTokenEncryptionService.decrypt,
-      ).toHaveBeenCalledWith({
-        ciphertext: mockEncryptedAccessToken,
-        workspaceId: mockWorkspaceId,
-      });
-      expect(
-        appOAuthRefreshAccessTokenService.refreshTokens,
-      ).not.toHaveBeenCalled();
-      expect(connectedAccountRepository.update).not.toHaveBeenCalled();
-    });
-
     it('should throw exception when Microsoft refresh fails with invalid_grant', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
@@ -439,20 +404,6 @@ describe('ConnectedAccountRefreshTokensService', () => {
       const result = await service.isAccessTokenStillValid(connectedAccount);
 
       expect(result).toBe(false);
-    });
-
-    it('should return true for APP provider with access token but no refresh token', async () => {
-      const connectedAccount = {
-        id: mockConnectedAccountId,
-        provider: ConnectedAccountProvider.APP,
-        accessToken: mockEncryptedAccessToken,
-        refreshToken: null,
-        lastCredentialsRefreshedAt: null,
-      } as unknown as ConnectedAccountEntity;
-
-      const result = await service.isAccessTokenStillValid(connectedAccount);
-
-      expect(result).toBe(true);
     });
 
     it('should return true for IMAP_SMTP_CALDAV provider regardless of lastCredentialsRefreshedAt', async () => {
