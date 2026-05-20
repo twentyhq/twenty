@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-function';
+
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -55,7 +57,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         handlerName: 'main',
         checksum: null,
         toolTriggerSettings: null,
-        workflowActionTriggerSettings: null,
+        workflowActionTriggerSettings: SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS,
         universalIdentifier: 'universal-id',
         applicationId: 'application-id',
         cronTriggerSettings: null,
@@ -284,7 +286,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   });
 
   describe('runStepCreationSideEffectsAndBuildStep', () => {
-    it('should create code step with logic function', async () => {
+    it('should create code step with logic function and seed input fields', async () => {
       const result = await service.runStepCreationSideEffectsAndBuildStep({
         type: WorkflowActionType.CODE,
         workspaceId: mockWorkspaceId,
@@ -296,11 +298,16 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         settings: {
           input: {
             logicFunctionId: string;
+            logicFunctionInput: Record<string, unknown>;
           };
         };
       };
 
       expect(codeResult.settings.input.logicFunctionId).toBe('new-function-id');
+      expect(codeResult.settings.input.logicFunctionInput).toEqual({
+        a: null,
+        b: null,
+      });
     });
 
     it('should create form step', async () => {

@@ -90,7 +90,7 @@ describe('MessagingMessagesImportService', () => {
       {
         provide: ConnectedAccountRefreshTokensService,
         useValue: {
-          refreshAndSaveTokens: jest.fn().mockResolvedValue({
+          resolveTokens: jest.fn().mockResolvedValue({
             accessToken: 'new-access-token',
             refreshToken: 'new-refresh-token',
           }),
@@ -266,7 +266,7 @@ describe('MessagingMessagesImportService', () => {
     ).toHaveBeenCalledWith([mockMessageChannel.id], workspaceId);
 
     expect(
-      connectedAccountRefreshTokensService.refreshAndSaveTokens,
+      connectedAccountRefreshTokensService.resolveTokens,
     ).toHaveBeenCalledWith(mockConnectedAccount, workspaceId);
 
     expect(

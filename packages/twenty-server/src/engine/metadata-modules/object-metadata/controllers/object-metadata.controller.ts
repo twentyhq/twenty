@@ -55,6 +55,7 @@ import {
   toLegacyObjectMetadataListResponse,
   toLegacyObjectMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/object-metadata/utils/to-legacy-object-metadata-response.util';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 @Controller('rest/metadata/objects')
 @UseGuards(
@@ -62,7 +63,10 @@ import {
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
 )
-@UseFilters(ObjectMetadataRestApiExceptionFilter)
+@UseFilters(
+  PermissionsRestApiExceptionFilter,
+  ObjectMetadataRestApiExceptionFilter,
+)
 @UsePipes(new ValidationPipe())
 export class ObjectMetadataController {
   constructor(

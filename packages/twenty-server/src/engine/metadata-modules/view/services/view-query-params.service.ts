@@ -108,11 +108,9 @@ export class ViewQueryParamsService {
     }));
 
     const filter = computeRecordGqlOperationFilter({
-      findFieldMetadataItemById: (id) =>
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: id,
-          flatEntityMaps: flatFieldMetadataMaps,
-        }),
+      fieldMetadataItems: Object.values(
+        flatFieldMetadataMaps.byUniversalIdentifier,
+      ).filter(isDefined),
       recordFilters,
       recordFilterGroups,
       filterValueDependencies: { currentWorkspaceMemberId, timeZone },

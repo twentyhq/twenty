@@ -6176,18 +6176,6 @@ export default {
             "myConnectedAccounts": [
                 269
             ],
-            "connectedAccountById": [
-                269,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "connectedAccounts": [
-                269
-            ],
             "myCalendarChannels": [
                 300,
                 {

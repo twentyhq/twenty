@@ -29,8 +29,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import type { ApplicationManifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 
-export const MAX_TARBALL_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
-
 @Injectable()
 export class ApplicationTarballService {
   private readonly logger = new Logger(ApplicationTarballService.name);

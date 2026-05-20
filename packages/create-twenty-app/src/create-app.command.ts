@@ -17,7 +17,7 @@ import {
   DEV_API_URL,
   serverStart,
 } from 'twenty-sdk/cli';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, normalizeUrl } from 'twenty-shared/utils';
 import {
   getDockerInstallInstructions,
   isDockerInstalled,
@@ -389,7 +389,7 @@ export class CreateAppCommand {
 
     const frontUrl = urls.customUrl ?? urls.subdomainUrl;
 
-    return frontUrl?.replace(/\/+$/, '') ?? null;
+    return frontUrl ? normalizeUrl(frontUrl) : null;
   }
 
   private async readMainPageLayoutUniversalIdentifier(
