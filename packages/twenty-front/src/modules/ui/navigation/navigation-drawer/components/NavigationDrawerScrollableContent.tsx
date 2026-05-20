@@ -34,7 +34,7 @@ export const NavigationDrawerScrollableContent = ({
       defaultEnableXScroll={false}
     >
       <StyledItemsContainer>
-        {isSettingsDrawer ? (
+        {isSettingsDrawer || isMobile ? (
           <StyledScrollableInnerContainer isMobile={isMobile}>
             {children}
           </StyledScrollableInnerContainer>

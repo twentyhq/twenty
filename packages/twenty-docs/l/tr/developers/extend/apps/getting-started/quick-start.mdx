@@ -43,7 +43,7 @@ Uygulamanızın eşitleme yapacağı bir Twenty sunucusuna ihtiyacı vardır. Su
 > **Yerel bir Twenty örneği kurmak ister misiniz?**
 
 * **Evet (önerilir)** — `twentycrm/twenty-app-dev` Docker imajını çeker ve `2020` portunda başlatır. Önce Docker'ın çalıştığından emin olun.
-* **Hayır** — Zaten bağlanmak istediğiniz bir Twenty sunucunuz varsa bunu seçin. Bunu daha sonra `yarn twenty remote add` ile bağlayabilirsiniz.
+* **Hayır** — Zaten bağlanmak istediğiniz bir Twenty sunucunuz varsa bunu seçin. Bunu daha sonra `yarn twenty remote:add` ile bağlayabilirsiniz.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Yerel örnek başlatılsın mı?" />
@@ -73,7 +73,7 @@ Terminaliniz her şeyin kurulduğunu onaylayacaktır.
 **Bu aşamadan sonra:** [http://localhost:2020](http://localhost:2020) adresinde çalışan bir Twenty sunucunuz ve ona eşitleme yapmak için yetkilendirilmiş bir CLI'ınız olur.
 
 <Note>
-Docker yüklü değilse veya çalışmıyorsa, iskelet oluşturucu işletim sisteminiz için doğru başlatma komutunu söyleyecektir. Docker çalışır duruma geldiğinde, `yarn twenty server start` ile devam edebilirsiniz — yeniden iskelet oluşturmaya gerek yok.
+Docker yüklü değilse veya çalışmıyorsa, iskelet oluşturucu işletim sisteminiz için doğru başlatma komutunu söyleyecektir. Docker çalışır duruma geldiğinde, `yarn twenty docker:start` ile devam edebilirsiniz — yeniden iskelet oluşturmaya gerek yok.
 </Note>
 
 ---
@@ -137,20 +137,6 @@ Her iki kipin de kimliği doğrulanmış bir uzak sunucuya ihtiyaç duyar.
 | `--once`                              | Bir kez derleyip eşitleyin, ardından çıkın.                                                |
 | `--debounceMs \<ms>` | Dosya değişikliği geciktirme süresini milisaniye cinsinden ayarlayın (varsayılan: `2000`). |
 | `--verbose` / `--debug`               | Ayrıntılı derleme günlüklerini, eşitleme isteklerini ve hata izlerini gösterin.            |
-
----
-
-## Bir örnekten başlayın
-
-Daha kapsamlı bir projeyle başlamak için `--example` kullanın (özel nesneler, alanlar, mantık işlevleri, ön uç bileşenleri):
-
-```bash filename="Terminal"
-npx create-twenty-app@latest my-twenty-app --example postcard
-```
-
-Örnekler [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) dizininde yer alır. Ayrıca `yarn twenty add` ile mevcut bir projeye tek tek varlıklar için iskelet oluşturabilirsiniz — bkz. [İskelet Oluşturma](/l/tr/developers/extend/apps/getting-started/scaffolding).
-
----
 
 ## Oluşturabilecekleriniz
 

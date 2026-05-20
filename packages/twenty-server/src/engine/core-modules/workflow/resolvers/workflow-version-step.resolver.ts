@@ -1,9 +1,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
@@ -23,6 +24,8 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { ConnectedAccountHandleDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-handle.dto';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -46,7 +49,30 @@ export class WorkflowVersionStepResolver {
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly httpTool: HttpTool,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
+
+  // Related to https://github.com/twentyhq/private-issues/issues/478
+  @Query(() => ConnectedAccountHandleDTO, { nullable: true })
+  async workflowStepConnectedAccountHandle(
+    @Args('connectedAccountId', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ConnectedAccountHandleDTO | null> {
+    const account = await this.connectedAccountMetadataService.findById({
+      id,
+      workspaceId,
+    });
+
+    if (!account) {
+      return null;
+    }
+
+    return {
+      id: account.id,
+      handle: account.handle,
+      provider: account.provider,
+    };
+  }
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async createWorkflowVersionStep(

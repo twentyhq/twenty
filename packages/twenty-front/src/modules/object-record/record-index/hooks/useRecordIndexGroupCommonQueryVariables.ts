@@ -6,7 +6,6 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { augmentFieldsWithRelationTargets } from '@/object-record/record-filter/utils/augmentFieldsWithRelationTargets';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -47,11 +46,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     filterValueDependencies,
     recordFilters: currentRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
-    fields: augmentFieldsWithRelationTargets({
-      baseFields: objectMetadataItem.fields,
-      recordFilters: currentRecordFilters,
-      allFieldMetadataItems: flattenedFieldMetadataItems,
-    }),
+    fieldMetadataItems: flattenedFieldMetadataItems,
   });
 
   const anyFieldFilterValue = useAtomComponentStateValue(

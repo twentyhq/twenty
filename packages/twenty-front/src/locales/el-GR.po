@@ -533,13 +533,6 @@ msgstr "Ο χρήστης {workspaceMemberName} θα αποδεσμευτεί α
 msgid "#"
 msgstr ""
 
-#. js-lingui-id: CwstSL
-#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "••••••••"
-msgstr "••••••••"
-
 #. js-lingui-id: n9nj+X
 #. placeholder {0}: aiChatThreadPendingDelete?.threadTitle ?? ''
 #: src/modules/ai/components/AiChatThreadDeleteConfirmationModal.tsx
@@ -2652,11 +2645,6 @@ msgstr "Πίσω στο {linkText}"
 msgid "Back to content"
 msgstr "Επιστροφή στο περιεχόμενο"
 
-#. js-lingui-id: OvBnOM
-#: src/modules/ui/navigation/bread-crumb/components/MobileBreadcrumb.tsx
-msgid "Back to Settings"
-msgstr "Πίσω στις Ρυθμίσεις"
-
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Background"
@@ -3184,6 +3172,11 @@ msgstr "Αλλαγή email"
 msgid "Change node type"
 msgstr "Αλλαγή τύπου κόμβου"
 
+#. js-lingui-id: GptGxg
+#: src/modules/settings/accounts/components/SettingsAccountsPasswordController.tsx
+msgid "Change password"
+msgstr ""
+
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -3466,6 +3459,11 @@ msgstr "Κλείσιμο"
 #: src/modules/information-banner/components/InformationBanner.tsx
 msgid "Close banner"
 msgstr "Κλείσιμο banner"
+
+#. js-lingui-id: vcpc5o
+#: src/modules/blocknote-editor/components/BlockEditor.tsx
+msgid "Close menu"
+msgstr ""
 
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
@@ -11801,11 +11799,11 @@ msgstr "Ο κωδικός πρόσβασης έχει ρυθμιστεί"
 msgid "Password has been updated"
 msgstr "Ο κωδικός έχει ενημερωθεί"
 
-#. js-lingui-id: 1oqxe6
+#. js-lingui-id: BfLK2u
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/auth/sign-in-up/hooks/useSignInUpForm.ts
-msgid "Password must be min. 8 characters"
-msgstr "Ο κωδικός πρόσβασης πρέπει να είναι τουλάχιστον 8 χαρακτήρες"
+msgid "Password must be between 8 and 50 characters"
+msgstr ""
 
 #. js-lingui-id: mi6Rel
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
@@ -13177,6 +13175,11 @@ msgstr "Όνομα ρόλου"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Role name cannot be empty"
 msgstr "Το όνομα του ρόλου δεν μπορεί να είναι κενό"
+
+#. js-lingui-id: VMX1Oy
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role permission flag"
+msgstr ""
 
 #. js-lingui-id: jLNGne
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

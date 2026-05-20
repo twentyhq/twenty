@@ -138,6 +138,7 @@ const createPageLayoutWithWidget = (
   name: 'Mock Page Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId,
+  universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [
     {
       __typename: 'PageLayoutTab' as const,

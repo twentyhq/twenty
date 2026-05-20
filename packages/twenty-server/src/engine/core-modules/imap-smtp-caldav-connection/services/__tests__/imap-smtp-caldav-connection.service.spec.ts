@@ -1,13 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DAVClient } from 'tsdav';
 
+import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
 import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 
@@ -34,9 +33,12 @@ describe('ImapSmtpCaldavService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ImapSmtpCaldavService,
-        { provide: GlobalWorkspaceOrmManager, useValue: {} },
-        { provide: getRepositoryToken(ConnectedAccountEntity), useValue: {} },
         { provide: SecureHttpClientService, useValue: {} },
+        { provide: ImapSmtpCaldavValidatorService, useValue: {} },
+        {
+          provide: TwentyConfigService,
+          useValue: { get: jest.fn().mockReturnValue(true) },
+        },
         {
           provide: CalDavClientService,
           useValue: mockCalDavClientService,

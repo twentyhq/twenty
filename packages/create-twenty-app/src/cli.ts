@@ -15,14 +15,11 @@ const program = new Command(packageJson.name)
     'Output the current version of create-twenty-app.',
   )
   .argument('[directory]')
-  .option('--example <name>', 'Initialize from an example')
   .option('-n, --name <name>', 'Application name')
   .option('-d, --display-name <displayName>', 'Application display name')
   .option('--description <description>', 'Application description')
-  .option(
-    '--api-url <apiUrl>',
-    'Twenty instance URL (default: http://localhost:2020)',
-  )
+  .option('--url <url>', 'Twenty server URL (default: http://localhost:2020)')
+  .option('--api-url <apiUrl>', '[deprecated: use --url]')
   .option(
     '--authentication-method <method>',
     'Authentication method: oauth or apiKey (default: apiKey for local, oauth for remote)',
@@ -32,10 +29,10 @@ const program = new Command(packageJson.name)
     async (
       directory?: string,
       options?: {
-        example?: string;
         name?: string;
         displayName?: string;
         description?: string;
+        url?: string;
         apiUrl?: string;
         authenticationMethod?: AuthenticationMethod;
       },
@@ -66,13 +63,20 @@ const program = new Command(packageJson.name)
         process.exit(1);
       }
 
+      if (options?.apiUrl) {
+        console.warn(
+          chalk.yellow('Warning: --api-url is deprecated. Use --url instead.'),
+        );
+      }
+
+      const serverUrl = (options?.url ?? options?.apiUrl)?.replace(/\/+$/, '');
+
       await new CreateAppCommand().execute({
         directory,
-        example: options?.example,
         name: options?.name,
         displayName: options?.displayName,
         description: options?.description,
-        apiUrl: options?.apiUrl,
+        serverUrl,
         authenticationMethod: options?.authenticationMethod,
       });
     },

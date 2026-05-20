@@ -390,7 +390,8 @@ export default defineFrontComponent({
 Componentele front-end pot accesa fișiere din directorul `public/` al aplicației folosind `getPublicAssetUrl`:
 
 ```tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
 const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
 

@@ -511,4 +511,91 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       ).toBe(true);
     });
   });
+
+  describe('pageType gating for index-only commands', () => {
+    it('should hide createNewView on a record page', () => {
+      const context = buildContext({
+        pageType: ContextStorePageType.Record,
+        hasAnySoftDeleteFilterOnView: false,
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should show createNewView on the index page', () => {
+      const context = buildContext({
+        pageType: ContextStorePageType.Index,
+        hasAnySoftDeleteFilterOnView: false,
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('should hide importRecords on a record page even with IMPORT_CSV permission', () => {
+      const context = buildContext({
+        pageType: ContextStorePageType.Record,
+        hasAnySoftDeleteFilterOnView: false,
+        permissionFlags: { IMPORT_CSV: true },
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should hide exportView on a record page even with EXPORT_CSV permission', () => {
+      const context = buildContext({
+        pageType: ContextStorePageType.Record,
+        permissionFlags: { EXPORT_CSV: true },
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'pageType == "INDEX_PAGE" and permissionFlags.EXPORT_CSV',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should hide seeDeletedRecords on a record page', () => {
+      const context = buildContext({
+        pageType: ContextStorePageType.Record,
+        hasAnySoftDeleteFilterOnView: false,
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should hide hideDeletedRecords on a record page', () => {
+      const context = buildContext({
+        pageType: ContextStorePageType.Record,
+        hasAnySoftDeleteFilterOnView: true,
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'pageType == "INDEX_PAGE" and hasAnySoftDeleteFilterOnView',
+          context,
+        ),
+      ).toBe(false);
+    });
+  });
 });

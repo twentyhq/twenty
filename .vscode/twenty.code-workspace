@@ -81,8 +81,8 @@
       "path": "../packages/twenty-sdk"
     },
     {
-      "name": "packages/twenty-website-new",
-      "path": "../packages/twenty-website-new"
+      "name": "packages/twenty-website",
+      "path": "../packages/twenty-website"
     }
   ],
   "settings": {

@@ -64,15 +64,15 @@ cd packages/twenty-apps/internal/twenty-linear
 # For day-to-day development (publish + install + watch in one):
 yarn twenty dev
 
-# Manual publish flow (deploy registers the app, install activates it):
-yarn twenty deploy
-yarn twenty install
+# Manual publish flow (publish registers the app, install activates it):
+yarn twenty app:publish --private
+yarn twenty app:install
 ```
 
 `twenty dev` is recommended for iteration — it publishes, installs, and
-watches for changes in one command. Use `twenty deploy` + `twenty install`
-when you want to control each step separately (e.g. deploying to a
-production server without auto-installing).
+watches for changes in one command. Use `twenty app:publish --private` +
+`twenty app:install` when you want to control each step separately (e.g.
+deploying to a production server without auto-installing).
 
 This serves as the reference implementation for Twenty's
 `defineConnectionProvider({ type: 'oauth' })` flow — useful as a template

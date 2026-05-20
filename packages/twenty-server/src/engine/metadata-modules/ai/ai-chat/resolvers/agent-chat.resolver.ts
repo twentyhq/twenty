@@ -27,6 +27,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
+import { FileAttachmentInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/file-attachment.input';
 import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
 import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
 import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-chat-message-result.dto';
@@ -113,8 +114,11 @@ export class AgentChatResolver {
     browsingContext: BrowsingContextType | null,
     @Args('modelId', { type: () => String, nullable: true })
     modelId: string | undefined,
-    @Args('fileIds', { type: () => [UUIDScalarType], nullable: true })
-    fileIds: string[] | null,
+    @Args('fileAttachments', {
+      type: () => [FileAttachmentInput],
+      nullable: true,
+    })
+    fileAttachments: FileAttachmentInput[] | null,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
@@ -157,7 +161,7 @@ export class AgentChatResolver {
         threadId,
         text,
         id: messageId,
-        fileIds: fileIds ?? undefined,
+        fileAttachments: fileAttachments ?? undefined,
         workspaceId: workspace.id,
         userWorkspaceId,
       });
@@ -179,7 +183,7 @@ export class AgentChatResolver {
       workspace,
       text,
       messageId,
-      fileIds: fileIds ?? undefined,
+      fileAttachments: fileAttachments ?? undefined,
     });
 
     return {
