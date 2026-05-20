@@ -1,5 +1,5 @@
 // Custom Jest reporter for CI that only shows failing test details.
-// Passing suites print a dot. Failing suites print the full failure
+// Passing suites are silent. Failing suites print the full failure
 // message immediately and are re-listed in the end summary.
 class CIReporter {
   constructor() {
@@ -7,28 +7,28 @@ class CIReporter {
   }
 
   onTestResult(_test, testResult) {
+    if (testResult.numFailingTests === 0 && !testResult.testExecError) {
+      return;
+    }
+
     const relativePath = testResult.testFilePath.replace(
       process.cwd() + '/',
       '',
     );
 
-    if (testResult.numFailingTests > 0 || testResult.testExecError) {
-      process.stderr.write(`\n\x1b[31mFAIL\x1b[0m ${relativePath}\n`);
+    process.stderr.write(`\n\x1b[31mFAIL\x1b[0m ${relativePath}\n`);
 
-      if (testResult.failureMessage) {
-        process.stderr.write(testResult.failureMessage + '\n');
-      }
-
-      if (testResult.testExecError) {
-        process.stderr.write(
-          `\n  Runtime error: ${testResult.testExecError.message}\n`,
-        );
-      }
-
-      this._failures.push({ path: relativePath, testResult });
-    } else {
-      process.stderr.write(`\x1b[32m.\x1b[0m`);
+    if (testResult.failureMessage) {
+      process.stderr.write(testResult.failureMessage + '\n');
     }
+
+    if (testResult.testExecError) {
+      process.stderr.write(
+        `\n  Runtime error: ${testResult.testExecError.message}\n`,
+      );
+    }
+
+    this._failures.push({ path: relativePath, testResult });
   }
 
   onRunComplete(_testContexts, aggregatedResults) {
@@ -41,7 +41,7 @@ class CIReporter {
       numTotalTests,
     } = aggregatedResults;
 
-    process.stderr.write('\n\n');
+    process.stderr.write('\n');
 
     if (this._failures.length > 0) {
       process.stderr.write(

@@ -9,7 +9,7 @@ const jestConfig = {
   prettierPath: null,
   // to enable logs, comment out the following line
   silent: true,
-  ...(isCI && { reporters: ['./ci-reporter.js'] }),
+  ...(isCI && { reporters: ['./jest-failures-only-reporter.js'] }),
   errorOnDeprecated: true,
   clearMocks: true,
   displayName: 'twenty-server',
