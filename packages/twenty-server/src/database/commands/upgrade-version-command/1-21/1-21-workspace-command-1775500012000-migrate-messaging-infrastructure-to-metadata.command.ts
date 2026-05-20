@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
 import { type FeatureFlagKey } from 'twenty-shared/types';
-import { type DeepPartial } from 'typeorm';
-import { Repository } from 'typeorm';
+import { type DeepPartial, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
