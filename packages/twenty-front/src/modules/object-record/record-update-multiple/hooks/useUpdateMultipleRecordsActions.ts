@@ -4,7 +4,7 @@ import { contextStoreFilterGroupsComponentState } from '@/context-store/states/c
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrementalUpdateManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -45,8 +45,8 @@ export const useUpdateMultipleRecordsActions = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const fieldMetadataItemByIdMap = useAtomStateValue(
-    fieldMetadataItemByIdMapSelector,
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
   );
 
   const graphqlFilter = computeContextStoreFilters({
@@ -54,7 +54,7 @@ export const useUpdateMultipleRecordsActions = ({
     contextStoreFilters,
     contextStoreFilterGroups,
     objectMetadataItem,
-    findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
+    fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
   });

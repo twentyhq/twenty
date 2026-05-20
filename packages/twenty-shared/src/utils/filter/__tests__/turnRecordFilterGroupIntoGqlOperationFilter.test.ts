@@ -21,14 +21,15 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
     },
   ];
 
-  const fieldById = new Map(fields.map((field) => [field.id, field]));
-  const findFieldMetadataItemById = (id: string) => fieldById.get(id);
+  const fieldMetadataItemById = new Map(
+    fields.map((field) => [field.id, field]),
+  );
 
   it('should return undefined when group is not found', () => {
     const result = turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies: {},
       filters: [],
-      findFieldMetadataItemById,
+      fieldMetadataItemById,
       recordFilterGroups: [],
       currentRecordFilterGroupId: 'nonexistent',
     });
@@ -48,7 +49,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
           recordFilterGroupId: 'group1',
         },
       ],
-      findFieldMetadataItemById,
+      fieldMetadataItemById,
       recordFilterGroups: [
         {
           id: 'group1',
@@ -73,7 +74,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
           recordFilterGroupId: 'group1',
         },
       ],
-      findFieldMetadataItemById,
+      fieldMetadataItemById,
       recordFilterGroups: [
         {
           id: 'group1',
@@ -98,7 +99,7 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
           recordFilterGroupId: 'subgroup1',
         },
       ],
-      findFieldMetadataItemById,
+      fieldMetadataItemById,
       recordFilterGroups: [
         {
           id: 'group1',

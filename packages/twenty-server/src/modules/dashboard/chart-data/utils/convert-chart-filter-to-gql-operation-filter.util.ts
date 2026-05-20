@@ -74,11 +74,9 @@ export const convertChartFilterToGqlOperationFilter = ({
     }));
 
   return computeRecordGqlOperationFilter({
-    findFieldMetadataItemById: (id) =>
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: id,
-        flatEntityMaps: flatFieldMetadataMaps,
-      }),
+    fieldMetadataItems: Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined),
     recordFilters: convertedRecordFilters,
     recordFilterGroups: convertedRecordFilterGroups,
     filterValueDependencies: {
