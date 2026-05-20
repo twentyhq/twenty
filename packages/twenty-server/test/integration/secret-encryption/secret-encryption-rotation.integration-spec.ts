@@ -8,10 +8,7 @@ import {
   findOneApplicationIdByUniversalIdentifier,
   findOneApplicationVariables,
 } from 'test/integration/secret-encryption/utils/find-one-application.util';
-import {
-  closeSecretEncryptionRotationCommandModule,
-  runSecretEncryptionRotationCommand,
-} from 'test/integration/secret-encryption/utils/run-secret-encryption-rotation-command.util';
+import { runSecretEncryptionRotationCommand } from 'test/integration/secret-encryption/utils/run-secret-encryption-rotation-command.util';
 import { updateOneApplicationVariable } from 'test/integration/secret-encryption/utils/update-one-application-variable.util';
 
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
@@ -32,6 +29,7 @@ describe('secret-encryption:rotate command (integration)', () => {
   beforeAll(async () => {
     applicationUniversalIdentifier = crypto.randomUUID();
     const roleUniversalIdentifier = crypto.randomUUID();
+    const roleLabel = `Rotation Test Role ${crypto.randomUUID()}`;
 
     await setupApplicationForSync({
       applicationUniversalIdentifier,
@@ -60,6 +58,13 @@ describe('secret-encryption:rotate command (integration)', () => {
             packageJsonChecksum: null,
             yarnLockChecksum: null,
           },
+          roles: [
+            {
+              universalIdentifier: roleUniversalIdentifier,
+              label: roleLabel,
+              description: 'A role for the secret encryption rotation test',
+            },
+          ],
         },
       }),
       expectToFail: false,
@@ -80,7 +85,6 @@ describe('secret-encryption:rotate command (integration)', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier,
     });
-    await closeSecretEncryptionRotationCommandModule();
   });
 
   it('keeps the secret applicationVariable decryptable via GraphQL after running the rotation', async () => {

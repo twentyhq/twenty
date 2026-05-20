@@ -1,45 +1,74 @@
-import { type TestingModule } from '@nestjs/testing';
+import { spawn } from 'child_process';
+import path from 'path';
 
-import { CommandTestFactory } from 'nest-commander-testing';
+const TWENTY_SERVER_ROOT = path.resolve(__dirname, '..', '..', '..', '..');
+const COMMAND_JS_PATH = path.join(
+  TWENTY_SERVER_ROOT,
+  'dist',
+  'command',
+  'command.js',
+);
 
-import { AppModule } from 'src/app.module';
-import { SecretEncryptionRotationModule } from 'src/database/commands/secret-encryption-rotation/secret-encryption-rotation.module';
+type RotateArguments = {
+  site?: string;
+  batchSize?: number;
+  dryRun?: boolean;
+};
 
-const ROTATE_COMMAND_NAME = 'secret-encryption:rotate';
+const buildArgs = ({ site, batchSize, dryRun }: RotateArguments): string[] => {
+  const args = ['secret-encryption:rotate'];
 
-let cachedCommandModule: TestingModule | undefined;
-
-const getOrCreateCommandModule = async (): Promise<TestingModule> => {
-  if (cachedCommandModule !== undefined) {
-    return cachedCommandModule;
+  if (site !== undefined) {
+    args.push('--site', site);
+  }
+  if (batchSize !== undefined) {
+    args.push('--batch-size', String(batchSize));
+  }
+  if (dryRun === true) {
+    args.push('--dry-run');
   }
 
-  cachedCommandModule = await CommandTestFactory.createTestingCommand({
-    imports: [AppModule, SecretEncryptionRotationModule],
-  }).compile();
-
-  await cachedCommandModule.init();
-
-  return cachedCommandModule;
+  return args;
 };
 
 export const runSecretEncryptionRotationCommand = async (
-  args: string[] = [],
+  args: RotateArguments = {},
 ): Promise<void> => {
-  const commandModule = await getOrCreateCommandModule();
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn('node', [COMMAND_JS_PATH, ...buildArgs(args)], {
+      cwd: TWENTY_SERVER_ROOT,
+      env: { ...process.env, NODE_ENV: 'test' },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
 
-  await CommandTestFactory.runWithoutClosing(commandModule, [
-    ROTATE_COMMAND_NAME,
-    ...args,
-  ]);
+    let stdout = '';
+    let stderr = '';
+
+    child.stdout?.on('data', (chunk: Buffer) => {
+      stdout += chunk.toString();
+    });
+    child.stderr?.on('data', (chunk: Buffer) => {
+      stderr += chunk.toString();
+    });
+
+    child.on('error', (error) => {
+      reject(
+        new Error(
+          `Failed to spawn secret-encryption:rotate: ${error.message}\nstdout:\n${stdout}\nstderr:\n${stderr}`,
+        ),
+      );
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+        return;
+      }
+      reject(
+        new Error(
+          `secret-encryption:rotate exited with code ${code}\nstdout:\n${stdout}\nstderr:\n${stderr}`,
+        ),
+      );
+    });
+  });
 };
-
-export const closeSecretEncryptionRotationCommandModule =
-  async (): Promise<void> => {
-    if (cachedCommandModule === undefined) {
-      return;
-    }
-
-    await cachedCommandModule.close();
-    cachedCommandModule = undefined;
-  };

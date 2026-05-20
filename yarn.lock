@@ -43458,18 +43458,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nest-commander-testing@npm:^3.5.1":
-  version: 3.5.1
-  resolution: "nest-commander-testing@npm:3.5.1"
-  peerDependencies:
-    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0
-    "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0
-    "@nestjs/testing": ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0
-    nest-commander: ^2.5.0 || ^3.0.0
-  checksum: 10c0/2a01e2116c7f75d430f95cef56809fbf930e3df567498bc418e459b4b3e65e9e0887bfd24dc76987b5215862e1492aa6d187755a4b59f827fc9188c75083c7c0
-  languageName: node
-  linkType: hard
-
 "nest-commander@npm:^3.19.1":
   version: 3.19.1
   resolution: "nest-commander@npm:3.19.1"
@@ -54260,7 +54248,6 @@ __metadata:
     mrmime: "npm:^2.0.1"
     ms: "npm:2.1.3"
     nest-commander: "npm:^3.19.1"
-    nest-commander-testing: "npm:^3.5.1"
     node-ical: "npm:^0.20.1"
     nodemailer: "npm:^8.0.4"
     openapi-types: "npm:12.1.3"
