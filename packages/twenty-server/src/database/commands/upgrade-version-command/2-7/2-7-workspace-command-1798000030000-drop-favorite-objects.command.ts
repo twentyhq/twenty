@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -43,6 +44,7 @@ const LEGACY_FAVORITE_OBJECTS: Array<{
 export class DropFavoriteObjectsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly applicationService: ApplicationService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
@@ -58,6 +60,11 @@ export class DropFavoriteObjectsCommand extends ActiveOrSuspendedWorkspaceComman
     this.logger.log(
       `${isDryRun ? '[DRY RUN] ' : ''}Starting legacy favorite objects removal for workspace ${workspaceId}`,
     );
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
 
     for (const { universalIdentifier, label } of LEGACY_FAVORITE_OBJECTS) {
       const { flatObjectMetadataMaps } =
@@ -89,11 +96,10 @@ export class DropFavoriteObjectsCommand extends ActiveOrSuspendedWorkspaceComman
         deleteObjectInput: { id: flatObjectMetadata.id },
         workspaceId,
         isSystemBuild: true,
+        ownerFlatApplication: twentyStandardFlatApplication,
       });
 
-      this.logger.log(
-        `Deleted ${label} object for workspace ${workspaceId}`,
-      );
+      this.logger.log(`Deleted ${label} object for workspace ${workspaceId}`);
     }
   }
 }
