@@ -7917,11 +7917,6 @@ msgstr "사용자 ID가 필요합니다."
 msgid "User is not a member of the workspace."
 msgstr "사용자가 작업 공간에 속하지 않습니다."
 
-#. js-lingui-id: B43Kks
-#: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "User is not part of the workspace"
-msgstr "사용자가 작업 공간에 속하지 않습니다"
-
 #. js-lingui-id: siJgSI
 #: src/engine/core-modules/user/user.exception.ts
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -8709,6 +8704,7 @@ msgid "Workspace ID and role mismatch."
 msgstr "워크스페이스 ID와 역할이 일치하지 않습니다."
 
 #. js-lingui-id: rklt6M
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
 msgstr "작업 공간은 새로운 멤버를 환영할 준비가 되어 있지 않습니다"
