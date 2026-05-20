@@ -231,26 +231,31 @@ export class SignInUpService {
   ) {
     if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) return;
 
-    // Existing members can still sign in to a non-active workspace (e.g.
-    // to resolve billing on a SUSPENDED one). We only block adding new
-    // members.
-    if (user.userData.type === 'existingUser') {
-      const userWorkspaceExists =
-        await this.userWorkspaceService.checkUserWorkspaceExists(
-          user.userData.existingUser.id,
-          workspace.id,
-        );
-
-      if (userWorkspaceExists) return;
+    if (user.userData.type !== 'existingUser') {
+      throw new AuthException(
+        'Workspace is not ready to welcome new members',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`Workspace is not ready to welcome new members`,
+        },
+      );
     }
 
-    throw new AuthException(
-      'Workspace is not ready to welcome new members',
-      AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      {
-        userFriendlyMessage: msg`Workspace is not ready to welcome new members`,
-      },
-    );
+    const userWorkspaceExists =
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.userData.existingUser.id,
+        workspace.id,
+      );
+
+    if (!userWorkspaceExists) {
+      throw new AuthException(
+        'Workspace is not ready to welcome new members',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`Workspace is not ready to welcome new members`,
+        },
+      );
+    }
   }
 
   async signInUpOnExistingWorkspace(
