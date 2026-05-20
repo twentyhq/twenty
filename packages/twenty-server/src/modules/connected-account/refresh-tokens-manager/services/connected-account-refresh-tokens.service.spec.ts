@@ -296,7 +296,37 @@ describe('ConnectedAccountRefreshTokensService', () => {
       );
     });
 
-    it('should throw when refresh token is missing', async () => {
+    it('should return decrypted access token and null refresh token when access token is valid but no refresh token exists', async () => {
+      const connectedAccount = {
+        id: mockConnectedAccountId,
+        provider: ConnectedAccountProvider.APP,
+        accessToken: mockEncryptedAccessToken,
+        refreshToken: null,
+        lastCredentialsRefreshedAt: new Date(Date.now() - 30 * 60 * 1000),
+      } as unknown as ConnectedAccountEntity;
+
+      const result = await service.refreshAndSaveTokens(
+        connectedAccount,
+        mockWorkspaceId,
+      );
+
+      expect(result).toEqual({
+        accessToken: mockAccessTokenPlaintext,
+        refreshToken: null,
+      });
+      expect(
+        connectedAccountTokenEncryptionService.decrypt,
+      ).toHaveBeenCalledWith({
+        ciphertext: mockEncryptedAccessToken,
+        workspaceId: mockWorkspaceId,
+      });
+      expect(
+        connectedAccountTokenEncryptionService.decrypt,
+      ).toHaveBeenCalledTimes(1);
+      expect(connectedAccountRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should throw when refresh token is missing and access token is expired', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
         provider: ConnectedAccountProvider.GOOGLE,
