@@ -1,32 +1,10 @@
-import type {
-  DeploymentExpertise,
-  ServedGeo,
-  SpokenLanguage,
+import {
+  DEPLOYMENT_EXPERTISES,
+  SERVED_GEOS,
+  SPOKEN_LANGUAGES,
 } from '@/lib/partners-api';
 
 import type { FilterCriteria } from './filter-partners';
-
-export const ALL_REGIONS: readonly ServedGeo[] = [
-  'EUROPE',
-  'US',
-  'LATAM',
-  'MENA',
-  'APAC',
-  'AFRICA',
-];
-
-export const ALL_LANGUAGES: readonly SpokenLanguage[] = [
-  'ENGLISH',
-  'FRENCH',
-  'GERMAN',
-  'CHINESE',
-  'SPANISH',
-];
-
-export const ALL_DEPLOYMENTS: readonly DeploymentExpertise[] = [
-  'CLOUD',
-  'SELF_HOST',
-];
 
 const parseFacet = <T extends string>(
   raw: string | null,
@@ -44,9 +22,9 @@ const parseFacet = <T extends string>(
 export const parseCriteriaFromParams = (
   params: URLSearchParams,
 ): FilterCriteria => ({
-  regions: parseFacet(params.get('regions'), ALL_REGIONS),
-  languages: parseFacet(params.get('languages'), ALL_LANGUAGES),
-  deployments: parseFacet(params.get('deployments'), ALL_DEPLOYMENTS),
+  regions: parseFacet(params.get('regions'), SERVED_GEOS),
+  languages: parseFacet(params.get('languages'), SPOKEN_LANGUAGES),
+  deployments: parseFacet(params.get('deployments'), DEPLOYMENT_EXPERTISES),
 });
 
 const encodeFacet = (set: ReadonlySet<string>): string | null =>

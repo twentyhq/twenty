@@ -1,7 +1,10 @@
 import {
-  ALL_DEPLOYMENTS,
-  ALL_LANGUAGES,
-  ALL_REGIONS,
+  DEPLOYMENT_EXPERTISES,
+  SERVED_GEOS,
+  SPOKEN_LANGUAGES,
+} from '@/lib/partners-api';
+
+import {
   buildQueryString,
   parseCriteriaFromParams,
   toggleInSet,
@@ -94,8 +97,8 @@ describe('toggleInSet', () => {
 
 describe('enum constants are non-empty', () => {
   it('covers all known regions, languages, deployments', () => {
-    expect(ALL_REGIONS.length).toBe(6);
-    expect(ALL_LANGUAGES.length).toBe(5);
-    expect(ALL_DEPLOYMENTS.length).toBe(2);
+    expect(SERVED_GEOS.length).toBe(6);
+    expect(SPOKEN_LANGUAGES.length).toBe(5);
+    expect(DEPLOYMENT_EXPERTISES.length).toBe(2);
   });
 });

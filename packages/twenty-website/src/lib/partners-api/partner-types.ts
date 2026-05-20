@@ -1,13 +1,8 @@
-export type DeploymentExpertise = 'CLOUD' | 'SELF_HOST';
-
-export type ServedGeo = 'EUROPE' | 'US' | 'LATAM' | 'MENA' | 'APAC' | 'AFRICA';
-
-export type SpokenLanguage =
-  | 'ENGLISH'
-  | 'FRENCH'
-  | 'GERMAN'
-  | 'CHINESE'
-  | 'SPANISH';
+import type {
+  DeploymentExpertise,
+  ServedGeo,
+  SpokenLanguage,
+} from './partner-facets';
 
 export type MarketplacePartner = {
   slug: string;

@@ -4,6 +4,11 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
+import {
+  DEPLOYMENT_EXPERTISES,
+  SERVED_GEOS,
+  SPOKEN_LANGUAGES,
+} from '@/lib/partners-api';
 import type {
   DeploymentExpertise,
   ServedGeo,
@@ -12,11 +17,6 @@ import type {
 import { theme } from '@/theme';
 
 import type { FilterCriteria } from '../filter-partners';
-import {
-  ALL_DEPLOYMENTS,
-  ALL_LANGUAGES,
-  ALL_REGIONS,
-} from '../filter-url-helpers';
 import {
   DEPLOYMENT_EXPERTISE_LABELS,
   SERVED_GEO_LABELS,
@@ -75,21 +75,21 @@ export function FilterBar({
     <BarSection aria-label={i18n._(msg`Filter partners`)}>
       <FilterChipRow
         label={msg`Regions`}
-        values={ALL_REGIONS}
+        values={SERVED_GEOS}
         valueLabels={SERVED_GEO_LABELS}
         selected={criteria.regions}
         onToggle={onToggleRegion}
       />
       <FilterChipRow
         label={msg`Languages`}
-        values={ALL_LANGUAGES}
+        values={SPOKEN_LANGUAGES}
         valueLabels={SPOKEN_LANGUAGE_LABELS}
         selected={criteria.languages}
         onToggle={onToggleLanguage}
       />
       <FilterChipRow
         label={msg`Deploys`}
-        values={ALL_DEPLOYMENTS}
+        values={DEPLOYMENT_EXPERTISES}
         valueLabels={DEPLOYMENT_EXPERTISE_LABELS}
         selected={criteria.deployments}
         onToggle={onToggleDeployment}
