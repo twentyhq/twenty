@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { registerCommands } from '@/cli/commands/app-command';
+import { registerCommands } from '@/cli/commands';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';

@@ -281,7 +281,7 @@ export const registerServerCommands = (program: Command): void => {
     .option('-r, --remote <name>', 'Sync on a specific remote')
     .action(async (options: { remote?: string }) => {
       deprecate('catalog-sync', 'dev:catalog-sync');
-      const { CatalogSyncCommand } = await import('./catalog-sync');
+      const { CatalogSyncCommand } = await import('../dev/catalog-sync');
       const cmd = new CatalogSyncCommand();
       await cmd.execute({ remote: options.remote });
     });
