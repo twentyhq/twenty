@@ -74,12 +74,17 @@ const program = new Command(packageJson.name)
         );
       }
 
+      const workspaceUrl = (options?.workspaceUrl ?? options?.apiUrl)?.replace(
+        /\/+$/,
+        '',
+      );
+
       await new CreateAppCommand().execute({
         directory,
         name: options?.name,
         displayName: options?.displayName,
         description: options?.description,
-        workspaceUrl: options?.workspaceUrl ?? options?.apiUrl,
+        workspaceUrl,
         authenticationMethod: options?.authenticationMethod,
       });
     },
