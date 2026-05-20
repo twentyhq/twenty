@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
-  type FieldMetadataType,
+  FieldMetadataType,
   type FilterableAndTSVectorFieldType,
   type ViewFilterOperand,
 } from 'twenty-shared/types';
@@ -82,10 +82,23 @@ export class FlatViewFilterValidatorService {
         userFriendlyMessage: msg`Field metadata not found`,
       });
     } else {
+      let relationTargetFieldType: FieldMetadataType | undefined;
+
+      if (isDefined(flatViewFilterToValidate.relationTargetFieldMetadataId)) {
+        const relationTargetFieldMetadata = findFlatEntityByUniversalIdentifier({
+          universalIdentifier:
+            flatViewFilterToValidate.relationTargetFieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        relationTargetFieldType = relationTargetFieldMetadata?.type;
+      }
+
       const incompatibleOperandError = this.getIncompatibleOperandError({
         operand: flatViewFilterToValidate.operand,
         fieldType: referencedFieldMetadata.type,
         subFieldName: flatViewFilterToValidate.subFieldName,
+        relationTargetFieldType,
       });
 
       if (isDefined(incompatibleOperandError)) {
@@ -200,10 +213,23 @@ export class FlatViewFilterValidatorService {
         userFriendlyMessage: msg`Field metadata not found`,
       });
     } else {
+      let relationTargetFieldType: FieldMetadataType | undefined;
+
+      if (isDefined(updatedFlatViewFilter.relationTargetFieldMetadataId)) {
+        const relationTargetFieldMetadata = findFlatEntityByUniversalIdentifier({
+          universalIdentifier:
+            updatedFlatViewFilter.relationTargetFieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        relationTargetFieldType = relationTargetFieldMetadata?.type;
+      }
+
       const incompatibleOperandError = this.getIncompatibleOperandError({
         operand: updatedFlatViewFilter.operand,
         fieldType: referencedFieldMetadata.type,
         subFieldName: updatedFlatViewFilter.subFieldName,
+        relationTargetFieldType,
       });
 
       if (isDefined(incompatibleOperandError)) {
@@ -234,17 +260,25 @@ export class FlatViewFilterValidatorService {
     operand,
     fieldType,
     subFieldName,
+    relationTargetFieldType,
   }: {
     operand: ViewFilterOperand;
     fieldType: FieldMetadataType;
     subFieldName: string | null | undefined;
+    relationTargetFieldType: FieldMetadataType | undefined;
   }) {
-    if (!(fieldType in FILTER_OPERANDS_MAP)) {
+    const effectiveFieldType =
+      fieldType === FieldMetadataType.RELATION &&
+      isDefined(relationTargetFieldType)
+        ? relationTargetFieldType
+        : fieldType;
+
+    if (!(effectiveFieldType in FILTER_OPERANDS_MAP)) {
       return undefined;
     }
 
     const allowedOperands = getFilterOperandsForFilterableFieldType({
-      filterType: fieldType as FilterableAndTSVectorFieldType,
+      filterType: effectiveFieldType as FilterableAndTSVectorFieldType,
       subFieldName,
     });
 
@@ -254,7 +288,7 @@ export class FlatViewFilterValidatorService {
 
     return {
       code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
-      message: `Operand "${operand}" is not supported on field type "${fieldType}". Supported operands: ${allowedOperands.join(', ')}.`,
+      message: `Operand "${operand}" is not supported on field type "${effectiveFieldType}". Supported operands: ${allowedOperands.join(', ')}.`,
       userFriendlyMessage: msg`Filter operand is not supported for this field type`,
     };
   }
