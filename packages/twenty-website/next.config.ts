@@ -101,10 +101,31 @@ const nextConfig: LinariaConfig = {
   async redirects() {
     return [
       // Canonicalise www → apex. Host-based; fires before any locale logic.
+      // The root-path rule must come before the :path* one — Next.js's
+      // path-to-regexp leaves a literal `:path*` in the Location header
+      // when the parameter matches empty against an absolute destination.
+      {
+        source: '/',
+        has: [{ type: 'host', value: 'www.twenty.com' }],
+        destination: 'https://twenty.com/',
+        permanent: true,
+      },
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'www.twenty.com' }],
         destination: 'https://twenty.com/:path*',
+        permanent: true,
+      },
+      {
+        source: '/',
+        has: [{ type: 'host', value: 'www.twenty-main.com' }],
+        destination: 'https://twenty-main.com/',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.twenty-main.com' }],
+        destination: 'https://twenty-main.com/:path*',
         permanent: true,
       },
       // Strip the source-locale prefix: /en/foo → /foo (301). Mirrors proxy.ts Rule 1.

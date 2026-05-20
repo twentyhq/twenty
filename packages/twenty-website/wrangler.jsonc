@@ -16,7 +16,11 @@
       "name": "twenty-website-dev",
       "routes": [
         {
-          "pattern": "website.twenty-main.com",
+          "pattern": "twenty-main.com",
+          "custom_domain": true,
+        },
+        {
+          "pattern": "www.twenty-main.com",
           "custom_domain": true,
         },
       ],
