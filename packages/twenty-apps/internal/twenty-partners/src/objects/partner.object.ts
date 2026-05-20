@@ -1,0 +1,116 @@
+import { FieldType, defineObject } from 'twenty-sdk/define';
+
+import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineObject({
+  universalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+  nameSingular: 'partner',
+  namePlural: 'partners',
+  labelSingular: 'Partner',
+  labelPlural: 'Partners',
+  description: 'A certified implementation partner',
+  icon: 'IconBuildingStore',
+  isSearchable: true,
+  labelIdentifierFieldMetadataUniversalIdentifier: 'a0000001-0000-4000-8000-000000000001',
+  fields: [
+    {
+      universalIdentifier: 'a0000001-0000-4000-8000-000000000001',
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      defaultValue: "''",
+    },
+    {
+      universalIdentifier: 'a0000002-0000-4000-8000-000000000002',
+      type: FieldType.TEXT,
+      name: 'slug',
+      label: 'Slug',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'a0000003-0000-4000-8000-000000000003',
+      type: FieldType.SELECT,
+      name: 'status',
+      label: 'Status',
+      defaultValue: "'DRAFT'",
+      options: [
+        { id: 'ba5527ca-f28f-4cd0-a792-0eb58361db31', value: 'DRAFT', label: 'Draft', position: 0, color: 'gray' },
+        { id: '18b63c99-f597-4b4a-844f-5636d8e7c69e', value: 'PENDING_REVIEW', label: 'Pending Review', position: 1, color: 'orange' },
+        { id: '3e8950b3-1248-41db-bdb3-c43a8c21f955', value: 'ACTIVE', label: 'Active', position: 2, color: 'green' },
+        { id: '13397331-b7fe-4107-aa56-0527aa393935', value: 'REJECTED', label: 'Rejected', position: 3, color: 'red' },
+      ],
+    },
+    {
+      universalIdentifier: 'a0000004-0000-4000-8000-000000000004',
+      type: FieldType.SELECT,
+      name: 'availability',
+      label: 'Availability',
+      defaultValue: "'AVAILABLE'",
+      options: [
+        { id: '639d74c3-5d38-407b-b0e4-81f3930db451', value: 'AVAILABLE', label: 'Available', position: 0, color: 'green' },
+        { id: '6a921479-559a-4446-892a-d4a1b5a3abb4', value: 'UNAVAILABLE', label: 'Unavailable', position: 1, color: 'gray' },
+      ],
+    },
+    {
+      universalIdentifier: 'a0000005-0000-4000-8000-000000000005',
+      type: FieldType.MULTI_SELECT,
+      name: 'deploymentExpertise',
+      label: 'Deployment Expertise',
+      isNullable: true,
+      options: [
+        { id: 'f2f53365-d909-4a97-bb81-efab43f0a17e', value: 'CLOUD', label: 'Cloud', position: 0, color: 'sky' },
+        { id: '5e47226b-4e60-413f-80ee-b8f1d9ee6ad6', value: 'SELF_HOST', label: 'Self-host', position: 1, color: 'purple' },
+      ],
+    },
+    {
+      universalIdentifier: 'a0000006-0000-4000-8000-000000000006',
+      type: FieldType.MULTI_SELECT,
+      name: 'servedGeos',
+      label: 'Served Geos',
+      isNullable: true,
+      options: [
+        { id: '6ebc2b0b-8b76-4504-842d-494edb4fd948', value: 'EUROPE', label: 'Europe', position: 0, color: 'blue' },
+        { id: '4d97e126-4a84-41b2-820e-5c24cf3b17d2', value: 'US', label: 'US', position: 1, color: 'red' },
+        { id: '9c73373a-2b71-468b-940b-619e7be39505', value: 'LATAM', label: 'LATAM', position: 2, color: 'green' },
+        { id: 'bba4f947-813d-4700-958c-18637444ecc9', value: 'MENA', label: 'MENA', position: 3, color: 'orange' },
+        { id: '027eb6ee-f4f9-4543-b940-265b7083b387', value: 'APAC', label: 'APAC', position: 4, color: 'yellow' },
+        { id: 'fde75bf8-07c4-4594-ad2f-c610d93adf7f', value: 'AFRICA', label: 'Africa', position: 5, color: 'pink' },
+      ],
+    },
+    {
+      universalIdentifier: 'a0000007-0000-4000-8000-000000000007',
+      type: FieldType.MULTI_SELECT,
+      name: 'languagesSpoken',
+      label: 'Languages Spoken',
+      isNullable: true,
+      options: [
+        { id: '3fe94a92-5f64-46f4-8697-1a44e06e939f', value: 'ENGLISH', label: 'English', position: 0, color: 'blue' },
+        { id: 'fdfe8adf-b2f1-4ef9-97c1-449302932698', value: 'FRENCH', label: 'French', position: 1, color: 'red' },
+        { id: '820c120a-17ba-4e9a-8dd7-9724ac41d7ca', value: 'GERMAN', label: 'German', position: 2, color: 'yellow' },
+        { id: '28171507-753d-4a8e-b9c2-44c698c2a26b', value: 'CHINESE', label: 'Chinese', position: 3, color: 'orange' },
+        { id: 'd9111720-26c1-47c3-85bb-a30699737cce', value: 'SPANISH', label: 'Spanish', position: 4, color: 'green' },
+      ],
+    },
+    {
+      universalIdentifier: 'a0000008-0000-4000-8000-000000000008',
+      type: FieldType.LINKS,
+      name: 'calendlyLink',
+      label: 'Calendly Link',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'a0000009-0000-4000-8000-000000000009',
+      type: FieldType.TEXT,
+      name: 'introduction',
+      label: 'Introduction',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'a0000010-0000-4000-8000-000000000010',
+      type: FieldType.DATE_TIME,
+      name: 'lastMatchAt',
+      label: 'Last Match At',
+      isNullable: true,
+    },
+  ],
+});
