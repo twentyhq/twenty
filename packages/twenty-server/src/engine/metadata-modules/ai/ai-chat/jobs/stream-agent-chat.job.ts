@@ -497,8 +497,10 @@ export class StreamAgentChatJob {
     });
 
     await this.agentChatService.notifyThreadUsageUpdated(
-      threadId,
-      userWorkspaceId,
+      {
+        threadId,
+        userWorkspaceId,
+      },
     );
   }
 }

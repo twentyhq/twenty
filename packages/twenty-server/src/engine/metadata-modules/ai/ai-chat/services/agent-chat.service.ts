@@ -539,10 +539,13 @@ export class AgentChatService {
     );
   }
 
-  async notifyThreadUsageUpdated(
-    threadId: string,
-    userWorkspaceId: string,
-  ): Promise<void> {
+  async notifyThreadUsageUpdated({
+    threadId,
+    userWorkspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+  }): Promise<void> {
     const thread = await this.getThreadById(threadId, userWorkspaceId);
 
     await this.broadcastThreadUpdated(
@@ -550,8 +553,6 @@ export class AgentChatService {
       [
         'totalInputTokens',
         'totalOutputTokens',
-        'totalCacheReadTokens',
-        'totalCacheCreationTokens',
         'totalInputCredits',
         'totalOutputCredits',
         'conversationSize',
