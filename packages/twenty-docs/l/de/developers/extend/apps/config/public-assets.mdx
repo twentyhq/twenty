@@ -13,7 +13,7 @@ Für Dateien im Verzeichnis `public/` gilt:
 * **In Logikfunktionen verfügbar** — referenzieren Sie Asset-URLs in E-Mails, API-Antworten oder in beliebiger serverseitiger Logik.
 * **Für Marketplace-Metadaten verwendet** — die Felder `logoUrl` und `screenshots` in `defineApplication()` referenzieren Dateien aus diesem Ordner (z. B. `public/logo.png`). Diese werden im Marketplace angezeigt, wenn Ihre App veröffentlicht wird.
 * **Im Dev-Modus automatisch synchronisiert** — wenn Sie in `public/` eine Datei hinzufügen, aktualisieren oder löschen, wird sie automatisch mit dem Server synchronisiert. Kein Neustart erforderlich.
-* **In Builds enthalten** — `yarn twenty build` bündelt alle öffentlichen Assets in der Distributionsausgabe.
+* **In Builds enthalten** — `yarn twenty dev:build` bündelt alle öffentlichen Assets in der Distributionsausgabe.
 
 ## Zugriff auf öffentliche Assets mit `getPublicAssetUrl`
 
