@@ -260,7 +260,11 @@ export class EmailComposerService {
           where: { headerMessageId: inReplyTo },
         });
 
-        if (!isDefined(parentMessage)) {
+        if (
+          !isDefined(parentMessage) ||
+          !isDefined(parentMessage.messageThreadId) ||
+          !isDefined(parentMessage.receivedAt)
+        ) {
           return {};
         }
 
