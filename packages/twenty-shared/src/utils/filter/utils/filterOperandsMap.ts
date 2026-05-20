@@ -102,11 +102,7 @@ export const FILTER_OPERANDS_MAP = {
     ViewFilterOperand.DOES_NOT_CONTAIN,
     ...emptyOperands,
   ],
-  SELECT: [
-    ViewFilterOperand.IS,
-    ViewFilterOperand.IS_NOT,
-    ...emptyOperands,
-  ],
+  SELECT: [ViewFilterOperand.IS, ViewFilterOperand.IS_NOT, ...emptyOperands],
   ACTOR: [
     ViewFilterOperand.CONTAINS,
     ViewFilterOperand.DOES_NOT_CONTAIN,
