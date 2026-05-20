@@ -2,7 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  type FieldMetadataType,
+  type FilterableAndTSVectorFieldType,
+  type ViewFilterOperand,
+} from 'twenty-shared/types';
+import {
+  FILTER_OPERANDS_MAP,
+  getFilterOperandsForFilterableFieldType,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
@@ -72,6 +81,16 @@ export class FlatViewFilterValidatorService {
         message: t`Field metadata not found`,
         userFriendlyMessage: msg`Field metadata not found`,
       });
+    } else {
+      const incompatibleOperandError = this.getIncompatibleOperandError({
+        operand: flatViewFilterToValidate.operand,
+        fieldType: referencedFieldMetadata.type,
+        subFieldName: flatViewFilterToValidate.subFieldName,
+      });
+
+      if (isDefined(incompatibleOperandError)) {
+        validationResult.errors.push(incompatibleOperandError);
+      }
     }
 
     if (
@@ -180,6 +199,16 @@ export class FlatViewFilterValidatorService {
         message: t`Field metadata not found`,
         userFriendlyMessage: msg`Field metadata not found`,
       });
+    } else {
+      const incompatibleOperandError = this.getIncompatibleOperandError({
+        operand: updatedFlatViewFilter.operand,
+        fieldType: referencedFieldMetadata.type,
+        subFieldName: updatedFlatViewFilter.subFieldName,
+      });
+
+      if (isDefined(incompatibleOperandError)) {
+        validationResult.errors.push(incompatibleOperandError);
+      }
     }
 
     if (isDefined(updatedFlatViewFilter.viewFilterGroupUniversalIdentifier)) {
@@ -199,5 +228,34 @@ export class FlatViewFilterValidatorService {
     }
 
     return validationResult;
+  }
+
+  private getIncompatibleOperandError({
+    operand,
+    fieldType,
+    subFieldName,
+  }: {
+    operand: ViewFilterOperand;
+    fieldType: FieldMetadataType;
+    subFieldName: string | null | undefined;
+  }) {
+    if (!(fieldType in FILTER_OPERANDS_MAP)) {
+      return undefined;
+    }
+
+    const allowedOperands = getFilterOperandsForFilterableFieldType({
+      filterType: fieldType as FilterableAndTSVectorFieldType,
+      subFieldName,
+    });
+
+    if (allowedOperands.includes(operand)) {
+      return undefined;
+    }
+
+    return {
+      code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
+      message: `Operand "${operand}" is not supported on field type "${fieldType}". Supported operands: ${allowedOperands.join(', ')}.`,
+      userFriendlyMessage: msg`Filter operand is not supported for this field type`,
+    };
   }
 }
