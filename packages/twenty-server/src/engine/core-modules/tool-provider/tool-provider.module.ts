@@ -9,8 +9,12 @@ import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/prov
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
 import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
+import { NavigationMenuItemToolProvider } from 'src/engine/core-modules/tool-provider/providers/navigation-menu-item-tool.provider';
+import { PageLayoutToolProvider } from 'src/engine/core-modules/tool-provider/providers/page-layout-tool.provider';
 import { ViewFieldToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-field-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
+import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
+import { WorkflowRunToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-run-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
@@ -32,10 +36,12 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// NOTE: This module does NOT import WorkflowToolsModule or DashboardToolsModule to avoid
-// circular dependencies. Instead, they are @Global() modules that provide their tokens.
-// When imported anywhere in the app (e.g., AiChatModule), the tokens become available
-// globally to their respective providers via @Optional() injection.
+// NOTE: This module does NOT import WorkflowToolsModule, DashboardToolsModule,
+// NavigationMenuItemToolsModule, PageLayoutToolsModule, WebhookToolsModule, or
+// WorkflowRunToolsModule to avoid circular dependencies. Instead, those
+// @Global() modules each provide their service token, which becomes available
+// to their respective providers via @Optional() injection once the module is
+// imported anywhere in the app (e.g. AiChatModule).
 
 @Module({
   imports: [
@@ -64,10 +70,14 @@ import { ToolRegistryService } from './services/tool-registry.service';
     DatabaseToolProvider,
     MetadataToolProvider,
     NativeToolBinderService,
+    NavigationMenuItemToolProvider,
+    PageLayoutToolProvider,
     LogicFunctionToolProvider,
     ViewFieldToolProvider,
     ViewToolProvider,
+    WebhookToolProvider,
     WorkflowToolProvider,
+    WorkflowRunToolProvider,
     {
       // TOOL_PROVIDERS contains only providers implementing ToolProvider
       // (registry tools with descriptors). The native tool binder is a
@@ -80,18 +90,26 @@ import { ToolRegistryService } from './services/tool-registry.service';
         databaseProvider: DatabaseToolProvider,
         metadataProvider: MetadataToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
+        navigationMenuItemProvider: NavigationMenuItemToolProvider,
+        pageLayoutProvider: PageLayoutToolProvider,
         viewFieldProvider: ViewFieldToolProvider,
         viewProvider: ViewToolProvider,
+        webhookProvider: WebhookToolProvider,
         workflowProvider: WorkflowToolProvider,
+        workflowRunProvider: WorkflowRunToolProvider,
       ) => [
         actionProvider,
         dashboardProvider,
         databaseProvider,
         metadataProvider,
         logicFunctionProvider,
+        navigationMenuItemProvider,
+        pageLayoutProvider,
         viewFieldProvider,
         viewProvider,
+        webhookProvider,
         workflowProvider,
+        workflowRunProvider,
       ],
       inject: [
         ActionToolProvider,
@@ -99,9 +117,13 @@ import { ToolRegistryService } from './services/tool-registry.service';
         DatabaseToolProvider,
         MetadataToolProvider,
         LogicFunctionToolProvider,
+        NavigationMenuItemToolProvider,
+        PageLayoutToolProvider,
         ViewFieldToolProvider,
         ViewToolProvider,
+        WebhookToolProvider,
         WorkflowToolProvider,
+        WorkflowRunToolProvider,
       ],
     },
     ToolRegistryService,

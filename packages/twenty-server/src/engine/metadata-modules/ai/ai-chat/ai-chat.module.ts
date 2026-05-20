@@ -19,7 +19,11 @@ import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { NavigationMenuItemToolsModule } from 'src/engine/metadata-modules/navigation-menu-item/tools/navigation-menu-item-tools.module';
+import { PageLayoutToolsModule } from 'src/engine/metadata-modules/page-layout/tools/page-layout-tools.module';
+import { WebhookToolsModule } from 'src/engine/metadata-modules/webhook/tools/webhook-tools.module';
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
+import { WorkflowRunToolsModule } from 'src/modules/workflow/workflow-run-tools/workflow-run-tools.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
@@ -58,7 +62,11 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AiBillingModule,
     ToolProviderModule,
     DashboardToolsModule,
+    NavigationMenuItemToolsModule,
+    PageLayoutToolsModule,
+    WebhookToolsModule,
     WorkflowToolsModule,
+    WorkflowRunToolsModule,
   ],
   providers: [
     AgentChatCancelSubscriberService,
