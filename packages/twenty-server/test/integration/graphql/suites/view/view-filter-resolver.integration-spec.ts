@@ -131,7 +131,7 @@ describe('View Filter Resolver', () => {
         input: {
           fieldMetadataId: testFieldMetadataId,
           viewId: testViewId,
-          operand: ViewFilterOperand.IS,
+          operand: ViewFilterOperand.CONTAINS,
           value: 'test value',
         },
         expectToFail: false,
@@ -140,7 +140,7 @@ describe('View Filter Resolver', () => {
       expect(errors).toBeUndefined();
       expect(data.createViewFilter).toMatchObject({
         fieldMetadataId: testFieldMetadataId,
-        operand: ViewFilterOperand.IS,
+        operand: ViewFilterOperand.CONTAINS,
         value: 'test value',
         viewId: testViewId,
       });
@@ -151,7 +151,7 @@ describe('View Filter Resolver', () => {
         input: {
           fieldMetadataId: testFieldMetadataId,
           viewId: testViewId,
-          operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+          operand: ViewFilterOperand.CONTAINS,
           value: 100,
         },
         expectToFail: false,
@@ -160,7 +160,7 @@ describe('View Filter Resolver', () => {
       expect(errors).toBeUndefined();
       expect(data.createViewFilter).toMatchObject({
         fieldMetadataId: testFieldMetadataId,
-        operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+        operand: ViewFilterOperand.CONTAINS,
         value: 100,
         viewId: testViewId,
       });
@@ -171,7 +171,7 @@ describe('View Filter Resolver', () => {
         input: {
           fieldMetadataId: testFieldMetadataId,
           viewId: testViewId,
-          operand: ViewFilterOperand.IS,
+          operand: ViewFilterOperand.CONTAINS,
           value: true,
         },
         expectToFail: false,
@@ -180,7 +180,7 @@ describe('View Filter Resolver', () => {
       expect(errors).toBeUndefined();
       expect(data.createViewFilter).toMatchObject({
         fieldMetadataId: testFieldMetadataId,
-        operand: ViewFilterOperand.IS,
+        operand: ViewFilterOperand.CONTAINS,
         value: true,
         viewId: testViewId,
       });

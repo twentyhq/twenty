@@ -570,7 +570,7 @@ describe('upsertViewWidget', () => {
             {
               id: filterId,
               fieldMetadataId,
-              operand: ViewFilterOperand.IS,
+              operand: ViewFilterOperand.DOES_NOT_CONTAIN,
               value: 'updated',
             },
           ],
@@ -588,7 +588,7 @@ describe('upsertViewWidget', () => {
       );
 
       expect(updatedFilter).toBeDefined();
-      expect(updatedFilter!.operand).toBe(ViewFilterOperand.IS);
+      expect(updatedFilter!.operand).toBe(ViewFilterOperand.DOES_NOT_CONTAIN);
       expect(updatedFilter!.value).toBe('updated');
     });
 
@@ -882,7 +882,7 @@ describe('upsertViewWidget', () => {
             {
               id: filterId,
               fieldMetadataId,
-              operand: ViewFilterOperand.CONTAINS,
+              operand: ViewFilterOperand.IS,
               value: 'combined-test',
               viewFilterGroupId: filterGroupId,
             },
