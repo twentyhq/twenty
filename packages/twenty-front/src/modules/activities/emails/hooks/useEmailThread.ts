@@ -11,6 +11,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
+import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
 import {
   type ConnectedAccountProvider,
   CoreObjectNameSingular,
@@ -104,24 +105,25 @@ export const useEmailThread = (threadId: string | null) => {
       skip: messages.length === 0,
     });
 
-  const { records: messageChannelMessageAssociationData } =
-    useFindManyRecords<MessageChannelMessageAssociation>({
-      filter: {
-        messageId: {
-          eq: lastMessageId ?? '',
-        },
+  const {
+    records: messageChannelMessageAssociationData,
+    loading: messageChannelMessageAssociationLoading,
+  } = useFindManyRecords<MessageChannelMessageAssociation>({
+    filter: {
+      messageId: {
+        eq: lastMessageId ?? '',
       },
-      objectNameSingular:
-        CoreObjectNameSingular.MessageChannelMessageAssociation,
-      recordGqlFields: {
-        id: true,
-        messageId: true,
-        messageChannelId: true,
-        messageThreadExternalId: true,
-        messageExternalId: true,
-      },
-      skip: !lastMessageId || !isMessagesFetchComplete,
-    });
+    },
+    objectNameSingular: CoreObjectNameSingular.MessageChannelMessageAssociation,
+    recordGqlFields: {
+      id: true,
+      messageId: true,
+      messageChannelId: true,
+      messageThreadExternalId: true,
+      messageExternalId: true,
+    },
+    skip: !lastMessageId || !isMessagesFetchComplete,
+  });
 
   const messageThreadExternalId =
     messageChannelMessageAssociationData.length > 0
@@ -149,10 +151,7 @@ export const useEmailThread = (threadId: string | null) => {
     })
     .filter(isDefined);
 
-  // connectedAccount and messageChannel live in the core schema,
-  // so we resolve the account from the core myConnectedAccounts query
-  // rather than the workspace-level messageChannel records.
-  const { data: myConnectedAccountsData, loading: messageChannelLoading } =
+  const { data: myConnectedAccountsData, loading: connectedAccountsLoading } =
     useQuery<{
       myConnectedAccounts: {
         id: string;
@@ -161,8 +160,34 @@ export const useEmailThread = (threadId: string | null) => {
       }[];
     }>(GET_MY_CONNECTED_ACCOUNTS);
 
+  const { data: myMessageChannelsData, loading: messageChannelsLoading } =
+    useQuery<{
+      myMessageChannels: {
+        id: string;
+        connectedAccountId: string;
+      }[];
+    }>(GET_MY_MESSAGE_CHANNELS);
+
+  const lastMessageChannelId =
+    messageChannelMessageAssociationData.length > 0
+      ? messageChannelMessageAssociationData[0].messageChannelId
+      : null;
+
+  const threadMessageChannel =
+    myMessageChannelsData?.myMessageChannels.find(
+      (messageChannel) => messageChannel.id === lastMessageChannelId,
+    ) ?? null;
+
   const resolvedConnectedAccount =
-    myConnectedAccountsData?.myConnectedAccounts[0] ?? null;
+    myConnectedAccountsData?.myConnectedAccounts.find(
+      (connectedAccount) =>
+        connectedAccount.id === threadMessageChannel?.connectedAccountId,
+    ) ?? null;
+
+  const messageChannelLoading =
+    connectedAccountsLoading ||
+    messageChannelsLoading ||
+    messageChannelMessageAssociationLoading;
 
   const connectedAccountId = resolvedConnectedAccount?.id ?? null;
   const connectedAccountHandle = resolvedConnectedAccount?.handle ?? null;
