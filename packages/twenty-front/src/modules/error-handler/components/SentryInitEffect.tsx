@@ -47,6 +47,21 @@ export const SentryInitEffect = () => {
                 onunhandledrejection: false, // handled in PromiseRejectionEffect
               }),
             ],
+            beforeSend(event) {
+              const fieldType = new URLSearchParams(window.location.search).get(
+                'fieldType',
+              );
+
+              event.tags = {
+                ...event.tags,
+                routePath: window.location.pathname,
+                ...(isNonEmptyString(fieldType)
+                  ? { fieldTypeFilter: fieldType }
+                  : {}),
+              };
+
+              return event;
+            },
             tracePropagationTargets: [
               'localhost:3001',
               REACT_APP_SERVER_BASE_URL,
