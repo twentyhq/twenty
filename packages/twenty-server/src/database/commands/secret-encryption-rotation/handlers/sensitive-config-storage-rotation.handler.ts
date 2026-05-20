@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
 
@@ -10,6 +11,7 @@ import {
   type SecretEncryptionRotationContext,
   type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
+import { buildRotationErrorMessage } from 'src/database/commands/secret-encryption-rotation/utils/build-rotation-error-message.util';
 import {
   KeyValuePairEntity,
   KeyValuePairType,
@@ -110,10 +112,14 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
     const rawValue = row.value as unknown;
 
     if (
-      typeof rawValue !== 'string' ||
+      !isNonEmptyString(rawValue) ||
       !rawValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)
     ) {
-      return { rotated: 0, skipped: 1, errors: 0 };
+      this.logger.error(
+        `[${this.siteName}] row ${row.id} (config key '${row.key}'): value is not a versioned envelope (expected '${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}…'), refusing to rotate.`,
+      );
+
+      return { rotated: 0, skipped: 0, errors: 1 };
     }
 
     try {
@@ -139,11 +145,10 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
 
       return { rotated: 1, skipped: 0, errors: 0 };
     } catch (error) {
-      this.logger.warn(
-        `[${this.siteName}] failed to re-encrypt config key '${row.key}' row ${row.id}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+      this.logger.error(
+        buildRotationErrorMessage(this.siteName, row.id, error),
       );
+
       return { rotated: 0, skipped: 0, errors: 1 };
     }
   }

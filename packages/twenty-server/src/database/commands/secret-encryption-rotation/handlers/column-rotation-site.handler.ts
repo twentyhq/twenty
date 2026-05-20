@@ -14,6 +14,7 @@ import {
   type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import { buildCurrentEncryptionKeyIdEnvelopeLikePattern } from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
+import { buildRotationErrorMessage } from 'src/database/commands/secret-encryption-rotation/utils/build-rotation-error-message.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
@@ -119,7 +120,11 @@ export class ColumnRotationSiteHandler<
       !isDefined(currentValue) ||
       !currentValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)
     ) {
-      return { rotated: 0, skipped: 1, errors: 0 };
+      this.logger.error(
+        `[${this.siteName}] row ${rowId}: column '${encryptedColumn}' is not a versioned envelope (expected '${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}…'), refusing to rotate.`,
+      );
+
+      return { rotated: 0, skipped: 0, errors: 1 };
     }
 
     const cryptoOptions = this.config.isWorkspaceScoped
@@ -153,11 +158,8 @@ export class ColumnRotationSiteHandler<
 
       return { rotated: 1, skipped: 0, errors: 0 };
     } catch (error) {
-      this.logger.warn(
-        `[${this.siteName}] failed to re-encrypt row ${rowId}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
+      this.logger.error(buildRotationErrorMessage(this.siteName, rowId, error));
+
       return { rotated: 0, skipped: 0, errors: 1 };
     }
   }
