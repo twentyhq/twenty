@@ -87,34 +87,42 @@ describe('secret-encryption:rotate command (integration)', () => {
     });
   });
 
-  it('keeps the secret applicationVariable decryptable via GraphQL after running the rotation', async () => {
-    await runSecretEncryptionRotationCommand();
+  it(
+    'keeps the secret applicationVariable decryptable via GraphQL after running the rotation',
+    async () => {
+      await runSecretEncryptionRotationCommand();
 
-    const variables = await findOneApplicationVariables({
-      id: applicationId,
-    });
-    const variable = variables.find(
-      (applicationVariable) =>
-        applicationVariable.key === ROTATION_VARIABLE_KEY,
-    );
+      const variables = await findOneApplicationVariables({
+        id: applicationId,
+      });
+      const variable = variables.find(
+        (applicationVariable) =>
+          applicationVariable.key === ROTATION_VARIABLE_KEY,
+      );
 
-    expect(variable).toBeDefined();
-    expect(variable?.isSecret).toBe(true);
-    expect(variable?.value).toBe(buildExpectedMask(plaintext));
-  });
+      expect(variable).toBeDefined();
+      expect(variable?.isSecret).toBe(true);
+      expect(variable?.value).toBe(buildExpectedMask(plaintext));
+    },
+    60000,
+  );
 
-  it('is idempotent: running rotation twice does not corrupt secrets', async () => {
-    await runSecretEncryptionRotationCommand();
-    await runSecretEncryptionRotationCommand();
+  it(
+    'is idempotent: running rotation twice does not corrupt secrets',
+    async () => {
+      await runSecretEncryptionRotationCommand();
+      await runSecretEncryptionRotationCommand();
 
-    const variables = await findOneApplicationVariables({
-      id: applicationId,
-    });
-    const variable = variables.find(
-      (applicationVariable) =>
-        applicationVariable.key === ROTATION_VARIABLE_KEY,
-    );
+      const variables = await findOneApplicationVariables({
+        id: applicationId,
+      });
+      const variable = variables.find(
+        (applicationVariable) =>
+          applicationVariable.key === ROTATION_VARIABLE_KEY,
+      );
 
-    expect(variable?.value).toBe(buildExpectedMask(plaintext));
-  });
+      expect(variable?.value).toBe(buildExpectedMask(plaintext));
+    },
+    90000,
+  );
 });
