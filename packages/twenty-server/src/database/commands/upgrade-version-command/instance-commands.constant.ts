@@ -40,10 +40,11 @@ import { BackfillRolePermissionFlagPermissionFlagIdSlowInstanceCommand } from 's
 import { AddEmailGroupChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778256809018-add-email-group-channel-type';
 import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1798000003000-add-application-id-to-public-domain';
 import { AddIsInternalMessagesImportEnabledFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778525104406-add-is-internal-messages-import-enabled';
+import { CreateSigningKeyTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778550000000-create-signing-key-table';
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
 import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
-import { AddEmailingDomainTenantStatusFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778862608620-add-emailing-domain-tenant-status';
-import { UniqueEmailingDomainGloballyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1778865501791-unique-emailing-domain-globally';
+import { AddEmailingDomainTenantStatusFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-fast-1778862608620-add-emailing-domain-tenant-status';
+import { UniqueEmailingDomainGloballyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-fast-1778865501791-unique-emailing-domain-globally';
 import { EncryptApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000005000-encrypt-application-variable';
 import { EncryptApplicationRegistrationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000006000-encrypt-application-registration-variable';
 import { EncryptSigningKeyPrivateKeysSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000007000-encrypt-signing-key-private-keys';
@@ -52,7 +53,6 @@ import { EncryptTotpSecretsSlowInstanceCommand } from 'src/database/commands/upg
 import { EncryptConnectionParametersSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-slow-1798000010000-encrypt-connection-parameters';
 import { AddSubFieldNameToViewSortFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778502963794-add-sub-field-name-to-view-sort';
 import { DropPostgresCredentialsTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1798500000000-drop-postgres-credentials-table';
-import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddChannelSyncStageIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000010000-add-channel-sync-stage-indexes';
 
 export const INSTANCE_COMMANDS = [
@@ -96,6 +96,7 @@ export const INSTANCE_COMMANDS = [
   AddEmailGroupChannelTypeFastInstanceCommand,
   AddApplicationIdToPublicDomainFastInstanceCommand,
   AddIsInternalMessagesImportEnabledFastInstanceCommand,
+  CreateSigningKeyTableFastInstanceCommand,
   EncryptConnectedAccountTokensSlowInstanceCommand,
   AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand,
   AddEmailingDomainTenantStatusFastInstanceCommand,
@@ -108,6 +109,5 @@ export const INSTANCE_COMMANDS = [
   EncryptConnectionParametersSlowInstanceCommand,
   AddSubFieldNameToViewSortFastInstanceCommand,
   DropPostgresCredentialsTableFastInstanceCommand,
-  AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand,
   AddChannelSyncStageIndexesFastInstanceCommand,
 ];
