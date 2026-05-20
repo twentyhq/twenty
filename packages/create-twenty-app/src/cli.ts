@@ -18,11 +18,8 @@ const program = new Command(packageJson.name)
   .option('-n, --name <name>', 'Application name')
   .option('-d, --display-name <displayName>', 'Application display name')
   .option('--description <description>', 'Application description')
-  .option(
-    '--workspace-url <workspaceUrl>',
-    'Twenty workspace URL (default: http://localhost:2020)',
-  )
-  .option('--api-url <apiUrl>', '[deprecated: use --workspace-url]')
+  .option('--url <url>', 'Twenty server URL (default: http://localhost:2020)')
+  .option('--api-url <apiUrl>', '[deprecated: use --url]')
   .option(
     '--authentication-method <method>',
     'Authentication method: oauth or apiKey (default: apiKey for local, oauth for remote)',
@@ -35,7 +32,7 @@ const program = new Command(packageJson.name)
         name?: string;
         displayName?: string;
         description?: string;
-        workspaceUrl?: string;
+        url?: string;
         apiUrl?: string;
         authenticationMethod?: AuthenticationMethod;
       },
@@ -68,23 +65,18 @@ const program = new Command(packageJson.name)
 
       if (options?.apiUrl) {
         console.warn(
-          chalk.yellow(
-            'Warning: --api-url is deprecated. Use --workspace-url instead.',
-          ),
+          chalk.yellow('Warning: --api-url is deprecated. Use --url instead.'),
         );
       }
 
-      const workspaceUrl = (options?.workspaceUrl ?? options?.apiUrl)?.replace(
-        /\/+$/,
-        '',
-      );
+      const serverUrl = (options?.url ?? options?.apiUrl)?.replace(/\/+$/, '');
 
       await new CreateAppCommand().execute({
         directory,
         name: options?.name,
         displayName: options?.displayName,
         description: options?.description,
-        workspaceUrl,
+        serverUrl,
         authenticationMethod: options?.authenticationMethod,
       });
     },

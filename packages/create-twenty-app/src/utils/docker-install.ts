@@ -28,6 +28,6 @@ export const getDockerInstallInstructions = (): string => {
     '  Then run this command again.',
     '',
     '  Alternatively, connect to an existing Twenty instance:',
-    '  npx create-twenty-app@latest my-twenty-app --workspace-url <your-instance-url>',
+    '  npx create-twenty-app@latest my-twenty-app --url <your-instance-url>',
   ].join('\n');
 };
