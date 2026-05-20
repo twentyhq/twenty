@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   computeRecordGqlOperationFilter,
+  isDefined,
   isRecordFilterValueValid,
   resolveInput,
 } from 'twenty-shared/utils';
@@ -9,7 +10,6 @@ import {
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
@@ -79,11 +79,9 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       workflowActionInput.filter?.recordFilters &&
       workflowActionInput.filter?.recordFilterGroups
         ? computeRecordGqlOperationFilter({
-            findFieldMetadataItemById: (id) =>
-              findFlatEntityByIdInFlatEntityMaps({
-                flatEntityId: id,
-                flatEntityMaps: flatFieldMetadataMaps,
-              }),
+            fieldMetadataItems: Object.values(
+              flatFieldMetadataMaps.byUniversalIdentifier,
+            ).filter(isDefined),
             recordFilters: workflowActionInput.filter.recordFilters,
             recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
             filterValueDependencies: {

@@ -8,29 +8,33 @@ import {
   type RecordFilterGroup,
 } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import {
-  type FindFieldMetadataItemById,
+  type FieldShared,
   turnRecordFilterIntoRecordGqlOperationFilter,
 } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const computeRecordGqlOperationFilter = ({
-  findFieldMetadataItemById,
+  fieldMetadataItems,
   recordFilters,
   recordFilterGroups,
   filterValueDependencies,
 }: {
   recordFilters: Omit<RecordFilter, 'id'>[];
-  findFieldMetadataItemById: FindFieldMetadataItemById;
+  fieldMetadataItems: FieldShared[];
   recordFilterGroups: RecordFilterGroup[];
   filterValueDependencies: RecordFilterValueDependencies;
 }): RecordGqlOperationFilter => {
+  const fieldMetadataItemById = new Map(
+    fieldMetadataItems.map((field) => [field.id, field]),
+  );
+
   const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] =
     recordFilters
       .filter((filter) => !isDefined(filter.recordFilterGroupId))
       .map((regularFilter) => {
         return turnRecordFilterIntoRecordGqlOperationFilter({
           recordFilter: regularFilter,
-          findFieldMetadataItemById,
+          fieldMetadataItemById,
           filterValueDependencies,
         });
       })
@@ -44,7 +48,7 @@ export const computeRecordGqlOperationFilter = ({
     turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies,
       filters: recordFilters,
-      findFieldMetadataItemById,
+      fieldMetadataItemById,
       recordFilterGroups,
       currentRecordFilterGroupId: outermostFilterGroupId,
     });

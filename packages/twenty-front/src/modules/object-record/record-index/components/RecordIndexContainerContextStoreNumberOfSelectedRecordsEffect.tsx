@@ -6,7 +6,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -54,8 +54,8 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
 
     const { filterValueDependencies } = useFilterValueDependencies();
 
-    const fieldMetadataItemByIdMap = useAtomStateValue(
-      fieldMetadataItemByIdMapSelector,
+    const flattenedFieldMetadataItems = useAtomStateValue(
+      flattenedFieldMetadataItemsSelector,
     );
 
     const computedFilter = computeContextStoreFilters({
@@ -63,7 +63,7 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       contextStoreFilters,
       contextStoreFilterGroups,
       objectMetadataItem,
-      findFieldMetadataItemById: (id) => fieldMetadataItemByIdMap.get(id),
+      fieldMetadataItems: flattenedFieldMetadataItems,
       filterValueDependencies,
       contextStoreAnyFieldFilterValue,
     });

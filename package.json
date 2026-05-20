@@ -53,7 +53,7 @@
       "packages/twenty-ui",
       "packages/twenty-utils",
       "packages/twenty-zapier",
-      "packages/twenty-website-new",
+      "packages/twenty-website",
       "packages/twenty-docs",
       "packages/twenty-e2e-testing",
       "packages/twenty-shared",

@@ -815,6 +815,18 @@
         "supportsReasoning": true
       },
       {
+        "name": "gemini-3.5-flash",
+        "label": "Gemini 3.5 Flash",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 1.5,
+        "outputCostPerMillionTokens": 9,
+        "cachedInputCostPerMillionTokens": 0.15,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true
+      },
+      {
         "name": "gemini-1.5-flash",
         "label": "Gemini 1.5 Flash",
         "modelFamily": "GEMINI",
