@@ -19,7 +19,11 @@ export const getFilterOperandsForFilterableFieldType = ({
       return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.currencyCode;
     }
 
-    return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.amountMicros;
+    if (subFieldName === 'amountMicros') {
+      return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.amountMicros;
+    }
+
+    return [];
   }
 
   return FILTER_OPERANDS_MAP[filterType];

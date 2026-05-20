@@ -83,7 +83,8 @@ The `value` field is always a JSON-serializable value, but its expected shape de
 | `CONTAINS`, `DOES_NOT_CONTAIN` on `MULTI_SELECT` | array of option keys (strings) | `['TAG_A']` |
 | `IS`, `IS_NOT` on `RELATION` | array of record IDs (uuids) | `['c5a1...']` |
 | `CONTAINS`, `DOES_NOT_CONTAIN` on text-like fields | string | `'acme'` |
-| `IS`, `IS_NOT` on `NUMBER` / `RATING` / `UUID` | string (the value) | `'5'` |
+| `IS`, `IS_NOT` on `NUMBER` | string (the value) | `'5'` |
+| `IS` on `RATING` / `UUID` | string (the value) | `'5'` |
 | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL` | string (the bound) | `'10'` |
 | `IS`, `IS_BEFORE`, `IS_AFTER` on `DATE` / `DATE_TIME` | ISO 8601 string | `'2025-01-01T00:00:00Z'` |
 | `IS_EMPTY`, `IS_NOT_EMPTY` | empty string | `''` |
