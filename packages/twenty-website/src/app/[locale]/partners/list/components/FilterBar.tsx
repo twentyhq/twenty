@@ -8,11 +8,9 @@ import {
   DEPLOYMENT_EXPERTISES,
   SERVED_GEOS,
   SPOKEN_LANGUAGES,
-} from '@/lib/partners-api';
-import type {
-  DeploymentExpertise,
-  ServedGeo,
-  SpokenLanguage,
+  type DeploymentExpertise,
+  type ServedGeo,
+  type SpokenLanguage,
 } from '@/lib/partners-api';
 import { theme } from '@/theme';
 

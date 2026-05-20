@@ -5,31 +5,31 @@ import {
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { styled } from '@linaria/react';
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 
 const StyledClearFiltersButton = styled.button`
   ${buttonBaseStyles}
 `;
 
-type ClearFiltersButtonProps = Omit<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  'children'
-> & {
+type ClearFiltersButtonProps = {
   children: ReactNode;
+  className?: string;
+  onClick: MouseEventHandler<HTMLButtonElement>;
 };
 
 export function ClearFiltersButton({
   children,
-  type = 'button',
-  ...buttonProps
+  className,
+  onClick,
 }: ClearFiltersButtonProps) {
   return (
     <StyledClearFiltersButton
-      {...buttonProps}
+      className={className}
       data-color="secondary"
       data-size="small"
       data-variant="outlined"
-      type={type}
+      onClick={onClick}
+      type="button"
     >
       <BaseButton
         color="secondary"

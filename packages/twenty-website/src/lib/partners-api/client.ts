@@ -1,4 +1,6 @@
-const readRequiredEnv = (name: 'TWENTY_PARTNERS_API_URL' | 'TWENTY_PARTNERS_API_KEY'): string => {
+const readRequiredEnv = (
+  name: 'TWENTY_PARTNERS_API_URL' | 'TWENTY_PARTNERS_API_KEY',
+): string => {
   const value = process.env[name];
   if (!value) {
     throw new Error(`Missing ${name} env var`);

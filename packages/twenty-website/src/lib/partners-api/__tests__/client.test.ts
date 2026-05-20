@@ -19,13 +19,17 @@ describe('partnersApiFetch', () => {
   it('throws a clear error when TWENTY_PARTNERS_API_URL is missing', async () => {
     delete process.env.TWENTY_PARTNERS_API_URL;
 
-    await expect(partnersApiFetch('/rest/people')).rejects.toThrow(/TWENTY_PARTNERS_API_URL/);
+    await expect(partnersApiFetch('/rest/people')).rejects.toThrow(
+      /TWENTY_PARTNERS_API_URL/,
+    );
   });
 
   it('throws a clear error when TWENTY_PARTNERS_API_KEY is missing', async () => {
     delete process.env.TWENTY_PARTNERS_API_KEY;
 
-    await expect(partnersApiFetch('/rest/people')).rejects.toThrow(/TWENTY_PARTNERS_API_KEY/);
+    await expect(partnersApiFetch('/rest/people')).rejects.toThrow(
+      /TWENTY_PARTNERS_API_KEY/,
+    );
   });
 
   it('sends Authorization: Bearer header and returns parsed JSON on 2xx', async () => {
