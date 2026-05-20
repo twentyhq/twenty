@@ -425,6 +425,102 @@ export const TextFieldWidget: Story = {
   },
 };
 
+export const TextFieldEditorWidget: Story = {
+  render: () => {
+    const widget: PageLayoutWidget = {
+      __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
+      id: 'widget-text-editor-field',
+      pageLayoutTabId: TAB_ID_OVERVIEW,
+      type: WidgetType.FIELD,
+      title: 'Company Name',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 0,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 2,
+      },
+      configuration: {
+        __typename: 'FieldConfiguration',
+        configurationType: WidgetConfigurationType.FIELD,
+        fieldMetadataId: nameField.id,
+        fieldDisplayMode: FieldDisplayMode.EDITOR,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    };
+
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
+      getTestEnrichedObjectMetadataItemsMock(),
+    );
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(
+      widget,
+      companyObjectMetadataItem.id,
+    );
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    setRecordInStores(TEST_RECORD_ID, mockCompanyRecord);
+
+    return (
+      <div style={{ width: '400px', padding: '20px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper store={jotaiStore}>
+              <LayoutRenderingProvider
+                value={{
+                  isInSidePanel: false,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: TEST_RECORD_ID,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                    tabId: 'fields',
+                  }}
+                >
+                  <WidgetComponentInstanceContext.Provider
+                    value={{ instanceId: widget.id }}
+                  >
+                    <FieldWidget widget={widget} />
+                  </WidgetComponentInstanceContext.Provider>
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const companyNameEditor =
+      await canvas.findByDisplayValue('Acme Corporation');
+    expect(companyNameEditor).toBeVisible();
+  },
+};
+
 export const AddressFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
