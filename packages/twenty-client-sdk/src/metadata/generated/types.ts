@@ -6187,21 +6187,6 @@ export default {
             "myConnectedAccounts": [
                 270
             ],
-<<<<<<< ses-outbound-followup
-            "connectedAccountById": [
-                270,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "connectedAccounts": [
-                270
-            ],
-=======
->>>>>>> main
             "myCalendarChannels": [
                 301,
                 {
