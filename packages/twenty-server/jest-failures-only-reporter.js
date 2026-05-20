@@ -1,7 +1,4 @@
-// Custom Jest reporter for CI that only shows failing test details.
-// Passing suites are silent. Failing suites print the full failure
-// message immediately and are re-listed in the end summary.
-class CIReporter {
+class JestFailuresOnlyReporter {
   constructor() {
     this._failures = [];
   }
@@ -58,9 +55,7 @@ class CIReporter {
         );
 
         for (const failedTest of failedTests) {
-          process.stderr.write(
-            `    \x1b[31m→\x1b[0m ${failedTest.fullName}\n`,
-          );
+          process.stderr.write(`    \x1b[31m→\x1b[0m ${failedTest.fullName}\n`);
         }
 
         process.stderr.write('\n');
@@ -81,12 +76,8 @@ class CIReporter {
 
     const testSummary =
       `Tests:       ` +
-      (numFailedTests > 0
-        ? `\x1b[31m${numFailedTests} failed\x1b[0m, `
-        : '') +
-      (numPassedTests > 0
-        ? `\x1b[32m${numPassedTests} passed\x1b[0m, `
-        : '') +
+      (numFailedTests > 0 ? `\x1b[31m${numFailedTests} failed\x1b[0m, ` : '') +
+      (numPassedTests > 0 ? `\x1b[32m${numPassedTests} passed\x1b[0m, ` : '') +
       `${numTotalTests} total`;
 
     process.stderr.write(suiteSummary + '\n');
@@ -94,4 +85,4 @@ class CIReporter {
   }
 }
 
-module.exports = CIReporter;
+module.exports = JestFailuresOnlyReporter;
