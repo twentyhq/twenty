@@ -4,7 +4,7 @@ import type {
   SupportedSourceTable,
 } from '../types/mapped-source-record.type';
 import type { TwentyClientLike } from '../types/twenty-client-like.type';
-import { mapSupabaseRecord } from '../utils/map-supabase-record';
+import { mapSupabaseRecords } from '../utils/map-supabase-record';
 
 export const BACKFILL_SOURCE_ORDER: SupportedSourceTable[] = [
   'products',
@@ -92,17 +92,19 @@ export const runXopureBackfillDryRun = async (
     for (const sourceRow of sourceRows) {
       scanned += 1;
 
-      const result = mapSupabaseRecord({
+      const results = mapSupabaseRecords({
         eventType: 'BACKFILL',
         sourceSchema,
         sourceTable,
         record: sourceRow,
       });
 
-      if (result.ok) {
-        mappedForTable.push(result.record);
-      } else {
-        errors.push(result);
+      for (const result of results) {
+        if (result.ok) {
+          mappedForTable.push(result.record);
+        } else {
+          errors.push(result);
+        }
       }
     }
 

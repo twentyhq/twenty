@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   mapSupabaseRecord,
+  mapSupabaseRecords,
   toSyncKey,
 } from './utils/map-supabase-record';
 
@@ -240,5 +241,90 @@ describe('mapSupabaseRecord', () => {
         sourceRecordId: 'order-1',
       }),
     ).toBe('supabase.public.orders.order-1');
+  });
+
+  it('derives one idempotent direct downline relationship from affiliate parent_id', () => {
+    const result = mapSupabaseRecords({
+      ...baseWebhook,
+      sourceTable: 'affiliates',
+      record: {
+        id: 'ambassador-child',
+        parent_id: 'ambassador-parent',
+        name: 'Child Ambassador',
+        email: 'child@example.test',
+        status: 'active',
+        created_at: '2026-05-01T12:00:00.000Z',
+        updated_at: '2026-05-02T12:00:00.000Z',
+      },
+    });
+
+    expect(result).toHaveLength(2);
+    expect(result[0]).toMatchObject({
+      ok: true,
+      record: {
+        targetObject: 'xopureAmbassador',
+        externalIdValue: 'ambassador-child',
+      },
+    });
+    expect(result[1]).toMatchObject({
+      ok: true,
+      record: {
+        sourceTable: 'affiliates',
+        sourceRecordId: 'referral:ambassador-parent:ambassador-child',
+        syncKey:
+          'supabase.public.affiliates.referral:ambassador-parent:ambassador-child',
+        targetObject: 'xopureReferralRelationship',
+        externalIdField: 'relationshipKey',
+        externalIdValue: 'ambassador-parent:ambassador-child',
+        fieldValues: {
+          relationshipKey: 'ambassador-parent:ambassador-child',
+          sponsorAmbassadorExternalId: 'ambassador-parent',
+          sponsoredAmbassadorExternalId: 'ambassador-child',
+          sponsoredName: 'Child Ambassador',
+          depth: 1,
+          isActive: true,
+          activatedAt: '2026-05-01T12:00:00.000Z',
+          lastSyncedAt: '2026-05-02T12:00:00.000Z',
+        },
+        relations: [
+          {
+            fieldName: 'sponsor',
+            relationIdFieldName: 'sponsorId',
+            targetObject: 'xopureAmbassador',
+            externalIdField: 'supabaseAmbassadorId',
+            externalIdValue: 'ambassador-parent',
+            required: true,
+          },
+          {
+            fieldName: 'sponsored',
+            relationIdFieldName: 'sponsoredId',
+            targetObject: 'xopureAmbassador',
+            externalIdField: 'supabaseAmbassadorId',
+            externalIdValue: 'ambassador-child',
+            required: true,
+          },
+        ],
+      },
+    });
+  });
+
+  it('does not derive a downline relationship for root affiliates', () => {
+    const result = mapSupabaseRecords({
+      ...baseWebhook,
+      sourceTable: 'affiliates',
+      record: {
+        id: 'ambassador-root',
+        name: 'Root Ambassador',
+      },
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      ok: true,
+      record: {
+        targetObject: 'xopureAmbassador',
+        externalIdValue: 'ambassador-root',
+      },
+    });
   });
 });

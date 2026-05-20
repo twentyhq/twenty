@@ -12,6 +12,7 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 const sessionStorageLogger = new Logger('SessionStorage');
 
 const REDIS_PING_INTERVAL_MS = 60_000;
+export const SESSION_COOKIE_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 7;
 
 export const getSessionStorageOptions = (
   twentyConfigService: TwentyConfigService,
@@ -33,7 +34,7 @@ export const getSessionStorageOptions = (
       secure: !!(SERVER_URL && SERVER_URL.startsWith('https')),
       httpOnly: true,
       sameSite: 'lax',
-      maxAge: 1000 * 60 * 30, // 30 minutes
+      maxAge: SESSION_COOKIE_MAX_AGE_MS,
     },
   };
 

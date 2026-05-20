@@ -161,6 +161,81 @@ describe('handleSupabaseSyncWebhook', () => {
     expect(JSON.stringify(result)).not.toContain('nextStep');
   });
 
+  it('mirrors affiliate downline relationships after the ambassador upsert', async () => {
+    const client = buildClient({
+      queryResults: [
+        { xopureSyncMaps: { edges: [] } },
+        { xopureAmbassadors: { edges: [] } },
+        { xopureSyncMaps: { edges: [] } },
+        { xopureAmbassadors: { edges: [{ node: { id: 'parent-id' } }] } },
+        { xopureAmbassadors: { edges: [{ node: { id: 'child-id' } }] } },
+        { xopureSyncMaps: { edges: [] } },
+        { xopureReferralRelationships: { edges: [] } },
+        { xopureSyncMaps: { edges: [] } },
+      ],
+      mutationResults: [
+        { createXopureAmbassador: { id: 'child-id' } },
+        { createXopureSyncMap: { id: 'sync-map-ambassador' } },
+        {
+          createXopureReferralRelationship: {
+            id: 'relationship-id',
+          },
+        },
+        { createXopureSyncMap: { id: 'sync-map-relationship' } },
+      ],
+    });
+
+    const result = await handleSupabaseSyncWebhook({
+      event: buildEvent({
+        secret: 'secret',
+        body: {
+          type: 'INSERT',
+          schema: 'public',
+          table: 'affiliates',
+          record: {
+            id: 'ambassador-child',
+            parent_id: 'ambassador-parent',
+            name: 'Child Ambassador',
+            email: 'child@example.test',
+            updated_at: '2026-05-01T00:00:00.000Z',
+          },
+        },
+      }),
+      expectedSecret: 'secret',
+      client,
+    });
+
+    expect(result).toMatchObject({
+      statusCode: 200,
+      body: {
+        ok: true,
+        status: 'processed',
+        created: 2,
+        updated: 0,
+        skipped: 0,
+        failed: 0,
+        sourceTable: 'affiliates',
+        sourceRecordId: 'ambassador-child',
+        targetObject: 'xopureAmbassador',
+        targetObjects: [
+          'xopureAmbassador',
+          'xopureReferralRelationship',
+        ],
+      },
+    });
+    expect(client.mutation.mock.calls[2]?.[0]).toMatchObject({
+      createXopureReferralRelationship: {
+        __args: {
+          data: {
+            relationshipKey: 'ambassador-parent:ambassador-child',
+            sponsorId: 'parent-id',
+            sponsoredId: 'child-id',
+          },
+        },
+      },
+    });
+  });
+
   it('records row-level failures as retryable visible state', async () => {
     const client = buildClient({
       queryResults: [

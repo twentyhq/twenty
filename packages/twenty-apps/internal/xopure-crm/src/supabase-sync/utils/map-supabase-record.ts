@@ -246,6 +246,71 @@ const mapAmbassador = (record: Record<string, unknown>) =>
     lastCommissionAt: isoDateValue(record.last_commission_at),
   });
 
+const buildReferralRelationshipKey = (
+  sponsorAmbassadorId: string,
+  sponsoredAmbassadorId: string,
+): string => `${sponsorAmbassadorId}:${sponsoredAmbassadorId}`;
+
+const mapReferralRelationshipFromAffiliate = (
+  record: Record<string, unknown>,
+): Record<string, unknown> | null => {
+  const sponsorAmbassadorId = stringValue(record.parent_id);
+  const sponsoredAmbassadorId = stringValue(record.id);
+
+  if (!sponsorAmbassadorId || !sponsoredAmbassadorId) {
+    return null;
+  }
+
+  const relationshipKey = buildReferralRelationshipKey(
+    sponsorAmbassadorId,
+    sponsoredAmbassadorId,
+  );
+  const sponsoredName =
+    stringValue(record.name) ?? stringValue(record.email) ?? sponsoredAmbassadorId;
+
+  return withLastSyncedAt(record, {
+    relationshipKey,
+    name: `${sponsorAmbassadorId} → ${sponsoredName}`,
+    sponsorAmbassadorExternalId: sponsorAmbassadorId,
+    sponsoredAmbassadorExternalId: sponsoredAmbassadorId,
+    sponsorName: sponsorAmbassadorId,
+    sponsoredName,
+    depth: 1,
+    isActive: true,
+    activatedAt: isoDateValue(record.created_at),
+  });
+};
+
+const mapReferralRelationshipRelations = (
+  record: Record<string, unknown>,
+): RelationReference[] => {
+  const sponsorAmbassadorId = stringValue(record.parent_id);
+  const sponsoredAmbassadorId = stringValue(record.id);
+
+  if (!sponsorAmbassadorId || !sponsoredAmbassadorId) {
+    return [];
+  }
+
+  return [
+    {
+      fieldName: 'sponsor',
+      relationIdFieldName: 'sponsorId',
+      targetObject: 'xopureAmbassador',
+      externalIdField: 'supabaseAmbassadorId',
+      externalIdValue: sponsorAmbassadorId,
+      required: true,
+    },
+    {
+      fieldName: 'sponsored',
+      relationIdFieldName: 'sponsoredId',
+      targetObject: 'xopureAmbassador',
+      externalIdField: 'supabaseAmbassadorId',
+      externalIdValue: sponsoredAmbassadorId,
+      required: true,
+    },
+  ];
+};
+
 const mapCustomerExpertise = (record: Record<string, unknown>) =>
   withLastSyncedAt(record, {
     name:
@@ -580,6 +645,45 @@ const buildMappedRecord = (
   };
 };
 
+const buildReferralRelationshipMappedRecord = (
+  input: MapSupabaseRecordInput,
+): MappedSourceRecord | null => {
+  const fieldValues = mapReferralRelationshipFromAffiliate(input.record);
+
+  if (!fieldValues) {
+    return null;
+  }
+
+  const relationshipKey = stringValue(fieldValues.relationshipKey);
+
+  if (!relationshipKey) {
+    throw new Error('Mapped field relationshipKey is missing for affiliates');
+  }
+
+  const identity: SourceIdentity = {
+    sourceSystem: 'supabase',
+    sourceSchema: input.sourceSchema,
+    sourceTable: 'affiliates',
+    sourceRecordId: `referral:${relationshipKey}`,
+  };
+
+  return {
+    ...identity,
+    syncKey: toSyncKey(identity),
+    targetObject: 'xopureReferralRelationship',
+    externalIdField: 'relationshipKey',
+    externalIdValue: relationshipKey,
+    fieldValues,
+    relations: mapReferralRelationshipRelations(input.record),
+    contentHash: computeContentHash({
+      targetObject: 'xopureReferralRelationship',
+      externalIdField: 'relationshipKey',
+      externalIdValue: relationshipKey,
+      fieldValues,
+    }),
+  };
+};
+
 export const mapSupabaseRecord = (
   input: MapSupabaseRecordInput,
 ): MappingResult => {
@@ -627,6 +731,22 @@ export const mapSupabaseRecord = (
       sourceRecordId,
     };
   }
+};
+
+export const mapSupabaseRecords = (
+  input: MapSupabaseRecordInput,
+): MappingResult[] => {
+  const primaryMappingResult = mapSupabaseRecord(input);
+
+  if (!primaryMappingResult.ok || primaryMappingResult.record.sourceTable !== 'affiliates') {
+    return [primaryMappingResult];
+  }
+
+  const referralRelationshipRecord = buildReferralRelationshipMappedRecord(input);
+
+  return referralRelationshipRecord
+    ? [primaryMappingResult, { ok: true, record: referralRelationshipRecord }]
+    : [primaryMappingResult];
 };
 
 export const getSafeSourceRecordId = (

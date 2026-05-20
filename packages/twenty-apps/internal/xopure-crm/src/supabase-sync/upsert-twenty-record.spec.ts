@@ -221,4 +221,84 @@ describe('upsertTwentyRecord', () => {
       },
     });
   });
+
+  it('creates a referral relationship with sponsor and sponsored relation ids', async () => {
+    const record = buildRecord({
+      sourceTable: 'affiliates',
+      sourceRecordId: 'referral:ambassador-parent:ambassador-child',
+      syncKey:
+        'supabase.public.affiliates.referral:ambassador-parent:ambassador-child',
+      targetObject: 'xopureReferralRelationship',
+      externalIdField: 'relationshipKey',
+      externalIdValue: 'ambassador-parent:ambassador-child',
+      fieldValues: {
+        relationshipKey: 'ambassador-parent:ambassador-child',
+        name: 'ambassador-parent → Child Ambassador',
+        sponsorAmbassadorExternalId: 'ambassador-parent',
+        sponsoredAmbassadorExternalId: 'ambassador-child',
+        depth: 1,
+        isActive: true,
+      },
+      relations: [
+        {
+          fieldName: 'sponsor',
+          relationIdFieldName: 'sponsorId',
+          targetObject: 'xopureAmbassador',
+          externalIdField: 'supabaseAmbassadorId',
+          externalIdValue: 'ambassador-parent',
+          required: true,
+        },
+        {
+          fieldName: 'sponsored',
+          relationIdFieldName: 'sponsoredId',
+          targetObject: 'xopureAmbassador',
+          externalIdField: 'supabaseAmbassadorId',
+          externalIdValue: 'ambassador-child',
+          required: true,
+        },
+      ],
+    });
+    const client = buildClient({
+      queryResults: [
+        { xopureAmbassadors: { edges: [{ node: { id: 'parent-id' } }] } },
+        { xopureAmbassadors: { edges: [{ node: { id: 'child-id' } }] } },
+        { xopureSyncMaps: { edges: [] } },
+        { xopureReferralRelationships: { edges: [] } },
+      ],
+      mutationResults: [
+        {
+          createXopureReferralRelationship: {
+            id: 'referral-relationship-id',
+          },
+        },
+        { createXopureSyncMap: { id: 'sync-map-relationship' } },
+      ],
+    });
+
+    const result = await upsertTwentyRecord(client, record);
+
+    expect(result).toEqual({
+      action: 'created',
+      targetObject: 'xopureReferralRelationship',
+      twentyRecordId: 'referral-relationship-id',
+      syncMapId: 'sync-map-relationship',
+    });
+    expect(client.mutation.mock.calls[0]?.[0]).toEqual({
+      createXopureReferralRelationship: {
+        __args: {
+          data: {
+            relationshipKey: 'ambassador-parent:ambassador-child',
+            name: 'ambassador-parent → Child Ambassador',
+            sponsorAmbassadorExternalId: 'ambassador-parent',
+            sponsoredAmbassadorExternalId: 'ambassador-child',
+            depth: 1,
+            isActive: true,
+            sponsorId: 'parent-id',
+            sponsoredId: 'child-id',
+          },
+        },
+        id: true,
+      },
+    });
+  });
 });

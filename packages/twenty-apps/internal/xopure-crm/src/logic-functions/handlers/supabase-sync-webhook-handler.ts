@@ -1,6 +1,10 @@
 import type { SupabaseWebhookPayload } from '../types/supabase-webhook-payload.type';
+import type { UpsertResult } from 'src/supabase-sync/types/mapped-source-record.type';
 import type { TwentyClientLike } from 'src/supabase-sync/types/twenty-client-like.type';
-import { getSafeSourceRecordId, mapSupabaseRecord } from 'src/supabase-sync/utils/map-supabase-record';
+import {
+  getSafeSourceRecordId,
+  mapSupabaseRecords,
+} from 'src/supabase-sync/utils/map-supabase-record';
 import { upsertTwentyRecord } from 'src/supabase-sync/utils/upsert-twenty-record';
 
 type WebhookEvent = {
@@ -53,9 +57,6 @@ const parsePayload = (body: unknown): SupabaseWebhookPayload | null => {
   return isRecord(body) ? (body as SupabaseWebhookPayload) : null;
 };
 
-const countForAction = (action: string, expectedAction: string): number =>
-  action === expectedAction ? 1 : 0;
-
 export const handleSupabaseSyncWebhook = async (
   input: HandlerInput,
 ): Promise<HandlerResponse> => {
@@ -95,22 +96,23 @@ export const handleSupabaseSyncWebhook = async (
   const record = payload.record;
   const sourceRecordId =
     getSafeSourceRecordId(record) ?? getSafeSourceRecordId(payload.old_record);
-  const mappingResult = mapSupabaseRecord({
+  const mappingResults = mapSupabaseRecords({
     eventType: payload.type ?? 'UNKNOWN',
     sourceSchema: payload.schema ?? 'public',
     sourceTable: payload.table,
     record,
   });
+  const firstMappingError = mappingResults.find((result) => !result.ok);
 
-  if (!mappingResult.ok) {
-    if (mappingResult.code === 'UNSUPPORTED_SOURCE_TABLE') {
+  if (firstMappingError && !firstMappingError.ok) {
+    if (firstMappingError.code === 'UNSUPPORTED_SOURCE_TABLE') {
       return {
         statusCode: 202,
         body: {
           ok: true,
           status: 'skipped',
           skipped: 1,
-          error: mappingResult,
+          error: firstMappingError,
         },
       };
     }
@@ -121,65 +123,101 @@ export const handleSupabaseSyncWebhook = async (
         ok: false,
         status: 'failed',
         failed: 1,
-        error: mappingResult,
+        error: firstMappingError,
       },
     };
   }
 
-  const upsertResult = await upsertTwentyRecord(input.client, mappingResult.record);
+  const mappedRecords = mappingResults.flatMap((result) =>
+    result.ok ? [result.record] : [],
+  );
+  const upsertResults: UpsertResult[] = [];
 
-  if (upsertResult.action === 'failed') {
+  for (const mappedRecord of mappedRecords) {
+    upsertResults.push(await upsertTwentyRecord(input.client, mappedRecord));
+  }
+
+  const failedUpsertResult = upsertResults.find(
+    (upsertResult) => upsertResult.action === 'failed',
+  );
+
+  if (failedUpsertResult) {
     console.warn('xopure_supabase_sync_row_failed', {
       sourceTable: payload.table,
       sourceRecordId,
-      targetObject: upsertResult.targetObject,
-      errorCode: upsertResult.errorCode,
-      retryable: upsertResult.retryable,
+      targetObject: failedUpsertResult.targetObject,
+      errorCode: failedUpsertResult.errorCode,
+      retryable: failedUpsertResult.retryable,
     });
 
     return {
-      statusCode: upsertResult.retryable ? 409 : 400,
+      statusCode: failedUpsertResult.retryable ? 409 : 400,
       body: {
         ok: false,
         status: 'failed',
-        created: 0,
-        updated: 0,
-        skipped: 0,
+        created: upsertResults.filter(
+          (upsertResult) => upsertResult.action === 'created',
+        ).length,
+        updated: upsertResults.filter(
+          (upsertResult) => upsertResult.action === 'updated',
+        ).length,
+        skipped: upsertResults.filter(
+          (upsertResult) => upsertResult.action === 'skipped',
+        ).length,
         failed: 1,
         sourceTable: payload.table,
         sourceRecordId,
-        targetObject: upsertResult.targetObject,
-        syncMapId: upsertResult.syncMapId,
+        targetObject: failedUpsertResult.targetObject,
+        syncMapId: failedUpsertResult.syncMapId,
         error: {
-          code: upsertResult.errorCode,
-          message: upsertResult.errorMessage,
-          retryable: upsertResult.retryable,
+          code: failedUpsertResult.errorCode,
+          message: failedUpsertResult.errorMessage,
+          retryable: failedUpsertResult.retryable,
         },
       },
     };
   }
 
-  console.info('xopure_supabase_sync_row_processed', {
-    sourceTable: mappingResult.record.sourceTable,
-    sourceRecordId: mappingResult.record.sourceRecordId,
-    targetObject: upsertResult.targetObject,
-    action: upsertResult.action,
-  });
+  for (const [index, upsertResult] of upsertResults.entries()) {
+    const mappedRecord = mappedRecords[index];
+
+    console.info('xopure_supabase_sync_row_processed', {
+      sourceTable: mappedRecord?.sourceTable,
+      sourceRecordId: mappedRecord?.sourceRecordId,
+      targetObject: upsertResult.targetObject,
+      action: upsertResult.action,
+    });
+  }
+
+  const created = upsertResults.filter(
+    (upsertResult) => upsertResult.action === 'created',
+  ).length;
+  const updated = upsertResults.filter(
+    (upsertResult) => upsertResult.action === 'updated',
+  ).length;
+  const skipped = upsertResults.filter(
+    (upsertResult) => upsertResult.action === 'skipped',
+  ).length;
+  const primaryUpsertResult = upsertResults[0];
 
   return {
     statusCode: 200,
     body: {
       ok: true,
-      status: upsertResult.action,
-      created: countForAction(upsertResult.action, 'created'),
-      updated: countForAction(upsertResult.action, 'updated'),
-      skipped: countForAction(upsertResult.action, 'skipped'),
+      status:
+        upsertResults.length === 1
+          ? primaryUpsertResult?.action
+          : 'processed',
+      created,
+      updated,
+      skipped,
       failed: 0,
-      sourceTable: mappingResult.record.sourceTable,
-      sourceRecordId: mappingResult.record.sourceRecordId,
-      targetObject: upsertResult.targetObject,
-      twentyRecordId: upsertResult.twentyRecordId,
-      syncMapId: upsertResult.syncMapId,
+      sourceTable: mappedRecords[0]?.sourceTable,
+      sourceRecordId: mappedRecords[0]?.sourceRecordId,
+      targetObject: primaryUpsertResult?.targetObject,
+      targetObjects: upsertResults.map((upsertResult) => upsertResult.targetObject),
+      twentyRecordId: primaryUpsertResult?.twentyRecordId,
+      syncMapId: primaryUpsertResult?.syncMapId,
     },
   };
 };

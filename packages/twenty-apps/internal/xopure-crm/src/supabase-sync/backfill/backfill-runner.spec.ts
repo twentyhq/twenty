@@ -93,4 +93,36 @@ describe('runXopureBackfillDryRun', () => {
       }),
     ]);
   });
+
+  it('includes derived downline relationship records for affiliate backfills', async () => {
+    const result = await runXopureBackfillDryRun({
+      sourceTables: ['affiliates'],
+      readSourceBatch: async () => [
+        {
+          id: 'ambassador-child',
+          parent_id: 'ambassador-parent',
+          name: 'Child Ambassador',
+          updated_at: '2026-05-01T00:00:00.000Z',
+        },
+      ],
+      client: {
+        query: vi.fn(async () => ({})),
+        mutation: vi.fn(async () => ({})),
+      },
+    });
+
+    expect(result).toMatchObject({
+      scanned: 1,
+      mapped: 2,
+      failed: 0,
+    });
+    expect(result.records.map((record) => record.targetObject)).toEqual([
+      'xopureAmbassador',
+      'xopureReferralRelationship',
+    ]);
+    expect(result.records[1]).toMatchObject({
+      externalIdField: 'relationshipKey',
+      externalIdValue: 'ambassador-parent:ambassador-child',
+    });
+  });
 });

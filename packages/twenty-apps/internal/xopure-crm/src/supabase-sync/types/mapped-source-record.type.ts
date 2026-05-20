@@ -16,7 +16,8 @@ export type TargetObjectName =
   | 'xopureOrder'
   | 'xopurePayment'
   | 'xopureOrderLine'
-  | 'xopureCommission';
+  | 'xopureCommission'
+  | 'xopureReferralRelationship';
 
 export type SyncStatus = 'SYNCED' | 'FAILED_RETRYABLE' | 'FAILED_PERMANENT';
 

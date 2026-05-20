@@ -4,6 +4,18 @@ export const XOPURE_REFERRAL_RELATIONSHIP_OBJECT_ID =
   '857eeffc-f6ca-4515-8380-916953f5fd95';
 export const XOPURE_REFERRAL_RELATIONSHIP_NAME_FIELD_ID =
   'ca57e8ba-b78a-4b45-9c7e-0d1b6bce13e1';
+export const XOPURE_REFERRAL_RELATIONSHIP_KEY_FIELD_ID =
+  'f8b1d2d6-d690-4c52-92e7-f11fb4d6236c';
+export const XOPURE_REFERRAL_RELATIONSHIP_SPONSOR_EXTERNAL_ID_FIELD_ID =
+  '181faf6a-53b2-438d-9a3f-4379f1c73685';
+export const XOPURE_REFERRAL_RELATIONSHIP_SPONSORED_EXTERNAL_ID_FIELD_ID =
+  '55d2dec8-d549-4f2b-a615-0cdb00e7b268';
+export const XOPURE_REFERRAL_RELATIONSHIP_DEPTH_FIELD_ID =
+  'e5a6b7c8-9012-4efa-bcd0-5678901234e5';
+export const XOPURE_REFERRAL_RELATIONSHIP_ACTIVE_FIELD_ID =
+  'b20ccebd-2ce8-4664-abcd-82e27cbb09ef';
+export const XOPURE_REFERRAL_RELATIONSHIP_LAST_SYNCED_AT_FIELD_ID =
+  'ef467df5-222a-43ae-ab3c-2cafad3c2544';
 
 export default defineObject({
   universalIdentifier: XOPURE_REFERRAL_RELATIONSHIP_OBJECT_ID,
@@ -25,14 +37,24 @@ export default defineObject({
       icon: 'IconTopologyStarRing3',
     },
     {
-      universalIdentifier: '181faf6a-53b2-438d-9a3f-4379f1c73685',
+      universalIdentifier: XOPURE_REFERRAL_RELATIONSHIP_KEY_FIELD_ID,
+      type: FieldType.TEXT,
+      name: 'relationshipKey',
+      label: 'Relationship key',
+      icon: 'IconKey',
+      isUnique: true,
+    },
+    {
+      universalIdentifier:
+        XOPURE_REFERRAL_RELATIONSHIP_SPONSOR_EXTERNAL_ID_FIELD_ID,
       type: FieldType.TEXT,
       name: 'sponsorAmbassadorExternalId',
       label: 'Sponsor ambassador ID',
       icon: 'IconUserStar',
     },
     {
-      universalIdentifier: '55d2dec8-d549-4f2b-a615-0cdb00e7b268',
+      universalIdentifier:
+        XOPURE_REFERRAL_RELATIONSHIP_SPONSORED_EXTERNAL_ID_FIELD_ID,
       type: FieldType.TEXT,
       name: 'sponsoredAmbassadorExternalId',
       label: 'Sponsored ambassador ID',
@@ -53,7 +75,7 @@ export default defineObject({
       icon: 'IconUser',
     },
     {
-      universalIdentifier: 'e5a6b7c8-9012-4efa-bcd0-5678901234e5',
+      universalIdentifier: XOPURE_REFERRAL_RELATIONSHIP_DEPTH_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'depth',
       label: 'Depth',
@@ -61,7 +83,7 @@ export default defineObject({
       defaultValue: 1,
     },
     {
-      universalIdentifier: 'b20ccebd-2ce8-4664-abcd-82e27cbb09ef',
+      universalIdentifier: XOPURE_REFERRAL_RELATIONSHIP_ACTIVE_FIELD_ID,
       type: FieldType.BOOLEAN,
       name: 'isActive',
       label: 'Is active',
@@ -78,7 +100,7 @@ export default defineObject({
       defaultValue: null,
     },
     {
-      universalIdentifier: 'ef467df5-222a-43ae-ab3c-2cafad3c2544',
+      universalIdentifier: XOPURE_REFERRAL_RELATIONSHIP_LAST_SYNCED_AT_FIELD_ID,
       type: FieldType.DATE_TIME,
       name: 'lastSyncedAt',
       label: 'Last synced at',

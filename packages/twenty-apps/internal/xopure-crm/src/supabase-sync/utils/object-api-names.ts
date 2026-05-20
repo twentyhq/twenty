@@ -8,17 +8,24 @@ export type TargetObjectApiNames = {
 };
 
 const TARGET_OBJECT_API_NAMES: Record<TargetObjectName, TargetObjectApiNames> =
-  Object.values(SOURCE_TABLE_MAPPINGS).reduce(
-    (accumulator, mapping) => ({
-      ...accumulator,
-      [mapping.targetObject]: {
-        pluralApiName: mapping.pluralApiName,
-        createMutationName: mapping.createMutationName,
-        updateMutationName: mapping.updateMutationName,
-      },
-    }),
-    {} as Record<TargetObjectName, TargetObjectApiNames>,
-  );
+  {
+    ...Object.values(SOURCE_TABLE_MAPPINGS).reduce(
+      (accumulator, mapping) => ({
+        ...accumulator,
+        [mapping.targetObject]: {
+          pluralApiName: mapping.pluralApiName,
+          createMutationName: mapping.createMutationName,
+          updateMutationName: mapping.updateMutationName,
+        },
+      }),
+      {} as Record<TargetObjectName, TargetObjectApiNames>,
+    ),
+    xopureReferralRelationship: {
+      pluralApiName: 'xopureReferralRelationships',
+      createMutationName: 'createXopureReferralRelationship',
+      updateMutationName: 'updateXopureReferralRelationship',
+    },
+  };
 
 export const getTargetObjectApiNames = (
   targetObject: TargetObjectName,
