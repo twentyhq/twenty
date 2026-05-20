@@ -34,8 +34,6 @@ export const registerCommands = (program: Command): void => {
   const logsCommand = new LogicFunctionLogsCommand();
   const executeCommand = new LogicFunctionExecuteCommand();
 
-  // ── Development ──────────────────────────────────────────────────
-
   const devAction = async (
     appPath: string | undefined,
     options: {
@@ -95,7 +93,7 @@ export const registerCommands = (program: Command): void => {
     });
 
   program
-    .command('dev:fn-logs [appPath]')
+    .command('dev:function:logs [appPath]')
     .description('Stream logic function logs')
     .option(
       '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
@@ -121,7 +119,7 @@ export const registerCommands = (program: Command): void => {
     );
 
   program
-    .command('dev:fn-exec [appPath]')
+    .command('dev:function:exec [appPath]')
     .description('Execute a logic function')
     .option('--postInstall', 'Execute post-install logic function if defined')
     .option('--preInstall', 'Execute pre-install logic function if defined')
@@ -180,7 +178,15 @@ export const registerCommands = (program: Command): void => {
       await addCommand.execute(entityType as SyncableEntity, options?.path);
     });
 
-  // ── App Lifecycle ────────────────────────────────────────────────
+  program
+    .command('dev:catalog-sync')
+    .description('Trigger marketplace catalog sync')
+    .option('-r, --remote <name>', 'Sync on a specific remote')
+    .action(async (options: { remote?: string }) => {
+      const { CatalogSyncCommand } = await import('./catalog-sync');
+      const cmd = new CatalogSyncCommand();
+      await cmd.execute({ remote: options.remote });
+    });
 
   program
     .command('app:publish [appPath]')
@@ -227,22 +233,8 @@ export const registerCommands = (program: Command): void => {
       }
     });
 
-  program
-    .command('app:catalog-sync')
-    .description('Trigger marketplace catalog sync')
-    .option('-r, --remote <name>', 'Sync on a specific remote')
-    .action(async (options: { remote?: string }) => {
-      const { CatalogSyncCommand } = await import('./catalog-sync');
-      const cmd = new CatalogSyncCommand();
-      await cmd.execute({ remote: options.remote });
-    });
-
-  // ── Infrastructure ───────────────────────────────────────────────
-
   registerRemoteCommands(program);
   registerServerCommands(program);
-
-  // ── Deprecated root commands (hidden, forward to new names) ──────
 
   program
     .command('build [appPath]', { hidden: true })
@@ -284,7 +276,7 @@ export const registerCommands = (program: Command): void => {
           functionName?: string;
         },
       ) => {
-        deprecate('logs', 'dev:fn-logs');
+        deprecate('logs', 'dev:function:logs');
         await logsCommand.execute({
           ...options,
           appPath: formatPath(appPath),
@@ -320,7 +312,7 @@ export const registerCommands = (program: Command): void => {
           functionName?: string;
         },
       ) => {
-        deprecate('exec', 'dev:fn-exec');
+        deprecate('exec', 'dev:function:exec');
         if (
           !options?.postInstall &&
           !options?.preInstall &&
@@ -408,7 +400,7 @@ export const registerCommands = (program: Command): void => {
     .command('catalog-sync', { hidden: true })
     .option('-r, --remote <name>', 'Sync on a specific remote')
     .action(async (options: { remote?: string }) => {
-      deprecate('catalog-sync', 'app:catalog-sync');
+      deprecate('catalog-sync', 'dev:catalog-sync');
       const { CatalogSyncCommand } = await import('./catalog-sync');
       const cmd = new CatalogSyncCommand();
       await cmd.execute({ remote: options.remote });

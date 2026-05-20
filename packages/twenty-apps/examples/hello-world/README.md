@@ -31,8 +31,8 @@ yarn twenty remote:remove <name>  # Remove a remote
 # Application
 yarn twenty dev            # Start dev mode (watch, build, sync, and auto-generate typed client)
 yarn twenty dev:add        # Scaffold a new entity (object, field, function, front-component, role, view, navigation-menu-item)
-yarn twenty dev:fn-logs    # Stream function logs
-yarn twenty dev:fn-exec    # Execute a function with JSON payload
+yarn twenty dev:function:logs    # Stream function logs
+yarn twenty dev:function:exec    # Execute a function with JSON payload
 yarn twenty app:uninstall  # Uninstall app from workspace
 ```
 
