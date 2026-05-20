@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddCalendarTypeToViewTable1757858496548
-  implements MigrationInterface
-{
+export class AddCalendarTypeToViewTable1757858496548 implements MigrationInterface {
   name = 'AddCalendarTypeToViewTable1757858496548';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

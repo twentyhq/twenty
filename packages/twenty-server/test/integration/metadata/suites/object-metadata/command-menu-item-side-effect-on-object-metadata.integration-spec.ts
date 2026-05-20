@@ -155,10 +155,7 @@ describe('Command menu item side effect on object metadata', () => {
     });
 
     expect(
-      findNavigationCommandMenuItemForObject(
-        itemsAfterDelete,
-        deletedObjectId,
-      ),
+      findNavigationCommandMenuItemForObject(itemsAfterDelete, deletedObjectId),
     ).toBeUndefined();
   });
 

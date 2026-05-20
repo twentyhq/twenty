@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddObjectMetadataIdToRowLevelPermissionPredicateGroup1767998263185
-  implements MigrationInterface
-{
+export class AddObjectMetadataIdToRowLevelPermissionPredicateGroup1767998263185 implements MigrationInterface {
   name = 'AddObjectMetadataIdToRowLevelPermissionPredicateGroup1767998263185';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -36,9 +36,7 @@
         {
           "key": "userGuideOverview",
           "label": "Overview",
-          "pages": [
-            "user-guide/introduction"
-          ]
+          "pages": ["user-guide/introduction"]
         },
         {
           "key": "dataModel",
@@ -220,9 +218,7 @@
             {
               "key": "aiHowTos",
               "label": "How-Tos",
-              "pages": [
-                "user-guide/ai/how-tos/ai-faq"
-              ]
+              "pages": ["user-guide/ai/how-tos/ai-faq"]
             }
           ]
         },
@@ -309,9 +305,7 @@
             {
               "key": "permissionsAccessHowTos",
               "label": "How-Tos",
-              "pages": [
-                "user-guide/permissions-access/how-tos/permissions-faq"
-              ]
+              "pages": ["user-guide/permissions-access/how-tos/permissions-faq"]
             }
           ]
         },
@@ -332,9 +326,7 @@
             {
               "key": "billingHowTos",
               "label": "How-Tos",
-              "pages": [
-                "user-guide/billing/how-tos/billing-faq"
-              ]
+              "pages": ["user-guide/billing/how-tos/billing-faq"]
             }
           ]
         },
@@ -359,9 +351,7 @@
             {
               "key": "settingsHowTos",
               "label": "How-Tos",
-              "pages": [
-                "user-guide/settings/how-tos/settings-faq"
-              ]
+              "pages": ["user-guide/settings/how-tos/settings-faq"]
             }
           ]
         }
@@ -374,9 +364,7 @@
         {
           "key": "developersOverview",
           "label": "Overview",
-          "pages": [
-            "developers/introduction"
-          ]
+          "pages": ["developers/introduction"]
         },
         {
           "key": "apps",

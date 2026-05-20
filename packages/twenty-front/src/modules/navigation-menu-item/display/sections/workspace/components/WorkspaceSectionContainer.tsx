@@ -23,9 +23,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 const LazyWorkspaceSectionListDndKit = lazy(() =>
-  import(
-    '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListDndKit'
-  ).then((m) => ({ default: m.WorkspaceSectionListDndKit })),
+  import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListDndKit').then(
+    (m) => ({ default: m.WorkspaceSectionListDndKit }),
+  ),
 );
 
 const StyledWorkspaceSectionContentGapOffset = styled.div`

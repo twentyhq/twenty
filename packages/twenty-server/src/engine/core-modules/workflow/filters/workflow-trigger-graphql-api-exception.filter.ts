@@ -33,9 +33,7 @@ export const handleWorkflowTriggerException = (
 };
 
 @Catch(WorkflowTriggerException)
-export class WorkflowTriggerGraphqlApiExceptionFilter
-  implements ExceptionFilter
-{
+export class WorkflowTriggerGraphqlApiExceptionFilter implements ExceptionFilter {
   catch(exception: WorkflowTriggerException) {
     handleWorkflowTriggerException(exception);
   }

@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class FixAiEntityTimestampsToTimestamptz1771600000000
-  implements MigrationInterface
-{
+export class FixAiEntityTimestampsToTimestamptz1771600000000 implements MigrationInterface {
   name = 'FixAiEntityTimestampsToTimestamptz1771600000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

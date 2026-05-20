@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class MigrateServerlessTriggersToServerless1769532887284
-  implements MigrationInterface
-{
+export class MigrateServerlessTriggersToServerless1769532887284 implements MigrationInterface {
   name = 'MigrateServerlessTriggersToServerless1769532887284';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

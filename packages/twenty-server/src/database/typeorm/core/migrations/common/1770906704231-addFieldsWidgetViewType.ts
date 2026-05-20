@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddFieldsWidgetViewType1770906704231
-  implements MigrationInterface
-{
+export class AddFieldsWidgetViewType1770906704231 implements MigrationInterface {
   name = 'AddFieldsWidgetViewType1770906704231';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

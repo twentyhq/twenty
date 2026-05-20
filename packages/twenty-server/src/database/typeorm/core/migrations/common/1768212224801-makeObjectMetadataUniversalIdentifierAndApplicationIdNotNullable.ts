@@ -2,9 +2,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 import { makeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableQueries } from 'src/database/typeorm/core/migrations/utils/1768212224801-makeObjectMetadataUniversalIdentifierAndApplicationIdNotNullable.util';
 
-export class MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullable1768212224801
-  implements MigrationInterface
-{
+export class MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullable1768212224801 implements MigrationInterface {
   name =
     'MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullable1768212224801';
 

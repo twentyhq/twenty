@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddHandlerToServerlessFunction1761210191095
-  implements MigrationInterface
-{
+export class AddHandlerToServerlessFunction1761210191095 implements MigrationInterface {
   name = 'AddHandlerToServerlessFunction1761210191095';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

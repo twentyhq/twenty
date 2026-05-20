@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RemoveObjectMetadataStandardId1770040351718
-  implements MigrationInterface
-{
+export class RemoveObjectMetadataStandardId1770040351718 implements MigrationInterface {
   name = 'RemoveObjectMetadataStandardId1770040351718';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

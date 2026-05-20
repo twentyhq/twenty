@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddIsSdkLayerStaleToApplication1773000000000
-  implements MigrationInterface
-{
+export class AddIsSdkLayerStaleToApplication1773000000000 implements MigrationInterface {
   name = 'AddIsSdkLayerStaleToApplication1773000000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
