@@ -26,6 +26,7 @@ import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-ev
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
+import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
 
 const serializeThreadForBroadcast = (
   thread: AgentChatThreadEntity,
@@ -564,7 +565,7 @@ export class AgentChatService {
 
   private async broadcastThreadUpdated(
     thread: AgentChatThreadEntity,
-    updatedFields: string[],
+    updatedFields: (keyof AgentChatThreadDTO)[],
     userWorkspaceId: string,
   ): Promise<void> {
     const lastMessageAt = await this.getLastMessageAtForThread(thread.id);
