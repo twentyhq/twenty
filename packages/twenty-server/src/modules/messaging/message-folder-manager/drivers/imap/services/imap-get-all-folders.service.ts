@@ -93,7 +93,18 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       });
     }
 
-    for (const mailbox of mailboxList) {
+    const mailboxValidities = await Promise.all(
+      mailboxList.map(async (mailbox) => {
+        if (!this.isValidMailbox(mailbox, folders)) {
+          return { mailbox, uidValidity: null };
+        }
+
+        const uidValidity = await this.getUidValidity(client, mailbox);
+        return { mailbox, uidValidity };
+      }),
+    );
+
+    for (const { mailbox, uidValidity } of mailboxValidities) {
       if (!this.isValidMailbox(mailbox, folders)) {
         if (!pathToExternalIdMap.has(mailbox.path)) {
           pathToExternalIdMap.set(mailbox.path, mailbox.path);
@@ -101,7 +112,6 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
         continue;
       }
 
-      const uidValidity = await this.getUidValidity(client, mailbox);
       const externalId = uidValidity
         ? `${mailbox.path}:${uidValidity}`
         : mailbox.path;
