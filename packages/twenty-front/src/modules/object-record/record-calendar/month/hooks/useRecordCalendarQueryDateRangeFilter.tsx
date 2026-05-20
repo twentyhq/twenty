@@ -7,7 +7,6 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { augmentFieldsWithRelationTargets } from '@/object-record/record-filter/utils/augmentFieldsWithRelationTargets';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -111,11 +110,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
     filterValueDependencies,
     recordFilters: calendarRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
-    fields: augmentFieldsWithRelationTargets({
-      baseFields: objectMetadataItem.fields,
-      recordFilters: calendarRecordFilters,
-      allFieldMetadataItems: flattenedFieldMetadataItems,
-    }),
+    fieldMetadataItems: flattenedFieldMetadataItems,
   });
 
   const { recordGqlOperationFilter: anyFieldFilter } =

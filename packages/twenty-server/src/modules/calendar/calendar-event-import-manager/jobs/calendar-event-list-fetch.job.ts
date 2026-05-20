@@ -35,32 +35,36 @@ export class CalendarEventListFetchJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarChannel = await this.calendarChannelRepository.findOne({
-        where: {
-          id: calendarChannelId,
-          isSyncEnabled: true,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const calendarChannel = await this.calendarChannelRepository.findOne({
+          where: {
+            id: calendarChannelId,
+            isSyncEnabled: true,
+            workspaceId,
+          },
+          relations: ['connectedAccount'],
+        });
+
+        if (!calendarChannel) {
+          return;
+        }
+
+        if (
+          calendarChannel.syncStage !==
+          CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED
+        ) {
+          return;
+        }
+
+        await this.calendarFetchEventsService.fetchCalendarEvents(
+          calendarChannel as unknown as CalendarChannelEntity,
+          calendarChannel.connectedAccount,
           workspaceId,
-        },
-        relations: ['connectedAccount'],
-      });
-
-      if (!calendarChannel) {
-        return;
-      }
-
-      if (
-        calendarChannel.syncStage !==
-        CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED
-      ) {
-        return;
-      }
-
-      await this.calendarFetchEventsService.fetchCalendarEvents(
-        calendarChannel as unknown as CalendarChannelEntity,
-        calendarChannel.connectedAccount,
-        workspaceId,
-      );
-    }, authContext);
+        );
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

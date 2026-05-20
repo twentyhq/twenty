@@ -1,5 +1,5 @@
 #
-# Crowdin CLI configuration for Website translations (twenty-website-new)
+# Crowdin CLI configuration for Website translations (twenty-website)
 # Project ID: 4
 # See https://crowdin.github.io/crowdin-cli/configuration for more information
 #
@@ -16,7 +16,7 @@ files:
   #
   # Source file - PO file for Lingui
   #
-  - source: packages/twenty-website-new/src/locales/en.po
+  - source: packages/twenty-website/src/locales/en.po
     #
     # Translation files path
     #

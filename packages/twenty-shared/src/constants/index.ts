@@ -7,6 +7,8 @@
  *                              |___/
  */
 
+export type { AccountType } from './AccountTypes';
+export { ACCOUNT_TYPES } from './AccountTypes';
 export { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from './AllowedFullNameSortSubfields';
 export { AUTO_SELECT_FAST_MODEL_ID } from './AutoSelectFastModelId';
 export { AUTO_SELECT_SMART_MODEL_ID } from './AutoSelectSmartModelId';
@@ -19,6 +21,7 @@ export { DATE_TYPE_FORMAT } from './DateTypeFormat';
 export { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from './DefaultNumberOfGroupsLimit';
 export { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from './DefaultRelativeDateFilterValue';
 export { DEFAULT_VISIBLE_ADDRESS_SUBFIELDS } from './DefaultVisibleAddressSubfields';
+export { DEFAULT_WIDGET_SIZE } from './DefaultWidgetSize';
 export { DOCUMENTATION_BASE_URL } from './DocumentationBaseUrl';
 export { DOCUMENTATION_DEFAULT_LANGUAGE } from './DocumentationDefaultLanguage';
 export { DOCUMENTATION_DEFAULT_PATH } from './DocumentationDefaultPath';

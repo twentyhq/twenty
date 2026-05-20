@@ -8,14 +8,18 @@ export class RenamePermissionFlagToRolePermissionFlagFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // The legacy permissionFlag table stores per-role grants (`roleId` + `flag`).
-    // Rename it to preserve those rows before creating the new permissionFlag catalog table.
     await queryRunner.query(
       `ALTER TABLE "core"."permissionFlag" RENAME TO "rolePermissionFlag"`,
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."rolePermissionFlag" RENAME CONSTRAINT "PK_a02789db60620a1e9f90147b50f" TO "PK_76591adc8035c2e7b0cd6115136"`,
+      `ALTER TABLE "core"."rolePermissionFlag" DROP CONSTRAINT IF EXISTS "PK_a02789db60620a1e9f90147b50f"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."rolePermissionFlag" DROP CONSTRAINT IF EXISTS "PK_8c144a021030d7e3326835a04c8"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."rolePermissionFlag" ADD CONSTRAINT "PK_76591adc8035c2e7b0cd6115136" PRIMARY KEY ("id")`,
     );
 
     await queryRunner.query(
@@ -26,9 +30,6 @@ export class RenamePermissionFlagToRolePermissionFlagFastInstanceCommand
       `ALTER INDEX "core"."IDX_PERMISSION_FLAG_ROLE_ID" RENAME TO "IDX_ROLE_PERMISSION_FLAG_ROLE_ID"`,
     );
 
-    // Re-hash inherited constraints/indexes so TypeORM's schema diff matches
-    // the renamed table. Original names were derived from "permissionFlag"
-    // and stay free for the new catalog table created by the next migration.
     await queryRunner.query(
       `ALTER TABLE "core"."rolePermissionFlag" DROP CONSTRAINT "FK_13f8ca9c517976733a1ce4c10eb"`,
     );
@@ -92,7 +93,10 @@ export class RenamePermissionFlagToRolePermissionFlagFastInstanceCommand
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."rolePermissionFlag" RENAME CONSTRAINT "PK_76591adc8035c2e7b0cd6115136" TO "PK_a02789db60620a1e9f90147b50f"`,
+      `ALTER TABLE "core"."rolePermissionFlag" DROP CONSTRAINT IF EXISTS "PK_76591adc8035c2e7b0cd6115136"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."rolePermissionFlag" ADD CONSTRAINT "PK_a02789db60620a1e9f90147b50f" PRIMARY KEY ("id")`,
     );
 
     await queryRunner.query(

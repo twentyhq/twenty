@@ -27,11 +27,9 @@ const DEFAULT_RECOMMENDED_MODELS = [
   'xai/grok-4',
 ];
 
-export const loadDefaultModelPreferences = (): AiModelPreferences => {
-  return {
-    disabledModels: [],
-    recommendedModels: DEFAULT_RECOMMENDED_MODELS,
-    defaultFastModels: DEFAULT_FAST_MODELS,
-    defaultSmartModels: DEFAULT_SMART_MODELS,
-  };
+export const DEFAULT_MODEL_PREFERENCES: AiModelPreferences = {
+  disabledModels: [],
+  recommendedModels: DEFAULT_RECOMMENDED_MODELS,
+  defaultFastModels: DEFAULT_FAST_MODELS,
+  defaultSmartModels: DEFAULT_SMART_MODELS,
 };

@@ -12,11 +12,20 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('rolePermissionFlag')
+@WasRenamedInUpgrade([
+  {
+    previousName: 'permissionFlag',
+    upgradeCommandName:
+      '2.6.0_RenamePermissionFlagToRolePermissionFlagFastInstanceCommand_1778235340020',
+  },
+])
 @Unique('IDX_ROLE_PERMISSION_FLAG_FLAG_ROLE_ID_UNIQUE', ['flag', 'roleId'])
 @Unique('IDX_ROLE_PERMISSION_FLAG_PERMISSION_FLAG_ID_ROLE_ID_UNIQUE', [
   'permissionFlagId',
@@ -40,6 +49,10 @@ export class RolePermissionFlagEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'varchar' })
   flag: PermissionFlagType;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.6.0_LinkRolePermissionFlagToPermissionFlagFastInstanceCommand_1778235340022',
+  })
   @Column({ nullable: true, type: 'uuid' })
   permissionFlagId: string | null;
 

@@ -311,6 +311,7 @@ export class MessagingMessageService {
         };
       },
       authContext,
+      { lite: true },
     );
   }
 
