@@ -64,8 +64,7 @@ export const TwoConnectedAccounts: Story = {
                 {
                   id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6f',
                   handle: 'test.test@gmail.com',
-                  connectedAccountId:
-                    '20202020-954c-4d76-9a87-e5f072d4b7ef',
+                  connectedAccountId: '20202020-954c-4d76-9a87-e5f072d4b7ef',
                   isSyncEnabled: true,
                   syncStage: 'CALENDAR_EVENT_LIST_FETCH_PENDING',
                   syncStatus: 'COMPLETED',
@@ -78,11 +77,9 @@ export const TwoConnectedAccounts: Story = {
                 {
                   id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6a',
                   handle: 'test.test2@gmail.com',
-                  connectedAccountId:
-                    '20202020-954c-4d76-9a87-e5f072d4b7ef',
+                  connectedAccountId: '20202020-954c-4d76-9a87-e5f072d4b7ef',
                   isSyncEnabled: true,
-                  syncStage:
-                    'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING',
+                  syncStage: 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING',
                   syncStatus: 'COMPLETED',
                   visibility: 'SHARE_EVERYTHING',
                   contactAutoCreationPolicy: 'SENT',
