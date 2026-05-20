@@ -5,6 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/is-safe-relative-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FrontComponentExceptionCode } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -33,6 +34,28 @@ export class FlatFrontComponentValidatorService {
         code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
         message: t`Front component name is required`,
         userFriendlyMessage: msg`Front component name is required`,
+      });
+    }
+
+    if (
+      isDefined(flatFrontComponent.builtComponentPath) &&
+      !isSafeRelativePath(flatFrontComponent.builtComponentPath)
+    ) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Built component path contains unsafe characters`,
+        userFriendlyMessage: msg`Built component path contains unsafe characters`,
+      });
+    }
+
+    if (
+      isDefined(flatFrontComponent.sourceComponentPath) &&
+      !isSafeRelativePath(flatFrontComponent.sourceComponentPath)
+    ) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Source component path contains unsafe characters`,
+        userFriendlyMessage: msg`Source component path contains unsafe characters`,
       });
     }
 
@@ -76,6 +99,7 @@ export class FlatFrontComponentValidatorService {
 
   public validateFlatFrontComponentUpdate({
     universalIdentifier,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFrontComponentMaps: optimisticFlatFrontComponentMaps,
     },
@@ -103,6 +127,28 @@ export class FlatFrontComponentValidatorService {
       });
 
       return validationResult;
+    }
+
+    if (
+      isDefined(flatEntityUpdate.builtComponentPath) &&
+      !isSafeRelativePath(flatEntityUpdate.builtComponentPath)
+    ) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Built component path contains unsafe characters`,
+        userFriendlyMessage: msg`Built component path contains unsafe characters`,
+      });
+    }
+
+    if (
+      isDefined(flatEntityUpdate.sourceComponentPath) &&
+      !isSafeRelativePath(flatEntityUpdate.sourceComponentPath)
+    ) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Source component path contains unsafe characters`,
+        userFriendlyMessage: msg`Source component path contains unsafe characters`,
+      });
     }
 
     return validationResult;
