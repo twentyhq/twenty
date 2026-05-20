@@ -43,9 +43,8 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
       <H2Title title={t`Configuration`} description={description} />
       <StyledContainer>
         {editedEnvVariables.map((editedEnvVariable) => (
-          <div>
+          <div key={editedEnvVariable.key}>
             <TextInput
-              key={editedEnvVariable.key}
               label={editedEnvVariable.key}
               value={editedEnvVariable.value}
               onChange={(newValue) => {
