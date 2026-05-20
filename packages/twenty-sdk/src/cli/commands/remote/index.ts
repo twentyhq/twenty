@@ -78,14 +78,14 @@ const runOAuthWithApiKeyFallback = async (
 const addAction = async (options: {
   as?: string;
   apiKey?: string;
-  workspaceUrl?: string;
+  url?: string;
   apiUrl?: string;
   local?: boolean;
   test?: boolean;
 }) => {
   if (options.apiUrl) {
     console.warn(
-      chalk.yellow('⚠ --api-url is deprecated. Use --workspace-url instead.'),
+      chalk.yellow('⚠ --api-url is deprecated. Use --url instead.'),
     );
   }
   const configPath = options.test ? getConfigPath(true) : undefined;
@@ -110,10 +110,10 @@ const addAction = async (options: {
     return;
   }
 
-  let apiUrl = options.workspaceUrl ?? options.apiUrl;
+  let serverUrl = options.url ?? options.apiUrl;
 
-  if (apiUrl) {
-    apiUrl = normalizeUrl(apiUrl);
+  if (serverUrl) {
+    serverUrl = normalizeUrl(serverUrl);
   } else {
     const detectedUrl = await detectLocalServer();
 
@@ -129,14 +129,14 @@ const addAction = async (options: {
       }
 
       console.log(chalk.gray(`Found local server at ${detectedUrl}`));
-      apiUrl = detectedUrl;
+      serverUrl = detectedUrl;
     } else {
-      apiUrl = normalizeUrl(
+      serverUrl = normalizeUrl(
         (
-          await inquirer.prompt<{ apiUrl: string }>([
+          await inquirer.prompt<{ serverUrl: string }>([
             {
               type: 'input',
-              name: 'apiUrl',
+              name: 'serverUrl',
               message: 'Twenty server URL:',
               validate: (input: string) => {
                 try {
@@ -149,18 +149,18 @@ const addAction = async (options: {
               },
             },
           ])
-        ).apiUrl,
+        ).serverUrl,
       );
     }
   }
 
-  const name = options.as ?? deriveRemoteName(apiUrl);
+  const name = options.as ?? deriveRemoteName(serverUrl);
 
   ConfigService.setActiveRemote(name);
-  const method = await authenticate(apiUrl, options.apiKey);
+  const method = await authenticate(serverUrl, options.apiKey);
 
   console.log(
-    chalk.green(`✓ Remote "${name}" added (${apiUrl}) via ${method}.`),
+    chalk.green(`✓ Remote "${name}" added (${serverUrl}) via ${method}.`),
   );
 
   await configService.setDefaultRemote(name);
@@ -283,8 +283,8 @@ export const registerRemoteCommands = (program: Command): void => {
     .description('Add or re-authenticate a remote')
     .option('--as <name>', 'Name for this remote')
     .option('--api-key <apiKey>', 'API key for non-interactive auth')
-    .option('--workspace-url <workspaceUrl>', 'Server URL')
-    .option('--api-url <apiUrl>', '[deprecated: use --workspace-url]')
+    .option('--url <url>', 'Server URL')
+    .option('--api-url <apiUrl>', '[deprecated: use --url]')
     .option('--local', 'Connect to a local Twenty server (auto-detect)')
     .option('--test', 'Write to config.test.json (for integration tests)')
     .action(addAction);
@@ -325,15 +325,15 @@ export const registerRemoteCommands = (program: Command): void => {
     .command('add')
     .option('--as <name>', 'Name for this remote')
     .option('--api-key <apiKey>', 'API key for non-interactive auth')
-    .option('--workspace-url <workspaceUrl>', 'Server URL')
-    .option('--api-url <apiUrl>', '[deprecated: use --workspace-url]')
+    .option('--url <url>', 'Server URL')
+    .option('--api-url <apiUrl>', '[deprecated: use --url]')
     .option('--local', 'Connect to a local Twenty server (auto-detect)')
     .option('--test', 'Write to config.test.json (for integration tests)')
     .action(
       async (options: {
         as?: string;
         apiKey?: string;
-        workspaceUrl?: string;
+        url?: string;
         apiUrl?: string;
         local?: boolean;
         test?: boolean;
