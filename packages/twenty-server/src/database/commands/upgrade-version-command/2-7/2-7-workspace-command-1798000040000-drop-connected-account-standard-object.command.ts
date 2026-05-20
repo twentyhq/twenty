@@ -23,7 +23,7 @@ const MESSAGE_CHANNEL_CONNECTED_ACCOUNT_FIELD_UNIVERSAL_IDENTIFIER =
 const CALENDAR_CHANNEL_CONNECTED_ACCOUNT_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-95b1-4f44-82dc-61b042ae2414';
 
-@RegisteredWorkspaceCommand('2.7.0', 1799000000000)
+@RegisteredWorkspaceCommand('2.7.0', 1798000040000)
 @Command({
   name: 'upgrade:2-7:drop-connected-account-standard-object',
   description:
