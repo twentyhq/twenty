@@ -40,7 +40,7 @@ export class ConnectedAccountRefreshTokensService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
-  async refreshAndSaveTokens(
+  async resolveTokens(
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
   ): Promise<ConnectedAccountTokens> {
