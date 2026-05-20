@@ -14,7 +14,9 @@ export default {
     ...baseConfig.cloudflare,
     skewProtection: {
       enabled: true,
-      maxNumberOfVersions: 10,
+      // Window large enough to keep prod-version history for skew routing AND
+      // hold one slot per open PR preview. `maxVersionAgeDays` prunes the rest.
+      maxNumberOfVersions: 50,
       maxVersionAgeDays: 14,
     },
   },
