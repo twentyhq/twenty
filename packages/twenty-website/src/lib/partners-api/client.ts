@@ -1,4 +1,4 @@
-const readRequiredEnv = (name: 'TWENTY_API_URL' | 'TWENTY_API_KEY'): string => {
+const readRequiredEnv = (name: 'TWENTY_PARTNERS_API_URL' | 'TWENTY_PARTNERS_API_KEY'): string => {
   const value = process.env[name];
   if (!value) {
     throw new Error(`Missing ${name} env var`);
@@ -6,12 +6,12 @@ const readRequiredEnv = (name: 'TWENTY_API_URL' | 'TWENTY_API_KEY'): string => {
   return value;
 };
 
-export const twentyFetch = async (
+export const partnersApiFetch = async (
   path: string,
   init: RequestInit = {},
 ): Promise<unknown> => {
-  const baseUrl = readRequiredEnv('TWENTY_API_URL');
-  const apiKey = readRequiredEnv('TWENTY_API_KEY');
+  const baseUrl = readRequiredEnv('TWENTY_PARTNERS_API_URL');
+  const apiKey = readRequiredEnv('TWENTY_PARTNERS_API_KEY');
 
   const callerHeaders =
     init.headers instanceof Headers

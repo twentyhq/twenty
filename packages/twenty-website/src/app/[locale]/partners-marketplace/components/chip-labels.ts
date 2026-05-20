@@ -5,7 +5,7 @@ import type {
   DeploymentExpertise,
   ServedGeo,
   SpokenLanguage,
-} from '@/lib/twenty-api';
+} from '@/lib/partners-api';
 
 export const SERVED_GEO_LABELS: Record<ServedGeo, MessageDescriptor> = {
   EUROPE: msg`Europe`,

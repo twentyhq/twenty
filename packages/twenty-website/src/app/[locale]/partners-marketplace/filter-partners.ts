@@ -3,7 +3,7 @@ import type {
   MarketplacePartner,
   ServedGeo,
   SpokenLanguage,
-} from '@/lib/twenty-api';
+} from '@/lib/partners-api';
 
 export type FilterCriteria = {
   regions: ReadonlySet<ServedGeo>;

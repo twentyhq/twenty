@@ -1,4 +1,4 @@
-import type { MarketplacePartner } from '@/lib/twenty-api';
+import type { MarketplacePartner } from '@/lib/partners-api';
 
 import {
   EMPTY_CRITERIA,

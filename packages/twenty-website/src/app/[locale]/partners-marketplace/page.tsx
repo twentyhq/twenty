@@ -11,7 +11,7 @@ import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels'
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
-import { getPartners } from '@/lib/twenty-api';
+import { getPartners } from '@/lib/partners-api';
 
 import { MarketplaceHeader } from './components';
 import { MarketplaceClient } from './MarketplaceClient';

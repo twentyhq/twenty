@@ -7,7 +7,7 @@ import type {
   DeploymentExpertise,
   ServedGeo,
   SpokenLanguage,
-} from '@/lib/twenty-api';
+} from '@/lib/partners-api';
 
 import {
   type FilterCriteria,

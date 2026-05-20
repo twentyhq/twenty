@@ -8,7 +8,7 @@ import type {
   DeploymentExpertise,
   ServedGeo,
   SpokenLanguage,
-} from '@/lib/twenty-api';
+} from '@/lib/partners-api';
 import { theme } from '@/theme';
 
 import type { FilterCriteria } from '../filter-partners';

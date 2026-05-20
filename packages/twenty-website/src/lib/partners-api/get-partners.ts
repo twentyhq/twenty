@@ -1,4 +1,4 @@
-import { twentyFetch } from './client';
+import { partnersApiFetch } from './client';
 import type { MarketplacePartner } from './partner-types';
 
 type ApiPartner = {
@@ -16,7 +16,7 @@ type ApiResponse = { ok: boolean; count: number; partners: ApiPartner[] };
 
 export const getPartners = async (): Promise<readonly MarketplacePartner[]> => {
   try {
-    const data = (await twentyFetch('/s/partners')) as ApiResponse;
+    const data = (await partnersApiFetch('/s/partners')) as ApiResponse;
     return data.partners.map((p) => ({
       slug: p.slug,
       name: p.name,
@@ -27,7 +27,7 @@ export const getPartners = async (): Promise<readonly MarketplacePartner[]> => {
       calendlyLink: p.calendlyLink.primaryLinkUrl,
     }));
   } catch (error) {
-    console.error('[twenty-api] getPartners failed:', error);
+    console.error('[partners-api] getPartners failed:', error);
     return [];
   }
 };

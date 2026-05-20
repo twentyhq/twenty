@@ -1,13 +1,13 @@
-import { twentyFetch } from '@/lib/twenty-api/client';
+import { partnersApiFetch } from '@/lib/partners-api/client';
 
-describe('twentyFetch', () => {
+describe('partnersApiFetch', () => {
   const ORIGINAL_ENV = process.env;
 
   beforeEach(() => {
     process.env = {
       ...ORIGINAL_ENV,
-      TWENTY_API_URL: 'https://twenty.example.com',
-      TWENTY_API_KEY: 'test-key-123',
+      TWENTY_PARTNERS_API_URL: 'https://twenty.example.com',
+      TWENTY_PARTNERS_API_KEY: 'test-key-123',
     };
   });
 
@@ -16,16 +16,16 @@ describe('twentyFetch', () => {
     jest.restoreAllMocks();
   });
 
-  it('throws a clear error when TWENTY_API_URL is missing', async () => {
-    delete process.env.TWENTY_API_URL;
+  it('throws a clear error when TWENTY_PARTNERS_API_URL is missing', async () => {
+    delete process.env.TWENTY_PARTNERS_API_URL;
 
-    await expect(twentyFetch('/rest/people')).rejects.toThrow(/TWENTY_API_URL/);
+    await expect(partnersApiFetch('/rest/people')).rejects.toThrow(/TWENTY_PARTNERS_API_URL/);
   });
 
-  it('throws a clear error when TWENTY_API_KEY is missing', async () => {
-    delete process.env.TWENTY_API_KEY;
+  it('throws a clear error when TWENTY_PARTNERS_API_KEY is missing', async () => {
+    delete process.env.TWENTY_PARTNERS_API_KEY;
 
-    await expect(twentyFetch('/rest/people')).rejects.toThrow(/TWENTY_API_KEY/);
+    await expect(partnersApiFetch('/rest/people')).rejects.toThrow(/TWENTY_PARTNERS_API_KEY/);
   });
 
   it('sends Authorization: Bearer header and returns parsed JSON on 2xx', async () => {
@@ -36,7 +36,7 @@ describe('twentyFetch', () => {
       }),
     );
 
-    const result = await twentyFetch('/rest/people');
+    const result = await partnersApiFetch('/rest/people');
 
     expect(result).toEqual({ ok: true });
     expect(fetchSpy).toHaveBeenCalledTimes(1);
@@ -54,7 +54,7 @@ describe('twentyFetch', () => {
       .spyOn(globalThis, 'fetch')
       .mockResolvedValue(new Response('Workspace not found', { status: 404 }));
 
-    await expect(twentyFetch('/rest/people')).rejects.toThrow(
+    await expect(partnersApiFetch('/rest/people')).rejects.toThrow(
       /404.*\/rest\/people.*Workspace not found/s,
     );
   });
@@ -64,7 +64,7 @@ describe('twentyFetch', () => {
       .spyOn(globalThis, 'fetch')
       .mockResolvedValue(new Response('{}', { status: 200 }));
 
-    await twentyFetch('/rest/people', {
+    await partnersApiFetch('/rest/people', {
       cache: 'force-cache',
       headers: { 'X-Custom': 'yes' },
     });

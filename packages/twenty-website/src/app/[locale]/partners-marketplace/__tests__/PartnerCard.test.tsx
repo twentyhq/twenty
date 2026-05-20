@@ -4,7 +4,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import type { MarketplacePartner } from '@/lib/twenty-api';
+import type { MarketplacePartner } from '@/lib/partners-api';
 import { PartnerCard } from '../components/PartnerCard';
 
 beforeAll(() => {

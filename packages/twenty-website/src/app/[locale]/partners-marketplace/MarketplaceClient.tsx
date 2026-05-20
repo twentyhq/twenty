@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 
 import { Container } from '@/design-system/components';
-import type { MarketplacePartner } from '@/lib/twenty-api';
+import type { MarketplacePartner } from '@/lib/partners-api';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
