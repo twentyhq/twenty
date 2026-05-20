@@ -1,30 +1,17 @@
 'use client';
 
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
 import { Container, LinkButton } from '@/design-system/components';
 import type { AppPreviewConfig } from '@/sections/AppPreview';
+import { TabButtons } from '@/sections/Tabs/components/TabButtons';
 import type { TabType } from '@/sections/Tabs/types';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
-import {
-  getHeroMenuColorMix,
-  getHeroScrollColors,
-  getHeroScrollMotion,
-} from './hero-scroll-colors';
-import { TabButtons } from '@/sections/Tabs/components/TabButtons';
 import { useProductHeroMenuSync } from './product-hero-menu-sync';
-import { PRODUCT_HERO_AI_TABS_ID } from './product-hero-tabs-id';
 import { ProductVisual } from './ProductVisual';
 import { useHeroScrollProgress } from './use-hero-scroll-progress';
 
@@ -41,6 +28,26 @@ export type HeroScrollProps = {
 
 const NAV_HEIGHT = 64;
 
+const LIGHT_BG = '#ffffff';
+const DARK_BG = '#141414';
+
+function lerpColor(
+  from: [number, number, number],
+  to: [number, number, number],
+  t: number,
+): string {
+  const r = Math.round(from[0] + (to[0] - from[0]) * t);
+  const g = Math.round(from[1] + (to[1] - from[1]) * t);
+  const b = Math.round(from[2] + (to[2] - from[2]) * t);
+
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+const LIGHT_BG_RGB: [number, number, number] = [255, 255, 255];
+const DARK_BG_RGB: [number, number, number] = [20, 20, 20];
+const LIGHT_TEXT_RGB: [number, number, number] = [28, 28, 28];
+const DARK_TEXT_RGB: [number, number, number] = [255, 255, 255];
+
 const ScrollTrack = styled.section`
   position: relative;
   width: 100%;
@@ -51,26 +58,31 @@ const ScrollTrack = styled.section`
 `;
 
 const StickyFrame = styled.div`
-  background-color: #ffffff;
+  align-items: center;
   display: flex;
   flex-direction: column;
-  position: relative;
+  justify-content: flex-start;
+  overflow: hidden;
+  padding-bottom: ${theme.spacing(6)};
+  padding-top: ${theme.spacing(7.5)};
   width: 100%;
+
+  &[data-phase='0'] {
+    background-color: ${LIGHT_BG};
+  }
+
+  &[data-phase='1'] {
+    background-color: ${DARK_BG};
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     height: calc(100vh - ${NAV_HEIGHT}px);
-    overflow: hidden;
+    padding-bottom: 0;
+    padding-top: ${theme.spacing(12)};
     position: sticky;
     top: ${NAV_HEIGHT}px;
+    transition: none;
   }
-`;
-
-const DarkColorOverlay = styled.div`
-  background-color: #141414;
-  inset: 0;
-  pointer-events: none;
-  position: absolute;
-  z-index: 0;
 `;
 
 const PatternOverlay = styled.div`
@@ -84,95 +96,33 @@ const PatternOverlay = styled.div`
   z-index: 0;
 `;
 
-const ScrollPatternOverlay = styled(PatternOverlay)`
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    display: none;
-  }
-`;
-
-const StackedPatternOverlay = styled(PatternOverlay)`
-  display: none;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    display: block;
-  }
-`;
-
 const patternImageClassName = css`
   object-fit: cover;
 `;
 
-const HeroViewport = styled.div`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  width: 100%;
-  z-index: 1;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-  }
-`;
-
-const HeroTrack = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    height: 100%;
-    will-change: transform;
-  }
-`;
-
-const HeroPanel = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  padding-bottom: ${theme.spacing(6)};
-  padding-top: ${theme.spacing(7.5)};
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    height: 100%;
-    min-height: 0;
-    padding-bottom: 0;
-    padding-top: ${theme.spacing(12)};
-  }
-`;
-
-const AiHeroPanel = styled(HeroPanel)`
-  position: relative;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    background-color: #141414;
-    overflow: hidden;
-    padding-top: ${theme.spacing(10)};
-  }
-`;
-
-const PanelContainer = styled(Container)`
+const StyledContainer = styled(Container)`
   display: grid;
-  flex-shrink: 0;
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   min-width: 0;
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
-  row-gap: ${theme.spacing(3)};
+  position: relative;
+  row-gap: ${theme.spacing(6)};
   text-align: center;
   width: 100%;
+  z-index: 1;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
-    row-gap: ${theme.spacing(6)};
   }
 `;
 
-const PanelHeading = styled.div`
+const HeadingSlot = styled.div`
   max-width: 360px;
+  min-height: 96px;
+  position: relative;
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
@@ -180,11 +130,12 @@ const PanelHeading = styled.div`
   }
 `;
 
-const PanelBody = styled.p`
+const BodyText = styled.div`
   font-size: ${theme.font.size(4)};
   line-height: 1.55;
   margin: 0;
   max-width: 360px;
+  position: relative;
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
@@ -192,32 +143,37 @@ const PanelBody = styled.p`
   }
 `;
 
-const IntroActions = styled.div`
+const HeadingGroup = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing(3)};
+  width: 100%;
+`;
+
+const ActionSlot = styled.div`
+  min-height: 48px;
+  position: relative;
+  width: 100%;
+`;
+
+const CtaLayer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${theme.spacing(3)};
   justify-content: center;
-  min-height: 48px;
+`;
+
+const TabsLayer = styled.div`
   width: 100%;
 `;
 
-const TabsActions = styled.div`
-  min-height: 48px;
-  width: 100%;
-`;
-
-const PanelVisual = styled.div`
+const VisualWrapper = styled.div`
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
   width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    flex: 1;
-    min-height: 0;
-  }
 `;
-
-const INTRO_PANEL_COLORS = getHeroScrollColors(0, 0);
-const AI_PANEL_COLORS = getHeroScrollColors(1, 1);
 
 export function HeroVisualScroll({
   aiBody,
@@ -230,138 +186,29 @@ export function HeroVisualScroll({
   visual,
 }: HeroScrollProps) {
   const trackRef = useRef<HTMLDivElement>(null);
-  const heroViewportRef = useRef<HTMLDivElement>(null);
-  const introPanelRef = useRef<HTMLDivElement>(null);
-  const aiPanelRef = useRef<HTMLDivElement>(null);
+  const { morphProgress, navProgress, phase } = useHeroScrollProgress(trackRef);
   const menuSync = useProductHeroMenuSync();
-  const { colorMix, isScrollDriven, panelMix } =
-    useHeroScrollProgress(trackRef);
   const [activeTab, setActiveTab] = useState(0);
-  const [panelStepPixels, setPanelStepPixels] = useState(0);
-
-  const heroColors = getHeroScrollColors(colorMix, panelMix);
-  const heroMotion = getHeroScrollMotion(panelMix, panelStepPixels);
-  const introPanelColors = isScrollDriven ? heroColors : INTRO_PANEL_COLORS;
-  const aiPanelColors = isScrollDriven ? heroColors : AI_PANEL_COLORS;
-  const isIntroInteractive = !isScrollDriven || panelMix < 0.5;
-  const isAiInteractive = !isScrollDriven || panelMix >= 0.5;
-
-  useLayoutEffect(() => {
-    const heroViewport = heroViewportRef.current;
-
-    if (!heroViewport || !isScrollDriven) {
-      return;
-    }
-
-    const measureViewport = () => {
-      setPanelStepPixels(heroViewport.clientHeight);
-    };
-
-    measureViewport();
-
-    const resizeObserver = new ResizeObserver(measureViewport);
-    resizeObserver.observe(heroViewport);
-
-    return () => resizeObserver.disconnect();
-  }, [aiBody, aiHeading, introBody, introHeading, isScrollDriven, tabs]);
-
-  const syncMenuColorMix = useCallback(() => {
-    if (!menuSync) {
-      return;
-    }
-
-    const track = trackRef.current;
-    const trackRect = track?.getBoundingClientRect() ?? null;
-    const aiPanelRect = aiPanelRef.current?.getBoundingClientRect() ?? null;
-    const introPanelRect =
-      introPanelRef.current?.getBoundingClientRect() ?? null;
-    const measuredNavHeight =
-      menuSync.menuSectionRef.current?.getBoundingClientRect().height ??
-      NAV_HEIGHT;
-
-    menuSync.setMenuDarkOpacity(
-      getHeroMenuColorMix({
-        aiPanelRect,
-        colorMix,
-        introPanelRect,
-        isScrollDriven,
-        navHeight: measuredNavHeight,
-        panelMix,
-        trackRect,
-        viewportHeight: window.innerHeight,
-      }),
-    );
-  }, [colorMix, isScrollDriven, menuSync, panelMix]);
+  const idPrefix = useId();
 
   useEffect(() => {
-    let animationFrameId = 0;
+    menuSync?.setMorphProgress(navProgress);
+  }, [menuSync, navProgress]);
 
-    const scheduleSyncMenuColorMix = () => {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = requestAnimationFrame(syncMenuColorMix);
-    };
+  const activeScene = phase === 0 ? 0 : activeTab + 1;
 
-    scheduleSyncMenuColorMix();
-
-    const introPanel = introPanelRef.current;
-    const aiPanel = aiPanelRef.current;
-    const track = trackRef.current;
-    const menuSection = menuSync?.menuSectionRef.current;
-
-    const resizeObserver = new ResizeObserver(scheduleSyncMenuColorMix);
-
-    if (introPanel) {
-      resizeObserver.observe(introPanel);
-    }
-
-    if (aiPanel) {
-      resizeObserver.observe(aiPanel);
-    }
-
-    if (track) {
-      resizeObserver.observe(track);
-    }
-
-    if (menuSection) {
-      resizeObserver.observe(menuSection);
-    }
-
-    const intersectionObserver = new IntersectionObserver(
-      scheduleSyncMenuColorMix,
-      { threshold: [0, 0.25, 0.5, 0.75, 1] },
-    );
-
-    if (introPanel) {
-      intersectionObserver.observe(introPanel);
-    }
-
-    if (aiPanel) {
-      intersectionObserver.observe(aiPanel);
-    }
-
-    window.addEventListener('scroll', scheduleSyncMenuColorMix, {
-      passive: true,
-    });
-    window.addEventListener('resize', scheduleSyncMenuColorMix);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      resizeObserver.disconnect();
-      intersectionObserver.disconnect();
-      window.removeEventListener('scroll', scheduleSyncMenuColorMix);
-      window.removeEventListener('resize', scheduleSyncMenuColorMix);
-    };
-  }, [menuSync, syncMenuColorMix]);
+  const backgroundColor = lerpColor(LIGHT_BG_RGB, DARK_BG_RGB, morphProgress);
+  const headingColor = lerpColor(LIGHT_TEXT_RGB, DARK_TEXT_RGB, morphProgress);
+  const bodyColor = `rgba(${Math.round(28 + (255 - 28) * morphProgress)}, ${Math.round(28 + (255 - 28) * morphProgress)}, ${Math.round(28 + (255 - 28) * morphProgress)}, ${0.6 + 0.1 * morphProgress})`;
+  const patternOpacity = morphProgress * 0.4;
 
   return (
     <ScrollTrack ref={trackRef}>
-      <StickyFrame>
-        {isScrollDriven ? (
-          <DarkColorOverlay
-            style={{ opacity: heroColors.darkOverlayOpacity }}
-          />
-        ) : null}
-        <ScrollPatternOverlay style={{ opacity: heroColors.patternOpacity }}>
+      <StickyFrame
+        data-phase={phase}
+        style={{ backgroundColor }}
+      >
+        <PatternOverlay style={{ opacity: patternOpacity }}>
           <NextImage
             alt=""
             className={patternImageClassName}
@@ -369,100 +216,44 @@ export function HeroVisualScroll({
             sizes="100vw"
             src="/images/product/tabs/background.webp"
           />
-        </ScrollPatternOverlay>
+        </PatternOverlay>
+        <StyledContainer>
+          <HeadingGroup>
+            <HeadingSlot style={{ color: headingColor }}>
+              {phase === 0 ? introHeading : aiHeading}
+            </HeadingSlot>
 
-        <HeroViewport ref={heroViewportRef}>
-          <HeroTrack
-            style={
-              isScrollDriven && panelStepPixels > 0
-                ? {
-                    height: panelStepPixels * 2,
-                    transform: `translate3d(0, ${heroMotion.trackTranslateY}px, 0)`,
-                  }
-                : undefined
-            }
-          >
-            <HeroPanel
-              ref={introPanelRef}
-              style={
-                isScrollDriven
-                  ? {
-                      color: introPanelColors.headingColor,
-                      height: panelStepPixels > 0 ? panelStepPixels : undefined,
-                    }
-                  : { color: introPanelColors.headingColor }
-              }
-            >
-              <PanelContainer>
-                <PanelHeading>{introHeading}</PanelHeading>
-                <PanelBody style={{ color: introPanelColors.bodyColor }}>
-                  {introBody}
-                </PanelBody>
-                <IntroActions
-                  style={{
-                    pointerEvents: isIntroInteractive ? 'auto' : 'none',
-                  }}
-                >
-                  <LinkButton
-                    color="secondary"
-                    href={ctaHref}
-                    label={ctaLabel}
-                    variant="contained"
-                  />
-                </IntroActions>
-              </PanelContainer>
-              <PanelVisual>
-                <ProductVisual visual={visual} />
-              </PanelVisual>
-            </HeroPanel>
+            <BodyText style={{ color: bodyColor }}>
+              {phase === 0 ? introBody : aiBody}
+            </BodyText>
+          </HeadingGroup>
 
-            <AiHeroPanel
-              ref={aiPanelRef}
-              style={
-                isScrollDriven
-                  ? {
-                      color: aiPanelColors.headingColor,
-                      height: panelStepPixels > 0 ? panelStepPixels : undefined,
-                    }
-                  : { color: aiPanelColors.headingColor }
-              }
-            >
-              {!isScrollDriven ? (
-                <StackedPatternOverlay style={{ opacity: 0.4 }}>
-                  <NextImage
-                    alt=""
-                    className={patternImageClassName}
-                    fill
-                    sizes="100vw"
-                    src="/images/product/tabs/background.webp"
-                  />
-                </StackedPatternOverlay>
-              ) : null}
-              <PanelContainer>
-                <PanelHeading>{aiHeading}</PanelHeading>
-                <PanelBody style={{ color: aiPanelColors.bodyColor }}>
-                  {aiBody}
-                </PanelBody>
-                <TabsActions
-                  style={{
-                    pointerEvents: isAiInteractive ? 'auto' : 'none',
-                  }}
-                >
-                  <TabButtons
-                    activeIndex={activeTab}
-                    idPrefix={PRODUCT_HERO_AI_TABS_ID}
-                    onSelect={setActiveTab}
-                    selectionStyle="sliding"
-                    tabs={tabs}
-                  />
-                </TabsActions>
-              </PanelContainer>
-              <PanelVisual>
-                <ProductVisual activeScene={activeTab + 1} visual={visual} />
-              </PanelVisual>
-            </AiHeroPanel>
-          </HeroTrack>
-        </HeroViewport>
+          <ActionSlot>
+            {phase === 0 ? (
+              <CtaLayer style={{ position: 'relative' }}>
+                <LinkButton
+                  color="secondary"
+                  href={ctaHref}
+                  label={ctaLabel}
+                  variant="contained"
+                />
+              </CtaLayer>
+            ) : (
+              <TabsLayer>
+                <TabButtons
+                  activeIndex={activeTab}
+                  idPrefix={idPrefix}
+                  onSelect={setActiveTab}
+                  tabs={tabs}
+                />
+              </TabsLayer>
+            )}
+          </ActionSlot>
+        </StyledContainer>
+
+        <VisualWrapper>
+          <ProductVisual activeScene={activeScene} visual={visual} />
+        </VisualWrapper>
       </StickyFrame>
     </ScrollTrack>
   );

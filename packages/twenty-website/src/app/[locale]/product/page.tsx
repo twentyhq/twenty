@@ -101,7 +101,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           aiHeading={
             <Heading size="lg" weight="light">
               <HeadingPart fontFamily="serif">
-                {i18n._(msg`...with AI that actually`)}
+                {i18n._(msg`AI that actually`)}
               </HeadingPart>
               <br />
               <HeadingPart fontFamily="serif">

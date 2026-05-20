@@ -28,58 +28,12 @@ const StyledRoot = styled.div`
   }
 `;
 
-const MOBILE_VISIBLE_HEIGHT_RATIO = 0.7;
-const MOBILE_VISUAL_SCALE = 1.14;
-
 const ShellScene = styled.div`
   aspect-ratio: 1280 / 832;
   margin: 0 auto;
   max-height: 740px;
   position: relative;
   width: 100%;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    aspect-ratio: 4 / 5;
-    max-height: none;
-    min-height: 300px;
-  }
-`;
-
-const MobileVisualScaler = styled.div`
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    box-sizing: border-box;
-    padding: ${theme.spacing(4)};
-  }
-`;
-
-const MobileVisualClip = styled.div`
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-`;
-
-const MobileVisualScaleLayer = styled.div`
-  height: 100%;
-  position: relative;
-  width: 100%;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    height: calc(
-      100% / ${MOBILE_VISIBLE_HEIGHT_RATIO} / ${MOBILE_VISUAL_SCALE}
-    );
-    left: 50%;
-    position: absolute;
-    top: 0;
-    transform: translateX(-50%) scale(${MOBILE_VISUAL_SCALE});
-    transform-origin: top center;
-    width: calc(100% / ${MOBILE_VISUAL_SCALE});
-  }
 `;
 
 const AppLayout = styled.div`
@@ -342,12 +296,9 @@ export function ProductVisual({ activeScene, visual }: ProductVisualProps) {
   return (
     <StyledRoot>
       <ShellScene>
-        <MobileVisualScaler>
-          <MobileVisualClip>
-            <WindowOrderProvider>
-              <MobileVisualScaleLayer>
-                <AppWindow>
-                <AppLayout>
+        <WindowOrderProvider>
+          <AppWindow>
+            <AppLayout>
               <AppPreviewSidebar
                 favoritesNav={visual.favoritesNav}
                 highlightedItemId={highlightedItemId ?? undefined}
@@ -505,12 +456,9 @@ export function ProductVisual({ activeScene, visual }: ProductVisualProps) {
                   </AiPanel>
                 </ContentRow>
               </RightColumn>
-                </AppLayout>
-                </AppWindow>
-              </MobileVisualScaleLayer>
-            </WindowOrderProvider>
-          </MobileVisualClip>
-        </MobileVisualScaler>
+            </AppLayout>
+          </AppWindow>
+        </WindowOrderProvider>
       </ShellScene>
     </StyledRoot>
   );

@@ -7,15 +7,11 @@ const DARK_HEADING = '#ffffff';
 const LIGHT_BODY = 'rgba(28, 28, 28, 0.6)';
 const DARK_BODY = 'rgba(255, 255, 255, 0.7)';
 
-export const HERO_COLOR_TRANSITION_START = 0.3;
-export const HERO_COLOR_TRANSITION_END = 0.75;
+export const HERO_COLOR_TRANSITION_START = 0.2;
+export const HERO_COLOR_TRANSITION_END = 0.78;
 
-export const HERO_PANEL_TRANSITION_START = 0.2;
-export const HERO_PANEL_TRANSITION_END = 0.6;
-
-// Start darkening before the intro/AI boundary reaches the nav, then ramp to full dark.
-export const HERO_MOBILE_MENU_LEAD_PX = 160;
-export const HERO_MOBILE_MENU_TRANSITION_PX = 140;
+export const HERO_PANEL_TRANSITION_START = 0.16;
+export const HERO_PANEL_TRANSITION_END = 0.58;
 
 function mapScrollToRange(
   progress: number,
@@ -161,65 +157,15 @@ export function getHeroMenuScheme(darkOverlayOpacity: number) {
 }
 
 type GetHeroMenuColorMixOptions = {
-  aiPanelRect: DOMRect | null;
   colorMix: number;
-  introPanelRect: DOMRect | null;
-  isScrollDriven: boolean;
   navHeight: number;
   panelMix: number;
   trackRect: DOMRect | null;
   viewportHeight: number;
 };
 
-function getHeroMobileMenuDarkOpacity({
-  aiPanelRect,
-  introPanelRect,
-  navHeight,
-  trackRect,
-  viewportHeight,
-}: {
-  aiPanelRect: DOMRect;
-  introPanelRect: DOMRect | null;
-  navHeight: number;
-  trackRect: DOMRect;
-  viewportHeight: number;
-}): number {
-  const introAiBoundaryY = introPanelRect?.bottom ?? aiPanelRect.top;
-  const scrollPastBoundary = navHeight + HERO_MOBILE_MENU_LEAD_PX - introAiBoundaryY;
-
-  let menuDarkOpacity = 0;
-
-  if (scrollPastBoundary > 0) {
-    const linearMix = Math.min(
-      1,
-      scrollPastBoundary / HERO_MOBILE_MENU_TRANSITION_PX,
-    );
-
-    // Mobile uses a solid panel background under the nav — match it directly
-    // instead of the slower overlay curve used for desktop scroll blending.
-    menuDarkOpacity = smoothstep(linearMix);
-  }
-
-  const isExitingHero =
-    trackRect.top < 0 && trackRect.bottom < viewportHeight;
-
-  if (isExitingHero) {
-    const exitProgress =
-      (viewportHeight - trackRect.bottom) /
-      Math.max(viewportHeight - navHeight, 1);
-    const exitFade = smoothstep(Math.min(1, Math.max(0, exitProgress)));
-
-    menuDarkOpacity = menuDarkOpacity * (1 - exitFade);
-  }
-
-  return menuDarkOpacity;
-}
-
 export function getHeroMenuColorMix({
-  aiPanelRect,
   colorMix,
-  introPanelRect,
-  isScrollDriven,
   navHeight,
   panelMix,
   trackRect,
@@ -229,25 +175,10 @@ export function getHeroMenuColorMix({
     return 0;
   }
 
-  if (!isScrollDriven) {
-    if (!aiPanelRect || aiPanelRect.bottom <= navHeight) {
-      return 0;
-    }
-
-    return getHeroMobileMenuDarkOpacity({
-      aiPanelRect,
-      introPanelRect,
-      navHeight,
-      trackRect,
-      viewportHeight,
-    });
-  }
-
   const menuColorMix = Math.max(colorMix, panelMix * 0.95);
   let menuDarkOpacity = getDarkOverlayOpacity(menuColorMix, panelMix);
 
-  const isExitingHero =
-    trackRect.top < 0 && trackRect.bottom < viewportHeight;
+  const isExitingHero = trackRect.top < 0 && trackRect.bottom < viewportHeight;
 
   if (isExitingHero) {
     const exitProgress =
@@ -261,11 +192,12 @@ export function getHeroMenuColorMix({
   return menuDarkOpacity;
 }
 
-export function getHeroScrollMotion(
-  panelMix: number,
-  panelStepPixels: number,
-) {
+export function getHeroScrollMotion(panelMix: number, panelStepPixels: number) {
+  const panelEase = smoothstep(panelMix);
+
   return {
-    trackTranslateY: -panelMix * panelStepPixels,
+    aiContentOpacity: smoothstep(Math.max(0, (panelMix - 0.22) / 0.78)),
+    introContentOpacity: 1 - smoothstep(Math.min(1, panelMix / 0.78)),
+    trackTranslateY: -panelEase * panelStepPixels,
   };
 }

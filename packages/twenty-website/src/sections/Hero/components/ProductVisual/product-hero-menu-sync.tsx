@@ -3,12 +3,9 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
-  type RefObject,
 } from 'react';
 
 import { Menu } from '@/sections/Menu/components';
@@ -17,16 +14,9 @@ import type {
   MenuScheme,
   MenuSocialLinkType,
 } from '@/sections/Menu/types';
-import { breakpoints } from '@/theme/breakpoints';
-
-import {
-  getHeroMenuScheme,
-  getHeroScrollColorsFromOpacity,
-} from './hero-scroll-colors';
 
 type ProductHeroMenuContextValue = {
-  menuSectionRef: RefObject<HTMLElement | null>;
-  setMenuDarkOpacity: (darkOverlayOpacity: number) => void;
+  setMorphProgress: (progress: number) => void;
 };
 
 const ProductHeroMenuContext =
@@ -35,6 +25,21 @@ const ProductHeroMenuContext =
 export function useProductHeroMenuSync() {
   return useContext(ProductHeroMenuContext);
 }
+
+function lerpColor(
+  from: [number, number, number],
+  to: [number, number, number],
+  t: number,
+): string {
+  const r = Math.round(from[0] + (to[0] - from[0]) * t);
+  const g = Math.round(from[1] + (to[1] - from[1]) * t);
+  const b = Math.round(from[2] + (to[2] - from[2]) * t);
+
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+const LIGHT_BG: [number, number, number] = [255, 255, 255];
+const DARK_BG: [number, number, number] = [20, 20, 20];
 
 type ProductHeroMenuSyncProps = {
   children: ReactNode;
@@ -47,36 +52,14 @@ export function ProductHeroMenuSync({
   navItems,
   socialLinks,
 }: ProductHeroMenuSyncProps) {
-  const menuSectionRef = useRef<HTMLElement | null>(null);
-  const [menuDarkOpacity, setMenuDarkOpacity] = useState(0);
-  const [enableBackdropBlur, setEnableBackdropBlur] = useState(false);
+  const [morphProgress, setMorphProgress] = useState(0);
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(
-      `(min-width: ${breakpoints.md}px)`,
-    );
-
-    const updateBackdropBlur = () => {
-      setEnableBackdropBlur(mediaQuery.matches);
-    };
-
-    updateBackdropBlur();
-    mediaQuery.addEventListener('change', updateBackdropBlur);
-
-    return () => mediaQuery.removeEventListener('change', updateBackdropBlur);
-  }, []);
-
-  const heroMenuColors = getHeroScrollColorsFromOpacity(menuDarkOpacity);
-  const menuScheme: MenuScheme = getHeroMenuScheme(
-    heroMenuColors.darkOverlayOpacity,
-  );
-  const menuBackgroundColor = heroMenuColors.menuBackgroundColor;
+  const menuBackgroundColor = lerpColor(LIGHT_BG, DARK_BG, morphProgress);
+  const menuScheme: MenuScheme =
+    morphProgress >= 0.5 ? 'secondary' : 'primary';
 
   const contextValue = useMemo(
-    () => ({
-      menuSectionRef,
-      setMenuDarkOpacity,
-    }),
+    () => ({ setMorphProgress }),
     [],
   );
 
@@ -84,12 +67,9 @@ export function ProductHeroMenuSync({
     <ProductHeroMenuContext.Provider value={contextValue}>
       <Menu.Root
         backgroundColor={menuBackgroundColor}
-        enableBackdropBlur={enableBackdropBlur}
         navItems={navItems}
         scheme={menuScheme}
-        sectionRef={menuSectionRef}
         socialLinks={socialLinks}
-        transitionBackgroundColor
       >
         <Menu.Logo scheme={menuScheme} />
         <Menu.Nav navItems={navItems} scheme={menuScheme} />

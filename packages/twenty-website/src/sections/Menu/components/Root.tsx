@@ -12,12 +12,7 @@ import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import {
-  useCallback,
-  useState,
-  type ReactNode,
-  type Ref,
-} from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { CloseDrawerWhenNavigationExpandsEffect } from './../effect-components/CloseDrawerWhenNavigationExpandsEffect';
 import { ScrollTrackingEffect } from './../effect-components/ScrollTrackingEffect';
 import { MenuDrawer } from './Drawer';
@@ -25,7 +20,6 @@ import { MenuDrawer } from './Drawer';
 const StyledSection = styled.section<{
   $enableBackdropBlur: boolean;
   $isElevated: boolean;
-  $transitionBackgroundColor: boolean;
 }>`
   /* Safari < 18 still requires the -webkit- prefix for backdrop-filter; the
    * unprefixed property is no-op on those versions and the menu would render
@@ -41,10 +35,7 @@ const StyledSection = styled.section<{
   min-width: 0;
   position: sticky;
   top: 0;
-  transition: ${({ $transitionBackgroundColor }) =>
-    $transitionBackgroundColor
-      ? 'background-color 0.2s ease, box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-      : 'box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1)'};
+  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   width: 100%;
   z-index: ${theme.zIndex.stickyHeader};
 `;
@@ -95,10 +86,8 @@ type RootProps = {
   scrolledBackgroundColor?: string;
   scrolledSurfaceColor?: string;
   scheme: MenuScheme;
-  sectionRef?: Ref<HTMLElement>;
-  socialLinks: MenuSocialLinkType[];
   surfaceColor?: string;
-  transitionBackgroundColor?: boolean;
+  socialLinks: MenuSocialLinkType[];
 };
 
 export function Root({
@@ -109,10 +98,8 @@ export function Root({
   scrolledBackgroundColor,
   scrolledSurfaceColor,
   scheme,
-  sectionRef,
-  socialLinks,
   surfaceColor,
-  transitionBackgroundColor = false,
+  socialLinks,
 }: RootProps) {
   const { i18n } = useLingui();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -162,10 +149,8 @@ export function Root({
       />
       <ScrollTrackingEffect onScrollStateChange={handleScrollStateChange} />
       <StyledSection
-        ref={sectionRef}
         $enableBackdropBlur={enableBackdropBlur}
         $isElevated={isScrolling || hasScrolled}
-        $transitionBackgroundColor={transitionBackgroundColor}
         style={{ backgroundColor: resolvedBackgroundColor }}
       >
         <StyledContainer>

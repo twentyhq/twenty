@@ -2,70 +2,89 @@
 
 import { type RefObject, useCallback, useEffect, useState } from 'react';
 
-import { useScrollProgress } from '@/lib/scroll/use-scroll-progress';
-import { breakpoints } from '@/theme/breakpoints';
+const MOBILE_BREAKPOINT = 921;
+const NAV_HEIGHT = 64;
 
-import { mapScrollToColorMix, mapScrollToPanelMix } from './hero-scroll-colors';
+// Scroll range over which the morph happens (as fraction of scrollable distance)
+const MORPH_START = 0.12;
+const MORPH_END = 0.55;
+
+// Distance (px) over which the nav fades back to light after the hero leaves
+const NAV_EXIT_DISTANCE_PX = 120;
+
+function smoothstep(value: number): number {
+  return value * value * (3 - 2 * value);
+}
+
+function mapToMorphProgress(scrollProgress: number): number {
+  if (scrollProgress <= MORPH_START) return 0;
+  if (scrollProgress >= MORPH_END) return 1;
+
+  const linear = (scrollProgress - MORPH_START) / (MORPH_END - MORPH_START);
+
+  return smoothstep(linear);
+}
 
 export type HeroScrollState = {
-  colorMix: number;
-  isScrollDriven: boolean;
-  panelMix: number;
+  morphProgress: number;
+  navProgress: number;
   phase: 0 | 1;
-  progress: number;
 };
 
-const INITIAL_SCROLL_STATE: HeroScrollState = {
-  colorMix: 0,
-  isScrollDriven: false,
-  panelMix: 0,
-  phase: 0,
-  progress: 0,
-};
+const INITIAL_STATE: HeroScrollState = { morphProgress: 0, navProgress: 0, phase: 0 };
 
 export function useHeroScrollProgress(
   trackRef: RefObject<HTMLDivElement | null>,
 ): HeroScrollState {
-  const [scrollState, setScrollState] =
-    useState<HeroScrollState>(INITIAL_SCROLL_STATE);
-  const [isScrollDriven, setIsScrollDriven] = useState(false);
+  const [state, setState] = useState<HeroScrollState>(INITIAL_STATE);
 
-  useEffect(() => {
-    const updateScrollMode = () => {
-      setIsScrollDriven(window.innerWidth >= breakpoints.md);
-    };
+  const handleScroll = useCallback(() => {
+    const element = trackRef.current;
 
-    updateScrollMode();
-    window.addEventListener('resize', updateScrollMode);
-
-    return () => window.removeEventListener('resize', updateScrollMode);
-  }, []);
-
-  useEffect(() => {
-    if (!isScrollDriven) {
-      setScrollState(INITIAL_SCROLL_STATE);
+    if (!element) return;
+    if (window.innerWidth < MOBILE_BREAKPOINT) {
+      setState(INITIAL_STATE);
+      return;
     }
-  }, [isScrollDriven]);
 
-  const handleScrollProgress = useCallback((progress: number) => {
-    const colorMix = mapScrollToColorMix(progress);
-    const panelMix = mapScrollToPanelMix(progress);
+    const rect = element.getBoundingClientRect();
+    const scrollableDistance = element.offsetHeight - window.innerHeight;
 
-    setScrollState({
-      colorMix,
-      isScrollDriven: true,
-      panelMix,
-      phase: panelMix >= 0.5 ? 1 : 0,
-      progress,
+    if (scrollableDistance <= 0) return;
+
+    const scrolled = -rect.top;
+    const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
+    const morphProgress = mapToMorphProgress(progress);
+
+    // Nav fades back to light only once the track's bottom is above the nav
+    let navProgress = morphProgress;
+    const trackBottom = rect.bottom;
+
+    if (trackBottom < NAV_HEIGHT) {
+      navProgress = 0;
+    } else if (trackBottom < NAV_HEIGHT + NAV_EXIT_DISTANCE_PX) {
+      const exitFade = (trackBottom - NAV_HEIGHT) / NAV_EXIT_DISTANCE_PX;
+
+      navProgress = morphProgress * exitFade;
+    }
+
+    setState({
+      morphProgress,
+      navProgress,
+      phase: morphProgress >= 0.5 ? 1 : 0,
     });
-  }, []);
+  }, [trackRef]);
 
-  useScrollProgress(trackRef, handleScrollProgress, {
-    enabled: isScrollDriven,
-  });
+  useEffect(() => {
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
 
-  return {
-    ...scrollState,
-    isScrollDriven,
-  };
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [handleScroll]);
+
+  return state;
 }
