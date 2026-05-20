@@ -84,12 +84,18 @@ export class FlatViewFilterValidatorService {
     } else {
       let relationTargetFieldType: FieldMetadataType | undefined;
 
-      if (isDefined(flatViewFilterToValidate.relationTargetFieldMetadataId)) {
-        const relationTargetFieldMetadata = findFlatEntityByUniversalIdentifier({
-          universalIdentifier:
-            flatViewFilterToValidate.relationTargetFieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
+      if (
+        isDefined(
+          flatViewFilterToValidate.relationTargetFieldMetadataUniversalIdentifier,
+        )
+      ) {
+        const relationTargetFieldMetadata = findFlatEntityByUniversalIdentifier(
+          {
+            universalIdentifier:
+              flatViewFilterToValidate.relationTargetFieldMetadataUniversalIdentifier,
+            flatEntityMaps: flatFieldMetadataMaps,
+          },
+        );
 
         relationTargetFieldType = relationTargetFieldMetadata?.type;
       }
@@ -215,12 +221,18 @@ export class FlatViewFilterValidatorService {
     } else {
       let relationTargetFieldType: FieldMetadataType | undefined;
 
-      if (isDefined(updatedFlatViewFilter.relationTargetFieldMetadataId)) {
-        const relationTargetFieldMetadata = findFlatEntityByUniversalIdentifier({
-          universalIdentifier:
-            updatedFlatViewFilter.relationTargetFieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
+      if (
+        isDefined(
+          updatedFlatViewFilter.relationTargetFieldMetadataUniversalIdentifier,
+        )
+      ) {
+        const relationTargetFieldMetadata = findFlatEntityByUniversalIdentifier(
+          {
+            universalIdentifier:
+              updatedFlatViewFilter.relationTargetFieldMetadataUniversalIdentifier,
+            flatEntityMaps: flatFieldMetadataMaps,
+          },
+        );
 
         relationTargetFieldType = relationTargetFieldMetadata?.type;
       }
