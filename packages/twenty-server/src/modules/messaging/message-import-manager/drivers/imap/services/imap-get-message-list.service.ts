@@ -57,9 +57,28 @@ export class ImapGetMessageListService {
     try {
       const results: GetMessageListsResponse = [];
 
-      for (const folder of foldersToProcess) {
-        const response = await this.getMessageList(client, folder);
+      // Concurrent folder status check to determine what needs syncing
+      const folderSyncChecks = await Promise.all(
+        foldersToProcess.map(async (folder) => {
+          const canSkip = await this.canSkipFolderSync(client, folder);
+          return { folder, canSkip };
+        }),
+      );
 
+      for (const { folder, canSkip } of folderSyncChecks) {
+        if (canSkip) {
+          this.logger.log(`Skipping folder ${folder.name}: no new messages`);
+          results.push({
+            messageExternalIds: [],
+            messageExternalIdsToDelete: [],
+            nextSyncCursor: folder.syncCursor ?? '',
+            previousSyncCursor: folder.syncCursor,
+            folderId: folder.id,
+          });
+          continue;
+        }
+
+        const response = await this.getMessageList(client, folder);
         results.push({ ...response, folderId: folder.id });
       }
 
@@ -86,18 +105,6 @@ export class ImapGetMessageListService {
         `Folder ${folder.name} has no path`,
         MessageImportDriverExceptionCode.NOT_FOUND,
       );
-    }
-
-    if (await this.canSkipFolderSync(client, folder)) {
-      this.logger.log(`Skipping folder ${folder.name}: no new messages`);
-
-      return {
-        messageExternalIds: [],
-        messageExternalIdsToDelete: [],
-        nextSyncCursor: folder.syncCursor ?? '',
-        previousSyncCursor: folder.syncCursor,
-        folderId: folder.id,
-      };
     }
 
     this.logger.log(`Processing folder: ${folder.name}`);
